@@ -1,0 +1,142 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{1A8F5423-F375-4ADD-82A7-5B93182219FF}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Unosquare.Tubular</RootNamespace>
+    <AssemblyName>Unosquare.Tubular</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Linq.Dynamic">
+      <HintPath>..\packages\System.Linq.Dynamic.1.0.4\lib\net40\System.Linq.Dynamic.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Common.cs" />
+    <Compile Include="ObjectModel\TubularGridDataRequest.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Css\allmighty-autocomplete\autocomplete.css" />
+    <Content Include="Css\tadaaapickr\tadaaapickr.css" />
+    <Content Include="Css\tubular-bundle.css">
+      <DependentUpon>tubular-bundle.css.bundle</DependentUpon>
+    </Content>
+    <Content Include="Css\tubular-bundle.min.css">
+      <DependentUpon>tubular-bundle.css</DependentUpon>
+    </Content>
+    <Content Include="Css\tubular\tubular.css" />
+    <Content Include="Javascript\allmighty-autocomplete\autocomplete.js" />
+    <Content Include="Javascript\blob-js\blob.js" />
+    <Content Include="Javascript\scriptjs\script.js" />
+    <Content Include="Javascript\tadaaapickr\tadaaapickr.pack.js" />
+    <Content Include="Javascript\tubular-bundle.js">
+      <DependentUpon>tubular-bundle.js.bundle</DependentUpon>
+    </Content>
+    <Content Include="Javascript\tubular-bundle.min.js">
+      <DependentUpon>tubular-bundle.js</DependentUpon>
+    </Content>
+    <Content Include="Javascript\tubular\tubular-directives-filters.js" />
+    <Content Include="Javascript\tubular\tubular-directives-filters.min.js">
+      <DependentUpon>tubular-directives-filters.js</DependentUpon>
+    </Content>
+    <Content Include="Javascript\tubular\tubular-directives-forms.js" />
+    <Content Include="Javascript\tubular\tubular-directives-forms.min.js">
+      <DependentUpon>tubular-directives-forms.js</DependentUpon>
+    </Content>
+    <Content Include="Javascript\tubular\tubular-directives-grid.js" />
+    <Content Include="Javascript\tubular\tubular-directives-grid.min.js">
+      <DependentUpon>tubular-directives-grid.js</DependentUpon>
+    </Content>
+    <Content Include="Javascript\tubular\tubular-directives.js" />
+    <Content Include="Javascript\tubular\tubular-directives.min.js">
+      <DependentUpon>tubular-directives.js</DependentUpon>
+    </Content>
+    <Content Include="Javascript\tubular\tubular-models.js" />
+    <Content Include="Javascript\tubular\tubular-models.min.js">
+      <DependentUpon>tubular-models.js</DependentUpon>
+    </Content>
+    <Content Include="Javascript\tubular\tubular-services.js" />
+    <Content Include="Javascript\tubular\tubular-services.min.js">
+      <DependentUpon>tubular-services.js</DependentUpon>
+    </Content>
+    <Content Include="Javascript\tubular\tubular.js" />
+    <Content Include="Javascript\tubular\tubular.min.js">
+      <DependentUpon>tubular.js</DependentUpon>
+    </Content>
+    <None Include="app.config" />
+    <Content Include="Javascript\tubular\tubular-directives-editors.min.js.map">
+      <DependentUpon>tubular-directives-editors.min.js</DependentUpon>
+    </Content>
+    <Content Include="Javascript\tubular\tubular-directives-filters.min.js.map">
+      <DependentUpon>tubular-directives-filters.min.js</DependentUpon>
+    </Content>
+    <Content Include="Javascript\tubular\tubular-directives-forms.min.js.map">
+      <DependentUpon>tubular-directives-forms.min.js</DependentUpon>
+    </Content>
+    <Content Include="Javascript\tubular\tubular-models.min.js.map">
+      <DependentUpon>tubular-models.min.js</DependentUpon>
+    </Content>
+    <Content Include="Javascript\tubular\tubular-services.min.js.map">
+      <DependentUpon>tubular-services.min.js</DependentUpon>
+    </Content>
+    <Content Include="Javascript\tubular\tubular.min.js.map">
+      <DependentUpon>tubular.min.js</DependentUpon>
+    </Content>
+    <None Include="Css\tubular-bundle.css.bundle" />
+    <None Include="Javascript\tubular-bundle.js.bundle" />
+    <None Include="Javascript\tubular-bundle.min.js.map">
+      <DependentUpon>tubular-bundle.min.js</DependentUpon>
+    </None>
+    <None Include="Javascript\tubular\tubular-directives-grid.min.js.map">
+      <DependentUpon>tubular-directives-grid.min.js</DependentUpon>
+    </None>
+    <None Include="Javascript\tubular\tubular-directives.min.js.map">
+      <DependentUpon>tubular-directives.min.js</DependentUpon>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Javascript\tubular\tubular-directives-editors.js" />
+    <Content Include="Javascript\tubular\tubular-directives-editors.min.js">
+      <DependentUpon>tubular-directives-editors.js</DependentUpon>
+    </Content>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

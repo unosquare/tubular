@@ -1,0 +1,42 @@
+﻿<div class="container" ng-controller="tubularSampleCtrl as sample">
+    <tubular-form server-save-url="/api/orders/save" is-new="true">
+        <div class="row">
+            <div class="col-md-9">
+                <h3>New Order</h3>
+
+                <tubular-simple-editor min="3" show-label="true" name="CustomerName">
+                </tubular-simple-editor>
+                <tubular-dropdown-editor name="ShipperCity" value="Model.ShipperCity" state="Model.$state.ShipperCity"
+                                         show-label="true" label="'Shipper City'" required="true"
+                                         options-url="api/orders/cities">
+                </tubular-dropdown-editor>
+                <tubular-numeric-editor name="Amount" value="Model.Amount" min="1" max="100" state="Model.$state.Amount"
+                                        show-label="true" label="'Amount'" required="true" default-value="100">
+                </tubular-numeric-editor>
+
+                <tubular-date-editor name="ShippedDate" required="true" format="'dd-MM-yyyy'" show-label="true" 
+                                     default-value="sample.defaultDate">
+                </tubular-date-editor>
+
+                <tubular-hidden-field name="OrderID" is-key="true" value="Model.OrderID">
+                </tubular-hidden-field>
+                
+                <div class="form-control">
+                    <label>Is Shipped?</label>
+                    <input type="checkbox" ng-model="Model.IsShipped" />
+                </div>
+
+                <hr />
+
+                <button class="btn btn-primary" ng-click="$parent.create()" ng-disabled="!Model.$valid()">Save</button>
+                <button class="btn btn-danger" ng-click="$parent.gotoView('/')">Cancel</button>
+            </div>
+
+            <div class="col-md-3">
+                <div class="jumbotron">
+                    <h3>Please complete the form, we must have orders.</h3>
+                </div>
+            </div>
+        </div>
+    </tubular-form>
+</div>
