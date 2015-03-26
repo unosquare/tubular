@@ -197,7 +197,7 @@
             }
         };
     }
-    ]).directive('tubularDropdownEditor', ['tubularEditorService', 'tubularGridService', function (tubularEditorService, tubularGridService) {
+    ]).directive('tubularDropdownEditor', ['tubularEditorService', 'tubularHttp', function (tubularEditorService, tubularHttp) {
 
             return {
                 template: '<div ng-class="{ \'form-group\' : isEditing, \'has-error\' : !$valid }">' +
@@ -220,10 +220,9 @@
                         $scope.loadData = function() {
                             if ($scope.dataIsLoaded) return;
 
-                            var currentRequest = tubularGridService.getDataAsync({
+                            var currentRequest = tubularHttp.retrieveDataAsync({
                                 serverUrl: $scope.optionsUrl,
-                                requestMethod: 'GET',
-                                timeout: 1000
+                                requestMethod: 'GET' // TODO: RequestMethod
                             });
 
                             var value = $scope.value;
@@ -252,61 +251,60 @@
                 ]
             };
         }
-    ]).directive('tubularAutocompleteEditor', ['tubularEditorService', 'tubularGridService', function (tubularEditorService, tubularGridService) {
+    ]).directive('tubularAutocompleteEditor', ['tubularEditorService', 'tubularHttp', function(tubularEditorService, tubularHttp) {
 
-        return {
-            template: '<div ng-class="{ \'form-group\' : isEditing, \'has-error\' : !$valid }">' +
-                '<span ng-hide="isEditing">{{ value }}</span>' +
-                '<label ng-show="showLabel">{{ label }}</label>' +
-                '<autocomplete ng-show="isEditing" ng-model="value" attr-input-class="form-control" data="options" ' +
-                'autocomplete-required="required" />' +
-                '<span class="help-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
-                '</div>',
-            restrict: 'E',
-            replace: true,
-            transclude: true,
-            scope: angular.extend({ options: '=?', optionsUrl: '@' }, tubularEditorService.defaultScope),
-            controller: [
-                '$scope', function ($scope) {
-                    tubularEditorService.setupScope($scope);
-                    $scope.$editorType = 'select';
-                    $scope.dataIsLoaded = false;
+            return {
+                template: '<div ng-class="{ \'form-group\' : isEditing, \'has-error\' : !$valid }">' +
+                    '<span ng-hide="isEditing">{{ value }}</span>' +
+                    '<label ng-show="showLabel">{{ label }}</label>' +
+                    '<autocomplete ng-show="isEditing" ng-model="value" attr-input-class="form-control" data="options" ' +
+                    'autocomplete-required="required" />' +
+                    '<span class="help-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
+                    '</div>',
+                restrict: 'E',
+                replace: true,
+                transclude: true,
+                scope: angular.extend({ options: '=?', optionsUrl: '@' }, tubularEditorService.defaultScope),
+                controller: [
+                    '$scope', function($scope) {
+                        tubularEditorService.setupScope($scope);
+                        $scope.$editorType = 'select';
+                        $scope.dataIsLoaded = false;
 
-                    $scope.loadData = function () {
-                        if ($scope.dataIsLoaded) return;
+                        $scope.loadData = function() {
+                            if ($scope.dataIsLoaded) return;
 
-                        var currentRequest = tubularGridService.getDataAsync({
-                            serverUrl: $scope.optionsUrl,
-                            requestMethod: 'GET',
-                            timeout: 1000
-                        });
-
-                        var value = $scope.value;
-                        $scope.value = '';
-
-                        currentRequest.promise.then(
-                            function (data) {
-                                $scope.options = data;
-                                $scope.dataIsLoaded = true;
-                                $scope.value = value;
-                            }, function (error) {
-                                $scope.$emit('tubularGrid_OnConnectionError', error);
+                            var currentRequest = tubularHttp.retrieveDataAsync({
+                                serverUrl: $scope.optionsUrl,
+                                requestMethod: 'GET' // TODO: RequestMethod
                             });
-                    };
 
-                    if (angular.isUndefined($scope.optionsUrl) == false) {
-                        if ($scope.isEditing) {
-                            $scope.loadData();
-                        } else {
-                            $scope.$watch('isEditing', function () {
-                                if ($scope.isEditing) $scope.loadData();
-                            });
+                            var value = $scope.value;
+                            $scope.value = '';
+
+                            currentRequest.promise.then(
+                                function(data) {
+                                    $scope.options = data;
+                                    $scope.dataIsLoaded = true;
+                                    $scope.value = value;
+                                }, function(error) {
+                                    $scope.$emit('tubularGrid_OnConnectionError', error);
+                                });
+                        };
+
+                        if (angular.isUndefined($scope.optionsUrl) == false) {
+                            if ($scope.isEditing) {
+                                $scope.loadData();
+                            } else {
+                                $scope.$watch('isEditing', function() {
+                                    if ($scope.isEditing) $scope.loadData();
+                                });
+                            }
                         }
                     }
-                }
-            ]
-        };
-    }
+                ]
+            };
+        }
     ]).directive('tubularHiddenField', ['tubularEditorService',
             function (tubularEditorService) {
 
@@ -345,44 +343,44 @@
                 };
             }
     ]).directive('tubularTextArea', ['tubularEditorService',
-            function (tubularEditorService) {
+        function(tubularEditorService) {
 
-                return {
-                    template: '<div ng-class="{ \'form-group\' : isEditing, \'has-error\' : !$valid }">' +
-                        '<span ng-hide="isEditing">{{value}}</span>' +
-                        '<label ng-show="showLabel">{{ label }}</label>' +
-                        '<textarea ng-show="isEditing" ng-model="value" class="form-control" ' +
-                            ' ng-required="required"></textarea>' +
-                        '<span class="help-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
-                        '</div>',
-                    restrict: 'E',
-                    replace: true,
-                    transclude: true,
-                    scope: tubularEditorService.defaultScope,
-                    controller: [
-                        '$scope', function ($scope) {
-                            $scope.validate = function () {
-                                if (angular.isUndefined($scope.min) == false && angular.isUndefined($scope.value) == false) {
-                                    if ($scope.value.length < parseInt($scope.min)) {
-                                        $scope.$valid = false;
-                                        $scope.state.$errors = ["The fields needs to be minimum " + $scope.min + " chars"];
-                                        return;
-                                    }
+            return {
+                template: '<div ng-class="{ \'form-group\' : isEditing, \'has-error\' : !$valid }">' +
+                    '<span ng-hide="isEditing">{{value}}</span>' +
+                    '<label ng-show="showLabel">{{ label }}</label>' +
+                    '<textarea ng-show="isEditing" ng-model="value" class="form-control" ' +
+                    ' ng-required="required"></textarea>' +
+                    '<span class="help-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
+                    '</div>',
+                restrict: 'E',
+                replace: true,
+                transclude: true,
+                scope: tubularEditorService.defaultScope,
+                controller: [
+                    '$scope', function($scope) {
+                        $scope.validate = function() {
+                            if (angular.isUndefined($scope.min) == false && angular.isUndefined($scope.value) == false) {
+                                if ($scope.value.length < parseInt($scope.min)) {
+                                    $scope.$valid = false;
+                                    $scope.state.$errors = ["The fields needs to be minimum " + $scope.min + " chars"];
+                                    return;
                                 }
+                            }
 
-                                if (angular.isUndefined($scope.max) == false && angular.isUndefined($scope.value) == false) {
-                                    if ($scope.value.length > parseInt($scope.max)) {
-                                        $scope.$valid = false;
-                                        $scope.state.$errors = ["The fields needs to be maximum " + $scope.min + " chars"];
-                                        return;
-                                    }
+                            if (angular.isUndefined($scope.max) == false && angular.isUndefined($scope.value) == false) {
+                                if ($scope.value.length > parseInt($scope.max)) {
+                                    $scope.$valid = false;
+                                    $scope.state.$errors = ["The fields needs to be maximum " + $scope.min + " chars"];
+                                    return;
                                 }
-                            };
+                            }
+                        };
 
-                            tubularEditorService.setupScope($scope);
-                        }
-                    ]
-                };
-            }
+                        tubularEditorService.setupScope($scope);
+                    }
+                ]
+            };
+        }
     ]);
 })();

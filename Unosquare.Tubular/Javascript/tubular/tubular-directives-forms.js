@@ -3,7 +3,7 @@
 
     angular.module('tubular.directives').directive('tubularForm',
     [
-        'tubularGridService', function(tubularGridService) {
+        'tubularHttp', function(tubularHttp) {
             return {
                 template: '<form ng-transclude></form>',
                 restrict: 'E',
@@ -18,7 +18,6 @@
                 controller: [
                     '$scope', '$routeParams', '$location', 'tubularModel', function($scope, $routeParams, $location, TubularModel) {
                         $scope.tubularDirective = 'tubular-form';
-                        $scope.requestTimeout = 10000;
                         $scope.columns = []; // TODO: Rename, right now for compatibility is columns
                         $scope.hasFieldsDefinitions = false;
                         $scope.modelKey = $routeParams.param;
@@ -71,13 +70,7 @@
                                 return;
                             }
 
-                            var currentRequest = tubularGridService.getDataAsync({
-                                serverUrl: $scope.serverUrl + $scope.modelKey,
-                                requestMethod: 'GET',
-                                timeout: 1000
-                            });
-
-                            currentRequest.promise.then(
+                            tubularHttp.get($scope.serverUrl + $scope.modelKey).promise.then(
                                 function(data) {
                                     $scope.rowModel = new TubularModel($scope, data);
 
@@ -90,12 +83,11 @@
                         $scope.updateRow = function(row) {
                             var request = {
                                 serverUrl: $scope.serverSaveUrl,
-                                requestMethod: 'PUT',
-                                timeout: $scope.requestTimeout
+                                requestMethod: 'PUT'
                             };
 
                             var returnValue = true;
-                            $scope.currentRequest = tubularGridService.saveDataAsync(row, request);
+                            $scope.currentRequest = tubularHttp.saveDataAsync(row, request);
 
                             $scope.currentRequest.promise.then(
                                     function(data) {
@@ -113,16 +105,7 @@
                         };
 
                         $scope.create = function() {
-                            var request = {
-                                serverUrl: $scope.serverSaveUrl,
-                                requestMethod: 'POST',
-                                timeout: $scope.requestTimeout,
-                                data: $scope.rowModel
-                            };
-
-                            $scope.currentRequest = tubularGridService.getDataAsync(request);
-
-                            $scope.currentRequest.promise.then(
+                            $scope.currentRequest = tubularHttp.post($scope.serverSaveUrl, $scope.rowModel).promise.then(
                                     function(data) {
                                         $scope.$emit('tubularGrid_OnSuccessfulUpdate', data);
                                         $scope.$emit('tubularGrid_OnSuccessfulForm', data);

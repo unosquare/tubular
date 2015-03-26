@@ -109,7 +109,7 @@
             }
         ])
         .directive('tubularColumnOptionsFilter', [
-            'tubularGridFilterService', 'tubularGridService', function(tubularGridFilterService, tubularGridService) {
+            'tubularGridFilterService', 'tubularHttp', function(tubularGridFilterService, tubularHttp) {
 
                 return {
                     require: '^tubularColumn',
@@ -138,7 +138,7 @@
                             $scope.getOptionsFromUrl = function() {
                                 if ($scope.dataIsLoaded) return;
 
-                                var currentRequest = tubularGridService.getDataAsync({
+                                var currentRequest = tubularHttp.retrieveDataAsync({
                                     serverUrl: $scope.filter.OptionsUrl,
                                     requestMethod: 'GET',
                                     timeout: 1000

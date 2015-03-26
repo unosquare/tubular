@@ -1,12 +1,7 @@
 ﻿(function() {
     'use strict';
 
-    angular.module('app.constants', [])
-        .constant('ApplicationName', 'Sample Angular Application')
-        .constant('GridDataOptions', { Url: '/api/orders/paged' })
-        .constant('HttpTimeout', 15000);
-
-    angular.module('app.routes', ['app.constants', 'ngRoute'])
+    angular.module('app.routes', ['ngRoute'])
         .config([
             '$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
                 $routeProvider.
@@ -27,19 +22,18 @@
             }
         ]);
 
-    angular.module('app.services', []).service('myService', [
-        '$q', function tubularGridService($q) {
+    angular.module('app.services', []).service('myService', ['$q', function myService($q) {
             var me = this;
 
             me.saveDataAsync = function(model, request) {
                 // DO NOTHING
             };
 
-            me.getDataAsync = function (request) {
+            me.retrieveDataAsync = function (request) {
                 return {
                     promise: $q(function(resolve, reject) {
                         resolve({
-                            Payload: [["Pepe", "P"],["Pepe 2", "P"]]
+                            Payload: [["Pepe", "P"], ["Pepe 2", "P"]]
                         });
                     }),
                     cancel: function() {}
@@ -96,7 +90,6 @@
         'tubular.models',
         'tubular.services',
         'tubular.directives',
-        'app.constants',
         'app.routes',
         'app.services',
         'app.controllers'

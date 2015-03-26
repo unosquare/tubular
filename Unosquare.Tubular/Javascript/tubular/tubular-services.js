@@ -3,8 +3,8 @@
 
     // User Service based on https://bitbucket.org/david.antaramian/so-21662778-spa-authentication-example
     angular.module('tubular.services', ['ui.bootstrap'])
-        .service('tubularGridService', [
-            '$http', '$timeout', '$q', '$cacheFactory', '$cookieStore', function tubularGridService($http, $timeout, $q, $cacheFactory, $cookieStore) {
+        .service('tubularHttp', [
+            '$http', '$timeout', '$q', '$cacheFactory', '$cookieStore', function tubularHttp($http, $timeout, $q, $cacheFactory, $cookieStore) {
                 function isAuthenticationExpired(expirationDate) {
                     var now = new Date();
                     expirationDate = new Date(expirationDate);
@@ -55,7 +55,7 @@
                     expirationDate: null,
                 };
 
-                me.cache = $cacheFactory('tubularGridServiceCache');
+                me.cache = $cacheFactory('tubularHttpCache');
                 me.useCache = true;
 
                 me.isAuthenticated = function() {
@@ -129,7 +129,7 @@
                         New: clone
                     };
 
-                    var dataRequest = me.getDataAsync(request);
+                    var dataRequest = me.retrieveDataAsync(request);
 
                     dataRequest.promise.then(function(data) {
                         model.$hasChanges = false;
@@ -157,7 +157,7 @@
                     return JSON.stringify(output);
                 };
 
-                me.getDataAsync = function(request) {
+                me.retrieveDataAsync = function(request) {
                     var checksum = me.checksum(request);
 
                     var canceller = $q.defer();
@@ -206,6 +206,36 @@
                         promise: promise,
                         cancel: cancel
                     };
+                };
+
+                me.get = function(url) {
+                    return me.retrieveDataAsync({
+                        serverUrl: url,
+                        requestMethod: 'GET',
+                    });
+                };
+
+                me.delete = function (url) {
+                    return me.retrieveDataAsync({
+                        serverUrl: url,
+                        requestMethod: 'DELETE',
+                    });
+                };
+
+                me.post = function (url, data) {
+                    return me.retrieveDataAsync({
+                        serverUrl: url,
+                        requestMethod: 'POST',
+                        data: data
+                    });
+                };
+
+                me.put = function (url, data) {
+                    return me.retrieveDataAsync({
+                        serverUrl: url,
+                        requestMethod: 'PUT',
+                        data: data
+                    });
                 };
             }
         ])

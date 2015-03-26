@@ -244,7 +244,7 @@
     'use strict';
 
     angular.module('tubular.directives').directive('tubularGrid', [
-            'tubularGridService', function(tubularGridService) {
+            'tubularHttp', function(tubularHttp) {
                 return {
                     template: '<div class="tubular-grid" ng-transclude></div>',
                     restrict: 'E',
@@ -282,7 +282,7 @@
                             };
                             $scope.isEmpty = false;
                             $scope.tempRow = new TubularModel($scope, {});
-                            $scope.gridDataService = $scope.gridDataService || tubularGridService;
+                            $scope.gridDataService = $scope.gridDataService || tubularHttp;
 
                             $scope.addColumn = function(item) {
                                 if (item.Name === null) return;
@@ -306,7 +306,7 @@
                                     data: $scope.tempRow
                                 };
 
-                                $scope.currentRequest = $scope.gridDataService.getDataAsync(request);
+                                $scope.currentRequest = $scope.gridDataService.retrieveDataAsync(request);
 
                                 $scope.currentRequest.promise.then(
                                     function(data) {
@@ -332,7 +332,7 @@
                                     timeout: $scope.requestTimeout
                                 };
 
-                                $scope.currentRequest = $scope.gridDataService.getDataAsync(request);
+                                $scope.currentRequest = $scope.gridDataService.retrieveDataAsync(request);
 
                                 $scope.currentRequest.promise.then(
                                     function(data) {
@@ -398,7 +398,7 @@
 
                                 $scope.$emit('tubularGrid_OnBeforeRequest', request);
 
-                                $scope.currentRequest = $scope.gridDataService.getDataAsync(request);
+                                $scope.currentRequest = $scope.gridDataService.retrieveDataAsync(request);
 
                                 $scope.currentRequest.promise.then(
                                     function(data) {
@@ -542,7 +542,7 @@
                             };
 
                             $scope.getFullDataSource = function(callback) {
-                                $scope.gridDataService.getDataAsync({
+                                $scope.gridDataService.retrieveDataAsync({
                                     serverUrl: $scope.serverUrl,
                                     requestMethod: $scope.requestMethod,
                                     timeout: $scope.requestTimeout,
@@ -1383,7 +1383,7 @@
             }
         };
     }
-    ]).directive('tubularDropdownEditor', ['tubularEditorService', 'tubularGridService', function (tubularEditorService, tubularGridService) {
+    ]).directive('tubularDropdownEditor', ['tubularEditorService', 'tubularHttp', function (tubularEditorService, tubularHttp) {
 
             return {
                 template: '<div ng-class="{ \'form-group\' : isEditing, \'has-error\' : !$valid }">' +
@@ -1406,10 +1406,9 @@
                         $scope.loadData = function() {
                             if ($scope.dataIsLoaded) return;
 
-                            var currentRequest = tubularGridService.getDataAsync({
+                            var currentRequest = tubularHttp.retrieveDataAsync({
                                 serverUrl: $scope.optionsUrl,
-                                requestMethod: 'GET',
-                                timeout: 1000
+                                requestMethod: 'GET' // TODO: RequestMethod
                             });
 
                             var value = $scope.value;
@@ -1438,61 +1437,60 @@
                 ]
             };
         }
-    ]).directive('tubularAutocompleteEditor', ['tubularEditorService', 'tubularGridService', function (tubularEditorService, tubularGridService) {
+    ]).directive('tubularAutocompleteEditor', ['tubularEditorService', 'tubularHttp', function(tubularEditorService, tubularHttp) {
 
-        return {
-            template: '<div ng-class="{ \'form-group\' : isEditing, \'has-error\' : !$valid }">' +
-                '<span ng-hide="isEditing">{{ value }}</span>' +
-                '<label ng-show="showLabel">{{ label }}</label>' +
-                '<autocomplete ng-show="isEditing" ng-model="value" attr-input-class="form-control" data="options" ' +
-                'autocomplete-required="required" />' +
-                '<span class="help-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
-                '</div>',
-            restrict: 'E',
-            replace: true,
-            transclude: true,
-            scope: angular.extend({ options: '=?', optionsUrl: '@' }, tubularEditorService.defaultScope),
-            controller: [
-                '$scope', function ($scope) {
-                    tubularEditorService.setupScope($scope);
-                    $scope.$editorType = 'select';
-                    $scope.dataIsLoaded = false;
+            return {
+                template: '<div ng-class="{ \'form-group\' : isEditing, \'has-error\' : !$valid }">' +
+                    '<span ng-hide="isEditing">{{ value }}</span>' +
+                    '<label ng-show="showLabel">{{ label }}</label>' +
+                    '<autocomplete ng-show="isEditing" ng-model="value" attr-input-class="form-control" data="options" ' +
+                    'autocomplete-required="required" />' +
+                    '<span class="help-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
+                    '</div>',
+                restrict: 'E',
+                replace: true,
+                transclude: true,
+                scope: angular.extend({ options: '=?', optionsUrl: '@' }, tubularEditorService.defaultScope),
+                controller: [
+                    '$scope', function($scope) {
+                        tubularEditorService.setupScope($scope);
+                        $scope.$editorType = 'select';
+                        $scope.dataIsLoaded = false;
 
-                    $scope.loadData = function () {
-                        if ($scope.dataIsLoaded) return;
+                        $scope.loadData = function() {
+                            if ($scope.dataIsLoaded) return;
 
-                        var currentRequest = tubularGridService.getDataAsync({
-                            serverUrl: $scope.optionsUrl,
-                            requestMethod: 'GET',
-                            timeout: 1000
-                        });
-
-                        var value = $scope.value;
-                        $scope.value = '';
-
-                        currentRequest.promise.then(
-                            function (data) {
-                                $scope.options = data;
-                                $scope.dataIsLoaded = true;
-                                $scope.value = value;
-                            }, function (error) {
-                                $scope.$emit('tubularGrid_OnConnectionError', error);
+                            var currentRequest = tubularHttp.retrieveDataAsync({
+                                serverUrl: $scope.optionsUrl,
+                                requestMethod: 'GET' // TODO: RequestMethod
                             });
-                    };
 
-                    if (angular.isUndefined($scope.optionsUrl) == false) {
-                        if ($scope.isEditing) {
-                            $scope.loadData();
-                        } else {
-                            $scope.$watch('isEditing', function () {
-                                if ($scope.isEditing) $scope.loadData();
-                            });
+                            var value = $scope.value;
+                            $scope.value = '';
+
+                            currentRequest.promise.then(
+                                function(data) {
+                                    $scope.options = data;
+                                    $scope.dataIsLoaded = true;
+                                    $scope.value = value;
+                                }, function(error) {
+                                    $scope.$emit('tubularGrid_OnConnectionError', error);
+                                });
+                        };
+
+                        if (angular.isUndefined($scope.optionsUrl) == false) {
+                            if ($scope.isEditing) {
+                                $scope.loadData();
+                            } else {
+                                $scope.$watch('isEditing', function() {
+                                    if ($scope.isEditing) $scope.loadData();
+                                });
+                            }
                         }
                     }
-                }
-            ]
-        };
-    }
+                ]
+            };
+        }
     ]).directive('tubularHiddenField', ['tubularEditorService',
             function (tubularEditorService) {
 
@@ -1531,45 +1529,45 @@
                 };
             }
     ]).directive('tubularTextArea', ['tubularEditorService',
-            function (tubularEditorService) {
+        function(tubularEditorService) {
 
-                return {
-                    template: '<div ng-class="{ \'form-group\' : isEditing, \'has-error\' : !$valid }">' +
-                        '<span ng-hide="isEditing">{{value}}</span>' +
-                        '<label ng-show="showLabel">{{ label }}</label>' +
-                        '<textarea ng-show="isEditing" ng-model="value" class="form-control" ' +
-                            ' ng-required="required"></textarea>' +
-                        '<span class="help-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
-                        '</div>',
-                    restrict: 'E',
-                    replace: true,
-                    transclude: true,
-                    scope: tubularEditorService.defaultScope,
-                    controller: [
-                        '$scope', function ($scope) {
-                            $scope.validate = function () {
-                                if (angular.isUndefined($scope.min) == false && angular.isUndefined($scope.value) == false) {
-                                    if ($scope.value.length < parseInt($scope.min)) {
-                                        $scope.$valid = false;
-                                        $scope.state.$errors = ["The fields needs to be minimum " + $scope.min + " chars"];
-                                        return;
-                                    }
+            return {
+                template: '<div ng-class="{ \'form-group\' : isEditing, \'has-error\' : !$valid }">' +
+                    '<span ng-hide="isEditing">{{value}}</span>' +
+                    '<label ng-show="showLabel">{{ label }}</label>' +
+                    '<textarea ng-show="isEditing" ng-model="value" class="form-control" ' +
+                    ' ng-required="required"></textarea>' +
+                    '<span class="help-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
+                    '</div>',
+                restrict: 'E',
+                replace: true,
+                transclude: true,
+                scope: tubularEditorService.defaultScope,
+                controller: [
+                    '$scope', function($scope) {
+                        $scope.validate = function() {
+                            if (angular.isUndefined($scope.min) == false && angular.isUndefined($scope.value) == false) {
+                                if ($scope.value.length < parseInt($scope.min)) {
+                                    $scope.$valid = false;
+                                    $scope.state.$errors = ["The fields needs to be minimum " + $scope.min + " chars"];
+                                    return;
                                 }
+                            }
 
-                                if (angular.isUndefined($scope.max) == false && angular.isUndefined($scope.value) == false) {
-                                    if ($scope.value.length > parseInt($scope.max)) {
-                                        $scope.$valid = false;
-                                        $scope.state.$errors = ["The fields needs to be maximum " + $scope.min + " chars"];
-                                        return;
-                                    }
+                            if (angular.isUndefined($scope.max) == false && angular.isUndefined($scope.value) == false) {
+                                if ($scope.value.length > parseInt($scope.max)) {
+                                    $scope.$valid = false;
+                                    $scope.state.$errors = ["The fields needs to be maximum " + $scope.min + " chars"];
+                                    return;
                                 }
-                            };
+                            }
+                        };
 
-                            tubularEditorService.setupScope($scope);
-                        }
-                    ]
-                };
-            }
+                        tubularEditorService.setupScope($scope);
+                    }
+                ]
+            };
+        }
     ]);
 })();
 ///#source 1 1 tubular/tubular-directives-filters.js
@@ -1684,7 +1682,7 @@
             }
         ])
         .directive('tubularColumnOptionsFilter', [
-            'tubularGridFilterService', 'tubularGridService', function(tubularGridFilterService, tubularGridService) {
+            'tubularGridFilterService', 'tubularHttp', function(tubularGridFilterService, tubularHttp) {
 
                 return {
                     require: '^tubularColumn',
@@ -1713,7 +1711,7 @@
                             $scope.getOptionsFromUrl = function() {
                                 if ($scope.dataIsLoaded) return;
 
-                                var currentRequest = tubularGridService.getDataAsync({
+                                var currentRequest = tubularHttp.retrieveDataAsync({
                                     serverUrl: $scope.filter.OptionsUrl,
                                     requestMethod: 'GET',
                                     timeout: 1000
@@ -1751,7 +1749,7 @@
 
     angular.module('tubular.directives').directive('tubularForm',
     [
-        'tubularGridService', function(tubularGridService) {
+        'tubularHttp', function(tubularHttp) {
             return {
                 template: '<form ng-transclude></form>',
                 restrict: 'E',
@@ -1766,7 +1764,6 @@
                 controller: [
                     '$scope', '$routeParams', '$location', 'tubularModel', function($scope, $routeParams, $location, TubularModel) {
                         $scope.tubularDirective = 'tubular-form';
-                        $scope.requestTimeout = 10000;
                         $scope.columns = []; // TODO: Rename, right now for compatibility is columns
                         $scope.hasFieldsDefinitions = false;
                         $scope.modelKey = $routeParams.param;
@@ -1819,13 +1816,7 @@
                                 return;
                             }
 
-                            var currentRequest = tubularGridService.getDataAsync({
-                                serverUrl: $scope.serverUrl + $scope.modelKey,
-                                requestMethod: 'GET',
-                                timeout: 1000
-                            });
-
-                            currentRequest.promise.then(
+                            tubularHttp.get($scope.serverUrl + $scope.modelKey).promise.then(
                                 function(data) {
                                     $scope.rowModel = new TubularModel($scope, data);
 
@@ -1838,12 +1829,11 @@
                         $scope.updateRow = function(row) {
                             var request = {
                                 serverUrl: $scope.serverSaveUrl,
-                                requestMethod: 'PUT',
-                                timeout: $scope.requestTimeout
+                                requestMethod: 'PUT'
                             };
 
                             var returnValue = true;
-                            $scope.currentRequest = tubularGridService.saveDataAsync(row, request);
+                            $scope.currentRequest = tubularHttp.saveDataAsync(row, request);
 
                             $scope.currentRequest.promise.then(
                                     function(data) {
@@ -1861,16 +1851,7 @@
                         };
 
                         $scope.create = function() {
-                            var request = {
-                                serverUrl: $scope.serverSaveUrl,
-                                requestMethod: 'POST',
-                                timeout: $scope.requestTimeout,
-                                data: $scope.rowModel
-                            };
-
-                            $scope.currentRequest = tubularGridService.getDataAsync(request);
-
-                            $scope.currentRequest.promise.then(
+                            $scope.currentRequest = tubularHttp.post($scope.serverSaveUrl, $scope.rowModel).promise.then(
                                     function(data) {
                                         $scope.$emit('tubularGrid_OnSuccessfulUpdate', data);
                                         $scope.$emit('tubularGrid_OnSuccessfulForm', data);
@@ -2130,8 +2111,8 @@
 
     // User Service based on https://bitbucket.org/david.antaramian/so-21662778-spa-authentication-example
     angular.module('tubular.services', ['ui.bootstrap'])
-        .service('tubularGridService', [
-            '$http', '$timeout', '$q', '$cacheFactory', '$cookieStore', function tubularGridService($http, $timeout, $q, $cacheFactory, $cookieStore) {
+        .service('tubularHttp', [
+            '$http', '$timeout', '$q', '$cacheFactory', '$cookieStore', function tubularHttp($http, $timeout, $q, $cacheFactory, $cookieStore) {
                 function isAuthenticationExpired(expirationDate) {
                     var now = new Date();
                     expirationDate = new Date(expirationDate);
@@ -2182,7 +2163,7 @@
                     expirationDate: null,
                 };
 
-                me.cache = $cacheFactory('tubularGridServiceCache');
+                me.cache = $cacheFactory('tubularHttpCache');
                 me.useCache = true;
 
                 me.isAuthenticated = function() {
@@ -2256,7 +2237,7 @@
                         New: clone
                     };
 
-                    var dataRequest = me.getDataAsync(request);
+                    var dataRequest = me.retrieveDataAsync(request);
 
                     dataRequest.promise.then(function(data) {
                         model.$hasChanges = false;
@@ -2284,7 +2265,7 @@
                     return JSON.stringify(output);
                 };
 
-                me.getDataAsync = function(request) {
+                me.retrieveDataAsync = function(request) {
                     var checksum = me.checksum(request);
 
                     var canceller = $q.defer();
@@ -2333,6 +2314,36 @@
                         promise: promise,
                         cancel: cancel
                     };
+                };
+
+                me.get = function(url) {
+                    return me.retrieveDataAsync({
+                        serverUrl: url,
+                        requestMethod: 'GET',
+                    });
+                };
+
+                me.delete = function (url) {
+                    return me.retrieveDataAsync({
+                        serverUrl: url,
+                        requestMethod: 'DELETE',
+                    });
+                };
+
+                me.post = function (url, data) {
+                    return me.retrieveDataAsync({
+                        serverUrl: url,
+                        requestMethod: 'POST',
+                        data: data
+                    });
+                };
+
+                me.put = function (url, data) {
+                    return me.retrieveDataAsync({
+                        serverUrl: url,
+                        requestMethod: 'PUT',
+                        data: data
+                    });
                 };
             }
         ])

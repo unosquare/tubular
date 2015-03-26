@@ -2,7 +2,7 @@
     'use strict';
 
     angular.module('tubular.directives').directive('tubularGrid', [
-            'tubularGridService', function(tubularGridService) {
+            'tubularHttp', function(tubularHttp) {
                 return {
                     template: '<div class="tubular-grid" ng-transclude></div>',
                     restrict: 'E',
@@ -40,7 +40,7 @@
                             };
                             $scope.isEmpty = false;
                             $scope.tempRow = new TubularModel($scope, {});
-                            $scope.gridDataService = $scope.gridDataService || tubularGridService;
+                            $scope.gridDataService = $scope.gridDataService || tubularHttp;
 
                             $scope.addColumn = function(item) {
                                 if (item.Name === null) return;
@@ -64,7 +64,7 @@
                                     data: $scope.tempRow
                                 };
 
-                                $scope.currentRequest = $scope.gridDataService.getDataAsync(request);
+                                $scope.currentRequest = $scope.gridDataService.retrieveDataAsync(request);
 
                                 $scope.currentRequest.promise.then(
                                     function(data) {
@@ -90,7 +90,7 @@
                                     timeout: $scope.requestTimeout
                                 };
 
-                                $scope.currentRequest = $scope.gridDataService.getDataAsync(request);
+                                $scope.currentRequest = $scope.gridDataService.retrieveDataAsync(request);
 
                                 $scope.currentRequest.promise.then(
                                     function(data) {
@@ -156,7 +156,7 @@
 
                                 $scope.$emit('tubularGrid_OnBeforeRequest', request);
 
-                                $scope.currentRequest = $scope.gridDataService.getDataAsync(request);
+                                $scope.currentRequest = $scope.gridDataService.retrieveDataAsync(request);
 
                                 $scope.currentRequest.promise.then(
                                     function(data) {
@@ -300,7 +300,7 @@
                             };
 
                             $scope.getFullDataSource = function(callback) {
-                                $scope.gridDataService.getDataAsync({
+                                $scope.gridDataService.retrieveDataAsync({
                                     serverUrl: $scope.serverUrl,
                                     requestMethod: $scope.requestMethod,
                                     timeout: $scope.requestTimeout,

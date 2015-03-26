@@ -8,7 +8,6 @@
                 <h3 class="modal-title">Edit Order {{Model.OrderID}}</h3>
             </div>
             <div class="modal-body">
-                <!--state="Model.$state.CustomerName"-->
                 <tubular-simple-editor min="3" show-label="true" name="CustomerName">
                 </tubular-simple-editor>
                 <tubular-autocomplete-editor value="Model.ShipperCity" name="ShipperCity"
@@ -199,14 +198,14 @@
 
     <hr />
     
-    <h3>Sample using minimum settings</h3>
+    <h3>Sample using minimum settings and internal datasource</h3>
 
     <tubular-grid service="sample.myService" class="row">
 
         <!-- Main grid nested row -->
         <div class="col-md-12 col-xs-12">
             <div class="panel panel-default panel-rounded">
-                <tubular-grid-table class="table tubular-grid-table">
+                <tubular-grid-table class="table tubular-grid-table table-bordered">
                     <tubular-column-definitions>
                         <tubular-column name="Id" sortable="true" sort-order="1"
                                         sort-direction="Descending" is-key="true">
