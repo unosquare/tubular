@@ -25,7 +25,9 @@
         })
         .filter('errormessage', function() {
             return function(input) {
-                if (angular.isDefined(input) && angular.isDefined(input.data) && angular.isDefined(input.data.ExceptionMessage))
+                if (angular.isDefined(input) && angular.isDefined(input.data) &&
+                    input.data != null &&
+                    angular.isDefined(input.data.ExceptionMessage))
                     return input.data.ExceptionMessage;
 
                 return input.statusText || "Connection Error";
