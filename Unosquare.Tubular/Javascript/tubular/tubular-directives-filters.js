@@ -1,11 +1,11 @@
 ﻿(function() {
     'use strict';
 
-    angular.module('tubular.directives').directive('tubularColumnFilter', [
+    angular.module('tubular.directives').directive('tbColumnFilter', [
             'tubularGridFilterService', function(tubularGridFilterService) {
 
                 return {
-                    require: '^tubularColumn',
+                    require: '^tbColumn',
                     template: '<div class="tubular-column-filter">' +
                         '<button class="tubular-column-filter-button btn btn-xs btn-default" data-toggle="popover" data-placement="bottom" ' +
                         'ng-class="{ \'btn-success\': (filter.Operator !== \'None\' && filter.Text.length > 0) }">' +
@@ -44,11 +44,11 @@
                 };
             }
         ])
-        .directive('tubularColumnDateTimeFilter', [
+        .directive('tbColumnDateTimeFilter', [
             'tubularGridFilterService', function(tubularGridFilterService) {
 
                 return {
-                    require: '^tubularColumn',
+                    require: '^tbColumn',
                     template: '<div ngTransclude class="btn-group tubular-column-filter">' +
                         '<button class="tubular-column-filter-button btn btn-xs btn-default" data-toggle="popover" data-placement="bottom" ' +
                         'ng-class="{ \'btn-success\': filter.Text != null }">' +
@@ -108,11 +108,11 @@
                 };
             }
         ])
-        .directive('tubularColumnOptionsFilter', [
+        .directive('tbColumnOptionsFilter', [
             'tubularGridFilterService', 'tubularHttp', function(tubularGridFilterService, tubularHttp) {
 
                 return {
-                    require: '^tubularColumn',
+                    require: '^tbColumn',
                     template: '<div class="tubular-column-filter">' +
                         '<button class="tubular-column-filter-button btn btn-xs btn-default" data-toggle="popover" data-placement="bottom" ' +
                         'ng-class="{ \'btn-success\': (filter.Argument.length > 0) }">' +

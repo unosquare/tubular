@@ -1,7 +1,7 @@
 ﻿(function() {
     'use strict';
 
-    angular.module('tubular.directives').directive('tubularForm',
+    angular.module('tubular.directives').directive('tbForm',
     [
         'tubularHttp', function(tubularHttp) {
             return {

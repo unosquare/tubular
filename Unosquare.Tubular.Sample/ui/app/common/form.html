@@ -1,29 +1,29 @@
 ﻿<div class="container" ng-controller="tubularSampleCtrl as sample">
-    <tubular-form server-url="/api/orders/" server-save-url="/api/orders/save">
+    <tb-form server-url="/api/orders/" server-save-url="/api/orders/save">
         <div class="row">
             <div class="col-md-10">
                 <h3>Edit Order - {{Model.OrderID}}</h3>
 
-                <tubular-simple-editor min="3" show-label="true" name="CustomerName">
-                </tubular-simple-editor>
-                <tubular-dropdown-editor name="ShipperCity" value="Model.ShipperCity" state="Model.$state.ShipperCity"
+                <tb-simple-editor min="3" show-label="true" name="CustomerName">
+                </tb-simple-editor>
+                <tb-dropdown-editor name="ShipperCity" value="Model.ShipperCity" state="Model.$state.ShipperCity"
                                          show-label="true" label="'Shipper City'" required="true"
                                          options-url="api/orders/cities">
-                </tubular-dropdown-editor>
+                </tb-dropdown-editor>
 
-                <tubular-numeric-editor name="Amount" min="1" max="100" show-label="true" required="true" format="'C'">
-                </tubular-numeric-editor>
+                <tb-numeric-editor name="Amount" min="1" max="100" show-label="true" required="true" format="'C'">
+                </tb-numeric-editor>
 
-                <tubular-date-editor name="ShippedDate" required="true"
+                <tb-date-editor name="ShippedDate" required="true"
                                      format="'dd-MM-yyyy'" show-label="true" label="'Shipped Date please'">
-                </tubular-date-editor>
+                </tb-date-editor>
 
-                <tubular-hidden-field name="OrderID" is-key="true" value="Model.OrderID">
-                </tubular-hidden-field>
+                <tb-hidden-field name="OrderID" is-key="true" value="Model.OrderID">
+                </tb-hidden-field>
 
                 <div class="form-control">
-                    <tubular-checkbox-field value="Model.IsShipped" name="IsShipped" show-label="true" label="'Is Shipped?'">
-                    </tubular-checkbox-field>
+                    <tb-checkbox-field value="Model.IsShipped" name="IsShipped" show-label="true" label="'Is Shipped?'">
+                    </tb-checkbox-field>
                 </div>
 
                 <hr />
@@ -32,5 +32,5 @@
                 <button class="btn btn-danger" ng-click="$parent.gotoView('/')">Cancel</button>
             </div>
         </div>
-    </tubular-form>
+    </tb-form>
 </div>

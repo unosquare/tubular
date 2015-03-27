@@ -1,10 +1,10 @@
 ﻿(function() {
     'use strict';
 
-    angular.module('tubular.directives').directive('tubularTextSearch', [
+    angular.module('tubular.directives').directive('tbTextSearch', [
         function() {
             return {
-                require: '^tubularGrid',
+                require: '^tbGrid',
                 template:
                     '<div>' +
                         '<div class="input-group">' +
@@ -46,11 +46,11 @@
                 ]
             };
         }
-    ]).directive('tubularRemoveButton', [
+    ]).directive('tbRemoveButton', [
         '$compile', function($compile) {
 
             return {
-                require: '^tubularGrid',
+                require: '^tbGrid',
                 template: '<button ng-click="confirmDelete()" class="btn" ng-hide="model.$isEditing">{{ caption || \'Remove\' }}</button>',
                 restrict: 'E',
                 replace: true,
@@ -82,11 +82,11 @@
                 ]
             };
         }
-    ]).directive('tubularSaveButton', [
+    ]).directive('tbSaveButton', [
         function() {
 
             return {
-                require: '^tubularGrid',
+                require: '^tbGrid',
                 template: '<div><button ng-click="save()" class="btn btn-default {{ saveCss || \'\' }}" ng-disabled="!model.$valid()" ng-show="model.$isEditing">' +
                     '{{ saveCaption || \'Save\' }}' +
                     '</button>' +
@@ -129,11 +129,11 @@
                 ]
             };
         }
-    ]).directive('tubularEditButton', [
+    ]).directive('tbEditButton', [
         function() {
 
             return {
-                require: '^tubularGrid',
+                require: '^tbGrid',
                 template: '<button ng-click="model.edit()" class="btn btn-default {{ css || \'\' }}" ng-hide="model.$isEditing">{{ caption || \'Edit\' }}</button>',
                 restrict: 'E',
                 replace: true,
@@ -145,11 +145,11 @@
                 }
             };
         }
-    ]).directive('tubularPageSizeSelector', [
+    ]).directive('tbPageSizeSelector', [
         function () {
 
             return {
-                require: '^tubularGrid',
+                require: '^tbGrid',
                 template: '<div class="{{css}}"><form class="form-inline">' +
                     '<div class="form-group">' +
                         '<label class="small">{{ caption || \'Page size:\' }}</label>' +
@@ -169,11 +169,11 @@
                 }
             };
         }
-    ]).directive('tubularExportButton', [
+    ]).directive('tbExportButton', [
         function() {
 
             return {
-                require: '^tubularGrid',
+                require: '^tbGrid',
                 template: '<div class="btn-group">' +
                     '<button class="btn btn-default dropdown-toggle {{css}}" data-toggle="dropdown" aria-expanded="false">' +
                     '<span class="fa fa-download"></span>&nbsp;Export CSV&nbsp;<span class="caret"></span>' +
@@ -205,11 +205,11 @@
                 ]
             };
         }
-    ]).directive('tubularPrintButton', [
+    ]).directive('tbPrintButton', [
         function() {
 
             return {
-                require: '^tubularGrid',
+                require: '^tbGrid',
                 template: '<button class="btn btn-default" ng-click="printGrid()">' +
                         '<span class="fa fa-print"></span>&nbsp;Print' +
                         '</button>',

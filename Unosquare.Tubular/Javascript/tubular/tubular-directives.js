@@ -1,7 +1,7 @@
 ﻿(function() {
     'use strict';
 
-    angular.module('tubular.directives').directive('tubularGrid', [
+    angular.module('tubular.directives').directive('tbGrid', [
             'tubularHttp', function(tubularHttp) {
                 return {
                     template: '<div class="tubular-grid" ng-transclude></div>',
@@ -336,10 +336,10 @@
                 };
             }
     ])
-        .directive('tubularGridPager', [
+        .directive('tbGridPager', [
             '$timeout', function($timeout) {
                 return {
-                    require: '^tubularGrid',
+                    require: '^tbGrid',
                     template:
                         '<div class="tubular-pager">' +
                             '<pagination ng-disabled="$component.isEmpty" direction-links="true" boundary-links="true" total-items="$component.filteredRecordCount"' +
@@ -393,10 +393,10 @@
                 };
             }
         ])
-        .directive('tubularGridTable', [
+        .directive('tbGridTable', [
             function() {
                 return {
-                    require: '^tubularGrid',
+                    require: '^tbGrid',
                     template: '<table ng-transclude></table>',
                     restrict: 'E',
                     replace: true,
@@ -411,11 +411,11 @@
                 };
             }
         ])
-        .directive('tubularColumnDefinitions', [
+        .directive('tbColumnDefinitions', [
             function() {
 
                 return {
-                    require: '^tubularGridTable',
+                    require: '^tbGridTable',
                     template: '<thead><tr ng-transclude></tr></thead>',
                     restrict: 'E',
                     replace: true,
@@ -438,10 +438,10 @@
                 };
             }
         ])
-        .directive('tubularColumn', [
+        .directive('tbColumn', [
             'tubulargGridColumnModel', function(ColumnModel) {
                 return {
-                    require: '^tubularColumnDefinitions',
+                    require: '^tbColumnDefinitions',
                     template: '<th ng-transclude ng-class="{sortable: column.Sortable}"></th>',
                     restrict: 'E',
                     replace: true,
@@ -474,11 +474,11 @@
                 };
             }
         ])
-        .directive('tubularColumnHeader', [
+        .directive('tbColumnHeader', [
             '$timeout', 'tubularConst', function($timeout, tubularConst) {
 
                 return {
-                    require: '^tubularColumn',
+                    require: '^tbColumn',
                     template: '<a title="Click to sort. Press Ctrl to sort by multiple columns" class="column-header" ng-transclude href="javascript:void(0)" ng-click="sortColumn($event)"></a>',
                     restrict: 'E',
                     replace: true,
@@ -532,11 +532,11 @@
                 };
             }
         ])
-        .directive('tubularRowSet', [
+        .directive('tbRowSet', [
             function() {
 
                 return {
-                    require: '^tubularGrid',
+                    require: '^tbGrid',
                     template: '<tbody ng-transclude></tbody>',
                     restrict: 'E',
                     replace: true,
@@ -548,21 +548,15 @@
                             $scope.$component = $scope.$parent.$component;
                             $scope.tubularDirective = 'tubular-row-set';
                         }
-                    ],
-                    compile: function compile(cElement, cAttrs) {
-                        return {
-                            pre: function(scope, lElement, lAttrs, lController, lTransclude) {},
-                            post: function(scope, lElement, lAttrs, lController, lTransclude) {}
-                        };
-                    }
+                    ]
                 };
             }
         ])
-        .directive('tubularRowTemplate', [
+        .directive('tbRowTemplate', [
             function() {
 
                 return {
-                    require: '^tubularRowSet',
+                    require: '^tbRowSet',
                     template: '<tr ng-transclude ng-class="{\'info\': selectableBool && rowModel.$selected}"' +
                         ' ng-click="changeSelection(rowModel)"></tr>',
                     restrict: 'E',
@@ -590,11 +584,11 @@
                 };
             }
         ])
-        .directive('tubularCellTemplate', [
+        .directive('tbCellTemplate', [
             function() {
 
                 return {
-                    require: '^tubularRowTemplate',
+                    require: '^tbRowTemplate',
                     template: '<td ng-transclude></td>',
                     restrict: 'E',
                     replace: true,
@@ -613,11 +607,11 @@
                 };
             }
         ])
-        .directive('tubularGridPagerInfo', [
+        .directive('tbGridPagerInfo', [
             function() {
 
                 return {
-                    require: '^tubularGrid',
+                    require: '^tbGrid',
                     template: '<div class="pager-info small">Showing {{currentInitial}} ' +
                         'to {{currentTop}} ' +
                         'of {{$component.filteredRecordCount}} records ' +
@@ -666,11 +660,11 @@
                 };
             }
         ])
-        .directive('tubularEmptyGrid', [
+        .directive('tbEmptyGrid', [
             function() {
 
                 return {
-                    require: '^tubularGrid',
+                    require: '^tbGrid',
                     template: '<tr ngTransclude ng-show="$parent.$component.isEmpty">' +
                         '<td class="bg-warning" colspan="{{$parent.$component.columns.length + 1}}">' +
                         '<b>No records found</b>' +

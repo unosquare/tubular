@@ -8,28 +8,28 @@ The next HTML represents a basic grid, you don't need to add anything else to yo
 
 ```html
  <div class="container" ng-controller="YourController">
-        <tubular-grid server-url="/api/customers" page-size="20" class="row">
+        <tb-grid server-url="/api/customers" page-size="20" class="row">
             <!-- Main grid nested row -->
             <div class="row">
                 <div class="col-md-12">
                     <div class="panel panel-default panel-rounded">
-                        <tubular-grid-table class="table tubular-grid-table table-bordered table-responsive table-striped table-hover table-condensed">
-                            <tubular-column-definitions>
-                                <tubular-column name="CustomerName">
-                                    <tubular-column-header>
+                        <tb-grid-table class="table tubular-grid-table table-bordered table-responsive table-striped table-hover table-condensed">
+                            <tb-column-definitions>
+                                <tb-column name="CustomerName">
+                                    <tb-column-header>
                                         <span>{{label}}</span>
-                                    </tubular-column-header>
-                                </tubular-column>
-                                <tubular-column name="Invoices">
-                                    <tubular-column-header>
+                                    </tb-column-header>
+                                </tb-column>
+                                <tb-column name="Invoices">
+                                    <tb-column-header>
                                         <span>{{label}}</span>
-                                    </tubular-column-header>
-                                </tubular-column>
-                            </tubular-column-definitions>
-                        </tubular-grid-table>
+                                    </tb-column-header>
+                                </tb-column>
+                            </tb-column-definitions>
+                        </tb-grid-table>
                     </div>
                 </div>
             </div>
-        </tubular-grid>
+        </tb-grid>
     </div>
 ```
