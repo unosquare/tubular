@@ -6,7 +6,7 @@
             '$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
                 $routeProvider.
                     when('/', {
-                        templateUrl: '/assets/home.html',
+                        templateUrl: 'assets/home.html',
                         title: 'Home'
                     }).otherwise({
                         redirectTo: '/'
