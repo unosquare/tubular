@@ -1,0 +1,17 @@
+﻿{
+    "Counter": 0,
+    "Payload": [
+        [
+            "Microsoft",
+            10
+        ],
+        [
+            "Unsoquare",
+            10
+        ]
+    ],
+    "TotalRecordCount": 2,
+    "FilteredRecordCount": 2,
+    "TotalPages": 1,
+    "CurrentPage": 1
+}

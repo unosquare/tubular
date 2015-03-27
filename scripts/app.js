@@ -38,20 +38,28 @@
 
     angular.module('app.controllers', ['app.services'])
         .controller('tubularSampleCtrl', [
-            '$scope', '$location', 'myService', function ($scope, $location, myService) {
-                $scope.myService = myService;
+            '$scope', '$location', '$templateCache', 'myService', function ($scope, $location, $templateCache, myService) {
+            $scope.myService = myService;
+            $scope.source = null;
 
-                $scope.$on('tubularGrid_OnBeforeRequest', function (event, eventData) { console.log(eventData); });
-                $scope.$on('tubularGrid_OnSuccessfulUpdate', function (data) { toastr.success("Record updated"); });
-                $scope.$on('tubularGrid_OnRemove', function (data) { toastr.success("Record removed"); });
-                $scope.$on('tubularGrid_OnConnectionError', function (error) { toastr.error(error.statusText || "Connection error"); });
-                $scope.$on('tubularGrid_OnSuccessfulForm', function (data) { $location.path('/'); });
-                $scope.$on('tubularGrid_OnSavingNoChanges', function (model) {
-                    toastr.warning("Nothing to save");
-                    $location.path('/');
-                });
-            }
-        ]);
+            $scope.$on('tubularGrid_OnBeforeRequest', function(event, eventData) { console.log(eventData); });
+            $scope.$on('tubularGrid_OnSuccessfulUpdate', function(data) { toastr.success("Record updated"); });
+            $scope.$on('tubularGrid_OnRemove', function(data) { toastr.success("Record removed"); });
+            $scope.$on('tubularGrid_OnConnectionError', function(error) { toastr.error(error.statusText || "Connection error"); });
+            $scope.$on('tubularGrid_OnSuccessfulForm', function(data) { $location.path('/'); });
+            $scope.$on('tubularGrid_OnSavingNoChanges', function(model) {
+                toastr.warning("Nothing to save");
+                $location.path('/');
+            });
+
+            $scope.toggleCode = function() {
+                if ($scope.source == null)
+                    $scope.source = $templateCache.get('sample.html');
+                else
+                    $scope.source = null;
+            };
+        }
+    ]);
 
     angular.module('app', [
         'ngRoute',
