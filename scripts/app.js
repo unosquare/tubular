@@ -57,6 +57,7 @@
         'ngRoute',
         'ngAnimate',
         'ngCookies',
+        'hljs',
         'tubular.models',
         'tubular.services',
         'tubular.directives',
