@@ -38,9 +38,21 @@
 
     angular.module('app.controllers', ['app.services'])
         .controller('tubularSampleCtrl', [
-            '$scope', '$location', '$templateCache', 'myService', function ($scope, $location, $templateCache, myService) {
+            '$scope', '$location', '$templateCache', 'myService', function($scope, $location, $templateCache, myService) {
             $scope.myService = myService;
-            $scope.source = null;
+            $scope.source = [];
+            $scope.tutorial = [
+                {
+                    title: 'Basic layout',
+                    body: 'The next grid represents a basic layout, without any additional feature or special column. Just a plain grid using a JSON datasource.',
+                    key: 'sample'
+                },
+                {
+                    title: 'Basic layout 102',
+                    body: 'Now with can add some features like pagination and searching. This demo is using an ODATA datasource.',
+                    key: 'sample2'
+                }
+            ];
 
             $scope.$on('tubularGrid_OnBeforeRequest', function(event, eventData) { console.log(eventData); });
             $scope.$on('tubularGrid_OnSuccessfulUpdate', function(data) { toastr.success("Record updated"); });
@@ -52,11 +64,12 @@
                 $location.path('/');
             });
 
-            $scope.toggleCode = function() {
-                if ($scope.source == null)
-                    $scope.source = $templateCache.get('sample.html');
-                else
-                    $scope.source = null;
+            $scope.toggleCode = function(tag) {
+                if ($scope.source[tag] == null) {
+                    $scope.source[tag] = $templateCache.get('assets/' + tag + '.html')[1];
+                } else {
+                    $scope.source[tag] = null;
+                }
             };
         }
     ]);

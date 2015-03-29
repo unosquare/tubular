@@ -1,51 +1,20 @@
-<script type="text/ng-template" id="sample.html">
-<tb-grid server-url="/data/customers.json" page-size="20" class="row">
-    <div class="col-md-12">
-        <div class="panel panel-default panel-rounded">
-            <tb-grid-table class="table tubular-grid-table table-bordered">
-                <tb-column-definitions>
-                    <tb-column name="CustomerName">
-                        <tb-column-header>
-                            <span>{{label}}</span>
-                        </tb-column-header>
-                    </tb-column>
-                    <tb-column name="Invoices">
-                        <tb-column-header>
-                            <span>{{label}}</span>
-                        </tb-column-header>
-                    </tb-column>
-                </tb-column-definitions>
-                <tb-row-set>
-                    <tb-row-template ng-repeat="cells in $component.rows" row-model="cells" selectable="true">
-                        <tb-cell-template>
-                            {{cells.CustomerName}}
-                        </tb-cell-template>
-                        <tb-cell-template>
-                            {{cells.Invoices}}
-                        </tb-cell-template>
-                    </tb-row-template>
-                </tb-row-set>
-            </tb-grid-table>
-        </div>
-    </div>
-</tb-grid>
-</script>
-
 <div class="container" ng-controller="tubularSampleCtrl">
-    <div class="row">
+    <div class="row" ng-repeat="t in tutorial">
         <div class="col-xs-3">
-            <h1>Basic layout</h1>
+            <h1>{{t.title}}</h1>
 
-            <p>
-                The next grid represents a basic layout, without any additional feature or special column.
-                Just a plain grid.
-            </p>
-            <button class="btn btn-default" ng-click="toggleCode()" ng-hide="source">Show Code</button>
-            <button class="btn btn-default" ng-click="toggleCode()" ng-show="source">Show Sample</button>
+            <p>{{t.body}}</p>
+            <button class="btn btn-primary" ng-click="toggleCode(t.key)" ng-hide="source[t.key]">
+                Show Code
+            </button>
+            <button class="btn btn-primary" ng-click="toggleCode(t.key)" ng-show="source[t.key]">
+                Show Sample
+            </button>
         </div>
         <div class="col-xs-9">
-            <div ng-include src="'sample.html'" ng-hide="source"></div>
-            <div hljs source="source" ng-show="source"></div>
+            <div ng-include src="'assets/' + t.key + '.html'" ng-hide="source[t.key]"></div>
+            <div hljs source="source[t.key]" ng-show="source[t.key]"></div>
         </div>
+        <hr />
     </div>
 </div>
