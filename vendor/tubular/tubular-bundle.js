@@ -2352,8 +2352,13 @@
                 url += "&$skip=" + params.Skip;
                 url += "&$top=" + params.Take;
 
-                // TODO: Search: $scope.search and filters in columns
-                
+                // TODO: Search: scope.search and filters in columns ($filter=Price gt 20)
+                // TODO: Sorting $orderby using columns ($orderby=Rating,Category/Name desc)
+                var order = params.Columns.filter(function (el) { return el.SortOrder > 0; }).sort(function (a, b) { return a.SortOrder - b.SortOrder; }).map(function (el) { return el.Name + " " + (el.SortDirection == "Descending" ? "desc" : ""); });
+
+                if (order.length > 0)
+                    url += "&$orderby=" + order.join(',');
+
                 request.data = null;
                 request.serverUrl = url;
                 
@@ -2371,7 +2376,7 @@
                     result.TotalRecordCount = data["odata.count"];
                     result.FilteredRecordCount = result.TotalRecordCount; // TODO
                     result.TotalPages = parseInt(result.TotalRecordCount / params.Take);
-                    result.CurrentPage = 1 + ((params.Skip / result.FilteredRecordCount) * result.TotalPages);
+                    result.CurrentPage = parseInt(1 + ((params.Skip / result.FilteredRecordCount) * result.TotalPages));
 
                     return result;
                 });

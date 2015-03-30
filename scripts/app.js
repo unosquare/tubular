@@ -35,7 +35,7 @@
                 },
                 {
                     title: 'Columns and columns',
-                    body: 'We can sort and filter columns.',
+                    body: 'In this sample, we can sort and filter columns.',
                     key: 'sample3'
                 }
             ];
