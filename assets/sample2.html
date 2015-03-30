@@ -1,15 +1,25 @@
-﻿<tb-grid server-url="http://services.odata.org/V4/OData/OData.svc/Persons" request-method="GET"
+﻿<tb-grid server-url="http://services.odata.org/V3/Northwind/Northwind.svc/Orders" request-method="GET"
          service="odata" page-size="20" class="row">
     <div class="col-md-12">
         <div class="panel panel-default panel-rounded">
             <tb-grid-table class="table tubular-grid-table table-bordered">
                 <tb-column-definitions>
-                    <tb-column name="CustomerName">
+                    <tb-column name="OrderID">
                         <tb-column-header>
                             <span>{{label}}</span>
                         </tb-column-header>
                     </tb-column>
-                    <tb-column name="Invoices">
+                    <tb-column name="CustomerID">
+                        <tb-column-header>
+                            <span>{{label}}</span>
+                        </tb-column-header>
+                    </tb-column>
+                    <tb-column name="OrderDate">
+                        <tb-column-header>
+                            <span>{{label}}</span>
+                        </tb-column-header>
+                    </tb-column>
+                    <tb-column name="ShipCity">
                         <tb-column-header>
                             <span>{{label}}</span>
                         </tb-column-header>
@@ -19,10 +29,16 @@
                     <tb-row-template ng-repeat="cells in $component.rows"
                                      row-model="cells">
                         <tb-cell-template>
-                            {{cells.CustomerName}}
+                            {{cells.OrderID}}
                         </tb-cell-template>
                         <tb-cell-template>
-                            {{cells.Invoices}}
+                            {{cells.CustomerID}}
+                        </tb-cell-template>
+                        <tb-cell-template>
+                            {{cells.OrderDate | date: 'short'}}
+                        </tb-cell-template>
+                        <tb-cell-template>
+                            {{cells.ShipCity}}
                         </tb-cell-template>
                     </tb-row-template>
                 </tb-row-set>

@@ -2363,9 +2363,9 @@
 
                 url += "&$select=" + params.Columns.map(function (el) { return el.Name; }).join(',');
 
-                url += "$skip=" + params.Skip;
+                url += "&$skip=" + params.Skip;
 
-                url += "$top=" + params.Take;
+                url += "&$top=" + params.Take;
 
                 //Count: $scope.requestCounter,
                 //Search: $scope.search,
