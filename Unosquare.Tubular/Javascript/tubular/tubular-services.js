@@ -239,6 +239,79 @@
                 };
             }
         ])
+        .service('tubularOData', ['tubularHttp', function tubularOData(tubularHttp) {
+            var me = this;
+
+            me.retrieveDataAsync = function (request) {
+                var params = request.data;
+                var url = request.serverUrl;
+                url += url.indexOf('?') > 0 ? '&' : '?';
+                url += '$format=json';
+
+                var countUrl = url + "&$inlinecount=allpages&$top=0";
+
+                url += "&$select=" + params.Columns.map(function (el) { return el.Name; }).join(',');
+
+                url += "&$skip=" + params.Skip;
+
+                url += "&$top=" + params.Take;
+
+                //Count: $scope.requestCounter,
+                //Search: $scope.search,
+                //TimezoneOffset: new Date().getTimezoneOffset()
+
+                request.data = null;
+                request.serverUrl = url;
+                
+                var response = tubularHttp.retrieveDataAsync(request);
+                
+                var promise = response.promise.then(function(data) {
+                    // TODO: ODAta Transform
+                    
+                    var result = {
+                        Payload: data.value,
+                        CurrentPage: 1,
+                        TotalPages: 1,
+                        TotalRecordCount: 1,
+                        FilteredRecordCount: 1
+                    };
+
+                    tubularHttp.get(countUrl).promise.then(function (countData) {
+                        result.TotalRecordCount = countData["odata.count"];
+                        result.FilteredRecordCount = countData["odata.count"]; // TODO
+                        result.TotalPages = parseInt(result.TotalRecordCount / params.Take);
+                        result.CurrentPage = 1 + ((params.Skip / result.FilteredRecordCount) * result.TotalPages);
+                    });
+
+                    return result;
+                });
+
+                return {
+                    promise: promise,
+                    cancel: response.cancel
+                };
+            };
+
+            me.saveDataAsync = function (model, request) {
+                tubularHttp.saveDataAsync(model, request);
+            };
+
+            me.get = function(url) {
+                tubularHttp.get(url);
+            };
+
+            me.delete = function (url) {
+                tubularHttp.delete(url);
+            };
+
+            me.post = function (url, data) {
+                tubularHttp.post(url, data);
+            };
+
+            me.put = function(url, data) {
+                tubularHttp.put(url, data);
+            };
+        }])
         .service('tubularGridPopupService', [
             '$modal', function tubularGridPopupService($modal) {
                 var me = this;
