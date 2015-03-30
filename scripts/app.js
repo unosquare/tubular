@@ -30,7 +30,7 @@
                 },
                 {
                     title: 'Basic layout 102',
-                    body: 'Now with can add some features like pagination and searching. This demo is using an ODATA datasource.',
+                    body: 'Now we are adding a new feature, the pagination. This demo is using an ODATA datasource.',
                     key: 'sample2'
                 }
             ];
