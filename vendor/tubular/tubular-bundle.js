@@ -2382,7 +2382,7 @@
                     // TODO: ODAta Transform
                     
                     var result = {
-                        Payload: data,
+                        Payload: data.value,
                         CurrentPage: 1,
                         TotalPages: 1,
                         TotalRecordCount: 1,
