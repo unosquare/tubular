@@ -16,7 +16,7 @@
             }
         ]);
 
-    angular.module('app.controllers', ['app.services'])
+    angular.module('app.controllers', ['tubular.services'])
         .controller('tubularSampleCtrl', [
             '$scope', '$location', '$templateCache', 'tubularOData',
             function ($scope, $location, $templateCache, tubularOData) {
