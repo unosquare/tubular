@@ -246,28 +246,20 @@
                 var params = request.data;
                 var url = request.serverUrl;
                 url += url.indexOf('?') > 0 ? '&' : '?';
-                url += '$format=json';
-
-                var countUrl = url + "&$inlinecount=allpages&$top=0";
+                url += '$format=json&$inlinecount=allpages';
 
                 url += "&$select=" + params.Columns.map(function (el) { return el.Name; }).join(',');
-
                 url += "&$skip=" + params.Skip;
-
                 url += "&$top=" + params.Take;
 
-                //Count: $scope.requestCounter,
-                //Search: $scope.search,
-                //TimezoneOffset: new Date().getTimezoneOffset()
-
+                // TODO: Search: $scope.search and filters in columns
+                
                 request.data = null;
                 request.serverUrl = url;
                 
                 var response = tubularHttp.retrieveDataAsync(request);
                 
                 var promise = response.promise.then(function(data) {
-                    // TODO: ODAta Transform
-                    
                     var result = {
                         Payload: data.value,
                         CurrentPage: 1,
@@ -276,12 +268,10 @@
                         FilteredRecordCount: 1
                     };
 
-                    tubularHttp.get(countUrl).promise.then(function (countData) {
-                        result.TotalRecordCount = countData["odata.count"];
-                        result.FilteredRecordCount = countData["odata.count"]; // TODO
-                        result.TotalPages = parseInt(result.TotalRecordCount / params.Take);
-                        result.CurrentPage = 1 + ((params.Skip / result.FilteredRecordCount) * result.TotalPages);
-                    });
+                    result.TotalRecordCount = data["odata.count"];
+                    result.FilteredRecordCount = result.TotalRecordCount; // TODO
+                    result.TotalPages = parseInt(result.TotalRecordCount / params.Take);
+                    result.CurrentPage = 1 + ((params.Skip / result.FilteredRecordCount) * result.TotalPages);
 
                     return result;
                 });

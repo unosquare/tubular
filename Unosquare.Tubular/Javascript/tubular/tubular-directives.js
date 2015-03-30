@@ -166,7 +166,6 @@
                                         $scope.rows = data.Payload.map(function(el) {
                                             var model = new TubularModel($scope, el);
 
-                                            // I don't know about this, should be in the Model constructor?
                                             model.editPopup = function(template) {
                                                 tubularGridPopupService.openDialog(template, model);
                                             };
@@ -326,13 +325,7 @@
 
                             $scope.$emit('tubularGrid_OnGreetParentController', $scope);
                         }
-                    ],
-                    compile: function compile(cElement, cAttrs) {
-                        return {
-                            pre: function(scope, lElement, lAttrs, lController, lTransclude) {},
-                            post: function(scope, lElement, lAttrs, lController, lTransclude) {}
-                        };
-                    }
+                    ]
                 };
             }
     ])
@@ -597,13 +590,7 @@
                     controller: [
                         '$scope', function($scope) {
                         }
-                    ],
-                    compile: function compile(cElement, cAttrs) {
-                        return {
-                            pre: function(scope, lElement, lAttrs, lController, lTransclude) {},
-                            post: function(scope, lElement, lAttrs, lController, lTransclude) {}
-                        };
-                    }
+                    ]
                 };
             }
         ])
