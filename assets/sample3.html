@@ -11,22 +11,23 @@
             <div class="panel panel-default panel-rounded">
                 <tb-grid-table class="table tubular-grid-table table-bordered">
                     <tb-column-definitions>
-                        <tb-column name="OrderID">
+                        <tb-column name="OrderID" sortable="true" sort-order="1"
+                                   sort-direction="Ascending" is-key="true">
                             <tb-column-header>
                                 <span>{{label}}</span>
                             </tb-column-header>
                         </tb-column>
-                        <tb-column name="CustomerID">
+                        <tb-column name="CustomerID" sortable="true">
                             <tb-column-header>
                                 <span>{{label}}</span>
                             </tb-column-header>
                         </tb-column>
-                        <tb-column name="OrderDate">
+                        <tb-column name="OrderDate" sortable="true">
                             <tb-column-header>
                                 <span>{{label}}</span>
                             </tb-column-header>
                         </tb-column>
-                        <tb-column name="ShipCity">
+                        <tb-column name="ShipCity" sortable="true">
                             <tb-column-header>
                                 <span>{{label}}</span>
                             </tb-column-header>

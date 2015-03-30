@@ -32,6 +32,11 @@
                     title: 'Basic layout 102',
                     body: 'Now we are adding a new feature, the pagination. This demo is using an ODATA datasource.',
                     key: 'sample2'
+                },
+                {
+                    title: 'Columns and columns',
+                    body: 'We can sort and filter columns.',
+                    key: 'sampple3'
                 }
             ];
 
