@@ -16,30 +16,11 @@
             }
         ]);
 
-    angular.module('app.services', []).service('myService', ['$q', function myService($q) {
-        var me = this;
-
-        me.saveDataAsync = function (model, request) {
-            // DO NOTHING
-        };
-
-        me.retrieveDataAsync = function (request) {
-            return {
-                promise: $q(function (resolve, reject) {
-                    resolve({
-                        Payload: [["Pepe", "P"], ["Pepe 2", "P"]]
-                    });
-                }),
-                cancel: function () { }
-            };
-        };
-    }
-    ]);
-
     angular.module('app.controllers', ['app.services'])
         .controller('tubularSampleCtrl', [
-            '$scope', '$location', '$templateCache', 'myService', function($scope, $location, $templateCache, myService) {
-            $scope.myService = myService;
+            '$scope', '$location', '$templateCache', 'tubularOData',
+            function ($scope, $location, $templateCache, tubularOData) {
+            $scope.odata = tubularOData;
             $scope.source = [];
             $scope.tutorial = [
                 {
@@ -83,7 +64,6 @@
         'tubular.services',
         'tubular.directives',
         'app.routes',
-        'app.services',
         'app.controllers'
     ]);
 })();

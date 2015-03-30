@@ -2352,6 +2352,50 @@
                 };
             }
         ])
+        .service('tubularOData', ['tubularHttp', function tubularOData(tubularHttp) {
+            var me = this;
+
+            me.retrieveDataAsync = function (request) {
+                var params = request.data;
+                var url = request.serverUrl;
+                url += url.indexOf('?') > 0 ? '&' : '?';
+                url += '$format=json';
+
+                url += "&$select=" + params.Columns.map(function (el) { return el.Name; }).join(',');
+
+                url += "$skip=" + params.Skip;
+
+                url += "$top=" + params.Take;
+
+                //Count: $scope.requestCounter,
+                //Search: $scope.search,
+                //TimezoneOffset: new Date().getTimezoneOffset()
+
+                request.data = null;
+                request.serverUrl = url;
+                tubularHttp.retrieveDataAsync(request);
+            };
+
+            me.saveDataAsync = function (model, request) {
+                tubularHttp.saveDataAsync(model, request);
+            };
+
+            me.get = function(url) {
+                tubularHttp.get(url);
+            };
+
+            me.delete = function (url) {
+                tubularHttp.delete(url);
+            };
+
+            me.post = function (url, data) {
+                tubularHttp.post(url, data);
+            };
+
+            me.put = function(url, data) {
+                tubularHttp.put(url, data);
+            };
+        }])
         .service('tubularGridPopupService', [
             '$modal', function tubularGridPopupService($modal) {
                 var me = this;
