@@ -2361,6 +2361,8 @@
                 url += url.indexOf('?') > 0 ? '&' : '?';
                 url += '$format=json';
 
+                var countUrl = url + "&$inlinecount=allpages&$top=0";
+
                 url += "&$select=" + params.Columns.map(function (el) { return el.Name; }).join(',');
 
                 url += "&$skip=" + params.Skip;
@@ -2373,21 +2375,34 @@
 
                 request.data = null;
                 request.serverUrl = url;
+                
                 var response = tubularHttp.retrieveDataAsync(request);
                 
-                response.promise.then(function(data) {
+                var promise = response.promise.then(function(data) {
                     // TODO: ODAta Transform
-
-                    return {
+                    
+                    var result = {
                         Payload: data,
-                        CurrentPage: 1, // TODO
-                        TotalPages: 1, // TODO
-                        TotalRecordCount: 1, // TODO
-                        FilteredRecordCount: 1 // TODO
+                        CurrentPage: 1,
+                        TotalPages: 1,
+                        TotalRecordCount: 1,
+                        FilteredRecordCount: 1
                     };
+
+                    tubularHttp.get(countUrl).promise.then(function (countData) {
+                        result.TotalRecordCount = countData["odata.count"];
+                        result.FilteredRecordCount = countData["odata.count"]; // TODO
+                        result.TotalPages = parseInt(result.TotalRecordCount / params.Take);
+                        result.CurrentPage = 1 + ((params.Skip / result.FilteredRecordCount) * result.TotalPages);
+                    });
+
+                    return result;
                 });
 
-                return response;
+                return {
+                    promise: promise,
+                    cancel: response.cancel
+                };
             };
 
             me.saveDataAsync = function (model, request) {
