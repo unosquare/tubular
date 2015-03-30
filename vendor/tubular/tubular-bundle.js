@@ -2373,7 +2373,9 @@
 
                 request.data = null;
                 request.serverUrl = url;
-                var response = tubularHttp.retrieveDataAsync(request).then(function(data) {
+                var response = tubularHttp.retrieveDataAsync(request);
+                
+                response.promise.then(function(data) {
                     // TODO: ODAta Transform
 
                     return {
