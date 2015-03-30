@@ -2373,7 +2373,19 @@
 
                 request.data = null;
                 request.serverUrl = url;
-                tubularHttp.retrieveDataAsync(request);
+                var response = tubularHttp.retrieveDataAsync(request).then(function(data) {
+                    // TODO: ODAta Transform
+
+                    return {
+                        Payload: data,
+                        CurrentPage: 1, // TODO
+                        TotalPages: 1, // TODO
+                        TotalRecordCount: 1, // TODO
+                        FilteredRecordCount: 1 // TODO
+                    };
+                });
+
+                return response;
             };
 
             me.saveDataAsync = function (model, request) {
