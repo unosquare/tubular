@@ -36,7 +36,7 @@
                 {
                     title: 'Columns and columns',
                     body: 'We can sort and filter columns.',
-                    key: 'sampple3'
+                    key: 'sample3'
                 }
             ];
 
