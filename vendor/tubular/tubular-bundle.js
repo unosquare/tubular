@@ -2345,10 +2345,10 @@
             // {0} represents column name and {1} represents filter value
             me.operatorsMapping = {
                 'None': '',
-                'Equals': "{0} eq '{1}'",
-                'Contains': "substringof('{1}', {0}) eq true",
-                'StartsWith': "startswith({0}, '{1}') eq true",
-                'EndsWith': "endswith({0}, '{1}') eq true",
+                'Equals': "{0} eq {1}",
+                'Contains': "substringof({1}, {0}) eq true",
+                'StartsWith': "startswith({0}, {1}) eq true",
+                'EndsWith': "endswith({0}, {1}) eq true",
                 // TODO: 'Between': 'Between', 
                 'Gte': "{0} ge {1}",
                 'Gt': "{0} gt {1}",
@@ -2367,16 +2367,21 @@
                 url += "&$top=" + params.Take;
 
                 var order = params.Columns
-                    .filter(function (el) { return el.SortOrder > 0; })
-                    .sort(function (a, b) { return a.SortOrder - b.SortOrder; })
-                    .map(function (el) { return el.Name + " " + (el.SortDirection == "Descending" ? "desc" : ""); });
+                    .filter(function(el) { return el.SortOrder > 0; })
+                    .sort(function(a, b) { return a.SortOrder - b.SortOrder; })
+                    .map(function(el) { return el.Name + " " + (el.SortDirection == "Descending" ? "desc" : ""); });
 
                 if (order.length > 0)
                     url += "&$orderby=" + order.join(',');
 
                 var filter = params.Columns
-                    .filter(function (el) { return el.Filter != null && el.Filter.Text != null; })
-                    .map(function (el) { return me.operatorsMapping[el.Filter.Operator].replace('{0}', el.Name).replace('{1}', el.Filter.Text); });
+                    .filter(function(el) { return el.Filter != null && el.Filter.Text != null; })
+                    .map(function(el) {
+                        return me.operatorsMapping[el.Filter.Operator]
+                            .replace('{0}', el.Name)
+                            .replace('{1}', el.DataType == "string" ? "'" + el.Filter.Text + "'" : el.Filter.Text);
+                    })
+                    .filter(function(el) { return el.length > 1; });
 
                 if (filter.length > 0)
                     url += "&$filter=" + filter.join(' and ');
