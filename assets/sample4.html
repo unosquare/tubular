@@ -42,17 +42,23 @@
                         <tb-row-template ng-repeat="cells in $component.rows"
                                          row-model="cells" selectable="false">
                             <tb-cell-template>
-                                <tb-edit-button model="cells" css="btn-xs hidden-xs hidden-sm" caption="cells.OrderID">
+                                <tb-save-button model="cells" save-css="btn-xs hidden-xs hidden-sm"
+                                                cancel-css="btn-danger btn-xs">
+                                </tb-save-button>
+                                <tb-edit-button model="cells" css="btn-xs hidden-xs hidden-sm" caption="{{cells.OrderID}}">
                                 </tb-edit-button>
                             </tb-cell-template>
                             <tb-cell-template>
-                                <tb-simple-editor is-editing="cells.$isEditing" value="cells.CustomerID"></tb-simple-editor>
+                                <tb-simple-editor is-editing="cells.$isEditing" value="cells.CustomerID">
+                                </tb-simple-editor>
                             </tb-cell-template>
                             <tb-cell-template>
-                                {{cells.OrderDate | date: 'short'}}
+                                <tb-date-editor is-editing="cells.$isEditing" value="cells.OrderDate">
+                                </tb-date-editor>
                             </tb-cell-template>
                             <tb-cell-template>
-                                {{cells.ShipCity}}
+                                <tb-simple-editor is-editing="cells.$isEditing" value="cells.ShipCity">
+                                </tb-simple-editor>
                             </tb-cell-template>
                         </tb-row-template>
                     </tb-row-set>
