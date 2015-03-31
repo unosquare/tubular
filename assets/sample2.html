@@ -34,7 +34,7 @@
                     </tb-column-definitions>
                     <tb-row-set>
                         <tb-row-template ng-repeat="cells in $component.rows"
-                                         row-model="cells">
+                                         row-model="cells" selectable="false">
                             <tb-cell-template>
                                 {{cells.OrderID}}
                             </tb-cell-template>

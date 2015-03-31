@@ -35,7 +35,7 @@
                 },
                 {
                     title: 'Columns and columns',
-                    body: 'In this sample, we can sort and filter columns.',
+                    body: 'In this sample, we can sort and filter columns. Press Ctrl key to sort by multiple columns.',
                     key: 'sample3'
                 }
             ];
