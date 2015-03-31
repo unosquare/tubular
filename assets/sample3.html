@@ -12,13 +12,15 @@
                 <tb-grid-table class="table tubular-grid-table table-bordered">
                     <tb-column-definitions>
                         <tb-column name="OrderID" sortable="true" sort-order="1"
-                                   sort-direction="Ascending" is-key="true">
+                                   sort-direction="Ascending" is-key="true"
+                                   column-type="numeric">
                             <tb-column-filter operator="Equals"></tb-column-filter>
                             <tb-column-header>
                                 <span>{{label}}</span>
                             </tb-column-header>
                         </tb-column>
-                        <tb-column name="CustomerID" sortable="true">
+                        <tb-column name="CustomerID" sortable="true"
+                                   column-type="numeric">
                             <tb-column-filter operator="Equals"></tb-column-filter>
                             <tb-column-header>
                                 <span>{{label}}</span>
