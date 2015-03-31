@@ -26,17 +26,20 @@
                 {
                     title: 'Basic layout',
                     body: 'The next grid represents a basic layout, without any additional feature or special column. Just a plain grid using a JSON datasource.',
-                    key: 'sample'
+                    key: 'sample',
+                    next: 'sample2'
                 },
                 {
                     title: 'Basic layout 102',
                     body: 'Now we are adding a new feature, the pagination. This demo is using an ODATA datasource.',
-                    key: 'sample2'
+                    key: 'sample2',
+                    next: 'sample3'
                 },
                 {
                     title: 'Columns and columns',
                     body: 'In this sample, we can sort and filter columns. Press Ctrl key to sort by multiple columns.',
-                    key: 'sample3'
+                    key: 'sample3',
+                    next: null
                 }
             ];
 
