@@ -12,21 +12,23 @@
         <div class="clearfix"></div>
     </div>
     <div class="row" ng-repeat="t in tutorial">
-        <div class="col-xs-3">
-            <h1 id="{{t.key}}">{{t.title}}</h1>
+        <div class="col-md-3 col-xs-12">
+            <div class="sample-content">
+                <h1 id="{{t.key}}">{{t.title}}</h1>
 
-            <p>{{t.body}}</p>
-            <button class="btn btn-primary btn-block" ng-click="toggleCode(t.key)" ng-hide="source[t.key]">
-                Show Code
-            </button>
-            <button class="btn btn-primary btn-block" ng-click="toggleCode(t.key)" ng-show="source[t.key]">
-                Show Sample
-            </button>
-            <a href="#{{t.next}}" ng-show="t.next" class="btn btn-success btn-block">
-                Next Sample
-            </a>
+                <p>{{t.body}}</p>
+                <button class="btn btn-primary btn-block" ng-click="toggleCode(t.key)" ng-hide="source[t.key]">
+                    Show Code
+                </button>
+                <button class="btn btn-primary btn-block" ng-click="toggleCode(t.key)" ng-show="source[t.key]">
+                    Show Sample
+                </button>
+                <a href="#{{t.next}}" ng-show="t.next" class="btn btn-success btn-block">
+                    Next Sample
+                </a>
+            </div>
         </div>
-        <div class="col-xs-9">
+        <div class="col-md-9 col-xs-12">
             <div ng-include src="'assets/' + t.key + '.html'" ng-hide="source[t.key]"></div>
             <div hljs source="source[t.key]" ng-show="source[t.key]"></div>
         </div>

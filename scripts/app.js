@@ -39,6 +39,12 @@
                     title: 'Columns and columns',
                     body: 'In this sample, we can sort and filter columns. Press Ctrl key to sort by multiple columns.',
                     key: 'sample3',
+                    next: 'sample4'
+                },
+                {
+                    title: 'Inline editors',
+                    body: 'You can add inline editors just defining a Save URL and assigning some controls. This demo is read-only, but you can figure out.',
+                    key: 'sample4',
                     next: null
                 }
             ];
