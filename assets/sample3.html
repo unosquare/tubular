@@ -13,11 +13,13 @@
                     <tb-column-definitions>
                         <tb-column name="OrderID" sortable="true" sort-order="1"
                                    sort-direction="Ascending" is-key="true">
+                            <tb-column-filter operator="Equals"></tb-column-filter>
                             <tb-column-header>
                                 <span>{{label}}</span>
                             </tb-column-header>
                         </tb-column>
                         <tb-column name="CustomerID" sortable="true">
+                            <tb-column-filter operator="Equals"></tb-column-filter>
                             <tb-column-header>
                                 <span>{{label}}</span>
                             </tb-column-header>
@@ -28,6 +30,7 @@
                             </tb-column-header>
                         </tb-column>
                         <tb-column name="ShipCity" sortable="true">
+                            <tb-column-filter operator="Contains"></tb-column-filter>
                             <tb-column-header>
                                 <span>{{label}}</span>
                             </tb-column-header>
