@@ -2376,7 +2376,7 @@
 
                 var filter = params.Columns
                     .filter(function (el) { return el.Filter != null && el.Filter.Text != null; })
-                    .map(function (el) { return operatorsMapping[el.Filter.Operator].replace('{0}', el.Name).replace('{1}', el.Filter.Text); });
+                    .map(function (el) { return me.operatorsMapping[el.Filter.Operator].replace('{0}', el.Name).replace('{1}', el.Filter.Text); });
 
                 if (filter.length > 0)
                     url += "&$filter=" + filter.join(' and ');
