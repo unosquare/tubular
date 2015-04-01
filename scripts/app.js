@@ -22,7 +22,7 @@
     angular.module('app.controllers', ['tubular.services'])
         .controller('tubularSampleCtrl', [
             '$scope', '$location', '$templateCache', 'tubularOData',
-            function ($scope, $location, $templateCache, tubularOData) {
+        function($scope, $location, $templateCache, tubularOData) {
             $scope.odata = tubularOData;
             $scope.source = [];
             $scope.tutorial = [

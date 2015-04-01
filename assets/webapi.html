@@ -14,7 +14,36 @@
     </div>
     <div class="row">
         <div class="col-xs-12">
-            <h1>Setting up your ApiController</h1>
+            <h1 id="sample">Setting up your ApiController</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3 col-xs-12">
+            
+        </div>
+        <div class="col-md-9 col-xs-12">
+            <div hljs no-escape language="cs">&lt;!--
+using System.Threading.Tasks;
+using System.Web.Http;
+using Unosquare.Tubular.ObjectModel;
+using Unosquare.Tubular.Sample.Models;
+
+namespace Unosquare.Tubular.Sample.Controllers
+{
+    [RoutePrefix("api/users")]
+    public class UsersController : ApiController
+    {
+        [HttpPost, Route("paged")]
+        public async Task<IHttpActionResult> GridData([FromBody] GridDataRequest request)
+        {
+            using (var context = new SampleDbContext(false))
+            {
+                return Ok(await Task.Run(() => request.CreateGridDataResponse(context.SystemUsers.AsNoTracking())));
+            }
+        }
+    }
+}--&gt;
+            </div>
         </div>
     </div>
 </div>
