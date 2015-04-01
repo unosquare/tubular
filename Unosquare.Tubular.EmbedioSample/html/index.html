@@ -47,15 +47,13 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <h1>Tubular + EmbedIO Sample</h1>
+                <h1>Tubular + EmbedIO <sample>sample</sample></h1>
             </div>
         </div>
+
         <tb-grid server-url="/api/people" page-size="10">
             <div class="row">
-                <tb-grid-pager class="col-md-6 col-xs-12"></tb-grid-pager>
-                <tb-page-size-selector class="col-md-3 col-xs-6" selectorcss="input-sm">
-                </tb-page-size-selector>
-                <tb-grid-pager-info class="col-md-3 col-xs-6"></tb-grid-pager-info>
+                <tb-grid-pager class="col-md-8 col-xs-12"></tb-grid-pager>
             </div>
             <div class="row">
                 <div class="col-md-12">
@@ -77,6 +75,7 @@
                                     </tb-column-header>
                                 </tb-column>
                                 <tb-column name="Age" sortable="true" column-type="numeric">
+                                    <tb-column-filter operator="Equals"></tb-column-filter>
                                     <tb-column-header>
                                         <span>{{label}}</span>
                                     </tb-column-header>
@@ -98,7 +97,7 @@
                                         {{cells.Name}}
                                     </tb-cell-template>
                                     <tb-cell-template>
-                                        {{cells.Age'}}
+                                        {{cells.Age}}
                                     </tb-cell-template>
                                     <tb-cell-template>
                                         {{cells.EmailAddress}}
@@ -108,6 +107,11 @@
                         </tb-grid-table>
                     </div>
                 </div>
+            </div>
+            <div class="row">
+                <tb-page-size-selector class="col-xs-6" selectorcss="input-sm">
+                </tb-page-size-selector>
+                <tb-grid-pager-info class="col-xs-6"></tb-grid-pager-info>
             </div>
         </tb-grid>
     </div>

@@ -43,7 +43,8 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="Unosquare.Labs.EmbedIO">
+    <Reference Include="Unosquare.Labs.EmbedIO, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\EmbedIO.1.0.1\lib\Unosquare.Labs.EmbedIO.dll</HintPath>
     </Reference>
   </ItemGroup>
@@ -75,7 +76,7 @@
     <Content Include="html\index.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="html\vendor\scripts\app.js">
+    <Content Include="html\scripts\app.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

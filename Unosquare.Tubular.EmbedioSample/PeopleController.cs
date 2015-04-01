@@ -32,11 +32,12 @@ namespace Unosquare.Tubular.EmbedioSample
         public static List<Person> People = new List<Person>
         {
             new Person() {Key = 1, Name = "Mario Di Vece", Age = 31, EmailAddress = "mario@unosquare.com"},
-            new Person() {Key = 2, Name = "Geovanni Perez", Age = 32, EmailAddress = "geovanni.perez@unosquare.com"},
+            new Person() {Key = 2, Name = "Geovanni Perez", Age = 31, EmailAddress = "geovanni.perez@unosquare.com"},
             new Person() {Key = 3, Name = "Luis Gonzalez", Age = 29, EmailAddress = "luis.gonzalez@unosquare.com"},
+            new Person() {Key = 4, Name = "Ricardo Salinas", Age = 22, EmailAddress = "ricardo.salinas@unosquare.com"},
         };
 
-        [WebApiHandler(HttpVerbs.Post, RelativePath + "people/*")]
+        [WebApiHandler(HttpVerbs.Post, RelativePath + "people")]
         public bool GetPeople(WebServer server, HttpListenerContext context)
         {
             try

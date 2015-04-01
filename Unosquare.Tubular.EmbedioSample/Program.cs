@@ -92,6 +92,9 @@ namespace Unosquare.Tubular.EmbedioSample
             {
                 // First, we will configure our web server by adding Modules.
 
+                server.RegisterModule(new WebApiModule());
+                server.Module<WebApiModule>().RegisterController<PeopleController>();
+
                 // Here we setup serving of static files
                 server.RegisterModule(new StaticFilesModule(HtmlRootPath)
                 {
@@ -99,9 +102,6 @@ namespace Unosquare.Tubular.EmbedioSample
                     DefaultExtension = ".html"
                 });
                 
-                server.RegisterModule(new WebApiModule());
-                server.Module<WebApiModule>().RegisterController<PeopleController>();
-
                 // Once we've registered our modules and configured them, we call the RunAsync() method.
                 // This is a non-blocking method (it return immediately) so in this case we avoid
                 // disposing of the object until a key is pressed.
