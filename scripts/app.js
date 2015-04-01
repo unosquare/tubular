@@ -8,6 +8,9 @@
                     when('/', {
                         templateUrl: 'assets/home.html',
                         title: 'Home'
+                    }).when('/WebApi', {
+                        templateUrl: 'assets/webapi.html',
+                        title: 'Home'
                     }).otherwise({
                         redirectTo: '/'
                     });

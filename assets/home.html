@@ -30,10 +30,10 @@
                     <i class="fa fa-star"></i>&nbsp;Next Sample
                 </a>
             </div>
-        </div>
-        <div class="col-md-9 col-xs-12">
-            <div ng-include src="'assets/' + t.key + '.html'" ng-hide="source[t.key]"></div>
-            <div hljs source="source[t.key]" ng-show="source[t.key]"></div>
+            <div class="col-md-9 col-xs-12">
+                <div ng-include src="'assets/' + t.key + '.html'" ng-hide="source[t.key]"></div>
+                <div hljs source="source[t.key]" ng-show="source[t.key]"></div>
+            </div>
         </div>
         <div class="col-xs-12" ng-show="t.next">
             <hr />
