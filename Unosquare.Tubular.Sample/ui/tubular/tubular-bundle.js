@@ -410,7 +410,6 @@
                                         $scope.rows = data.Payload.map(function(el) {
                                             var model = new TubularModel($scope, el);
 
-                                            // I don't know about this, should be in the Model constructor?
                                             model.editPopup = function(template) {
                                                 tubularGridPopupService.openDialog(template, model);
                                             };
@@ -570,13 +569,7 @@
 
                             $scope.$emit('tubularGrid_OnGreetParentController', $scope);
                         }
-                    ],
-                    compile: function compile(cElement, cAttrs) {
-                        return {
-                            pre: function(scope, lElement, lAttrs, lController, lTransclude) {},
-                            post: function(scope, lElement, lAttrs, lController, lTransclude) {}
-                        };
-                    }
+                    ]
                 };
             }
     ])
@@ -841,13 +834,7 @@
                     controller: [
                         '$scope', function($scope) {
                         }
-                    ],
-                    compile: function compile(cElement, cAttrs) {
-                        return {
-                            pre: function(scope, lElement, lAttrs, lController, lTransclude) {},
-                            post: function(scope, lElement, lAttrs, lController, lTransclude) {}
-                        };
-                    }
+                    ]
                 };
             }
         ])
@@ -2352,6 +2339,101 @@
                 };
             }
         ])
+        .service('tubularOData', ['tubularHttp', function tubularOData(tubularHttp) {
+            var me = this;
+
+            // {0} represents column name and {1} represents filter value
+            me.operatorsMapping = {
+                'None': '',
+                'Equals': "{0} eq {1}",
+                'Contains': "substringof({1}, {0}) eq true",
+                'StartsWith': "startswith({0}, {1}) eq true",
+                'EndsWith': "endswith({0}, {1}) eq true",
+                // TODO: 'Between': 'Between', 
+                'Gte': "{0} ge {1}",
+                'Gt': "{0} gt {1}",
+                'Lte': "{0} le {1}",
+                'Lt': "{0} lt {1}",
+            };
+
+            me.retrieveDataAsync = function(request) {
+                var params = request.data;
+                var url = request.serverUrl;
+                url += url.indexOf('?') > 0 ? '&' : '?';
+                url += '$format=json&$inlinecount=allpages';
+
+                url += "&$select=" + params.Columns.map(function(el) { return el.Name; }).join(',');
+                url += "&$skip=" + params.Skip;
+                url += "&$top=" + params.Take;
+
+                var order = params.Columns
+                    .filter(function(el) { return el.SortOrder > 0; })
+                    .sort(function(a, b) { return a.SortOrder - b.SortOrder; })
+                    .map(function(el) { return el.Name + " " + (el.SortDirection == "Descending" ? "desc" : ""); });
+
+                if (order.length > 0)
+                    url += "&$orderby=" + order.join(',');
+
+                var filter = params.Columns
+                    .filter(function(el) { return el.Filter != null && el.Filter.Text != null; })
+                    .map(function(el) {
+                        return me.operatorsMapping[el.Filter.Operator]
+                            .replace('{0}', el.Name)
+                            .replace('{1}', el.DataType == "string" ? "'" + el.Filter.Text + "'" : el.Filter.Text);
+                    })
+                    .filter(function(el) { return el.length > 1; });
+
+                if (filter.length > 0)
+                    url += "&$filter=" + filter.join(' and ');
+
+                request.data = null;
+                request.serverUrl = url;
+
+                var response = tubularHttp.retrieveDataAsync(request);
+
+                var promise = response.promise.then(function(data) {
+                    var result = {
+                        Payload: data.value,
+                        CurrentPage: 1,
+                        TotalPages: 1,
+                        TotalRecordCount: 1,
+                        FilteredRecordCount: 1
+                    };
+
+                    result.TotalRecordCount = data["odata.count"];
+                    result.FilteredRecordCount = result.TotalRecordCount; // TODO
+                    result.TotalPages = parseInt(result.TotalRecordCount / params.Take);
+                    result.CurrentPage = parseInt(1 + ((params.Skip / result.FilteredRecordCount) * result.TotalPages));
+
+                    return result;
+                });
+
+                return {
+                    promise: promise,
+                    cancel: response.cancel
+                };
+            };
+
+            me.saveDataAsync = function (model, request) {
+                tubularHttp.saveDataAsync(model, request);
+            };
+
+            me.get = function(url) {
+                tubularHttp.get(url);
+            };
+
+            me.delete = function (url) {
+                tubularHttp.delete(url);
+            };
+
+            me.post = function (url, data) {
+                tubularHttp.post(url, data);
+            };
+
+            me.put = function(url, data) {
+                tubularHttp.put(url, data);
+            };
+        }])
         .service('tubularGridPopupService', [
             '$modal', function tubularGridPopupService($modal) {
                 var me = this;
@@ -2378,6 +2460,8 @@
                             }
                         ]
                     });
+
+                    return dialog;
                 };
             }
         ])
