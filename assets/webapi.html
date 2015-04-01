@@ -19,10 +19,10 @@
     </div>
     <div class="row">
         <div class="col-md-3 col-xs-12">
-            
+            If you are using 
         </div>
         <div class="col-md-9 col-xs-12">
-            <div hljs no-escape language="cs">&lt;!--
+            <div hljs language="cs">
 using System.Threading.Tasks;
 using System.Web.Http;
 using Unosquare.Tubular.ObjectModel;
@@ -34,15 +34,15 @@ namespace Unosquare.Tubular.Sample.Controllers
     public class UsersController : ApiController
     {
         [HttpPost, Route("paged")]
-        public async Task<IHttpActionResult> GridData([FromBody] GridDataRequest request)
+        public IHttpActionResult GridData([FromBody] GridDataRequest request)
         {
             using (var context = new SampleDbContext(false))
             {
-                return Ok(await Task.Run(() => request.CreateGridDataResponse(context.SystemUsers.AsNoTracking())));
+                return Ok(request.CreateGridDataResponse(context.SystemUsers.AsNoTracking()));
             }
         }
     }
-}--&gt;
+}
             </div>
         </div>
     </div>
