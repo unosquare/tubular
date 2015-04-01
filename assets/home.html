@@ -6,25 +6,28 @@
         </p>
         <div class="pull-right">
             <a class="btn btn-lg btn-success" href="#sample">
-                Go to First Sample
+                <i class="fa fa-star"></i>&nbsp;Go to First Sample
             </a>
         </div>
         <div class="clearfix"></div>
     </div>
-    <div class="row" ng-repeat="t in tutorial">
-        <div class="col-md-3 col-xs-12">
-            <div class="sample-content">
+    <div class="sample-content" ng-repeat="t in tutorial">
+        <div class="row">
+            <div class="col-xs-12">
                 <h1 id="{{t.key}}">{{t.title}}</h1>
-
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3 col-xs-12">
                 <p>{{t.body}}</p>
                 <button class="btn btn-primary btn-block" ng-click="toggleCode(t.key)" ng-hide="source[t.key]">
-                    Show Code
+                    <i class="fa fa-code"></i>&nbsp;Show Code
                 </button>
                 <button class="btn btn-primary btn-block" ng-click="toggleCode(t.key)" ng-show="source[t.key]">
-                    Show Sample
+                    <i class="fa fa-table"></i>&nbsp;Show Sample
                 </button>
                 <a href="#{{t.next}}" ng-show="t.next" class="btn btn-success btn-block">
-                    Next Sample
+                    <i class="fa fa-star"></i>&nbsp;Next Sample
                 </a>
             </div>
         </div>
@@ -32,7 +35,7 @@
             <div ng-include src="'assets/' + t.key + '.html'" ng-hide="source[t.key]"></div>
             <div hljs source="source[t.key]" ng-show="source[t.key]"></div>
         </div>
-        <div class="col-xs-12">
+        <div class="col-xs-12" ng-show="t.next">
             <hr />
         </div>
     </div>
