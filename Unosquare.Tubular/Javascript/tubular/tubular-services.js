@@ -500,7 +500,7 @@
                     isEditing: '=?',
                     editorType: '@',
                     showLabel: '=?',
-                    label: '=?',
+                    label: '@?',
                     required: '=?',
                     format: '=?',
                     min: '=?',

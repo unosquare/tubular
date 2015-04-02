@@ -1505,8 +1505,10 @@
             return {
                 template: '<div ng-class="{ \'form-group\' : isEditing, \'has-error\' : !$valid }">' +
                     '<span ng-hide="isEditing">{{value}}</span>' +
-                    '<label ng-show="showLabel">{{ label }}</label>' +
-                    '<input type="checkbox" ng-show="isEditing" ng-model="value" ng-required="required" />' +
+                    '<label>' +
+                    '<input type="checkbox" ng-show="isEditing" ng-model="value" ng-required="required" /> ' +
+                    '<span ng-show="showLabel">{{label}}</span>' +
+                    '</label>' +
                     '<span class="help-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
                     '</div>',
                 restrict: 'E',
@@ -2600,7 +2602,7 @@
                     isEditing: '=?',
                     editorType: '@',
                     showLabel: '=?',
-                    label: '=?',
+                    label: '@?',
                     required: '=?',
                     format: '=?',
                     min: '=?',
