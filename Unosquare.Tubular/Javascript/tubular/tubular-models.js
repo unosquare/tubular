@@ -1,6 +1,6 @@
 ﻿(function() {
         'use strict';
-        // http://blog.jennysjottings.co.uk/2014/01/04/binding-isolated-scopes-in-angularjs/
+        
         angular.module('tubular.models', [])
             .factory('tubulargGridColumnModel', function() {
 

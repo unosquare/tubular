@@ -239,7 +239,7 @@
                                     $scope.dataIsLoaded = true;
                                     $scope.value = value;
                                 }, function(error) {
-                                    $scope.$emit('tubularGrid_OnConnectionError', error);
+                                    $scope.$emit('tbGrid_OnConnectionError', error);
                                 });
                         };
 
@@ -294,7 +294,7 @@
                                     $scope.dataIsLoaded = true;
                                     $scope.value = value;
                                 }, function(error) {
-                                    $scope.$emit('tubularGrid_OnConnectionError', error);
+                                    $scope.$emit('tbGrid_OnConnectionError', error);
                                 });
                         };
 

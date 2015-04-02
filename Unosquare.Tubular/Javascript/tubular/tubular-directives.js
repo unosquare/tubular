@@ -68,10 +68,10 @@
 
                                 $scope.currentRequest.promise.then(
                                     function(data) {
-                                        $scope.$emit('tubularGrid_OnSuccessfulUpdate', data);
+                                        $scope.$emit('tbGrid_OnSuccessfulUpdate', data);
                                         $scope.tempRow.$isEditing = false;
                                     }, function(error) {
-                                        $scope.$emit('tubularGrid_OnConnectionError', error);
+                                        $scope.$emit('tbGrid_OnConnectionError', error);
                                     }).then(function() {
                                         $scope.currentRequest = null;
                                         $scope.retrieveData();
@@ -95,9 +95,9 @@
                                 $scope.currentRequest.promise.then(
                                     function(data) {
                                         row.$hasChanges = false;
-                                        $scope.$emit('tubularGrid_OnRemove', data);
+                                        $scope.$emit('tbGrid_OnRemove', data);
                                     }, function(error) {
-                                        $scope.$emit('tubularGrid_OnConnectionError', error);
+                                        $scope.$emit('tbGrid_OnConnectionError', error);
                                     }).then(function() {
                                         $scope.currentRequest = null;
                                         $scope.retrieveData();
@@ -117,9 +117,9 @@
 
                                 $scope.currentRequest.promise.then(
                                         function(data) {
-                                            $scope.$emit('tubularGrid_OnSuccessfulUpdate', data);
+                                            $scope.$emit('tbGrid_OnSuccessfulUpdate', data);
                                         }, function(error) {
-                                            $scope.$emit('tubularGrid_OnConnectionError', error);
+                                            $scope.$emit('tbGrid_OnConnectionError', error);
                                             returnValue = false;
                                         })
                                     .then(function() {
@@ -154,7 +154,7 @@
                                 if (angular.isUndefined($scope.onBeforeGetData) === false)
                                     $scope.onBeforeGetData();
 
-                                $scope.$emit('tubularGrid_OnBeforeRequest', request);
+                                $scope.$emit('tbGrid_OnBeforeRequest', request);
 
                                 $scope.currentRequest = $scope.gridDataService.retrieveDataAsync(request);
 
@@ -180,7 +180,7 @@
                                         $scope.isEmpty = $scope.filteredRecordCount == 0;
                                     }, function(error) {
                                         $scope.requestedPage = $scope.currentPage;
-                                        $scope.$emit('tubularGrid_OnConnectionError', error);
+                                        $scope.$emit('tbGrid_OnConnectionError', error);
                                     }).then(function() {
                                         $scope.currentRequest = null;
                                     });
@@ -248,7 +248,7 @@
                                     col.SortOrder = index + 1;
                                 });
 
-                                $scope.$broadcast('tubularGrid_OnColumnSorted');
+                                $scope.$broadcast('tbGrid_OnColumnSorted');
 
                                 $scope.retrieveData();
                             };
@@ -317,13 +317,13 @@
                                     function(data) {
                                         callback(data.Payload);
                                     }, function(error) {
-                                        $scope.$emit('tubularGrid_OnConnectionError', error);
+                                        $scope.$emit('tbGrid_OnConnectionError', error);
                                     }).then(function() {
                                         $scope.currentRequest = null;
                                     });
                             };
 
-                            $scope.$emit('tubularGrid_OnGreetParentController', $scope);
+                            $scope.$emit('tbGrid_OnGreetParentController', $scope);
                         }
                     ]
                 };
@@ -364,11 +364,11 @@
                         return {
                             pre: function(scope, lElement, lAttrs, lController, lTransclude) {},
                             post: function(scope, lElement, lAttrs, lController, lTransclude) {
-                                scope.firstButtonClass = lAttrs.firstButtonClass || 'glyphicon glyphicon-fast-backward';
-                                scope.prevButtonClass = lAttrs.prevButtonClass || 'glyphicon glyphicon-backward';
+                                scope.firstButtonClass = lAttrs.firstButtonClass || 'fa fa-fast-backward';
+                                scope.prevButtonClass = lAttrs.prevButtonClass || 'fa fa-backward';
 
-                                scope.nextButtonClass = lAttrs.nextButtonClass || 'glyphicon glyphicon-forward';
-                                scope.lastButtonClass = lAttrs.lastButtonClass || 'glyphicon glyphicon-fast-forward';
+                                scope.nextButtonClass = lAttrs.nextButtonClass || 'fa fa-forward';
+                                scope.lastButtonClass = lAttrs.lastButtonClass || 'fa fa-fast-forward';
 
                                 $timeout(function() {
                                     var allLinks = lElement.find('li a');
@@ -501,7 +501,7 @@
                                     $(icon).addClass(cssClass);
                                 };
 
-                                scope.$on('tubularGrid_OnColumnSorted', function() {
+                                scope.$on('tbGrid_OnColumnSorted', function() {
                                     refreshIcon($('i.sort-icon.fa', lElement.parent()));
                                 });
 
@@ -550,7 +550,8 @@
 
                 return {
                     require: '^tbRowSet',
-                    template: '<tr ng-transclude ng-class="{\'info\': selectableBool && rowModel.$selected}"' +
+                    template: '<tr ng-transclude' +
+                        ' ng-class="{\'info\': selectableBool && rowModel.$selected}"' +
                         ' ng-click="changeSelection(rowModel)"></tr>',
                     restrict: 'E',
                     replace: true,
@@ -596,13 +597,13 @@
         ])
         .directive('tbGridPagerInfo', [
             function() {
-
                 return {
                     require: '^tbGrid',
                     template: '<div class="pager-info small">Showing {{currentInitial}} ' +
                         'to {{currentTop}} ' +
                         'of {{$component.filteredRecordCount}} records ' +
-                        '<span ng-show="filtered">(Filtered from {{$component.totalRecordCount}} total records)</span>' +
+                        '<span ng-show="filtered">' +
+                        '(Filtered from {{$component.totalRecordCount}} total records)</span>' +
                         '</div>',
                     restrict: 'E',
                     replace: true,

@@ -286,6 +286,8 @@
                 if (filter.length > 0)
                     url += "&$filter=" + filter.join(' and ');
 
+                // TODO: Free text search
+
                 request.data = null;
                 request.serverUrl = url;
 
@@ -301,7 +303,7 @@
                     };
 
                     result.TotalRecordCount = data["odata.count"];
-                    result.FilteredRecordCount = result.TotalRecordCount; // TODO
+                    result.FilteredRecordCount = result.TotalRecordCount; // TODO: Calculate filtered items
                     result.TotalPages = parseInt(result.TotalRecordCount / params.Take);
                     result.CurrentPage = parseInt(1 + ((params.Skip / result.FilteredRecordCount) * result.TotalPages));
 
@@ -315,7 +317,7 @@
             };
 
             me.saveDataAsync = function (model, request) {
-                tubularHttp.saveDataAsync(model, request);
+                tubularHttp.saveDataAsync(model, request); //TODO: Check how to handle
             };
 
             me.get = function(url) {

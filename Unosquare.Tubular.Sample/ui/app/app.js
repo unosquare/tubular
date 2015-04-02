@@ -71,12 +71,12 @@
             
             me.myService = myService;
 
-            $scope.$on('tubularGrid_OnBeforeRequest', function(event, eventData) { console.log(eventData); });
-            $scope.$on('tubularGrid_OnSuccessfulUpdate', function(data) { toastr.success("Record updated"); });
-            $scope.$on('tubularGrid_OnRemove', function(data) { toastr.success("Record removed"); });
-            $scope.$on('tubularGrid_OnConnectionError', function(error) { toastr.error(error.statusText || "Connection error"); });
-            $scope.$on('tubularGrid_OnSuccessfulForm', function (data) { $location.path('/'); });
-            $scope.$on('tubularGrid_OnSavingNoChanges', function (model) {
+            $scope.$on('tbGrid_OnBeforeRequest', function(event, eventData) { console.log(eventData); });
+            $scope.$on('tbGrid_OnSuccessfulUpdate', function(data) { toastr.success("Record updated"); });
+            $scope.$on('tbGrid_OnRemove', function(data) { toastr.success("Record removed"); });
+            $scope.$on('tbGrid_OnConnectionError', function(error) { toastr.error(error.statusText || "Connection error"); });
+            $scope.$on('tbGrid_OnSuccessfulForm', function (data) { $location.path('/'); });
+            $scope.$on('tbGrid_OnSavingNoChanges', function (model) {
                 toastr.warning("Nothing to save");
                 $location.path('/');
             });

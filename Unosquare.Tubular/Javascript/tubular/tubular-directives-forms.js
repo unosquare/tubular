@@ -2,8 +2,7 @@
     'use strict';
 
     angular.module('tubular.directives').directive('tbForm',
-    [
-        'tubularHttp', function(tubularHttp) {
+    ['tubularHttp', function(tubularHttp) {
             return {
                 template: '<form ng-transclude></form>',
                 restrict: 'E',
@@ -76,7 +75,7 @@
 
                                     $scope.bindFields();
                                 }, function(error) {
-                                    $scope.$emit('tubularGrid_OnConnectionError', error);
+                                    $scope.$emit('tbGrid_OnConnectionError', error);
                                 });
                         };
 
@@ -91,10 +90,10 @@
 
                             $scope.currentRequest.promise.then(
                                     function(data) {
-                                        $scope.$emit('tubularGrid_OnSuccessfulUpdate', data);
-                                        $scope.$emit('tubularGrid_OnSuccessfulForm', data);
+                                        $scope.$emit('tbGrid_OnSuccessfulUpdate', data);
+                                        $scope.$emit('tGrid_OnSuccessfulForm', data);
                                     }, function(error) {
-                                        $scope.$emit('tubularGrid_OnConnectionError', error);
+                                        $scope.$emit('tbGrid_OnConnectionError', error);
                                         returnValue = false;
                                     })
                                 .then(function() {
@@ -107,10 +106,10 @@
                         $scope.create = function() {
                             $scope.currentRequest = tubularHttp.post($scope.serverSaveUrl, $scope.rowModel).promise.then(
                                     function(data) {
-                                        $scope.$emit('tubularGrid_OnSuccessfulUpdate', data);
-                                        $scope.$emit('tubularGrid_OnSuccessfulForm', data);
+                                        $scope.$emit('tbGrid_OnSuccessfulUpdate', data);
+                                        $scope.$emit('tGrid_OnSuccessfulForm', data);
                                     }, function(error) {
-                                        $scope.$emit('tubularGrid_OnConnectionError', error);
+                                        $scope.$emit('tbGrid_OnConnectionError', error);
                                     })
                                 .then(function() {
                                     $scope.currentRequest = null;
@@ -119,7 +118,7 @@
 
                         $scope.save = function() {
                             if ($scope.rowModel.save() == false) {
-                                $scope.$emit('tubularGrid_OnSavingNoChanges', $scope.rowModel);
+                                $scope.$emit('tbGrid_OnSavingNoChanges', $scope.rowModel);
                             }
                         };
 
