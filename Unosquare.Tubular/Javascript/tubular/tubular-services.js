@@ -507,7 +507,8 @@
                     max: '=?',
                     name: '@',
                     defaultValue: '=?',
-                    IsKey: '@'
+                    IsKey: '@',
+                    placeholder: '@?'
                 };
 
                 me.setupScope = function(scope, defaultFormat) {

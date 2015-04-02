@@ -1179,7 +1179,7 @@
                 template: '<div ng-class="{ \'form-group\' : isEditing, \'has-error\' : !$valid }">' +
                     '<span ng-hide="isEditing">{{value}}</span>' +
                     '<label ng-show="showLabel">{{ label }}</label>' +
-                    '<input type="{{editorType}}" ng-show="isEditing" ng-model="value" class="form-control" ' +
+                    '<input type="{{editorType}}" placeholder="{{placeholder}}" ng-show="isEditing" ng-model="value" class="form-control" ' +
                     ' ng-required="required" />' +
                     '<span class="help-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
                     '</div>',
@@ -1221,7 +1221,7 @@
                     '<label ng-show="showLabel">{{ label }}</label>' +
                     '<div class="input-group" ng-show="isEditing">' +
                     '<div class="input-group-addon" ng-show="format == \'C\'">$</div>' +
-                    '<input type="number" ng-model="value" class="form-control" ' +
+                    '<input type="number" placeholder="{{placeholder}}" ng-model="value" class="form-control" ' +
                     'ng-required="required" />' +
                     '</div>' +
                     '<span class="help-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
@@ -1530,7 +1530,7 @@
                 template: '<div ng-class="{ \'form-group\' : isEditing, \'has-error\' : !$valid }">' +
                     '<span ng-hide="isEditing">{{value}}</span>' +
                     '<label ng-show="showLabel">{{ label }}</label>' +
-                    '<textarea ng-show="isEditing" ng-model="value" class="form-control" ' +
+                    '<textarea ng-show="isEditing" placeholder="{{placeholder}}" ng-model="value" class="form-control" ' +
                     ' ng-required="required"></textarea>' +
                     '<span class="help-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
                     '</div>',
@@ -2609,7 +2609,8 @@
                     max: '=?',
                     name: '@',
                     defaultValue: '=?',
-                    IsKey: '@'
+                    IsKey: '@',
+                    placeholder: '@?'
                 };
 
                 me.setupScope = function(scope, defaultFormat) {
