@@ -1,3 +1,7 @@
 div.sample-content {
     min-height: 400px;
 }
+.btn:hover {
+    margin-top: 0;
+    border-bottom-width: 4px;
+}
