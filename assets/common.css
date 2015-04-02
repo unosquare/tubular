@@ -1,7 +1,17 @@
 div.sample-content {
     min-height: 400px;
 }
+.pagination>li>a:hover, 
+.pager>li>a:hover, 
+.pagination>li>span:hover, 
+.pager>li>span:hover {
+    top: 0;
+    border-bottom-width: 4px;
+}
 .btn:hover {
     margin-top: 0;
     border-bottom-width: 4px;
+}
+.btn-block+.btn-block:hover {
+    margin-top: 5px;
 }
