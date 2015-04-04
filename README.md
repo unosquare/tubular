@@ -5,7 +5,16 @@ Featuring a simple to design grid with a lot of features like server side pagina
 
 ## Dependencies
 
-* You need [Web Essentials](http://vswebessentials.com/download) to generate the Tubular bundles.
+You will need to add the next JS libraries to use Tubular:
+
+* jQuery
+* Twitter Bootstrap
+* AngularJS (including Route, Cookies and if you want Animate)
+* AngularJS UI Bootstrap
+* AngularJS Local Storage
+* Font Awesome
+
+Also if you use the Visual Studio project you need [Web Essentials](http://vswebessentials.com/download) to generate the Tubular bundles.
 
 ## Samples
 
