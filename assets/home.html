@@ -1,15 +1,36 @@
 <div class="container" ng-controller="tubularSampleCtrl">
     <div class="jumbotron">
-        <h1>Tubular Demo</h1>
+        <h1>Tubular Demo<small>a brief tutorial</small></h1>
         <p>
-            Welcome to Tubular Demo. Tubular Grid has multiples features that you can discover in the the next cards.
+            Welcome to Tubular, our Grid has multiples features that you can discover in the next tutorial.
         </p>
         <div class="pull-right">
-            <a class="btn btn-lg btn-success" href="#sample">
-                <i class="fa fa-star"></i>&nbsp;Go to First Sample
+            <a class="btn btn-lg btn-success" ng-click="scrollTo('start')">
+                <i class="fa fa-star"></i>&nbsp;Start
             </a>
         </div>
         <div class="clearfix"></div>
+    </div>
+    <div class="sample-content">
+        <h1>Requirements<small>or a lot of CDN items</small></h1>
+        
+        <p>
+            You need to add some JS libraries to your webapp before to use Tubular. You can opt for adde them
+            directly in your project or use them directly from a CDN. The requirements are:
+        </p>
+        <ul>
+            <li><a href="http://jquery.com/">jQuery</a></li>
+            <li><a href="http://getbootstrap.com/">Twitter Bootstrap</a></li>
+            <li><a href="https://angularjs.org/">AngularJS (including Route, Cookies and if you want Animate)</a></li>
+            <li><a href="https://angular-ui.github.io/bootstrap/">AngularJS UI Bootstrap</a></li>
+            <li><a href="https://github.com/grevory/angular-local-storage">AngularJS Local Storage</a></li>
+            <li><a href="http://fortawesome.github.io/Font-Awesome/">Font Awesome</a></li>
+        </ul>
+        <div class="pull-right">
+            <a class="btn btn-lg btn-success" ng-click="scrollTo('sample')">
+                <i class="fa fa-star"></i>&nbsp;Start
+            </a>
+        </div>
     </div>
     <div class="sample-content" ng-repeat="t in tutorial">
         <div class="row">
@@ -26,7 +47,7 @@
                 <button class="btn btn-primary btn-block" ng-click="toggleCode(t.key)" ng-show="source[t.key]">
                     <i class="fa fa-table"></i>&nbsp;Show Sample
                 </button>
-                <a href="#{{t.next}}" ng-show="t.next" class="btn btn-success btn-block">
+                <a ng-click="scrollTo('{{t.next}}')" ng-show="t.next" class="btn btn-success btn-block">
                     <i class="fa fa-star"></i>&nbsp;Next Sample
                 </a>
             </div>

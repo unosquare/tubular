@@ -21,8 +21,8 @@
 
     angular.module('app.controllers', ['tubular.services'])
         .controller('tubularSampleCtrl', [
-            '$scope', '$location', '$templateCache', 'tubularOData',
-        function($scope, $location, $templateCache, tubularOData) {
+            '$scope', '$location', '$anchorScroll', '$templateCache', 'tubularOData',
+        function ($scope, $location, $anchorScroll, $templateCache, tubularOData) {
             $scope.odata = tubularOData;
             $scope.source = [];
             $scope.tutorial = [
@@ -68,6 +68,11 @@
                 } else {
                     $scope.source[tag] = null;
                 }
+            };
+
+            $scope.scrollTo = function(id) {
+                $location.hash(id);
+                $anchorScroll();
             };
         }
     ]);
