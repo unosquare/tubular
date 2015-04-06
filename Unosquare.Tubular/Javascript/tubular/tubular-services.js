@@ -508,7 +508,8 @@
                     name: '@',
                     defaultValue: '=?',
                     IsKey: '@',
-                    placeholder: '@?'
+                    placeholder: '@?',
+                    readOnly: '=?'
                 };
 
                 me.setupScope = function(scope, defaultFormat) {
@@ -516,6 +517,7 @@
                     scope.showLabel = scope.showLabel || false;
                     scope.label = scope.label || (scope.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
                     scope.required = scope.required || false;
+                    scope.readOnly = scope.readOnly || false;
                     scope.format = scope.format || defaultFormat;
                     scope.$valid = true;
                     scope.$editorType = 'input';

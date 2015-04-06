@@ -1180,7 +1180,7 @@
                     '<span ng-hide="isEditing">{{value}}</span>' +
                     '<label ng-show="showLabel">{{ label }}</label>' +
                     '<input type="{{editorType}}" placeholder="{{placeholder}}" ng-show="isEditing" ng-model="value" class="form-control" ' +
-                    ' ng-required="required" />' +
+                    ' ng-required="required" ng-readonly="readOnly" />' +
                     '<span class="help-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
                     '</div>',
                 restrict: 'E',
@@ -1222,7 +1222,7 @@
                     '<div class="input-group" ng-show="isEditing">' +
                     '<div class="input-group-addon" ng-show="format == \'C\'">$</div>' +
                     '<input type="number" placeholder="{{placeholder}}" ng-model="value" class="form-control" ' +
-                    'ng-required="required" />' +
+                    'ng-required="required" ng-readonly="readOnly" />' +
                     '</div>' +
                     '<span class="help-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
                     '</div>',
@@ -1260,7 +1260,8 @@
                 template: '<div ng-class="{ \'form-group\' : isEditing }">' +
                     '<span ng-hide="isEditing">{{ value | date: format }}</span>' +
                     '<label ng-show="showLabel">{{ label }}</label>' +
-                    '<input type="datetime-local" ng-show="isEditing" ng-model="value" class="form-control" />' +
+                    '<input type="datetime-local" ng-show="isEditing" ng-model="value" class="form-control" ' +
+                    'ng-required="required" ng-readonly="readOnly" />' +
                     '<span class="help-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
                     '</div>',
                 restrict: 'E',
@@ -1315,7 +1316,8 @@
                 template: '<div ng-class="{ \'form-group\' : isEditing }">' +
                     '<span ng-hide="isEditing">{{ value | date: format }}</span>' +
                     '<label ng-show="showLabel">{{ label }}</label>' +
-                    '<input type="date" ng-show="isEditing" ng-model="value" class="form-control" />' +
+                    '<input type="date" ng-show="isEditing" ng-model="value" class="form-control" ' +
+                    'ng-required="required" ng-readonly="readOnly" />' +
                     '<span class="help-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
                     '</div>',
                 restrict: 'E',
@@ -1531,7 +1533,7 @@
                     '<span ng-hide="isEditing">{{value}}</span>' +
                     '<label ng-show="showLabel">{{ label }}</label>' +
                     '<textarea ng-show="isEditing" placeholder="{{placeholder}}" ng-model="value" class="form-control" ' +
-                    ' ng-required="required"></textarea>' +
+                    ' ng-required="required" ng-readonly="readOnly"></textarea>' +
                     '<span class="help-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
                     '</div>',
                 restrict: 'E',
@@ -2610,7 +2612,8 @@
                     name: '@',
                     defaultValue: '=?',
                     IsKey: '@',
-                    placeholder: '@?'
+                    placeholder: '@?',
+                    readOnly: '=?'
                 };
 
                 me.setupScope = function(scope, defaultFormat) {
@@ -2618,6 +2621,7 @@
                     scope.showLabel = scope.showLabel || false;
                     scope.label = scope.label || (scope.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
                     scope.required = scope.required || false;
+                    scope.readOnly = scope.readOnly || false;
                     scope.format = scope.format || defaultFormat;
                     scope.$valid = true;
                     scope.$editorType = 'input';
