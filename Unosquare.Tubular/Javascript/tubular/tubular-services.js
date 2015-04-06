@@ -349,10 +349,10 @@
                                 $scope.Model = model;
 
                                 $scope.savePopup = function () {
-                                    var saveResult = $scope.Model.save();
+                                    $scope.Model.save();
 
-                                    if (saveResult)
-                                        dialog.close();
+                                    $scope.$on('tbGrid_OnSuccessfulUpdate', 
+                                        function () { dialog.close(); });
                                 };
 
                                 $scope.closePopup = function() {
@@ -379,7 +379,6 @@
                 gridScope.getFullDataSource(function(data) {
                     me.exportToCsv(filename, columns, data);
                 });
-                
             };
 
             me.exportGridToCsv = function(filename, gridScope) {

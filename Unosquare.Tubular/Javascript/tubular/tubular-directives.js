@@ -111,8 +111,6 @@
                                     timeout: $scope.requestTimeout
                                 };
 
-                                var returnValue = true;
-
                                 $scope.currentRequest = $scope.gridDataService.saveDataAsync(row, request);
 
                                 $scope.currentRequest.promise.then(
@@ -120,13 +118,10 @@
                                             $scope.$emit('tbGrid_OnSuccessfulUpdate', data);
                                         }, function(error) {
                                             $scope.$emit('tbGrid_OnConnectionError', error);
-                                            returnValue = false;
                                         })
                                     .then(function() {
                                         $scope.currentRequest = null;
                                     });
-
-                                return returnValue;
                             };
 
                             $scope.retrieveData = function() {

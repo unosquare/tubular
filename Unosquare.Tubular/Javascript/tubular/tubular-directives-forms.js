@@ -15,12 +15,12 @@
                     isNew: '@'
                 },
                 controller: [
-                    '$scope', '$routeParams', '$location', 'tubularModel', function($scope, $routeParams, $location, TubularModel) {
+                    '$scope', '$routeParams', '$location', 'tubularModel', function ($scope, $routeParams, $location, TubularModel) {
                         $scope.tubularDirective = 'tubular-form';
-                        $scope.columns = []; // TODO: Rename, right now for compatibility is columns
+                        $scope.fields = [];
                         $scope.hasFieldsDefinitions = false;
                         $scope.modelKey = $routeParams.param;
-
+                        
                         $scope.addField = function(item) {
                             if (item.name === null) return;
 
@@ -28,7 +28,7 @@
                                 throw 'Cannot define more fields. Field definitions have been sealed';
 
                             item.Name = item.name;
-                            $scope.columns.push(item);
+                            $scope.fields.push(item);
                         };
 
                         $scope.$watch('hasFieldsDefinitions', function(newVal) {
@@ -37,7 +37,7 @@
                         });
 
                         $scope.bindFields = function() {
-                            angular.forEach($scope.columns, function(column) {
+                            angular.forEach($scope.fields, function (column) {
                                 column.$parent.Model = $scope.rowModel;
 
                                 // TODO: this behavior is nice, but I don't know how to apply to inline editors
@@ -85,7 +85,6 @@
                                 requestMethod: 'PUT'
                             };
 
-                            var returnValue = true;
                             $scope.currentRequest = tubularHttp.saveDataAsync(row, request);
 
                             $scope.currentRequest.promise.then(
@@ -94,16 +93,14 @@
                                         $scope.$emit('tGrid_OnSuccessfulForm', data);
                                     }, function(error) {
                                         $scope.$emit('tbGrid_OnConnectionError', error);
-                                        returnValue = false;
                                     })
                                 .then(function() {
                                     $scope.currentRequest = null;
                                 });
-
-                            return returnValue;
                         };
 
-                        $scope.create = function() {
+                        $scope.create = function () {
+                            // TODO: Method could be PUT?
                             $scope.currentRequest = tubularHttp.post($scope.serverSaveUrl, $scope.rowModel).promise.then(
                                     function(data) {
                                         $scope.$emit('tbGrid_OnSuccessfulUpdate', data);
@@ -116,7 +113,8 @@
                                 });
                         };
 
-                        $scope.save = function() {
+                        $scope.save = function () {
+                            // TODO: Why Save and Create is not the same?ñ
                             if ($scope.rowModel.save() == false) {
                                 $scope.$emit('tbGrid_OnSavingNoChanges', $scope.rowModel);
                             }

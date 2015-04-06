@@ -201,3 +201,6 @@ div.fullHeight, .modal-backdrop.in {
 div.tubular-remove-popover {
     min-width: 120px;
 }
+input.ng-pristine+span.help-block.error-block {
+    display: none;
+} 
