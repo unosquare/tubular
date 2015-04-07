@@ -9,7 +9,7 @@
     <div class="row">
         <div class="col-md-12">
             <div class="panel panel-default panel-rounded">
-                <tb-grid-table class="table tubular-grid-table table-bordered">
+                <tb-grid-table class="table-bordered">
                     <tb-column-definitions>
                         <tb-column name="OrderID" sortable="true" sort-order="1"
                                    sort-direction="Ascending" is-key="true"
@@ -42,10 +42,10 @@
                         <tb-row-template ng-repeat="cells in $component.rows"
                                          row-model="cells" selectable="false">
                             <tb-cell-template>
-                                <tb-save-button model="cells" save-css="btn-xs hidden-xs hidden-sm"
+                                <tb-save-button model="cells" save-css="btn-xs"
                                                 cancel-css="btn-danger btn-xs">
                                 </tb-save-button>
-                                <tb-edit-button model="cells" css="btn-xs hidden-xs hidden-sm" caption="{{cells.OrderID}}">
+                                <tb-edit-button model="cells" css="btn-xs" caption="{{cells.OrderID}}">
                                 </tb-edit-button>
                             </tb-cell-template>
                             <tb-cell-template>

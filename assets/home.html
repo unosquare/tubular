@@ -1,5 +1,5 @@
 <div class="container" ng-controller="tubularSampleCtrl">
-    <div class="jumbotron">
+    <div class="jumbotron" id="intro">
         <h1>Tubular Demo <small>a brief tutorial</small></h1>
         <p>
             Welcome to Tubular, our Grid has multiples features that you can discover in the next tutorial.
@@ -54,7 +54,7 @@
             <hr />
         </div>
     </div>
-<div class="pull-right">
-	<a href="#">Back to Top</a>
-</div>
+    <div class="pull-right">
+        <a ng-click="scrollTo('intro')">Back to Top</a>
+    </div>
 </div>
