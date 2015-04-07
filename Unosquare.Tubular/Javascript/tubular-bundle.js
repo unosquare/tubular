@@ -826,11 +826,7 @@
                     restrict: 'E',
                     replace: true,
                     transclude: true,
-                    scope: true,
-                    controller: [
-                        '$scope', function($scope) {
-                        }
-                    ]
+                    scope: true
                 };
             }
         ])
@@ -916,10 +912,13 @@
                 require: '^tbGrid',
                 template:
                     '<div>' +
-                        '<div class="input-group">' +
-                        '<span class="input-group-addon {{css}}"><i class="glyphicon glyphicon-search"></i></span>' +
-                        '<input type="search" class="form-control {{css}}" placeholder="search . . ." maxlength="20" ' +
+                        '<div class="input-group input-group-sm">' +
+                        '<span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>' +
+                        '<input type="search" class="form-control" placeholder="search . . ." maxlength="20" ' +
                         'ng-model="$component.search.Text" ng-model-options="{ debounce: 300 }">' +
+                        '<span class="input-group-btn" ng-show="$component.search.Text.length > 0" ng-click="$component.search.Text = \'\'">' +
+                        '<button class="btn btn-default"><i class="fa fa-times-circle"></i></button>' +
+                        '</span>' +
                         '<div>' +
                     '<div>',
                 restrict: 'E',
@@ -1043,7 +1042,8 @@
 
             return {
                 require: '^tbGrid',
-                template: '<button ng-click="model.edit()" class="btn btn-default {{ css || \'\' }}" ng-hide="model.$isEditing">{{ caption || \'Edit\' }}</button>',
+                template: '<button ng-click="model.edit()" class="btn btn-default {{ css || \'\' }}" ' +
+                    'ng-hide="model.$isEditing">{{ caption || \'Edit\' }}</button>',
                 restrict: 'E',
                 replace: true,
                 transclude: true,
@@ -1062,8 +1062,9 @@
                 template: '<div class="{{css}}"><form class="form-inline">' +
                     '<div class="form-group">' +
                         '<label class="small">{{ caption || \'Page size:\' }}</label>' +
-                        '<select ng-model="$parent.$parent.pageSize" class="form-control input-sm {{selectorCss}}">' +
-                        '<option ng-repeat="item in [10,20,50,100]" value="{{item}}">{{item}}</option>' +
+                        // TODO: There is a bug here PageSize is not selected at start
+                        '<select ng-model="$parent.$parent.pageSize" class="form-control input-sm {{selectorCss}}">' + 
+                        '<option ng-repeat="item in [\'10\',\'20\',\'50\',\'100\']" value="{{item}}">{{item}}</option>' +
                         '</select>' +
                     '</div>' +
                     '</form></div>',
@@ -1136,10 +1137,14 @@
                         $scope.printGrid = function() {
                             $scope.$component.getFullDataSource(function(data) {
                                 var tableHtml = "<table class='table table-bordered table-striped'><thead><tr>"
-                                    + $scope.$component.columns.map(function(el) { return "<th>" + (el.Label || el.Name) + "</th>"; }).join(" ")
+                                    + $scope.$component.columns.map(function(el) {
+                                         return "<th>" + (el.Label || el.Name) + "</th>";
+                                    }).join(" ")
                                     + "</tr></thead>"
                                     + "<tbody>"
-                                    + data.map(function(row) { return "<tr>" + row.map(function(cell) { return "<td>" + cell + "</td>"; }).join(" ") + "</tr>"; }).join(" ")
+                                    + data.map(function(row) {
+                                         return "<tr>" + row.map(function(cell) { return "<td>" + cell + "</td>"; }).join(" ") + "</tr>";
+                                    }).join(" ")
                                     + "</tbody>"
                                     + "</table>";
 

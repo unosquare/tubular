@@ -111,7 +111,7 @@ namespace Unosquare.Tubular.ObjectModel
             // Perform Filtering
             foreach (var column in request.Columns.Where(x => x.Filter != null))
             {
-                if (String.IsNullOrWhiteSpace(column.Filter.Text) && column.Filter.Argument == null) 
+                if (String.IsNullOrWhiteSpace(column.Filter.Text) && column.Filter.Argument == null)
                     continue; // TODO: Handle null?
 
                 switch (column.Filter.Operator)
@@ -197,7 +197,7 @@ namespace Unosquare.Tubular.ObjectModel
                         if (column.Filter.Argument == null || column.Filter.Argument.Length == 0) continue;
 
                         searchLambda.AppendFormat("(({0} >= @{1}) &&  ({0} <= @{2})) &&", column.Name,
-                                                          searchParamArgs.Count, searchParamArgs.Count + 1);
+                            searchParamArgs.Count, searchParamArgs.Count + 1);
 
                         if (column.DataType == DataType.Numeric.ToString().ToLower())
                         {
@@ -245,10 +245,13 @@ namespace Unosquare.Tubular.ObjectModel
 
             var pageSize = request.Take;
             response.TotalPages = (response.FilteredRecordCount + pageSize - 1)/pageSize;
-            response.CurrentPage = 1 +
-                                   (int)
-                                       ((request.Skip/(float) response.FilteredRecordCount)*
-                                        response.TotalPages);
+
+            if (response.TotalPages > 0)
+            {
+                response.CurrentPage = 1 +
+                                       (int) ((request.Skip/(float) response.FilteredRecordCount)*response.TotalPages);
+            }
+
             response.Payload = CreateGridPayload(subset, columnMap, pageSize, request.TimezoneOffset);
 
             return response;

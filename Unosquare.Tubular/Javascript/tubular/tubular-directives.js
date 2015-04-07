@@ -582,11 +582,7 @@
                     restrict: 'E',
                     replace: true,
                     transclude: true,
-                    scope: true,
-                    controller: [
-                        '$scope', function($scope) {
-                        }
-                    ]
+                    scope: true
                 };
             }
         ])
