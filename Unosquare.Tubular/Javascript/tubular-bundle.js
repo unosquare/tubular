@@ -629,7 +629,7 @@
             function() {
                 return {
                     require: '^tbGrid',
-                    template: '<table ng-transclude></table>',
+                    template: '<table ng-transclude class="table tubular-grid-table"></table>',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
@@ -959,23 +959,31 @@
 
             return {
                 require: '^tbGrid',
-                template: '<button ng-click="confirmDelete()" class="btn" ng-hide="model.$isEditing">{{ caption || \'Remove\' }}</button>',
+                template: '<button ng-click="confirmDelete()" class="btn" ng-hide="model.$isEditing">' +
+                    '<span ng-show="showIcon" class="{{icon}}"></span>' +
+                    '<span ng-show="showCaption">{{ caption || \'Remove\' }}</span>' +
+                    '</button>',
                 restrict: 'E',
                 replace: true,
                 transclude: true,
                 scope: {
                     model: '=',
-                    caption: '@'
+                    caption: '@',
+                    icon: '@'
                 },
                 controller: [
-                    '$scope', '$element', function($scope, $element) {
+                    '$scope', '$element', function ($scope, $element) {
+                        $scope.showIcon = angular.isDefined($scope.icon);
+                        $scope.showCaption = !($scope.showIcon && angular.isUndefined($scope.caption));
                         $scope.confirmDelete = function() {
                             $element.popover({
                                 html: true,
                                 title: 'Do you want to delete this row?',
                                 content: function() {
-                                    var html = '<div class="tubular-remove-popover"><button ng-click="model.delete()" class="btn btn-danger btn-xs">Remove</button>' +
-                                        '&nbsp;<button ng-click="cancelDelete()" class="btn btn-default btn-xs">Cancel</button></div>';
+                                    var html = '<div class="tubular-remove-popover">' +
+                                        '<button ng-click="model.delete()" class="btn btn-danger btn-xs">Remove</button>' +
+                                        '&nbsp;<button ng-click="cancelDelete()" class="btn btn-default btn-xs">Cancel</button>' +
+                                        '</div>';
                                     return $compile(html)($scope);
                                 }
                             });
@@ -995,7 +1003,8 @@
 
             return {
                 require: '^tbGrid',
-                template: '<div><button ng-click="save()" class="btn btn-default {{ saveCss || \'\' }}" ng-disabled="!model.$valid()" ng-show="model.$isEditing">' +
+                template: '<div><button ng-click="save()" class="btn btn-default {{ saveCss || \'\' }}" ' +
+                    'ng-disabled="!model.$valid()" ng-show="model.$isEditing">' +
                     '{{ saveCaption || \'Save\' }}' +
                     '</button>' +
                     '<button ng-click="cancel()" class="btn {{ cancelCss || \'btn-default\' }}" ng-show="model.$isEditing">' +
@@ -1061,11 +1070,10 @@
                 require: '^tbGrid',
                 template: '<div class="{{css}}"><form class="form-inline">' +
                     '<div class="form-group">' +
-                        '<label class="small">{{ caption || \'Page size:\' }}</label>' +
-                        // TODO: There is a bug here PageSize is not selected at start
-                        '<select ng-model="$parent.$parent.pageSize" class="form-control input-sm {{selectorCss}}">' + 
-                        '<option ng-repeat="item in [\'10\',\'20\',\'50\',\'100\']" value="{{item}}">{{item}}</option>' +
-                        '</select>' +
+                    '<label class="small">{{ caption || \'Page size:\' }}</label>' +
+                    '<select ng-model="$parent.$parent.pageSize" class="form-control input-sm {{selectorCss}}" ' +
+                    'ng-options="item for item in options">' +
+                    '</select>' +
                     '</div>' +
                     '</form></div>',
                 restrict: 'E',
@@ -1075,8 +1083,13 @@
                     caption: '@',
                     css: '@',
                     selectorCss: '@',
-                    options: '=' //TODO: Add support
-                }
+                    options: '=?'
+                },
+                controller: [
+                    '$scope', function($scope) {
+                        $scope.options = angular.isDefined($scope.options) ? $scope.options : ['10', '20', '50', '100'];
+                    }
+                ]
             };
         }
     ]).directive('tbExportButton', [

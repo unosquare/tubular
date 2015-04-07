@@ -204,6 +204,9 @@ div.tubular-remove-popover {
 input.ng-pristine+span.help-block.error-block {
     display: none;
 } 
+.has-error .form-control.ng-pristine {
+    border: 1px solid #e7e7e7;
+}
 /* Responsive table for mobiles https://techblog.livingsocial.com/blog/2015/04/06/responsive-tables-in-pure-css/ */
 
 @media screen and (max-width: 500px) {
@@ -239,9 +242,5 @@ input.ng-pristine+span.help-block.error-block {
                 float: left;
                 text-transform: uppercase;
                 font-weight: bold;
-            }
-
-            table.responsive-mobile td span:empty {
-                display: none;
             }
 }

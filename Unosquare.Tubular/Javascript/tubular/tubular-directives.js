@@ -385,7 +385,7 @@
             function() {
                 return {
                     require: '^tbGrid',
-                    template: '<table ng-transclude></table>',
+                    template: '<table ng-transclude class="table tubular-grid-table"></table>',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
