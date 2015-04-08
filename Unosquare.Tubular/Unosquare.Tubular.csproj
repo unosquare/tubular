@@ -42,6 +42,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common.cs" />
+    <Compile Include="ObjectModel\GridColumn.cs" />
+    <Compile Include="ObjectModel\GridDataRequest.cs" />
+    <Compile Include="ObjectModel\GridDataResponse.cs" />
     <Compile Include="ObjectModel\TubularGridDataRequest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
