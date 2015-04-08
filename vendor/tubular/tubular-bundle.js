@@ -2403,7 +2403,7 @@
                     var freetext = params.Columns
                         .filter(function(el) { return el.Searchable; })
                         .map(function(el) {
-                            return "startswith({0}, {1}) eq true".replace('{0}', el.Name).replace('{1}', params.Search.Text);
+                            return "startswith({0}, '{1}') eq true".replace('{0}', el.Name).replace('{1}', params.Search.Text);
                         });
 
                     if (freetext.length > 0)
