@@ -1,26 +1,26 @@
 # Tubular
 
-A set of [Angular](https://angularjs.org/) directives and C# classes designed to rapidly build modern web applications. 
-Featuring a simple to design grid with a lot of features like server side pagination, multi-column filtering, exporting to CSV in client side.
+A set of [AngularJS](https://angularjs.org/) directives and C# classes designed to rapidly build modern web applications. 
+Tubular features a fully templateable grid with lots of features such as server-side pagination, multi-column sorting and filtering, built-in export to CSV, and in-line editing of rows via templates.
 
 ## Dependencies
 
-You will need to add the next JS libraries to use Tubular:
+You will need to reference the following JS libraries in order to use Tubular in your HTML:
 
 * jQuery
 * Twitter Bootstrap
-* AngularJS (including Route, Cookies and if you want Animate)
+* AngularJS (including Route, Cookies, and optionally, Animate)
 * AngularJS UI Bootstrap
 * AngularJS Local Storage
 * Font Awesome
 
-Also if you use the Visual Studio project you need [Web Essentials](http://vswebessentials.com/download) to generate the Tubular bundles.
+Also, if you use the Visual Studio you will need the excellent [Web Essentials](http://vswebessentials.com/download) plug-in in order to generate the Tubular bundles.
 
 ## Samples
 
-You can check [Tubular GitPage](http://unosquare.github.io/tubular) for more demos.
+You can check out the [Tubular GitPage](http://unosquare.github.io/tubular) to get a few examples. We still need to work on more samples and better documentation, but we feel what we have now will get you up to speed for now.
 
-The next HTML represents a basic grid, you don't need to add anything else to your controller.
+The following HTML represents a basic grid. You don't need to add anything else to your controller! Everything is templated
 
 ```html
  <div class="container" ng-controller="YourController">
@@ -57,8 +57,8 @@ The next HTML represents a basic grid, you don't need to add anything else to yo
     </div>
 ```
 
-Tubular can work directly with any OData service or you can create your own service using C# and our library to handle Tubular's models.
+Tubular works directly with either your own OData service or, you can also have it consume custom calls using our .NET library to handle Tubular's models.
 
 ## Tubular Models
 
-Tubular uses a special model to request a page in C# and expect a model with the payload.
+Tubular uses a special model to represent requests and expects a specific JSON payload. More details to come.
