@@ -19,31 +19,33 @@
     </div>
     <div class="row">
         <div class="col-md-3 col-xs-12">
-            All the request made by Tubular Grid are using HTTP POST method, in order to send a
-            <a href="https://github.com/unosquare/tubular/blob/master/Unosquare.Tubular/ObjectModel/GridDataRequest.cs">GridDataRequest</a> model.
-            This model provides an extension method to generate a payload using any IQueryable datasource like
-            an EntityFramework query.
-            <br />
-            The internal helper will deliver a
-            <a href="https://github.com/unosquare/tubular/blob/master/Unosquare.Tubular/ObjectModel/GridDataResponse.cs">GridDataResponse</a> model.
-            This model is the expected payload for the grid.
-            <br />
-            <strong>Heads up!</strong> You can also use this helper with <a href="https://github.com/unosquare/embedio">EmbedIO web server</a>.
+            <p>
+                All the request made by Tubular Grid are using HTTP POST method, in order to send a
+                <a href="https://github.com/unosquare/tubular/blob/master/Unosquare.Tubular/ObjectModel/GridDataRequest.cs">GridDataRequest</a> model.
+                This model provides an extension method to generate a payload using any IQueryable datasource like
+                an EntityFramework query.
+            </p>
+            <p>
+                The internal helper will deliver a
+                <a href="https://github.com/unosquare/tubular/blob/master/Unosquare.Tubular/ObjectModel/GridDataResponse.cs">GridDataResponse</a> model.
+                This model is the expected payload for the grid.
+            </p>
+            <p>
+                <strong>Heads up!</strong> You can also use this helper with <a href="https://github.com/unosquare/embedio">EmbedIO web server</a>.
+            </p>
         </div>
         <div class="col-md-9 col-xs-12">
             <div hljs language="cs">
-                [RoutePrefix("api/users")]
-                public class UsersController : ApiController
-                {
-                [HttpPost, Route("paged")]
-                public IHttpActionResult GridData([FromBody] GridDataRequest request)
-                {
-                using (var context = new SampleDbContext(false))
-                {
-                return Ok(request.CreateGridDataResponse(context.SystemUsers));
-                }
-                }
-                }
+[RoutePrefix("api/users")]
+public class UsersController : ApiController
+{
+    [HttpPost, Route("paged")]
+    public IHttpActionResult GridData([FromBody] GridDataRequest request)
+    {
+        using (var context = new SampleDbContext(false))
+            return Ok(request.CreateGridDataResponse(context.SystemUsers));
+    }
+}
             </div>
         </div>
     </div>
