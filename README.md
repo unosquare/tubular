@@ -5,8 +5,16 @@ Tubular features a fully templateable grid with lots of features such as server-
 
 ## NuGet Installation
 
+### Package containing only the client-side stuff
+
 <pre>
 PM> Install-Package Tubular
+</pre>
+
+### Package containing the server-side stuff
+
+<pre>
+PM> Install-Package Tubular.ServerSide
 </pre>
 
 ## Dependencies
