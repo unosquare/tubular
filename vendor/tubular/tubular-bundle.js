@@ -2398,10 +2398,18 @@
                     })
                     .filter(function(el) { return el.length > 1; });
 
+
+                if (params.Search != null && params.Search.Operator == 'Auto') {
+                    var freetext = params.Columns.filter(function(el) { return el.Searchable; }).map(function(el) {
+                        return "startswith({0}, {1}) eq true".replace('{0}', el.Name).replace('{1}', params.Search.Text);
+                    });
+
+                    if (freetext.length > 0)
+                        filter = "(" + freetext.join(' or ') + ")";
+                }
+
                 if (filter.length > 0)
                     url += "&$filter=" + filter.join(' and ');
-
-                // TODO: Free text search
 
                 request.data = null;
                 request.serverUrl = url;
