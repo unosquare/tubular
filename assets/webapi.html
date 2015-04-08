@@ -2,7 +2,7 @@
     <div class="jumbotron">
         <h1>Tubular WebApi</h1>
         <p>
-            Tubular provides a .NET library to easily create payloads in WebApi (or WCF) for your Tubular grids.
+            Tubular provides a .NET library to easily create responses in WebApi (or WCF) for your Tubular grids.
             This helpers provides sorting, filtering and pagination using <a href="https://dynamiclinq.codeplex.com/">System.Linq.Dynamic</a>.
         </p>
         <div class="pull-right">
@@ -19,32 +19,31 @@
     </div>
     <div class="row">
         <div class="col-md-3 col-xs-12">
-            All the request made by Tubular Grid are using POST method, in order to send our <b>GridDataRequest</b> model.
+            All the request made by Tubular Grid are using HTTP POST method, in order to send a
+            <a href="https://github.com/unosquare/tubular/blob/master/Unosquare.Tubular/ObjectModel/GridDataRequest.cs">GridDataRequest</a> model.
             This model provides an extension method to generate a payload using any IQueryable datasource like
             an EntityFramework query.
+            <br />
+            The internal helper will deliver a
+            <a href="https://github.com/unosquare/tubular/blob/master/Unosquare.Tubular/ObjectModel/GridDataResponse.cs">GridDataResponse</a> model.
+            This model is the expected payload for the grid.
+            <br />
+            <strong>Heads up!</strong> You can also use this helper with <a href="https://github.com/unosquare/embedio">EmbedIO web server</a>.
         </div>
         <div class="col-md-9 col-xs-12">
             <div hljs language="cs">
-using System.Threading.Tasks;
-using System.Web.Http;
-using Unosquare.Tubular.ObjectModel;
-using Unosquare.Tubular.Sample.Models;
-
-namespace Unosquare.Tubular.Sample.Controllers
-{
-    [RoutePrefix("api/users")]
-    public class UsersController : ApiController
-    {
-        [HttpPost, Route("paged")]
-        public IHttpActionResult GridData([FromBody] GridDataRequest request)
-        {
-            using (var context = new SampleDbContext(false))
-            {
-                return Ok(request.CreateGridDataResponse(context.SystemUsers.AsNoTracking()));
-            }
-        }
-    }
-}
+                [RoutePrefix("api/users")]
+                public class UsersController : ApiController
+                {
+                [HttpPost, Route("paged")]
+                public IHttpActionResult GridData([FromBody] GridDataRequest request)
+                {
+                using (var context = new SampleDbContext(false))
+                {
+                return Ok(request.CreateGridDataResponse(context.SystemUsers));
+                }
+                }
+                }
             </div>
         </div>
     </div>
