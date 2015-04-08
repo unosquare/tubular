@@ -27,7 +27,7 @@ The next HTML represents a basic grid, you don't need to add anything else to yo
         <tb-grid server-url="/data/customers.json" page-size="20" class="row">
             <div class="col-md-12">
                 <div class="panel panel-default panel-rounded">
-                    <tb-grid-table class="table tubular-grid-table table-bordered">
+                    <tb-grid-table class="table-bordered">
                         <tb-column-definitions>
                             <tb-column name="CustomerName">
                                 <tb-column-header>
@@ -56,3 +56,9 @@ The next HTML represents a basic grid, you don't need to add anything else to yo
         </tb-grid>
     </div>
 ```
+
+Tubular can work directly with any OData service or you can create your own service using C# and our library to handle Tubular's models.
+
+## Tubular Models
+
+Tubular uses a special model to request a page in C# and expect a model with the payload.
