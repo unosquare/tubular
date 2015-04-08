@@ -355,8 +355,6 @@
                                     timeout: $scope.requestTimeout
                                 };
 
-                                var returnValue = true;
-
                                 $scope.currentRequest = $scope.gridDataService.saveDataAsync(row, request);
 
                                 $scope.currentRequest.promise.then(
@@ -364,13 +362,10 @@
                                             $scope.$emit('tbGrid_OnSuccessfulUpdate', data);
                                         }, function(error) {
                                             $scope.$emit('tbGrid_OnConnectionError', error);
-                                            returnValue = false;
                                         })
                                     .then(function() {
                                         $scope.currentRequest = null;
                                     });
-
-                                return returnValue;
                             };
 
                             $scope.retrieveData = function() {
@@ -634,7 +629,7 @@
             function() {
                 return {
                     require: '^tbGrid',
-                    template: '<table ng-transclude></table>',
+                    template: '<table ng-transclude class="table tubular-grid-table"></table>',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
@@ -831,11 +826,7 @@
                     restrict: 'E',
                     replace: true,
                     transclude: true,
-                    scope: true,
-                    controller: [
-                        '$scope', function($scope) {
-                        }
-                    ]
+                    scope: true
                 };
             }
         ])
@@ -921,10 +912,13 @@
                 require: '^tbGrid',
                 template:
                     '<div>' +
-                        '<div class="input-group">' +
-                        '<span class="input-group-addon {{css}}"><i class="glyphicon glyphicon-search"></i></span>' +
-                        '<input type="search" class="form-control {{css}}" placeholder="search . . ." maxlength="20" ' +
+                        '<div class="input-group input-group-sm">' +
+                        '<span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>' +
+                        '<input type="search" class="form-control" placeholder="search . . ." maxlength="20" ' +
                         'ng-model="$component.search.Text" ng-model-options="{ debounce: 300 }">' +
+                        '<span class="input-group-btn" ng-show="$component.search.Text.length > 0" ng-click="$component.search.Text = \'\'">' +
+                        '<button class="btn btn-default"><i class="fa fa-times-circle"></i></button>' +
+                        '</span>' +
                         '<div>' +
                     '<div>',
                 restrict: 'E',
@@ -965,23 +959,31 @@
 
             return {
                 require: '^tbGrid',
-                template: '<button ng-click="confirmDelete()" class="btn" ng-hide="model.$isEditing">{{ caption || \'Remove\' }}</button>',
+                template: '<button ng-click="confirmDelete()" class="btn" ng-hide="model.$isEditing">' +
+                    '<span ng-show="showIcon" class="{{icon}}"></span>' +
+                    '<span ng-show="showCaption">{{ caption || \'Remove\' }}</span>' +
+                    '</button>',
                 restrict: 'E',
                 replace: true,
                 transclude: true,
                 scope: {
                     model: '=',
-                    caption: '@'
+                    caption: '@',
+                    icon: '@'
                 },
                 controller: [
-                    '$scope', '$element', function($scope, $element) {
+                    '$scope', '$element', function ($scope, $element) {
+                        $scope.showIcon = angular.isDefined($scope.icon);
+                        $scope.showCaption = !($scope.showIcon && angular.isUndefined($scope.caption));
                         $scope.confirmDelete = function() {
                             $element.popover({
                                 html: true,
                                 title: 'Do you want to delete this row?',
                                 content: function() {
-                                    var html = '<div class="tubular-remove-popover"><button ng-click="model.delete()" class="btn btn-danger btn-xs">Remove</button>' +
-                                        '&nbsp;<button ng-click="cancelDelete()" class="btn btn-default btn-xs">Cancel</button></div>';
+                                    var html = '<div class="tubular-remove-popover">' +
+                                        '<button ng-click="model.delete()" class="btn btn-danger btn-xs">Remove</button>' +
+                                        '&nbsp;<button ng-click="cancelDelete()" class="btn btn-default btn-xs">Cancel</button>' +
+                                        '</div>';
                                     return $compile(html)($scope);
                                 }
                             });
@@ -1001,7 +1003,8 @@
 
             return {
                 require: '^tbGrid',
-                template: '<div><button ng-click="save()" class="btn btn-default {{ saveCss || \'\' }}" ng-disabled="!model.$valid()" ng-show="model.$isEditing">' +
+                template: '<div><button ng-click="save()" class="btn btn-default {{ saveCss || \'\' }}" ' +
+                    'ng-disabled="!model.$valid()" ng-show="model.$isEditing">' +
                     '{{ saveCaption || \'Save\' }}' +
                     '</button>' +
                     '<button ng-click="cancel()" class="btn {{ cancelCss || \'btn-default\' }}" ng-show="model.$isEditing">' +
@@ -1048,7 +1051,8 @@
 
             return {
                 require: '^tbGrid',
-                template: '<button ng-click="model.edit()" class="btn btn-default {{ css || \'\' }}" ng-hide="model.$isEditing">{{ caption || \'Edit\' }}</button>',
+                template: '<button ng-click="model.edit()" class="btn btn-default {{ css || \'\' }}" ' +
+                    'ng-hide="model.$isEditing">{{ caption || \'Edit\' }}</button>',
                 restrict: 'E',
                 replace: true,
                 transclude: true,
@@ -1066,10 +1070,10 @@
                 require: '^tbGrid',
                 template: '<div class="{{css}}"><form class="form-inline">' +
                     '<div class="form-group">' +
-                        '<label class="small">{{ caption || \'Page size:\' }}</label>' +
-                        '<select ng-model="$parent.$parent.pageSize" class="form-control input-sm {{selectorCss}}">' +
-                        '<option ng-repeat="item in [10,20,50,100]" value="{{item}}">{{item}}</option>' +
-                        '</select>' +
+                    '<label class="small">{{ caption || \'Page size:\' }}</label>' +
+                    '<select ng-model="$parent.$parent.pageSize" class="form-control input-sm {{selectorCss}}" ' +
+                    'ng-options="item for item in options">' +
+                    '</select>' +
                     '</div>' +
                     '</form></div>',
                 restrict: 'E',
@@ -1079,8 +1083,13 @@
                     caption: '@',
                     css: '@',
                     selectorCss: '@',
-                    options: '=' //TODO: Add support
-                }
+                    options: '=?'
+                },
+                controller: [
+                    '$scope', function($scope) {
+                        $scope.options = angular.isDefined($scope.options) ? $scope.options : ['10', '20', '50', '100'];
+                    }
+                ]
             };
         }
     ]).directive('tbExportButton', [
@@ -1141,10 +1150,14 @@
                         $scope.printGrid = function() {
                             $scope.$component.getFullDataSource(function(data) {
                                 var tableHtml = "<table class='table table-bordered table-striped'><thead><tr>"
-                                    + $scope.$component.columns.map(function(el) { return "<th>" + (el.Label || el.Name) + "</th>"; }).join(" ")
+                                    + $scope.$component.columns.map(function(el) {
+                                         return "<th>" + (el.Label || el.Name) + "</th>";
+                                    }).join(" ")
                                     + "</tr></thead>"
                                     + "<tbody>"
-                                    + data.map(function(row) { return "<tr>" + row.map(function(cell) { return "<td>" + cell + "</td>"; }).join(" ") + "</tr>"; }).join(" ")
+                                    + data.map(function(row) {
+                                         return "<tr>" + row.map(function(cell) { return "<td>" + cell + "</td>"; }).join(" ") + "</tr>";
+                                    }).join(" ")
                                     + "</tbody>"
                                     + "</table>";
 
@@ -1179,9 +1192,9 @@
                 template: '<div ng-class="{ \'form-group\' : isEditing, \'has-error\' : !$valid }">' +
                     '<span ng-hide="isEditing">{{value}}</span>' +
                     '<label ng-show="showLabel">{{ label }}</label>' +
-                    '<input type="{{editorType}}" ng-show="isEditing" ng-model="value" class="form-control" ' +
-                    ' ng-required="required" />' +
-                    '<span class="help-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
+                    '<input type="{{editorType}}" placeholder="{{placeholder}}" ng-show="isEditing" ng-model="value" class="form-control" ' +
+                    ' ng-required="required" ng-readonly="readOnly" />' +
+                    '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
                     '</div>',
                 restrict: 'E',
                 replace: true,
@@ -1221,10 +1234,10 @@
                     '<label ng-show="showLabel">{{ label }}</label>' +
                     '<div class="input-group" ng-show="isEditing">' +
                     '<div class="input-group-addon" ng-show="format == \'C\'">$</div>' +
-                    '<input type="number" ng-model="value" class="form-control" ' +
-                    'ng-required="required" />' +
+                    '<input type="number" placeholder="{{placeholder}}" ng-model="value" class="form-control" ' +
+                    'ng-required="required" ng-readonly="readOnly" />' +
                     '</div>' +
-                    '<span class="help-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
+                    '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
                     '</div>',
                 restrict: 'E',
                 replace: true,
@@ -1260,8 +1273,9 @@
                 template: '<div ng-class="{ \'form-group\' : isEditing }">' +
                     '<span ng-hide="isEditing">{{ value | date: format }}</span>' +
                     '<label ng-show="showLabel">{{ label }}</label>' +
-                    '<input type="datetime-local" ng-show="isEditing" ng-model="value" class="form-control" />' +
-                    '<span class="help-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
+                    '<input type="datetime-local" ng-show="isEditing" ng-model="value" class="form-control" ' +
+                    'ng-required="required" ng-readonly="readOnly" />' +
+                    '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
                     '</div>',
                 restrict: 'E',
                 replace: true,
@@ -1315,8 +1329,9 @@
                 template: '<div ng-class="{ \'form-group\' : isEditing }">' +
                     '<span ng-hide="isEditing">{{ value | date: format }}</span>' +
                     '<label ng-show="showLabel">{{ label }}</label>' +
-                    '<input type="date" ng-show="isEditing" ng-model="value" class="form-control" />' +
-                    '<span class="help-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
+                    '<input type="date" ng-show="isEditing" ng-model="value" class="form-control" ' +
+                    'ng-required="required" ng-readonly="readOnly" />' +
+                    '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
                     '</div>',
                 restrict: 'E',
                 replace: true,
@@ -1380,7 +1395,7 @@
                     '<label ng-show="showLabel">{{ label }}</label>' +
                     '<select ng-options="d for d in options" ng-show="isEditing" ng-model="value" class="form-control" ' +
                     'ng-required="required" />' +
-                    '<span class="help-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
+                    '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
                     '</div>',
                 restrict: 'E',
                 replace: true,
@@ -1435,7 +1450,7 @@
                     '<label ng-show="showLabel">{{ label }}</label>' +
                     '<autocomplete ng-show="isEditing" ng-model="value" attr-input-class="form-control" data="options" ' +
                     'autocomplete-required="required" />' +
-                    '<span class="help-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
+                    '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
                     '</div>',
                 restrict: 'E',
                 replace: true,
@@ -1505,9 +1520,11 @@
             return {
                 template: '<div ng-class="{ \'form-group\' : isEditing, \'has-error\' : !$valid }">' +
                     '<span ng-hide="isEditing">{{value}}</span>' +
-                    '<label ng-show="showLabel">{{ label }}</label>' +
-                    '<input type="checkbox" ng-show="isEditing" ng-model="value" ng-required="required" />' +
-                    '<span class="help-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
+                    '<label>' +
+                    '<input type="checkbox" ng-show="isEditing" ng-model="value" ng-required="required" /> ' +
+                    '<span ng-show="showLabel">{{label}}</span>' +
+                    '</label>' +
+                    '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
                     '</div>',
                 restrict: 'E',
                 replace: true,
@@ -1528,9 +1545,9 @@
                 template: '<div ng-class="{ \'form-group\' : isEditing, \'has-error\' : !$valid }">' +
                     '<span ng-hide="isEditing">{{value}}</span>' +
                     '<label ng-show="showLabel">{{ label }}</label>' +
-                    '<textarea ng-show="isEditing" ng-model="value" class="form-control" ' +
-                    ' ng-required="required"></textarea>' +
-                    '<span class="help-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
+                    '<textarea ng-show="isEditing" placeholder="{{placeholder}}" ng-model="value" class="form-control" ' +
+                    ' ng-required="required" ng-readonly="readOnly"></textarea>' +
+                    '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
                     '</div>',
                 restrict: 'E',
                 replace: true,
@@ -1754,12 +1771,12 @@
                     isNew: '@'
                 },
                 controller: [
-                    '$scope', '$routeParams', '$location', 'tubularModel', function($scope, $routeParams, $location, TubularModel) {
+                    '$scope', '$routeParams', '$location', 'tubularModel', function ($scope, $routeParams, $location, TubularModel) {
                         $scope.tubularDirective = 'tubular-form';
-                        $scope.columns = []; // TODO: Rename, right now for compatibility is columns
+                        $scope.fields = [];
                         $scope.hasFieldsDefinitions = false;
                         $scope.modelKey = $routeParams.param;
-
+                        
                         $scope.addField = function(item) {
                             if (item.name === null) return;
 
@@ -1767,7 +1784,7 @@
                                 throw 'Cannot define more fields. Field definitions have been sealed';
 
                             item.Name = item.name;
-                            $scope.columns.push(item);
+                            $scope.fields.push(item);
                         };
 
                         $scope.$watch('hasFieldsDefinitions', function(newVal) {
@@ -1776,7 +1793,7 @@
                         });
 
                         $scope.bindFields = function() {
-                            angular.forEach($scope.columns, function(column) {
+                            angular.forEach($scope.fields, function (column) {
                                 column.$parent.Model = $scope.rowModel;
 
                                 // TODO: this behavior is nice, but I don't know how to apply to inline editors
@@ -1824,7 +1841,6 @@
                                 requestMethod: 'PUT'
                             };
 
-                            var returnValue = true;
                             $scope.currentRequest = tubularHttp.saveDataAsync(row, request);
 
                             $scope.currentRequest.promise.then(
@@ -1833,16 +1849,14 @@
                                         $scope.$emit('tGrid_OnSuccessfulForm', data);
                                     }, function(error) {
                                         $scope.$emit('tbGrid_OnConnectionError', error);
-                                        returnValue = false;
                                     })
                                 .then(function() {
                                     $scope.currentRequest = null;
                                 });
-
-                            return returnValue;
                         };
 
-                        $scope.create = function() {
+                        $scope.create = function () {
+                            // TODO: Method could be PUT?
                             $scope.currentRequest = tubularHttp.post($scope.serverSaveUrl, $scope.rowModel).promise.then(
                                     function(data) {
                                         $scope.$emit('tbGrid_OnSuccessfulUpdate', data);
@@ -1855,7 +1869,8 @@
                                 });
                         };
 
-                        $scope.save = function() {
+                        $scope.save = function () {
+                            // TODO: Why Save and Create is not the same?ñ
                             if ($scope.rowModel.save() == false) {
                                 $scope.$emit('tbGrid_OnSavingNoChanges', $scope.rowModel);
                             }
@@ -2383,10 +2398,20 @@
                     })
                     .filter(function(el) { return el.length > 1; });
 
+
+                if (params.Search != null && params.Search.Operator == 'Auto') {
+                    var freetext = params.Columns
+                        .filter(function(el) { return el.Searchable; })
+                        .map(function(el) {
+                            return "startswith({0}, {1}) eq true".replace('{0}', el.Name).replace('{1}', params.Search.Text);
+                        });
+
+                    if (freetext.length > 0)
+                        filter.push("(" + freetext.join(' or ') + ")");
+                }
+
                 if (filter.length > 0)
                     url += "&$filter=" + filter.join(' and ');
-
-                // TODO: Free text search
 
                 request.data = null;
                 request.serverUrl = url;
@@ -2449,10 +2474,10 @@
                                 $scope.Model = model;
 
                                 $scope.savePopup = function () {
-                                    var saveResult = $scope.Model.save();
+                                    $scope.Model.save();
 
-                                    if (saveResult)
-                                        dialog.close();
+                                    $scope.$on('tbGrid_OnSuccessfulUpdate', 
+                                        function () { dialog.close(); });
                                 };
 
                                 $scope.closePopup = function() {
@@ -2479,7 +2504,6 @@
                 gridScope.getFullDataSource(function(data) {
                     me.exportToCsv(filename, columns, data);
                 });
-                
             };
 
             me.exportGridToCsv = function(filename, gridScope) {
@@ -2600,14 +2624,16 @@
                     isEditing: '=?',
                     editorType: '@',
                     showLabel: '=?',
-                    label: '=?',
+                    label: '@?',
                     required: '=?',
                     format: '=?',
                     min: '=?',
                     max: '=?',
                     name: '@',
                     defaultValue: '=?',
-                    IsKey: '@'
+                    IsKey: '@',
+                    placeholder: '@?',
+                    readOnly: '=?'
                 };
 
                 me.setupScope = function(scope, defaultFormat) {
@@ -2615,6 +2641,7 @@
                     scope.showLabel = scope.showLabel || false;
                     scope.label = scope.label || (scope.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
                     scope.required = scope.required || false;
+                    scope.readOnly = scope.readOnly || false;
                     scope.format = scope.format || defaultFormat;
                     scope.$valid = true;
                     scope.$editorType = 'input';

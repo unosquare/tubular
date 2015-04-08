@@ -317,38 +317,6 @@ namespace Unosquare.Tubular.ObjectModel
         public string OptionsUrl { get; set; }
     }
 
-    public class GridColumn
-    {
-        public string Name { get; set; }
-        public string Label { get; set; }
-        public bool Sortable { get; set; }
-        public int SortOrder { get; set; }
-        public SortDirection SortDirection { get; set; }
-        public Filter Filter { get; set; }
-        public bool Searchable { get; set; }
-        public string DataType { get; set; }
-    }
-
-    public class GridDataRequest
-    {
-        public int Counter { get; set; }
-        public Filter Search { get; set; }
-        public int Skip { get; set; }
-        public int Take { get; set; }
-        public GridColumn[] Columns { get; set; }
-        public int TimezoneOffset { get; set; }
-    }
-
-    public class GridDataResponse
-    {
-        public int Counter { get; set; }
-        public List<List<object>> Payload { get; set; }
-        public int TotalRecordCount { get; set; }
-        public int FilteredRecordCount { get; set; }
-        public int TotalPages { get; set; }
-        public int CurrentPage { get; set; }
-    }
-
     public class GridDataUpdateRow<T> where T : class
     {
         public T Old { get; set; }
