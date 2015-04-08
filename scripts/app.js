@@ -28,31 +28,36 @@
             $scope.tutorial = [
                 {
                     title: 'Basic Layout with JSON datasource',
-                    body: 'The next grid represents a basic layout, without any additional feature or special column. Just a plain grid using a JSON datasource.',
+                    body: 'First grid shows a basic layout, without any additional feature or special column. Just a plain grid using a JSON datasource.',
                     key: 'sample',
                     next: 'sample2'
                 },
                 {
                     title: 'Grid with Paginations using OData',
-                    body: 'Now we are adding a new feature, the pagination. This demo is using an OData datasource.',
+                    body: 'Adding a new feature: the pagination. This demo is using an OData datasource and you can move across the pages and change the size.',
                     key: 'sample2',
                     next: 'sample3'
                 },
                 {
                     title: 'Grid with common features using OData',
-                    body: 'In this sample, we can sort and filter columns. Press Ctrl key to sort by multiple columns.',
+                    body: 'The grid can be extended to include features like sorting and filtering. Press Ctrl key to sort by multiple columns.',
                     key: 'sample3',
                     next: 'sample4'
                 },
                 {
-                    title: 'Inline editors (read-only)',
-                    body: 'You can add inline editors just defining a Save URL and assigning some controls. This demo is read-only, but you can figure out.',
+                    title: 'Free-text search',
+                    body: 'Adding a "searchable" attribute to your columns and you can perform free-text searches.',
                     key: 'sample4',
+                    next: 'sample5'
+                },
+                {
+                    title: 'Inline editors (read-only)',
+                    body: 'You can add inline editors just defining a Save URL and assigning some controls. This demo is read-only, but you can get the idea.',
+                    key: 'sample5',
                     next: null
                 }
             ];
 
-            $scope.$on('tbGrid_OnBeforeRequest', function(event, eventData) { console.log(eventData); });
             $scope.$on('tbGrid_OnSuccessfulUpdate', function(data) { toastr.success("Record updated"); });
             $scope.$on('tbGrid_OnRemove', function(data) { toastr.success("Record removed"); });
             $scope.$on('tbGrid_OnConnectionError', function(error) { toastr.error(error.statusText || "Connection error"); });
