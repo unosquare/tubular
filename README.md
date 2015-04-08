@@ -3,6 +3,12 @@
 A set of <a href="https://angularjs.org/" target="_blank">AngularJS</a> directives and C# classes designed to rapidly build modern web applications. 
 Tubular features a fully templateable grid with lots of features such as server-side pagination, multi-column sorting and filtering, built-in export to CSV, and in-line editing of rows via templates.
 
+## NuGet Installation
+
+<pre>
+PM> Install-Package Tubular
+</pre>
+
 ## Dependencies
 
 You will need to reference the following JS libraries in order to use Tubular in your HTML:
