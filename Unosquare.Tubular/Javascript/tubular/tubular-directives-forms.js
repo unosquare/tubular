@@ -52,6 +52,9 @@
                                     });
                                 }
 
+                                // Ignores models without state
+                                if (angular.isUndefined($scope.rowModel.$state)) return;
+
                                 if (angular.equals(column.state, $scope.rowModel.$state[column.Name]) == false) {
                                     column.state = $scope.rowModel.$state[column.Name];
                                 }

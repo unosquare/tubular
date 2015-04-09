@@ -65,24 +65,51 @@ div.tubular-overlay {
         border-radius: 4px;
     }
 
-.tubular-overlay {
+.tubular-overlay, .tubular-general-overlay {
     line-height: 20px;
     opacity: 0.4;
     background: white;
 }
 
     .tubular-overlay.ng-hide-add.ng-hide-add-active,
-    .tubular-overlay.ng-hide-remove.ng-hide-remove-active {
+    .tubular-overlay.ng-hide-remove.ng-hide-remove-active,
+    .tubular-general-overlay.ng-hide-add.ng-hide-add-active,
+    .tubular-general-overlay.ng-hide-remove.ng-hide-remove-active {
         -webkit-transition: all linear 0.1s;
         -moz-transition: all linear 0.1s;
         -o-transition: all linear 0.1s;
         transition: all linear 0.1s;
     }
 
-    .tubular-overlay.ng-hide {
+    .tubular-overlay.ng-hide, .tubular-general-overlay.ng-hide {
         line-height: 0;
         opacity: 0;
         padding: 0 10px;
+    }
+
+/* Tubular General Overlay and animation */
+
+div.tubular-general-overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 5000;
+    opacity: 0.4;
+    text-align: center;
+    color: #fff;
+}
+
+    div.tubular-general-overlay > div {
+        position: absolute;
+        background-color: rgb(180,180,180);
+        color: #fff;
+        height: 100%;
+        width: 100%;
+        top: 0;
+        bottom: 0;
+        display: block;
+        right: 15px;
+        border-radius: 4px;
     }
 
 /* Tubular Grid Pager Styles */
@@ -201,9 +228,11 @@ div.fullHeight, .modal-backdrop.in {
 div.tubular-remove-popover {
     min-width: 120px;
 }
-input.ng-pristine+span.help-block.error-block {
+
+input.ng-pristine + span.help-block.error-block {
     display: none;
-} 
+}
+
 .has-error .form-control.ng-pristine {
     border: 1px solid #e7e7e7;
 }

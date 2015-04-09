@@ -8,11 +8,8 @@
                 function isAuthenticationExpired(expirationDate) {
                     var now = new Date();
                     expirationDate = new Date(expirationDate);
-                    if (expirationDate - now > 0) {
-                        return false;
-                    } else {
-                        return true;
-                    }
+
+                    return expirationDate - now <= 0;
                 }
 
                 function saveData() {
@@ -59,16 +56,15 @@
                 me.useCache = true;
 
                 me.isAuthenticated = function() {
-                    if (me.userData.isAuthenticated && !isAuthenticationExpired(me.userData.expirationDate)) {
-                        return true;
-                    } else {
+                    if (!me.userData.isAuthenticated || isAuthenticationExpired(me.userData.expirationDate)) {
                         try {
                             retrieveSavedData();
                         } catch (e) {
                             return false;
                         }
-                        return true;
                     }
+
+                    return true;
                 };
 
                 me.removeAuthentication = function() {
@@ -215,14 +211,14 @@
                     });
                 };
 
-                me.delete = function (url) {
+                me.delete = function(url) {
                     return me.retrieveDataAsync({
                         serverUrl: url,
                         requestMethod: 'DELETE',
                     });
                 };
 
-                me.post = function (url, data) {
+                me.post = function(url, data) {
                     return me.retrieveDataAsync({
                         serverUrl: url,
                         requestMethod: 'POST',
@@ -230,7 +226,7 @@
                     });
                 };
 
-                me.put = function (url, data) {
+                me.put = function(url, data) {
                     return me.retrieveDataAsync({
                         serverUrl: url,
                         requestMethod: 'PUT',
@@ -550,10 +546,11 @@
                         scope.$valid = true;
                         scope.state.$errors = [];
 
+                        // Try to match the model to the parent, if it exists
                         if (angular.isDefined(scope.$parent.Model)) {
                             if (angular.isDefined(scope.$parent.Model[scope.name]))
                                 scope.$parent.Model[scope.name] = newValue;
-                            else
+                            else if (angular.isDefined(scope.$parent.Model.$addField))
                                 scope.$parent.Model.$addField(scope.name, newValue);
                         }
 
@@ -563,6 +560,7 @@
                             return;
                         }
 
+                        // Check if we have a validation function, otherwise return
                         if (angular.isUndefined(scope.validate)) return;
 
                         scope.validate();
@@ -570,6 +568,7 @@
 
                     var parent = scope.$parent;
 
+                    // We try to find a Tubular Form in the parents
                     while (true) {
                         if (parent == null) break;
                         if (angular.isUndefined(parent.tubularDirective) == false &&
