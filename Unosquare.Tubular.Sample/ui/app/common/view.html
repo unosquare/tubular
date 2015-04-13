@@ -11,14 +11,19 @@
                                    show-label="true" required="true"
                                    options-url="api/orders/cities">
                 </tb-typeahead-editor>
-                <tb-numeric-editor min="1" max="100" name="Amount" show-label="true" required="true" format="'C'">
+                <tb-numeric-editor min="1" max="100" name="Amount" show-label="true" 
+                                   required="true" format="'C'">
                 </tb-numeric-editor>
                 <tb-date-editor required="true" name="ShippedDate" show-label="true">
                 </tb-date-editor>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-primary" ng-click="savePopup()" ng-disabled="!Model.$valid()">Save</button>
-                <button class="btn btn-danger" ng-click="closePopup()">Cancel</button>
+                <button class="btn btn-primary" ng-click="savePopup()" ng-disabled="!Model.$valid()">
+                    Save
+                </button>
+                <button class="btn btn-danger" ng-click="closePopup()">
+                    Cancel
+                </button>
             </div>
         </tb-form>
     </script>
