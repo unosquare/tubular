@@ -5,12 +5,12 @@
         .config([
             '$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
                 $routeProvider.
-                    when('/', {
+                    when('/Basic', {
                         templateUrl: 'assets/home.html',
-                        title: 'Home'
                     }).when('/WebApi', {
                         templateUrl: 'assets/webapi.html',
-                        title: 'Home'
+                    }).when('/Generator', {
+                        templateUrl: 'assets/generator.html',
                     }).otherwise({
                         redirectTo: '/'
                     });
@@ -80,7 +80,11 @@
                 $anchorScroll();
             };
         }
-    ]);
+        ]).controller('tubularGeneratorCtrl', ['$scope', function($scope) {
+        $scope.generate = function() {
+            //$templateCache.put('tubulartemplate', result);
+        }
+    }]);
 
     angular.module('app', [
         'ngRoute',

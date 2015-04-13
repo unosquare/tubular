@@ -1,0 +1,27 @@
+﻿<div class="container" ng-controller="tubularGeneratorCtrl">
+    <h1>Tubular Grid Generator</h1>
+    
+    <div class="row">
+        <div class="col-xs-12">
+            <p>First you need to paste and sample model, it could be any JSON and if it has many values much better.</p>
+            <textarea ng-model="basemodel"></textarea>
+            
+            <div class="pull-right">
+                <button class="btn btn-primary btn-lg" ng-click="generate()">
+                    Generate
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row" ng-show="gridmodel">
+        <div class="col-xs-6">
+            <div class="container">
+                <div include src=" 'tubulartemplate' "></div>
+            </div>
+        </div>
+        <div class="col-xs-6">
+            <div hljs source="gridmodel"></div>
+        </div>
+    </div>
+</div>
