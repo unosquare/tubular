@@ -5,7 +5,7 @@
         .config([
             '$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
                 $routeProvider.
-                    when('/Basic', {
+                    when('/', {
                         templateUrl: 'assets/home.html',
                     }).when('/WebApi', {
                         templateUrl: 'assets/webapi.html',
