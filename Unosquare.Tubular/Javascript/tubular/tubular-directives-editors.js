@@ -258,15 +258,15 @@
                 ]
             };
         }
-    ]).directive('tbAutocompleteEditor', [
+    ]).directive('tbTypeaheadEditor', [
         'tubularEditorService', 'tubularHttp', function(tubularEditorService, tubularHttp) {
 
             return {
                 template: '<div ng-class="{ \'form-group\' : isEditing, \'has-error\' : !$valid }">' +
                     '<span ng-hide="isEditing">{{ value }}</span>' +
                     '<label ng-show="showLabel">{{ label }}</label>' +
-                    '<autocomplete ng-show="isEditing" ng-model="value" attr-input-class="form-control" data="options" ' +
-                    'autocomplete-required="required" />' +
+                    '<input ng-show="isEditing" ng-model="value" class="form-control" typeahead="o for o in options | filter:$viewValue | limitTo:8" ' +
+                    'ng-required="required" />' +
                     '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
                     '</div>',
                 restrict: 'E',

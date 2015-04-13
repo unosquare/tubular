@@ -169,7 +169,7 @@
 (function() {
     'use strict';
 
-    angular.module('tubular.directives', ['tubular.services', 'tubular.models', 'LocalStorageModule', 'autocomplete'])
+    angular.module('tubular.directives', ['tubular.services', 'tubular.models', 'LocalStorageModule'])
         .config([
             'localStorageServiceProvider', function(localStorageServiceProvider) {
                 localStorageServiceProvider.setPrefix('tubular');
@@ -1441,15 +1441,15 @@
                 ]
             };
         }
-    ]).directive('tbAutocompleteEditor', [
+    ]).directive('tbTypeaheadEditor', [
         'tubularEditorService', 'tubularHttp', function(tubularEditorService, tubularHttp) {
 
             return {
                 template: '<div ng-class="{ \'form-group\' : isEditing, \'has-error\' : !$valid }">' +
                     '<span ng-hide="isEditing">{{ value }}</span>' +
                     '<label ng-show="showLabel">{{ label }}</label>' +
-                    '<autocomplete ng-show="isEditing" ng-model="value" attr-input-class="form-control" data="options" ' +
-                    'autocomplete-required="required" />' +
+                    '<input ng-show="isEditing" ng-model="value" class="form-control" typeahead="o for o in options | filter:$viewValue | limitTo:8" ' +
+                    'ng-required="required" />' +
                     '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
                     '</div>',
                 restrict: 'E',
@@ -1808,6 +1808,9 @@
                                     });
                                 }
 
+                                // Ignores models without state
+                                if (angular.isUndefined($scope.rowModel.$state)) return;
+
                                 if (angular.equals(column.state, $scope.rowModel.$state[column.Name]) == false) {
                                     column.state = $scope.rowModel.$state[column.Name];
                                 }
@@ -2123,11 +2126,8 @@
                 function isAuthenticationExpired(expirationDate) {
                     var now = new Date();
                     expirationDate = new Date(expirationDate);
-                    if (expirationDate - now > 0) {
-                        return false;
-                    } else {
-                        return true;
-                    }
+
+                    return expirationDate - now <= 0;
                 }
 
                 function saveData() {
@@ -2174,16 +2174,15 @@
                 me.useCache = true;
 
                 me.isAuthenticated = function() {
-                    if (me.userData.isAuthenticated && !isAuthenticationExpired(me.userData.expirationDate)) {
-                        return true;
-                    } else {
+                    if (!me.userData.isAuthenticated || isAuthenticationExpired(me.userData.expirationDate)) {
                         try {
                             retrieveSavedData();
                         } catch (e) {
                             return false;
                         }
-                        return true;
                     }
+
+                    return true;
                 };
 
                 me.removeAuthentication = function() {
@@ -2330,14 +2329,14 @@
                     });
                 };
 
-                me.delete = function (url) {
+                me.delete = function(url) {
                     return me.retrieveDataAsync({
                         serverUrl: url,
                         requestMethod: 'DELETE',
                     });
                 };
 
-                me.post = function (url, data) {
+                me.post = function(url, data) {
                     return me.retrieveDataAsync({
                         serverUrl: url,
                         requestMethod: 'POST',
@@ -2345,7 +2344,7 @@
                     });
                 };
 
-                me.put = function (url, data) {
+                me.put = function(url, data) {
                     return me.retrieveDataAsync({
                         serverUrl: url,
                         requestMethod: 'PUT',
@@ -2354,113 +2353,6 @@
                 };
             }
         ])
-        .service('tubularOData', ['tubularHttp', function tubularOData(tubularHttp) {
-            var me = this;
-
-            // {0} represents column name and {1} represents filter value
-            me.operatorsMapping = {
-                'None': '',
-                'Equals': "{0} eq {1}",
-                'Contains': "substringof({1}, {0}) eq true",
-                'StartsWith': "startswith({0}, {1}) eq true",
-                'EndsWith': "endswith({0}, {1}) eq true",
-                // TODO: 'Between': 'Between', 
-                'Gte': "{0} ge {1}",
-                'Gt': "{0} gt {1}",
-                'Lte': "{0} le {1}",
-                'Lt': "{0} lt {1}",
-            };
-
-            me.retrieveDataAsync = function(request) {
-                var params = request.data;
-                var url = request.serverUrl;
-                url += url.indexOf('?') > 0 ? '&' : '?';
-                url += '$format=json&$inlinecount=allpages';
-
-                url += "&$select=" + params.Columns.map(function(el) { return el.Name; }).join(',');
-                url += "&$skip=" + params.Skip;
-                url += "&$top=" + params.Take;
-
-                var order = params.Columns
-                    .filter(function(el) { return el.SortOrder > 0; })
-                    .sort(function(a, b) { return a.SortOrder - b.SortOrder; })
-                    .map(function(el) { return el.Name + " " + (el.SortDirection == "Descending" ? "desc" : ""); });
-
-                if (order.length > 0)
-                    url += "&$orderby=" + order.join(',');
-
-                var filter = params.Columns
-                    .filter(function(el) { return el.Filter != null && el.Filter.Text != null; })
-                    .map(function(el) {
-                        return me.operatorsMapping[el.Filter.Operator]
-                            .replace('{0}', el.Name)
-                            .replace('{1}', el.DataType == "string" ? "'" + el.Filter.Text + "'" : el.Filter.Text);
-                    })
-                    .filter(function(el) { return el.length > 1; });
-
-
-                if (params.Search != null && params.Search.Operator == 'Auto') {
-                    var freetext = params.Columns
-                        .filter(function(el) { return el.Searchable; })
-                        .map(function(el) {
-                            return "startswith({0}, {1}) eq true".replace('{0}', el.Name).replace('{1}', params.Search.Text);
-                        });
-
-                    if (freetext.length > 0)
-                        filter.push("(" + freetext.join(' or ') + ")");
-                }
-
-                if (filter.length > 0)
-                    url += "&$filter=" + filter.join(' and ');
-
-                request.data = null;
-                request.serverUrl = url;
-
-                var response = tubularHttp.retrieveDataAsync(request);
-
-                var promise = response.promise.then(function(data) {
-                    var result = {
-                        Payload: data.value,
-                        CurrentPage: 1,
-                        TotalPages: 1,
-                        TotalRecordCount: 1,
-                        FilteredRecordCount: 1
-                    };
-
-                    result.TotalRecordCount = data["odata.count"];
-                    result.FilteredRecordCount = result.TotalRecordCount; // TODO: Calculate filtered items
-                    result.TotalPages = parseInt(result.TotalRecordCount / params.Take);
-                    result.CurrentPage = parseInt(1 + ((params.Skip / result.FilteredRecordCount) * result.TotalPages));
-
-                    return result;
-                });
-
-                return {
-                    promise: promise,
-                    cancel: response.cancel
-                };
-            };
-
-            me.saveDataAsync = function (model, request) {
-                tubularHttp.saveDataAsync(model, request); //TODO: Check how to handle
-            };
-
-            me.get = function(url) {
-                tubularHttp.get(url);
-            };
-
-            me.delete = function (url) {
-                tubularHttp.delete(url);
-            };
-
-            me.post = function (url, data) {
-                tubularHttp.post(url, data);
-            };
-
-            me.put = function(url, data) {
-                tubularHttp.put(url, data);
-            };
-        }])
         .service('tubularGridPopupService', [
             '$modal', function tubularGridPopupService($modal) {
                 var me = this;
@@ -2665,10 +2557,11 @@
                         scope.$valid = true;
                         scope.state.$errors = [];
 
+                        // Try to match the model to the parent, if it exists
                         if (angular.isDefined(scope.$parent.Model)) {
                             if (angular.isDefined(scope.$parent.Model[scope.name]))
                                 scope.$parent.Model[scope.name] = newValue;
-                            else
+                            else if (angular.isDefined(scope.$parent.Model.$addField))
                                 scope.$parent.Model.$addField(scope.name, newValue);
                         }
 
@@ -2678,6 +2571,7 @@
                             return;
                         }
 
+                        // Check if we have a validation function, otherwise return
                         if (angular.isUndefined(scope.validate)) return;
 
                         scope.validate();
@@ -2685,6 +2579,7 @@
 
                     var parent = scope.$parent;
 
+                    // We try to find a Tubular Form in the parents
                     while (true) {
                         if (parent == null) break;
                         if (angular.isUndefined(parent.tubularDirective) == false &&
@@ -2695,6 +2590,121 @@
 
                         parent = parent.$parent;
                     }
+                };
+            }
+        ]);
+})();
+///#source 1 1 tubular/tubular-services-odata.js
+(function () {
+    'use strict';
+
+    angular.module('tubular.services')
+        .service('tubularOData', [
+            'tubularHttp', function tubularOData(tubularHttp) {
+                var me = this;
+
+                // {0} represents column name and {1} represents filter value
+                me.operatorsMapping = {
+                    'None': '',
+                    'Equals': "{0} eq {1}",
+                    'Contains': "substringof({1}, {0}) eq true",
+                    'StartsWith': "startswith({0}, {1}) eq true",
+                    'EndsWith': "endswith({0}, {1}) eq true",
+                    // TODO: 'Between': 'Between', 
+                    'Gte': "{0} ge {1}",
+                    'Gt': "{0} gt {1}",
+                    'Lte': "{0} le {1}",
+                    'Lt': "{0} lt {1}",
+                };
+
+                me.retrieveDataAsync = function(request) {
+                    var params = request.data;
+                    var url = request.serverUrl;
+                    url += url.indexOf('?') > 0 ? '&' : '?';
+                    url += '$format=json&$inlinecount=allpages';
+
+                    url += "&$select=" + params.Columns.map(function(el) { return el.Name; }).join(',');
+                    url += "&$skip=" + params.Skip;
+                    url += "&$top=" + params.Take;
+
+                    var order = params.Columns
+                        .filter(function(el) { return el.SortOrder > 0; })
+                        .sort(function(a, b) { return a.SortOrder - b.SortOrder; })
+                        .map(function(el) { return el.Name + " " + (el.SortDirection == "Descending" ? "desc" : ""); });
+
+                    if (order.length > 0)
+                        url += "&$orderby=" + order.join(',');
+
+                    var filter = params.Columns
+                        .filter(function(el) { return el.Filter != null && el.Filter.Text != null; })
+                        .map(function(el) {
+                            return me.operatorsMapping[el.Filter.Operator]
+                                .replace('{0}', el.Name)
+                                .replace('{1}', el.DataType == "string" ? "'" + el.Filter.Text + "'" : el.Filter.Text);
+                        })
+                        .filter(function(el) { return el.length > 1; });
+
+
+                    if (params.Search != null && params.Search.Operator == 'Auto') {
+                        var freetext = params.Columns
+                            .filter(function(el) { return el.Searchable; })
+                            .map(function(el) {
+                                return "startswith({0}, '{1}') eq true".replace('{0}', el.Name).replace('{1}', params.Search.Text);
+                            });
+
+                        if (freetext.length > 0)
+                            filter.push("(" + freetext.join(' or ') + ")");
+                    }
+
+                    if (filter.length > 0)
+                        url += "&$filter=" + filter.join(' and ');
+
+                    request.data = null;
+                    request.serverUrl = url;
+
+                    var response = tubularHttp.retrieveDataAsync(request);
+
+                    var promise = response.promise.then(function(data) {
+                        var result = {
+                            Payload: data.value,
+                            CurrentPage: 1,
+                            TotalPages: 1,
+                            TotalRecordCount: 1,
+                            FilteredRecordCount: 1
+                        };
+
+                        result.TotalRecordCount = data["odata.count"];
+                        result.FilteredRecordCount = result.TotalRecordCount; // TODO: Calculate filtered items
+                        result.TotalPages = parseInt(result.TotalRecordCount / params.Take);
+                        result.CurrentPage = parseInt(1 + ((params.Skip / result.FilteredRecordCount) * result.TotalPages));
+
+                        return result;
+                    });
+
+                    return {
+                        promise: promise,
+                        cancel: response.cancel
+                    };
+                };
+
+                me.saveDataAsync = function(model, request) {
+                    tubularHttp.saveDataAsync(model, request); //TODO: Check how to handle
+                };
+
+                me.get = function(url) {
+                    tubularHttp.get(url);
+                };
+
+                me.delete = function(url) {
+                    tubularHttp.delete(url);
+                };
+
+                me.post = function(url, data) {
+                    tubularHttp.post(url, data);
+                };
+
+                me.put = function(url, data) {
+                    tubularHttp.put(url, data);
                 };
             }
         ]);
@@ -3373,306 +3383,6 @@
     function repeat(str, n) { return (n == 0) ? "" : Array(n + 1).join(str); }
 
 })(jQuery);
-///#source 1 1 allmighty-autocomplete/autocomplete.js
-/* --- Made by justgoscha and licensed under MIT license --- */
-
-var app = angular.module('autocomplete', []);
-
-app.directive('autocomplete', function() {
-  var index = -1;
-
-  return {
-    restrict: 'E',
-    scope: {
-      searchParam: '=ngModel',
-      suggestions: '=data',
-      onType: '=onType',
-      onSelect: '=onSelect',
-      autocompleteRequired: '='
-    },
-    controller: ['$scope', function($scope){
-      // the index of the suggestions that's currently selected
-      $scope.selectedIndex = -1;
-
-      $scope.initLock = true;
-
-      // set new index
-      $scope.setIndex = function(i){
-        $scope.selectedIndex = parseInt(i);
-      };
-
-      this.setIndex = function(i){
-        $scope.setIndex(i);
-        $scope.$apply();
-      };
-
-      $scope.getIndex = function(i){
-        return $scope.selectedIndex;
-      };
-
-      // watches if the parameter filter should be changed
-      var watching = true;
-
-      // autocompleting drop down on/off
-      $scope.completing = false;
-
-      // starts autocompleting on typing in something
-      $scope.$watch('searchParam', function(newValue, oldValue){
-
-        if (oldValue === newValue || (!oldValue && $scope.initLock)) {
-          return;
-        }
-
-        if(watching && typeof $scope.searchParam !== 'undefined' && $scope.searchParam !== null) {
-          $scope.completing = true;
-          $scope.searchFilter = $scope.searchParam;
-          $scope.selectedIndex = -1;
-        }
-
-        // function thats passed to on-type attribute gets executed
-        if($scope.onType)
-          $scope.onType($scope.searchParam);
-      });
-
-      // for hovering over suggestions
-      this.preSelect = function(suggestion){
-
-        watching = false;
-
-        // this line determines if it is shown
-        // in the input field before it's selected:
-        //$scope.searchParam = suggestion;
-
-        $scope.$apply();
-        watching = true;
-
-      };
-
-      $scope.preSelect = this.preSelect;
-
-      this.preSelectOff = function(){
-        watching = true;
-      };
-
-      $scope.preSelectOff = this.preSelectOff;
-
-      // selecting a suggestion with RIGHT ARROW or ENTER
-      $scope.select = function(suggestion){
-        if(suggestion){
-          $scope.searchParam = suggestion;
-          $scope.searchFilter = suggestion;
-          if($scope.onSelect)
-            $scope.onSelect(suggestion);
-        }
-        watching = false;
-        $scope.completing = false;
-        setTimeout(function(){watching = true;},1000);
-        $scope.setIndex(-1);
-      };
-
-
-    }],
-    link: function(scope, element, attrs){
-
-      setTimeout(function() {
-        scope.initLock = false;
-        scope.$apply();
-      }, 250);
-
-      var attr = '';
-
-      // Default atts
-      scope.attrs = {
-        "placeholder": "start typing...",
-        "class": "",
-        "id": "",
-        "inputclass": "",
-        "inputid": ""
-      };
-
-      for (var a in attrs) {
-        attr = a.replace('attr', '').toLowerCase();
-        // add attribute overriding defaults
-        // and preventing duplication
-        if (a.indexOf('attr') === 0) {
-          scope.attrs[attr] = attrs[a];
-        }
-      }
-
-      if (attrs.clickActivation) {
-        element[0].onclick = function(e){
-          if(!scope.searchParam){
-            setTimeout(function() {
-              scope.completing = true;
-              scope.$apply();
-            }, 200);
-          }
-        };
-      }
-
-      var key = {left: 37, up: 38, right: 39, down: 40 , enter: 13, esc: 27, tab: 9};
-
-      document.addEventListener("keydown", function(e){
-        var keycode = e.keyCode || e.which;
-
-        switch (keycode){
-          case key.esc:
-            // disable suggestions on escape
-            scope.select();
-            scope.setIndex(-1);
-            scope.$apply();
-            e.preventDefault();
-        }
-      }, true);
-
-      document.addEventListener("blur", function(e){
-        // disable suggestions on blur
-        // we do a timeout to prevent hiding it before a click event is registered
-        setTimeout(function() {
-          scope.select();
-          scope.setIndex(-1);
-          scope.$apply();
-        }, 150);
-      }, true);
-
-      element[0].addEventListener("keydown",function (e){
-        var keycode = e.keyCode || e.which;
-
-        var l = angular.element(this).find('li').length;
-
-        // this allows submitting forms by pressing Enter in the autocompleted field
-        if(!scope.completing || l == 0) return;
-
-        // implementation of the up and down movement in the list of suggestions
-        switch (keycode){
-          case key.up:
-
-            index = scope.getIndex()-1;
-            if(index<-1){
-              index = l-1;
-            } else if (index >= l ){
-              index = -1;
-              scope.setIndex(index);
-              scope.preSelectOff();
-              break;
-            }
-            scope.setIndex(index);
-
-            if(index!==-1)
-              scope.preSelect(angular.element(angular.element(this).find('li')[index]).text());
-
-            scope.$apply();
-
-            break;
-          case key.down:
-            index = scope.getIndex()+1;
-            if(index<-1){
-              index = l-1;
-            } else if (index >= l ){
-              index = -1;
-              scope.setIndex(index);
-              scope.preSelectOff();
-              scope.$apply();
-              break;
-            }
-            scope.setIndex(index);
-
-            if(index!==-1)
-              scope.preSelect(angular.element(angular.element(this).find('li')[index]).text());
-
-            break;
-          case key.left:
-            break;
-          case key.right:
-          case key.enter:
-          case key.tab:
-
-            index = scope.getIndex();
-            // scope.preSelectOff();
-            if(index !== -1) {
-              scope.select(angular.element(angular.element(this).find('li')[index]).text());
-              if(keycode == key.enter) {
-                e.preventDefault();
-              }
-            } else {
-              if(keycode == key.enter) {
-                scope.select();
-              }
-            }
-            scope.setIndex(-1);
-            scope.$apply();
-
-            break;
-          case key.esc:
-            // disable suggestions on escape
-            scope.select();
-            scope.setIndex(-1);
-            scope.$apply();
-            e.preventDefault();
-            break;
-          default:
-            return;
-        }
-
-      });
-    },
-    template: '\
-        <div class="autocomplete {{ attrs.class }}" id="{{ attrs.id }}">\
-          <input\
-            type="text"\
-            ng-model="searchParam"\
-            placeholder="{{ attrs.placeholder }}"\
-            class="{{ attrs.inputclass }}"\
-            id="{{ attrs.inputid }}"\
-            ng-required="{{ autocompleteRequired }}" />\
-          <ul ng-show="completing && (suggestions | filter:searchFilter).length > 0">\
-            <li\
-              suggestion\
-              ng-repeat="suggestion in suggestions | filter:searchFilter | orderBy:\'toString()\' track by $index"\
-              index="{{ $index }}"\
-              val="{{ suggestion }}"\
-              ng-class="{ active: ($index === selectedIndex) }"\
-              ng-click="select(suggestion)"\
-              ng-bind-html="suggestion | highlight:searchParam"></li>\
-          </ul>\
-        </div>'
-  };
-});
-
-app.filter('highlight', ['$sce', function ($sce) {
-  return function (input, searchParam) {
-    if (typeof input === 'function') return '';
-    if (searchParam) {
-      var words = '(' +
-            searchParam.split(/\ /).join(' |') + '|' +
-            searchParam.split(/\ /).join('|') +
-          ')',
-          exp = new RegExp(words, 'gi');
-      if (words.length) {
-        input = input.replace(exp, "<span class=\"highlight\">$1</span>");
-      }
-    }
-    return $sce.trustAsHtml(input);
-  };
-}]);
-
-app.directive('suggestion', function(){
-  return {
-    restrict: 'A',
-    require: '^autocomplete', // ^look for controller on parents element
-    link: function(scope, element, attrs, autoCtrl){
-      element.bind('mouseenter', function() {
-        autoCtrl.preSelect(attrs.val);
-        autoCtrl.setIndex(attrs.index);
-      });
-
-      element.bind('mouseleave', function() {
-        autoCtrl.preSelectOff();
-      });
-    }
-  };
-});
-
 ///#source 1 1 blob-js/blob.js
 /* Blob.js
  * A Blob implementation.

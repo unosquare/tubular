@@ -2,12 +2,12 @@
     <tb-form server-url="/api/orders/" server-save-url="/api/orders/save">
         <div class="row">
             <div class="col-md-10">
-                <h3>Edit Order - {{Model.OrderID}}</h3>
+                <h3>Edit Order <small>{{Model.OrderID}}</small></h3>
 
                 <tb-simple-editor min="3" show-label="true" name="CustomerName">
                 </tb-simple-editor>
                 <tb-dropdown-editor name="ShipperCity" value="Model.ShipperCity" state="Model.$state.ShipperCity"
-                                         show-label="true" label="'Shipper City'" required="true"
+                                         show-label="true" required="true"
                                          options-url="api/orders/cities">
                 </tb-dropdown-editor>
 
@@ -15,14 +15,14 @@
                 </tb-numeric-editor>
 
                 <tb-date-editor name="ShippedDate" required="true"
-                                     format="'dd-MM-yyyy'" show-label="true" label="'Shipped Date please'">
+                                     format="'dd-MM-yyyy'" show-label="true" label="Shipped Date please">
                 </tb-date-editor>
 
                 <tb-hidden-field name="OrderID" is-key="true" value="Model.OrderID">
                 </tb-hidden-field>
 
                 <div class="form-control">
-                    <tb-checkbox-field value="Model.IsShipped" name="IsShipped" show-label="true" label="'Is Shipped?'">
+                    <tb-checkbox-field value="Model.IsShipped" name="IsShipped" show-label="true" label="Is Shipped?">
                     </tb-checkbox-field>
                 </div>
 

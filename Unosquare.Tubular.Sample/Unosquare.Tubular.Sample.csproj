@@ -144,7 +144,6 @@
     <Content Include="ui\app\common\view.html" />
     <Content Include="ui\media\favicon.ico" />
     <Content Include="ui\media\favicon.png" />
-    <Content Include="ui\styles\main.css" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>

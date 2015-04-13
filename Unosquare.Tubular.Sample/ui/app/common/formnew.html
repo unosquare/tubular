@@ -7,11 +7,11 @@
                 <tb-simple-editor min="3" show-label="true" name="CustomerName">
                 </tb-simple-editor>
                 <tb-dropdown-editor name="ShipperCity" value="Model.ShipperCity" state="Model.$state.ShipperCity"
-                                         show-label="true" label="'Shipper City'" required="true"
+                                         show-label="true" required="true"
                                          options-url="api/orders/cities">
                 </tb-dropdown-editor>
                 <tb-numeric-editor name="Amount" value="Model.Amount" min="1" max="100" state="Model.$state.Amount"
-                                        show-label="true" label="'Amount'" required="true" default-value="100">
+                                        show-label="true" required="true" default-value="100">
                 </tb-numeric-editor>
 
                 <tb-date-editor name="ShippedDate" required="true" format="'dd-MM-yyyy'" show-label="true" 

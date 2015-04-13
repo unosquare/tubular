@@ -7,10 +7,10 @@
             <div class="modal-body">
                 <tb-simple-editor min="3" show-label="true" name="CustomerName">
                 </tb-simple-editor>
-                <tb-autocomplete-editor value="Model.ShipperCity" name="ShipperCity"
-                                                          show-label="true" label="'Shipper City'" required="true"
-                                                          options-url="api/orders/cities">
-                </tb-autocomplete-editor>
+                <tb-typeahead-editor value="Model.ShipperCity" name="ShipperCity"
+                                   show-label="true" required="true"
+                                   options-url="api/orders/cities">
+                </tb-typeahead-editor>
                 <tb-numeric-editor min="1" max="100" name="Amount" show-label="true" required="true" format="'C'">
                 </tb-numeric-editor>
                 <tb-date-editor required="true" name="ShippedDate" show-label="true">
