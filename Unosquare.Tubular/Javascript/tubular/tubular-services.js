@@ -254,8 +254,10 @@
                                         function () { dialog.close(); });
                                 };
 
-                                $scope.closePopup = function() {
-                                    $scope.Model.revertChanges();
+                                $scope.closePopup = function () {
+                                    if (angular.isDefined($scope.Model.revertChanges))
+                                        $scope.Model.revertChanges();
+
                                     dialog.close();
                                 };
                             }
@@ -407,7 +409,8 @@
                     defaultValue: '=?',
                     IsKey: '@',
                     placeholder: '@?',
-                    readOnly: '=?'
+                    readOnly: '=?',
+                    help: '@?'
                 };
 
                 me.setupScope = function(scope, defaultFormat) {

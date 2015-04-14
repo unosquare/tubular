@@ -342,6 +342,7 @@
                     '<span ng-show="showLabel">{{label}}</span>' +
                     '</label>' +
                     '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
+                    '<span class="help-block" ng-show="isEditing && help">{{help}}</span>' +
                     '</div>',
                 restrict: 'E',
                 replace: true,
