@@ -126,6 +126,7 @@
 
                             $scope.retrieveData = function() {
                                 $scope.pageSize = $scope.pageSize || 20;
+                                var page = $scope.requestedPage == 0 ? 1 : $scope.requestedPage;
 
                                 var request = {
                                     serverUrl: $scope.serverUrl,
@@ -134,7 +135,7 @@
                                     data: {
                                         Count: $scope.requestCounter,
                                         Columns: $scope.columns,
-                                        Skip: ($scope.requestedPage - 1) * $scope.pageSize,
+                                        Skip: (page - 1) * $scope.pageSize,
                                         Take: parseInt($scope.pageSize),
                                         Search: $scope.search,
                                         TimezoneOffset: new Date().getTimezoneOffset()
