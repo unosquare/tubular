@@ -11,7 +11,7 @@ Tubular features a fully templateable grid with lots of features such as server-
 PM> Install-Package Tubular
 </pre>
 
-### Package containing the server-side stuff
+### Package containing the server-side stuff (which also installs the client-side stuff)
 
 <pre>
 PM> Install-Package Tubular.ServerSide
