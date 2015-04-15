@@ -348,22 +348,28 @@
                                     });
                             };
 
-                            $scope.updateRow = function(row) {
+                            $scope.updateRow = function(row, externalSave) {
+                                row.$isLoading = true;
+
                                 var request = {
                                     serverUrl: $scope.serverSaveUrl,
                                     requestMethod: 'PUT',
                                     timeout: $scope.requestTimeout
                                 };
 
-                                $scope.currentRequest = $scope.gridDataService.saveDataAsync(row, request);
+                                var requestObj = $scope.gridDataService.saveDataAsync(row, request);
 
-                                $scope.currentRequest.promise.then(
+                                if (externalSave == false)
+                                    $scope.currentRequest = requestObj;
+
+                                requestObj.promise.then(
                                         function(data) {
                                             $scope.$emit('tbGrid_OnSuccessfulUpdate', data);
                                         }, function(error) {
                                             $scope.$emit('tbGrid_OnConnectionError', error);
                                         })
                                     .then(function() {
+                                        row.$isLoading = false;
                                         $scope.currentRequest = null;
                                     });
                             };
@@ -2073,8 +2079,8 @@
                             return true;
                         };
 
-                        obj.save = function () {
-                            return obj.$hasChanges ? $scope.updateRow(obj) : false;
+                        obj.save = function (externalSave) {
+                            return obj.$hasChanges ? $scope.updateRow(obj, externalSave) : false;
                         };
 
                         obj.edit = function() {
@@ -2368,8 +2374,8 @@
                                 $scope.Model = model;
 
                                 $scope.savePopup = function () {
-                                    $scope.Model.save();
-
+                                    $scope.Model.save(true);
+                                    
                                     $scope.$on('tbGrid_OnSuccessfulUpdate', 
                                         function () { dialog.close(); });
                                 };

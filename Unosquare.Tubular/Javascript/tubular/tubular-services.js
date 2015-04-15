@@ -248,8 +248,8 @@
                                 $scope.Model = model;
 
                                 $scope.savePopup = function () {
-                                    $scope.Model.save();
-
+                                    $scope.Model.save(true);
+                                    
                                     $scope.$on('tbGrid_OnSuccessfulUpdate', 
                                         function () { dialog.close(); });
                                 };

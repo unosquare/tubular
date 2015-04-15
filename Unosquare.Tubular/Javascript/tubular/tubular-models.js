@@ -172,8 +172,8 @@
                             return true;
                         };
 
-                        obj.save = function () {
-                            return obj.$hasChanges ? $scope.updateRow(obj) : false;
+                        obj.save = function (externalSave) {
+                            return obj.$hasChanges ? $scope.updateRow(obj, externalSave) : false;
                         };
 
                         obj.edit = function() {
