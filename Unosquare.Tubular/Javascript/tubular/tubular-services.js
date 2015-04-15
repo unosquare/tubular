@@ -153,7 +153,9 @@
                     return JSON.stringify(output);
                 };
 
-                me.retrieveDataAsync = function(request) {
+                me.retrieveDataAsync = function (request) {
+                    if (me.isAuthenticated() == false) return false;
+
                     var checksum = me.checksum(request);
 
                     var canceller = $q.defer();
@@ -176,13 +178,12 @@
                         }
                     }
 
-                    // TODO: Check Unauthorize error and send revalidation
                     var promise = $http({
                         url: request.serverUrl,
                         method: request.requestMethod,
                         data: request.data,
                         timeout: canceller.promise
-                    }).then(function(response) {
+                    }).then(function (response) {
                         $timeout.cancel(timeoutHanlder);
 
                         if (me.useCache) {
@@ -190,6 +191,14 @@
                         }
 
                         return response.data;
+                    }, function(error) {
+                        if (angular.isDefined(error) && angular.isDefined(error.status) && error.status == 401) {
+                            if (me.isAuthenticated()) {
+                                me.removeAuthentication();
+                                // Let's trigger a refresh
+                                document.location = document.location;
+                            }
+                        }
                     });
 
                     request.timeout = request.timeout || 15000;
