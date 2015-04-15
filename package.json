@@ -1,7 +1,7 @@
 {
     "name": "tubular",
     "filename": "tubular-bundle.min.js",
-    "version": "0.9.1",
+    "version": "0.9.2",
     "description": "A set of AngularJS directives and designed to rapidly build modern web applications. ",
     "repository": {
         "type": "git",
@@ -16,22 +16,5 @@
     "contributors": [ { "name": "Geovanni Perez", "email": "geovanni.perez@gmail.com" } ],
     "license": "MIT",
     "homepage": "http://unosquare.github.io/tubular",
-    "autoupdate": {
-        "source": "git",
-        "target": "git://github.com/unosquare/tubular",
-        "basePath": "Unosquare.Tubular/Javascript",
-        "files": [
-            "*.js",
-            "*.css"
-        ]
-    },
-    "npmName": "allmighty-autocomplete",
-    "npmFileMap": [
-        {
-            "basePath": "Unosquare.Tubular/Javascript",
-            "files": [
-                "*"
-            ]
-        }
-    ]
+    "main": "dist"
 }
