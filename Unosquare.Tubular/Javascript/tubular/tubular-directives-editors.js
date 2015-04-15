@@ -259,13 +259,13 @@
             };
         }
     ]).directive('tbTypeaheadEditor', [
-        'tubularEditorService', 'tubularHttp', function(tubularEditorService, tubularHttp) {
+        'tubularEditorService', 'tubularHttp', '$q', function (tubularEditorService, tubularHttp, $q) {
 
             return {
                 template: '<div ng-class="{ \'form-group\' : isEditing, \'has-error\' : !$valid }">' +
                     '<span ng-hide="isEditing">{{ value }}</span>' +
                     '<label ng-show="showLabel">{{ label }}</label>' +
-                    '<input ng-show="isEditing" ng-model="value" class="form-control" typeahead="o for o in options | filter:$viewValue | limitTo:8" ' +
+                    '<input ng-show="isEditing" ng-model="value" class="form-control" typeahead="o for o in getValues($viewValue)" ' +
                     'ng-required="required" />' +
                     '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
                     '</div>',
@@ -277,37 +277,18 @@
                     '$scope', function($scope) {
                         tubularEditorService.setupScope($scope);
                         $scope.$editorType = 'select';
-                        $scope.dataIsLoaded = false;
 
-                        $scope.loadData = function() {
-                            if ($scope.dataIsLoaded) return;
-
-                            var currentRequest = tubularHttp.retrieveDataAsync({
-                                serverUrl: $scope.optionsUrl,
-                                requestMethod: 'GET' // TODO: RequestMethod
-                            });
-
-                            var value = $scope.value;
-                            $scope.value = '';
-
-                            currentRequest.promise.then(
-                                function(data) {
-                                    $scope.options = data;
-                                    $scope.dataIsLoaded = true;
-                                    $scope.value = value;
-                                }, function(error) {
-                                    $scope.$emit('tbGrid_OnConnectionError', error);
-                                });
-                        };
-
-                        if (angular.isUndefined($scope.optionsUrl) == false) {
-                            if ($scope.isEditing) {
-                                $scope.loadData();
-                            } else {
-                                $scope.$watch('isEditing', function() {
-                                    if ($scope.isEditing) $scope.loadData();
-                                });
+                        $scope.getValues = function (val) {
+                            if (angular.isDefined($scope.optionsUrl)) {
+                                return tubularHttp.retrieveDataAsync({
+                                    serverUrl: $scope.optionsUrl + '?search=' + val,
+                                    requestMethod: 'GET' // TODO: RequestMethod
+                                }).promise;
                             }
+
+                            return $q(function(resolve, reject) {
+                                resolve($scope.options);
+                            });
                         }
                     }
                 ]
