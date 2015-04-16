@@ -18,8 +18,8 @@
     <file>tubular/tubular-directives-forms.js</file>
     <file>tubular/tubular-models.js</file>
     <file>tubular/tubular-services.js</file>
+    <file>tubular/tubular-services-http.js</file>
     <file>tubular/tubular-services-odata.js</file>
     <file>tadaaapickr/tadaaapickr.pack.js</file>
-    <file>blob-js/blob.js</file>
   </files>
 </bundle>

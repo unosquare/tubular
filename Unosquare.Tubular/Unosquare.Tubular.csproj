@@ -58,7 +58,6 @@
       <DependentUpon>tubular-bundle.css</DependentUpon>
     </Content>
     <Content Include="Css\tubular\tubular.css" />
-    <Content Include="Javascript\blob-js\blob.js" />
     <Content Include="Javascript\tadaaapickr\tadaaapickr.pack.js" />
     <Content Include="Javascript\tubular-bundle.js">
       <DependentUpon>tubular-bundle.js.bundle</DependentUpon>
@@ -85,6 +84,10 @@
     <Content Include="Javascript\tubular\tubular-models.js" />
     <Content Include="Javascript\tubular\tubular-models.min.js">
       <DependentUpon>tubular-models.js</DependentUpon>
+    </Content>
+    <Content Include="Javascript\tubular\tubular-services-http.js" />
+    <Content Include="Javascript\tubular\tubular-services-http.min.js">
+      <DependentUpon>tubular-services-http.js</DependentUpon>
     </Content>
     <Content Include="Javascript\tubular\tubular-services-odata.js" />
     <Content Include="Javascript\tubular\tubular-services-odata.min.js">
@@ -127,6 +130,9 @@
     </None>
     <None Include="Javascript\tubular\tubular-directives.min.js.map">
       <DependentUpon>tubular-directives.min.js</DependentUpon>
+    </None>
+    <None Include="Javascript\tubular\tubular-services-http.min.js.map">
+      <DependentUpon>tubular-services-http.min.js</DependentUpon>
     </None>
     <None Include="Javascript\tubular\tubular-services-odata.min.js.map">
       <DependentUpon>tubular-services-odata.min.js</DependentUpon>

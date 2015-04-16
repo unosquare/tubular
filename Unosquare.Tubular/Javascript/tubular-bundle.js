@@ -1953,267 +1953,7 @@
 (function() {
     'use strict';
 
-    // User Service based on https://bitbucket.org/david.antaramian/so-21662778-spa-authentication-example
     angular.module('tubular.services', ['ui.bootstrap'])
-        .service('tubularHttp', [
-            '$http', '$timeout', '$q', '$cacheFactory', '$cookieStore', function tubularHttp($http, $timeout, $q, $cacheFactory, $cookieStore) {
-                function isAuthenticationExpired(expirationDate) {
-                    var now = new Date();
-                    expirationDate = new Date(expirationDate);
-
-                    return expirationDate - now <= 0;
-                }
-
-                function saveData() {
-                    removeData();
-                    $cookieStore.put('auth_data', me.userData);
-                }
-
-                function removeData() {
-                    $cookieStore.remove('auth_data');
-                }
-
-                function retrieveSavedData() {
-                    var savedData = $cookieStore.get('auth_data');
-                    if (typeof savedData === 'undefined') {
-                        throw new Exception('No authentication data exists');
-                    } else if (isAuthenticationExpired(savedData.expirationDate)) {
-                        throw new Exception('Authentication token has already expired');
-                    } else {
-                        me.userData = savedData;
-                        setHttpAuthHeader();
-                    }
-                }
-
-                function clearUserData() {
-                    me.userData.isAuthenticated = false;
-                    me.userData.username = '';
-                    me.userData.bearerToken = '';
-                    me.userData.expirationDate = null;
-                }
-
-                function setHttpAuthHeader() {
-                    $http.defaults.headers.common.Authorization = 'Bearer ' + me.userData.bearerToken;
-                }
-
-                var me = this;
-                me.userData = {
-                    isAuthenticated: false,
-                    username: '',
-                    bearerToken: '',
-                    expirationDate: null,
-                };
-
-                me.cache = $cacheFactory('tubularHttpCache');
-                me.useCache = true;
-                me.requireAuthentication = true;
-
-                me.isAuthenticated = function() {
-                    if (!me.userData.isAuthenticated || isAuthenticationExpired(me.userData.expirationDate)) {
-                        try {
-                            retrieveSavedData();
-                        } catch (e) {
-                            return false;
-                        }
-                    }
-
-                    return true;
-                };
-
-                me.setRequireAuthentication = function(val) {
-                    me.requireAuthentication = val;
-                };
-
-                me.removeAuthentication = function() {
-                    removeData();
-                    clearUserData();
-                    $http.defaults.headers.common.Authorization = null;
-                };
-
-                me.authenticate = function(username, password, successCallback, errorCallback, persistData) {
-                    this.removeAuthentication();
-                    var config = {
-                        method: 'POST',
-                        url: '/api/token',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded',
-                        },
-                        data: 'grant_type=password&username=' + username + '&password=' + password,
-                    };
-
-                    $http(config)
-                        .success(function(data) {
-                            me.userData.isAuthenticated = true;
-                            me.userData.username = data.userName;
-                            me.userData.bearerToken = data.access_token;
-                            me.userData.expirationDate = new Date(data['.expires']);
-                            setHttpAuthHeader();
-                            if (persistData === true) {
-                                saveData();
-                            }
-                            if (typeof successCallback === 'function') {
-                                successCallback();
-                            }
-                        })
-                        .error(function(data) {
-                            if (typeof errorCallback === 'function') {
-                                if (data.error_description) {
-                                    errorCallback(data.error_description);
-                                } else {
-                                    errorCallback('Unable to contact server; please, try again later.');
-                                }
-                            }
-                        });
-                };
-
-                me.saveDataAsync = function(model, request) {
-                    var clone = angular.copy(model);
-                    var originalClone = angular.copy(model.$original);
-
-                    delete clone.$isEditing;
-                    delete clone.$hasChanges;
-                    delete clone.$selected;
-                    delete clone.$original;
-                    delete clone.$state;
-                    delete clone.$valid;
-
-                    request.data = {
-                        Old: originalClone,
-                        New: clone
-                    };
-
-                    var dataRequest = me.retrieveDataAsync(request);
-
-                    dataRequest.promise.then(function(data) {
-                        model.$hasChanges = false;
-                        model.resetOriginal();
-                        return data;
-                    });
-
-                    return dataRequest;
-                };
-
-                me.getExpirationDate = function() {
-                    var date = new Date();
-                    var minutes = 5;
-                    return new Date(date.getTime() + minutes * 60000);
-                }
-
-                me.checksum = function(obj) {
-                    var keys = Object.keys(obj).sort();
-                    var output = [], prop;
-                    for (var i = 0; i < keys.length; i++) {
-                        prop = keys[i];
-                        output.push(prop);
-                        output.push(obj[prop]);
-                    }
-                    return JSON.stringify(output);
-                };
-
-                me.retrieveDataAsync = function (request) {
-                    var canceller = $q.defer();
-
-                    var cancel = function(reason) {
-                        console.error(reason);
-                        canceller.resolve(reason);
-                    };
-
-                    if (angular.isString(request.requireAuthentication))
-                        request.requireAuthentication = request.requireAuthentication == "true";
-                    else
-                        request.requireAuthentication = request.requireAuthentication || me.requireAuthentication;
-
-                    if (request.requireAuthentication && me.isAuthenticated() == false) {
-                        // Return empty dataset
-                        return {
-                            promise: $q(function(resolve, reject) {
-                                resolve(null);
-                            }),
-                            cancel: cancel
-                        };
-                    }
-
-                    var checksum = me.checksum(request);
-
-                    if ((request.requestMethod == 'GET' || request.requestMethod == 'POST') && me.useCache) {
-                        var data = me.cache.get(checksum);
-
-                        if (angular.isDefined(data) && data.Expiration.getTime() > new Date().getTime()) {
-                            return {
-                                promise: $q(function(resolve, reject) {
-                                    resolve(data.Set);
-                                }),
-                                cancel: cancel
-                            };
-                        }
-                    }
-
-                    var promise = $http({
-                        url: request.serverUrl,
-                        method: request.requestMethod,
-                        data: request.data,
-                        timeout: canceller.promise
-                    }).then(function (response) {
-                        $timeout.cancel(timeoutHanlder);
-
-                        if (me.useCache) {
-                            me.cache.put(checksum, { Expiration: me.getExpirationDate(), Set: response.data });
-                        }
-
-                        return response.data;
-                    }, function(error) {
-                        if (angular.isDefined(error) && angular.isDefined(error.status) && error.status == 401) {
-                            if (me.isAuthenticated()) {
-                                me.removeAuthentication();
-                                // Let's trigger a refresh
-                                document.location = document.location;
-                            }
-                        }
-                    });
-
-                    request.timeout = request.timeout || 15000;
-
-                    var timeoutHanlder = $timeout(function() {
-                        cancel('Timed out');
-                    }, request.timeout);
-
-                    return {
-                        promise: promise,
-                        cancel: cancel
-                    };
-                };
-
-                me.get = function(url) {
-                    return me.retrieveDataAsync({
-                        serverUrl: url,
-                        requestMethod: 'GET',
-                    });
-                };
-
-                me.delete = function(url) {
-                    return me.retrieveDataAsync({
-                        serverUrl: url,
-                        requestMethod: 'DELETE',
-                    });
-                };
-
-                me.post = function(url, data) {
-                    return me.retrieveDataAsync({
-                        serverUrl: url,
-                        requestMethod: 'POST',
-                        data: data
-                    });
-                };
-
-                me.put = function(url, data) {
-                    return me.retrieveDataAsync({
-                        serverUrl: url,
-                        requestMethod: 'PUT',
-                        data: data
-                    });
-                };
-            }
-        ])
         .service('tubularPopupService', [
             '$modal', function tubularPopupService($modal) {
                 var me = this;
@@ -2455,6 +2195,271 @@
                 };
             }
         ]);
+})();
+///#source 1 1 tubular/tubular-services-http.js
+(function () {
+    'use strict';
+
+    // User Service based on https://bitbucket.org/david.antaramian/so-21662778-spa-authentication-example
+    angular.module('tubular.services').service('tubularHttp', [
+        '$http', '$timeout', '$q', '$cacheFactory', '$cookieStore', function tubularHttp($http, $timeout, $q, $cacheFactory, $cookieStore) {
+            function isAuthenticationExpired(expirationDate) {
+                var now = new Date();
+                expirationDate = new Date(expirationDate);
+
+                return expirationDate - now <= 0;
+            }
+
+            function saveData() {
+                removeData();
+                $cookieStore.put('auth_data', me.userData);
+            }
+
+            function removeData() {
+                $cookieStore.remove('auth_data');
+            }
+
+            function retrieveSavedData() {
+                var savedData = $cookieStore.get('auth_data');
+                if (typeof savedData === 'undefined') {
+                    throw new Exception('No authentication data exists');
+                } else if (isAuthenticationExpired(savedData.expirationDate)) {
+                    throw new Exception('Authentication token has already expired');
+                } else {
+                    me.userData = savedData;
+                    setHttpAuthHeader();
+                }
+            }
+
+            function clearUserData() {
+                me.userData.isAuthenticated = false;
+                me.userData.username = '';
+                me.userData.bearerToken = '';
+                me.userData.expirationDate = null;
+            }
+
+            function setHttpAuthHeader() {
+                $http.defaults.headers.common.Authorization = 'Bearer ' + me.userData.bearerToken;
+            }
+
+            var me = this;
+            me.userData = {
+                isAuthenticated: false,
+                username: '',
+                bearerToken: '',
+                expirationDate: null,
+            };
+
+            me.cache = $cacheFactory('tubularHttpCache');
+            me.useCache = true;
+            me.requireAuthentication = true;
+
+            me.isAuthenticated = function() {
+                if (!me.userData.isAuthenticated || isAuthenticationExpired(me.userData.expirationDate)) {
+                    try {
+                        retrieveSavedData();
+                    } catch (e) {
+                        return false;
+                    }
+                }
+
+                return true;
+            };
+
+            me.setRequireAuthentication = function(val) {
+                me.requireAuthentication = val;
+            };
+
+            me.removeAuthentication = function() {
+                removeData();
+                clearUserData();
+                $http.defaults.headers.common.Authorization = null;
+            };
+
+            me.authenticate = function(username, password, successCallback, errorCallback, persistData) {
+                this.removeAuthentication();
+                var config = {
+                    method: 'POST',
+                    url: '/api/token',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    data: 'grant_type=password&username=' + username + '&password=' + password,
+                };
+
+                $http(config)
+                    .success(function(data) {
+                        me.userData.isAuthenticated = true;
+                        me.userData.username = data.userName;
+                        me.userData.bearerToken = data.access_token;
+                        me.userData.expirationDate = new Date(data['.expires']);
+                        setHttpAuthHeader();
+                        if (persistData === true) {
+                            saveData();
+                        }
+                        if (typeof successCallback === 'function') {
+                            successCallback();
+                        }
+                    })
+                    .error(function(data) {
+                        if (typeof errorCallback === 'function') {
+                            if (data.error_description) {
+                                errorCallback(data.error_description);
+                            } else {
+                                errorCallback('Unable to contact server; please, try again later.');
+                            }
+                        }
+                    });
+            };
+
+            me.saveDataAsync = function(model, request) {
+                var clone = angular.copy(model);
+                var originalClone = angular.copy(model.$original);
+
+                delete clone.$isEditing;
+                delete clone.$hasChanges;
+                delete clone.$selected;
+                delete clone.$original;
+                delete clone.$state;
+                delete clone.$valid;
+
+                request.data = {
+                    Old: originalClone,
+                    New: clone
+                };
+
+                var dataRequest = me.retrieveDataAsync(request);
+
+                dataRequest.promise.then(function(data) {
+                    model.$hasChanges = false;
+                    model.resetOriginal();
+                    return data;
+                });
+
+                return dataRequest;
+            };
+
+            me.getExpirationDate = function() {
+                var date = new Date();
+                var minutes = 5;
+                return new Date(date.getTime() + minutes * 60000);
+            }
+
+            me.checksum = function(obj) {
+                var keys = Object.keys(obj).sort();
+                var output = [], prop;
+                for (var i = 0; i < keys.length; i++) {
+                    prop = keys[i];
+                    output.push(prop);
+                    output.push(obj[prop]);
+                }
+                return JSON.stringify(output);
+            };
+
+            me.retrieveDataAsync = function(request) {
+                var canceller = $q.defer();
+
+                var cancel = function(reason) {
+                    console.error(reason);
+                    canceller.resolve(reason);
+                };
+
+                if (angular.isString(request.requireAuthentication))
+                    request.requireAuthentication = request.requireAuthentication == "true";
+                else
+                    request.requireAuthentication = request.requireAuthentication || me.requireAuthentication;
+
+                if (request.requireAuthentication && me.isAuthenticated() == false) {
+                    // Return empty dataset
+                    return {
+                        promise: $q(function(resolve, reject) {
+                            resolve(null);
+                        }),
+                        cancel: cancel
+                    };
+                }
+
+                var checksum = me.checksum(request);
+
+                if ((request.requestMethod == 'GET' || request.requestMethod == 'POST') && me.useCache) {
+                    var data = me.cache.get(checksum);
+
+                    if (angular.isDefined(data) && data.Expiration.getTime() > new Date().getTime()) {
+                        return {
+                            promise: $q(function(resolve, reject) {
+                                resolve(data.Set);
+                            }),
+                            cancel: cancel
+                        };
+                    }
+                }
+
+                var promise = $http({
+                    url: request.serverUrl,
+                    method: request.requestMethod,
+                    data: request.data,
+                    timeout: canceller.promise
+                }).then(function(response) {
+                    $timeout.cancel(timeoutHanlder);
+
+                    if (me.useCache) {
+                        me.cache.put(checksum, { Expiration: me.getExpirationDate(), Set: response.data });
+                    }
+
+                    return response.data;
+                }, function(error) {
+                    if (angular.isDefined(error) && angular.isDefined(error.status) && error.status == 401) {
+                        if (me.isAuthenticated()) {
+                            me.removeAuthentication();
+                            // Let's trigger a refresh
+                            document.location = document.location;
+                        }
+                    }
+                });
+
+                request.timeout = request.timeout || 15000;
+
+                var timeoutHanlder = $timeout(function() {
+                    cancel('Timed out');
+                }, request.timeout);
+
+                return {
+                    promise: promise,
+                    cancel: cancel
+                };
+            };
+
+            me.get = function(url) {
+                return me.retrieveDataAsync({
+                    serverUrl: url,
+                    requestMethod: 'GET',
+                });
+            };
+
+            me.delete = function(url) {
+                return me.retrieveDataAsync({
+                    serverUrl: url,
+                    requestMethod: 'DELETE',
+                });
+            };
+
+            me.post = function(url, data) {
+                return me.retrieveDataAsync({
+                    serverUrl: url,
+                    requestMethod: 'POST',
+                    data: data
+                });
+            };
+
+            me.put = function(url, data) {
+                return me.retrieveDataAsync({
+                    serverUrl: url,
+                    requestMethod: 'PUT',
+                    data: data
+                });
+            };
+        }
+    ]);
 })();
 ///#source 1 1 tubular/tubular-services-odata.js
 (function () {
@@ -3254,201 +3259,3 @@
     function repeat(str, n) { return (n == 0) ? "" : Array(n + 1).join(str); }
 
 })(jQuery);
-///#source 1 1 blob-js/blob.js
-/* Blob.js
- * A Blob implementation.
- * 2014-07-24
- *
- * By Eli Grey, http://eligrey.com
- * By Devin Samarin, https://github.com/dsamarin
- * License: X11/MIT
- *   See https://github.com/eligrey/Blob.js/blob/master/LICENSE.md
- */
-
-/*global self, unescape */
-/*jslint bitwise: true, regexp: true, confusion: true, es5: true, vars: true, white: true,
-  plusplus: true */
-
-/*! @source http://purl.eligrey.com/github/Blob.js/blob/master/Blob.js */
-
-(function (view) {
-    "use strict";
-
-    view.URL = view.URL || view.webkitURL;
-
-    if (view.Blob && view.URL) {
-        try {
-            new Blob;
-            return;
-        } catch (e) { }
-    }
-
-    // Internally we use a BlobBuilder implementation to base Blob off of
-    // in order to support older browsers that only have BlobBuilder
-    var BlobBuilder = view.BlobBuilder || view.WebKitBlobBuilder || view.MozBlobBuilder || (function (view) {
-        var
-			  get_class = function (object) {
-			      return Object.prototype.toString.call(object).match(/^\[object\s(.*)\]$/)[1];
-			  }
-			, FakeBlobBuilder = function BlobBuilder() {
-			    this.data = [];
-			}
-			, FakeBlob = function Blob(data, type, encoding) {
-			    this.data = data;
-			    this.size = data.length;
-			    this.type = type;
-			    this.encoding = encoding;
-			}
-			, FBB_proto = FakeBlobBuilder.prototype
-			, FB_proto = FakeBlob.prototype
-			, FileReaderSync = view.FileReaderSync
-			, FileException = function (type) {
-			    this.code = this[this.name = type];
-			}
-			, file_ex_codes = (
-				  "NOT_FOUND_ERR SECURITY_ERR ABORT_ERR NOT_READABLE_ERR ENCODING_ERR "
-				+ "NO_MODIFICATION_ALLOWED_ERR INVALID_STATE_ERR SYNTAX_ERR"
-			).split(" ")
-			, file_ex_code = file_ex_codes.length
-			, real_URL = view.URL || view.webkitURL || view
-			, real_create_object_URL = real_URL.createObjectURL
-			, real_revoke_object_URL = real_URL.revokeObjectURL
-			, URL = real_URL
-			, btoa = view.btoa
-			, atob = view.atob
-
-			, ArrayBuffer = view.ArrayBuffer
-			, Uint8Array = view.Uint8Array
-
-			, origin = /^[\w-]+:\/*\[?[\w\.:-]+\]?(?::[0-9]+)?/
-        ;
-        FakeBlob.fake = FB_proto.fake = true;
-        while (file_ex_code--) {
-            FileException.prototype[file_ex_codes[file_ex_code]] = file_ex_code + 1;
-        }
-        // Polyfill URL
-        if (!real_URL.createObjectURL) {
-            URL = view.URL = function (uri) {
-                var
-					  uri_info = document.createElementNS("http://www.w3.org/1999/xhtml", "a")
-					, uri_origin
-                ;
-                uri_info.href = uri;
-                if (!("origin" in uri_info)) {
-                    if (uri_info.protocol.toLowerCase() === "data:") {
-                        uri_info.origin = null;
-                    } else {
-                        uri_origin = uri.match(origin);
-                        uri_info.origin = uri_origin && uri_origin[1];
-                    }
-                }
-                return uri_info;
-            };
-        }
-        URL.createObjectURL = function (blob) {
-            var
-				  type = blob.type
-				, data_URI_header
-            ;
-            if (type === null) {
-                type = "application/octet-stream";
-            }
-            if (blob instanceof FakeBlob) {
-                data_URI_header = "data:" + type;
-                if (blob.encoding === "base64") {
-                    return data_URI_header + ";base64," + blob.data;
-                } else if (blob.encoding === "URI") {
-                    return data_URI_header + "," + decodeURIComponent(blob.data);
-                } if (btoa) {
-                    return data_URI_header + ";base64," + btoa(blob.data);
-                } else {
-                    return data_URI_header + "," + encodeURIComponent(blob.data);
-                }
-            } else if (real_create_object_URL) {
-                return real_create_object_URL.call(real_URL, blob);
-            }
-        };
-        URL.revokeObjectURL = function (object_URL) {
-            if (object_URL.substring(0, 5) !== "data:" && real_revoke_object_URL) {
-                real_revoke_object_URL.call(real_URL, object_URL);
-            }
-        };
-        FBB_proto.append = function (data/*, endings*/) {
-            var bb = this.data;
-            // decode data to a binary string
-            if (Uint8Array && (data instanceof ArrayBuffer || data instanceof Uint8Array)) {
-                var
-					  str = ""
-					, buf = new Uint8Array(data)
-					, i = 0
-					, buf_len = buf.length
-                ;
-                for (; i < buf_len; i++) {
-                    str += String.fromCharCode(buf[i]);
-                }
-                bb.push(str);
-            } else if (get_class(data) === "Blob" || get_class(data) === "File") {
-                if (FileReaderSync) {
-                    var fr = new FileReaderSync;
-                    bb.push(fr.readAsBinaryString(data));
-                } else {
-                    // async FileReader won't work as BlobBuilder is sync
-                    throw new FileException("NOT_READABLE_ERR");
-                }
-            } else if (data instanceof FakeBlob) {
-                if (data.encoding === "base64" && atob) {
-                    bb.push(atob(data.data));
-                } else if (data.encoding === "URI") {
-                    bb.push(decodeURIComponent(data.data));
-                } else if (data.encoding === "raw") {
-                    bb.push(data.data);
-                }
-            } else {
-                if (typeof data !== "string") {
-                    data += ""; // convert unsupported types to strings
-                }
-                // decode UTF-16 to binary string
-                bb.push(unescape(encodeURIComponent(data)));
-            }
-        };
-        FBB_proto.getBlob = function (type) {
-            if (!arguments.length) {
-                type = null;
-            }
-            return new FakeBlob(this.data.join(""), type, "raw");
-        };
-        FBB_proto.toString = function () {
-            return "[object BlobBuilder]";
-        };
-        FB_proto.slice = function (start, end, type) {
-            var args = arguments.length;
-            if (args < 3) {
-                type = null;
-            }
-            return new FakeBlob(
-				  this.data.slice(start, args > 1 ? end : this.data.length)
-				, type
-				, this.encoding
-			);
-        };
-        FB_proto.toString = function () {
-            return "[object Blob]";
-        };
-        FB_proto.close = function () {
-            this.size = 0;
-            delete this.data;
-        };
-        return FakeBlobBuilder;
-    }(view));
-
-    view.Blob = function (blobParts, options) {
-        var type = options ? (options.type || "") : "";
-        var builder = new BlobBuilder();
-        if (blobParts) {
-            for (var i = 0, len = blobParts.length; i < len; i++) {
-                builder.append(blobParts[i]);
-            }
-        }
-        return builder.getBlob(type);
-    };
-}(typeof self !== "undefined" && self || typeof window !== "undefined" && window || this.content || this));
