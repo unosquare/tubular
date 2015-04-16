@@ -121,9 +121,6 @@
                             $scope.gridDataService = $scope.gridDataService || tubularHttp;
                             $scope.requireAuthentication = $scope.requireAuthentication || true;
 
-                            if (angular.isString($scope.requireAuthentication))
-                                $scope.requireAuthentication = $scope.requireAuthentication == "true";
-
                             $scope.addColumn = function (item) {
                                 if (item.Name === null) return;
 
@@ -2121,7 +2118,10 @@
                         canceller.resolve(reason);
                     };
 
-                    request.requireAuthentication = request.requireAuthentication || me.requireAuthentication;
+                    if (angular.isString(request.requireAuthentication))
+                        request.requireAuthentication = request.requireAuthentication == "true";
+                    else
+                        request.requireAuthentication = request.requireAuthentication || me.requireAuthentication;
 
                     if (request.requireAuthentication && me.isAuthenticated() == false) {
                         // Return empty dataset
