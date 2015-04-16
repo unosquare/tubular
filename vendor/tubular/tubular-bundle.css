@@ -1,47 +1,4 @@
-﻿.autocomplete {
-    width: 100%;
-    position: relative;
-}
-
-    .autocomplete input {
-        width: 100%;
-    }
-
-    .autocomplete ul {
-        position: absolute;
-        left: 0;
-        width: 100%;
-        border-left: 1px solid #888;
-        border-right: 1px solid #888;
-        border-bottom: 1px solid #888;
-        z-index: 1000;
-        padding: 0;
-    }
-
-    .autocomplete li {
-        text-align: left;
-        list-style: none;
-        width: 100%;
-        padding: 0.4em;
-        background-color: #fff;
-        color: #000;
-    }
-
-        .autocomplete li.active {
-            width: 100%;
-            background-color: #4bf;
-        }
-
-    .autocomplete .highlight {
-        background-color: #E2E2E2;
-    }
-
-    .autocomplete li.active .highlight {
-        background: #666;
-        color: #fff;
-    }
-
-/*!
+﻿/*!
  * Datepicker for Bootstrap
  *
  * Copyright 2012 Stefan Petre
@@ -208,9 +165,11 @@ div.tubular-pager {
         display: block !important;
     }
 
-    div.tubular-pager ul.pagination li a {
-        outline: none;
-    }
+        div.tubular-pager .pagination > li > a {
+            text-align: center;
+            font-size: 10px;
+            outline: none;
+        }
 
 /* Tubular Grid Overlay and animation */
 
@@ -241,31 +200,52 @@ div.tubular-overlay {
         border-radius: 4px;
     }
 
-.tubular-overlay {
+.tubular-overlay, .tubular-general-overlay {
     line-height: 20px;
     opacity: 0.4;
     background: white;
 }
 
     .tubular-overlay.ng-hide-add.ng-hide-add-active,
-    .tubular-overlay.ng-hide-remove.ng-hide-remove-active {
+    .tubular-overlay.ng-hide-remove.ng-hide-remove-active,
+    .tubular-general-overlay.ng-hide-add.ng-hide-add-active,
+    .tubular-general-overlay.ng-hide-remove.ng-hide-remove-active {
         -webkit-transition: all linear 0.1s;
         -moz-transition: all linear 0.1s;
         -o-transition: all linear 0.1s;
         transition: all linear 0.1s;
     }
 
-    .tubular-overlay.ng-hide {
+    .tubular-overlay.ng-hide, .tubular-general-overlay.ng-hide {
         line-height: 0;
         opacity: 0;
         padding: 0 10px;
     }
 
-/* Tubular Grid Pager Styles */
-.tubular-pager ul.pagination li {
+/* Tubular General Overlay and animation */
+
+div.tubular-general-overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 5000;
+    opacity: 0.4;
     text-align: center;
-    font-size: 11px;
+    color: #fff;
 }
+
+    div.tubular-general-overlay > div {
+        position: absolute;
+        background-color: rgb(180,180,180);
+        color: #fff;
+        height: 100%;
+        width: 100%;
+        top: 0;
+        bottom: 0;
+        display: block;
+        right: 15px;
+        border-radius: 4px;
+    }
 
 /* Tubular Grid Heading and Heading Filter Styles */
 div.panel > table.tubular-grid-table.table-bordered > thead > tr > th {
@@ -291,13 +271,10 @@ th.show-xl, td.show-xl {
         font-size: 12px;
     }
 
-    .tubular-pager ul.pagination li {
+    div.tubular-pager .pagination > li > a {
         font-size: 12px;
+        min-width: 37px;
     }
-
-        .tubular-pager ul.pagination li a {
-            min-width: 37px;
-        }
 }
 
 @media (min-width: 1400px) {
@@ -377,9 +354,11 @@ div.fullHeight, .modal-backdrop.in {
 div.tubular-remove-popover {
     min-width: 120px;
 }
-input.ng-pristine+span.help-block.error-block {
+
+input.ng-pristine + span.help-block.error-block {
     display: none;
-} 
+}
+
 .has-error .form-control.ng-pristine {
     border: 1px solid #e7e7e7;
 }
@@ -420,3 +399,4 @@ input.ng-pristine+span.help-block.error-block {
                 font-weight: bold;
             }
 }
+

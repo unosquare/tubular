@@ -1,175 +1,8 @@
-﻿///#source 1 1 scriptjs/script.js
-!function (win, doc) {
-    var head = doc.getElementsByTagName('head')[0],
-        list = {}, ids = {}, delay = {}, scripts = {},
-        s = 'string', f = false, push = 'push', complete = /^c|loade/,
-        domContentLoaded = 'DOMContentLoaded', readyState = 'readyState',
-        addEventListener = 'addEventListener', onreadystatechange = 'onreadystatechange',
-        faux = doc.createElement('script'),
-        preloadExplicit = typeof faux.preload == 'boolean',
-        preloadReal = preloadExplicit || (faux[readyState] && faux[readyState] == 'uninitialized'),
-        async = !preloadReal && faux.async === true
-
-    if (!doc[readyState] && doc[addEventListener]) {
-        doc[addEventListener](domContentLoaded, function fn() {
-            doc.removeEventListener(domContentLoaded, fn, f);
-            doc[readyState] = 'complete';
-        }, f);
-        doc[readyState] = 'loading';
-    }
-
-    function timeout(fn) {
-        setTimeout(fn, 0)
-    }
-
-    function every(ar, fn, i) {
-        for (i = 0, j = ar.length; i < j; ++i) if (!fn(ar[i])) return f
-        return 1;
-    }
-
-    function each(ar, fn) {
-        every(ar, function (el) { return !fn(el) })
-    }
-
-    function $script(paths, idOrDone, optDone) {
-        paths = paths[push] ? paths : [paths]
-        var idOrDoneIsDone = idOrDone && idOrDone.call,
-            workingPaths = paths.slice(0), loadedPaths = {},
-            done = idOrDoneIsDone ? idOrDone : optDone,
-            id = idOrDoneIsDone ? paths.join('') : idOrDone,
-            queue = paths.length
-
-        function loopFn(item) {
-            return item.call ? item() : list[item]
-        }
-
-        function callback() {
-            if (!--queue) {
-                list[id] = 1
-                done && done()
-                for (var dset in delay) {
-                    every(dset.split('|'), loopFn) && !each(delay[dset], loopFn) && (delay[dset] = [])
-                }
-            }
-        }
-
-        timeout(function () {
-            each(paths, function (path, p) {
-                p = $script.path ? $script.path + path + '.js' : path
-                if (scripts[path]) {
-                    ids[id] = id || f
-                    return callback()
-                }
-                scripts[path] = 1
-                ids[id] = id || f
-                !$script.order ? create(p, callback) : preload(p, function (el) {
-                    if (async) return callback()
-                    loadedPaths[p] = el || 1
-                    if (el) {
-                        if (workingPaths[0] == p) {
-                            head.insertBefore(el, head.firstChild)
-                            timeout(function () {
-                                callback()
-                                workingPaths.shift()
-                                while (loadedPaths[workingPaths[0]]) {
-                                    head.insertBefore(loadedPaths[workingPaths[0]], head.firstChild)
-                                    timeout(callback)
-                                    workingPaths.shift()
-                                }
-                            })
-                        }
-                        return
-                    }
-                    workingPaths[0] == p && create(p, callback)
-                    workingPaths.shift()
-                    while (loadedPaths[workingPaths[0]]) {
-                        create(workingPaths[0], callback)
-                        workingPaths.shift()
-                    }
-                })
-            })
-        })
-        return $script
-    }
-
-    function create(path, fn, type) {
-        var el = doc.createElement('script'), loaded = f
-        el.type = type || 'text/javascript'
-        el.async = !$script.order
-        el.onload = el[onreadystatechange] = function () {
-            if ((el[readyState] && !(complete.test(el[readyState]))) || loaded) return
-            el.onload = el[onreadystatechange] = null
-            loaded = 1
-            fn && fn()
-        }
-        el.src = path
-        head.insertBefore(el, head.firstChild)
-    }
-
-    function bind(fn) {
-        var a = Array.prototype.slice.call(arguments, 1)
-        return function () {
-            fn.apply(null, a)
-        }
-    }
-
-    function preload(path, fn, el) {
-        if (preloadReal) {
-            el = doc.createElement('script')
-            el.type = 'text/javascript'
-            if (preloadExplicit) {
-                el.preload = true
-                el.onpreload = bind(fn, el)
-            } else {
-                el[onreadystatechange] = function () {
-                    if (complete.test(el[readyState])) {
-                        fn(el)
-                        el[onreadystatechange] = null
-                    }
-                }
-            }
-            el.src = path // setting .src begins the preload
-        } else if (async) {
-            create(path, fn)
-        } else {
-            create(path, fn, 'text/cache-script')
-        }
-    }
-
-    $script.get = create
-    $script.order = true
-
-    $script.ready = function (deps, ready, req) {
-        deps = deps[push] ? deps : [deps]
-        var missing = []
-        !each(deps, function (dep) {
-            list[dep] || missing[push](dep)
-        }) && every(deps, function (dep) {
-            return list[dep]
-        }) ? ready() : !function (key) {
-            delay[key] = delay[key] || []
-            delay[key][push](ready)
-            req && req(missing)
-        }(deps.join('|'))
-        return $script
-    };
-
-    var old = win.$script;
-    $script.noConflict = function () {
-        win.$script = old;
-        return this;
-    };
-
-    typeof module !== 'undefined' && module.exports && (module.exports = $script)
-
-    win['$script'] = $script
-
-}(this, document);
-///#source 1 1 tubular/tubular.js
+﻿///#source 1 1 tubular/tubular.js
 (function() {
     'use strict';
 
-    angular.module('tubular.directives', ['tubular.services', 'tubular.models', 'LocalStorageModule', 'autocomplete'])
+    angular.module('tubular.directives', ['tubular.services', 'tubular.models', 'LocalStorageModule'])
         .config([
             'localStorageServiceProvider', function(localStorageServiceProvider) {
                 localStorageServiceProvider.setPrefix('tubular');
@@ -293,11 +126,6 @@
                                     throw 'Cannot define more columns. Column definitions have been sealed';
 
                                 $scope.columns.push(item);
-                                $scope.logMessage('tubular-grid.addColumn()', item.Name);
-                            };
-
-                            $scope.logMessage = function(source, message) {
-                                console.debug('Source: ' + source + ': ' + message);
                             };
 
                             $scope.createRow = function() {
@@ -348,28 +176,35 @@
                                     });
                             };
 
-                            $scope.updateRow = function(row) {
+                            $scope.updateRow = function(row, externalSave) {
+                                row.$isLoading = true;
+
                                 var request = {
                                     serverUrl: $scope.serverSaveUrl,
                                     requestMethod: 'PUT',
                                     timeout: $scope.requestTimeout
                                 };
 
-                                $scope.currentRequest = $scope.gridDataService.saveDataAsync(row, request);
+                                var requestObj = $scope.gridDataService.saveDataAsync(row, request);
 
-                                $scope.currentRequest.promise.then(
+                                if (externalSave == false)
+                                    $scope.currentRequest = requestObj;
+
+                                requestObj.promise.then(
                                         function(data) {
                                             $scope.$emit('tbGrid_OnSuccessfulUpdate', data);
                                         }, function(error) {
                                             $scope.$emit('tbGrid_OnConnectionError', error);
                                         })
                                     .then(function() {
+                                        row.$isLoading = false;
                                         $scope.currentRequest = null;
                                     });
                             };
 
                             $scope.retrieveData = function() {
                                 $scope.pageSize = $scope.pageSize || 20;
+                                var page = $scope.requestedPage == 0 ? 1 : $scope.requestedPage;
 
                                 var request = {
                                     serverUrl: $scope.serverUrl,
@@ -378,7 +213,7 @@
                                     data: {
                                         Count: $scope.requestCounter,
                                         Columns: $scope.columns,
-                                        Skip: ($scope.requestedPage - 1) * $scope.pageSize,
+                                        Skip: (page - 1) * $scope.pageSize,
                                         Take: parseInt($scope.pageSize),
                                         Search: $scope.search,
                                         TimezoneOffset: new Date().getTimezoneOffset()
@@ -400,6 +235,16 @@
                                 $scope.currentRequest.promise.then(
                                     function(data) {
                                         $scope.requestCounter += 1;
+
+                                        if (angular.isUndefined(data)) {
+                                            $scope.$emit('tbGrid_OnConnectionError', {
+                                                statusText: "Data is empty",
+                                                status: 0
+                                            });
+
+                                            return;
+                                        }
+
                                         $scope.dataSource = data;
 
                                         $scope.rows = data.Payload.map(function(el) {
@@ -1441,15 +1286,15 @@
                 ]
             };
         }
-    ]).directive('tbAutocompleteEditor', [
-        'tubularEditorService', 'tubularHttp', function(tubularEditorService, tubularHttp) {
+    ]).directive('tbTypeaheadEditor', [
+        'tubularEditorService', 'tubularHttp', '$q', function (tubularEditorService, tubularHttp, $q) {
 
             return {
                 template: '<div ng-class="{ \'form-group\' : isEditing, \'has-error\' : !$valid }">' +
                     '<span ng-hide="isEditing">{{ value }}</span>' +
                     '<label ng-show="showLabel">{{ label }}</label>' +
-                    '<autocomplete ng-show="isEditing" ng-model="value" attr-input-class="form-control" data="options" ' +
-                    'autocomplete-required="required" />' +
+                    '<input ng-show="isEditing" ng-model="value" class="form-control" typeahead="o for o in getValues($viewValue)" ' +
+                    'ng-required="required" />' +
                     '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
                     '</div>',
                 restrict: 'E',
@@ -1460,37 +1305,18 @@
                     '$scope', function($scope) {
                         tubularEditorService.setupScope($scope);
                         $scope.$editorType = 'select';
-                        $scope.dataIsLoaded = false;
 
-                        $scope.loadData = function() {
-                            if ($scope.dataIsLoaded) return;
-
-                            var currentRequest = tubularHttp.retrieveDataAsync({
-                                serverUrl: $scope.optionsUrl,
-                                requestMethod: 'GET' // TODO: RequestMethod
-                            });
-
-                            var value = $scope.value;
-                            $scope.value = '';
-
-                            currentRequest.promise.then(
-                                function(data) {
-                                    $scope.options = data;
-                                    $scope.dataIsLoaded = true;
-                                    $scope.value = value;
-                                }, function(error) {
-                                    $scope.$emit('tbGrid_OnConnectionError', error);
-                                });
-                        };
-
-                        if (angular.isUndefined($scope.optionsUrl) == false) {
-                            if ($scope.isEditing) {
-                                $scope.loadData();
-                            } else {
-                                $scope.$watch('isEditing', function() {
-                                    if ($scope.isEditing) $scope.loadData();
-                                });
+                        $scope.getValues = function (val) {
+                            if (angular.isDefined($scope.optionsUrl)) {
+                                return tubularHttp.retrieveDataAsync({
+                                    serverUrl: $scope.optionsUrl + '?search=' + val,
+                                    requestMethod: 'GET' // TODO: RequestMethod
+                                }).promise;
                             }
+
+                            return $q(function(resolve, reject) {
+                                resolve($scope.options);
+                            });
                         }
                     }
                 ]
@@ -1525,6 +1351,7 @@
                     '<span ng-show="showLabel">{{label}}</span>' +
                     '</label>' +
                     '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
+                    '<span class="help-block" ng-show="isEditing && help">{{help}}</span>' +
                     '</div>',
                 restrict: 'E',
                 replace: true,
@@ -1808,6 +1635,9 @@
                                     });
                                 }
 
+                                // Ignores models without state
+                                if (angular.isUndefined($scope.rowModel.$state)) return;
+
                                 if (angular.equals(column.state, $scope.rowModel.$state[column.Name]) == false) {
                                     column.state = $scope.rowModel.$state[column.Name];
                                 }
@@ -2068,8 +1898,8 @@
                             return true;
                         };
 
-                        obj.save = function () {
-                            return obj.$hasChanges ? $scope.updateRow(obj) : false;
+                        obj.save = function (externalSave) {
+                            return obj.$hasChanges ? $scope.updateRow(obj, externalSave) : false;
                         };
 
                         obj.edit = function() {
@@ -2123,11 +1953,8 @@
                 function isAuthenticationExpired(expirationDate) {
                     var now = new Date();
                     expirationDate = new Date(expirationDate);
-                    if (expirationDate - now > 0) {
-                        return false;
-                    } else {
-                        return true;
-                    }
+
+                    return expirationDate - now <= 0;
                 }
 
                 function saveData() {
@@ -2174,16 +2001,15 @@
                 me.useCache = true;
 
                 me.isAuthenticated = function() {
-                    if (me.userData.isAuthenticated && !isAuthenticationExpired(me.userData.expirationDate)) {
-                        return true;
-                    } else {
+                    if (!me.userData.isAuthenticated || isAuthenticationExpired(me.userData.expirationDate)) {
                         try {
                             retrieveSavedData();
                         } catch (e) {
                             return false;
                         }
-                        return true;
                     }
+
+                    return true;
                 };
 
                 me.removeAuthentication = function() {
@@ -2272,7 +2098,9 @@
                     return JSON.stringify(output);
                 };
 
-                me.retrieveDataAsync = function(request) {
+                me.retrieveDataAsync = function (request) {
+                    if (me.isAuthenticated() == false) return false;
+
                     var checksum = me.checksum(request);
 
                     var canceller = $q.defer();
@@ -2295,13 +2123,12 @@
                         }
                     }
 
-                    // TODO: Check Unauthorize error and send revalidation
                     var promise = $http({
                         url: request.serverUrl,
                         method: request.requestMethod,
                         data: request.data,
                         timeout: canceller.promise
-                    }).then(function(response) {
+                    }).then(function (response) {
                         $timeout.cancel(timeoutHanlder);
 
                         if (me.useCache) {
@@ -2309,6 +2136,14 @@
                         }
 
                         return response.data;
+                    }, function(error) {
+                        if (angular.isDefined(error) && angular.isDefined(error.status) && error.status == 401) {
+                            if (me.isAuthenticated()) {
+                                me.removeAuthentication();
+                                // Let's trigger a refresh
+                                document.location = document.location;
+                            }
+                        }
                     });
 
                     request.timeout = request.timeout || 15000;
@@ -2330,14 +2165,14 @@
                     });
                 };
 
-                me.delete = function (url) {
+                me.delete = function(url) {
                     return me.retrieveDataAsync({
                         serverUrl: url,
                         requestMethod: 'DELETE',
                     });
                 };
 
-                me.post = function (url, data) {
+                me.post = function(url, data) {
                     return me.retrieveDataAsync({
                         serverUrl: url,
                         requestMethod: 'POST',
@@ -2345,7 +2180,7 @@
                     });
                 };
 
-                me.put = function (url, data) {
+                me.put = function(url, data) {
                     return me.retrieveDataAsync({
                         serverUrl: url,
                         requestMethod: 'PUT',
@@ -2354,113 +2189,6 @@
                 };
             }
         ])
-        .service('tubularOData', ['tubularHttp', function tubularOData(tubularHttp) {
-            var me = this;
-
-            // {0} represents column name and {1} represents filter value
-            me.operatorsMapping = {
-                'None': '',
-                'Equals': "{0} eq {1}",
-                'Contains': "substringof({1}, {0}) eq true",
-                'StartsWith': "startswith({0}, {1}) eq true",
-                'EndsWith': "endswith({0}, {1}) eq true",
-                // TODO: 'Between': 'Between', 
-                'Gte': "{0} ge {1}",
-                'Gt': "{0} gt {1}",
-                'Lte': "{0} le {1}",
-                'Lt': "{0} lt {1}",
-            };
-
-            me.retrieveDataAsync = function(request) {
-                var params = request.data;
-                var url = request.serverUrl;
-                url += url.indexOf('?') > 0 ? '&' : '?';
-                url += '$format=json&$inlinecount=allpages';
-
-                url += "&$select=" + params.Columns.map(function(el) { return el.Name; }).join(',');
-                url += "&$skip=" + params.Skip;
-                url += "&$top=" + params.Take;
-
-                var order = params.Columns
-                    .filter(function(el) { return el.SortOrder > 0; })
-                    .sort(function(a, b) { return a.SortOrder - b.SortOrder; })
-                    .map(function(el) { return el.Name + " " + (el.SortDirection == "Descending" ? "desc" : ""); });
-
-                if (order.length > 0)
-                    url += "&$orderby=" + order.join(',');
-
-                var filter = params.Columns
-                    .filter(function(el) { return el.Filter != null && el.Filter.Text != null; })
-                    .map(function(el) {
-                        return me.operatorsMapping[el.Filter.Operator]
-                            .replace('{0}', el.Name)
-                            .replace('{1}', el.DataType == "string" ? "'" + el.Filter.Text + "'" : el.Filter.Text);
-                    })
-                    .filter(function(el) { return el.length > 1; });
-
-
-                if (params.Search != null && params.Search.Operator == 'Auto') {
-                    var freetext = params.Columns
-                        .filter(function(el) { return el.Searchable; })
-                        .map(function(el) {
-                            return "startswith({0}, '{1}') eq true".replace('{0}', el.Name).replace('{1}', params.Search.Text);
-                        });
-
-                    if (freetext.length > 0)
-                        filter.push("(" + freetext.join(' or ') + ")");
-                }
-
-                if (filter.length > 0)
-                    url += "&$filter=" + filter.join(' and ');
-
-                request.data = null;
-                request.serverUrl = url;
-
-                var response = tubularHttp.retrieveDataAsync(request);
-
-                var promise = response.promise.then(function(data) {
-                    var result = {
-                        Payload: data.value,
-                        CurrentPage: 1,
-                        TotalPages: 1,
-                        TotalRecordCount: 1,
-                        FilteredRecordCount: 1
-                    };
-
-                    result.TotalRecordCount = data["odata.count"];
-                    result.FilteredRecordCount = result.TotalRecordCount; // TODO: Calculate filtered items
-                    result.TotalPages = parseInt(result.TotalRecordCount / params.Take);
-                    result.CurrentPage = parseInt(1 + ((params.Skip / result.FilteredRecordCount) * result.TotalPages));
-
-                    return result;
-                });
-
-                return {
-                    promise: promise,
-                    cancel: response.cancel
-                };
-            };
-
-            me.saveDataAsync = function (model, request) {
-                tubularHttp.saveDataAsync(model, request); //TODO: Check how to handle
-            };
-
-            me.get = function(url) {
-                tubularHttp.get(url);
-            };
-
-            me.delete = function (url) {
-                tubularHttp.delete(url);
-            };
-
-            me.post = function (url, data) {
-                tubularHttp.post(url, data);
-            };
-
-            me.put = function(url, data) {
-                tubularHttp.put(url, data);
-            };
-        }])
         .service('tubularGridPopupService', [
             '$modal', function tubularGridPopupService($modal) {
                 var me = this;
@@ -2474,14 +2202,16 @@
                                 $scope.Model = model;
 
                                 $scope.savePopup = function () {
-                                    $scope.Model.save();
-
+                                    $scope.Model.save(true);
+                                    
                                     $scope.$on('tbGrid_OnSuccessfulUpdate', 
                                         function () { dialog.close(); });
                                 };
 
-                                $scope.closePopup = function() {
-                                    $scope.Model.revertChanges();
+                                $scope.closePopup = function () {
+                                    if (angular.isDefined($scope.Model.revertChanges))
+                                        $scope.Model.revertChanges();
+
                                     dialog.close();
                                 };
                             }
@@ -2541,9 +2271,7 @@
                 }
 
                 var blob = new Blob([csvFile], { type: 'text/csv;charset=utf-8;' });
-                $script('//cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2014-11-29/FileSaver.min.js', function() {
-                    saveAs(blob, filename);
-                });
+                saveAs(blob, filename);
             };
         })
         .service('tubularGridFilterService', [
@@ -2633,7 +2361,8 @@
                     defaultValue: '=?',
                     IsKey: '@',
                     placeholder: '@?',
-                    readOnly: '=?'
+                    readOnly: '=?',
+                    help: '@?'
                 };
 
                 me.setupScope = function(scope, defaultFormat) {
@@ -2665,10 +2394,11 @@
                         scope.$valid = true;
                         scope.state.$errors = [];
 
+                        // Try to match the model to the parent, if it exists
                         if (angular.isDefined(scope.$parent.Model)) {
                             if (angular.isDefined(scope.$parent.Model[scope.name]))
                                 scope.$parent.Model[scope.name] = newValue;
-                            else
+                            else if (angular.isDefined(scope.$parent.Model.$addField))
                                 scope.$parent.Model.$addField(scope.name, newValue);
                         }
 
@@ -2678,6 +2408,7 @@
                             return;
                         }
 
+                        // Check if we have a validation function, otherwise return
                         if (angular.isUndefined(scope.validate)) return;
 
                         scope.validate();
@@ -2685,6 +2416,7 @@
 
                     var parent = scope.$parent;
 
+                    // We try to find a Tubular Form in the parents
                     while (true) {
                         if (parent == null) break;
                         if (angular.isUndefined(parent.tubularDirective) == false &&
@@ -2695,6 +2427,121 @@
 
                         parent = parent.$parent;
                     }
+                };
+            }
+        ]);
+})();
+///#source 1 1 tubular/tubular-services-odata.js
+(function () {
+    'use strict';
+
+    angular.module('tubular.services')
+        .service('tubularOData', [
+            'tubularHttp', function tubularOData(tubularHttp) {
+                var me = this;
+
+                // {0} represents column name and {1} represents filter value
+                me.operatorsMapping = {
+                    'None': '',
+                    'Equals': "{0} eq {1}",
+                    'Contains': "substringof({1}, {0}) eq true",
+                    'StartsWith': "startswith({0}, {1}) eq true",
+                    'EndsWith': "endswith({0}, {1}) eq true",
+                    // TODO: 'Between': 'Between', 
+                    'Gte': "{0} ge {1}",
+                    'Gt': "{0} gt {1}",
+                    'Lte': "{0} le {1}",
+                    'Lt': "{0} lt {1}",
+                };
+
+                me.retrieveDataAsync = function(request) {
+                    var params = request.data;
+                    var url = request.serverUrl;
+                    url += url.indexOf('?') > 0 ? '&' : '?';
+                    url += '$format=json&$inlinecount=allpages';
+
+                    url += "&$select=" + params.Columns.map(function(el) { return el.Name; }).join(',');
+                    url += "&$skip=" + params.Skip;
+                    url += "&$top=" + params.Take;
+
+                    var order = params.Columns
+                        .filter(function(el) { return el.SortOrder > 0; })
+                        .sort(function(a, b) { return a.SortOrder - b.SortOrder; })
+                        .map(function(el) { return el.Name + " " + (el.SortDirection == "Descending" ? "desc" : ""); });
+
+                    if (order.length > 0)
+                        url += "&$orderby=" + order.join(',');
+
+                    var filter = params.Columns
+                        .filter(function(el) { return el.Filter != null && el.Filter.Text != null; })
+                        .map(function(el) {
+                            return me.operatorsMapping[el.Filter.Operator]
+                                .replace('{0}', el.Name)
+                                .replace('{1}', el.DataType == "string" ? "'" + el.Filter.Text + "'" : el.Filter.Text);
+                        })
+                        .filter(function(el) { return el.length > 1; });
+
+
+                    if (params.Search != null && params.Search.Operator == 'Auto') {
+                        var freetext = params.Columns
+                            .filter(function(el) { return el.Searchable; })
+                            .map(function(el) {
+                                return "startswith({0}, '{1}') eq true".replace('{0}', el.Name).replace('{1}', params.Search.Text);
+                            });
+
+                        if (freetext.length > 0)
+                            filter.push("(" + freetext.join(' or ') + ")");
+                    }
+
+                    if (filter.length > 0)
+                        url += "&$filter=" + filter.join(' and ');
+
+                    request.data = null;
+                    request.serverUrl = url;
+
+                    var response = tubularHttp.retrieveDataAsync(request);
+
+                    var promise = response.promise.then(function(data) {
+                        var result = {
+                            Payload: data.value,
+                            CurrentPage: 1,
+                            TotalPages: 1,
+                            TotalRecordCount: 1,
+                            FilteredRecordCount: 1
+                        };
+
+                        result.TotalRecordCount = data["odata.count"];
+                        result.FilteredRecordCount = result.TotalRecordCount; // TODO: Calculate filtered items
+                        result.TotalPages = parseInt(result.TotalRecordCount / params.Take);
+                        result.CurrentPage = parseInt(1 + ((params.Skip / result.FilteredRecordCount) * result.TotalPages));
+
+                        return result;
+                    });
+
+                    return {
+                        promise: promise,
+                        cancel: response.cancel
+                    };
+                };
+
+                me.saveDataAsync = function(model, request) {
+                    tubularHttp.saveDataAsync(model, request); //TODO: Check how to handle
+                };
+
+                me.get = function(url) {
+                    tubularHttp.get(url);
+                };
+
+                me.delete = function(url) {
+                    tubularHttp.delete(url);
+                };
+
+                me.post = function(url, data) {
+                    tubularHttp.post(url, data);
+                };
+
+                me.put = function(url, data) {
+                    tubularHttp.put(url, data);
                 };
             }
         ]);
@@ -3373,306 +3220,6 @@
     function repeat(str, n) { return (n == 0) ? "" : Array(n + 1).join(str); }
 
 })(jQuery);
-///#source 1 1 allmighty-autocomplete/autocomplete.js
-/* --- Made by justgoscha and licensed under MIT license --- */
-
-var app = angular.module('autocomplete', []);
-
-app.directive('autocomplete', function() {
-  var index = -1;
-
-  return {
-    restrict: 'E',
-    scope: {
-      searchParam: '=ngModel',
-      suggestions: '=data',
-      onType: '=onType',
-      onSelect: '=onSelect',
-      autocompleteRequired: '='
-    },
-    controller: ['$scope', function($scope){
-      // the index of the suggestions that's currently selected
-      $scope.selectedIndex = -1;
-
-      $scope.initLock = true;
-
-      // set new index
-      $scope.setIndex = function(i){
-        $scope.selectedIndex = parseInt(i);
-      };
-
-      this.setIndex = function(i){
-        $scope.setIndex(i);
-        $scope.$apply();
-      };
-
-      $scope.getIndex = function(i){
-        return $scope.selectedIndex;
-      };
-
-      // watches if the parameter filter should be changed
-      var watching = true;
-
-      // autocompleting drop down on/off
-      $scope.completing = false;
-
-      // starts autocompleting on typing in something
-      $scope.$watch('searchParam', function(newValue, oldValue){
-
-        if (oldValue === newValue || (!oldValue && $scope.initLock)) {
-          return;
-        }
-
-        if(watching && typeof $scope.searchParam !== 'undefined' && $scope.searchParam !== null) {
-          $scope.completing = true;
-          $scope.searchFilter = $scope.searchParam;
-          $scope.selectedIndex = -1;
-        }
-
-        // function thats passed to on-type attribute gets executed
-        if($scope.onType)
-          $scope.onType($scope.searchParam);
-      });
-
-      // for hovering over suggestions
-      this.preSelect = function(suggestion){
-
-        watching = false;
-
-        // this line determines if it is shown
-        // in the input field before it's selected:
-        //$scope.searchParam = suggestion;
-
-        $scope.$apply();
-        watching = true;
-
-      };
-
-      $scope.preSelect = this.preSelect;
-
-      this.preSelectOff = function(){
-        watching = true;
-      };
-
-      $scope.preSelectOff = this.preSelectOff;
-
-      // selecting a suggestion with RIGHT ARROW or ENTER
-      $scope.select = function(suggestion){
-        if(suggestion){
-          $scope.searchParam = suggestion;
-          $scope.searchFilter = suggestion;
-          if($scope.onSelect)
-            $scope.onSelect(suggestion);
-        }
-        watching = false;
-        $scope.completing = false;
-        setTimeout(function(){watching = true;},1000);
-        $scope.setIndex(-1);
-      };
-
-
-    }],
-    link: function(scope, element, attrs){
-
-      setTimeout(function() {
-        scope.initLock = false;
-        scope.$apply();
-      }, 250);
-
-      var attr = '';
-
-      // Default atts
-      scope.attrs = {
-        "placeholder": "start typing...",
-        "class": "",
-        "id": "",
-        "inputclass": "",
-        "inputid": ""
-      };
-
-      for (var a in attrs) {
-        attr = a.replace('attr', '').toLowerCase();
-        // add attribute overriding defaults
-        // and preventing duplication
-        if (a.indexOf('attr') === 0) {
-          scope.attrs[attr] = attrs[a];
-        }
-      }
-
-      if (attrs.clickActivation) {
-        element[0].onclick = function(e){
-          if(!scope.searchParam){
-            setTimeout(function() {
-              scope.completing = true;
-              scope.$apply();
-            }, 200);
-          }
-        };
-      }
-
-      var key = {left: 37, up: 38, right: 39, down: 40 , enter: 13, esc: 27, tab: 9};
-
-      document.addEventListener("keydown", function(e){
-        var keycode = e.keyCode || e.which;
-
-        switch (keycode){
-          case key.esc:
-            // disable suggestions on escape
-            scope.select();
-            scope.setIndex(-1);
-            scope.$apply();
-            e.preventDefault();
-        }
-      }, true);
-
-      document.addEventListener("blur", function(e){
-        // disable suggestions on blur
-        // we do a timeout to prevent hiding it before a click event is registered
-        setTimeout(function() {
-          scope.select();
-          scope.setIndex(-1);
-          scope.$apply();
-        }, 150);
-      }, true);
-
-      element[0].addEventListener("keydown",function (e){
-        var keycode = e.keyCode || e.which;
-
-        var l = angular.element(this).find('li').length;
-
-        // this allows submitting forms by pressing Enter in the autocompleted field
-        if(!scope.completing || l == 0) return;
-
-        // implementation of the up and down movement in the list of suggestions
-        switch (keycode){
-          case key.up:
-
-            index = scope.getIndex()-1;
-            if(index<-1){
-              index = l-1;
-            } else if (index >= l ){
-              index = -1;
-              scope.setIndex(index);
-              scope.preSelectOff();
-              break;
-            }
-            scope.setIndex(index);
-
-            if(index!==-1)
-              scope.preSelect(angular.element(angular.element(this).find('li')[index]).text());
-
-            scope.$apply();
-
-            break;
-          case key.down:
-            index = scope.getIndex()+1;
-            if(index<-1){
-              index = l-1;
-            } else if (index >= l ){
-              index = -1;
-              scope.setIndex(index);
-              scope.preSelectOff();
-              scope.$apply();
-              break;
-            }
-            scope.setIndex(index);
-
-            if(index!==-1)
-              scope.preSelect(angular.element(angular.element(this).find('li')[index]).text());
-
-            break;
-          case key.left:
-            break;
-          case key.right:
-          case key.enter:
-          case key.tab:
-
-            index = scope.getIndex();
-            // scope.preSelectOff();
-            if(index !== -1) {
-              scope.select(angular.element(angular.element(this).find('li')[index]).text());
-              if(keycode == key.enter) {
-                e.preventDefault();
-              }
-            } else {
-              if(keycode == key.enter) {
-                scope.select();
-              }
-            }
-            scope.setIndex(-1);
-            scope.$apply();
-
-            break;
-          case key.esc:
-            // disable suggestions on escape
-            scope.select();
-            scope.setIndex(-1);
-            scope.$apply();
-            e.preventDefault();
-            break;
-          default:
-            return;
-        }
-
-      });
-    },
-    template: '\
-        <div class="autocomplete {{ attrs.class }}" id="{{ attrs.id }}">\
-          <input\
-            type="text"\
-            ng-model="searchParam"\
-            placeholder="{{ attrs.placeholder }}"\
-            class="{{ attrs.inputclass }}"\
-            id="{{ attrs.inputid }}"\
-            ng-required="{{ autocompleteRequired }}" />\
-          <ul ng-show="completing && (suggestions | filter:searchFilter).length > 0">\
-            <li\
-              suggestion\
-              ng-repeat="suggestion in suggestions | filter:searchFilter | orderBy:\'toString()\' track by $index"\
-              index="{{ $index }}"\
-              val="{{ suggestion }}"\
-              ng-class="{ active: ($index === selectedIndex) }"\
-              ng-click="select(suggestion)"\
-              ng-bind-html="suggestion | highlight:searchParam"></li>\
-          </ul>\
-        </div>'
-  };
-});
-
-app.filter('highlight', ['$sce', function ($sce) {
-  return function (input, searchParam) {
-    if (typeof input === 'function') return '';
-    if (searchParam) {
-      var words = '(' +
-            searchParam.split(/\ /).join(' |') + '|' +
-            searchParam.split(/\ /).join('|') +
-          ')',
-          exp = new RegExp(words, 'gi');
-      if (words.length) {
-        input = input.replace(exp, "<span class=\"highlight\">$1</span>");
-      }
-    }
-    return $sce.trustAsHtml(input);
-  };
-}]);
-
-app.directive('suggestion', function(){
-  return {
-    restrict: 'A',
-    require: '^autocomplete', // ^look for controller on parents element
-    link: function(scope, element, attrs, autoCtrl){
-      element.bind('mouseenter', function() {
-        autoCtrl.preSelect(attrs.val);
-        autoCtrl.setIndex(attrs.index);
-      });
-
-      element.bind('mouseleave', function() {
-        autoCtrl.preSelectOff();
-      });
-    }
-  };
-});
-
 ///#source 1 1 blob-js/blob.js
 /* Blob.js
  * A Blob implementation.
