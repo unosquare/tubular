@@ -175,7 +175,7 @@ table.tubular-grid-table thead tr th i.fa {
     cursor: default;
 }
 
-table.tubular-grid-table thead tr th div.tubular-column-filter {
+table.tubular-grid-table thead tr th div.tubular-column-menu {
     position: relative;
     display: block;
     text-align: center;
@@ -183,32 +183,34 @@ table.tubular-grid-table thead tr th div.tubular-column-filter {
     float: right;
 }
 
-    table.tubular-grid-table thead tr th div.tubular-column-filter:active {
+    table.tubular-grid-table thead tr th div.tubular-column-menu:active {
         outline: none;
     }
 
-    table.tubular-grid-table thead tr th div.tubular-column-filter .tubular-column-filter-button {
+    table.tubular-grid-table thead tr th div.tubular-column-menu > button,
+    table.tubular-grid-table thead tr th div.tubular-column-menu > div.btn-group > button {
         border-radius: 30px !important;
         line-height: 10px;
         margin: 0;
     }
 
-        table.tubular-grid-table thead tr th div.tubular-column-filter .tubular-column-filter-button:active {
+        table.tubular-grid-table thead tr th div.tubular-column-menu  > button:active,
+        table.tubular-grid-table thead tr th div.tubular-column-menu > div.btn-group > button:active {
             outline: none;
         }
 
-        table.tubular-grid-table thead tr th div.tubular-column-filter .tubular-column-filter-button i.fa,
-        table.tubular-grid-table thead tr th div.tubular-column-filter .tubular-column-filter-button i.glyphicon {
+        table.tubular-grid-table thead tr th div.tubular-column-menu button i.fa,
+        table.tubular-grid-table thead tr th div.tubular-column-menu button i.glyphicon {
             font-size: 10px;
         }
 
-    table.tubular-grid-table thead tr th div.tubular-column-filter form.tubular-column-filter-form {
-        min-width: 230px;
-    }
-
-form.tubular-column-filter-form input[type=checkbox] {
-    height: inherit;
+form.tubular-column-filter-form {
+    min-width: 230px;
 }
+
+    form.tubular-column-filter-form input[type=checkbox] {
+        height: inherit;
+    }
 
     form.tubular-column-filter-form input[type=checkbox]:after {
         content: "Check to filter";

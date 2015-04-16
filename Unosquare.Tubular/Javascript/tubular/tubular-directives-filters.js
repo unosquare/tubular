@@ -1,13 +1,14 @@
 ﻿(function() {
     'use strict';
 
-    angular.module('tubular.directives').directive('tbColumnFilter', [
+    angular.module('tubular.directives')
+        .directive('tbColumnFilter', [
             'tubularGridFilterService', function(tubularGridFilterService) {
 
                 return {
                     require: '^tbColumn',
-                    template: '<div class="tubular-column-filter">' +
-                        '<button class="tubular-column-filter-button btn btn-xs btn-default" data-toggle="popover" data-placement="bottom" ' +
+                    template: '<div class="tubular-column-menu">' +
+                        '<button class="btn btn-xs btn-default" data-toggle="popover" data-placement="bottom" ' +
                         'ng-class="{ \'btn-success\': (filter.Operator !== \'None\' && filter.Text.length > 0) }">' +
                         '<i class="fa fa-filter"></i></button>' +
                         '<div style="display: none;">' +
@@ -166,6 +167,32 @@
                             }
                         };
                     }
+                };
+            }
+        ]).directive('tbColumnMenu', [function () {
+
+                return {
+                    require: '^tbColumn',
+                    template: '<div class="tubular-column-menu"><div class="btn-group">' +
+                        '<button class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown"aria-expanded="false">' +
+                        '<i class="fa fa-bars"></i></button>' +
+                        '<ul class="dropdown-menu" role="menu">' +
+                        '<li ng-show="filter"><a href="#">Filter</a></li>' +
+                        '<li><a href="#">Columns</a></li>' +
+                        '</ul>' +
+                        '</div>' +
+                        '</div>',
+                    restrict: 'E',
+                    replace: true,
+                    transclude: true,
+                    scope: {
+                        filter: '=?',
+                    },
+                    controller: [
+                        '$scope', function ($scope) {
+                            $scope.filter = $scope.filter || false;
+                        }
+                    ]
                 };
             }
         ]);
