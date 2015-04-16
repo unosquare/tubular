@@ -121,7 +121,10 @@
                             $scope.gridDataService = $scope.gridDataService || tubularHttp;
                             $scope.requireAuthentication = $scope.requireAuthentication || true;
 
-                            $scope.addColumn = function(item) {
+                            if (angular.isString($scope.requireAuthentication))
+                                $scope.requireAuthentication = $scope.requireAuthentication == "true";
+
+                            $scope.addColumn = function (item) {
                                 if (item.Name === null) return;
 
                                 if ($scope.hasColumnsDefinitions !== false)
