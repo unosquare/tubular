@@ -135,6 +135,7 @@
                                     serverUrl: $scope.serverSaveUrl,
                                     requestMethod: $scope.serverSaveMethod,
                                     timeout: $scope.requestTimeout,
+                                    requireAuthentication: $scope.requireAuthentication,
                                     data: $scope.tempRow
                                 };
 
@@ -161,7 +162,8 @@
                                 var request = {
                                     serverUrl: $scope.serverSaveUrl + "/" + row.$key,
                                     requestMethod: 'DELETE',
-                                    timeout: $scope.requestTimeout
+                                    timeout: $scope.requestTimeout,
+                                    requireAuthentication: $scope.requireAuthentication,
                                 };
 
                                 $scope.currentRequest = $scope.gridDataService.retrieveDataAsync(request);
@@ -184,7 +186,8 @@
                                 var request = {
                                     serverUrl: $scope.serverSaveUrl,
                                     requestMethod: 'PUT',
-                                    timeout: $scope.requestTimeout
+                                    timeout: $scope.requestTimeout,
+                                    requireAuthentication: $scope.requireAuthentication,
                                 };
 
                                 var requestObj = $scope.gridDataService.saveDataAsync(row, request);
@@ -212,6 +215,7 @@
                                     serverUrl: $scope.serverUrl,
                                     requestMethod: $scope.requestMethod,
                                     timeout: $scope.requestTimeout,
+                                    requireAuthentication: $scope.requireAuthentication,
                                     data: {
                                         Count: $scope.requestCounter,
                                         Columns: $scope.columns,
@@ -238,7 +242,7 @@
                                     function(data) {
                                         $scope.requestCounter += 1;
 
-                                        if (angular.isUndefined(data)) {
+                                        if (angular.isUndefined(data) || data == null) {
                                             $scope.$emit('tbGrid_OnConnectionError', {
                                                 statusText: "Data is empty",
                                                 status: 0
@@ -389,6 +393,7 @@
                                     serverUrl: $scope.serverUrl,
                                     requestMethod: $scope.requestMethod,
                                     timeout: $scope.requestTimeout,
+                                    requireAuthentication: $scope.requireAuthentication,
                                     data: {
                                         Count: $scope.requestCounter,
                                         Columns: $scope.columns,
