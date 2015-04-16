@@ -142,8 +142,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy $(ProjectDir)Css\*.css $(SolutionDir)dist\
-copy $(ProjectDir)Javascript\*.js $(SolutionDir)dist\</PostBuildEvent>
+    <PostBuildEvent>IF EXIST $(SolutionDir)dist\ copy $(ProjectDir)Css\*.css $(SolutionDir)dist\
+IF EXIST $(SolutionDir)dist\ copy $(ProjectDir)Javascript\*.js $(SolutionDir)dist\</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

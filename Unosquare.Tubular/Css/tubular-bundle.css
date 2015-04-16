@@ -165,9 +165,11 @@ div.tubular-pager {
         display: block !important;
     }
 
-    div.tubular-pager ul.pagination li a {
-        outline: none;
-    }
+        div.tubular-pager .pagination > li > a {
+            text-align: center;
+            font-size: 10px;
+            outline: none;
+        }
 
 /* Tubular Grid Overlay and animation */
 
@@ -245,12 +247,6 @@ div.tubular-general-overlay {
         border-radius: 4px;
     }
 
-/* Tubular Grid Pager Styles */
-.tubular-pager ul.pagination li {
-    text-align: center;
-    font-size: 11px;
-}
-
 /* Tubular Grid Heading and Heading Filter Styles */
 div.panel > table.tubular-grid-table.table-bordered > thead > tr > th {
     vertical-align: middle;
@@ -275,13 +271,10 @@ th.show-xl, td.show-xl {
         font-size: 12px;
     }
 
-    .tubular-pager ul.pagination li {
+    div.tubular-pager .pagination > li > a {
         font-size: 12px;
+        min-width: 37px;
     }
-
-        .tubular-pager ul.pagination li a {
-            min-width: 37px;
-        }
 }
 
 @media (min-width: 1400px) {
