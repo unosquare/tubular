@@ -92,7 +92,8 @@
                         pageSize: '@?',
                         onBeforeGetData: '=?',
                         requestMethod: '@',
-                        gridDataService: '=?service'
+                        gridDataService: '=?service',
+                        requireAuthentication: '@?'
                     },
                     controller: [
                         '$scope', 'localStorageService', 'tubularGridPopupService', 'tubularModel',
@@ -118,8 +119,9 @@
                             $scope.isEmpty = false;
                             $scope.tempRow = new TubularModel($scope, {});
                             $scope.gridDataService = $scope.gridDataService || tubularHttp;
+                            $scope.requireAuthentication = $scope.requireAuthentication || true;
 
-                            $scope.addColumn = function(item) {
+                            $scope.addColumn = function (item) {
                                 if (item.Name === null) return;
 
                                 if ($scope.hasColumnsDefinitions !== false)
@@ -133,6 +135,7 @@
                                     serverUrl: $scope.serverSaveUrl,
                                     requestMethod: $scope.serverSaveMethod,
                                     timeout: $scope.requestTimeout,
+                                    requireAuthentication: $scope.requireAuthentication,
                                     data: $scope.tempRow
                                 };
 
@@ -159,7 +162,8 @@
                                 var request = {
                                     serverUrl: $scope.serverSaveUrl + "/" + row.$key,
                                     requestMethod: 'DELETE',
-                                    timeout: $scope.requestTimeout
+                                    timeout: $scope.requestTimeout,
+                                    requireAuthentication: $scope.requireAuthentication,
                                 };
 
                                 $scope.currentRequest = $scope.gridDataService.retrieveDataAsync(request);
@@ -182,7 +186,8 @@
                                 var request = {
                                     serverUrl: $scope.serverSaveUrl,
                                     requestMethod: 'PUT',
-                                    timeout: $scope.requestTimeout
+                                    timeout: $scope.requestTimeout,
+                                    requireAuthentication: $scope.requireAuthentication,
                                 };
 
                                 var requestObj = $scope.gridDataService.saveDataAsync(row, request);
@@ -210,6 +215,7 @@
                                     serverUrl: $scope.serverUrl,
                                     requestMethod: $scope.requestMethod,
                                     timeout: $scope.requestTimeout,
+                                    requireAuthentication: $scope.requireAuthentication,
                                     data: {
                                         Count: $scope.requestCounter,
                                         Columns: $scope.columns,
@@ -236,7 +242,7 @@
                                     function(data) {
                                         $scope.requestCounter += 1;
 
-                                        if (angular.isUndefined(data)) {
+                                        if (angular.isUndefined(data) || data == null) {
                                             $scope.$emit('tbGrid_OnConnectionError', {
                                                 statusText: "Data is empty",
                                                 status: 0
@@ -387,6 +393,7 @@
                                     serverUrl: $scope.serverUrl,
                                     requestMethod: $scope.requestMethod,
                                     timeout: $scope.requestTimeout,
+                                    requireAuthentication: $scope.requireAuthentication,
                                     data: {
                                         Count: $scope.requestCounter,
                                         Columns: $scope.columns,
@@ -1999,6 +2006,7 @@
 
                 me.cache = $cacheFactory('tubularHttpCache');
                 me.useCache = true;
+                me.requireAuthentication = true;
 
                 me.isAuthenticated = function() {
                     if (!me.userData.isAuthenticated || isAuthenticationExpired(me.userData.expirationDate)) {
@@ -2010,6 +2018,10 @@
                     }
 
                     return true;
+                };
+
+                me.setRequireAuthentication = function(val) {
+                    me.requireAuthentication = val;
                 };
 
                 me.removeAuthentication = function() {
@@ -2099,16 +2111,29 @@
                 };
 
                 me.retrieveDataAsync = function (request) {
-                    if (me.isAuthenticated() == false) return false;
-
-                    var checksum = me.checksum(request);
-
                     var canceller = $q.defer();
 
                     var cancel = function(reason) {
                         console.error(reason);
                         canceller.resolve(reason);
                     };
+
+                    if (angular.isString(request.requireAuthentication))
+                        request.requireAuthentication = request.requireAuthentication == "true";
+                    else
+                        request.requireAuthentication = request.requireAuthentication || me.requireAuthentication;
+
+                    if (request.requireAuthentication && me.isAuthenticated() == false) {
+                        // Return empty dataset
+                        return {
+                            promise: $q(function(resolve, reject) {
+                                resolve(null);
+                            }),
+                            cancel: cancel
+                        };
+                    }
+
+                    var checksum = me.checksum(request);
 
                     if ((request.requestMethod == 'GET' || request.requestMethod == 'POST') && me.useCache) {
                         var data = me.cache.get(checksum);
@@ -2440,6 +2465,12 @@
             'tubularHttp', function tubularOData(tubularHttp) {
                 var me = this;
 
+                me.requireAuthentication = true;
+
+                me.setRequireAuthentication = function (val) {
+                    me.requireAuthentication = val;
+                };
+
                 // {0} represents column name and {1} represents filter value
                 me.operatorsMapping = {
                     'None': '',
@@ -2499,6 +2530,8 @@
                     request.data = null;
                     request.serverUrl = url;
 
+                    tubularHttp.setRequireAuthentication(request.requireAuthentication || me.requireAuthentication);
+
                     var response = tubularHttp.retrieveDataAsync(request);
 
                     var promise = response.promise.then(function(data) {
@@ -2524,7 +2557,8 @@
                     };
                 };
 
-                me.saveDataAsync = function(model, request) {
+                me.saveDataAsync = function (model, request) {
+                    tubularHttp.setRequireAuthentication(request.requireAuthentication || me.requireAuthentication);
                     tubularHttp.saveDataAsync(model, request); //TODO: Check how to handle
                 };
 
