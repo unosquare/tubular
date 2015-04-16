@@ -258,14 +258,18 @@ namespace Unosquare.Tubular
             return response;
         }
 
+        public static IQueryable CreateDynamicFilteredSet(this IQueryable dataSource, string fieldName, string filter)
+        {
+            return dataSource.Where(String.Format("{0}.Contains(@0)", fieldName), new[] {filter});
+        }
+
         public static IQueryable CreateTypeAheadList(this IQueryable dataSource, string fieldName, string filter)
         {
             // TODO: I need to connect this to a better platform
-            return
-                dataSource.Where(String.Format("{0}.Contains(@0)", fieldName), new[] {filter})
-                    .Select(fieldName)
-                    .Distinct()
-                    .Take(8);
+            return dataSource.CreateDynamicFilteredSet(fieldName, filter)
+                .Select(fieldName)
+                .Distinct()
+                .Take(8);
         }
     }
 
