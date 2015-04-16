@@ -1999,6 +1999,7 @@
 
                 me.cache = $cacheFactory('tubularHttpCache');
                 me.useCache = true;
+                me.requireAuthentication = true;
 
                 me.isAuthenticated = function() {
                     if (!me.userData.isAuthenticated || isAuthenticationExpired(me.userData.expirationDate)) {
@@ -2010,6 +2011,10 @@
                     }
 
                     return true;
+                };
+
+                me.setRequireAuthentication = function(val) {
+                    me.requireAuthentication = val;
                 };
 
                 me.removeAuthentication = function() {
@@ -2099,16 +2104,26 @@
                 };
 
                 me.retrieveDataAsync = function (request) {
-                    if (me.isAuthenticated() == false) return false;
-
-                    var checksum = me.checksum(request);
-
                     var canceller = $q.defer();
 
                     var cancel = function(reason) {
                         console.error(reason);
                         canceller.resolve(reason);
                     };
+
+                    request.requireAuthentication = request.requireAuthentication || me.requireAuthentication;
+
+                    if (request.requireAuthentication && me.isAuthenticated() == false) {
+                        // Return empty dataset
+                        return {
+                            promise: $q(function(resolve, reject) {
+                                resolve(null);
+                            }),
+                            cancel: cancel
+                        };
+                    }
+
+                    var checksum = me.checksum(request);
 
                     if ((request.requestMethod == 'GET' || request.requestMethod == 'POST') && me.useCache) {
                         var data = me.cache.get(checksum);
@@ -2498,6 +2513,9 @@
 
                     request.data = null;
                     request.serverUrl = url;
+
+                    // TODO: Get this from grid config
+                    tubularHttp.setRequireAuthentication(false);
 
                     var response = tubularHttp.retrieveDataAsync(request);
 
