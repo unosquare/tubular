@@ -163,6 +163,16 @@
                                 $scope.currentRequest.promise.then(
                                     function(data) {
                                         $scope.requestCounter += 1;
+
+                                        if (angular.isUndefined(data)) {
+                                            $scope.$emit('tbGrid_OnConnectionError', {
+                                                statusText: "Data is empty",
+                                                status: 0
+                                            });
+
+                                            return;
+                                        }
+
                                         $scope.dataSource = data;
 
                                         $scope.rows = data.Payload.map(function(el) {

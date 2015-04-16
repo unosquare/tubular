@@ -326,9 +326,7 @@
                 }
 
                 var blob = new Blob([csvFile], { type: 'text/csv;charset=utf-8;' });
-                $script('//cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2014-11-29/FileSaver.min.js', function() {
-                    saveAs(blob, filename);
-                });
+                saveAs(blob, filename);
             };
         })
         .service('tubularGridFilterService', [

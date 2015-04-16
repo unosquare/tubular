@@ -10,7 +10,6 @@
   </settings>
   <!--The order of the <file> elements determines the order of the files in the bundle.-->
   <files>
-    <file>scriptjs/script.js</file>
     <file>tubular/tubular.js</file>
     <file>tubular/tubular-directives.js</file>
     <file>tubular/tubular-directives-grid.js</file>
