@@ -49,11 +49,6 @@
                                     throw 'Cannot define more columns. Column definitions have been sealed';
 
                                 $scope.columns.push(item);
-                                $scope.logMessage('tubular-grid.addColumn()', item.Name);
-                            };
-
-                            $scope.logMessage = function(source, message) {
-                                console.debug('Source: ' + source + ': ' + message);
                             };
 
                             $scope.createRow = function() {
