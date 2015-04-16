@@ -19,8 +19,8 @@
                         requireAuthentication: '@?'
                     },
                     controller: [
-                        '$scope', 'localStorageService', 'tubularGridPopupService', 'tubularModel',
-                        function($scope, localStorageService, tubularGridPopupService, TubularModel) {
+                        '$scope', 'localStorageService', 'tubularPopupService', 'tubularModel',
+                        function($scope, localStorageService, tubularPopupService, TubularModel) {
                             $scope.tubularDirective = 'tubular-grid';
                             $scope.columns = [];
                             $scope.rows = [];
@@ -180,7 +180,7 @@
                                             var model = new TubularModel($scope, el);
 
                                             model.editPopup = function(template) {
-                                                tubularGridPopupService.openDialog(template, model);
+                                                tubularPopupService.openDialog(template, model);
                                             };
 
                                             return model;

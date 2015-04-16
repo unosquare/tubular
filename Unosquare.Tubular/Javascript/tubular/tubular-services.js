@@ -262,8 +262,8 @@
                 };
             }
         ])
-        .service('tubularGridPopupService', [
-            '$modal', function tubularGridPopupService($modal) {
+        .service('tubularPopupService', [
+            '$modal', function tubularPopupService($modal) {
                 var me = this;
 
                 me.openDialog = function(template, model) {
