@@ -30,6 +30,15 @@ You will need to reference the following JS libraries in order to use Tubular in
 
 Also, if you use the Visual Studio you will need the excellent <a href="http://vswebessentials.com/download" target="_blank">Web Essentials</a> plug-in in order to generate the Tubular bundles.
 
+You can get them all using the next lines in your initial HTML page. <a href="http://www.jsdelivr.com/">jsDelivr</a> has almost everything you need.
+```html
+<link rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap/3.3.4/css/bootstrap.min.css" />
+<link rel="stylesheet" href="//cdn.jsdelivr.net/fontawesome/4.3.0/css/font-awesome.min.css" />
+
+<script src="//cdn.jsdelivr.net/g/jquery,bootstrap,angularjs(angular.min.js+angular-animate.min.js+angular-cookies.min.js+angular-route.min.js),filesaver.js,angular.bootstrap(ui-bootstrap.min.js+ui-bootstrap-tpls.min.js)"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/angular-local-storage/0.1.5/angular-local-storage.min.js"></script>
+```
+
 ## Samples
 
 You can check out the <a href="http://unosquare.github.io/tubular" target="_blank">Tubular GitPage</a> to get a few examples. We still need to work on more samples and better documentation, but we feel what we have now will get you up to speed for now.
