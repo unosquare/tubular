@@ -526,14 +526,14 @@
             'tubulargGridColumnModel', function(ColumnModel) {
                 return {
                     require: '^tbColumnDefinitions',
-                    template: '<th ng-transclude ng-class="{sortable: column.Sortable}"></th>',
+                    template: '<th ng-transclude ng-class="{sortable: column.Sortable}" ng-show="column.Visible"></th>',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
                     scope: true,
                     controller: [
                         '$scope', function($scope) {
-                            //$scope.$component.logMessage('tubular-grid.table.thead.th', 'ctrl');
+                            $scope.column = { Label: '' };
                             $scope.$component = $scope.$parent.$parent.$component;
                             $scope.tubularDirective = 'tubular-column';
 
@@ -545,11 +545,12 @@
                     compile: function compile(cElement, cAttrs) {
                         return {
                             pre: function(scope, lElement, lAttrs, lController, lTransclude) {
-                                scope.label = lAttrs.label || (lAttrs.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
+                                lAttrs.label = lAttrs.label || (lAttrs.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
 
                                 var column = new ColumnModel(lAttrs);
                                 scope.$component.addColumn(column);
                                 scope.column = column;
+                                scope.label = column.Label;
                             },
                             post: function(scope, lElement, lAttrs, lController, lTransclude) {
                             }
@@ -674,11 +675,28 @@
 
                 return {
                     require: '^tbRowTemplate',
-                    template: '<td ng-transclude></td>',
+                    template: '<td ng-transclude ng-show="column.Visible" data-label="{{column.Label}}"></td>',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
-                    scope: true
+                    scope: {
+                        columnName: '@?'
+                    },
+                    controller: [
+                        '$scope', function ($scope) {
+                            $scope.column = { Visible: true };
+                            $scope.columnName = $scope.columnName || null;
+                            $scope.$component = $scope.$parent.$parent.$component;
+
+                            if ($scope.columnName != null) {
+                                var columnModel = $scope.$component.columns.filter(function (el) { return el.Name == $scope.columnName; });
+
+                                if (columnModel.length > 0) {
+                                    $scope.column = columnModel[0];
+                                }
+                            }
+                        }
+                    ]
                 };
             }
         ])
@@ -1586,7 +1604,7 @@
                     }
                 };
             }
-        ]).directive('tbColumnMenu', [function () {
+        ]).directive('tbColumnMenu', ['$modal', function ($modal) {
 
                 return {
                     require: '^tbColumn',
@@ -1595,7 +1613,7 @@
                         '<i class="fa fa-bars"></i></button>' +
                         '<ul class="dropdown-menu" role="menu">' +
                         '<li ng-show="filter"><a href="#">Filter</a></li>' +
-                        '<li><a href="#">Columns</a></li>' +
+                        '<li ng-show="columnSelector"><a ng-click="openColumnsSelector()">Columns Selector</a></li>' +
                         '</ul>' +
                         '</div>' +
                         '</div>',
@@ -1604,10 +1622,40 @@
                     transclude: true,
                     scope: {
                         filter: '=?',
+                        columnSelector: '=?',
                     },
                     controller: [
                         '$scope', function ($scope) {
                             $scope.filter = $scope.filter || false;
+                            $scope.columnSelector = $scope.columnSelector || false;
+                            $scope.component = $scope.$parent.$parent.$component;
+
+                            $scope.openColumnsSelector = function () {
+                                var model = $scope.component.columns;
+
+                                var dialog = $modal.open({
+                                    template: '<div class="modal-header">' +
+                                        '<h3 class="modal-title">Columns Selector</h3>' +
+                                        '</div>' +
+                                        '<div class="modal-body">' +
+                                        '<div class="row" ng-repeat="col in Model">' +
+                                        '<div class="col-xs-2"><input type="checkbox" ng-model="col.Visible" /></div>' +
+                                        '<div class="col-xs-10">{{col.Label}}</li>' +
+                                        '</div></div>' +
+                                        '</div>' +
+                                        '<div class="modal-footer"><button class="btn btn-warning" ng-click="closePopup()">Close</button></div>',
+                                    backdropClass: 'fullHeight',
+                                    controller: [
+                                        '$scope', function ($innerScope) {
+                                            $innerScope.Model = model;
+
+                                            $innerScope.closePopup = function () {
+                                                dialog.close();
+                                            };
+                                        }
+                                    ]
+                                });
+                            };
                         }
                     ]
                 };
@@ -1779,11 +1827,12 @@
                 return function(attrs) {
                     this.Name = attrs.name || null;
                     this.Label = attrs.label || null;
-                    this.Sortable = attrs.sortable === "true" ? true : false;
+                    this.Sortable = attrs.sortable === "true";
                     this.SortOrder = parseInt(attrs.sortOrder) || -1;
                     this.SortDirection = parseSortDirection(attrs.sortDirection);
-                    this.IsKey = attrs.isKey === "true" ? true : false;
-                    this.Searchable = attrs.searchable === "true" ? true : false;
+                    this.IsKey = attrs.isKey === "true";
+                    this.Searchable = attrs.searchable === "true";
+                    this.Visible = attrs.visible === "false" ? false : true;
                     this.Filter = null;
                     this.DataType = attrs.columnType || "string";
 

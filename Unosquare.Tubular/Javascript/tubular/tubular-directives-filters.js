@@ -169,7 +169,7 @@
                     }
                 };
             }
-        ]).directive('tbColumnMenu', [function () {
+        ]).directive('tbColumnMenu', ['$modal', function ($modal) {
 
                 return {
                     require: '^tbColumn',
@@ -178,7 +178,7 @@
                         '<i class="fa fa-bars"></i></button>' +
                         '<ul class="dropdown-menu" role="menu">' +
                         '<li ng-show="filter"><a href="#">Filter</a></li>' +
-                        '<li><a href="#">Columns</a></li>' +
+                        '<li ng-show="columnSelector"><a ng-click="openColumnsSelector()">Columns Selector</a></li>' +
                         '</ul>' +
                         '</div>' +
                         '</div>',
@@ -187,10 +187,40 @@
                     transclude: true,
                     scope: {
                         filter: '=?',
+                        columnSelector: '=?',
                     },
                     controller: [
                         '$scope', function ($scope) {
                             $scope.filter = $scope.filter || false;
+                            $scope.columnSelector = $scope.columnSelector || false;
+                            $scope.component = $scope.$parent.$parent.$component;
+
+                            $scope.openColumnsSelector = function () {
+                                var model = $scope.component.columns;
+
+                                var dialog = $modal.open({
+                                    template: '<div class="modal-header">' +
+                                        '<h3 class="modal-title">Columns Selector</h3>' +
+                                        '</div>' +
+                                        '<div class="modal-body">' +
+                                        '<div class="row" ng-repeat="col in Model">' +
+                                        '<div class="col-xs-2"><input type="checkbox" ng-model="col.Visible" /></div>' +
+                                        '<div class="col-xs-10">{{col.Label}}</li>' +
+                                        '</div></div>' +
+                                        '</div>' +
+                                        '<div class="modal-footer"><button class="btn btn-warning" ng-click="closePopup()">Close</button></div>',
+                                    backdropClass: 'fullHeight',
+                                    controller: [
+                                        '$scope', function ($innerScope) {
+                                            $innerScope.Model = model;
+
+                                            $innerScope.closePopup = function () {
+                                                dialog.close();
+                                            };
+                                        }
+                                    ]
+                                });
+                            };
                         }
                     ]
                 };

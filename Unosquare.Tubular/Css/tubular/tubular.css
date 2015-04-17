@@ -268,3 +268,6 @@ input.ng-pristine + span.help-block.error-block {
                 font-weight: bold;
             }
 }
+ul.dropdown-menu a {
+    cursor: pointer;
+}

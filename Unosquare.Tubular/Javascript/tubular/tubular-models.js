@@ -19,11 +19,12 @@
                 return function(attrs) {
                     this.Name = attrs.name || null;
                     this.Label = attrs.label || null;
-                    this.Sortable = attrs.sortable === "true" ? true : false;
+                    this.Sortable = attrs.sortable === "true";
                     this.SortOrder = parseInt(attrs.sortOrder) || -1;
                     this.SortDirection = parseSortDirection(attrs.sortDirection);
-                    this.IsKey = attrs.isKey === "true" ? true : false;
-                    this.Searchable = attrs.searchable === "true" ? true : false;
+                    this.IsKey = attrs.isKey === "true";
+                    this.Searchable = attrs.searchable === "true";
+                    this.Visible = attrs.visible === "false" ? false : true;
                     this.Filter = null;
                     this.DataType = attrs.columnType || "string";
 

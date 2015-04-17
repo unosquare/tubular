@@ -449,14 +449,14 @@
             'tubulargGridColumnModel', function(ColumnModel) {
                 return {
                     require: '^tbColumnDefinitions',
-                    template: '<th ng-transclude ng-class="{sortable: column.Sortable}"></th>',
+                    template: '<th ng-transclude ng-class="{sortable: column.Sortable}" ng-show="column.Visible"></th>',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
                     scope: true,
                     controller: [
                         '$scope', function($scope) {
-                            //$scope.$component.logMessage('tubular-grid.table.thead.th', 'ctrl');
+                            $scope.column = { Label: '' };
                             $scope.$component = $scope.$parent.$parent.$component;
                             $scope.tubularDirective = 'tubular-column';
 
@@ -468,11 +468,12 @@
                     compile: function compile(cElement, cAttrs) {
                         return {
                             pre: function(scope, lElement, lAttrs, lController, lTransclude) {
-                                scope.label = lAttrs.label || (lAttrs.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
+                                lAttrs.label = lAttrs.label || (lAttrs.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
 
                                 var column = new ColumnModel(lAttrs);
                                 scope.$component.addColumn(column);
                                 scope.column = column;
+                                scope.label = column.Label;
                             },
                             post: function(scope, lElement, lAttrs, lController, lTransclude) {
                             }
@@ -597,11 +598,28 @@
 
                 return {
                     require: '^tbRowTemplate',
-                    template: '<td ng-transclude></td>',
+                    template: '<td ng-transclude ng-show="column.Visible" data-label="{{column.Label}}"></td>',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
-                    scope: true
+                    scope: {
+                        columnName: '@?'
+                    },
+                    controller: [
+                        '$scope', function ($scope) {
+                            $scope.column = { Visible: true };
+                            $scope.columnName = $scope.columnName || null;
+                            $scope.$component = $scope.$parent.$parent.$component;
+
+                            if ($scope.columnName != null) {
+                                var columnModel = $scope.$component.columns.filter(function (el) { return el.Name == $scope.columnName; });
+
+                                if (columnModel.length > 0) {
+                                    $scope.column = columnModel[0];
+                                }
+                            }
+                        }
+                    ]
                 };
             }
         ])
