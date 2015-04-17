@@ -11,6 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unosquare.Tubular.Security"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Folder", "Solution Folder", "{142E9E46-AD02-4F12-98D2-1E0EE6A4F26A}"
 	ProjectSection(SolutionItems) = preProject
+		bower.json = bower.json
 		LICENSE = LICENSE
 		package.json = package.json
 		README.md = README.md
