@@ -27,7 +27,6 @@ namespace Unosquare.Tubular.Sample.Application
         {
             static public void Configure(IAppBuilder app)
             {
-
                 var authFunc = new Func<OAuthGrantResourceOwnerCredentialsContext, Task<Security.UserAuthenticationResult>>((c) =>
                 {
                     var task = new Task<Security.UserAuthenticationResult>(() =>
@@ -42,10 +41,8 @@ namespace Unosquare.Tubular.Sample.Application
                                 var roles = user.Roles.ToArray();
                                 return Security.UserAuthenticationResult.CreateAuthorizedResult(user, roles);
                             }
-                            else
-                            {
-                                return Security.UserAuthenticationResult.CreateErrorResult("Invalid credentials");
-                            }
+                            
+                            return Security.UserAuthenticationResult.CreateErrorResult("Invalid credentials");
                         }
 
                         
