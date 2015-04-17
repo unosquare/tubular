@@ -18,7 +18,10 @@
                                     $scope.Model.save(true);
                                     
                                     $scope.$on('tbGrid_OnSuccessfulUpdate', 
-                                        function () { dialog.close(); });
+                                        function () {
+                                            // TODO: Review this
+                                            dialog.close();
+                                        });
                                 };
 
                                 $scope.closePopup = function () {
