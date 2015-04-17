@@ -46,11 +46,6 @@
                     replace: true,
                     transclude: true,
                     scope: false,
-                    controller: [
-                        '$scope', function($scope) {
-
-                        }
-                    ],
                     compile: function compile(cElement, cAttrs) {
                         return {
                             pre: function(scope, lElement, lAttrs, lController, lTransclude) {

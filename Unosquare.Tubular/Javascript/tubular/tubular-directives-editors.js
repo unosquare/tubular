@@ -278,7 +278,7 @@
                         tubularEditorService.setupScope($scope);
                         $scope.$editorType = 'select';
 
-                        $scope.getValues = function (val) {
+                        $scope.getValues = function(val) {
                             if (angular.isDefined($scope.optionsUrl)) {
                                 return tubularHttp.retrieveDataAsync({
                                     serverUrl: $scope.optionsUrl + '?search=' + val,
@@ -286,10 +286,10 @@
                                 }).promise;
                             }
 
-                            return $q(function(resolve, reject) {
+                            return $q(function(resolve) {
                                 resolve($scope.options);
                             });
-                        }
+                        };
                     }
                 ]
             };

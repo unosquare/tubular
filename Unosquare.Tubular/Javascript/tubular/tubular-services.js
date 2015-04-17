@@ -63,7 +63,7 @@
                         var innerValue = row[j] === null ? '' : row[j].toString();
                         if (row[j] instanceof Date) {
                             innerValue = row[j].toLocaleString();
-                        };
+                        }
                         var result = innerValue.replace(/"/g, '""');
                         if (result.search(/("|,|\n)/g) >= 0)
                             result = '"' + result + '"';
@@ -172,11 +172,11 @@
                     scope.dataType = columns[0].DataType;
                     scope.filterOperators = columns[0].FilterOperators[scope.dataType];
 
-                    if (scope.dataType == 'datetime' || scope.dataType == 'date') {
+                    if (scope.dataType === 'datetime' || scope.dataType === 'date') {
                         scope.filter.Argument = [new Date()];
                     }
 
-                    if (scope.dataType == 'numeric') {
+                    if (scope.dataType === 'numeric') {
                         scope.filter.Argument = [1];
                     }
 
@@ -238,10 +238,11 @@
 
                         // Try to match the model to the parent, if it exists
                         if (angular.isDefined(scope.$parent.Model)) {
-                            if (angular.isDefined(scope.$parent.Model[scope.name]))
+                            if (angular.isDefined(scope.$parent.Model[scope.name])) {
                                 scope.$parent.Model[scope.name] = newValue;
-                            else if (angular.isDefined(scope.$parent.Model.$addField))
+                            } else if (angular.isDefined(scope.$parent.Model.$addField)) {
                                 scope.$parent.Model.$addField(scope.name, newValue);
+                            }
                         }
 
                         if (angular.isUndefined(scope.value) && scope.required) {
@@ -262,7 +263,7 @@
                     while (true) {
                         if (parent == null) break;
                         if (angular.isUndefined(parent.tubularDirective) == false &&
-                            parent.tubularDirective == 'tubular-form') {
+                            parent.tubularDirective === 'tubular-form') {
                             parent.addField(scope);
                             break;
                         }

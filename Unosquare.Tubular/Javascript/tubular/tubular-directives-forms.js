@@ -118,7 +118,7 @@
 
                         $scope.save = function () {
                             // TODO: Why Save and Create is not the same?ñ
-                            if ($scope.rowModel.save() == false) {
+                            if ($scope.rowModel.save() === false) {
                                 $scope.$emit('tbGrid_OnSavingNoChanges', $scope.rowModel);
                             }
                         };

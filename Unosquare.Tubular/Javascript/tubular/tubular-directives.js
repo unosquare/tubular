@@ -204,12 +204,12 @@
                                 $scope.retrieveData();
                             });
 
-                            $scope.$watch('pageSize', function(newVal) {
+                            $scope.$watch('pageSize', function() {
                                 if ($scope.hasColumnsDefinitions && $scope.requestCounter > 0)
                                     $scope.retrieveData();
                             });
 
-                            $scope.$watch('requestedPage', function(newVal) {
+                            $scope.$watch('requestedPage', function() {
                                 // TODO: we still need to inter-lock failed, initial and paged requests
                                 if ($scope.hasColumnsDefinitions && $scope.requestCounter > 0)
                                     $scope.retrieveData();
@@ -241,7 +241,7 @@
 
                                 // if it's not a multiple sorting, remove the sorting from all other columns
                                 if (multiple === false) {
-                                    angular.forEach($scope.columns.filter(function(col) { return col.Name !== columnName }), function(col) {
+                                    angular.forEach($scope.columns.filter(function(col) { return col.Name !== columnName; }), function(col) {
                                         col.SortOrder = -1;
                                         col.SortDirection = 'None';
                                     });
@@ -580,7 +580,7 @@
                             $scope.selectableBool = $scope.selectable != "false";
                             $scope.$component = $scope.$parent.$parent.$parent.$component;
 
-                            if ($scope.selectableBool && angular.isUndefined($scope.rowModel) == false) {
+                            if ($scope.selectableBool && angular.isUndefined($scope.rowModel) === false) {
                                 $scope.$component.selectFromSession($scope.rowModel);
                             }
 

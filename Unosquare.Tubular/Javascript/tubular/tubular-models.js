@@ -148,26 +148,30 @@
                         obj.$selected = false;
 
                         for (var k in obj) {
-                            if (k[0] == '$') continue;
+                            if (obj.hasOwnProperty(k)) {
+                                if (k[0] == '$') continue;
 
-                            obj.$state[k] = {
-                                $valid: function() {
-                                    return this.$errors.length == 0;
-                                },
-                                $errors: []
-                            };
+                                obj.$state[k] = {
+                                    $valid: function() {
+                                        return this.$errors.length == 0;
+                                    },
+                                    $errors: []
+                                };
+                            }
                         }
 
                         obj.$valid = function () {
                             for (var k in obj.$state) {
-                                var key = k;
-                                if (angular.isUndefined(obj.$state[key]) ||
-                                    obj.$state[key] == null ||
-                                    angular.isUndefined(obj.$state[key].$valid)) continue;
+                                if (obj.$state.hasOwnProperty(k)) {
+                                    var key = k;
+                                    if (angular.isUndefined(obj.$state[key]) ||
+                                        obj.$state[key] == null ||
+                                        angular.isUndefined(obj.$state[key].$valid)) continue;
 
-                                if (obj.$state[key].$valid()) continue;
+                                    if (obj.$state[key].$valid()) continue;
 
-                                return false;
+                                    return false;
+                                }
                             }
 
                             return true;
@@ -191,17 +195,21 @@
 
                         obj.resetOriginal = function() {
                             for (var k in obj.$original) {
-                                obj.$original[k] = obj[k];
+                                if (obj.$original.hasOwnProperty(k)) {
+                                    obj.$original[k] = obj[k];
+                                }
                             }
                         };
 
                         obj.revertChanges = function() {
                             for (var k in obj) {
-                                if (k[0] == '$' || angular.isUndefined(obj.$original[k])) {
-                                    continue;
-                                }
+                                if (obj.hasOwnProperty(k)) {
+                                    if (k[0] == '$' || angular.isUndefined(obj.$original[k])) {
+                                        continue;
+                                    }
 
-                                obj[k] = obj.$original[k];
+                                    obj[k] = obj.$original[k];
+                                }
                             }
 
                             obj.$isEditing = false;

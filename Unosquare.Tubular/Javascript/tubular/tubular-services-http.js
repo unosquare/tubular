@@ -144,7 +144,7 @@
                 var date = new Date();
                 var minutes = 5;
                 return new Date(date.getTime() + minutes * 60000);
-            }
+            };
 
             me.checksum = function(obj) {
                 var keys = Object.keys(obj).sort();
@@ -165,10 +165,11 @@
                     canceller.resolve(reason);
                 };
 
-                if (angular.isString(request.requireAuthentication))
+                if (angular.isString(request.requireAuthentication)) {
                     request.requireAuthentication = request.requireAuthentication == "true";
-                else
+                } else {
                     request.requireAuthentication = request.requireAuthentication || me.requireAuthentication;
+                }
 
                 if (request.requireAuthentication && me.isAuthenticated() == false) {
                     // Return empty dataset

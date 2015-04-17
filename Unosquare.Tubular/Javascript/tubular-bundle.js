@@ -281,12 +281,12 @@
                                 $scope.retrieveData();
                             });
 
-                            $scope.$watch('pageSize', function(newVal) {
+                            $scope.$watch('pageSize', function() {
                                 if ($scope.hasColumnsDefinitions && $scope.requestCounter > 0)
                                     $scope.retrieveData();
                             });
 
-                            $scope.$watch('requestedPage', function(newVal) {
+                            $scope.$watch('requestedPage', function() {
                                 // TODO: we still need to inter-lock failed, initial and paged requests
                                 if ($scope.hasColumnsDefinitions && $scope.requestCounter > 0)
                                     $scope.retrieveData();
@@ -318,7 +318,7 @@
 
                                 // if it's not a multiple sorting, remove the sorting from all other columns
                                 if (multiple === false) {
-                                    angular.forEach($scope.columns.filter(function(col) { return col.Name !== columnName }), function(col) {
+                                    angular.forEach($scope.columns.filter(function(col) { return col.Name !== columnName; }), function(col) {
                                         col.SortOrder = -1;
                                         col.SortDirection = 'None';
                                     });
@@ -657,7 +657,7 @@
                             $scope.selectableBool = $scope.selectable != "false";
                             $scope.$component = $scope.$parent.$parent.$parent.$component;
 
-                            if ($scope.selectableBool && angular.isUndefined($scope.rowModel) == false) {
+                            if ($scope.selectableBool && angular.isUndefined($scope.rowModel) === false) {
                                 $scope.$component.selectFromSession($scope.rowModel);
                             }
 
@@ -1331,7 +1331,7 @@
                         tubularEditorService.setupScope($scope);
                         $scope.$editorType = 'select';
 
-                        $scope.getValues = function (val) {
+                        $scope.getValues = function(val) {
                             if (angular.isDefined($scope.optionsUrl)) {
                                 return tubularHttp.retrieveDataAsync({
                                     serverUrl: $scope.optionsUrl + '?search=' + val,
@@ -1339,10 +1339,10 @@
                                 }).promise;
                             }
 
-                            return $q(function(resolve, reject) {
+                            return $q(function(resolve) {
                                 resolve($scope.options);
                             });
-                        }
+                        };
                     }
                 ]
             };
@@ -1481,11 +1481,6 @@
                     replace: true,
                     transclude: true,
                     scope: false,
-                    controller: [
-                        '$scope', function($scope) {
-
-                        }
-                    ],
                     compile: function compile(cElement, cAttrs) {
                         return {
                             pre: function(scope, lElement, lAttrs, lController, lTransclude) {
@@ -1744,7 +1739,7 @@
 
                         $scope.save = function () {
                             // TODO: Why Save and Create is not the same?ñ
-                            if ($scope.rowModel.save() == false) {
+                            if ($scope.rowModel.save() === false) {
                                 $scope.$emit('tbGrid_OnSavingNoChanges', $scope.rowModel);
                             }
                         };
@@ -1917,26 +1912,30 @@
                         obj.$selected = false;
 
                         for (var k in obj) {
-                            if (k[0] == '$') continue;
+                            if (obj.hasOwnProperty(k)) {
+                                if (k[0] == '$') continue;
 
-                            obj.$state[k] = {
-                                $valid: function() {
-                                    return this.$errors.length == 0;
-                                },
-                                $errors: []
-                            };
+                                obj.$state[k] = {
+                                    $valid: function() {
+                                        return this.$errors.length == 0;
+                                    },
+                                    $errors: []
+                                };
+                            }
                         }
 
                         obj.$valid = function () {
                             for (var k in obj.$state) {
-                                var key = k;
-                                if (angular.isUndefined(obj.$state[key]) ||
-                                    obj.$state[key] == null ||
-                                    angular.isUndefined(obj.$state[key].$valid)) continue;
+                                if (obj.$state.hasOwnProperty(k)) {
+                                    var key = k;
+                                    if (angular.isUndefined(obj.$state[key]) ||
+                                        obj.$state[key] == null ||
+                                        angular.isUndefined(obj.$state[key].$valid)) continue;
 
-                                if (obj.$state[key].$valid()) continue;
+                                    if (obj.$state[key].$valid()) continue;
 
-                                return false;
+                                    return false;
+                                }
                             }
 
                             return true;
@@ -1960,17 +1959,21 @@
 
                         obj.resetOriginal = function() {
                             for (var k in obj.$original) {
-                                obj.$original[k] = obj[k];
+                                if (obj.$original.hasOwnProperty(k)) {
+                                    obj.$original[k] = obj[k];
+                                }
                             }
                         };
 
                         obj.revertChanges = function() {
                             for (var k in obj) {
-                                if (k[0] == '$' || angular.isUndefined(obj.$original[k])) {
-                                    continue;
-                                }
+                                if (obj.hasOwnProperty(k)) {
+                                    if (k[0] == '$' || angular.isUndefined(obj.$original[k])) {
+                                        continue;
+                                    }
 
-                                obj[k] = obj.$original[k];
+                                    obj[k] = obj.$original[k];
+                                }
                             }
 
                             obj.$isEditing = false;
@@ -2052,7 +2055,7 @@
                         var innerValue = row[j] === null ? '' : row[j].toString();
                         if (row[j] instanceof Date) {
                             innerValue = row[j].toLocaleString();
-                        };
+                        }
                         var result = innerValue.replace(/"/g, '""');
                         if (result.search(/("|,|\n)/g) >= 0)
                             result = '"' + result + '"';
@@ -2161,11 +2164,11 @@
                     scope.dataType = columns[0].DataType;
                     scope.filterOperators = columns[0].FilterOperators[scope.dataType];
 
-                    if (scope.dataType == 'datetime' || scope.dataType == 'date') {
+                    if (scope.dataType === 'datetime' || scope.dataType === 'date') {
                         scope.filter.Argument = [new Date()];
                     }
 
-                    if (scope.dataType == 'numeric') {
+                    if (scope.dataType === 'numeric') {
                         scope.filter.Argument = [1];
                     }
 
@@ -2227,10 +2230,11 @@
 
                         // Try to match the model to the parent, if it exists
                         if (angular.isDefined(scope.$parent.Model)) {
-                            if (angular.isDefined(scope.$parent.Model[scope.name]))
+                            if (angular.isDefined(scope.$parent.Model[scope.name])) {
                                 scope.$parent.Model[scope.name] = newValue;
-                            else if (angular.isDefined(scope.$parent.Model.$addField))
+                            } else if (angular.isDefined(scope.$parent.Model.$addField)) {
                                 scope.$parent.Model.$addField(scope.name, newValue);
+                            }
                         }
 
                         if (angular.isUndefined(scope.value) && scope.required) {
@@ -2251,7 +2255,7 @@
                     while (true) {
                         if (parent == null) break;
                         if (angular.isUndefined(parent.tubularDirective) == false &&
-                            parent.tubularDirective == 'tubular-form') {
+                            parent.tubularDirective === 'tubular-form') {
                             parent.addField(scope);
                             break;
                         }
@@ -2409,7 +2413,7 @@
                 var date = new Date();
                 var minutes = 5;
                 return new Date(date.getTime() + minutes * 60000);
-            }
+            };
 
             me.checksum = function(obj) {
                 var keys = Object.keys(obj).sort();
@@ -2430,10 +2434,11 @@
                     canceller.resolve(reason);
                 };
 
-                if (angular.isString(request.requireAuthentication))
+                if (angular.isString(request.requireAuthentication)) {
                     request.requireAuthentication = request.requireAuthentication == "true";
-                else
+                } else {
                     request.requireAuthentication = request.requireAuthentication || me.requireAuthentication;
+                }
 
                 if (request.requireAuthentication && me.isAuthenticated() == false) {
                     // Return empty dataset
