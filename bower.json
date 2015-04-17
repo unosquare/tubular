@@ -1,0 +1,34 @@
+{
+    "name": "tubular",
+    "version": "0.9.2",
+    "description": "A set of AngularJS directives and designed to rapidly build modern web applications. ",
+    "homepage": "http://unosquare.github.io/tubular",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/unosquare/tubular"
+    },
+    "main": [
+        "dist/tubular-bundle.js",
+        "dist/tubular-bundle.css"
+    ],
+    "ignore": [
+        "**/.*",
+        "packages",
+        "Unosquare.Tubular",
+        "Unosquare.Tubular.EmbedioSample",
+        "Unosquare.Tubular.Sample",
+        "Unosquare.Tubular.Security",
+        "LICENSE",
+        "package.json",
+        "README.md",
+        "Unosquare.Tubular.sln"
+    ],
+    "license": "MIT",
+    "dependencies": {
+        "bootstrap": "~3.3.4",
+        "angular": "~1.4.0-build.3978+sha.08411cf",
+        "file-saver.js": "~1.20150304.1",
+        "angular-local-storage": "~0.1.5",
+        "font-awesome":  "~4.3.0"
+    }
+}
