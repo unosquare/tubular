@@ -88,10 +88,11 @@
             };
         })
         .service('tubularGridFilterService', [
-            'tubulargGridFilterModel', '$compile', function tubularGridFilterService(FilterModel, $compile) {
+            'tubulargGridFilterModel', '$compile', '$modal', function tubularGridFilterService(FilterModel, $compile, $modal) {
                 var me = this;
 
-                me.applyFilterFuncs = function(scope, el, openCallback) {
+                me.applyFilterFuncs = function (scope, el, attributes, openCallback) {
+                    scope.columnSelector = attributes.columnSelector || false;
                     scope.$component = scope.$parent.$component;
                     scope.filterTitle = "Filter";
 
@@ -113,9 +114,37 @@
                         $(el).find('[data-toggle="popover"]').popover('hide');
                     };
 
+                    scope.openColumnsSelector = function () {
+                        scope.close();
+
+                        var model = scope.$component.columns;
+
+                        var dialog = $modal.open({
+                            template: '<div class="modal-header">' +
+                                '<h3 class="modal-title">Columns Selector</h3>' +
+                                '</div>' +
+                                '<div class="modal-body">' +
+                                '<div class="row" ng-repeat="col in Model">' +
+                                '<div class="col-xs-2"><input type="checkbox" ng-model="col.Visible" /></div>' +
+                                '<div class="col-xs-10">{{col.Label}}</li>' +
+                                '</div></div>' +
+                                '</div>' +
+                                '<div class="modal-footer"><button class="btn btn-warning" ng-click="closePopup()">Close</button></div>',
+                            backdropClass: 'fullHeight',
+                            controller: [
+                                '$scope', function ($innerScope) {
+                                    $innerScope.Model = model;
+
+                                    $innerScope.closePopup = function () {
+                                        dialog.close();
+                                    };
+                                }
+                            ]
+                        });
+                    };
+
                     $(el).find('[data-toggle="popover"]').popover({
                         html: true,
-                        title: scope.filterTitle,
                         content: function() {
                             var selectEl = $(this).next().find('select').find('option').remove().end();
                             angular.forEach(scope.filterOperators, function(val, key) {

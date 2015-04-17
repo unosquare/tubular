@@ -1437,6 +1437,25 @@
     'use strict';
 
     angular.module('tubular.directives')
+        .directive('tbColumnFilterButtons', [function () {
+            return {
+                template: '<div class="btn-group"><a class="btn btn-sm btn-success" ng-click="applyFilter()">Apply</a>' +
+                        '<button class="btn btn-sm btn-danger" ng-click="clearFilter()">Clear</button>' +
+                        '<button class="btn btn-sm btn-default" ng-click="close()">Close</button>' +
+                        '</div>',
+                restrict: 'E',
+                replace: true,
+                transclude: true,
+            };
+        }])
+        .directive('tbColumnFilterColumnSelector', [function() {
+            return {
+                template: '<div><hr /><h4>Columns Selector</h4><button class="btn btn-sm btn-default" ng-click="openColumnsSelector()">Select Columns</button></div>',
+                restrict: 'E',
+                replace: true,
+                transclude: true,
+            };
+        }])
         .directive('tbColumnFilter', [
             'tubularGridFilterService', function(tubularGridFilterService) {
 
@@ -1447,15 +1466,15 @@
                         'ng-class="{ \'btn-success\': (filter.Operator !== \'None\' && filter.Text.length > 0) }">' +
                         '<i class="fa fa-filter"></i></button>' +
                         '<div style="display: none;">' +
+                        '<h4>{{filterTitle}}</h4>' +
                         '<form class="tubular-column-filter-form" onsubmit="return false;">' +
                         '<select class="form-control" ng-model="filter.Operator" ng-hide="dataType == \'boolean\'"></select>' +
                         '<input class="form-control" type="{{ dataType == \'boolean\' ? \'checkbox\' : \'search\'}}" ng-model="filter.Text" placeholder="Value" ' +
                         'ng-disabled="filter.Operator == \'None\'" />' +
-                        '<input type="search" class="form-control" ng-model="filter.Argument[0]" ng-show="filter.Operator == \'Between\'" /> <hr />' +
-                        '<div class="btn-group"><a class="btn btn-sm btn-success" ng-click="applyFilter()">Apply</a>' +
-                        '<button class="btn btn-sm btn-danger" ng-click="clearFilter()">Clear</button>' +
-                        '<button class="btn btn-sm btn-default" ng-click="close()">Close</button>' +
-                        '</div>' +
+                        '<input type="search" class="form-control" ng-model="filter.Argument[0]" ng-show="filter.Operator == \'Between\'" />' +
+                        '<hr />' +
+                        '<tb-column-filter-buttons></tb-column-filter-buttons>' +
+                        '<tb-column-filter-column-selector ng-show="columnSelector"></tb-column-filter-column-selector>' +
                         '</form></div>' +
                         '</div>',
                     restrict: 'E',
@@ -1470,7 +1489,7 @@
                     compile: function compile(cElement, cAttrs) {
                         return {
                             pre: function(scope, lElement, lAttrs, lController, lTransclude) {
-                                tubularGridFilterService.applyFilterFuncs(scope, lElement);
+                                tubularGridFilterService.applyFilterFuncs(scope, lElement, lAttrs);
                             },
                             post: function(scope, lElement, lAttrs, lController, lTransclude) {
                                 tubularGridFilterService.createFilterModel(scope, lAttrs);
@@ -1490,14 +1509,14 @@
                         'ng-class="{ \'btn-success\': filter.Text != null }">' +
                         '<i class="fa fa-filter"></i></button>' +
                         '<div style="display: none;">' +
+                        '<h4>{{filterTitle}}</h4>' +
                         '<form class="tubular-column-filter-form" onsubmit="return false;">' +
                         '<select class="form-control" ng-model="filter.Operator"></select>' +
                         '<input type="date" class="form-control" ng-model="filter.Text" />' +
                         '<input type="date" class="form-control" ng-model="filter.Argument[0]" ng-show="filter.Operator == \'Between\'" />' +
                         '<hr />' +
-                        '<div class="btn-group"><a class="btn btn-sm btn-default" ng-click="applyFilter()">Apply</a>' +
-                        '<button class="btn btn-sm btn-default" ng-click="clearFilter()">Clear</button></div>' +
-                        '<button class="btn btn-sm btn-default" ng-click="close()">Close</button>' +
+                        '<tb-column-filter-buttons></tb-column-filter-buttons>' +
+                        '<tb-column-filter-column-selector ng-show="columnSelector"></tb-column-filter-column-selector>' +
                         '</form></div>' +
                         '</div>',
                     restrict: 'E',
@@ -1514,7 +1533,7 @@
                     compile: function compile(cElement, cAttrs) {
                         return {
                             pre: function(scope, lElement, lAttrs, lController, lTransclude) {
-                                tubularGridFilterService.applyFilterFuncs(scope, lElement, function() {
+                                tubularGridFilterService.applyFilterFuncs(scope, lElement, lAttrs, function() {
                                     var inp = $(lElement).find("input[type=date]")[0];
 
                                     if (inp.type != 'date') {
@@ -1554,13 +1573,12 @@
                         'ng-class="{ \'btn-success\': (filter.Argument.length > 0) }">' +
                         '<i class="fa fa-filter"></i></button>' +
                         '<div style="display: none;">' +
+                        '<h4>{{filterTitle}}</h4>' +
                         '<form class="tubular-column-filter-form" onsubmit="return false;">' +
                         '<select class="form-control" ng-model="filter.Argument" ng-options="item for item in optionsItems" multiple></select>' +
                         '<hr />' + // Maybe we should add checkboxes or something like that
-                        '<div class="btn-group"><a class="btn btn-sm btn-default" ng-click="applyFilter()">Apply</a>' +
-                        '<button class="btn btn-sm btn-default" ng-click="clearFilter()">Clear</button>' +
-                        '<button class="btn btn-sm btn-default" ng-click="close()">Close</button>' +
-                        '</div>' +
+                        '<tb-column-filter-buttons></tb-column-filter-buttons>' +
+                        '<tb-column-filter-column-selector ng-show="columnSelector"></tb-column-filter-column-selector>' +
                         '</form></div>' +
                         '</div>',
                     restrict: 'E',
@@ -1576,8 +1594,7 @@
 
                                 var currentRequest = tubularHttp.retrieveDataAsync({
                                     serverUrl: $scope.filter.OptionsUrl,
-                                    requestMethod: 'GET',
-                                    timeout: 1000
+                                    requestMethod: 'GET'
                                 });
 
                                 currentRequest.promise.then(
@@ -1593,7 +1610,7 @@
                     compile: function compile(cElement, cAttrs) {
                         return {
                             pre: function(scope, lElement, lAttrs, lController, lTransclude) {
-                                tubularGridFilterService.applyFilterFuncs(scope, lElement, function() {
+                                tubularGridFilterService.applyFilterFuncs(scope, lElement, lAttrs,function() {
                                     scope.getOptionsFromUrl();
                                 });
                             },
@@ -1602,62 +1619,6 @@
                             }
                         };
                     }
-                };
-            }
-        ]).directive('tbColumnMenu', ['$modal', function ($modal) {
-
-                return {
-                    require: '^tbColumn',
-                    template: '<div class="tubular-column-menu"><div class="btn-group">' +
-                        '<button class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown"aria-expanded="false">' +
-                        '<i class="fa fa-bars"></i></button>' +
-                        '<ul class="dropdown-menu" role="menu">' +
-                        '<li ng-show="filter"><a href="#">Filter</a></li>' +
-                        '<li ng-show="columnSelector"><a ng-click="openColumnsSelector()">Columns Selector</a></li>' +
-                        '</ul>' +
-                        '</div>' +
-                        '</div>',
-                    restrict: 'E',
-                    replace: true,
-                    transclude: true,
-                    scope: {
-                        filter: '=?',
-                        columnSelector: '=?',
-                    },
-                    controller: [
-                        '$scope', function ($scope) {
-                            $scope.filter = $scope.filter || false;
-                            $scope.columnSelector = $scope.columnSelector || false;
-                            $scope.component = $scope.$parent.$parent.$component;
-
-                            $scope.openColumnsSelector = function () {
-                                var model = $scope.component.columns;
-
-                                var dialog = $modal.open({
-                                    template: '<div class="modal-header">' +
-                                        '<h3 class="modal-title">Columns Selector</h3>' +
-                                        '</div>' +
-                                        '<div class="modal-body">' +
-                                        '<div class="row" ng-repeat="col in Model">' +
-                                        '<div class="col-xs-2"><input type="checkbox" ng-model="col.Visible" /></div>' +
-                                        '<div class="col-xs-10">{{col.Label}}</li>' +
-                                        '</div></div>' +
-                                        '</div>' +
-                                        '<div class="modal-footer"><button class="btn btn-warning" ng-click="closePopup()">Close</button></div>',
-                                    backdropClass: 'fullHeight',
-                                    controller: [
-                                        '$scope', function ($innerScope) {
-                                            $innerScope.Model = model;
-
-                                            $innerScope.closePopup = function () {
-                                                dialog.close();
-                                            };
-                                        }
-                                    ]
-                                });
-                            };
-                        }
-                    ]
                 };
             }
         ]);
@@ -2116,10 +2077,11 @@
             };
         })
         .service('tubularGridFilterService', [
-            'tubulargGridFilterModel', '$compile', function tubularGridFilterService(FilterModel, $compile) {
+            'tubulargGridFilterModel', '$compile', '$modal', function tubularGridFilterService(FilterModel, $compile, $modal) {
                 var me = this;
 
-                me.applyFilterFuncs = function(scope, el, openCallback) {
+                me.applyFilterFuncs = function (scope, el, attributes, openCallback) {
+                    scope.columnSelector = attributes.columnSelector || false;
                     scope.$component = scope.$parent.$component;
                     scope.filterTitle = "Filter";
 
@@ -2141,9 +2103,37 @@
                         $(el).find('[data-toggle="popover"]').popover('hide');
                     };
 
+                    scope.openColumnsSelector = function () {
+                        scope.close();
+
+                        var model = scope.$component.columns;
+
+                        var dialog = $modal.open({
+                            template: '<div class="modal-header">' +
+                                '<h3 class="modal-title">Columns Selector</h3>' +
+                                '</div>' +
+                                '<div class="modal-body">' +
+                                '<div class="row" ng-repeat="col in Model">' +
+                                '<div class="col-xs-2"><input type="checkbox" ng-model="col.Visible" /></div>' +
+                                '<div class="col-xs-10">{{col.Label}}</li>' +
+                                '</div></div>' +
+                                '</div>' +
+                                '<div class="modal-footer"><button class="btn btn-warning" ng-click="closePopup()">Close</button></div>',
+                            backdropClass: 'fullHeight',
+                            controller: [
+                                '$scope', function ($innerScope) {
+                                    $innerScope.Model = model;
+
+                                    $innerScope.closePopup = function () {
+                                        dialog.close();
+                                    };
+                                }
+                            ]
+                        });
+                    };
+
                     $(el).find('[data-toggle="popover"]').popover({
                         html: true,
-                        title: scope.filterTitle,
                         content: function() {
                             var selectEl = $(this).next().find('select').find('option').remove().end();
                             angular.forEach(scope.filterOperators, function(val, key) {
