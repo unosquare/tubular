@@ -2401,10 +2401,13 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 '<h3 class="modal-title">Columns Selector</h3>' +
                                 '</div>' +
                                 '<div class="modal-body">' +
-                                '<div class="row" ng-repeat="col in Model">' +
-                                '<div class="col-xs-2"><input type="checkbox" ng-model="col.Visible" /></div>' +
-                                '<div class="col-xs-10">{{col.Label}}</li>' +
-                                '</div></div>' +
+                                '<table class="table table-bordered table-responsive table-striped table-hover table-condensed">' +
+                                '<thead><tr><th>Visible?</th><th>Name</th><th>Is grouping?</th></tr></thead>' +
+                                '<tbody><tr ng-repeat="col in Model">' +
+                                '<td><input type="checkbox" ng-model="col.Visible" /></td>' +
+                                '<td>{{col.Label}}</td>' +
+                                '<td><input type="checkbox" ng-disabled="true" ng-model="col.IsGrouping" /></td>' +
+                                '</tr></tbody></table></div>' +
                                 '</div>' +
                                 '<div class="modal-footer"><button class="btn btn-warning" ng-click="closePopup()">Close</button></div>',
                             backdropClass: 'fullHeight',
