@@ -2,7 +2,7 @@
     'use strict';
 
     angular.module('tubular.directives').directive('tbGrid', [
-            'tubularHttp', function(tubularHttp) {
+            'tubularHttp', '$filter', function(tubularHttp, $filter) {
                 return {
                     template: '<div class="tubular-grid" ng-transclude></div>',
                     restrict: 'E',
@@ -46,7 +46,7 @@
                             $scope.requireAuthentication = $scope.requireAuthentication || true;
                             $scope.name = $scope.name || 'tbgrid';
                             $scope.canSaveState = false;
-
+                            
                             $scope.$watch('columns', function (val) {
                                 if ($scope.hasColumnsDefinitions === false || $scope.canSaveState === false)
                                     return;
@@ -585,9 +585,8 @@
                     transclude: true,
                     scope: false,
                     controller: [
-                        '$scope', function($scope) {
-                            //$scope.$component.logMessage('tubular-grid.table.tbody', 'ctrl');
-                            $scope.$component = $scope.$parent.$component;
+                        '$scope', function ($scope) {
+                            $scope.$component = $scope.$parent.$component || $scope.$parent.$parent.$component;
                             $scope.tubularDirective = 'tubular-row-set';
                         }
                     ]
@@ -724,6 +723,23 @@
                     replace: true,
                     transclude: true,
                     scope: false
+                };
+            }
+        ]).directive('tbRowGroupHeader', [
+            function () {
+
+                return {
+                    require: '^tbRowSet',
+                    template: '<tr ngTransclude class="row-group">' +
+                        '<td colspan="{{group.length + 1}}">{{label}}</td>' +
+                        '</tr>',
+                    restrict: 'E',
+                    replace: true,
+                    transclude: true,
+                    scope: {
+                        label: '=',
+                        group: '='
+                    }
                 };
             }
         ]);

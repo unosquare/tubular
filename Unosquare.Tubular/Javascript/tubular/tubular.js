@@ -1,20 +1,20 @@
 ﻿(function() {
     'use strict';
 
-    angular.module('tubular.directives', ['tubular.services', 'tubular.models', 'LocalStorageModule'])
+    angular.module('tubular.directives', ['tubular.services', 'tubular.models', 'LocalStorageModule','a8m.group-by'])
         .config([
-            'localStorageServiceProvider', function(localStorageServiceProvider) {
+            'localStorageServiceProvider', function (localStorageServiceProvider) {
                 localStorageServiceProvider.setPrefix('tubular');
 
                 // define console methods if not defined
                 if (typeof console === "undefined") {
                     window.console = {
-                        log: function() {},
-                        debug: function() {},
-                        error: function() {},
-                        assert: function() {},
-                        info: function() {},
-                        warn: function() {},
+                        log: function () { },
+                        debug: function () { },
+                        error: function () { },
+                        assert: function () { },
+                        info: function () { },
+                        warn: function () { },
                     };
                 }
             }
@@ -23,8 +23,8 @@
             "upCssClass": "fa-long-arrow-up",
             "downCssClass": "fa-long-arrow-down"
         })
-        .filter('errormessage', function() {
-            return function(input) {
+        .filter('errormessage', function () {
+            return function (input) {
                 if (angular.isDefined(input) && angular.isDefined(input.data) &&
                     input.data != null &&
                     angular.isDefined(input.data.ExceptionMessage))
@@ -33,8 +33,8 @@
                 return input.statusText || "Connection Error";
             };
         }).filter('numberorcurrency', [
-            '$filter', function($filter) {
-                return function(input, format, symbol, fractionSize) {
+            '$filter', function ($filter) {
+                return function (input, format, symbol, fractionSize) {
                     symbol = symbol || "$";
                     fractionSize = fractionSize || 2;
 
@@ -47,8 +47,8 @@
             }
         ])
         // Based on https://github.com/sparkalow/angular-truncate/blob/master/src/truncate.js
-        .filter('characters', function() {
-            return function(input, chars, breakOnWord) {
+        .filter('characters', function () {
+            return function (input, chars, breakOnWord) {
                 if (isNaN(chars)) return input;
                 if (chars <= 0) return '';
 

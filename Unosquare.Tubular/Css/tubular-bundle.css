@@ -327,7 +327,7 @@ table.tubular-grid-table thead tr th div.tubular-column-menu {
         margin: 0;
     }
 
-        table.tubular-grid-table thead tr th div.tubular-column-menu  > button:active,
+        table.tubular-grid-table thead tr th div.tubular-column-menu > button:active,
         table.tubular-grid-table thead tr th div.tubular-column-menu > div.btn-group > button:active {
             outline: none;
         }
@@ -335,6 +335,11 @@ table.tubular-grid-table thead tr th div.tubular-column-menu {
         table.tubular-grid-table thead tr th div.tubular-column-menu button i.fa,
         table.tubular-grid-table thead tr th div.tubular-column-menu button i.glyphicon {
             font-size: 10px;
+        }
+
+        table.tubular-grid-table tr.row-group > td {
+            font-weight: bolder;
+            text-transform: capitalize;
         }
 
 form.tubular-column-filter-form {

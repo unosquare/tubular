@@ -58,6 +58,8 @@
       <DependentUpon>tubular-bundle.css</DependentUpon>
     </Content>
     <Content Include="Css\tubular\tubular.css" />
+    <Content Include="Javascript\angular-filter\group-by.js" />
+    <Content Include="Javascript\angular-filter\watcher.js" />
     <Content Include="Javascript\tadaaapickr\tadaaapickr.pack.js" />
     <Content Include="Javascript\tubular-bundle.js">
       <DependentUpon>tubular-bundle.js.bundle</DependentUpon>

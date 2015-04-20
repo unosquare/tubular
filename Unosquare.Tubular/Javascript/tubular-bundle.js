@@ -1,21 +1,215 @@
-﻿///#source 1 1 tubular/tubular.js
+﻿///#source 1 1 angular-filter/watcher.js
+/**
+ * @ngdoc provider
+ * @name filterWatcher
+ * @kind function
+ *
+ * @description
+ * store specific filters result in $$cache, based on scope life time(avoid memory leak).
+ * on scope.$destroy remove it's cache from $$cache container
+ */
+
+angular.module('a8m.filter-watcher', [])
+  .provider('filterWatcher', function () {
+
+      this.$get = ['$window', '$rootScope', function ($window, $rootScope) {
+
+          /**
+           * Cache storing
+           * @type {Object}
+           */
+          var $$cache = {};
+
+          /**
+           * Scope listeners container
+           * scope.$destroy => remove all cache keys
+           * bind to current scope.
+           * @type {Object}
+           */
+          var $$listeners = {};
+
+          /**
+           * $timeout without triggering the digest cycle
+           * @type {function}
+           */
+          var $$timeout = $window.setTimeout;
+
+          /**
+           * @description
+           * get `HashKey` string based on the given arguments.
+           * @param fName
+           * @param args
+           * @returns {string}
+           */
+          function getHashKey(fName, args) {
+              return [fName, angular.toJson(args)]
+                .join('#')
+                .replace(/"/g, '');
+          }
+
+          /**
+           * @description
+           * fir on $scope.$destroy,
+           * remove cache based scope from `$$cache`,
+           * and remove itself from `$$listeners`
+           * @param event
+           */
+          function removeCache(event) {
+              var id = event.targetScope.$id;
+              forEach($$listeners[id], function (key) {
+                  delete $$cache[key];
+              });
+              delete $$listeners[id];
+          }
+
+          /**
+           * @description
+           * for angular version that greater than v.1.3.0
+           * it clear cache when the digest cycle is end.
+           */
+          function cleanStateless() {
+              $$timeout(function () {
+                  if (!$rootScope.$$phase)
+                      $$cache = {};
+              });
+          }
+
+          /**
+           * @description
+           * Store hashKeys in $$listeners container
+           * on scope.$destroy, remove them all(bind an event).
+           * @param scope
+           * @param hashKey
+           * @returns {*}
+           */
+          function addListener(scope, hashKey) {
+              var id = scope.$id;
+              if (isUndefined($$listeners[id])) {
+                  scope.$on('$destroy', removeCache);
+                  $$listeners[id] = [];
+              }
+              return $$listeners[id].push(hashKey);
+          }
+
+          /**
+           * @description
+           * return the `cacheKey` or undefined.
+           * @param filterName
+           * @param args
+           * @returns {*}
+           */
+          function $$isMemoized(filterName, args) {
+              var hashKey = getHashKey(filterName, args);
+              return $$cache[hashKey];
+          }
+
+          /**
+         * @description
+         * Test if given object is a Scope instance
+         * @param obj
+         * @returns {Boolean}
+         */
+          function isScope(obj) {
+              return obj && obj.$evalAsync && obj.$watch;
+          }
+
+          /**
+           * @description
+           * store `result` in `$$cache` container, based on the hashKey.
+           * add $destroy listener and return result
+           * @param filterName
+           * @param args
+           * @param scope
+           * @param result
+           * @returns {*}
+           */
+          function $$memoize(filterName, args, scope, result) {
+              var hashKey = getHashKey(filterName, args);
+              //store result in `$$cache` container
+              $$cache[hashKey] = result;
+              // for angular versions that less than 1.3
+              // add to `$destroy` listener, a cleaner callback
+              if (isScope(scope)) {
+                  addListener(scope, hashKey);
+              } else {
+                  cleanStateless();
+              }
+              return result;
+          }
+
+          return {
+              isMemoized: $$isMemoized,
+              memoize: $$memoize
+          }
+
+      }];
+  });
+///#source 1 1 angular-filter/group-by.js
+/**
+ * @ngdoc filter
+ * @name groupBy
+ * @kind function
+ *
+ * @description
+ * Create an object composed of keys generated from the result of running each element of a collection,
+ * each key is an array of the elements.
+ */
+
+angular.module('a8m.group-by', ['a8m.filter-watcher'])
+
+  .filter('groupBy', ['$parse', 'filterWatcher', function ($parse, filterWatcher) {
+      return function (collection, property) {
+
+          if (!angular.isObject(collection) || angular.isUndefined(property)) {
+              return collection;
+          }
+
+          var getterFn = $parse(property);
+
+          return filterWatcher.isMemoized('groupBy', arguments) ||
+            filterWatcher.memoize('groupBy', arguments, this,
+              _groupBy(collection, getterFn));
+
+          /**
+           * groupBy function
+           * @param collection
+           * @param getter
+           * @returns {{}}
+           */
+          function _groupBy(collection, getter) {
+              var result = {};
+              var prop;
+
+              angular.forEach(collection, function (elm) {
+                  prop = getter(elm);
+
+                  if (!result[prop]) {
+                      result[prop] = [];
+                  }
+                  result[prop].push(elm);
+              });
+              return result;
+          }
+      }
+  }]);
+///#source 1 1 tubular/tubular.js
 (function() {
     'use strict';
 
-    angular.module('tubular.directives', ['tubular.services', 'tubular.models', 'LocalStorageModule'])
+    angular.module('tubular.directives', ['tubular.services', 'tubular.models', 'LocalStorageModule','a8m.group-by'])
         .config([
-            'localStorageServiceProvider', function(localStorageServiceProvider) {
+            'localStorageServiceProvider', function (localStorageServiceProvider) {
                 localStorageServiceProvider.setPrefix('tubular');
 
                 // define console methods if not defined
                 if (typeof console === "undefined") {
                     window.console = {
-                        log: function() {},
-                        debug: function() {},
-                        error: function() {},
-                        assert: function() {},
-                        info: function() {},
-                        warn: function() {},
+                        log: function () { },
+                        debug: function () { },
+                        error: function () { },
+                        assert: function () { },
+                        info: function () { },
+                        warn: function () { },
                     };
                 }
             }
@@ -24,8 +218,8 @@
             "upCssClass": "fa-long-arrow-up",
             "downCssClass": "fa-long-arrow-down"
         })
-        .filter('errormessage', function() {
-            return function(input) {
+        .filter('errormessage', function () {
+            return function (input) {
                 if (angular.isDefined(input) && angular.isDefined(input.data) &&
                     input.data != null &&
                     angular.isDefined(input.data.ExceptionMessage))
@@ -34,8 +228,8 @@
                 return input.statusText || "Connection Error";
             };
         }).filter('numberorcurrency', [
-            '$filter', function($filter) {
-                return function(input, format, symbol, fractionSize) {
+            '$filter', function ($filter) {
+                return function (input, format, symbol, fractionSize) {
                     symbol = symbol || "$";
                     fractionSize = fractionSize || 2;
 
@@ -48,8 +242,8 @@
             }
         ])
         // Based on https://github.com/sparkalow/angular-truncate/blob/master/src/truncate.js
-        .filter('characters', function() {
-            return function(input, chars, breakOnWord) {
+        .filter('characters', function () {
+            return function (input, chars, breakOnWord) {
                 if (isNaN(chars)) return input;
                 if (chars <= 0) return '';
 
@@ -79,7 +273,7 @@
     'use strict';
 
     angular.module('tubular.directives').directive('tbGrid', [
-            'tubularHttp', function(tubularHttp) {
+            'tubularHttp', '$filter', function(tubularHttp, $filter) {
                 return {
                     template: '<div class="tubular-grid" ng-transclude></div>',
                     restrict: 'E',
@@ -123,7 +317,7 @@
                             $scope.requireAuthentication = $scope.requireAuthentication || true;
                             $scope.name = $scope.name || 'tbgrid';
                             $scope.canSaveState = false;
-
+                            
                             $scope.$watch('columns', function (val) {
                                 if ($scope.hasColumnsDefinitions === false || $scope.canSaveState === false)
                                     return;
@@ -662,9 +856,8 @@
                     transclude: true,
                     scope: false,
                     controller: [
-                        '$scope', function($scope) {
-                            //$scope.$component.logMessage('tubular-grid.table.tbody', 'ctrl');
-                            $scope.$component = $scope.$parent.$component;
+                        '$scope', function ($scope) {
+                            $scope.$component = $scope.$parent.$component || $scope.$parent.$parent.$component;
                             $scope.tubularDirective = 'tubular-row-set';
                         }
                     ]
@@ -801,6 +994,23 @@
                     replace: true,
                     transclude: true,
                     scope: false
+                };
+            }
+        ]).directive('tbRowGroupHeader', [
+            function () {
+
+                return {
+                    require: '^tbRowSet',
+                    template: '<tr ngTransclude class="row-group">' +
+                        '<td colspan="{{group.length + 1}}">{{label}}</td>' +
+                        '</tr>',
+                    restrict: 'E',
+                    replace: true,
+                    transclude: true,
+                    scope: {
+                        label: '=',
+                        group: '='
+                    }
                 };
             }
         ]);
