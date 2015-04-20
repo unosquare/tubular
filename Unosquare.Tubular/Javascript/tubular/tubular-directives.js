@@ -46,7 +46,8 @@
                             $scope.requireAuthentication = $scope.requireAuthentication || true;
                             $scope.name = $scope.name || 'tbgrid';
                             $scope.canSaveState = false;
-                            
+                            $scope.groupBy = '';
+
                             $scope.$watch('columns', function (val) {
                                 if ($scope.hasColumnsDefinitions === false || $scope.canSaveState === false)
                                     return;
@@ -237,7 +238,6 @@
                                 if (newVal !== true) return;
 
                                 var isGrouping = false;
-                                var groupColumn = '';
                                 // Check columns
                                 angular.forEach($scope.columns, function (column) {
                                     if (column.IsGrouping) {
@@ -248,12 +248,12 @@
                                         column.Visible = false;
                                         column.Sortable = true;
                                         column.SortOrder = 1;
-                                        groupColumn = column.Name;
+                                        $scope.groupBy = column.Name;
                                     }
                                 });
 
                                 angular.forEach($scope.columns, function (column) {
-                                    if (groupColumn == column.Name) return;
+                                    if ($scope.groupBy == column.Name) return;
 
                                     if (column.Sortable && column.SortOrder > 0)
                                         column.SortOrder++;
@@ -669,7 +669,8 @@
                             $scope.$component = $scope.$parent.$parent.$component;
 
                             if ($scope.columnName != null) {
-                                var columnModel = $scope.$component.columns.filter(function (el) { return el.Name == $scope.columnName; });
+                                var columnModel = $scope.$component.columns
+                                    .filter(function (el) { return el.Name == $scope.columnName; });
 
                                 if (columnModel.length > 0) {
                                     $scope.column = columnModel[0];
@@ -753,15 +754,12 @@
             function () {
 
                 return {
-                    require: '^tbRowSet',
-                    template: '<tr ngTransclude class="row-group">' +
-                        '<td colspan="{{group[0].$count}}">{{label}}</td>' +
-                        '</tr>',
+                    require: '^tbRowTemplate',
+                    template: '<td class="row-group" colspan="{{group[0].$count}}"><ng-transclude></ng-transclude></td>',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
                     scope: {
-                        label: '=',
                         group: '='
                     }
                 };

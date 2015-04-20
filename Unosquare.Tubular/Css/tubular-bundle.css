@@ -337,7 +337,7 @@ table.tubular-grid-table thead tr th div.tubular-column-menu {
             font-size: 10px;
         }
 
-        table.tubular-grid-table tr.row-group > td {
+        table.tubular-grid-table tbody td.row-group {
             font-weight: bolder;
             text-transform: capitalize;
         }
