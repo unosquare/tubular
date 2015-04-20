@@ -50,10 +50,16 @@
                     key: 'sample4',
                     next: 'sample5'
                 },
+		{
+                    title: 'Grouping',
+                    body: 'You can group by one column (we hope improve this later) and also select the columns to show.',
+                    key: 'sample5',
+                    next: 'sample6'
+                },
                 {
                     title: 'Inline editors (read-only)',
                     body: 'You can add inline editors just defining a Save URL and assigning some controls. This demo is read-only, but you can get the idea.',
-                    key: 'sample5',
+                    key: 'sample6',
                     next: null
                 }
             ];

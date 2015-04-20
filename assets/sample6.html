@@ -25,7 +25,7 @@
                                 <span>{{label}}</span>
                             </tb-column-header>
                         </tb-column>
-                        <tb-column name="OrderDate" sortable="true">
+                        <tb-column name="OrderDate" sortable="true" column-type="date">
                             <tb-column-header>
                                 <span>{{label}}</span>
                             </tb-column-header>
@@ -36,7 +36,7 @@
                                 <span>{{label}}</span>
                             </tb-column-header>
                         </tb-column>
-                        <tb-column name="ShipCountry" sortable="true" searchable="true" is-grouping="true">
+                        <tb-column name="ShipCountry" sortable="true" searchable="true">
                             <tb-column-filter operator="Contains"></tb-column-filter>
                             <tb-column-header>
                                 <span>{{label}}</span>
@@ -44,27 +44,30 @@
                         </tb-column>
                     </tb-column-definitions>
                     <tb-row-set>
-			<tb-row-template ng-repeat="(key, group) in $parent.$component.rows | groupBy: $parent.$component.groupBy">
-			<tb-row-group-header group="group" class="info">
-				{{key}}
-			</tb-row-group-header>
-			</tb-row-template>
-                        <tb-row-template ng-repeat="cells in group"
+                        <tb-row-template ng-repeat="cells in $component.rows"
                                          row-model="cells" selectable="false">
-                            <tb-cell-template column-name="OrderID">
-                                {{cells.OrderID}}
+                            <tb-cell-template>
+                                <tb-save-button model="cells" save-css="btn-xs"
+                                                cancel-css="btn-danger btn-xs">
+                                </tb-save-button>
+                                <tb-edit-button model="cells" css="btn-xs" caption="{{cells.OrderID}}">
+                                </tb-edit-button>
                             </tb-cell-template>
-                            <tb-cell-template column-name="CustomerID">
-                                {{cells.CustomerID}}
+                            <tb-cell-template>
+                                <tb-simple-editor is-editing="cells.$isEditing" value="cells.CustomerID">
+                                </tb-simple-editor>
                             </tb-cell-template>
-                            <tb-cell-template column-name="OrderDate">
-                                {{cells.OrderDate | date: 'short'}}
+                            <tb-cell-template>
+                                <tb-date-editor is-editing="cells.$isEditing" value="cells.OrderDate">
+                                </tb-date-editor>
                             </tb-cell-template>
-                            <tb-cell-template column-name="ShipCity">
-                                {{cells.ShipCity}}
+                            <tb-cell-template>
+                                <tb-simple-editor is-editing="cells.$isEditing" value="cells.ShipCity">
+                                </tb-simple-editor>
                             </tb-cell-template>
-                            <tb-cell-template column-name="ShipCountry">
-                                {{cells.ShipCountry}}
+                            <tb-cell-template>
+                                <tb-simple-editor is-editing="cells.$isEditing" value="cells.ShipCountry">
+                                </tb-simple-editor>
                             </tb-cell-template>
                         </tb-row-template>
                     </tb-row-set>

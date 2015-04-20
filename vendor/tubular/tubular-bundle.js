@@ -1,21 +1,215 @@
-﻿///#source 1 1 tubular/tubular.js
+﻿///#source 1 1 angular-filter/watcher.js
+/**
+ * @ngdoc provider
+ * @name filterWatcher
+ * @kind function
+ *
+ * @description
+ * store specific filters result in $$cache, based on scope life time(avoid memory leak).
+ * on scope.$destroy remove it's cache from $$cache container
+ */
+
+angular.module('a8m.filter-watcher', [])
+  .provider('filterWatcher', function () {
+
+      this.$get = ['$window', '$rootScope', function ($window, $rootScope) {
+
+          /**
+           * Cache storing
+           * @type {Object}
+           */
+          var $$cache = {};
+
+          /**
+           * Scope listeners container
+           * scope.$destroy => remove all cache keys
+           * bind to current scope.
+           * @type {Object}
+           */
+          var $$listeners = {};
+
+          /**
+           * $timeout without triggering the digest cycle
+           * @type {function}
+           */
+          var $$timeout = $window.setTimeout;
+
+          /**
+           * @description
+           * get `HashKey` string based on the given arguments.
+           * @param fName
+           * @param args
+           * @returns {string}
+           */
+          function getHashKey(fName, args) {
+              return [fName, angular.toJson(args)]
+                .join('#')
+                .replace(/"/g, '');
+          }
+
+          /**
+           * @description
+           * fir on $scope.$destroy,
+           * remove cache based scope from `$$cache`,
+           * and remove itself from `$$listeners`
+           * @param event
+           */
+          function removeCache(event) {
+              var id = event.targetScope.$id;
+              forEach($$listeners[id], function (key) {
+                  delete $$cache[key];
+              });
+              delete $$listeners[id];
+          }
+
+          /**
+           * @description
+           * for angular version that greater than v.1.3.0
+           * it clear cache when the digest cycle is end.
+           */
+          function cleanStateless() {
+              $$timeout(function () {
+                  if (!$rootScope.$$phase)
+                      $$cache = {};
+              });
+          }
+
+          /**
+           * @description
+           * Store hashKeys in $$listeners container
+           * on scope.$destroy, remove them all(bind an event).
+           * @param scope
+           * @param hashKey
+           * @returns {*}
+           */
+          function addListener(scope, hashKey) {
+              var id = scope.$id;
+              if (isUndefined($$listeners[id])) {
+                  scope.$on('$destroy', removeCache);
+                  $$listeners[id] = [];
+              }
+              return $$listeners[id].push(hashKey);
+          }
+
+          /**
+           * @description
+           * return the `cacheKey` or undefined.
+           * @param filterName
+           * @param args
+           * @returns {*}
+           */
+          function $$isMemoized(filterName, args) {
+              var hashKey = getHashKey(filterName, args);
+              return $$cache[hashKey];
+          }
+
+          /**
+         * @description
+         * Test if given object is a Scope instance
+         * @param obj
+         * @returns {Boolean}
+         */
+          function isScope(obj) {
+              return obj && obj.$evalAsync && obj.$watch;
+          }
+
+          /**
+           * @description
+           * store `result` in `$$cache` container, based on the hashKey.
+           * add $destroy listener and return result
+           * @param filterName
+           * @param args
+           * @param scope
+           * @param result
+           * @returns {*}
+           */
+          function $$memoize(filterName, args, scope, result) {
+              var hashKey = getHashKey(filterName, args);
+              //store result in `$$cache` container
+              $$cache[hashKey] = result;
+              // for angular versions that less than 1.3
+              // add to `$destroy` listener, a cleaner callback
+              if (isScope(scope)) {
+                  addListener(scope, hashKey);
+              } else {
+                  cleanStateless();
+              }
+              return result;
+          }
+
+          return {
+              isMemoized: $$isMemoized,
+              memoize: $$memoize
+          }
+
+      }];
+  });
+///#source 1 1 angular-filter/group-by.js
+/**
+ * @ngdoc filter
+ * @name groupBy
+ * @kind function
+ *
+ * @description
+ * Create an object composed of keys generated from the result of running each element of a collection,
+ * each key is an array of the elements.
+ */
+
+angular.module('a8m.group-by', ['a8m.filter-watcher'])
+
+  .filter('groupBy', ['$parse', 'filterWatcher', function ($parse, filterWatcher) {
+      return function (collection, property) {
+
+          if (!angular.isObject(collection) || angular.isUndefined(property)) {
+              return collection;
+          }
+
+          var getterFn = $parse(property);
+
+          return filterWatcher.isMemoized('groupBy', arguments) ||
+            filterWatcher.memoize('groupBy', arguments, this,
+              _groupBy(collection, getterFn));
+
+          /**
+           * groupBy function
+           * @param collection
+           * @param getter
+           * @returns {{}}
+           */
+          function _groupBy(collection, getter) {
+              var result = {};
+              var prop;
+
+              angular.forEach(collection, function (elm) {
+                  prop = getter(elm);
+
+                  if (!result[prop]) {
+                      result[prop] = [];
+                  }
+                  result[prop].push(elm);
+              });
+              return result;
+          }
+      }
+  }]);
+///#source 1 1 tubular/tubular.js
 (function() {
     'use strict';
 
-    angular.module('tubular.directives', ['tubular.services', 'tubular.models', 'LocalStorageModule'])
+    angular.module('tubular.directives', ['tubular.services', 'tubular.models', 'LocalStorageModule','a8m.group-by'])
         .config([
-            'localStorageServiceProvider', function(localStorageServiceProvider) {
+            'localStorageServiceProvider', function (localStorageServiceProvider) {
                 localStorageServiceProvider.setPrefix('tubular');
 
                 // define console methods if not defined
                 if (typeof console === "undefined") {
                     window.console = {
-                        log: function() {},
-                        debug: function() {},
-                        error: function() {},
-                        assert: function() {},
-                        info: function() {},
-                        warn: function() {},
+                        log: function () { },
+                        debug: function () { },
+                        error: function () { },
+                        assert: function () { },
+                        info: function () { },
+                        warn: function () { },
                     };
                 }
             }
@@ -24,8 +218,8 @@
             "upCssClass": "fa-long-arrow-up",
             "downCssClass": "fa-long-arrow-down"
         })
-        .filter('errormessage', function() {
-            return function(input) {
+        .filter('errormessage', function () {
+            return function (input) {
                 if (angular.isDefined(input) && angular.isDefined(input.data) &&
                     input.data != null &&
                     angular.isDefined(input.data.ExceptionMessage))
@@ -34,8 +228,8 @@
                 return input.statusText || "Connection Error";
             };
         }).filter('numberorcurrency', [
-            '$filter', function($filter) {
-                return function(input, format, symbol, fractionSize) {
+            '$filter', function ($filter) {
+                return function (input, format, symbol, fractionSize) {
                     symbol = symbol || "$";
                     fractionSize = fractionSize || 2;
 
@@ -48,8 +242,8 @@
             }
         ])
         // Based on https://github.com/sparkalow/angular-truncate/blob/master/src/truncate.js
-        .filter('characters', function() {
-            return function(input, chars, breakOnWord) {
+        .filter('characters', function () {
+            return function (input, chars, breakOnWord) {
                 if (isNaN(chars)) return input;
                 if (chars <= 0) return '';
 
@@ -79,7 +273,7 @@
     'use strict';
 
     angular.module('tubular.directives').directive('tbGrid', [
-            'tubularHttp', function(tubularHttp) {
+            'tubularHttp', '$filter', function(tubularHttp, $filter) {
                 return {
                     template: '<div class="tubular-grid" ng-transclude></div>',
                     restrict: 'E',
@@ -93,11 +287,12 @@
                         onBeforeGetData: '=?',
                         requestMethod: '@',
                         gridDataService: '=?service',
-                        requireAuthentication: '@?'
+                        requireAuthentication: '@?',
+                        name: '@?gridName'
                     },
                     controller: [
-                        '$scope', 'localStorageService', 'tubularGridPopupService', 'tubularModel',
-                        function($scope, localStorageService, tubularGridPopupService, TubularModel) {
+                        '$scope', 'localStorageService', 'tubularPopupService', 'tubularModel',
+                        function($scope, localStorageService, tubularPopupService, TubularModel) {
                             $scope.tubularDirective = 'tubular-grid';
                             $scope.columns = [];
                             $scope.rows = [];
@@ -120,6 +315,16 @@
                             $scope.tempRow = new TubularModel($scope, {});
                             $scope.gridDataService = $scope.gridDataService || tubularHttp;
                             $scope.requireAuthentication = $scope.requireAuthentication || true;
+                            $scope.name = $scope.name || 'tbgrid';
+                            $scope.canSaveState = false;
+                            $scope.groupBy = '';
+
+                            $scope.$watch('columns', function (val) {
+                                if ($scope.hasColumnsDefinitions === false || $scope.canSaveState === false)
+                                    return;
+
+                                localStorageService.set($scope.name + "_columns", $scope.columns);
+                            }, true);
 
                             $scope.addColumn = function (item) {
                                 if (item.Name === null) return;
@@ -207,7 +412,31 @@
                                     });
                             };
 
-                            $scope.retrieveData = function() {
+                            $scope.verifyColumns = function () {
+                                var columns = localStorageService.get($scope.name + "_columns");
+                                if (columns === null || columns === "") {
+                                    // Nothing in settings, saving initial state
+                                    localStorageService.set($scope.name + "_columns", $scope.columns);
+                                    return;
+                                }
+
+                                for (var index in columns) {
+                                    var columnName = columns[index].Name;
+                                    var filtered = $scope.columns.filter(function (el) { return el.Name == columnName; });
+
+                                    if (filtered.length == 0) continue;
+
+                                    var current = filtered[0];
+                                    // Updates visibility by now
+                                    current.Visible = columns[index].Visible;
+                                    // TODO: Restore filters
+                                }
+                            };
+
+                            $scope.retrieveData = function () {
+                                $scope.canSaveState = true;
+                                $scope.verifyColumns();
+
                                 $scope.pageSize = $scope.pageSize || 20;
                                 var page = $scope.requestedPage == 0 ? 1 : $scope.requestedPage;
 
@@ -257,7 +486,7 @@
                                             var model = new TubularModel($scope, el);
 
                                             model.editPopup = function(template) {
-                                                tubularGridPopupService.openDialog(template, model);
+                                                tubularPopupService.openDialog(template, model);
                                             };
 
                                             return model;
@@ -278,15 +507,38 @@
 
                             $scope.$watch('hasColumnsDefinitions', function(newVal) {
                                 if (newVal !== true) return;
+
+                                var isGrouping = false;
+                                // Check columns
+                                angular.forEach($scope.columns, function (column) {
+                                    if (column.IsGrouping) {
+                                        if (isGrouping)
+                                            throw 'Only one column is allowed to grouping';
+
+                                        isGrouping = true;
+                                        column.Visible = false;
+                                        column.Sortable = true;
+                                        column.SortOrder = 1;
+                                        $scope.groupBy = column.Name;
+                                    }
+                                });
+
+                                angular.forEach($scope.columns, function (column) {
+                                    if ($scope.groupBy == column.Name) return;
+
+                                    if (column.Sortable && column.SortOrder > 0)
+                                        column.SortOrder++;
+                                });
+
                                 $scope.retrieveData();
                             });
 
-                            $scope.$watch('pageSize', function(newVal) {
+                            $scope.$watch('pageSize', function() {
                                 if ($scope.hasColumnsDefinitions && $scope.requestCounter > 0)
                                     $scope.retrieveData();
                             });
 
-                            $scope.$watch('requestedPage', function(newVal) {
+                            $scope.$watch('requestedPage', function() {
                                 // TODO: we still need to inter-lock failed, initial and paged requests
                                 if ($scope.hasColumnsDefinitions && $scope.requestCounter > 0)
                                     $scope.retrieveData();
@@ -318,7 +570,7 @@
 
                                 // if it's not a multiple sorting, remove the sorting from all other columns
                                 if (multiple === false) {
-                                    angular.forEach($scope.columns.filter(function(col) { return col.Name !== columnName }), function(col) {
+                                    angular.forEach($scope.columns.filter(function(col) { return col.Name !== columnName; }), function(col) {
                                         col.SortOrder = -1;
                                         col.SortDirection = 'None';
                                     });
@@ -344,7 +596,7 @@
                             };
 
                             $scope.selectedRows = function() {
-                                var rows = localStorageService.get("rows"); // TODO: We need a table identifier
+                                var rows = localStorageService.get($scope.name + "_rows");
                                 if (rows === null || rows === "") {
                                     rows = [];
                                 }
@@ -357,7 +609,7 @@
                                     value.$selected = false;
                                 });
 
-                                localStorageService.set("rows", []);
+                                localStorageService.set($scope.name + "_rows", []);
                             };
 
                             $scope.isEmptySelection = function() {
@@ -385,7 +637,7 @@
                                     });
                                 }
 
-                                localStorageService.set("rows", rows);
+                                localStorageService.set($scope.name + "_rows", rows);
                             };
 
                             $scope.getFullDataSource = function(callback) {
@@ -398,7 +650,7 @@
                                         Count: $scope.requestCounter,
                                         Columns: $scope.columns,
                                         Skip: 0,
-                                        Take: 1000, // TODO: Take more?
+                                        Take: -1,
                                         Search: {
                                             Argument: '',
                                             Operator: 'None'
@@ -526,14 +778,14 @@
             'tubulargGridColumnModel', function(ColumnModel) {
                 return {
                     require: '^tbColumnDefinitions',
-                    template: '<th ng-transclude ng-class="{sortable: column.Sortable}"></th>',
+                    template: '<th ng-transclude ng-class="{sortable: column.Sortable}" ng-show="column.Visible"></th>',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
                     scope: true,
                     controller: [
                         '$scope', function($scope) {
-                            //$scope.$component.logMessage('tubular-grid.table.thead.th', 'ctrl');
+                            $scope.column = { Label: '' };
                             $scope.$component = $scope.$parent.$parent.$component;
                             $scope.tubularDirective = 'tubular-column';
 
@@ -545,11 +797,12 @@
                     compile: function compile(cElement, cAttrs) {
                         return {
                             pre: function(scope, lElement, lAttrs, lController, lTransclude) {
-                                scope.label = lAttrs.label || (lAttrs.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
+                                lAttrs.label = lAttrs.label || (lAttrs.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
 
                                 var column = new ColumnModel(lAttrs);
                                 scope.$component.addColumn(column);
                                 scope.column = column;
+                                scope.label = column.Label;
                             },
                             post: function(scope, lElement, lAttrs, lController, lTransclude) {
                             }
@@ -627,9 +880,8 @@
                     transclude: true,
                     scope: false,
                     controller: [
-                        '$scope', function($scope) {
-                            //$scope.$component.logMessage('tubular-grid.table.tbody', 'ctrl');
-                            $scope.$component = $scope.$parent.$component;
+                        '$scope', function ($scope) {
+                            $scope.$component = $scope.$parent.$component || $scope.$parent.$parent.$component;
                             $scope.tubularDirective = 'tubular-row-set';
                         }
                     ]
@@ -656,7 +908,7 @@
                             $scope.selectableBool = $scope.selectable != "false";
                             $scope.$component = $scope.$parent.$parent.$parent.$component;
 
-                            if ($scope.selectableBool && angular.isUndefined($scope.rowModel) == false) {
+                            if ($scope.selectableBool && angular.isUndefined($scope.rowModel) === false) {
                                 $scope.$component.selectFromSession($scope.rowModel);
                             }
 
@@ -674,11 +926,29 @@
 
                 return {
                     require: '^tbRowTemplate',
-                    template: '<td ng-transclude></td>',
+                    template: '<td ng-transclude ng-show="column.Visible" data-label="{{column.Label}}"></td>',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
-                    scope: true
+                    scope: {
+                        columnName: '@?'
+                    },
+                    controller: [
+                        '$scope', function ($scope) {
+                            $scope.column = { Visible: true };
+                            $scope.columnName = $scope.columnName || null;
+                            $scope.$component = $scope.$parent.$parent.$component;
+
+                            if ($scope.columnName != null) {
+                                var columnModel = $scope.$component.columns
+                                    .filter(function (el) { return el.Name == $scope.columnName; });
+
+                                if (columnModel.length > 0) {
+                                    $scope.column = columnModel[0];
+                                }
+                            }
+                        }
+                    ]
                 };
             }
         ])
@@ -749,6 +1019,20 @@
                     replace: true,
                     transclude: true,
                     scope: false
+                };
+            }
+        ]).directive('tbRowGroupHeader', [
+            function () {
+
+                return {
+                    require: '^tbRowTemplate',
+                    template: '<td class="row-group" colspan="{{group[0].$count}}"><ng-transclude></ng-transclude></td>',
+                    restrict: 'E',
+                    replace: true,
+                    transclude: true,
+                    scope: {
+                        group: '='
+                    }
                 };
             }
         ]);
@@ -1313,7 +1597,7 @@
                         tubularEditorService.setupScope($scope);
                         $scope.$editorType = 'select';
 
-                        $scope.getValues = function (val) {
+                        $scope.getValues = function(val) {
                             if (angular.isDefined($scope.optionsUrl)) {
                                 return tubularHttp.retrieveDataAsync({
                                     serverUrl: $scope.optionsUrl + '?search=' + val,
@@ -1321,10 +1605,10 @@
                                 }).promise;
                             }
 
-                            return $q(function(resolve, reject) {
+                            return $q(function(resolve) {
                                 resolve($scope.options);
                             });
-                        }
+                        };
                     }
                 ]
             };
@@ -1418,40 +1702,55 @@
 (function() {
     'use strict';
 
-    angular.module('tubular.directives').directive('tbColumnFilter', [
+    angular.module('tubular.directives')
+        .directive('tbColumnFilterButtons', [function () {
+            return {
+                template: '<div class="btn-group"><a class="btn btn-sm btn-success" ng-click="applyFilter()">Apply</a>' +
+                        '<button class="btn btn-sm btn-danger" ng-click="clearFilter()">Clear</button>' +
+                        '<button class="btn btn-sm btn-default" ng-click="close()">Close</button>' +
+                        '</div>',
+                restrict: 'E',
+                replace: true,
+                transclude: true,
+            };
+        }])
+        .directive('tbColumnFilterColumnSelector', [function() {
+            return {
+                template: '<div><hr /><h4>Columns Selector</h4><button class="btn btn-sm btn-default" ng-click="openColumnsSelector()">Select Columns</button></div>',
+                restrict: 'E',
+                replace: true,
+                transclude: true,
+            };
+        }])
+        .directive('tbColumnFilter', [
             'tubularGridFilterService', function(tubularGridFilterService) {
 
                 return {
                     require: '^tbColumn',
-                    template: '<div class="tubular-column-filter">' +
-                        '<button class="tubular-column-filter-button btn btn-xs btn-default" data-toggle="popover" data-placement="bottom" ' +
+                    template: '<div class="tubular-column-menu">' +
+                        '<button class="btn btn-xs btn-default" data-toggle="popover" data-placement="bottom" ' +
                         'ng-class="{ \'btn-success\': (filter.Operator !== \'None\' && filter.Text.length > 0) }">' +
                         '<i class="fa fa-filter"></i></button>' +
                         '<div style="display: none;">' +
+                        '<h4>{{filterTitle}}</h4>' +
                         '<form class="tubular-column-filter-form" onsubmit="return false;">' +
                         '<select class="form-control" ng-model="filter.Operator" ng-hide="dataType == \'boolean\'"></select>' +
                         '<input class="form-control" type="{{ dataType == \'boolean\' ? \'checkbox\' : \'search\'}}" ng-model="filter.Text" placeholder="Value" ' +
                         'ng-disabled="filter.Operator == \'None\'" />' +
-                        '<input type="search" class="form-control" ng-model="filter.Argument[0]" ng-show="filter.Operator == \'Between\'" /> <hr />' +
-                        '<div class="btn-group"><a class="btn btn-sm btn-success" ng-click="applyFilter()">Apply</a>' +
-                        '<button class="btn btn-sm btn-danger" ng-click="clearFilter()">Clear</button>' +
-                        '<button class="btn btn-sm btn-default" ng-click="close()">Close</button>' +
-                        '</div>' +
+                        '<input type="search" class="form-control" ng-model="filter.Argument[0]" ng-show="filter.Operator == \'Between\'" />' +
+                        '<hr />' +
+                        '<tb-column-filter-buttons></tb-column-filter-buttons>' +
+                        '<tb-column-filter-column-selector ng-show="columnSelector"></tb-column-filter-column-selector>' +
                         '</form></div>' +
                         '</div>',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
                     scope: false,
-                    controller: [
-                        '$scope', function($scope) {
-
-                        }
-                    ],
                     compile: function compile(cElement, cAttrs) {
                         return {
                             pre: function(scope, lElement, lAttrs, lController, lTransclude) {
-                                tubularGridFilterService.applyFilterFuncs(scope, lElement);
+                                tubularGridFilterService.applyFilterFuncs(scope, lElement, lAttrs);
                             },
                             post: function(scope, lElement, lAttrs, lController, lTransclude) {
                                 tubularGridFilterService.createFilterModel(scope, lAttrs);
@@ -1471,14 +1770,14 @@
                         'ng-class="{ \'btn-success\': filter.Text != null }">' +
                         '<i class="fa fa-filter"></i></button>' +
                         '<div style="display: none;">' +
+                        '<h4>{{filterTitle}}</h4>' +
                         '<form class="tubular-column-filter-form" onsubmit="return false;">' +
                         '<select class="form-control" ng-model="filter.Operator"></select>' +
                         '<input type="date" class="form-control" ng-model="filter.Text" />' +
                         '<input type="date" class="form-control" ng-model="filter.Argument[0]" ng-show="filter.Operator == \'Between\'" />' +
                         '<hr />' +
-                        '<div class="btn-group"><a class="btn btn-sm btn-default" ng-click="applyFilter()">Apply</a>' +
-                        '<button class="btn btn-sm btn-default" ng-click="clearFilter()">Clear</button></div>' +
-                        '<button class="btn btn-sm btn-default" ng-click="close()">Close</button>' +
+                        '<tb-column-filter-buttons></tb-column-filter-buttons>' +
+                        '<tb-column-filter-column-selector ng-show="columnSelector"></tb-column-filter-column-selector>' +
                         '</form></div>' +
                         '</div>',
                     restrict: 'E',
@@ -1495,7 +1794,7 @@
                     compile: function compile(cElement, cAttrs) {
                         return {
                             pre: function(scope, lElement, lAttrs, lController, lTransclude) {
-                                tubularGridFilterService.applyFilterFuncs(scope, lElement, function() {
+                                tubularGridFilterService.applyFilterFuncs(scope, lElement, lAttrs, function() {
                                     var inp = $(lElement).find("input[type=date]")[0];
 
                                     if (inp.type != 'date') {
@@ -1535,13 +1834,12 @@
                         'ng-class="{ \'btn-success\': (filter.Argument.length > 0) }">' +
                         '<i class="fa fa-filter"></i></button>' +
                         '<div style="display: none;">' +
+                        '<h4>{{filterTitle}}</h4>' +
                         '<form class="tubular-column-filter-form" onsubmit="return false;">' +
                         '<select class="form-control" ng-model="filter.Argument" ng-options="item for item in optionsItems" multiple></select>' +
                         '<hr />' + // Maybe we should add checkboxes or something like that
-                        '<div class="btn-group"><a class="btn btn-sm btn-default" ng-click="applyFilter()">Apply</a>' +
-                        '<button class="btn btn-sm btn-default" ng-click="clearFilter()">Clear</button>' +
-                        '<button class="btn btn-sm btn-default" ng-click="close()">Close</button>' +
-                        '</div>' +
+                        '<tb-column-filter-buttons></tb-column-filter-buttons>' +
+                        '<tb-column-filter-column-selector ng-show="columnSelector"></tb-column-filter-column-selector>' +
                         '</form></div>' +
                         '</div>',
                     restrict: 'E',
@@ -1557,8 +1855,7 @@
 
                                 var currentRequest = tubularHttp.retrieveDataAsync({
                                     serverUrl: $scope.filter.OptionsUrl,
-                                    requestMethod: 'GET',
-                                    timeout: 1000
+                                    requestMethod: 'GET'
                                 });
 
                                 currentRequest.promise.then(
@@ -1574,7 +1871,7 @@
                     compile: function compile(cElement, cAttrs) {
                         return {
                             pre: function(scope, lElement, lAttrs, lController, lTransclude) {
-                                tubularGridFilterService.applyFilterFuncs(scope, lElement, function() {
+                                tubularGridFilterService.applyFilterFuncs(scope, lElement, lAttrs,function() {
                                     scope.getOptionsFromUrl();
                                 });
                             },
@@ -1708,7 +2005,7 @@
 
                         $scope.save = function () {
                             // TODO: Why Save and Create is not the same?ñ
-                            if ($scope.rowModel.save() == false) {
+                            if ($scope.rowModel.save() === false) {
                                 $scope.$emit('tbGrid_OnSavingNoChanges', $scope.rowModel);
                             }
                         };
@@ -1752,13 +2049,15 @@
                 return function(attrs) {
                     this.Name = attrs.name || null;
                     this.Label = attrs.label || null;
-                    this.Sortable = attrs.sortable === "true" ? true : false;
+                    this.Sortable = attrs.sortable === "true";
                     this.SortOrder = parseInt(attrs.sortOrder) || -1;
                     this.SortDirection = parseSortDirection(attrs.sortDirection);
-                    this.IsKey = attrs.isKey === "true" ? true : false;
-                    this.Searchable = attrs.searchable === "true" ? true : false;
+                    this.IsKey = attrs.isKey === "true";
+                    this.Searchable = attrs.searchable === "true";
+                    this.Visible = attrs.visible === "false" ? false : true;
                     this.Filter = null;
                     this.DataType = attrs.columnType || "string";
+                    this.IsGrouping = attrs.isGrouping === "true";
 
                     this.FilterOperators = {
                         'string': {
@@ -1816,7 +2115,10 @@
                     return function ($scope, data) {
                         var obj = {
                             $key: "",
+                            $count: 0,
                             $addField: function (key, value) {
+                                this.$count++;
+
                                 this[key] = value;
                                 if (angular.isUndefined(this.$original)) this.$original = {};
                                 this.$original[key] = value;
@@ -1880,26 +2182,30 @@
                         obj.$selected = false;
 
                         for (var k in obj) {
-                            if (k[0] == '$') continue;
+                            if (obj.hasOwnProperty(k)) {
+                                if (k[0] == '$') continue;
 
-                            obj.$state[k] = {
-                                $valid: function() {
-                                    return this.$errors.length == 0;
-                                },
-                                $errors: []
-                            };
+                                obj.$state[k] = {
+                                    $valid: function() {
+                                        return this.$errors.length == 0;
+                                    },
+                                    $errors: []
+                                };
+                            }
                         }
 
                         obj.$valid = function () {
                             for (var k in obj.$state) {
-                                var key = k;
-                                if (angular.isUndefined(obj.$state[key]) ||
-                                    obj.$state[key] == null ||
-                                    angular.isUndefined(obj.$state[key].$valid)) continue;
+                                if (obj.$state.hasOwnProperty(k)) {
+                                    var key = k;
+                                    if (angular.isUndefined(obj.$state[key]) ||
+                                        obj.$state[key] == null ||
+                                        angular.isUndefined(obj.$state[key].$valid)) continue;
 
-                                if (obj.$state[key].$valid()) continue;
+                                    if (obj.$state[key].$valid()) continue;
 
-                                return false;
+                                    return false;
+                                }
                             }
 
                             return true;
@@ -1923,17 +2229,21 @@
 
                         obj.resetOriginal = function() {
                             for (var k in obj.$original) {
-                                obj.$original[k] = obj[k];
+                                if (obj.$original.hasOwnProperty(k)) {
+                                    obj.$original[k] = obj[k];
+                                }
                             }
                         };
 
                         obj.revertChanges = function() {
                             for (var k in obj) {
-                                if (k[0] == '$' || angular.isUndefined(obj.$original[k])) {
-                                    continue;
-                                }
+                                if (obj.hasOwnProperty(k)) {
+                                    if (k[0] == '$' || angular.isUndefined(obj.$original[k])) {
+                                        continue;
+                                    }
 
-                                obj[k] = obj.$original[k];
+                                    obj[k] = obj.$original[k];
+                                }
                             }
 
                             obj.$isEditing = false;
@@ -1953,269 +2263,9 @@
 (function() {
     'use strict';
 
-    // User Service based on https://bitbucket.org/david.antaramian/so-21662778-spa-authentication-example
     angular.module('tubular.services', ['ui.bootstrap'])
-        .service('tubularHttp', [
-            '$http', '$timeout', '$q', '$cacheFactory', '$cookieStore', function tubularHttp($http, $timeout, $q, $cacheFactory, $cookieStore) {
-                function isAuthenticationExpired(expirationDate) {
-                    var now = new Date();
-                    expirationDate = new Date(expirationDate);
-
-                    return expirationDate - now <= 0;
-                }
-
-                function saveData() {
-                    removeData();
-                    $cookieStore.put('auth_data', me.userData);
-                }
-
-                function removeData() {
-                    $cookieStore.remove('auth_data');
-                }
-
-                function retrieveSavedData() {
-                    var savedData = $cookieStore.get('auth_data');
-                    if (typeof savedData === 'undefined') {
-                        throw new Exception('No authentication data exists');
-                    } else if (isAuthenticationExpired(savedData.expirationDate)) {
-                        throw new Exception('Authentication token has already expired');
-                    } else {
-                        me.userData = savedData;
-                        setHttpAuthHeader();
-                    }
-                }
-
-                function clearUserData() {
-                    me.userData.isAuthenticated = false;
-                    me.userData.username = '';
-                    me.userData.bearerToken = '';
-                    me.userData.expirationDate = null;
-                }
-
-                function setHttpAuthHeader() {
-                    $http.defaults.headers.common.Authorization = 'Bearer ' + me.userData.bearerToken;
-                }
-
-                var me = this;
-                me.userData = {
-                    isAuthenticated: false,
-                    username: '',
-                    bearerToken: '',
-                    expirationDate: null,
-                };
-
-                me.cache = $cacheFactory('tubularHttpCache');
-                me.useCache = true;
-                me.requireAuthentication = true;
-
-                me.isAuthenticated = function() {
-                    if (!me.userData.isAuthenticated || isAuthenticationExpired(me.userData.expirationDate)) {
-                        try {
-                            retrieveSavedData();
-                        } catch (e) {
-                            return false;
-                        }
-                    }
-
-                    return true;
-                };
-
-                me.setRequireAuthentication = function(val) {
-                    me.requireAuthentication = val;
-                };
-
-                me.removeAuthentication = function() {
-                    removeData();
-                    clearUserData();
-                    $http.defaults.headers.common.Authorization = null;
-                };
-
-                me.authenticate = function(username, password, successCallback, errorCallback, persistData) {
-                    this.removeAuthentication();
-                    var config = {
-                        method: 'POST',
-                        url: '/api/token',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded',
-                        },
-                        data: 'grant_type=password&username=' + username + '&password=' + password,
-                    };
-
-                    $http(config)
-                        .success(function(data) {
-                            me.userData.isAuthenticated = true;
-                            me.userData.username = data.userName;
-                            me.userData.bearerToken = data.access_token;
-                            me.userData.expirationDate = new Date(data['.expires']);
-                            setHttpAuthHeader();
-                            if (persistData === true) {
-                                saveData();
-                            }
-                            if (typeof successCallback === 'function') {
-                                successCallback();
-                            }
-                        })
-                        .error(function(data) {
-                            if (typeof errorCallback === 'function') {
-                                if (data.error_description) {
-                                    errorCallback(data.error_description);
-                                } else {
-                                    errorCallback('Unable to contact server; please, try again later.');
-                                }
-                            }
-                        });
-                };
-
-                me.saveDataAsync = function(model, request) {
-                    var clone = angular.copy(model);
-                    var originalClone = angular.copy(model.$original);
-
-                    delete clone.$isEditing;
-                    delete clone.$hasChanges;
-                    delete clone.$selected;
-                    delete clone.$original;
-                    delete clone.$state;
-                    delete clone.$valid;
-
-                    request.data = {
-                        Old: originalClone,
-                        New: clone
-                    };
-
-                    var dataRequest = me.retrieveDataAsync(request);
-
-                    dataRequest.promise.then(function(data) {
-                        model.$hasChanges = false;
-                        model.resetOriginal();
-                        return data;
-                    });
-
-                    return dataRequest;
-                };
-
-                me.getExpirationDate = function() {
-                    var date = new Date();
-                    var minutes = 5;
-                    return new Date(date.getTime() + minutes * 60000);
-                }
-
-                me.checksum = function(obj) {
-                    var keys = Object.keys(obj).sort();
-                    var output = [], prop;
-                    for (var i = 0; i < keys.length; i++) {
-                        prop = keys[i];
-                        output.push(prop);
-                        output.push(obj[prop]);
-                    }
-                    return JSON.stringify(output);
-                };
-
-                me.retrieveDataAsync = function (request) {
-                    var canceller = $q.defer();
-
-                    var cancel = function(reason) {
-                        console.error(reason);
-                        canceller.resolve(reason);
-                    };
-
-                    if (angular.isString(request.requireAuthentication))
-                        request.requireAuthentication = request.requireAuthentication == "true";
-                    else
-                        request.requireAuthentication = request.requireAuthentication || me.requireAuthentication;
-
-                    if (request.requireAuthentication && me.isAuthenticated() == false) {
-                        // Return empty dataset
-                        return {
-                            promise: $q(function(resolve, reject) {
-                                resolve(null);
-                            }),
-                            cancel: cancel
-                        };
-                    }
-
-                    var checksum = me.checksum(request);
-
-                    if ((request.requestMethod == 'GET' || request.requestMethod == 'POST') && me.useCache) {
-                        var data = me.cache.get(checksum);
-
-                        if (angular.isDefined(data) && data.Expiration.getTime() > new Date().getTime()) {
-                            return {
-                                promise: $q(function(resolve, reject) {
-                                    resolve(data.Set);
-                                }),
-                                cancel: cancel
-                            };
-                        }
-                    }
-
-                    var promise = $http({
-                        url: request.serverUrl,
-                        method: request.requestMethod,
-                        data: request.data,
-                        timeout: canceller.promise
-                    }).then(function (response) {
-                        $timeout.cancel(timeoutHanlder);
-
-                        if (me.useCache) {
-                            me.cache.put(checksum, { Expiration: me.getExpirationDate(), Set: response.data });
-                        }
-
-                        return response.data;
-                    }, function(error) {
-                        if (angular.isDefined(error) && angular.isDefined(error.status) && error.status == 401) {
-                            if (me.isAuthenticated()) {
-                                me.removeAuthentication();
-                                // Let's trigger a refresh
-                                document.location = document.location;
-                            }
-                        }
-                    });
-
-                    request.timeout = request.timeout || 15000;
-
-                    var timeoutHanlder = $timeout(function() {
-                        cancel('Timed out');
-                    }, request.timeout);
-
-                    return {
-                        promise: promise,
-                        cancel: cancel
-                    };
-                };
-
-                me.get = function(url) {
-                    return me.retrieveDataAsync({
-                        serverUrl: url,
-                        requestMethod: 'GET',
-                    });
-                };
-
-                me.delete = function(url) {
-                    return me.retrieveDataAsync({
-                        serverUrl: url,
-                        requestMethod: 'DELETE',
-                    });
-                };
-
-                me.post = function(url, data) {
-                    return me.retrieveDataAsync({
-                        serverUrl: url,
-                        requestMethod: 'POST',
-                        data: data
-                    });
-                };
-
-                me.put = function(url, data) {
-                    return me.retrieveDataAsync({
-                        serverUrl: url,
-                        requestMethod: 'PUT',
-                        data: data
-                    });
-                };
-            }
-        ])
-        .service('tubularGridPopupService', [
-            '$modal', function tubularGridPopupService($modal) {
+        .service('tubularPopupService', [
+            '$modal', function tubularPopupService($modal) {
                 var me = this;
 
                 me.openDialog = function(template, model) {
@@ -2230,7 +2280,10 @@
                                     $scope.Model.save(true);
                                     
                                     $scope.$on('tbGrid_OnSuccessfulUpdate', 
-                                        function () { dialog.close(); });
+                                        function () {
+                                            // TODO: Review this
+                                            dialog.close();
+                                        });
                                 };
 
                                 $scope.closePopup = function () {
@@ -2250,32 +2303,44 @@
         .service('tubularGridExportService', function tubularGridExportService() {
             var me = this;
             
-            me.getColumns = function(gridScope) {
-                return gridScope.columns.map(function(c) { return c.Name.replace(/([a-z])([A-Z])/g, '$1 $2'); });
+            me.getColumns = function (gridScope) {
+                return gridScope.columns
+                    .filter(function (c) { return c.Visible; })
+                    .map(function (c) { return c.Name.replace(/([a-z])([A-Z])/g, '$1 $2'); });
+            };
+
+            me.getColumnsVisibility = function (gridScope) {
+                return gridScope.columns
+                    .map(function (c) { return c.Visible; });
             };
 
             me.exportAllGridToCsv = function(filename, gridScope) {
                 var columns = me.getColumns(gridScope);
+                var visibility = me.getColumnsVisibility(gridScope);
+
                 gridScope.getFullDataSource(function(data) {
-                    me.exportToCsv(filename, columns, data);
+                    me.exportToCsv(filename, columns, data, visibility);
                 });
             };
 
             me.exportGridToCsv = function(filename, gridScope) {
                 var columns = me.getColumns(gridScope);
+                var visibility = me.getColumnsVisibility(gridScope);
+
                 gridScope.currentRequest = {};
-                me.exportToCsv(filename, columns, gridScope.dataSource.Payload);
+                me.exportToCsv(filename, columns, gridScope.dataSource.Payload, visibility);
                 gridScope.currentRequest = null;
             };
 
-            me.exportToCsv = function(filename, header, rows) {
+            me.exportToCsv = function(filename, header, rows, visibility) {
                 var processRow = function(row) {
                     var finalVal = '';
                     for (var j = 0; j < row.length; j++) {
+                        if (visibility[j] === false) continue;
                         var innerValue = row[j] === null ? '' : row[j].toString();
                         if (row[j] instanceof Date) {
                             innerValue = row[j].toLocaleString();
-                        };
+                        }
                         var result = innerValue.replace(/"/g, '""');
                         if (result.search(/("|,|\n)/g) >= 0)
                             result = '"' + result + '"';
@@ -2300,10 +2365,11 @@
             };
         })
         .service('tubularGridFilterService', [
-            'tubulargGridFilterModel', '$compile', function tubularGridFilterService(FilterModel, $compile) {
+            'tubulargGridFilterModel', '$compile', '$modal', function tubularGridFilterService(FilterModel, $compile, $modal) {
                 var me = this;
 
-                me.applyFilterFuncs = function(scope, el, openCallback) {
+                me.applyFilterFuncs = function (scope, el, attributes, openCallback) {
+                    scope.columnSelector = attributes.columnSelector || false;
                     scope.$component = scope.$parent.$component;
                     scope.filterTitle = "Filter";
 
@@ -2325,9 +2391,40 @@
                         $(el).find('[data-toggle="popover"]').popover('hide');
                     };
 
+                    scope.openColumnsSelector = function () {
+                        scope.close();
+
+                        var model = scope.$component.columns;
+
+                        var dialog = $modal.open({
+                            template: '<div class="modal-header">' +
+                                '<h3 class="modal-title">Columns Selector</h3>' +
+                                '</div>' +
+                                '<div class="modal-body">' +
+                                '<table class="table table-bordered table-responsive table-striped table-hover table-condensed">' +
+                                '<thead><tr><th>Visible?</th><th>Name</th><th>Is grouping?</th></tr></thead>' +
+                                '<tbody><tr ng-repeat="col in Model">' +
+                                '<td><input type="checkbox" ng-model="col.Visible" /></td>' +
+                                '<td>{{col.Label}}</td>' +
+                                '<td><input type="checkbox" ng-disabled="true" ng-model="col.IsGrouping" /></td>' +
+                                '</tr></tbody></table></div>' +
+                                '</div>' +
+                                '<div class="modal-footer"><button class="btn btn-warning" ng-click="closePopup()">Close</button></div>',
+                            backdropClass: 'fullHeight',
+                            controller: [
+                                '$scope', function ($innerScope) {
+                                    $innerScope.Model = model;
+
+                                    $innerScope.closePopup = function () {
+                                        dialog.close();
+                                    };
+                                }
+                            ]
+                        });
+                    };
+
                     $(el).find('[data-toggle="popover"]').popover({
                         html: true,
-                        title: scope.filterTitle,
                         content: function() {
                             var selectEl = $(this).next().find('select').find('option').remove().end();
                             angular.forEach(scope.filterOperators, function(val, key) {
@@ -2355,11 +2452,11 @@
                     scope.dataType = columns[0].DataType;
                     scope.filterOperators = columns[0].FilterOperators[scope.dataType];
 
-                    if (scope.dataType == 'datetime' || scope.dataType == 'date') {
+                    if (scope.dataType === 'datetime' || scope.dataType === 'date') {
                         scope.filter.Argument = [new Date()];
                     }
 
-                    if (scope.dataType == 'numeric') {
+                    if (scope.dataType === 'numeric') {
                         scope.filter.Argument = [1];
                     }
 
@@ -2421,10 +2518,11 @@
 
                         // Try to match the model to the parent, if it exists
                         if (angular.isDefined(scope.$parent.Model)) {
-                            if (angular.isDefined(scope.$parent.Model[scope.name]))
+                            if (angular.isDefined(scope.$parent.Model[scope.name])) {
                                 scope.$parent.Model[scope.name] = newValue;
-                            else if (angular.isDefined(scope.$parent.Model.$addField))
+                            } else if (angular.isDefined(scope.$parent.Model.$addField)) {
                                 scope.$parent.Model.$addField(scope.name, newValue);
+                            }
                         }
 
                         if (angular.isUndefined(scope.value) && scope.required) {
@@ -2445,7 +2543,7 @@
                     while (true) {
                         if (parent == null) break;
                         if (angular.isUndefined(parent.tubularDirective) == false &&
-                            parent.tubularDirective == 'tubular-form') {
+                            parent.tubularDirective === 'tubular-form') {
                             parent.addField(scope);
                             break;
                         }
@@ -2455,6 +2553,272 @@
                 };
             }
         ]);
+})();
+///#source 1 1 tubular/tubular-services-http.js
+(function () {
+    'use strict';
+
+    // User Service based on https://bitbucket.org/david.antaramian/so-21662778-spa-authentication-example
+    angular.module('tubular.services').service('tubularHttp', [
+        '$http', '$timeout', '$q', '$cacheFactory', '$cookieStore', function tubularHttp($http, $timeout, $q, $cacheFactory, $cookieStore) {
+            function isAuthenticationExpired(expirationDate) {
+                var now = new Date();
+                expirationDate = new Date(expirationDate);
+
+                return expirationDate - now <= 0;
+            }
+
+            function saveData() {
+                removeData();
+                $cookieStore.put('auth_data', me.userData);
+            }
+
+            function removeData() {
+                $cookieStore.remove('auth_data');
+            }
+
+            function retrieveSavedData() {
+                var savedData = $cookieStore.get('auth_data');
+                if (typeof savedData === 'undefined') {
+                    throw new Exception('No authentication data exists');
+                } else if (isAuthenticationExpired(savedData.expirationDate)) {
+                    throw new Exception('Authentication token has already expired');
+                } else {
+                    me.userData = savedData;
+                    setHttpAuthHeader();
+                }
+            }
+
+            function clearUserData() {
+                me.userData.isAuthenticated = false;
+                me.userData.username = '';
+                me.userData.bearerToken = '';
+                me.userData.expirationDate = null;
+            }
+
+            function setHttpAuthHeader() {
+                $http.defaults.headers.common.Authorization = 'Bearer ' + me.userData.bearerToken;
+            }
+
+            var me = this;
+            me.userData = {
+                isAuthenticated: false,
+                username: '',
+                bearerToken: '',
+                expirationDate: null,
+            };
+
+            me.cache = $cacheFactory('tubularHttpCache');
+            me.useCache = true;
+            me.requireAuthentication = true;
+
+            me.isAuthenticated = function() {
+                if (!me.userData.isAuthenticated || isAuthenticationExpired(me.userData.expirationDate)) {
+                    try {
+                        retrieveSavedData();
+                    } catch (e) {
+                        return false;
+                    }
+                }
+
+                return true;
+            };
+
+            me.setRequireAuthentication = function(val) {
+                me.requireAuthentication = val;
+            };
+
+            me.removeAuthentication = function() {
+                removeData();
+                clearUserData();
+                $http.defaults.headers.common.Authorization = null;
+            };
+
+            me.authenticate = function(username, password, successCallback, errorCallback, persistData) {
+                this.removeAuthentication();
+                var config = {
+                    method: 'POST',
+                    url: '/api/token',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    data: 'grant_type=password&username=' + username + '&password=' + password,
+                };
+
+                $http(config)
+                    .success(function(data) {
+                        me.userData.isAuthenticated = true;
+                        me.userData.username = data.userName;
+                        me.userData.bearerToken = data.access_token;
+                        me.userData.expirationDate = new Date(data['.expires']);
+                        setHttpAuthHeader();
+                        if (persistData === true) {
+                            saveData();
+                        }
+                        if (typeof successCallback === 'function') {
+                            successCallback();
+                        }
+                    })
+                    .error(function(data) {
+                        if (typeof errorCallback === 'function') {
+                            if (data.error_description) {
+                                errorCallback(data.error_description);
+                            } else {
+                                errorCallback('Unable to contact server; please, try again later.');
+                            }
+                        }
+                    });
+            };
+
+            me.saveDataAsync = function(model, request) {
+                var clone = angular.copy(model);
+                var originalClone = angular.copy(model.$original);
+
+                delete clone.$isEditing;
+                delete clone.$hasChanges;
+                delete clone.$selected;
+                delete clone.$original;
+                delete clone.$state;
+                delete clone.$valid;
+
+                request.data = {
+                    Old: originalClone,
+                    New: clone
+                };
+
+                var dataRequest = me.retrieveDataAsync(request);
+
+                dataRequest.promise.then(function(data) {
+                    model.$hasChanges = false;
+                    model.resetOriginal();
+                    return data;
+                });
+
+                return dataRequest;
+            };
+
+            me.getExpirationDate = function() {
+                var date = new Date();
+                var minutes = 5;
+                return new Date(date.getTime() + minutes * 60000);
+            };
+
+            me.checksum = function(obj) {
+                var keys = Object.keys(obj).sort();
+                var output = [], prop;
+                for (var i = 0; i < keys.length; i++) {
+                    prop = keys[i];
+                    output.push(prop);
+                    output.push(obj[prop]);
+                }
+                return JSON.stringify(output);
+            };
+
+            me.retrieveDataAsync = function(request) {
+                var canceller = $q.defer();
+
+                var cancel = function(reason) {
+                    console.error(reason);
+                    canceller.resolve(reason);
+                };
+
+                if (angular.isString(request.requireAuthentication)) {
+                    request.requireAuthentication = request.requireAuthentication == "true";
+                } else {
+                    request.requireAuthentication = request.requireAuthentication || me.requireAuthentication;
+                }
+
+                if (request.requireAuthentication && me.isAuthenticated() == false) {
+                    // Return empty dataset
+                    return {
+                        promise: $q(function(resolve, reject) {
+                            resolve(null);
+                        }),
+                        cancel: cancel
+                    };
+                }
+
+                var checksum = me.checksum(request);
+
+                if ((request.requestMethod == 'GET' || request.requestMethod == 'POST') && me.useCache) {
+                    var data = me.cache.get(checksum);
+
+                    if (angular.isDefined(data) && data.Expiration.getTime() > new Date().getTime()) {
+                        return {
+                            promise: $q(function(resolve, reject) {
+                                resolve(data.Set);
+                            }),
+                            cancel: cancel
+                        };
+                    }
+                }
+
+                var promise = $http({
+                    url: request.serverUrl,
+                    method: request.requestMethod,
+                    data: request.data,
+                    timeout: canceller.promise
+                }).then(function(response) {
+                    $timeout.cancel(timeoutHanlder);
+
+                    if (me.useCache) {
+                        me.cache.put(checksum, { Expiration: me.getExpirationDate(), Set: response.data });
+                    }
+
+                    return response.data;
+                }, function(error) {
+                    if (angular.isDefined(error) && angular.isDefined(error.status) && error.status == 401) {
+                        if (me.isAuthenticated()) {
+                            me.removeAuthentication();
+                            // Let's trigger a refresh
+                            document.location = document.location;
+                        }
+                    }
+                });
+
+                request.timeout = request.timeout || 15000;
+
+                var timeoutHanlder = $timeout(function() {
+                    cancel('Timed out');
+                }, request.timeout);
+
+                return {
+                    promise: promise,
+                    cancel: cancel
+                };
+            };
+
+            me.get = function(url) {
+                return me.retrieveDataAsync({
+                    serverUrl: url,
+                    requestMethod: 'GET',
+                });
+            };
+
+            me.delete = function(url) {
+                return me.retrieveDataAsync({
+                    serverUrl: url,
+                    requestMethod: 'DELETE',
+                });
+            };
+
+            me.post = function(url, data) {
+                return me.retrieveDataAsync({
+                    serverUrl: url,
+                    requestMethod: 'POST',
+                    data: data
+                });
+            };
+
+            me.put = function(url, data) {
+                return me.retrieveDataAsync({
+                    serverUrl: url,
+                    requestMethod: 'PUT',
+                    data: data
+                });
+            };
+        }
+    ]);
 })();
 ///#source 1 1 tubular/tubular-services-odata.js
 (function () {
@@ -3254,201 +3618,3 @@
     function repeat(str, n) { return (n == 0) ? "" : Array(n + 1).join(str); }
 
 })(jQuery);
-///#source 1 1 blob-js/blob.js
-/* Blob.js
- * A Blob implementation.
- * 2014-07-24
- *
- * By Eli Grey, http://eligrey.com
- * By Devin Samarin, https://github.com/dsamarin
- * License: X11/MIT
- *   See https://github.com/eligrey/Blob.js/blob/master/LICENSE.md
- */
-
-/*global self, unescape */
-/*jslint bitwise: true, regexp: true, confusion: true, es5: true, vars: true, white: true,
-  plusplus: true */
-
-/*! @source http://purl.eligrey.com/github/Blob.js/blob/master/Blob.js */
-
-(function (view) {
-    "use strict";
-
-    view.URL = view.URL || view.webkitURL;
-
-    if (view.Blob && view.URL) {
-        try {
-            new Blob;
-            return;
-        } catch (e) { }
-    }
-
-    // Internally we use a BlobBuilder implementation to base Blob off of
-    // in order to support older browsers that only have BlobBuilder
-    var BlobBuilder = view.BlobBuilder || view.WebKitBlobBuilder || view.MozBlobBuilder || (function (view) {
-        var
-			  get_class = function (object) {
-			      return Object.prototype.toString.call(object).match(/^\[object\s(.*)\]$/)[1];
-			  }
-			, FakeBlobBuilder = function BlobBuilder() {
-			    this.data = [];
-			}
-			, FakeBlob = function Blob(data, type, encoding) {
-			    this.data = data;
-			    this.size = data.length;
-			    this.type = type;
-			    this.encoding = encoding;
-			}
-			, FBB_proto = FakeBlobBuilder.prototype
-			, FB_proto = FakeBlob.prototype
-			, FileReaderSync = view.FileReaderSync
-			, FileException = function (type) {
-			    this.code = this[this.name = type];
-			}
-			, file_ex_codes = (
-				  "NOT_FOUND_ERR SECURITY_ERR ABORT_ERR NOT_READABLE_ERR ENCODING_ERR "
-				+ "NO_MODIFICATION_ALLOWED_ERR INVALID_STATE_ERR SYNTAX_ERR"
-			).split(" ")
-			, file_ex_code = file_ex_codes.length
-			, real_URL = view.URL || view.webkitURL || view
-			, real_create_object_URL = real_URL.createObjectURL
-			, real_revoke_object_URL = real_URL.revokeObjectURL
-			, URL = real_URL
-			, btoa = view.btoa
-			, atob = view.atob
-
-			, ArrayBuffer = view.ArrayBuffer
-			, Uint8Array = view.Uint8Array
-
-			, origin = /^[\w-]+:\/*\[?[\w\.:-]+\]?(?::[0-9]+)?/
-        ;
-        FakeBlob.fake = FB_proto.fake = true;
-        while (file_ex_code--) {
-            FileException.prototype[file_ex_codes[file_ex_code]] = file_ex_code + 1;
-        }
-        // Polyfill URL
-        if (!real_URL.createObjectURL) {
-            URL = view.URL = function (uri) {
-                var
-					  uri_info = document.createElementNS("http://www.w3.org/1999/xhtml", "a")
-					, uri_origin
-                ;
-                uri_info.href = uri;
-                if (!("origin" in uri_info)) {
-                    if (uri_info.protocol.toLowerCase() === "data:") {
-                        uri_info.origin = null;
-                    } else {
-                        uri_origin = uri.match(origin);
-                        uri_info.origin = uri_origin && uri_origin[1];
-                    }
-                }
-                return uri_info;
-            };
-        }
-        URL.createObjectURL = function (blob) {
-            var
-				  type = blob.type
-				, data_URI_header
-            ;
-            if (type === null) {
-                type = "application/octet-stream";
-            }
-            if (blob instanceof FakeBlob) {
-                data_URI_header = "data:" + type;
-                if (blob.encoding === "base64") {
-                    return data_URI_header + ";base64," + blob.data;
-                } else if (blob.encoding === "URI") {
-                    return data_URI_header + "," + decodeURIComponent(blob.data);
-                } if (btoa) {
-                    return data_URI_header + ";base64," + btoa(blob.data);
-                } else {
-                    return data_URI_header + "," + encodeURIComponent(blob.data);
-                }
-            } else if (real_create_object_URL) {
-                return real_create_object_URL.call(real_URL, blob);
-            }
-        };
-        URL.revokeObjectURL = function (object_URL) {
-            if (object_URL.substring(0, 5) !== "data:" && real_revoke_object_URL) {
-                real_revoke_object_URL.call(real_URL, object_URL);
-            }
-        };
-        FBB_proto.append = function (data/*, endings*/) {
-            var bb = this.data;
-            // decode data to a binary string
-            if (Uint8Array && (data instanceof ArrayBuffer || data instanceof Uint8Array)) {
-                var
-					  str = ""
-					, buf = new Uint8Array(data)
-					, i = 0
-					, buf_len = buf.length
-                ;
-                for (; i < buf_len; i++) {
-                    str += String.fromCharCode(buf[i]);
-                }
-                bb.push(str);
-            } else if (get_class(data) === "Blob" || get_class(data) === "File") {
-                if (FileReaderSync) {
-                    var fr = new FileReaderSync;
-                    bb.push(fr.readAsBinaryString(data));
-                } else {
-                    // async FileReader won't work as BlobBuilder is sync
-                    throw new FileException("NOT_READABLE_ERR");
-                }
-            } else if (data instanceof FakeBlob) {
-                if (data.encoding === "base64" && atob) {
-                    bb.push(atob(data.data));
-                } else if (data.encoding === "URI") {
-                    bb.push(decodeURIComponent(data.data));
-                } else if (data.encoding === "raw") {
-                    bb.push(data.data);
-                }
-            } else {
-                if (typeof data !== "string") {
-                    data += ""; // convert unsupported types to strings
-                }
-                // decode UTF-16 to binary string
-                bb.push(unescape(encodeURIComponent(data)));
-            }
-        };
-        FBB_proto.getBlob = function (type) {
-            if (!arguments.length) {
-                type = null;
-            }
-            return new FakeBlob(this.data.join(""), type, "raw");
-        };
-        FBB_proto.toString = function () {
-            return "[object BlobBuilder]";
-        };
-        FB_proto.slice = function (start, end, type) {
-            var args = arguments.length;
-            if (args < 3) {
-                type = null;
-            }
-            return new FakeBlob(
-				  this.data.slice(start, args > 1 ? end : this.data.length)
-				, type
-				, this.encoding
-			);
-        };
-        FB_proto.toString = function () {
-            return "[object Blob]";
-        };
-        FB_proto.close = function () {
-            this.size = 0;
-            delete this.data;
-        };
-        return FakeBlobBuilder;
-    }(view));
-
-    view.Blob = function (blobParts, options) {
-        var type = options ? (options.type || "") : "";
-        var builder = new BlobBuilder();
-        if (blobParts) {
-            for (var i = 0, len = blobParts.length; i < len; i++) {
-                builder.append(blobParts[i]);
-            }
-        }
-        return builder.getBlob(type);
-    };
-}(typeof self !== "undefined" && self || typeof window !== "undefined" && window || this.content || this));
