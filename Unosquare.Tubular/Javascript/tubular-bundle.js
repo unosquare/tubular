@@ -506,6 +506,30 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                             $scope.$watch('hasColumnsDefinitions', function(newVal) {
                                 if (newVal !== true) return;
+
+                                var isGrouping = false;
+                                var groupColumn = '';
+                                // Check columns
+                                angular.forEach($scope.columns, function (column) {
+                                    if (column.IsGrouping) {
+                                        if (isGrouping)
+                                            throw 'Only one column is allowed to grouping';
+
+                                        isGrouping = true;
+                                        column.Visible = false;
+                                        column.Sortable = true;
+                                        column.SortOrder = 1;
+                                        groupColumn = column.Name;
+                                    }
+                                });
+
+                                angular.forEach($scope.columns, function (column) {
+                                    if (groupColumn == column.Name) return;
+
+                                    if (column.Sortable && column.SortOrder > 0)
+                                        column.SortOrder++;
+                                });
+
                                 $scope.retrieveData();
                             });
 
@@ -1002,7 +1026,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 return {
                     require: '^tbRowSet',
                     template: '<tr ngTransclude class="row-group">' +
-                        '<td colspan="{{group.length + 1}}">{{label}}</td>' +
+                        '<td colspan="{{group[0].$count}}">{{label}}</td>' +
                         '</tr>',
                     restrict: 'E',
                     replace: true,
@@ -2035,6 +2059,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     this.Visible = attrs.visible === "false" ? false : true;
                     this.Filter = null;
                     this.DataType = attrs.columnType || "string";
+                    this.IsGrouping = attrs.isGrouping === "true";
 
                     this.FilterOperators = {
                         'string': {
@@ -2092,7 +2117,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     return function ($scope, data) {
                         var obj = {
                             $key: "",
+                            $count: 0,
                             $addField: function (key, value) {
+                                this.$count++;
+
                                 this[key] = value;
                                 if (angular.isUndefined(this.$original)) this.$original = {};
                                 this.$original[key] = value;

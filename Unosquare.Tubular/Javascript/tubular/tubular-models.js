@@ -27,6 +27,7 @@
                     this.Visible = attrs.visible === "false" ? false : true;
                     this.Filter = null;
                     this.DataType = attrs.columnType || "string";
+                    this.IsGrouping = attrs.isGrouping === "true";
 
                     this.FilterOperators = {
                         'string': {
@@ -84,7 +85,10 @@
                     return function ($scope, data) {
                         var obj = {
                             $key: "",
+                            $count: 0,
                             $addField: function (key, value) {
+                                this.$count++;
+
                                 this[key] = value;
                                 if (angular.isUndefined(this.$original)) this.$original = {};
                                 this.$original[key] = value;
