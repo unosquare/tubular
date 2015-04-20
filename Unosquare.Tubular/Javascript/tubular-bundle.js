@@ -93,7 +93,8 @@
                         onBeforeGetData: '=?',
                         requestMethod: '@',
                         gridDataService: '=?service',
-                        requireAuthentication: '@?'
+                        requireAuthentication: '@?',
+                        name: '@?gridName'
                     },
                     controller: [
                         '$scope', 'localStorageService', 'tubularPopupService', 'tubularModel',
@@ -120,6 +121,15 @@
                             $scope.tempRow = new TubularModel($scope, {});
                             $scope.gridDataService = $scope.gridDataService || tubularHttp;
                             $scope.requireAuthentication = $scope.requireAuthentication || true;
+                            $scope.name = $scope.name || 'tbgrid';
+                            $scope.canSaveState = false;
+
+                            $scope.$watch('columns', function (val) {
+                                if ($scope.hasColumnsDefinitions === false || $scope.canSaveState === false)
+                                    return;
+
+                                localStorageService.set($scope.name + "_columns", $scope.columns);
+                            }, true);
 
                             $scope.addColumn = function (item) {
                                 if (item.Name === null) return;
@@ -207,7 +217,31 @@
                                     });
                             };
 
-                            $scope.retrieveData = function() {
+                            $scope.verifyColumns = function () {
+                                var columns = localStorageService.get($scope.name + "_columns");
+                                if (columns === null || columns === "") {
+                                    // Nothing in settings, saving initial state
+                                    localStorageService.set($scope.name + "_columns", $scope.columns);
+                                    return;
+                                }
+
+                                for (var index in columns) {
+                                    var columnName = columns[index].Name;
+                                    var filtered = $scope.columns.filter(function (el) { return el.Name == columnName; });
+
+                                    if (filtered.length == 0) continue;
+
+                                    var current = filtered[0];
+                                    // Updates visibility by now
+                                    current.Visible = columns[index].Visible;
+                                    // TODO: Restore filters
+                                }
+                            };
+
+                            $scope.retrieveData = function () {
+                                $scope.canSaveState = true;
+                                $scope.verifyColumns();
+
                                 $scope.pageSize = $scope.pageSize || 20;
                                 var page = $scope.requestedPage == 0 ? 1 : $scope.requestedPage;
 
@@ -344,7 +378,7 @@
                             };
 
                             $scope.selectedRows = function() {
-                                var rows = localStorageService.get("rows"); // TODO: We need a table identifier
+                                var rows = localStorageService.get($scope.name + "_rows");
                                 if (rows === null || rows === "") {
                                     rows = [];
                                 }
@@ -357,7 +391,7 @@
                                     value.$selected = false;
                                 });
 
-                                localStorageService.set("rows", []);
+                                localStorageService.set($scope.name + "_rows", []);
                             };
 
                             $scope.isEmptySelection = function() {
@@ -385,7 +419,7 @@
                                     });
                                 }
 
-                                localStorageService.set("rows", rows);
+                                localStorageService.set($scope.name + "_rows", rows);
                             };
 
                             $scope.getFullDataSource = function(callback) {
@@ -398,7 +432,7 @@
                                         Count: $scope.requestCounter,
                                         Columns: $scope.columns,
                                         Skip: 0,
-                                        Take: 1000, // TODO: Take more?
+                                        Take: -1,
                                         Search: {
                                             Argument: '',
                                             Operator: 'None'
@@ -2033,28 +2067,40 @@
         .service('tubularGridExportService', function tubularGridExportService() {
             var me = this;
             
-            me.getColumns = function(gridScope) {
-                return gridScope.columns.map(function(c) { return c.Name.replace(/([a-z])([A-Z])/g, '$1 $2'); });
+            me.getColumns = function (gridScope) {
+                return gridScope.columns
+                    .filter(function (c) { return c.Visible; })
+                    .map(function (c) { return c.Name.replace(/([a-z])([A-Z])/g, '$1 $2'); });
+            };
+
+            me.getColumnsVisibility = function (gridScope) {
+                return gridScope.columns
+                    .map(function (c) { return c.Visible; });
             };
 
             me.exportAllGridToCsv = function(filename, gridScope) {
                 var columns = me.getColumns(gridScope);
+                var visibility = me.getColumnsVisibility(gridScope);
+
                 gridScope.getFullDataSource(function(data) {
-                    me.exportToCsv(filename, columns, data);
+                    me.exportToCsv(filename, columns, data, visibility);
                 });
             };
 
             me.exportGridToCsv = function(filename, gridScope) {
                 var columns = me.getColumns(gridScope);
+                var visibility = me.getColumnsVisibility(gridScope);
+
                 gridScope.currentRequest = {};
-                me.exportToCsv(filename, columns, gridScope.dataSource.Payload);
+                me.exportToCsv(filename, columns, gridScope.dataSource.Payload, visibility);
                 gridScope.currentRequest = null;
             };
 
-            me.exportToCsv = function(filename, header, rows) {
+            me.exportToCsv = function(filename, header, rows, visibility) {
                 var processRow = function(row) {
                     var finalVal = '';
                     for (var j = 0; j < row.length; j++) {
+                        if (visibility[j] === false) continue;
                         var innerValue = row[j] === null ? '' : row[j].toString();
                         if (row[j] instanceof Date) {
                             innerValue = row[j].toLocaleString();

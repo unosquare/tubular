@@ -241,16 +241,26 @@ namespace Unosquare.Tubular
                 subset = subset.OrderBy(request.Columns.First().Name + " ASC");
             }
 
-            subset = subset.Skip(request.Skip)
-                .Take(request.Take);
-
+            subset = subset.Skip(request.Skip);
             var pageSize = request.Take;
-            response.TotalPages = (response.FilteredRecordCount + pageSize - 1) / pageSize;
 
-            if (response.TotalPages > 0)
+            // Take with value -1 represents entire set
+            if (request.Take == -1)
             {
-                response.CurrentPage = 1 +
-                                       (int)((request.Skip / (float)response.FilteredRecordCount) * response.TotalPages);
+                response.TotalPages = 1;
+                response.CurrentPage = 1;
+                pageSize = subset.Count();
+            }
+            else
+            {
+                subset = subset.Take(request.Take);
+                response.TotalPages = (response.FilteredRecordCount + pageSize - 1) / pageSize;
+
+                if (response.TotalPages > 0)
+                {
+                    response.CurrentPage = 1 +
+                                           (int)((request.Skip / (float)response.FilteredRecordCount) * response.TotalPages);
+                }
             }
 
             response.Payload = CreateGridPayload(subset, columnMap, pageSize, request.TimezoneOffset);

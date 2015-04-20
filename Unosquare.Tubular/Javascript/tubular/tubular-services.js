@@ -41,28 +41,40 @@
         .service('tubularGridExportService', function tubularGridExportService() {
             var me = this;
             
-            me.getColumns = function(gridScope) {
-                return gridScope.columns.map(function(c) { return c.Name.replace(/([a-z])([A-Z])/g, '$1 $2'); });
+            me.getColumns = function (gridScope) {
+                return gridScope.columns
+                    .filter(function (c) { return c.Visible; })
+                    .map(function (c) { return c.Name.replace(/([a-z])([A-Z])/g, '$1 $2'); });
+            };
+
+            me.getColumnsVisibility = function (gridScope) {
+                return gridScope.columns
+                    .map(function (c) { return c.Visible; });
             };
 
             me.exportAllGridToCsv = function(filename, gridScope) {
                 var columns = me.getColumns(gridScope);
+                var visibility = me.getColumnsVisibility(gridScope);
+
                 gridScope.getFullDataSource(function(data) {
-                    me.exportToCsv(filename, columns, data);
+                    me.exportToCsv(filename, columns, data, visibility);
                 });
             };
 
             me.exportGridToCsv = function(filename, gridScope) {
                 var columns = me.getColumns(gridScope);
+                var visibility = me.getColumnsVisibility(gridScope);
+
                 gridScope.currentRequest = {};
-                me.exportToCsv(filename, columns, gridScope.dataSource.Payload);
+                me.exportToCsv(filename, columns, gridScope.dataSource.Payload, visibility);
                 gridScope.currentRequest = null;
             };
 
-            me.exportToCsv = function(filename, header, rows) {
+            me.exportToCsv = function(filename, header, rows, visibility) {
                 var processRow = function(row) {
                     var finalVal = '';
                     for (var j = 0; j < row.length; j++) {
+                        if (visibility[j] === false) continue;
                         var innerValue = row[j] === null ? '' : row[j].toString();
                         if (row[j] instanceof Date) {
                             innerValue = row[j].toLocaleString();
