@@ -91,7 +91,7 @@
         ]).controller('tubularGeneratorCtrl', ['$scope', function($scope) {
         $scope.generate = function() {
 		console.log($scope.basemodel);
-		console.log(angular.fromJson($scope.basemodel);
+		console.log(angular.fromJson($scope.basemodel));
             //$templateCache.put('tubulartemplate', result);
         }
     }]);
