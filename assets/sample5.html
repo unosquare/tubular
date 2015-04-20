@@ -43,8 +43,8 @@
                             </tb-column-header>
                         </tb-column>
                     </tb-column-definitions>
-                    <tb-row-set>
-			<tb-row-template ng-repeat="(key, group) in $parent.$component.rows | groupBy: $parent.$component.groupBy">
+                    <tb-row-set ng-repeat="(key, group) in $parent.$component.rows | groupBy: $parent.$component.groupBy">
+			<tb-row-template>
 			<tb-row-group-header group="group" class="info">
 				{{key}}
 			</tb-row-group-header>
