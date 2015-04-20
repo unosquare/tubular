@@ -6,6 +6,8 @@
             '$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
                 $routeProvider.
                     when('/', {
+                        templateUrl: 'assets/intro.html',
+                    }).when('/Basic', {
                         templateUrl: 'assets/home.html',
                     }).when('/WebApi', {
                         templateUrl: 'assets/webapi.html',
@@ -88,6 +90,8 @@
         }
         ]).controller('tubularGeneratorCtrl', ['$scope', function($scope) {
         $scope.generate = function() {
+		console.log($scope.basemodel);
+		console.log(angular.fromJson($scope.basemodel);
             //$templateCache.put('tubulartemplate', result);
         }
     }]);

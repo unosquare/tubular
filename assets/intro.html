@@ -1,0 +1,42 @@
+<div class="container" ng-controller="tubularSampleCtrl">
+    <div class="jumbotron" id="intro">
+        <h1>Tubular Demo <small>a brief tutorial</small></h1>
+        <p>
+            Welcome to Tubular, our Grid has multiples features that you can discover in the next tutorial.
+        </p>
+    </div>
+    <div class="sample-content">
+        <h1>Requirements <small>or a lot of CDN items</small></h1>
+        
+        <p>
+            You need to add some JS libraries to your webapp before to use Tubular. You can opt for adde them
+            directly in your project or use them directly from a CDN. The requirements are:
+        </p>
+        <ul>
+            <li><a href="http://jquery.com/">jQuery</a></li>
+            <li><a href="http://getbootstrap.com/">Twitter Bootstrap</a></li>
+            <li><a href="https://angularjs.org/">AngularJS (including Route, Cookies and if you want Animate)</a></li>
+            <li><a href="https://angular-ui.github.io/bootstrap/">AngularJS UI Bootstrap</a></li>
+            <li><a href="https://github.com/grevory/angular-local-storage">AngularJS Local Storage</a></li>
+            <li><a href="http://fortawesome.github.io/Font-Awesome/">Font Awesome</a></li>
+            <li><a href="https://github.com/eligrey/FileSaver.js">FileSaver.js</a> and <a href="https://github.com/eligrey/Blob.js/">Blob.js</a></li>
+        </ul>
+        
+        <p>You can get them all using the next lines in your initial HTML page. <a href="http://www.jsdelivr.com/">jsDelivr</a> has almost everything you need.</p>
+        
+        <div hljs>
+<link rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap/3.3.4/css/bootstrap.min.css" />
+<link rel="stylesheet" href="//cdn.jsdelivr.net/fontawesome/4.3.0/css/font-awesome.min.css" />
+
+<script src="//cdn.jsdelivr.net/g/jquery,bootstrap,angularjs(angular.min.js+angular-animate.min.js+angular-cookies.min.js+angular-route.min.js),filesaver.js,angular.bootstrap(ui-bootstrap.min.js+ui-bootstrap-tpls.min.js),blob.js(Blob.js),filesaver.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/angular-local-storage/0.1.5/angular-local-storage.min.js"></script>
+        </div>
+        
+        <p>Finally you can use the same CDN to retrieve Tubular CSS and JS files.</p>
+        
+        <div hljs>
+<link rel="stylesheet" href="//cdn.jsdelivr.net/tubular/latest/tubular-bundle.min.css" />
+<script src="//cdn.jsdelivr.net/tubular/latest/tubular-bundle.min.js"></script>
+        </div>
+    </div>
+</div>
