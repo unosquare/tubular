@@ -113,6 +113,7 @@
             '$scope', '$http', '$templateCache', 'formPostData', function($scope, $http, $templateCache, formPostData) {
             $scope.templatename = '';
             $scope.basemodel = '';
+            $scope.step = 1;
 
             $scope.generate = function() {
                 $scope.templatename = '';
@@ -150,7 +151,7 @@
                     CurrentPage: 1
                 };
 
-                $scope.runTemplate();
+                $scope.step++;
             };
 
             $scope.runTemplate = function() {
@@ -177,6 +178,8 @@
 
                 $templateCache.put('tubulartemplate.html', $scope.gridmodel);
                 $scope.templatename = 'tubulartemplate.html';
+
+                $scope.step++;
             };
 
             $scope.useSample = function() {
