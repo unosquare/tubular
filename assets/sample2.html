@@ -33,19 +33,19 @@
                         </tb-column>
                     </tb-column-definitions>
                     <tb-row-set>
-                        <tb-row-template ng-repeat="cells in $component.rows"
-                                         row-model="cells" selectable="false">
+                        <tb-row-template ng-repeat="row in $component.rows"
+                                         row-model="row" selectable="false">
                             <tb-cell-template>
-                                {{cells.OrderID}}
+                                {{row.OrderID}}
                             </tb-cell-template>
                             <tb-cell-template>
-                                {{cells.CustomerID}}
+                                {{row.CustomerID}}
                             </tb-cell-template>
                             <tb-cell-template>
-                                {{cells.OrderDate | date: 'short'}}
+                                {{row.OrderDate | date: 'short'}}
                             </tb-cell-template>
                             <tb-cell-template>
-                                {{cells.ShipCity}}
+                                {{row.ShipCity}}
                             </tb-cell-template>
                         </tb-row-template>
                     </tb-row-set>

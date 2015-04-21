@@ -49,22 +49,22 @@
 				{{key}}
 			</tb-row-group-header>
 			</tb-row-template>
-                        <tb-row-template ng-repeat="cells in group"
-                                         row-model="cells" selectable="false">
+                        <tb-row-template ng-repeat="row in group"
+                                         row-model="row" selectable="false">
                             <tb-cell-template column-name="OrderID">
-                                {{cells.OrderID}}
+                                {{row.OrderID}}
                             </tb-cell-template>
                             <tb-cell-template column-name="CustomerID">
-                                {{cells.CustomerID}}
+                                {{row.CustomerID}}
                             </tb-cell-template>
                             <tb-cell-template column-name="OrderDate">
-                                {{cells.OrderDate | date: 'short'}}
+                                {{row.OrderDate | date: 'short'}}
                             </tb-cell-template>
                             <tb-cell-template column-name="ShipCity">
-                                {{cells.ShipCity}}
+                                {{row.ShipCity}}
                             </tb-cell-template>
                             <tb-cell-template column-name="ShipCountry">
-                                {{cells.ShipCountry}}
+                                {{row.ShipCountry}}
                             </tb-cell-template>
                         </tb-row-template>
                     </tb-row-set>

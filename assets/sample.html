@@ -16,13 +16,13 @@
                     </tb-column>
                 </tb-column-definitions>
                 <tb-row-set>
-                    <tb-row-template ng-repeat="cells in $component.rows"
-                                     row-model="cells">
+                    <tb-row-template ng-repeat="row in $component.rows"
+                                     row-model="row">
                         <tb-cell-template>
-                            {{cells.CustomerName}}
+                            {{row.CustomerName}}
                         </tb-cell-template>
                         <tb-cell-template>
-                            {{cells.Invoices}}
+                            {{row.Invoices}}
                         </tb-cell-template>
                     </tb-row-template>
                 </tb-row-set>

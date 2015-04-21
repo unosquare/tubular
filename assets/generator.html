@@ -7,15 +7,15 @@
                 First you need to paste and sample model, it could be any JSON and if it has many values much better.
                 If you only want to play a little bit, give a try <a href="http://www.json-generator.com/">Json Generator</a>.
             </p>
-            <textarea ng-model="basemodel" class="form-control"></textarea>
+            <textarea ng-model="basemodel" class="form-control" rows="10"></textarea>
             <hr />
             <div class="pull-right">
                 <div class="btn-group">
-                    <button class="btn btn-default btn-lg" ng-click="useSample()">
-                        Use Sample
-                    </button>
                     <button class="btn btn-primary btn-lg" ng-click="generate()" ng-disabled="basemodel.length == 0">
-                        Generate
+                        <i class="fa fa-gear"></i>&nbsp;Generate
+                    </button>
+                    <button class="btn btn-default btn-lg" ng-click="useSample()">
+                        <i class="fa fa-star"></i>&nbsp;Use Sample
                     </button>
                 </div>
             </div>
@@ -39,8 +39,12 @@
             <div class="alert alert-warning">
                 Now you can edit your grid template and include features like sorting and filtering.
                 You need to replace the <i>server-url</i> attribute to match you REST service.
+                <div class="pull-right">
+                    <button class="btn btn-success" ng-click="plunker()">
+                        <i class="fa fa-pencil"></i>&nbsp;Send to Plunker
+                    </button>
+                </div>
             </div>
-
             <div hljs source="gridmodel"></div>
         </div>
     </div>
