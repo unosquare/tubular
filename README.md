@@ -43,11 +43,17 @@ You can get all dependencies using the next lines in your initial HTML page. <a 
 <script src="//cdnjs.cloudflare.com/ajax/libs/angular-local-storage/0.1.5/angular-local-storage.min.js"></script>
 ```
 
-Finally you can use the same CDN to retrieve Tubular CSS and JS files.
+Then you need to grab your own Tubular copy or you can use the same CDN to retrieve Tubular CSS and JS files.
 
 ```html
 <link rel="stylesheet" href="//cdn.jsdelivr.net/tubular/latest/tubular-bundle.min.css" />
 <script src="//cdn.jsdelivr.net/tubular/latest/tubular-bundle.min.js"></script>
+```
+
+Finally update your modules to include Tubular, for example if your module is app.
+
+```javascript
+angular.module('app', ['ngRoute','ngAnimate','ngCookies','tubular.models','tubular.services','tubular.directives']);
 ```
 
 ## Samples
@@ -75,12 +81,12 @@ The following HTML represents a basic grid. You don't need to add anything else 
                             </tb-column>
                         </tb-column-definitions>
                         <tb-row-set>
-                            <tb-row-template ng-repeat="cells in $component.rows" row-model="cells" selectable="true">
+                            <tb-row-template ng-repeat="row in $component.rows" row-model="row" selectable="true">
                                 <tb-cell-template>
-                                    {{cells.CustomerName}}
+                                    {{row.CustomerName}}
                                 </tb-cell-template>
                                 <tb-cell-template>
-                                    {{cells.Invoices}}
+                                    {{row.Invoices}}
                                 </tb-cell-template>
                             </tb-row-template>
                         </tb-row-set>
