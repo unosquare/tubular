@@ -142,6 +142,25 @@
                     }
                 }
 
+                var firstSort = false;
+
+                for (var column in $scope.columns) {
+                    if ($scope.columns.hasOwnProperty(column)) {
+                        var columnObj = $scope.columns[column];
+                        columnObj.Label = columnObj.Name.replace(/([a-z])([A-Z])/g, '$1 $2');
+                        columnObj.Searchable = columnObj.DataType === 'string';
+                        columnObj.Sortable = true;
+                        columnObj.IsKey = false;
+                        columnObj.SortOrder = -1;
+
+                        if (firstSort === false) {
+                            columnObj.IsKey = true;
+                            columnObj.SortOrder = 1;
+                            firstSort = true;
+                        }
+                    }
+                }
+
                 $scope.payload = {
                     Counter: 0,
                     Payload: model,
@@ -164,7 +183,11 @@
                     '\r\n\t<div class="panel panel-default panel-rounded">' +
                     '\r\n\t<tb-grid-table class="table-bordered">' +
                     '\r\n\t<tb-column-definitions>' +
-                    $scope.columns.map(function (el) { return '\r\n\t\t<tb-column name="' + el.Name + '" column-type="' + el.DataType + '">\r\n\t\t\t<tb-column-header>{{label}}</tb-column-header>\r\n\t\t</tb-column>'; }).join('') +
+                    $scope.columns.map(function (el) {
+                        return '\r\n\t\t<tb-column name="' + el.Name + '" label="' + el.Label + '" column-type="' + el.DataType + '" sortable="' + el.Sortable + '" sort-order="' + el.SortOrder + '" is-key="' + el.IsKey + '" searchable="' + el.Searchable + '">' +
+                            '\r\n\t\t\t<tb-column-header>{{label}}</tb-column-header>' +
+                            '\r\n\t\t</tb-column>';
+                    }).join('') +
                     '\r\n\t</tb-column-definitions>' +
                     '\r\n\t<tb-row-set>' +
                     '\r\n\t<tb-row-template ng-repeat="row in $component.rows" row-model="row">' +

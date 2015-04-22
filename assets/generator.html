@@ -30,17 +30,31 @@
     <div class="row" ng-hide="step != 2">
         <div class="col-xs-12">
             <p>Please setup anything you need before to continue.</p>
-            <table class="table">
+            <table class="table table-striped table-bordered table-condensed">
                 <thead>
                     <tr>
-                        <td>Name</td>
-                        <td>Label</td>
-                        <td>Data Type</td>
+                        <th>Is Key?</th>
+                        <th>Name</th>
+                        <th>Label</th>
+                        <th>Data Type</th>
+                        <th>Template</th>
+                        <th>Searchable</th>
+                        <th>Sortable</th>
+                        <th>Sort Order</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr ng-repeat="row in columns">
+                        <td class="text-center"><input type="checkbox" ng-model="row.IsKey" /></td>
                         <td>{{row.Name}}</td>
+                        <td><input type="text" class="form-control" ng-model="row.Label" /></td>
+                        <td><input type="text" class="form-control" ng-model="row.DataType" /></td>
+                        <td><input type="text" class="form-control" ng-model="row.Template" /></td>
+                        <td class="text-center"><input type="checkbox" ng-model="row.Searchable" /></td>
+                        <td class="text-center"><input type="checkbox" ng-model="row.Sortable" /></td>
+                        <td>
+                            <input type="number" class="form-control" ng-model="row.SortOrder" ng-show="row.Sortable" />
+                        </td>
                     </tr>
                 </tbody>
             </table>
