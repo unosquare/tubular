@@ -70,26 +70,26 @@
                                     <tb-column-header>ID</tb-column-header>
                                 </tb-column>
                                 <tb-column name="CustomerName" label="Customer" searchable="true">
-                                    <tb-column-filter operator="Contains" title="Filter Customer"></tb-column-filter>
+                                    <tb-column-filter title="Filter Customer"></tb-column-filter>
                                     <tb-column-header>
                                         <span>{{label}}</span>
                                     </tb-column-header>
                                 </tb-column>
                                 <tb-column name="ShipperCity" label="Shipping City" sortable="true" searchable="true">
                                     <tb-column-header>{{label}}</tb-column-header>
-                                    <tb-column-options-filter operator="Multiple" options-url="/api/orders/cities"></tb-column-options-filter>
+                                    <tb-column-options-filter options-url="/api/orders/cities"></tb-column-options-filter>
                                 </tb-column>
                                 <tb-column name="Amount" label="Amount" column-type="numeric">
                                     <tb-column-header>{{label}}</tb-column-header>
-                                    <tb-column-filter operator="Equals"></tb-column-filter>
+                                    <tb-column-filter></tb-column-filter>
                                 </tb-column>
                                 <tb-column name="ShippedDate" label="Date" column-type="datetime">
                                     <tb-column-header>{{label}}</tb-column-header>
-                                    <tb-column-date-time-filter operator="Equals"></tb-column-date-time-filter>
+                                    <tb-column-date-time-filter></tb-column-date-time-filter>
                                 </tb-column>
                                 <tb-column name="IsShipped" column-type="boolean">
                                     <tb-column-header>Shipped?</tb-column-header>
-                                    <tb-column-filter operator="Equals"></tb-column-filter>
+                                    <tb-column-filter></tb-column-filter>
                                 </tb-column>
                             </tb-column-definitions>
 

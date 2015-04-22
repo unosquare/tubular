@@ -192,10 +192,12 @@
 
                     if (scope.dataType === 'datetime' || scope.dataType === 'date') {
                         scope.filter.Argument = [new Date()];
+                        scope.filter.Operator = 'Equals';
                     }
 
                     if (scope.dataType === 'numeric') {
                         scope.filter.Argument = [1];
+                        scope.filter.Operator = 'Equals';
                     }
 
                     scope.filterTitle = lAttrs.title || "Filter";

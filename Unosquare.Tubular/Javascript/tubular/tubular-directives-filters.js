@@ -176,6 +176,8 @@
                             },
                             post: function(scope, lElement, lAttrs, lController, lTransclude) {
                                 tubularGridFilterService.createFilterModel(scope, lAttrs);
+
+                                scope.filter.Operator = 'Multiple';
                             }
                         };
                     }

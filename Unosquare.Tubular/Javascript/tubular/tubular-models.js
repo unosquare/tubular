@@ -76,7 +76,7 @@
                 return function(attrs) {
                     this.Text = attrs.text || null;
                     this.Argument = attrs.argument || null;
-                    this.Operator = attrs.operator || null;
+                    this.Operator = attrs.operator || 'Contains';
                     this.OptionsUrl = attrs.optionsUrl || null;
                 };
             })

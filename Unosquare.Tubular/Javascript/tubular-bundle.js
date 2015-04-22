@@ -273,7 +273,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
     'use strict';
 
     angular.module('tubular.directives').directive('tbGrid', [
-            'tubularHttp', '$filter', function(tubularHttp, $filter) {
+            'tubularHttp', 'tubularOData', function (tubularHttp, tubularOData) {
                 return {
                     template: '<div class="tubular-grid" ng-transclude></div>',
                     restrict: 'E',
@@ -287,6 +287,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         onBeforeGetData: '=?',
                         requestMethod: '@',
                         gridDataService: '=?service',
+                        gridDataServiceName: '@?serviceName',
                         requireAuthentication: '@?',
                         name: '@?gridName'
                     },
@@ -318,6 +319,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             $scope.name = $scope.name || 'tbgrid';
                             $scope.canSaveState = false;
                             $scope.groupBy = '';
+
+                            // Helper to use OData without controller
+                            if ($scope.gridDataServiceName === 'odata') {
+                                $scope.gridDataService = tubularOData;
+                            }
 
                             $scope.$watch('columns', function (val) {
                                 if ($scope.hasColumnsDefinitions === false || $scope.canSaveState === false)
@@ -1877,6 +1883,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             },
                             post: function(scope, lElement, lAttrs, lController, lTransclude) {
                                 tubularGridFilterService.createFilterModel(scope, lAttrs);
+
+                                scope.filter.Operator = 'Multiple';
                             }
                         };
                     }
@@ -2106,7 +2114,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 return function(attrs) {
                     this.Text = attrs.text || null;
                     this.Argument = attrs.argument || null;
-                    this.Operator = attrs.operator || null;
+                    this.Operator = attrs.operator || 'Contains';
                     this.OptionsUrl = attrs.optionsUrl || null;
                 };
             })
@@ -2454,10 +2462,12 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                     if (scope.dataType === 'datetime' || scope.dataType === 'date') {
                         scope.filter.Argument = [new Date()];
+                        scope.filter.Operator = 'Equals';
                     }
 
                     if (scope.dataType === 'numeric') {
                         scope.filter.Argument = [1];
+                        scope.filter.Operator = 'Equals';
                     }
 
                     scope.filterTitle = lAttrs.title || "Filter";
