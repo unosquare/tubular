@@ -12,6 +12,7 @@
                     '<input type="{{editorType}}" placeholder="{{placeholder}}" ng-show="isEditing" ng-model="value" class="form-control" ' +
                     ' ng-required="required" ng-readonly="readOnly" />' +
                     '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
+                    '<span class="help-block" ng-show="isEditing && help">{{help}}</span>' +
                     '</div>',
                 restrict: 'E',
                 replace: true,
@@ -55,6 +56,7 @@
                     'ng-required="required" ng-readonly="readOnly" />' +
                     '</div>' +
                     '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
+                    '<span class="help-block" ng-show="isEditing && help">{{help}}</span>' +
                     '</div>',
                 restrict: 'E',
                 replace: true,
@@ -93,6 +95,7 @@
                     '<input type="datetime-local" ng-show="isEditing" ng-model="value" class="form-control" ' +
                     'ng-required="required" ng-readonly="readOnly" />' +
                     '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
+                    '<span class="help-block" ng-show="isEditing && help">{{help}}</span>' +
                     '</div>',
                 restrict: 'E',
                 replace: true,
@@ -149,6 +152,7 @@
                     '<input type="date" ng-show="isEditing" ng-model="value" class="form-control" ' +
                     'ng-required="required" ng-readonly="readOnly" />' +
                     '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
+                    '<span class="help-block" ng-show="isEditing && help">{{help}}</span>' +
                     '</div>',
                 restrict: 'E',
                 replace: true,
@@ -213,6 +217,7 @@
                     '<select ng-options="d for d in options" ng-show="isEditing" ng-model="value" class="form-control" ' +
                     'ng-required="required" />' +
                     '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
+                    '<span class="help-block" ng-show="isEditing && help">{{help}}</span>' +
                     '</div>',
                 restrict: 'E',
                 replace: true,
@@ -268,6 +273,7 @@
                     '<input ng-show="isEditing" ng-model="value" class="form-control" typeahead="o for o in getValues($viewValue)" ' +
                     'ng-required="required" />' +
                     '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
+                    '<span class="help-block" ng-show="isEditing && help">{{help}}</span>' +
                     '</div>',
                 restrict: 'E',
                 replace: true,
@@ -347,6 +353,7 @@
                     '<textarea ng-show="isEditing" placeholder="{{placeholder}}" ng-model="value" class="form-control" ' +
                     ' ng-required="required" ng-readonly="readOnly"></textarea>' +
                     '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
+                    '<span class="help-block" ng-show="isEditing && help">{{help}}</span>' +
                     '</div>',
                 restrict: 'E',
                 replace: true,

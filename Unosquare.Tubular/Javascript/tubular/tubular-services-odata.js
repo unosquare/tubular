@@ -118,6 +118,10 @@
                 me.put = function(url, data) {
                     tubularHttp.put(url, data);
                 };
+
+                me.getByKey = function (url, key) {
+                    tubularHttp.get(url + "(" + key + ")");
+                };
             }
         ]);
 })();

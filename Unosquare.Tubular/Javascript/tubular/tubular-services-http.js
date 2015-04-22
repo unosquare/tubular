@@ -231,7 +231,7 @@
                 };
             };
 
-            me.get = function(url) {
+            me.get = function (url) {
                 return me.retrieveDataAsync({
                     serverUrl: url,
                     requestMethod: 'GET',
@@ -259,6 +259,10 @@
                     requestMethod: 'PUT',
                     data: data
                 });
+            };
+
+            me.getByKey = function (url, key) {
+                return me.get(url + key);
             };
         }
     ]);

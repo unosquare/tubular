@@ -2,7 +2,7 @@
     'use strict';
 
     angular.module('tubular.directives').directive('tbForm',
-    ['tubularHttp', function(tubularHttp) {
+    [function() {
             return {
                 template: '<form ng-transclude></form>',
                 restrict: 'E',
@@ -12,15 +12,25 @@
                     rowModel: '=?',
                     serverUrl: '@',
                     serverSaveUrl: '@',
-                    isNew: '@'
+                    isNew: '@',
+                    modelKey: '@?',
+                    gridDataService: '=?service',
+                    gridDataServiceName: '@?serviceName',
                 },
                 controller: [
-                    '$scope', '$routeParams', '$location', 'tubularModel', function ($scope, $routeParams, $location, TubularModel) {
+                    '$scope', '$routeParams', '$location', 'tubularModel', 'tubularHttp', 'tubularOData',
+                    function ($scope, $routeParams, $location, TubularModel, tubularHttp, tubularOData) {
                         $scope.tubularDirective = 'tubular-form';
                         $scope.fields = [];
                         $scope.hasFieldsDefinitions = false;
-                        $scope.modelKey = $routeParams.param;
-                        
+                        $scope.modelKey = $scope.modelKey || $routeParams.param;
+                        $scope.gridDataService = $scope.gridDataService || tubularHttp;
+
+                        // Helper to use OData without controller
+                        if ($scope.gridDataServiceName === 'odata') {
+                            $scope.gridDataService = tubularOData;
+                        }
+
                         $scope.addField = function(item) {
                             if (item.name === null) return;
 
@@ -72,7 +82,7 @@
                                 return;
                             }
 
-                            tubularHttp.get($scope.serverUrl + $scope.modelKey).promise.then(
+                            $scope.gridDataService.getByKey($scope.serverUrl, $scope.modelKey).promise.then(
                                 function(data) {
                                     $scope.rowModel = new TubularModel($scope, data);
 
@@ -83,12 +93,10 @@
                         };
 
                         $scope.updateRow = function(row) {
-                            var request = {
+                            $scope.currentRequest = gridDataService.saveDataAsync(row, {
                                 serverUrl: $scope.serverSaveUrl,
                                 requestMethod: 'PUT'
-                            };
-
-                            $scope.currentRequest = tubularHttp.saveDataAsync(row, request);
+                            });
 
                             $scope.currentRequest.promise.then(
                                     function(data) {
@@ -104,7 +112,7 @@
 
                         $scope.create = function () {
                             // TODO: Method could be PUT?
-                            $scope.currentRequest = tubularHttp.post($scope.serverSaveUrl, $scope.rowModel).promise.then(
+                            $scope.currentRequest = gridDataService.post($scope.serverSaveUrl, $scope.rowModel).promise.then(
                                     function(data) {
                                         $scope.$emit('tbGrid_OnSuccessfulUpdate', data);
                                         $scope.$emit('tGrid_OnSuccessfulForm', data);
@@ -117,7 +125,7 @@
                         };
 
                         $scope.save = function () {
-                            // TODO: Why Save and Create is not the same?ñ
+                            // TODO: Why Save and Create is not the same?
                             if ($scope.rowModel.save() === false) {
                                 $scope.$emit('tbGrid_OnSavingNoChanges', $scope.rowModel);
                             }

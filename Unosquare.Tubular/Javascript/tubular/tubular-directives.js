@@ -2,7 +2,7 @@
     'use strict';
 
     angular.module('tubular.directives').directive('tbGrid', [
-            'tubularHttp', 'tubularOData', function (tubularHttp, tubularOData) {
+            function() {
                 return {
                     template: '<div class="tubular-grid" ng-transclude></div>',
                     restrict: 'E',
@@ -21,8 +21,8 @@
                         name: '@?gridName'
                     },
                     controller: [
-                        '$scope', 'localStorageService', 'tubularPopupService', 'tubularModel',
-                        function($scope, localStorageService, tubularPopupService, TubularModel) {
+                        '$scope', 'localStorageService', 'tubularPopupService', 'tubularModel', 'tubularHttp', 'tubularOData',
+                        function($scope, localStorageService, tubularPopupService, TubularModel, tubularHttp, tubularOData) {
                             $scope.tubularDirective = 'tubular-grid';
                             $scope.columns = [];
                             $scope.rows = [];
@@ -54,14 +54,14 @@
                                 $scope.gridDataService = tubularOData;
                             }
 
-                            $scope.$watch('columns', function (val) {
+                            $scope.$watch('columns', function(val) {
                                 if ($scope.hasColumnsDefinitions === false || $scope.canSaveState === false)
                                     return;
 
                                 localStorageService.set($scope.name + "_columns", $scope.columns);
                             }, true);
 
-                            $scope.addColumn = function (item) {
+                            $scope.addColumn = function(item) {
                                 if (item.Name === null) return;
 
                                 if ($scope.hasColumnsDefinitions !== false)
@@ -88,9 +88,9 @@
                                     }, function(error) {
                                         $scope.$emit('tbGrid_OnConnectionError', error);
                                     }).then(function() {
-                                        $scope.currentRequest = null;
-                                        $scope.retrieveData();
-                                    });
+                                    $scope.currentRequest = null;
+                                    $scope.retrieveData();
+                                });
                             };
 
                             $scope.newRow = function() {
@@ -115,9 +115,9 @@
                                     }, function(error) {
                                         $scope.$emit('tbGrid_OnConnectionError', error);
                                     }).then(function() {
-                                        $scope.currentRequest = null;
-                                        $scope.retrieveData();
-                                    });
+                                    $scope.currentRequest = null;
+                                    $scope.retrieveData();
+                                });
                             };
 
                             $scope.updateRow = function(row, externalSave) {
@@ -147,7 +147,7 @@
                                     });
                             };
 
-                            $scope.verifyColumns = function () {
+                            $scope.verifyColumns = function() {
                                 var columns = localStorageService.get($scope.name + "_columns");
                                 if (columns === null || columns === "") {
                                     // Nothing in settings, saving initial state
@@ -157,7 +157,7 @@
 
                                 for (var index in columns) {
                                     var columnName = columns[index].Name;
-                                    var filtered = $scope.columns.filter(function (el) { return el.Name == columnName; });
+                                    var filtered = $scope.columns.filter(function(el) { return el.Name == columnName; });
 
                                     if (filtered.length == 0) continue;
 
@@ -168,7 +168,7 @@
                                 }
                             };
 
-                            $scope.retrieveData = function () {
+                            $scope.retrieveData = function() {
                                 $scope.canSaveState = true;
                                 $scope.verifyColumns();
 
@@ -236,8 +236,8 @@
                                         $scope.requestedPage = $scope.currentPage;
                                         $scope.$emit('tbGrid_OnConnectionError', error);
                                     }).then(function() {
-                                        $scope.currentRequest = null;
-                                    });
+                                    $scope.currentRequest = null;
+                                });
                             };
 
                             $scope.$watch('hasColumnsDefinitions', function(newVal) {
@@ -245,7 +245,7 @@
 
                                 var isGrouping = false;
                                 // Check columns
-                                angular.forEach($scope.columns, function (column) {
+                                angular.forEach($scope.columns, function(column) {
                                     if (column.IsGrouping) {
                                         if (isGrouping)
                                             throw 'Only one column is allowed to grouping';
@@ -258,7 +258,7 @@
                                     }
                                 });
 
-                                angular.forEach($scope.columns, function (column) {
+                                angular.forEach($scope.columns, function(column) {
                                     if ($scope.groupBy == column.Name) return;
 
                                     if (column.Sortable && column.SortOrder > 0)
@@ -397,8 +397,8 @@
                                     }, function(error) {
                                         $scope.$emit('tbGrid_OnConnectionError', error);
                                     }).then(function() {
-                                        $scope.currentRequest = null;
-                                    });
+                                    $scope.currentRequest = null;
+                                });
                             };
 
                             $scope.$emit('tbGrid_OnGreetParentController', $scope);
@@ -406,7 +406,7 @@
                     ]
                 };
             }
-    ])
+        ])
         .directive('tbGridPager', [
             '$timeout', function($timeout) {
                 return {
@@ -615,7 +615,7 @@
                     transclude: true,
                     scope: false,
                     controller: [
-                        '$scope', function ($scope) {
+                        '$scope', function($scope) {
                             $scope.$component = $scope.$parent.$component || $scope.$parent.$parent.$component;
                             $scope.tubularDirective = 'tubular-row-set';
                         }
@@ -640,7 +640,7 @@
                     },
                     controller: [
                         '$scope', function($scope) {
-                            $scope.selectableBool = $scope.selectable != "false";
+                            $scope.selectableBool = $scope.selectable !== "false";
                             $scope.$component = $scope.$parent.$parent.$parent.$component;
 
                             if ($scope.selectableBool && angular.isUndefined($scope.rowModel) === false) {
@@ -669,14 +669,14 @@
                         columnName: '@?'
                     },
                     controller: [
-                        '$scope', function ($scope) {
+                        '$scope', function($scope) {
                             $scope.column = { Visible: true };
                             $scope.columnName = $scope.columnName || null;
                             $scope.$component = $scope.$parent.$parent.$component;
 
                             if ($scope.columnName != null) {
                                 var columnModel = $scope.$component.columns
-                                    .filter(function (el) { return el.Name == $scope.columnName; });
+                                    .filter(function(el) { return el.Name === $scope.columnName; });
 
                                 if (columnModel.length > 0) {
                                     $scope.column = columnModel[0];
@@ -757,7 +757,7 @@
                 };
             }
         ]).directive('tbRowGroupHeader', [
-            function () {
+            function() {
 
                 return {
                     require: '^tbRowTemplate',

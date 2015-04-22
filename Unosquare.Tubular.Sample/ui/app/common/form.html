@@ -4,7 +4,7 @@
             <div class="col-md-10">
                 <h3>Edit Order <small>{{Model.OrderID}}</small></h3>
 
-                <tb-simple-editor min="3" show-label="true" name="CustomerName">
+                <tb-simple-editor min="3" show-label="true" name="CustomerName" help="Please a good name">
                 </tb-simple-editor>
                 <tb-dropdown-editor name="ShipperCity" value="Model.ShipperCity" state="Model.$state.ShipperCity"
                                          show-label="true" required="true"
