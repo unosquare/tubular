@@ -251,7 +251,12 @@ div.tubular-general-overlay {
 div.panel > table.tubular-grid-table.table-bordered > thead > tr > th {
     vertical-align: middle;
     border-bottom: 2px solid #ddd;
+    border-right: 2px solid #ddd;
     line-height: 22px;
+}
+
+div.panel > table.tubular-grid-table.table-bordered > thead > tr > th:last-child {
+    border-right-width: 0;
 }
 
 table.tubular-grid-table {
