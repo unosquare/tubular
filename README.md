@@ -1,7 +1,8 @@
 # Tubular
 
-A set of <a href="https://angularjs.org/" target="_blank">AngularJS</a> directives and C# classes designed to rapidly build modern web applications. 
-Tubular features a fully templateable grid with lots of features such as server-side pagination, multi-column sorting and filtering, built-in export to CSV, and in-line editing of rows via templates.
+A set of <a href="https://angularjs.org/" target="_blank">AngularJS</a> directives and C# classes designed to rapidly build modern web applications.  Tubular features a fully templateable grid with lots of features such as server-side pagination, multi-column sorting and filtering, built-in export to CSV (client-side), and in-line editing of rows via templates.
+
+Please visit first our <a href="http://unosquare.github.io/tubular" target="_blank">Tubular Website</a> to know about the project and start coding directly with the Tubular Generator.
 
 ## NuGet Installation
 
@@ -58,7 +59,7 @@ angular.module('app', ['ngRoute','ngAnimate','ngCookies','tubular.models','tubul
 
 ## Samples
 
-You can check out the <a href="http://unosquare.github.io/tubular" target="_blank">Tubular GitPage</a> to get a few examples. We still need to work on more samples and better documentation, but we feel what we have now will get you up to speed for now.
+You can check out the <a href="http://unosquare.github.io/tubular" target="_blank">Tubular GitHub Pages</a> to get a few examples. We still need to work on more samples and better documentation, but we feel what we have now will get you up to speed for now.
 
 The following HTML represents a basic grid. You don't need to add anything else to your controller! Everything is templated
 
