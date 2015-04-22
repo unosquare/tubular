@@ -17,9 +17,6 @@
 
     <div class="row" ng-hide="step != 1">
         <div class="col-xs-12">
-            <div class="alert alert-warning" ng-show="views.length == 0">
-                <b>Attention</b> If you need to generate another you need to refresh the page.
-            </div>
             <p ng-show="views.length == 0">
                 First you need to paste and sample model, it could be any <b>JSON</b> or even you can use a <b>OData URI</b>.
                 If you only want to play a little bit, give a try <a href="http://www.json-generator.com/">Json Generator</a>.
@@ -136,14 +133,12 @@
                 </div>
             </div>
             <div class="pull-right">
-                <button class="btn btn-primary btn-lg" ng-click="runTemplate()">
+                <button class="btn btn-primary btn-lg" ng-click="runGridTemplate()">
                     <i class="fa fa-gear"></i>&nbsp;Continue
                 </button>
             </div>
             <div class="clearfix"></div>
-            <p>
-                You can't go back, be sure to setup correctly.
-            </p>
+            <br />
         </div>
     </div>
 
@@ -157,10 +152,10 @@
 
             <div class="pull-right">
                 <div class="btn-group">
-                    <button class="btn btn-success" ng-click="plunker()">
+                    <button class="btn btn-success" ng-click="plunker('grid')">
                         <i class="fa fa-pencil"></i>&nbsp;Export to Plunker
                     </button>
-                    <button class="btn btn-default" ng-click="save()">
+                    <button class="btn btn-default" ng-click="save('grid')">
                         <i class="fa fa-plus"></i>&nbsp;Save and Continue
                     </button>
                 </div>

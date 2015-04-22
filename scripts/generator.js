@@ -26,7 +26,7 @@
                 };
             }
         ]).service('tubularGenerator', [
-            '$http', function tubularGenerator($http) {
+            'formPostData', function tubularGenerator(formPostData) {
                 var me = this;
 
                 me.createColumns = function(model, scope) {
@@ -42,13 +42,13 @@
                             if (value == null) continue;
 
                             if (angular.isNumber(value) || parseFloat(value).toString() == value) {
-                                scope.columns.push({ Name: prop, DataType: 'numeric', Template: '{{row.' + prop + '}}' });
+                                scope.columns.push({ Name: prop, DataType: 'numeric', Template: '{{row.' + prop + '}}', EditorType: 'tbNumericEditor' });
                             } else if (angular.isDate(value) || isNaN((new Date(value)).getTime()) == false) {
-                                scope.columns.push({ Name: prop, DataType: 'date', Template: '{{row.' + prop + ' | date}}' });
+                                scope.columns.push({ Name: prop, DataType: 'date', Template: '{{row.' + prop + ' | date}}', EditorType: 'tbDateTimeEditor' });
                             } else if (value.toLowerCase() == 'true' || value.toLowerCase() == 'false') {
-                                scope.columns.push({ Name: prop, DataType: 'boolean', Template: '{{row.' + prop + ' ? "TRUE" : "FALSE" }}' });
+                                scope.columns.push({ Name: prop, DataType: 'boolean', Template: '{{row.' + prop + ' ? "TRUE" : "FALSE" }}', EditorType: 'tbCheckboxField' });
                             } else {
-                                var newColumn = { Name: prop, DataType: 'string', Template: '{{row.' + prop + '}}' };
+                                var newColumn = { Name: prop, DataType: 'string', Template: '{{row.' + prop + '}}', EditorType: 'tbSimpleEditor' };
 
                                 if ((/e(-|)mail/ig).test(newColumn.Name)) {
                                     newColumn.Template = '<a href="mailto:' + newColumn.Template + '">' + newColumn.Template + '</a>';
@@ -65,12 +65,20 @@
                         if (scope.columns.hasOwnProperty(column)) {
                             var columnObj = scope.columns[column];
                             columnObj.Label = columnObj.Name.replace(/([a-z])([A-Z])/g, '$1 $2');
+                            // Grid attributes
                             columnObj.Searchable = columnObj.DataType === 'string';
                             columnObj.Filter = true;
                             columnObj.Visible = true;
                             columnObj.Sortable = true;
                             columnObj.IsKey = false;
                             columnObj.SortOrder = -1;
+                            // Form attributes
+                            columnObj.ShowLabel = true;
+                            columnObj.Placeholder = '';
+                            columnObj.Format = '';
+                            columnObj.Help = '';
+                            columnObj.Required = true;
+                            columnObj.ReadOnly = false;
 
                             if (firstSort === false) {
                                 columnObj.IsKey = true;
@@ -79,6 +87,100 @@
                             }
                         }
                     }
+                };
+
+                me.runGridTemplate = function(scope) {
+                    var topToolbar = '';
+                    var bottomToolbar = '';
+
+                    if (scope.uiOptions.Pager) {
+                        topToolbar += '\r\n\t<tb-grid-pager class="col-md-6"></tb-grid-pager>';
+                        bottomToolbar += '\r\n\t<tb-grid-pager class="col-md-6"></tb-grid-pager>';
+                    }
+
+                    if (scope.uiOptions.ExportCsv) {
+                        topToolbar += '\r\n\t<div class="col-md-3">' +
+                            '\r\n\t\t<div class="btn-group">' +
+                            '\r\n\t\t<tb-print-button title="Tubular" class="btn-sm"></tb-print-button>' +
+                            '\r\n\t\t<tb-export-button filename="tubular.csv" css="btn-sm"></tb-export-button>' +
+                            '\r\n\t\t</div>' +
+                            '\r\n\t</div>';
+                    }
+
+                    if (scope.uiOptions.FreeTextSearch) {
+                        topToolbar += '\r\n\t<tb-text-search class="col-md-3" css="input-sm"></tb-text-search>';
+                    }
+
+                    if (scope.uiOptions.PageSizeSelector) {
+                        bottomToolbar += '\r\n\t<tb-page-size-selector class="col-md-3" selectorcss="input-sm"></tb-page-size-selector>';
+                    }
+
+                    if (scope.uiOptions.PagerInfo) {
+                        bottomToolbar += '\r\n\t<tb-grid-pager-info class="col-md-3"></tb-grid-pager-info>';
+                    }
+
+                    return '<h1>Autogenerated Grid</h1>' +
+                        '\r\n<div class="container">' +
+                        '\r\n<tb-grid server-url="' + scope.dataUrl + '" request-method="GET" class="row" require-authentication="false" page-size="10"' +
+                        (scope.isOData ? ' service-name="odata" ' : '') + '>' +
+                        (topToolbar === '' ? '' : '\r\n\t<div class="row">' + topToolbar + '\r\n\t</div>') +
+                        '\r\n\t<div class="row">' +
+                        '\r\n\t<div class="col-md-12">' +
+                        '\r\n\t<div class="panel panel-default panel-rounded">' +
+                        '\r\n\t<tb-grid-table class="table-bordered">' +
+                        '\r\n\t<tb-column-definitions>' +
+                        scope.columns.map(function(el) {
+                            return '\r\n\t\t<tb-column name="' + el.Name + '" label="' + el.Label + '" column-type="' + el.DataType + '" sortable="' + el.Sortable + '" ' +
+                                '\r\n\t\t\tsort-order="' + el.SortOrder + '" is-key="' + el.IsKey + '" searchable="' + el.Searchable + '" visible="' + el.Visible + '">' +
+                                (el.Filter ? '<tb-column-filter></tb-column-filter>' : '') +
+                                '\r\n\t\t\t<tb-column-header>{{label}}</tb-column-header>' +
+                                '\r\n\t\t</tb-column>';
+                        }).join('') +
+                        '\r\n\t</tb-column-definitions>' +
+                        '\r\n\t<tb-row-set>' +
+                        '\r\n\t<tb-row-template ng-repeat="row in $component.rows" row-model="row">' +
+                        scope.columns.map(function(el) { return '\r\n\t\t<tb-cell-template column-name="' + el.Name + '">\r\n\t\t\t' + el.Template + '\r\n\t\t</tb-cell-template>'; }).join('') +
+                        '\r\n\t</tb-row-template>' +
+                        '\r\n\t</tb-row-set>' +
+                        '\r\n\t</tb-grid-table>' +
+                        '\r\n\t</div>' +
+                        '\r\n\t</div>' +
+                        '\r\n\t</div>' +
+                        (bottomToolbar === '' ? '' : '\r\n\t<div class="row">' + bottomToolbar + '\r\n\t</div>') +
+                        '\r\n\t</div>' +
+                        '\r\n</tb-grid>' +
+                        '\r\n</div>';
+                };
+
+                me.runFormTemplate = function(scope) {
+                    return '<h1>Autogenerated Form</h1>' +
+                        '\r\n<tb-form server-url="' + scope.dataUrl + '" server-save-url="' + scope.dataUrl + '">' +
+                        scope.columns.map(function(el) {
+                            var editorTag = el.EditorType.replace(/([A-Z])/g, function($1) { return "-" + $1.toLowerCase(); });
+                            return '\r\n\t<' + editorTag + ' name="' + el.Name + '" label="' + el.Label + '" editor-type="' + el.DataType + '" ' +
+                                '\r\n\t\tshow-label="' + el.ShowLabel + '" placeholder="' + el.Placeholder + '" required="' + el.Required + '" ' +
+                                '\r\n\t\tread-only="' + el.ReadOnly + '" format="' + el.Format + '" help="' + el.Help + '">' +
+                                '\r\n\t</' + editorTag + '>';
+                        }).join('') +
+                        '\r\n<button class="btn btn-primary" ng-click="$parent.save()" ng-disabled="!Model.$valid()">Save</button>' +
+                        '\r\n<a class="btn btn-danger" href="/">Cancel</button>' +
+                        '\r\n</tb-form>';
+                };
+
+                me.exportPluker = function(files) {
+                    var postData = {};
+
+                    angular.forEach(files, function(file) {
+                        postData['files[' + file.name + ']'] = file.content;
+                    });
+
+                    postData['tags[0]'] = "angularjs";
+                    postData['tags[1]'] = "tubular";
+                    postData['tags[1]'] = "autogenerated";
+                    postData.private = true;
+                    postData.description = "Tubular Sample";
+
+                    formPostData('http://plnkr.co/edit/?p=preview', false, postData);
                 };
             }
         ]);
