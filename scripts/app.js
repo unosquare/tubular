@@ -23,7 +23,7 @@
             }
         ]);
 
-    angular.module('app.controllers', ['tubular.services'])
+    angular.module('app.controllers', ['tubular.services', 'LocalStorageModule'])
         .controller('tubularSampleCtrl', [
             '$scope', '$location', '$anchorScroll', '$templateCache', 'tubularOData',
             function($scope, $location, $anchorScroll, $templateCache, tubularOData) {
@@ -91,7 +91,8 @@
                 };
             }
         ]).controller('tubularGeneratorCtrl', [
-            '$scope', '$http', '$templateCache', 'formPostData', 'tubularGenerator', function($scope, $http, $templateCache, formPostData, tubularGenerator) {
+            '$scope', '$http', '$templateCache', 'formPostData', 'tubularGenerator', 'localStorageService',
+        function($scope, $http, $templateCache, formPostData, tubularGenerator, localStorageService) {
             $scope.templatename = '';
             $scope.basemodel = '';
             $scope.step = 1;
@@ -105,9 +106,12 @@
                 PagerInfo: true,
                 ExportCsv: true
             };
+            $scope.views = localStorageService.get('generator_views') || [];
+            $scope.gridId = ($scope.views.length + 1);
 
             $scope.generateModel = function() {
                 $scope.templatename = '';
+                $scope.jsonstring = '';
 
                 if ($scope.basemodel.indexOf('http') === 0) {
                     $scope.dataUrl = $scope.basemodel;
@@ -219,16 +223,28 @@
                 $http.get('generator/index.html').
                     success(function(data) {
                         var postData = {};
-                        var fixedTemplate = $scope.gridmodel.replace(/server-url="(.[^"]+)"/g, 'server-url="' + $scope.dataUrl + '"');
 
                         var files = [
                             { name: 'index.html', content: data },
-                            { name: 'grid.html', content: fixedTemplate },
+                            // TODO: Generate route for all
                             { name: 'app.js', content: "angular.module('app', ['ngRoute','ngAnimate','ngCookies','tubular.models','tubular.services','tubular.directives']).config(['$routeProvider', function($routeProvider) {$routeProvider.when('/', {templateUrl: 'grid.html',}).otherwise({redirectTo: '/'}); } ]);" },
                         ];
 
-                        if (angular.isDefined($scope.jsonstring) && $scope.jsonstring != null)
-                            files.push({ name: 'data.json', content: $scope.jsonstring });
+                        if ($scope.views.length == 0) {
+                            var tempUrl = $scope.dataUrl;
+
+                            if (angular.isDefined($scope.jsonstring) && $scope.jsonstring !== '') {
+                                tempUrl = 'data.json';
+                                files.push({ name: tempUrl, content: $scope.jsonstring });
+                            }
+
+                            files.push({ name: 'grid.html', content: $scope.gridmodel.replace(/server-url="(.[^"]+)"/g, 'server-url="' + tempUrl + '"') });
+                        } else {
+                            for (var prop in $scope.views) {
+                                var view = $scope.views[prop];
+                                files.push(view);
+                            }
+                        }
 
                         angular.forEach(files, function(file) {
                             postData['files[' + file.name + ']'] = file.content;
@@ -243,6 +259,31 @@
                         formPostData('http://plnkr.co/edit/?p=preview', false, postData);
                     });
             };
+
+            $scope.save = function() {
+                var tempUrl = $scope.dataUrl;
+
+                if (angular.isDefined($scope.jsonstring) && $scope.jsonstring !== '') {
+                    tempUrl = 'data' + ($scope.gridId) + '.json';
+                    $scope.views.push({ name: tempUrl, content: $scope.jsonstring });
+                }
+
+                $scope.views.push({
+                    name: 'grid' + ($scope.gridId++) + '.html',
+                    content: $scope.gridmodel.replace(/server-url="(.[^"]+)"/g, 'server-url="' + tempUrl + '"')
+                });
+
+
+                localStorageService.set('generator_views', $scope.views);
+                $scope.step = 1;
+                $scope.basemodel = '';
+            };
+
+            $scope.clearViews = function() {
+                localStorageService.remove('generator_views');
+                $scope.views = [];
+                $scope.gridId = ($scope.views.length + 1);
+            }
 
             $scope.removeColumn = function(row) {
                 var index = $scope.columns.indexOf(row);

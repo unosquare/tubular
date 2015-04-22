@@ -1,20 +1,37 @@
 ﻿<div class="container" ng-controller="tubularGeneratorCtrl">
-    <h1>Tubular Grid Generator</h1>
+    <div class="row">
+        <div class="col-md-8">
+            <h1>Tubular Grid Generator</h1>
+        </div>
+        <div class="col-md-4" ng-show="views.length > 0">
+            <div class="pull-right">
+                <button class="btn btn-success" ng-click="plunker()">
+                    <i class="fa fa-pencil"></i>&nbsp;Export All to Plunker
+                </button>
+                <button class="btn btn-danger" ng-click="clearViews()">
+                    <i class="fa fa-trash"></i>&nbsp;Clear Project
+                </button>
+            </div>
+        </div>
+    </div>
 
     <div class="row" ng-hide="step != 1">
         <div class="col-xs-12">
-            <div class="alert alert-warning">
+            <div class="alert alert-warning" ng-show="views.length == 0">
                 <b>Attention</b> If you need to generate another you need to refresh the page.
             </div>
-            <p>
+            <p ng-show="views.length == 0">
                 First you need to paste and sample model, it could be any <b>JSON</b> or even you can use a <b>OData URI</b>.
                 If you only want to play a little bit, give a try <a href="http://www.json-generator.com/">Json Generator</a>.
+            </p>
+            <p ng-show="views.length > 0">
+                You can add more views to your project or just send your current work to Plunker.
             </p>
             <textarea ng-model="basemodel" class="form-control" rows="10" placeholder="Paste here a JSON model or an OData URI"></textarea>
             <hr />
             <div class="pull-right">
                 <div class="btn-group">
-                    <button class="btn btn-primary btn-lg" ng-click="generate()" ng-disabled="basemodel.length == 0">
+                    <button class="btn btn-primary btn-lg" ng-click="generateModel()" ng-disabled="basemodel.length == 0">
                         <i class="fa fa-gear"></i>&nbsp;Generate
                     </button>
                     <button class="btn btn-default btn-lg" ng-click="useSample()">
@@ -28,7 +45,7 @@
             <div class="clearfix"></div>
         </div>
     </div>
-    
+
     <div class="row" ng-hide="step != 2">
         <div class="col-xs-12">
             <p>Please setup anything you need before to continue.</p>
@@ -131,15 +148,20 @@
     </div>
 
     <div class="row" ng-hide="step != 3">
-        <div class="col-xs-12">
-            <div class="alert alert-warning">
-                Now you can edit your grid template and include features like sorting and filtering.
-                You need to replace the <i>server-url</i> attribute to match you REST service.
+        <div class="col-md-12">
+            <p>
+                If you wish send this grid to <b>Plunker</b> and you can start right now to customize it. The Tubular grid is located as <i>grid.html</i>.
                 <br />
-                If you wish send this grid to Plunker and you can start right now to customize it. The Tubular grid is located as <i>grid.html</i>.
-                <div class="pull-right">
+                <b>Save and Continue</b> will save this grid locally and allow to add more views to edit later.
+            </p>
+
+            <div class="pull-right">
+                <div class="btn-group">
                     <button class="btn btn-success" ng-click="plunker()">
-                        <i class="fa fa-pencil"></i>&nbsp;Send to Plunker
+                        <i class="fa fa-pencil"></i>&nbsp;Export to Plunker
+                    </button>
+                    <button class="btn btn-default" ng-click="save()">
+                        <i class="fa fa-plus"></i>&nbsp;Save and Continue
                     </button>
                 </div>
             </div>
@@ -156,7 +178,7 @@
     </div>
 </div>
 <script>
-    $(function() {
+    $(function () {
         $('[data-toggle="tooltip"]').tooltip();
     });
 </script>
