@@ -131,7 +131,14 @@
                                 $scope.model.$isNew = true;
                             }
 
-                            $scope.model.save().then(
+                            $scope.currentRequest = $scope.model.save();
+
+                            if ($scope.currentRequest === false) {
+                                $scope.$emit('tbGrid_OnSavingNoChanges', $scope.model);
+                                return;
+                            }
+
+                            $scope.currentRequest.then(
                                 function(data) {
                                     $scope.model.$isEditing = false;
                                     $scope.$emit('tbGrid_OnSuccessfulSave', data);

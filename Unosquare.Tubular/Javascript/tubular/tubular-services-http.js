@@ -209,7 +209,7 @@
                     }
 
                     return response.data;
-                }, function(error) {
+                }, function (error) {
                     if (angular.isDefined(error) && angular.isDefined(error.status) && error.status == 401) {
                         if (me.isAuthenticated()) {
                             me.removeAuthentication();
@@ -217,6 +217,8 @@
                             document.location = document.location;
                         }
                     }
+
+                    return $q.reject(error);
                 });
 
                 request.timeout = request.timeout || 15000;

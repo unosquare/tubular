@@ -3,26 +3,40 @@
 
     angular.module('tubular.services', ['ui.bootstrap'])
         .service('tubularPopupService', [
-            '$modal', function tubularPopupService($modal) {
+            '$modal', '$rootScope', function tubularPopupService($modal, $rootScope) {
                 var me = this;
+
+                me.onSuccessForm = function(callback) {
+                    $rootScope.$on('tbForm_OnSuccessfulSave', callback);
+                };
+
+                me.onConnectionError = function (callback) {
+                    $rootScope.$on('tbForm_OnConnectionError', callback);
+                };
 
                 me.openDialog = function(template, model) {
                     var dialog = $modal.open({
                         templateUrl: template,
                         backdropClass: 'fullHeight',
                         controller: [
-                            '$scope', function($scope) {
+                            '$scope', function ($scope) {
                                 $scope.Model = model;
 
                                 $scope.savePopup = function () {
-                                    $scope.Model.save().then(
-                                        function(data) {
-                                            dialog.close();
-                                            $scope.Model.$isLoading = false;
+                                    var result = $scope.Model.save();
+
+                                    if (result === false) return;
+
+                                    result.then(
+                                        function (data) {
                                             $scope.$emit('tbForm_OnSuccessfulSave', data);
-                                        }, function (error) {
+                                            $rootScope.$broadcast('tbForm_OnSuccessfulSave', data);
                                             $scope.Model.$isLoading = false;
+                                            dialog.close();
+                                        }, function (error) {
                                             $scope.$emit('tbForm_OnConnectionError', error);
+                                            $rootScope.$broadcast('tbForm_OnConnectionError', error);
+                                            $scope.Model.$isLoading = false;
                                         });
                                 };
 

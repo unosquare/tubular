@@ -351,6 +351,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 if (angular.isDefined(template)) {
                                     if (angular.isDefined(popup) && popup) {
                                         tubularPopupService.openDialog(template, $scope.tempRow);
+                                    } else {
+                                        // TODO: Open?
                                     }
                                 }
                             };
@@ -1137,7 +1139,14 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 $scope.model.$isNew = true;
                             }
 
-                            $scope.model.save().then(
+                            $scope.currentRequest = $scope.model.save();
+
+                            if ($scope.currentRequest === false) {
+                                $scope.$emit('tbGrid_OnSavingNoChanges', $scope.model);
+                                return;
+                            }
+
+                            $scope.currentRequest.then(
                                 function(data) {
                                     $scope.model.$isEditing = false;
                                     $scope.$emit('tbGrid_OnSuccessfulSave', data);
@@ -2268,26 +2277,40 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
     angular.module('tubular.services', ['ui.bootstrap'])
         .service('tubularPopupService', [
-            '$modal', function tubularPopupService($modal) {
+            '$modal', '$rootScope', function tubularPopupService($modal, $rootScope) {
                 var me = this;
+
+                me.onSuccessForm = function(callback) {
+                    $rootScope.$on('tbForm_OnSuccessfulSave', callback);
+                };
+
+                me.onConnectionError = function (callback) {
+                    $rootScope.$on('tbForm_OnConnectionError', callback);
+                };
 
                 me.openDialog = function(template, model) {
                     var dialog = $modal.open({
                         templateUrl: template,
                         backdropClass: 'fullHeight',
                         controller: [
-                            '$scope', function($scope) {
+                            '$scope', function ($scope) {
                                 $scope.Model = model;
 
                                 $scope.savePopup = function () {
-                                    $scope.Model.save().then(
-                                        function(data) {
-                                            dialog.close();
-                                            $scope.Model.$isLoading = false;
+                                    var result = $scope.Model.save();
+
+                                    if (result === false) return;
+
+                                    result.then(
+                                        function (data) {
                                             $scope.$emit('tbForm_OnSuccessfulSave', data);
-                                        }, function (error) {
+                                            $rootScope.$broadcast('tbForm_OnSuccessfulSave', data);
                                             $scope.Model.$isLoading = false;
+                                            dialog.close();
+                                        }, function (error) {
                                             $scope.$emit('tbForm_OnConnectionError', error);
+                                            $rootScope.$broadcast('tbForm_OnConnectionError', error);
+                                            $scope.Model.$isLoading = false;
                                         });
                                 };
 
@@ -2773,7 +2796,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     }
 
                     return response.data;
-                }, function(error) {
+                }, function (error) {
                     if (angular.isDefined(error) && angular.isDefined(error.status) && error.status == 401) {
                         if (me.isAuthenticated()) {
                             me.removeAuthentication();
@@ -2781,6 +2804,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             document.location = document.location;
                         }
                     }
+
+                    return $q.reject(error);
                 });
 
                 request.timeout = request.timeout || 15000;

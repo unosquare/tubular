@@ -343,10 +343,18 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 $scope.columns.push(item);
                             };
 
-                            $scope.newRow = function() {
+                            $scope.newRow = function(template, popup) {
                                 $scope.tempRow = new TubularModel($scope, {}, $scope.gridDataService);
                                 $scope.tempRow.$isNew = true;
                                 $scope.tempRow.$isEditing = true;
+
+                                if (angular.isDefined(template)) {
+                                    if (angular.isDefined(popup) && popup) {
+                                        tubularPopupService.openDialog(template, $scope.tempRow);
+                                    } else {
+                                        // TODO: Open?
+                                    }
+                                }
                             };
 
                             $scope.deleteRow = function(row) {
@@ -1131,7 +1139,14 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 $scope.model.$isNew = true;
                             }
 
-                            $scope.model.save().then(
+                            $scope.currentRequest = $scope.model.save();
+
+                            if ($scope.currentRequest === false) {
+                                $scope.$emit('tbGrid_OnSavingNoChanges', $scope.model);
+                                return;
+                            }
+
+                            $scope.currentRequest.then(
                                 function(data) {
                                     $scope.model.$isEditing = false;
                                     $scope.$emit('tbGrid_OnSuccessfulSave', data);
@@ -1874,6 +1889,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     model: '=?',
                     serverUrl: '@',
                     serverSaveUrl: '@',
+                    serverSaveMethod: '@',
                     isNew: '@',
                     modelKey: '@?',
                     gridDataService: '=?service',
@@ -1883,6 +1899,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     '$scope', '$routeParams', 'tubularModel', 'tubularHttp', 'tubularOData',
                     function($scope, $routeParams, TubularModel, tubularHttp, tubularOData) {
                         $scope.tubularDirective = 'tubular-form';
+                        $scope.serverSaveMethod = $scope.serverSaveMethod || 'POST';
                         $scope.fields = [];
                         $scope.hasFieldsDefinitions = false;
                         // Try to load a key from markup or route
@@ -2188,15 +2205,20 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         };
 
                         // Returns a save promise
-                        obj.save = function () {
+                        obj.save = function() {
                             if (angular.isUndefined(dataService) || dataService == null)
                                 throw 'Define DataService to your model.';
 
                             if (obj.$hasChanges == false) return false;
 
                             obj.$isLoading = true;
+
                             if (obj.$isNew) {
-                                return dataService.post($scope.serverSaveUrl, obj).promise;
+                                return dataService.retrieveDataAsync({
+                                    serverUrl: $scope.serverSaveUrl,
+                                    requestMethod: $scope.serverSaveMethod,
+                                    data: obj
+                                }).promise;
                             } else {
                                 return dataService.saveDataAsync(obj, {
                                     serverUrl: $scope.serverSaveUrl,
@@ -2267,14 +2289,20 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 $scope.Model = model;
 
                                 $scope.savePopup = function () {
-                                    $scope.Model.save().then(
-                                        function(data) {
-                                            dialog.close();
-                                            $scope.Model.$isLoading = false;
+                                    var result = $scope.Model.save();
+
+                                    if (result === false) return;
+
+                                    result.then(
+                                        function (data) {
                                             $scope.$emit('tbForm_OnSuccessfulSave', data);
-                                        }, function (error) {
+                                            $scope.$broadcast('tbForm_OnSuccessfulSave', data);
                                             $scope.Model.$isLoading = false;
+                                            dialog.close();
+                                        }, function (error) {
                                             $scope.$emit('tbForm_OnConnectionError', error);
+                                            $scope.$broadcast('tbForm_OnConnectionError', error);
+                                            $scope.Model.$isLoading = false;
                                         });
                                 };
 

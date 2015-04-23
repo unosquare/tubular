@@ -80,6 +80,8 @@
                                 if (angular.isDefined(template)) {
                                     if (angular.isDefined(popup) && popup) {
                                         tubularPopupService.openDialog(template, $scope.tempRow);
+                                    } else {
+                                        // TODO: Open?
                                     }
                                 }
                             };
