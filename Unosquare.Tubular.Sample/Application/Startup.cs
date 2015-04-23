@@ -1,4 +1,5 @@
-﻿using Microsoft.Owin;
+﻿using System.Web.Routing;
+using Microsoft.Owin;
 using Microsoft.Owin.Security.OAuth;
 using Owin;
 using System;
@@ -9,6 +10,7 @@ using Unosquare.Tubular.Sample.Application;
 using Unosquare.Tubular.Sample.Models;
 
 [assembly: OwinStartup(typeof(Startup))]
+
 namespace Unosquare.Tubular.Sample.Application
 {
     public class Startup
@@ -25,32 +27,35 @@ namespace Unosquare.Tubular.Sample.Application
 
         private static class OAuth
         {
-            static public void Configure(IAppBuilder app)
+            public static void Configure(IAppBuilder app)
             {
-                var authFunc = new Func<OAuthGrantResourceOwnerCredentialsContext, Task<Security.UserAuthenticationResult>>((c) =>
-                {
-                    var task = new Task<Security.UserAuthenticationResult>(() =>
+                var authFunc =
+                    new Func<OAuthGrantResourceOwnerCredentialsContext, Task<Security.UserAuthenticationResult>>((c) =>
                     {
-
-                        using (var context = new SampleDbContext())
+                        var task = new Task<Security.UserAuthenticationResult>(() =>
                         {
-                            var user = context.SystemUsers.FirstOrDefault(u => u.Id == c.UserName && u.Password == c.Password);
-                            
-                            if (user != null)
+
+                            using (var context = new SampleDbContext())
                             {
-                                var roles = user.Roles.ToArray();
-                                return Security.UserAuthenticationResult.CreateAuthorizedResult(user, roles);
+                                var user =
+                                    context.SystemUsers.FirstOrDefault(
+                                        u => u.Id == c.UserName && u.Password == c.Password);
+
+                                if (user != null)
+                                {
+                                    var roles = user.Roles.ToArray();
+                                    return Security.UserAuthenticationResult.CreateAuthorizedResult(user, roles);
+                                }
+
+                                return Security.UserAuthenticationResult.CreateErrorResult("Invalid credentials");
                             }
-                            
-                            return Security.UserAuthenticationResult.CreateErrorResult("Invalid credentials");
-                        }
 
-                        
+
+                        });
+
+                        task.Start();
+                        return task;
                     });
-
-                    task.Start();
-                    return task;
-                });
 
                 var authServerOptions = new OAuthAuthorizationServerOptions()
                 {
@@ -78,7 +83,7 @@ namespace Unosquare.Tubular.Sample.Application
 
         private static class WebApi
         {
-            static public void Configure(HttpConfiguration config)
+            public static void Configure(HttpConfiguration config)
             {
                 // Web API configuration and services
                 var json = config.Formatters.JsonFormatter;
@@ -91,8 +96,10 @@ namespace Unosquare.Tubular.Sample.Application
                 config.Routes.MapHttpRoute(
                     name: "DefaultApi",
                     routeTemplate: "api/{controller}/{id}",
-                    defaults: new { id = RouteParameter.Optional }
-                );
+                    defaults: new {id = RouteParameter.Optional}
+                    );
+
+                RouteTable.Routes.MapPageRoute("Default", "{*anything}", "~/index.html");
             }
         }
 

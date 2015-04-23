@@ -128,10 +128,16 @@
 
                         $scope.save = function() {
                             if ($scope.isNew) {
-                                $scope.component.createRow();
-                            } else {
-                                $scope.model.edit();
+                                $scope.model.$isNew = true;
                             }
+
+                            $scope.model.save().then(
+                                function(data) {
+                                    $scope.model.$isEditing = false;
+                                    $scope.$emit('tbGrid_OnSuccessfulSave', data);
+                                }, function(error) {
+                                    $scope.$emit('tbGrid_OnConnectionError', error);
+                                });
                         };
 
                         $scope.cancel = function() {

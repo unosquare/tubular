@@ -82,7 +82,7 @@
             })
             .factory('tubularModel', [
                 '$timeout', '$location', function ($timeout, $location) {
-                    return function ($scope, data) {
+                    return function ($scope, data, dataService) {
                         var obj = {
                             $key: "",
                             $count: 0,
@@ -150,6 +150,7 @@
                         obj.$isEditing = false;
                         obj.$hasChanges = false;
                         obj.$selected = false;
+                        obj.$isNew = false;
 
                         for (var k in obj) {
                             if (obj.hasOwnProperty(k)) {
@@ -181,8 +182,22 @@
                             return true;
                         };
 
-                        obj.save = function (externalSave) {
-                            return obj.$hasChanges ? $scope.updateRow(obj, externalSave) : false;
+                        // Returns a save promise
+                        obj.save = function () {
+                            if (angular.isUndefined(dataService) || dataService == null)
+                                throw 'Define DataService to your model.';
+
+                            if (obj.$hasChanges == false) return false;
+
+                            obj.$isLoading = true;
+                            if (obj.$isNew) {
+                                return dataService.post($scope.serverSaveUrl, obj).promise;
+                            } else {
+                                return dataService.saveDataAsync(obj, {
+                                    serverUrl: $scope.serverSaveUrl,
+                                    requestMethod: 'PUT'
+                                }).promise;
+                            }
                         };
 
                         obj.edit = function() {

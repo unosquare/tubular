@@ -103,7 +103,7 @@
                 scope: tubularEditorService.defaultScope,
                 controller: [
                     '$scope', function($scope) {
-                        $scope.DataType = "numeric";
+                        $scope.DataType = "date";
 
                         $scope.validate = function() {
                             if (angular.isUndefined($scope.min) == false) {

@@ -22,7 +22,9 @@
                     },
                     controller: [
                         '$scope', 'localStorageService', 'tubularPopupService', 'tubularModel', 'tubularHttp', 'tubularOData',
-                        function($scope, localStorageService, tubularPopupService, TubularModel, tubularHttp, tubularOData) {
+                        function ($scope, localStorageService, tubularPopupService, TubularModel, tubularHttp, tubularOData) {
+                            // TODO: Add $routeParams to apply filters from URL
+
                             $scope.tubularDirective = 'tubular-grid';
                             $scope.columns = [];
                             $scope.rows = [];
@@ -70,31 +72,9 @@
                                 $scope.columns.push(item);
                             };
 
-                            $scope.createRow = function() {
-                                var request = {
-                                    serverUrl: $scope.serverSaveUrl,
-                                    requestMethod: $scope.serverSaveMethod,
-                                    timeout: $scope.requestTimeout,
-                                    requireAuthentication: $scope.requireAuthentication,
-                                    data: $scope.tempRow
-                                };
-
-                                $scope.currentRequest = $scope.gridDataService.retrieveDataAsync(request);
-
-                                $scope.currentRequest.promise.then(
-                                    function(data) {
-                                        $scope.$emit('tbGrid_OnSuccessfulUpdate', data);
-                                        $scope.tempRow.$isEditing = false;
-                                    }, function(error) {
-                                        $scope.$emit('tbGrid_OnConnectionError', error);
-                                    }).then(function() {
-                                    $scope.currentRequest = null;
-                                    $scope.retrieveData();
-                                });
-                            };
-
                             $scope.newRow = function() {
-                                $scope.tempRow = new TubularModel($scope, {});
+                                $scope.tempRow = new TubularModel($scope, {}, $scope.gridDataService);
+                                $scope.tempRow.$isNew = true;
                                 $scope.tempRow.$isEditing = true;
                             };
 
@@ -118,33 +98,6 @@
                                     $scope.currentRequest = null;
                                     $scope.retrieveData();
                                 });
-                            };
-
-                            $scope.updateRow = function(row, externalSave) {
-                                row.$isLoading = true;
-
-                                var request = {
-                                    serverUrl: $scope.serverSaveUrl,
-                                    requestMethod: 'PUT',
-                                    timeout: $scope.requestTimeout,
-                                    requireAuthentication: $scope.requireAuthentication,
-                                };
-
-                                var requestObj = $scope.gridDataService.saveDataAsync(row, request);
-
-                                if (externalSave == false)
-                                    $scope.currentRequest = requestObj;
-
-                                requestObj.promise.then(
-                                        function(data) {
-                                            $scope.$emit('tbGrid_OnSuccessfulUpdate', data);
-                                        }, function(error) {
-                                            $scope.$emit('tbGrid_OnConnectionError', error);
-                                        })
-                                    .then(function() {
-                                        row.$isLoading = false;
-                                        $scope.currentRequest = null;
-                                    });
                             };
 
                             $scope.verifyColumns = function() {
@@ -218,7 +171,7 @@
                                         $scope.dataSource = data;
 
                                         $scope.rows = data.Payload.map(function(el) {
-                                            var model = new TubularModel($scope, el);
+                                            var model = new TubularModel($scope, el, $scope.gridDataService);
 
                                             model.editPopup = function(template) {
                                                 tubularPopupService.openDialog(template, model);

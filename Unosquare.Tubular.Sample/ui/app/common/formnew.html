@@ -28,8 +28,8 @@
 
                 <hr />
 
-                <button class="btn btn-primary" ng-click="$parent.create()" ng-disabled="!Model.$valid()">Save</button>
-                <button class="btn btn-danger" ng-click="$parent.gotoView('/')">Cancel</button>
+                <button class="btn btn-primary" ng-click="$parent.create()" ng-disabled="!$parent.model.$valid()">Save</button>
+                <button class="btn btn-danger" ng-click="$parent.cancel()">Cancel</button>
             </div>
 
             <div class="col-md-3">

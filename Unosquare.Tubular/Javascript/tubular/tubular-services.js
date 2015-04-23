@@ -15,12 +15,14 @@
                                 $scope.Model = model;
 
                                 $scope.savePopup = function () {
-                                    $scope.Model.save(true);
-                                    
-                                    $scope.$on('tbGrid_OnSuccessfulUpdate', 
-                                        function () {
-                                            // TODO: Review this
+                                    $scope.Model.save().then(
+                                        function(data) {
                                             dialog.close();
+                                            $scope.Model.$isLoading = false;
+                                            $scope.$emit('tbForm_OnSuccessfulSave', data);
+                                        }, function (error) {
+                                            $scope.Model.$isLoading = false;
+                                            $scope.$emit('tbForm_OnConnectionError', error);
                                         });
                                 };
 
@@ -241,7 +243,7 @@
                         scope.value = scope.defaultValue;
                     }
 
-                    scope.$watch('value', function(newValue, oldValue) {
+                    scope.$watch('value', function (newValue, oldValue) {
                         if (angular.isUndefined(oldValue) && angular.isUndefined(newValue)) return;
 
                         if (angular.isUndefined(scope.state)) {

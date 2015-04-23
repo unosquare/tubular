@@ -1,8 +1,9 @@
 ﻿<div class="container" ng-controller="tubularSampleCtrl as sample">
-    <tb-form server-url="/api/orders/" server-save-url="/api/orders/save">
+    <tb-form server-url="/api/orders/" 
+             server-save-url="/api/orders/save">
         <div class="row">
             <div class="col-md-10">
-                <h3>Edit Order <small>{{Model.OrderID}}</small></h3>
+                <h2>Edit Order <small>{{Model.OrderID}}</small></h2>
 
                 <tb-simple-editor min="3" show-label="true" name="CustomerName" help="Please a good name">
                 </tb-simple-editor>
@@ -28,8 +29,8 @@
 
                 <hr />
 
-                <button class="btn btn-primary" ng-click="$parent.save()" ng-disabled="!Model.$valid()">Save</button>
-                <button class="btn btn-danger" ng-click="$parent.gotoView('/')">Cancel</button>
+                <button class="btn btn-primary" ng-click="$parent.save()" ng-disabled="!$parent.model.$valid()">Save</button>
+                <button class="btn btn-danger" ng-click="$parent.cancel()">Go Back</button>
             </div>
         </div>
     </tb-form>

@@ -2,14 +2,15 @@
     'use strict';
 
     angular.module('tubular.directives').directive('tbForm',
-    [function() {
+    [
+        function() {
             return {
                 template: '<form ng-transclude></form>',
                 restrict: 'E',
                 replace: true,
                 transclude: true,
                 scope: {
-                    rowModel: '=?',
+                    model: '=?',
                     serverUrl: '@',
                     serverSaveUrl: '@',
                     isNew: '@',
@@ -18,12 +19,14 @@
                     gridDataServiceName: '@?serviceName',
                 },
                 controller: [
-                    '$scope', '$routeParams', '$location', 'tubularModel', 'tubularHttp', 'tubularOData',
-                    function ($scope, $routeParams, $location, TubularModel, tubularHttp, tubularOData) {
+                    '$scope', '$routeParams', 'tubularModel', 'tubularHttp', 'tubularOData',
+                    function($scope, $routeParams, TubularModel, tubularHttp, tubularOData) {
                         $scope.tubularDirective = 'tubular-form';
                         $scope.fields = [];
                         $scope.hasFieldsDefinitions = false;
+                        // Try to load a key from markup or route
                         $scope.modelKey = $scope.modelKey || $routeParams.param;
+
                         $scope.gridDataService = $scope.gridDataService || tubularHttp;
 
                         // Helper to use OData without controller
@@ -47,34 +50,34 @@
                         });
 
                         $scope.bindFields = function() {
-                            angular.forEach($scope.fields, function (column) {
-                                column.$parent.Model = $scope.rowModel;
+                            angular.forEach($scope.fields, function(field) {
+                                field.$parent.Model = $scope.model;
 
                                 // TODO: this behavior is nice, but I don't know how to apply to inline editors
-                                if (column.$editorType == 'input' &&
-                                    angular.equals(column.value, $scope.rowModel[column.Name]) == false) {
-                                    column.value = $scope.rowModel[column.Name];
+                                if (field.$editorType == 'input' &&
+                                    angular.equals(field.value, $scope.model[field.Name]) == false) {
+                                    field.value = (field.DataType == 'date') ? new Date($scope.model[field.Name]) : $scope.model[field.Name];
 
                                     $scope.$watch(function() {
-                                        return column.value;
+                                        return field.value;
                                     }, function(value) {
-                                        $scope.rowModel[column.Name] = value;
+                                        $scope.model[field.Name] = value;
                                     });
                                 }
 
                                 // Ignores models without state
-                                if (angular.isUndefined($scope.rowModel.$state)) return;
+                                if (angular.isUndefined($scope.model.$state)) return;
 
-                                if (angular.equals(column.state, $scope.rowModel.$state[column.Name]) == false) {
-                                    column.state = $scope.rowModel.$state[column.Name];
+                                if (angular.equals(field.state, $scope.model.$state[field.Name]) == false) {
+                                    field.state = $scope.model.$state[field.Name];
                                 }
                             });
                         };
 
                         $scope.retrieveData = function() {
                             if (angular.isUndefined($scope.serverUrl)) {
-                                if (angular.isUndefined($scope.rowModel)) {
-                                    $scope.rowModel = new TubularModel($scope, {});
+                                if (angular.isUndefined($scope.model)) {
+                                    $scope.model = new TubularModel($scope, {}, $scope.gridDataService);
                                 }
 
                                 $scope.bindFields();
@@ -84,55 +87,45 @@
 
                             $scope.gridDataService.getByKey($scope.serverUrl, $scope.modelKey).promise.then(
                                 function(data) {
-                                    $scope.rowModel = new TubularModel($scope, data);
+                                    $scope.model = new TubularModel($scope, data, $scope.gridDataService);
 
                                     $scope.bindFields();
                                 }, function(error) {
-                                    $scope.$emit('tbGrid_OnConnectionError', error);
+                                    $scope.$emit('tbForm_OnConnectionError', error);
                                 });
                         };
 
-                        $scope.updateRow = function(row) {
-                            $scope.currentRequest = gridDataService.saveDataAsync(row, {
-                                serverUrl: $scope.serverSaveUrl,
-                                requestMethod: 'PUT'
-                            });
+                        $scope.save = function() {
+                            $scope.currentRequest = $scope.model.save();
 
-                            $scope.currentRequest.promise.then(
-                                    function(data) {
-                                        $scope.$emit('tbGrid_OnSuccessfulUpdate', data);
-                                        $scope.$emit('tGrid_OnSuccessfulForm', data);
-                                    }, function(error) {
-                                        $scope.$emit('tbGrid_OnConnectionError', error);
-                                    })
-                                .then(function() {
-                                    $scope.currentRequest = null;
-                                });
-                        };
-
-                        $scope.create = function () {
-                            // TODO: Method could be PUT?
-                            $scope.currentRequest = gridDataService.post($scope.serverSaveUrl, $scope.rowModel).promise.then(
-                                    function(data) {
-                                        $scope.$emit('tbGrid_OnSuccessfulUpdate', data);
-                                        $scope.$emit('tGrid_OnSuccessfulForm', data);
-                                    }, function(error) {
-                                        $scope.$emit('tbGrid_OnConnectionError', error);
-                                    })
-                                .then(function() {
-                                    $scope.currentRequest = null;
-                                });
-                        };
-
-                        $scope.save = function () {
-                            // TODO: Why Save and Create is not the same?
-                            if ($scope.rowModel.save() === false) {
-                                $scope.$emit('tbGrid_OnSavingNoChanges', $scope.rowModel);
+                            if ($scope.currentRequest === false) {
+                                $scope.$emit('tbForm_OnSavingNoChanges', $scope.model);
+                                return;
                             }
+
+                            $scope.currentRequest.then(
+                                    function(data) {
+                                        $scope.$emit('tbForm_OnSuccessfulSave', data);
+                                    }, function(error) {
+                                        $scope.$emit('tbForm_OnConnectionError', error);
+                                    })
+                                .then(function() {
+                                    $scope.model.$isLoading = false;
+                                    $scope.currentRequest = null;
+                                });
                         };
 
-                        $scope.gotoView = function(view) {
-                            $location.path(view);
+                        $scope.update = function() {
+                            $scope.save();
+                        };
+
+                        $scope.create = function() {
+                            $scope.model.$isNew = true;
+                            $scope.save();
+                        };
+
+                        $scope.cancel = function() {
+                            $scope.$emit('tbForm_OnCancel', $scope.model);
                         };
                     }
                 ],
