@@ -18,11 +18,12 @@
                         gridDataService: '=?service',
                         gridDataServiceName: '@?serviceName',
                         requireAuthentication: '@?',
-                        name: '@?gridName'
+                        name: '@?gridName',
+                        editorMode: '@?',
                     },
                     controller: [
-                        '$scope', 'localStorageService', 'tubularPopupService', 'tubularModel', 'tubularHttp', 'tubularOData',
-                        function ($scope, localStorageService, tubularPopupService, TubularModel, tubularHttp, tubularOData) {
+                        '$scope', 'localStorageService', 'tubularPopupService', 'tubularModel', 'tubularHttp', 'tubularOData', 'tubularTemplateService',
+                function ($scope, localStorageService, tubularPopupService, TubularModel, tubularHttp, tubularOData, tubularTemplateService) {
                             // TODO: Add $routeParams to apply filters from URL
 
                             $scope.tubularDirective = 'tubular-grid';
@@ -48,6 +49,7 @@
                             $scope.gridDataService = $scope.gridDataService || tubularHttp;
                             $scope.requireAuthentication = $scope.requireAuthentication || true;
                             $scope.name = $scope.name || 'tbgrid';
+                            $scope.editorMode = $scope.editorMode || 'none';
                             $scope.canSaveState = false;
                             $scope.groupBy = '';
 
@@ -181,7 +183,10 @@
                                         $scope.rows = data.Payload.map(function(el) {
                                             var model = new TubularModel($scope, el, $scope.gridDataService);
 
-                                            model.editPopup = function(template) {
+                                            model.editPopup = function (template) {
+                                                if (angular.isUndefined(template))
+                                                    template = tubularTemplateService.generatePopup(model);
+
                                                 tubularPopupService.openDialog(template, model);
                                             };
 

@@ -159,7 +159,7 @@
 
             return {
                 require: '^tbGrid',
-                template: '<button ng-click="model.edit()" class="btn btn-default {{ css || \'\' }}" ' +
+                template: '<button ng-click="edit()" class="btn btn-default {{ css || \'\' }}" ' +
                     'ng-hide="model.$isEditing">{{ caption || \'Edit\' }}</button>',
                 restrict: 'E',
                 replace: true,
@@ -168,7 +168,18 @@
                     model: '=',
                     caption: '@',
                     css: '@'
-                }
+                },
+                controller: [
+                    '$scope', function ($scope) {
+                    $scope.component = $scope.$parent.$parent.$component;
+                        $scope.edit = function () {
+                            if ($scope.component.editorMode == 'popup') {
+                                $scope.model.editPopup();
+                            } else {
+                                $scope.model.edit();
+                            }
+                        };
+                }]
             };
         }
     ]).directive('tbPageSizeSelector', [
