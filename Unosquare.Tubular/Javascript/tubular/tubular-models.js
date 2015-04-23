@@ -183,15 +183,20 @@
                         };
 
                         // Returns a save promise
-                        obj.save = function () {
+                        obj.save = function() {
                             if (angular.isUndefined(dataService) || dataService == null)
                                 throw 'Define DataService to your model.';
 
                             if (obj.$hasChanges == false) return false;
 
                             obj.$isLoading = true;
+
                             if (obj.$isNew) {
-                                return dataService.post($scope.serverSaveUrl, obj).promise;
+                                return dataService.retrieveDataAsync({
+                                    serverUrl: $scope.serverSaveUrl,
+                                    requestMethod: $scope.serverSaveMethod,
+                                    data: obj
+                                }).promise;
                             } else {
                                 return dataService.saveDataAsync(obj, {
                                     serverUrl: $scope.serverSaveUrl,

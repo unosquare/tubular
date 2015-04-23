@@ -13,6 +13,7 @@
                     model: '=?',
                     serverUrl: '@',
                     serverSaveUrl: '@',
+                    serverSaveMethod: '@',
                     isNew: '@',
                     modelKey: '@?',
                     gridDataService: '=?service',
@@ -22,6 +23,7 @@
                     '$scope', '$routeParams', 'tubularModel', 'tubularHttp', 'tubularOData',
                     function($scope, $routeParams, TubularModel, tubularHttp, tubularOData) {
                         $scope.tubularDirective = 'tubular-form';
+                        $scope.serverSaveMethod = $scope.serverSaveMethod || 'POST';
                         $scope.fields = [];
                         $scope.hasFieldsDefinitions = false;
                         // Try to load a key from markup or route

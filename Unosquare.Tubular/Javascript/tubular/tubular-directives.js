@@ -72,10 +72,16 @@
                                 $scope.columns.push(item);
                             };
 
-                            $scope.newRow = function() {
+                            $scope.newRow = function(template, popup) {
                                 $scope.tempRow = new TubularModel($scope, {}, $scope.gridDataService);
                                 $scope.tempRow.$isNew = true;
                                 $scope.tempRow.$isEditing = true;
+
+                                if (angular.isDefined(template)) {
+                                    if (angular.isDefined(popup) && popup) {
+                                        tubularPopupService.openDialog(template, $scope.tempRow);
+                                    }
+                                }
                             };
 
                             $scope.deleteRow = function(row) {

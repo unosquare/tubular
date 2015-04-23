@@ -343,10 +343,16 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 $scope.columns.push(item);
                             };
 
-                            $scope.newRow = function() {
+                            $scope.newRow = function(template, popup) {
                                 $scope.tempRow = new TubularModel($scope, {}, $scope.gridDataService);
                                 $scope.tempRow.$isNew = true;
                                 $scope.tempRow.$isEditing = true;
+
+                                if (angular.isDefined(template)) {
+                                    if (angular.isDefined(popup) && popup) {
+                                        tubularPopupService.openDialog(template, $scope.tempRow);
+                                    }
+                                }
                             };
 
                             $scope.deleteRow = function(row) {
@@ -1874,6 +1880,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     model: '=?',
                     serverUrl: '@',
                     serverSaveUrl: '@',
+                    serverSaveMethod: '@',
                     isNew: '@',
                     modelKey: '@?',
                     gridDataService: '=?service',
@@ -1883,6 +1890,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     '$scope', '$routeParams', 'tubularModel', 'tubularHttp', 'tubularOData',
                     function($scope, $routeParams, TubularModel, tubularHttp, tubularOData) {
                         $scope.tubularDirective = 'tubular-form';
+                        $scope.serverSaveMethod = $scope.serverSaveMethod || 'POST';
                         $scope.fields = [];
                         $scope.hasFieldsDefinitions = false;
                         // Try to load a key from markup or route
@@ -2188,15 +2196,20 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         };
 
                         // Returns a save promise
-                        obj.save = function () {
+                        obj.save = function() {
                             if (angular.isUndefined(dataService) || dataService == null)
                                 throw 'Define DataService to your model.';
 
                             if (obj.$hasChanges == false) return false;
 
                             obj.$isLoading = true;
+
                             if (obj.$isNew) {
-                                return dataService.post($scope.serverSaveUrl, obj).promise;
+                                return dataService.retrieveDataAsync({
+                                    serverUrl: $scope.serverSaveUrl,
+                                    requestMethod: $scope.serverSaveMethod,
+                                    data: obj
+                                }).promise;
                             } else {
                                 return dataService.saveDataAsync(obj, {
                                     serverUrl: $scope.serverSaveUrl,
