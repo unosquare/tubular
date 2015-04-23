@@ -92,12 +92,16 @@
             }
         ]).controller('tubularGeneratorCtrl', [
             '$scope', '$http', '$templateCache', 'tubularGenerator', 'localStorageService',
-        function($scope, $http, $templateCache, tubularGenerator, localStorageService) {
+        function ($scope, $http, $templateCache, tubularGenerator, localStorageService) {
+            // Options
+            $scope.dataTypes = ['numeric', 'date', 'boolean', 'string'];
+            $scope.editorTypes = ['tbSimpleEditor', 'tbNumericEditor', 'tbDateTimeEditor', 'tbDateEditor',
+                'tbDropdownEditor', 'tbTypeaheadEditor', 'tbHiddenField', 'tbCheckboxField', 'tbTextArea'];
+            $scope.gridMode = ['Read-Only', 'Inline', 'Popup'];
+
             $scope.templatename = '';
             $scope.basemodel = '';
             $scope.step = 1;
-            $scope.dataTypes = ['numeric', 'date', 'boolean', 'string'];
-            $scope.editorTypes = ['tbSimpleEditor', 'tbNumericEditor', 'tbDateTimeEditor', 'tbDateEditor', 'tbDropdownEditor', 'tbTypeaheadEditor', 'tbHiddenField', 'tbCheckboxField', 'tbTextArea'];
             $scope.dataUrl = '';
             $scope.isOData = false;
             $scope.uiOptions = {
@@ -106,7 +110,7 @@
                 PageSizeSelector: true,
                 PagerInfo: true,
                 ExportCsv: true,
-                InlineEditors: false
+                Mode: 'Read-Only'
             };
             $scope.formOptions = {
                 SaveButton: true,

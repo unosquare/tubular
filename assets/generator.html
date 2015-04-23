@@ -132,12 +132,11 @@
                     </div>
                 </div>
                 <div class="col-xs-4">
-                    <div class="checkbox">
-                        <label>
-                            <input type="checkbox" ng-model="uiOptions.InlineEditors"> Inline Editors?
-                            &nbsp;<i class="fa fa-question-circle" data-toggle="tooltip" title="A basic text editor will be added, but you can change it later"></i>
-                        </label>
-                    </div>
+                    <label>
+                        Editors
+                        &nbsp;<i class="fa fa-question-circle" data-toggle="tooltip" title="A basic text editor will be added, but you can change it later"></i>
+                    </label>
+                    <select ng-model="uiOptions.Mode" class="form-control" ng-options="option for option in gridMode"></select>
                 </div>
             </div>
             <div class="pull-right">
