@@ -131,6 +131,14 @@
                         </label>
                     </div>
                 </div>
+                <div class="col-xs-4">
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" ng-model="uiOptions.InlineEditors"> Inline Editors?
+                            &nbsp;<i class="fa fa-question-circle" data-toggle="tooltip" title="A basic text editor will be added, but you can change it later"></i>
+                        </label>
+                    </div>
+                </div>
             </div>
             <div class="pull-right">
                 <button class="btn btn-primary btn-lg" ng-click="runGridTemplate()">
@@ -152,6 +160,9 @@
 
             <div class="pull-right">
                 <div class="btn-group">
+                    <button class="btn btn-danger" ng-click="revert()">
+                        <i class="fa fa-exclamation-triangle"></i>&nbsp;Return to Setup
+                    </button>
                     <button class="btn btn-success" ng-click="plunker('grid')">
                         <i class="fa fa-pencil"></i>&nbsp;Export to Plunker
                     </button>
@@ -160,6 +171,7 @@
                     </button>
                 </div>
             </div>
+            <div class="clearfix"></div>
 
             <div ng-include="templatename"></div>
         </div>

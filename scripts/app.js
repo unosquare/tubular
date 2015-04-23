@@ -105,12 +105,15 @@
                 FreeTextSearch: true,
                 PageSizeSelector: true,
                 PagerInfo: true,
-                ExportCsv: true
+                ExportCsv: true,
+                InlineEditors: false
             };
             $scope.formOptions = {
                 SaveButton: true,
                 CancelButton: true,
-                SaveUrl: ''
+                IsNew: true,
+                SaveUrl: '',
+                SaveMethod: 'POST'
             };
             $scope.views = localStorageService.get('generator_views') || [];
             $scope.gridId = ($scope.views.length + 1);
@@ -176,6 +179,11 @@
             $scope.useServerSample = function() {
                 $scope.basemodel = "http://services.odata.org/V3/Northwind/Northwind.svc/Orders";
                 $scope.generateModel();
+            };
+
+            $scope.revert = function () {
+                $scope.templatename = '';
+                $scope.step--;
             };
 
             $scope.plunker = function(filename) {
