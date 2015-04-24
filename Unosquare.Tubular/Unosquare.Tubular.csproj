@@ -95,6 +95,10 @@
     <Content Include="Javascript\tubular\tubular-services-odata.min.js">
       <DependentUpon>tubular-services-odata.js</DependentUpon>
     </Content>
+    <Content Include="Javascript\tubular\tubular-services-template.js" />
+    <Content Include="Javascript\tubular\tubular-services-template.min.js">
+      <DependentUpon>tubular-services-template.js</DependentUpon>
+    </Content>
     <Content Include="Javascript\tubular\tubular-services.js" />
     <Content Include="Javascript\tubular\tubular-services.min.js">
       <DependentUpon>tubular-services.js</DependentUpon>
@@ -138,6 +142,9 @@
     </None>
     <None Include="Javascript\tubular\tubular-services-odata.min.js.map">
       <DependentUpon>tubular-services-odata.min.js</DependentUpon>
+    </None>
+    <None Include="Javascript\tubular\tubular-services-template.min.js.map">
+      <DependentUpon>tubular-services-template.min.js</DependentUpon>
     </None>
     <None Include="packages.config" />
   </ItemGroup>

@@ -100,27 +100,27 @@
 
                 me.saveDataAsync = function (model, request) {
                     tubularHttp.setRequireAuthentication(request.requireAuthentication || me.requireAuthentication);
-                    tubularHttp.saveDataAsync(model, request); //TODO: Check how to handle
+                    return tubularHttp.saveDataAsync(model, request); //TODO: Check how to handle
                 };
 
                 me.get = function(url) {
-                    tubularHttp.get(url);
+                    return tubularHttp.get(url);
                 };
 
                 me.delete = function(url) {
-                    tubularHttp.delete(url);
+                    return tubularHttp.delete(url);
                 };
 
                 me.post = function(url, data) {
-                    tubularHttp.post(url, data);
+                    return tubularHttp.post(url, data);
                 };
 
                 me.put = function(url, data) {
-                    tubularHttp.put(url, data);
+                    return tubularHttp.put(url, data);
                 };
 
                 me.getByKey = function (url, key) {
-                    tubularHttp.get(url + "(" + key + ")");
+                    return tubularHttp.get(url + "(" + key + ")");
                 };
             }
         ]);
