@@ -98,11 +98,6 @@
         ]);
 
     angular.module('app', [
-        'ngRoute',
-        'ngAnimate',
-        'ngCookies',
-        'tubular.models',
-        'tubular.services',
         'tubular.directives',
         'app.routes',
         'app.services',

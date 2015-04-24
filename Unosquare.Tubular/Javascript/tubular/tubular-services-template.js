@@ -9,8 +9,7 @@
             me.generatePopup = function(model, title) {
                 var templateName = 'temp' + (new Date().getTime()) + '.html';
                 var columns = me.createColumns(model);
-                console.log(columns);
-
+                
                 var template = '<tb-form model="Model">' +
                     '<div class="modal-header"><h3 class="modal-title">' + (title || 'Edit Row') + '</h3></div>' +
                     '<div class="modal-body">' +
