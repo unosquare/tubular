@@ -1,7 +1,7 @@
 ﻿(function() {
     'use strict';
 
-    angular.module('app.generator', [])
+    angular.module('app.generator', ['tubular.services'])
         // This Factory and the pluker button is based on Angular Documentation
         .factory('formPostData', [
             '$document', function($document) {
@@ -26,82 +26,11 @@
                 };
             }
         ]).service('tubularGenerator', [
-            'formPostData', function tubularGenerator(formPostData) {
+            'tubularTemplateService', 'formPostData', function tubularGenerator(tubularTemplateService, formPostData) {
                 var me = this;
 
-            me.getEditorTypeByDateType = function(dataType) {
-                switch (dataType) {
-                case 'date':
-                    return 'tbDateTimeEditor';
-                case 'numeric':
-                    return 'tbNumericEditor';
-                case 'boolean':
-                    return 'tbCheckboxField';
-                default:
-                    return 'tbSimpleEditor';
-                }
-            };
-
-            me.createColumns = function(model, scope) {
-                    var jsonModel = (angular.isArray(model) && model.length > 0) ? model[0] : model;
-
-                    scope.columns = [];
-
-                for (var prop in jsonModel) {
-                    if (jsonModel.hasOwnProperty(prop)) {
-                        var value = jsonModel[prop];
-
-                        // Ignore null value, but maybe evaluate another item if there is anymore
-                        if (value == null) continue;
-
-                        if (angular.isNumber(value) || parseFloat(value).toString() == value) {
-                            scope.columns.push({ Name: prop, DataType: 'numeric', Template: '{{row.' + prop + '}}' });
-                        } else if (angular.isDate(value) || isNaN((new Date(value)).getTime()) == false) {
-                            scope.columns.push({ Name: prop, DataType: 'date', Template: '{{row.' + prop + ' | date}}' });
-                        } else if (value.toLowerCase() == 'true' || value.toLowerCase() == 'false') {
-                            scope.columns.push({ Name: prop, DataType: 'boolean', Template: '{{row.' + prop + ' ? "TRUE" : "FALSE" }}' });
-                        } else {
-                            var newColumn = { Name: prop, DataType: 'string', Template: '{{row.' + prop + '}}' };
-
-                            if ((/e(-|)mail/ig).test(newColumn.Name)) {
-                                newColumn.Template = '<a href="mailto:' + newColumn.Template + '">' + newColumn.Template + '</a>';
-                            }
-
-                            scope.columns.push(newColumn);
-                        }
-                    }
-                }
-
-                var firstSort = false;
-
-                    for (var column in scope.columns) {
-                        if (scope.columns.hasOwnProperty(column)) {
-                            var columnObj = scope.columns[column];
-                            columnObj.Label = columnObj.Name.replace(/([a-z])([A-Z])/g, '$1 $2');
-                            columnObj.EditorType = me.getEditorTypeByDateType(columnObj.DataType);
-
-                            // Grid attributes
-                            columnObj.Searchable = columnObj.DataType === 'string';
-                            columnObj.Filter = true;
-                            columnObj.Visible = true;
-                            columnObj.Sortable = true;
-                            columnObj.IsKey = false;
-                            columnObj.SortOrder = -1;
-                            // Form attributes
-                            columnObj.ShowLabel = true;
-                            columnObj.Placeholder = '';
-                            columnObj.Format = '';
-                            columnObj.Help = '';
-                            columnObj.Required = true;
-                            columnObj.ReadOnly = false;
-
-                            if (firstSort === false) {
-                                columnObj.IsKey = true;
-                                columnObj.SortOrder = 1;
-                                firstSort = true;
-                            }
-                        }
-                    }
+                me.createColumns = function(model, scope) {
+                    scope.columns = tubularTemplateService.createColumns(model);
                 };
 
                 me.runGridTemplate = function(scope) {
@@ -138,7 +67,7 @@
                         '\r\n<div class="container">' +
                         '\r\n<tb-grid server-url="' + scope.dataUrl + '" request-method="GET" class="row" require-authentication="false" page-size="10"' +
                         (scope.isOData ? ' service-name="odata"' : '') +
-                        (scope.uiOptions.Mode != 'Read-Only' ? ' editor-mode="' + scope.uiOptions.Mode.toLowerCase() +'"' : '') + '>' +
+                        (scope.uiOptions.Mode != 'Read-Only' ? ' editor-mode="' + scope.uiOptions.Mode.toLowerCase() + '"' : '') + '>' +
                         (topToolbar === '' ? '' : '\r\n\t<div class="row">' + topToolbar + '\r\n\t</div>') +
                         '\r\n\t<div class="row">' +
                         '\r\n\t<div class="col-md-12">' +
@@ -157,17 +86,17 @@
                         '\r\n\t<tb-row-set>' +
                         '\r\n\t<tb-row-template ng-repeat="row in $component.rows" row-model="row">' +
                         (scope.uiOptions.Mode != 'Read-Only' ? '\r\n\t\t<tb-cell-template>' +
-                                            (scope.uiOptions.Mode  == 'Inline' ? '\r\n\t\t\t<tb-save-button model="row"></tb-save-button>' : '')+
-                                            '\r\n\t\t\t<tb-edit-button model="row"></tb-edit-button>' +
-                                            '\r\n\t\t</tb-cell-template>' : '') +
-                        scope.columns.map(function (el) {
-                            var editorTag = el.EditorType.replace(/([A-Z])/g, function ($1) { return "-" + $1.toLowerCase(); });
+                            (scope.uiOptions.Mode == 'Inline' ? '\r\n\t\t\t<tb-save-button model="row"></tb-save-button>' : '') +
+                            '\r\n\t\t\t<tb-edit-button model="row"></tb-edit-button>' +
+                            '\r\n\t\t</tb-cell-template>' : '') +
+                        scope.columns.map(function(el) {
+                            var editorTag = el.EditorType.replace(/([A-Z])/g, function($1) { return "-" + $1.toLowerCase(); });
 
                             return '\r\n\t\t<tb-cell-template column-name="' + el.Name + '">' +
                                 (scope.uiOptions.Mode == 'Inline' ?
                                     '<' + editorTag + ' is-editing="row.$isEditing" value="row.' + el.Name + '"></' + editorTag + '>' :
                                     '\r\n\t\t\t' + el.Template) +
-                                 '\r\n\t\t</tb-cell-template>';
+                                '\r\n\t\t</tb-cell-template>';
                         }).join('') +
                         '\r\n\t</tb-row-template>' +
                         '\r\n\t</tb-row-set>' +
@@ -185,13 +114,7 @@
                     return '<h1>Autogenerated Form</h1>' +
                         '\r\n<tb-form server-url="' + scope.dataUrl + '" server-save-url="' + scope.dataUrl + '"' +
                         (scope.isOData ? ' service-name="odata"' : '') + '>' +
-                        scope.columns.map(function(el) {
-                            var editorTag = el.EditorType.replace(/([A-Z])/g, function($1) { return "-" + $1.toLowerCase(); });
-                            return '\r\n\t<' + editorTag + ' name="' + el.Name + '" label="' + el.Label + '" editor-type="' + el.DataType + '" ' +
-                                '\r\n\t\tshow-label="' + el.ShowLabel + '" placeholder="' + el.Placeholder + '" required="' + el.Required + '" ' +
-                                '\r\n\t\tread-only="' + el.ReadOnly + '" format="' + el.Format + '" help="' + el.Help + '">' +
-                                '\r\n\t</' + editorTag + '>';
-                        }).join('') +
+                        tubularTemplateService.generateFields(scope.columns) +
                         '\r\n<button class="btn btn-primary" ng-click="$parent.save()" ng-disabled="!$parent.model.$valid()">Save</button>' +
                         '\r\n<a class="btn btn-danger" href="/">Cancel</button>' +
                         '\r\n</tb-form>';

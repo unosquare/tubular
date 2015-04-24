@@ -122,14 +122,20 @@
                     <input type="text" ng-model="formOptions.SaveUrl" class="form-control" />
                 </div>
                 <div class="col-xs-4">
-                    <label>Save Method</label>
-                    <input type="text" ng-model="formOptions.SaveMethod" class="form-control" />
+                    <label>Save Http Method</label>
+                    <select ng-model="formOptions.SaveMethod" class="form-control" ng-options="option for option in httpMethods"></select>
                 </div>
             </div>
+            <hr />
             <div class="pull-right">
-                <button class="btn btn-primary btn-lg" ng-click="runFormTemplate()">
-                    <i class="fa fa-gear"></i>&nbsp;Continue
-                </button>
+                <div class="btn-group">
+                    <button class="btn btn-danger btn-lg" ng-click="revert()">
+                        <i class="fa fa-trash"></i>&nbsp;Return
+                    </button>
+                    <button class="btn btn-primary btn-lg" ng-click="runFormTemplate()">
+                        <i class="fa fa-gear"></i>&nbsp;Continue
+                    </button>
+                </div>
             </div>
             <div class="clearfix"></div>
             <br />

@@ -98,6 +98,7 @@
             $scope.editorTypes = ['tbSimpleEditor', 'tbNumericEditor', 'tbDateTimeEditor', 'tbDateEditor',
                 'tbDropdownEditor', 'tbTypeaheadEditor', 'tbHiddenField', 'tbCheckboxField', 'tbTextArea'];
             $scope.gridMode = ['Read-Only', 'Inline', 'Popup'];
+            $scope.httpMethods = ['POST', 'PUT'];
 
             $scope.templatename = '';
             $scope.basemodel = '';

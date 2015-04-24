@@ -139,10 +139,16 @@
                     <select ng-model="uiOptions.Mode" class="form-control" ng-options="option for option in gridMode"></select>
                 </div>
             </div>
+            <hr />
             <div class="pull-right">
-                <button class="btn btn-primary btn-lg" ng-click="runGridTemplate()">
-                    <i class="fa fa-gear"></i>&nbsp;Continue
-                </button>
+                <div class="btn-group">
+                    <button class="btn btn-danger btn-lg" ng-click="revert()">
+                        <i class="fa fa-trash"></i>&nbsp;Return
+                    </button>
+                    <button class="btn btn-primary btn-lg" ng-click="runGridTemplate()">
+                        <i class="fa fa-gear"></i>&nbsp;Continue
+                    </button>
+                </div>
             </div>
             <div class="clearfix"></div>
             <br />
