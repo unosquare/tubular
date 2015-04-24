@@ -43,13 +43,13 @@
                             </tb-column-header>
                         </tb-column>
                     </tb-column-definitions>
-                    <tb-row-set ng-repeat="(key, group) in $parent.$component.rows | groupBy: $parent.$component.groupBy">
-			<tb-row-template>
-			<tb-row-group-header group="group" class="info">
-				{{key}}
-			</tb-row-group-header>
-			</tb-row-template>
-                        <tb-row-template ng-repeat="row in group"
+                    <tb-row-set ng-repeat="(groupKey, rowGroup) in $parent.$component.rows | groupBy: $parent.$component.groupBy">
+			            <tb-row-template>
+                            <tb-row-group-header group="rowGroup" class="info">
+                                {{groupKey}}
+                            </tb-row-group-header>
+			            </tb-row-template>
+                        <tb-row-template ng-repeat="row in rowGroup"
                                          row-model="row" selectable="false">
                             <tb-cell-template column-name="OrderID">
                                 {{row.OrderID}}

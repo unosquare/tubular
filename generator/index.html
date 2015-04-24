@@ -15,7 +15,7 @@
         <link rel="stylesheet" href="//cdn.jsdelivr.net/fontawesome/4.3.0/css/font-awesome.min.css" />
         <link href="//maxcdn.bootstrapcdn.com/bootswatch/3.3.4/lumen/bootstrap.min.css" rel="stylesheet">
     
-        <link rel="stylesheet" href="//cdn.jsdelivr.net/tubular/0.9.4/tubular-bundle.min.css" />
+        <link rel="stylesheet" href="//cdn.jsdelivr.net/tubular/0.9.5/tubular-bundle.min.css" />
 
         <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!--[if lt IE 9]>
@@ -28,13 +28,15 @@
         <script src="//cdnjs.cloudflare.com/ajax/libs/angular-local-storage/0.1.5/angular-local-storage.min.js"></script>
     
         <!-- Angular Application files -->
-        <script src="//cdn.jsdelivr.net/tubular/0.9.4/tubular-bundle.min.js"></script>
+        <script src="//cdn.jsdelivr.net/tubular/0.9.5/tubular-bundle.min.js"></script>
         <script src="app.js"></script>
     </head>
 
     <body ng-cloak>
         <div class="container">
-            <div class="alert alert-danger"><b>Remember</b> to change <i>server-url</i> attribute to your REST service.</div>
+            <div class="alert alert-danger">
+                <b>Remember</b> to change <i>server-url</i> attribute to your REST service if your are using a local JSON.
+            </div>
 
             <ng-view></ng-view>
         </div>

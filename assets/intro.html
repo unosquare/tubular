@@ -1,17 +1,17 @@
-<div class="container" ng-controller="tubularSampleCtrl">
-    <div class="jumbotron" id="intro">
-        <h1>Tubular<small>a brief tutorial</small></h1>
-        <p>
-            Welcome to Tubular, our Grid has multiples features that you can discover in the next tutorial.
-        </p>
-    </div>
-    <div class="sample-content">
+<div class="jumbotron">
+    <div class="container">
+        <h1>Tubular</h1>
         <p>
             A set of <a href="https://angularjs.org/" target="_blank">AngularJS</a> directives and C# classes designed to rapidly build modern web applications.
-            Tubular features a fully templateable grid with lots of features such as server-side pagination, multi-column sorting and filtering, built-in export to CSV, and in-line editing of rows via templates.
+            Tubular features a fully templateable grid with lots of features such as server-side pagination, multi-column sorting and filtering,
+            built-in export to CSV, and in-line editing of rows via templates.
         </p>
-
-        <h1>Features</h1>
+    </div>
+</div>
+<div class="container" ng-controller="tubularSampleCtrl">
+    <div class="row">
+        <div class="col-md-9">
+        <h1 id="features">Features</h1>
         
         <p>Tubular provides a set of directives and services using AngularJS as framework, the main component is a grid with multiple options:</p>
         
@@ -26,21 +26,25 @@
             </li>
         </ul>
         <hr />
-        <h1>NuGet Installation</h1>
+        <h1 id="nuget">NuGet Installation</h1>
 
         <h3>Package containing only the client-side stuff</h3>
 
-        <pre>
-PM> Install-Package Tubular
-</pre>
+        <pre>PM> Install-Package Tubular</pre>
 
         <h3>Package containing the server-side stuff (which also installs the client-side stuff)</h3>
 
-        <pre>
-PM> Install-Package Tubular.ServerSide
-</pre>
+            <pre>PM> Install-Package Tubular.ServerSide</pre>
+
         <hr />
-        <h1>Requirements <small>or a lot of CDN items</small></h1>
+        <h1 id="bower">Bower Installation</h1>
+        
+        <pre># install Tubular package and add it to bower.json
+$ bower install tubular --save
+</pre>
+
+        <hr />
+        <h1 id="requirements">Requirements <small>or a lot of CDN items</small></h1>
 
         <p>
             You need to add some JS libraries to your webapp before to use Tubular. You can opt for adde them
@@ -49,7 +53,7 @@ PM> Install-Package Tubular.ServerSide
         <ul>
             <li><a href="http://jquery.com/">jQuery</a></li>
             <li><a href="http://getbootstrap.com/">Twitter Bootstrap</a></li>
-            <li><a href="https://angularjs.org/">AngularJS (including Route, Cookies and if you want Animate)</a></li>
+            <li><a href="https://angularjs.org/">AngularJS (including Route, Cookies, and optionally, Animate)</a></li>
             <li><a href="https://angular-ui.github.io/bootstrap/">AngularJS UI Bootstrap</a></li>
             <li><a href="https://github.com/grevory/angular-local-storage">AngularJS Local Storage</a></li>
             <li><a href="http://fortawesome.github.io/Font-Awesome/">Font Awesome</a></li>
@@ -58,7 +62,7 @@ PM> Install-Package Tubular.ServerSide
 
         <p>You can get them all using the next lines in your initial HTML page. <a href="http://www.jsdelivr.com/">jsDelivr</a> has almost everything you need.</p>
 
-<div hljs>
+        <div hljs>
 <link rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap/3.3.4/css/bootstrap.min.css" />
 <link rel="stylesheet" href="//cdn.jsdelivr.net/fontawesome/4.3.0/css/font-awesome.min.css" />
 
@@ -67,17 +71,14 @@ PM> Install-Package Tubular.ServerSide
 
         <p>Include your Tubular copy directly in your project or you can use the same CDN to retrieve Tubular CSS and JS files.</p>
 
-<div hljs>
-<link rel="stylesheet" href="//cdn.jsdelivr.net/tubular/latest/tubular-bundle.min.css" />
+        <div hljs><link rel="stylesheet" href="//cdn.jsdelivr.net/tubular/latest/tubular-bundle.min.css" />
 <script src="//cdn.jsdelivr.net/tubular/latest/tubular-bundle.min.js"></script></div>
 
-        <p>Tubular is available in <a href="http://bower.io/">bower</a> as <b>tubular</b>.</p>
+        <p>Finally update your modules to include Tubular, for example if your module is called <i>app</i>.</p>
 
-        <p>Finally update your modules to include Tubular, for example if your module is app.</p>
-
-        <div hljs>angular.module('app', ['ngRoute','ngAnimate','ngCookies','tubular.models','tubular.services','tubular.directives']);</div>
-        <hr />
-        <h1>Start coding <small>or check some samples</small></h1>
+        <div hljs>angular.module('app', ['ngRoute','ngCookies','tubular.directives']);</div>
+        
+        <h1 id="code">Start coding <small>or check some samples</small></h1>
 
         <p>
             Browse to the <a href="/tubular/#Basic">Samples</a> and discover all the features in Tubular. If you feel lucky, you can go
@@ -85,9 +86,9 @@ PM> Install-Package Tubular.ServerSide
             REST service or maybe just play a little bit.
         </p>
         
-        <p>In the next snippet you can see how easy is to understand Tubular grid markup.</p>
-<div hljs>
-<div class="container" ng-controller="YourController">
+        <p>In the next snippet you can see how easy is to understand Tubular grid markup. You don't need to add anything else to your controller!</p>
+        <div hljs>
+<div class="container">
     <tb-grid server-url="/data/customers.json" page-size="20" class="row">
         <div class="col-md-12">
             <div class="panel panel-default panel-rounded">
@@ -119,12 +120,23 @@ PM> Install-Package Tubular.ServerSide
         </div>
     </tb-grid>
 </div>
-</div>
-    <hr />
+        </div>
+        <hr />
     
-    <h1>Tubular .NET Models</h1>
+        <h1 id="net">Tubular .NET Models</h1>
 
-    <p>Tubular uses a special model to represent requests and expects a specific JSON payload. More details to come.</p>
+        <p>Tubular uses a special model to represent requests and expects a specific JSON payload. More details to come.</p>
     </div>
-
-</div>
+        <div class="col-md-3">
+            <div data-spy="affix" data-offset-top="60" data-offset-bottom="200">
+                <div class="list-group">
+                    <a ng-click="scrollTo('features')" class="list-group-item">Features</a>
+                    <a ng-click="scrollTo('nuget')" class="list-group-item">NuGet Installation</a>
+                    <a ng-click="scrollTo('bower')" class="list-group-item">Bower Installation</a>
+                    <a ng-click="scrollTo('requirements')" class="list-group-item">Requirements</a>
+                    <a ng-click="scrollTo('code')" class="list-group-item">Start Coding</a>
+                    <a ng-click="scrollTo('net')" class="list-group-item">.NET Models</a>
+                </div>
+            </div>
+        </div>
+</div></div>

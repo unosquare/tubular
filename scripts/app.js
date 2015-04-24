@@ -23,7 +23,7 @@
             }
         ]);
 
-    angular.module('app.controllers', ['tubular.services', 'LocalStorageModule'])
+    angular.module('app.controllers', ['tubular.services', 'LocalStorageModule', 'app.generator'])
         .controller('tubularSampleCtrl', [
             '$scope', '$location', '$anchorScroll', '$templateCache', 'tubularOData',
             function($scope, $location, $anchorScroll, $templateCache, tubularOData) {
@@ -191,13 +191,17 @@
                 $scope.step--;
             };
 
+            $scope.cleanPlunker = function(filename) {
+                $scope.clearViews();
+                $scope.plunker(filename);
+            }
+
             $scope.plunker = function(filename) {
                 $http.get('generator/index.html').
                     success(function(data) {
+                        var appJs = "angular.module('app', ['ngRoute','ngCookies','tubular.directives']).config(['$routeProvider', function($routeProvider) {$routeProvider.when('/', {templateUrl: 'grid.html',}).otherwise({redirectTo: '/'}); } ]);";
                         var files = [
-                            { name: 'index.html', content: data },
-                            // TODO: Generate route for all
-                            { name: 'app.js', content: "angular.module('app', ['ngRoute','ngAnimate','ngCookies','tubular.models','tubular.services','tubular.directives']).config(['$routeProvider', function($routeProvider) {$routeProvider.when('/', {templateUrl: 'grid.html',}).otherwise({redirectTo: '/'}); } ]);" },
+                            { name: 'index.html', content: data }
                         ];
 
                         if ($scope.views.length == 0) {
@@ -213,10 +217,18 @@
                             for (var prop in $scope.views) {
                                 var view = $scope.views[prop];
                                 files.push(view);
+
+                                if (view.indexOf('.html') > 0) {
+                                    appJs = appJs.replace(/grid.html/g, view);
+                                }
                             }
                         }
-                    tubularGenerator.exportPluker(files);
-                });
+
+                        // TODO: Generate route for all
+                        files.push({ name: 'app.js', content: appJs });
+
+                        tubularGenerator.exportPluker(files);
+                    });
             };
 
             $scope.save = function(filename) {
@@ -253,14 +265,8 @@
     ]);
 
     angular.module('app', [
-        'ngRoute',
-        'ngAnimate',
-        'ngCookies',
         'hljs',
-        'tubular.models',
-        'tubular.services',
         'tubular.directives',
-        'app.generator',
         'app.routes',
         'app.controllers'
     ]);
