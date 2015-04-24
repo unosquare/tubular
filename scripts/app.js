@@ -25,9 +25,8 @@
 
     angular.module('app.controllers', ['tubular.services', 'LocalStorageModule', 'app.generator'])
         .controller('tubularSampleCtrl', [
-            '$scope', '$location', '$anchorScroll', '$templateCache', 'tubularOData',
-            function($scope, $location, $anchorScroll, $templateCache, tubularOData) {
-                $scope.odata = tubularOData;
+            '$scope', '$location', '$anchorScroll', '$templateCache', '$http', 'tubularGenerator',
+            function ($scope, $location, $anchorScroll, $templateCache, $http, tubularGenerator) {
                 $scope.source = [];
                 $scope.tutorial = [
                     {
@@ -89,6 +88,18 @@
                     $location.hash(id);
                     $anchorScroll();
                 };
+
+                $scope.openCode = function(tag) {
+                    $http.get('generator/index.html').
+                        success(function(data) {
+                            tubularGenerator.exportPluker([
+                                { name: 'index.html', content: data },
+                                { name: 'README.md', content: tubularGenerator.DefaultReadme },
+                                { name: 'app.js', content: tubularGenerator.DefaultJs },
+                                { name: 'grid.html', content: $templateCache.get('assets/' + tag + '.html')[1] }
+                            ]);
+                        });
+                }
             }
         ]).controller('tubularGeneratorCtrl', [
             '$scope', '$http', '$templateCache', 'tubularGenerator', 'localStorageService',
@@ -199,10 +210,10 @@
             $scope.plunker = function(filename) {
                 $http.get('generator/index.html').
                     success(function(data) {
-                        var appJs = "angular.module('app', ['ngRoute','ngCookies','tubular.directives']).config(['$routeProvider', function($routeProvider) {$routeProvider.when('/', {templateUrl: 'grid.html',}).otherwise({redirectTo: '/'}); } ]);";
+                        var appJs = tubularGenerator.DefaultJs;
                         var files = [
                             { name: 'index.html', content: data },
-                            { name: 'README.md', content: '#Tubular WebApp\r\nYou can add your content now. Create more views @ [Tubular](http://unosquare.github.io/tubular)' }
+                            { name: 'README.md', content: tubularGenerator.DefaultReadme }
                         ];
 
                         if ($scope.views.length == 0) {

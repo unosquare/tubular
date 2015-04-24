@@ -7,12 +7,12 @@
             '$document', function($document) {
                 return function(url, newWindow, fields) {
                     /**
-                 * If the form posts to target="_blank", pop-up blockers can cause it not to work.
-                 * If a user choses to bypass pop-up blocker one time and click the link, they will arrive at
-                 * a new default plnkr, not a plnkr with the desired template.  Given this undesired behavior,
-                 * some may still want to open the plnk in a new window by opting-in via ctrl+click.  The
-                 * newWindow param allows for this possibility.
-                 */
+                     * If the form posts to target="_blank", pop-up blockers can cause it not to work.
+                     * If a user choses to bypass pop-up blocker one time and click the link, they will arrive at
+                     * a new default plnkr, not a plnkr with the desired template.  Given this undesired behavior,
+                     * some may still want to open the plnk in a new window by opting-in via ctrl+click.  The
+                     */
+
                     var target = newWindow ? '_blank' : '_self';
                     var form = angular.element('<form style="display: none;" method="post" action="' + url + '" target="' + target + '"></form>');
                     angular.forEach(fields, function(value, name) {
@@ -28,6 +28,9 @@
         ]).service('tubularGenerator', [
             'tubularTemplateService', 'formPostData', function tubularGenerator(tubularTemplateService, formPostData) {
                 var me = this;
+
+                me.DefaultJs = "angular.module('app', ['ngRoute','ngCookies','tubular.directives']).config(['$routeProvider', function($routeProvider) {$routeProvider.when('/', {templateUrl: 'grid.html',}).otherwise({redirectTo: '/'}); } ]);";
+                me.DefaultReadme = '#Tubular WebApp\r\nYou can add your content now. Create more views @ [Tubular](http://unosquare.github.io/tubular)';
 
                 me.createColumns = function(model, scope) {
                     scope.columns = tubularTemplateService.createColumns(model);
@@ -116,7 +119,7 @@
                         (scope.isOData ? ' service-name="odata"' : '') + '>' +
                         tubularTemplateService.generateFields(scope.columns) +
                         '\r\n<button class="btn btn-primary" ng-click="$parent.save()" ng-disabled="!$parent.model.$valid()">Save</button>' +
-                        '\r\n<a class="btn btn-danger" href="/">Cancel</button>' +
+                        '\r\n<button class="btn btn-danger" ng-click="$parent.cancel()" formnovalidate>Cancel</button>' +
                         '\r\n</tb-form>';
                 };
 

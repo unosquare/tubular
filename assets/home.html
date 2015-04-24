@@ -22,6 +22,9 @@
                 <button class="btn btn-primary btn-block" ng-click="toggleCode(t.key)" ng-show="source[t.key]">
                     <i class="fa fa-table"></i>&nbsp;Show Sample
                 </button>
+                <button class="btn btn-default btn-block" ng-click="openCode(t.key)">
+                    <i class="fa fa-pencil"></i>&nbsp;Export to Plunker
+                </button>
                 <a ng-click="scrollTo(t.next)" ng-show="t.next" class="btn btn-success btn-block">
                     <i class="fa fa-star"></i>&nbsp;Next Sample
                 </a>
