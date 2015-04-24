@@ -1,7 +1,7 @@
 ﻿(function() {
     'use strict';
 
-    angular.module('tubular.services', ['ui.bootstrap'])
+    angular.module('tubular.services', ['ui.bootstrap', 'ngCookies'])
         .service('tubularPopupService', [
             '$modal', '$rootScope', function tubularPopupService($modal, $rootScope) {
                 var me = this;

@@ -58,7 +58,7 @@
                                 $scope.gridDataService = tubularOData;
                             }
 
-                            $scope.$watch('columns', function(val) {
+                            $scope.$watch('columns', function() {
                                 if ($scope.hasColumnsDefinitions === false || $scope.canSaveState === false)
                                     return;
 
@@ -82,8 +82,6 @@
                                 if (angular.isDefined(template)) {
                                     if (angular.isDefined(popup) && popup) {
                                         tubularPopupService.openDialog(template, $scope.tempRow);
-                                    } else {
-                                        // TODO: Open?
                                     }
                                 }
                             };
@@ -537,10 +535,10 @@
                                     $(icon).removeClass(tubularConst.downCssClass);
 
                                     var cssClass = "";
-                                    if (scope.$parent.column.SortDirection == 'Ascending')
+                                    if (scope.$parent.column.SortDirection === 'Ascending')
                                         cssClass = tubularConst.upCssClass;
 
-                                    if (scope.$parent.column.SortDirection == 'Descending')
+                                    if (scope.$parent.column.SortDirection === 'Descending')
                                         cssClass = tubularConst.downCssClass;
 
                                     $(icon).addClass(cssClass);

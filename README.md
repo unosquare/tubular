@@ -1,3 +1,4 @@
+
 # Tubular
 
 A set of <a href="https://angularjs.org/" target="_blank">AngularJS</a> directives and C# classes designed to rapidly build modern web applications.  Tubular features a fully templateable grid with lots of features such as server-side pagination, multi-column sorting and filtering, built-in export to CSV (client-side), and in-line editing of rows via templates.
@@ -5,6 +6,8 @@ A set of <a href="https://angularjs.org/" target="_blank">AngularJS</a> directiv
 Please visit first our <a href="http://unosquare.github.io/tubular" target="_blank">Tubular Website</a> to know about the project and start coding directly with the Tubular Generator.
 
 ## NuGet Installation
+
+[![NuGet version](https://badge.fury.io/nu/tubular.svg)](http://badge.fury.io/nu/tubular)
 
 ### Package containing only the client-side stuff
 
@@ -18,17 +21,24 @@ PM> Install-Package Tubular
 PM> Install-Package Tubular.ServerSide
 </pre>
 
+## Bower Installation
+
+<pre>
+# install Tubular package and add it to bower.json
+$ bower install tubular --save
+</pre>
+
 ## Dependencies
 
 You will need to reference the following JS libraries in order to use Tubular in your HTML:
 
-* jQuery
-* Twitter Bootstrap
-* AngularJS (including Route, Cookies, and optionally, Animate)
-* AngularJS UI Bootstrap
-* AngularJS Local Storage
-* Font Awesome
-* FileSaver.js and Blob.js
+* [jQuery](http://jquery.com/)
+* [Twitter Bootstrap](http://getbootstrap.com/)
+* [AngularJS (including Route, Cookies, and optionally, Animate)](https://angularjs.org/)
+* [AngularJS UI Bootstrap](https://angular-ui.github.io/bootstrap/)
+* [AngularJS Local Storage](https://github.com/grevory/angular-local-storage)
+* [Font Awesome](http://fortawesome.github.io/Font-Awesome/)
+* [FileSaver.js and Blob.js](https://github.com/eligrey/FileSaver.js)
 
 Also, if you use the Visual Studio you will need the excellent <a href="http://vswebessentials.com/download" target="_blank">Web Essentials</a> plug-in in order to generate the Tubular bundles.
 
@@ -51,20 +61,20 @@ Then you need to grab your own Tubular copy or you can use the same CDN to retri
 <script src="//cdn.jsdelivr.net/tubular/latest/tubular-bundle.min.js"></script>
 ```
 
-Finally update your modules to include Tubular, for example if your module is app.
+Finally update your modules to include Tubular, for example if your module is called <i>app</i>.
 
 ```javascript
-angular.module('app', ['ngRoute','ngAnimate','ngCookies','tubular.models','tubular.services','tubular.directives']);
+angular.module('app', ['ngRoute','ngCookies','tubular.directives']);
 ```
 
 ## Samples
 
 You can check out the <a href="http://unosquare.github.io/tubular" target="_blank">Tubular GitHub Pages</a> to get a few examples. We still need to work on more samples and better documentation, but we feel what we have now will get you up to speed for now.
 
-The following HTML represents a basic grid. You don't need to add anything else to your controller! Everything is templated
+The following HTML represents a basic grid. You don't need to add anything else to your controller! Everything you need is to create your markup.
 
 ```html
- <div class="container" ng-controller="YourController">
+ <div class="container">
         <tb-grid server-url="/data/customers.json" page-size="20" class="row">
             <div class="col-md-12">
                 <div class="panel panel-default panel-rounded">

@@ -329,7 +329,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 $scope.gridDataService = tubularOData;
                             }
 
-                            $scope.$watch('columns', function(val) {
+                            $scope.$watch('columns', function() {
                                 if ($scope.hasColumnsDefinitions === false || $scope.canSaveState === false)
                                     return;
 
@@ -353,8 +353,6 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 if (angular.isDefined(template)) {
                                     if (angular.isDefined(popup) && popup) {
                                         tubularPopupService.openDialog(template, $scope.tempRow);
-                                    } else {
-                                        // TODO: Open?
                                     }
                                 }
                             };
@@ -808,10 +806,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     $(icon).removeClass(tubularConst.downCssClass);
 
                                     var cssClass = "";
-                                    if (scope.$parent.column.SortDirection == 'Ascending')
+                                    if (scope.$parent.column.SortDirection === 'Ascending')
                                         cssClass = tubularConst.upCssClass;
 
-                                    if (scope.$parent.column.SortDirection == 'Descending')
+                                    if (scope.$parent.column.SortDirection === 'Descending')
                                         cssClass = tubularConst.downCssClass;
 
                                     $(icon).addClass(cssClass);
@@ -2291,7 +2289,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 (function() {
     'use strict';
 
-    angular.module('tubular.services', ['ui.bootstrap'])
+    angular.module('tubular.services', ['ui.bootstrap', 'ngCookies'])
         .service('tubularPopupService', [
             '$modal', '$rootScope', function tubularPopupService($modal, $rootScope) {
                 var me = this;
