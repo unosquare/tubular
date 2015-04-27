@@ -52,11 +52,39 @@ footer {
 .jumbotron {
     background-image: url('background.png');
 }
-.navbar-nav>li>a, a.navbar-brand {
+.navbar-nav>li>a {
     color: white;
     border-bottom: 2px solid #333;
+    padding-bottom: 4px;
+    margin-bottom: 8px;
 }
-.navbar-nav>li>a:hover, a:hover.navbar-brand {
+.navbar-nav>li>a:hover, .navbar-nav>li>a:focus {
     background-color: #333;
     border-bottom: 2px solid #44c5db;
 }
+a.navbar-brand {
+    color: white;
+}
+a.navbar-brand:hover, a.navbar-brand:focus  {
+    color: #44c5db
+}
+.pop {
+    width: 70px;
+    height: 70px;
+    padding-top: 15px;
+    position: absolute;
+    top: -35px;
+    left: -30px;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    background-color: #44c5db;
+    color: #fff;
+    line-height: 20px;
+    text-align: center;
+    font-weight: bolder;
+}
+    .pop span {
+        display: block;
+        font-size: 26px;
+        font-weight: bold;
+    }

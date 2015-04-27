@@ -4,7 +4,7 @@
             <h1>Tubular Form Generator</h1>
             <div ng-hide="step != 1">
                 <p ng-show="views.length == 0">
-                    First you need to paste and sample model, it could be any <b>JSON</b> or even you can use a <b>OData URI</b>.
+                    First you need to paste and sample model, it could be any <b>JSON</b> or even you can use a <b>OData URL</b>.
                     If you only want to play a little bit, give a try <a href="http://www.json-generator.com/">Json Generator</a>.
                 </p>
                 <p ng-show="views.length > 0">
@@ -63,126 +63,141 @@
         </div>
     </div>
 
-<div class="container">
-    <div class="pull-right" ng-show="views.length > 0">
-        <button class="btn btn-success" ng-click="plunker()">
-            <i class="fa fa-pencil"></i>&nbsp;Export All to Plunker
-        </button>
-        <button class="btn btn-danger" ng-click="clearViews()">
-            <i class="fa fa-trash"></i>&nbsp;Clear Project
-        </button>
-    </div>
-
-    <div class="row" ng-hide="step != 1">
-        <div class="col-xs-12">
-            <textarea ng-model="basemodel" class="form-control" rows="10" placeholder="Paste here a JSON model or an OData URI"></textarea>
-            <hr />
+    <div class="container">
+        <div class="pull-right" ng-show="views.length > 0">
+            <button class="btn btn-success" ng-click="plunker()">
+                <i class="fa fa-pencil"></i>&nbsp;Export All to Plunker
+            </button>
+            <button class="btn btn-danger" ng-click="clearViews()">
+                <i class="fa fa-trash"></i>&nbsp;Clear Project
+            </button>
         </div>
-    </div>
 
-    <div class="row" ng-hide="step != 2">
-        <div class="col-xs-12">
-            <table class="table table-striped table-bordered table-condensed">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Editor Type</th>
-                        <th>Label</th>
-                        <th>Show Label</th>
-                        <th>Placeholder</th>
-                        <th>Required?</th>
-                        <th>Read-Only?</th>
-                        <th>
-                            Format
-                            &nbsp;<i class="fa fa-question-circle" data-toggle="tooltip" title="Only for Numeric or Date fields"></i>
-                        </th>
-                        <th>
-                            Help
-                            &nbsp;<i class="fa fa-question-circle" data-toggle="tooltip" title="Show little help text after field"></i>
-                        </th>
-                        <th>&nbsp;</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr ng-repeat="row in columns">
-                        <td>{{row.Name}}</td>
-                        <td><select ng-options="dataType for dataType in editorTypes" class="form-control" ng-model="row.EditorType" /></td>
-                        <td><input type="text" class="form-control" ng-model="row.Label" /></td>
-                        <td class="text-center"><input type="checkbox" ng-model="row.ShowLabel" /></td>
-                        <td><input type="text" class="form-control" ng-model="row.Placeholder" /></td>
-                        <td class="text-center"><input type="checkbox" ng-model="row.Required" /></td>
-                        <td class="text-center"><input type="checkbox" ng-model="row.ReadOnly" /></td>
-                        <td>
-                            <input type="text" class="form-control" ng-model="row.Format"
-                                   ng-disabled="row.EditorType == 'tbSimpleEditor' || row.EditorType == 'tbDropdownEditor' || row.EditorType == 'tbCheckboxField'" />
-                        </td>
-                        <td><input type="text" class="form-control" ng-model="row.Help" /></td>
-                        <td>
-                            <button class="btn btn-danger btn-xs" ng-click="removeColumn(row)">Remove</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <hr />
-            <div class="row">
-                <h4>UI Options</h4>
-                <p>Please select which additional UI elements wants to show in your view.</p>
-                <div class="col-xs-4">
-                    <div class="checkbox">
-                        <label>
-                            <input type="checkbox" ng-model="formOptions.SaveButton"> Show Save Button?
-                        </label>
+        <div class="row" ng-hide="step != 1">
+            <div class="col-xs-12">
+                <textarea ng-model="basemodel" class="form-control" rows="10" placeholder="Paste here a JSON model or an OData URL"></textarea>
+                <hr />
+            </div>
+        </div>
+
+        <div class="row" ng-hide="step != 2">
+            <div class="col-xs-12">
+                <table class="table table-striped table-bordered table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Editor Type</th>
+                            <th>Label</th>
+                            <th>Show Label</th>
+                            <th>Placeholder</th>
+                            <th>Required?</th>
+                            <th>Read-Only?</th>
+                            <th>
+                                Format
+                                &nbsp;<i class="fa fa-question-circle" data-toggle="tooltip" title="Only for Numeric or Date fields"></i>
+                            </th>
+                            <th>
+                                Help
+                                &nbsp;<i class="fa fa-question-circle" data-toggle="tooltip" title="Show little help text after field"></i>
+                            </th>
+                            <th>&nbsp;</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="row in columns">
+                            <td>{{row.Name}}</td>
+                            <td><select ng-options="dataType for dataType in editorTypes" class="form-control" ng-model="row.EditorType" /></td>
+                            <td><input type="text" class="form-control" ng-model="row.Label" /></td>
+                            <td class="text-center"><input type="checkbox" ng-model="row.ShowLabel" /></td>
+                            <td><input type="text" class="form-control" ng-model="row.Placeholder" /></td>
+                            <td class="text-center"><input type="checkbox" ng-model="row.Required" /></td>
+                            <td class="text-center"><input type="checkbox" ng-model="row.ReadOnly" /></td>
+                            <td>
+                                <input type="text" class="form-control" ng-model="row.Format"
+                                       ng-disabled="row.EditorType == 'tbSimpleEditor' || row.EditorType == 'tbDropdownEditor' || row.EditorType == 'tbCheckboxField'" />
+                            </td>
+                            <td><input type="text" class="form-control" ng-model="row.Help" /></td>
+                            <td>
+                                <button class="btn btn-danger btn-xs" ng-click="removeColumn(row)">Remove</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <hr />
+                <div class="row">
+                    <h4>UI Options</h4>
+                    <p>Please select which additional UI elements wants to show in your view.</p>
+                    <div class="col-xs-4">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" ng-model="formOptions.SaveButton"> Show Save Button?
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-xs-4">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" ng-model="formOptions.CancelButton"> Show Cancel Button?
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-xs-4">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" ng-model="formOptions.IsNew"> Is New Record?
+                            </label>
+                        </div>
                     </div>
                 </div>
-                <div class="col-xs-4">
-                    <div class="checkbox">
-                        <label>
-                            <input type="checkbox" ng-model="formOptions.CancelButton"> Show Cancel Button?
-                        </label>
+                <div class="row">
+                    <h4>Server Options</h4>
+                    <p>Configure the server URL.</p>
+                    <div class="col-xs-4">
+                        <label>Save Url</label>
+                        <input type="text" ng-model="formOptions.SaveUrl" class="form-control" />
+                    </div>
+                    <div class="col-xs-4">
+                        <label>Save Http Method</label>
+                        <select ng-model="formOptions.SaveMethod" class="form-control"
+                                ng-options="option for option in httpMethods"></select>
                     </div>
                 </div>
-                <div class="col-xs-4">
-                    <div class="checkbox">
-                        <label>
-                            <input type="checkbox" ng-model="formOptions.IsNew"> Is New Record?
-                        </label>
+                <hr />
+            </div>
+        </div>
+
+        <div class="row" ng-hide="step != 3">
+            <div class="col-md-12">
+                <div role="tabpanel" id="samplePreview">
+                    <ul class="nav nav-pills" role="tablist">
+                        <li role="presentation" class="active"><a href="#preview" aria-controls="preview" role="tab" data-toggle="tab">Preview</a></li>
+                        <li role="presentation"><a href="#code" aria-controls="code" role="tab" data-toggle="tab">Code</a></li>
+                    </ul>
+                    <hr />
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="preview">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">HTML Preview</div>
+                                <div class="panel-body">
+                                    <div ng-include="templatename"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="code">
+                            <div hljs source="gridmodel"></div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <h4>Server Options</h4>
-                <p>Configure the server URL.</p>
-                <div class="col-xs-4">
-                    <label>Save Url</label>
-                    <input type="text" ng-model="formOptions.SaveUrl" class="form-control" />
-                </div>
-                <div class="col-xs-4">
-                    <label>Save Http Method</label>
-                    <select ng-model="formOptions.SaveMethod" class="form-control"
-                            ng-options="option for option in httpMethods"></select>
-                </div>
-            </div>
-            <hr />
         </div>
     </div>
-
-    <div class="row" ng-hide="step != 3">
-        <div class="col-md-12">
-            <div ng-include="templatename"></div>
-        </div>
-    </div>
-
-    <div class="row" ng-hide="step != 3">
-        <div class="col-xs-12">
-            <hr />
-            <div hljs source="gridmodel"></div>
-            <hr />
-        </div>
-    </div>
-</div>
 </div>
 <script>
     $(function () {
         $('[data-toggle="tooltip"]').tooltip();
+        $('#samplePreview ul.nav a').click(function(e) {
+            e.preventDefault();
+            $(this).tab('show');
+        });
     });
 </script>
