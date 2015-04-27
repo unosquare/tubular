@@ -3,7 +3,7 @@
 
     angular.module('tubular.services', ['ui.bootstrap', 'ngCookies'])
         .service('tubularPopupService', [
-            '$modal', '$rootScope', function tubularPopupService($modal, $rootScope) {
+            '$modal', '$rootScope', 'tubularTemplateService', function tubularPopupService($modal, $rootScope, tubularTemplateService) {
                 var me = this;
 
                 me.onSuccessForm = function(callback) {
@@ -14,7 +14,10 @@
                     $rootScope.$on('tbForm_OnConnectionError', callback);
                 };
 
-                me.openDialog = function(template, model) {
+                me.openDialog = function (template, model) {
+                    if (angular.isUndefined(template))
+                        template = tubularTemplateService.generatePopup(model);
+
                     var dialog = $modal.open({
                         templateUrl: template,
                         backdropClass: 'fullHeight',

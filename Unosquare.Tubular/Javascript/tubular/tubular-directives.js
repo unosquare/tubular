@@ -22,10 +22,9 @@
                         editorMode: '@?',
                     },
                     controller: [
-                        '$scope', 'localStorageService', 'tubularPopupService', 'tubularModel', 'tubularHttp', 'tubularOData', 'tubularTemplateService',
-                function ($scope, localStorageService, tubularPopupService, TubularModel, tubularHttp, tubularOData, tubularTemplateService) {
-                            // TODO: Add $routeParams to apply filters from URL
-
+                        '$scope', 'localStorageService', 'tubularPopupService', 'tubularModel', 'tubularHttp', 'tubularOData','$routeParams',
+                function ($scope, localStorageService, tubularPopupService, TubularModel, tubularHttp, tubularOData, $routeParams) {
+                           
                             $scope.tubularDirective = 'tubular-grid';
                             $scope.columns = [];
                             $scope.rows = [];
@@ -40,9 +39,10 @@
                             $scope.serverSaveMethod = $scope.serverSaveMethod || 'POST';
                             $scope.requestTimeout = 10000;
                             $scope.currentRequest = null;
+                            $scope.autoSearch = $routeParams.param || '';
                             $scope.search = {
-                                Argument: '',
-                                Operator: 'None'
+                                Text: $scope.autoSearch,
+                                Operator: $scope.autoSearch == '' ? 'None' : 'Auto'
                             };
                             $scope.isEmpty = false;
                             $scope.tempRow = new TubularModel($scope, {});
@@ -182,9 +182,6 @@
                                             var model = new TubularModel($scope, el, $scope.gridDataService);
 
                                             model.editPopup = function (template) {
-                                                if (angular.isUndefined(template))
-                                                    template = tubularTemplateService.generatePopup(model);
-
                                                 tubularPopupService.openDialog(template, model);
                                             };
 
@@ -351,7 +348,7 @@
                                         Skip: 0,
                                         Take: -1,
                                         Search: {
-                                            Argument: '',
+                                            Text: '',
                                             Operator: 'None'
                                         }
                                     }

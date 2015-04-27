@@ -29,8 +29,9 @@
                         $scope.tubularDirective = 'tubular-grid-text-search';
                         $scope.lastSearch = "";
 
-                        $scope.$watch("$component.search.Text", function(val) {
+                        $scope.$watch("$component.search.Text", function (val, prev) {
                             if (angular.isUndefined(val)) return;
+                            if (val === prev) return;
 
                             if ($scope.lastSearch !== "" && val === "") {
                                 $scope.$component.search.Operator = 'None';

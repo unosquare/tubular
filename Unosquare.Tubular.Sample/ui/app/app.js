@@ -74,7 +74,6 @@
 
                 // Grid Events
                 $scope.$on('tbGrid_OnBeforeRequest', function(event, eventData) { console.log(eventData); });
-                $scope.$on('tbGrid_OnSuccessfulUpdate', function(data) { toastr.success("Record updated"); });
                 $scope.$on('tbGrid_OnRemove', function(data) { toastr.success("Record removed"); });
                 $scope.$on('tbGrid_OnConnectionError', function(error) { toastr.error(error.statusText || "Connection error"); });
 

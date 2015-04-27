@@ -293,10 +293,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         editorMode: '@?',
                     },
                     controller: [
-                        '$scope', 'localStorageService', 'tubularPopupService', 'tubularModel', 'tubularHttp', 'tubularOData', 'tubularTemplateService',
-                function ($scope, localStorageService, tubularPopupService, TubularModel, tubularHttp, tubularOData, tubularTemplateService) {
-                            // TODO: Add $routeParams to apply filters from URL
-
+                        '$scope', 'localStorageService', 'tubularPopupService', 'tubularModel', 'tubularHttp', 'tubularOData','$routeParams',
+                function ($scope, localStorageService, tubularPopupService, TubularModel, tubularHttp, tubularOData, $routeParams) {
+                           
                             $scope.tubularDirective = 'tubular-grid';
                             $scope.columns = [];
                             $scope.rows = [];
@@ -311,9 +310,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             $scope.serverSaveMethod = $scope.serverSaveMethod || 'POST';
                             $scope.requestTimeout = 10000;
                             $scope.currentRequest = null;
+                            $scope.autoSearch = $routeParams.param || '';
                             $scope.search = {
-                                Argument: '',
-                                Operator: 'None'
+                                Text: $scope.autoSearch,
+                                Operator: $scope.autoSearch == '' ? 'None' : 'Auto'
                             };
                             $scope.isEmpty = false;
                             $scope.tempRow = new TubularModel($scope, {});
@@ -453,9 +453,6 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                             var model = new TubularModel($scope, el, $scope.gridDataService);
 
                                             model.editPopup = function (template) {
-                                                if (angular.isUndefined(template))
-                                                    template = tubularTemplateService.generatePopup(model);
-
                                                 tubularPopupService.openDialog(template, model);
                                             };
 
@@ -622,7 +619,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                         Skip: 0,
                                         Take: -1,
                                         Search: {
-                                            Argument: '',
+                                            Text: '',
                                             Operator: 'None'
                                         }
                                     }
@@ -1040,8 +1037,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         $scope.tubularDirective = 'tubular-grid-text-search';
                         $scope.lastSearch = "";
 
-                        $scope.$watch("$component.search.Text", function(val) {
+                        $scope.$watch("$component.search.Text", function (val, prev) {
                             if (angular.isUndefined(val)) return;
+                            if (val === prev) return;
 
                             if ($scope.lastSearch !== "" && val === "") {
                                 $scope.$component.search.Operator = 'None';
@@ -2291,7 +2289,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
     angular.module('tubular.services', ['ui.bootstrap', 'ngCookies'])
         .service('tubularPopupService', [
-            '$modal', '$rootScope', function tubularPopupService($modal, $rootScope) {
+            '$modal', '$rootScope', 'tubularTemplateService', function tubularPopupService($modal, $rootScope, tubularTemplateService) {
                 var me = this;
 
                 me.onSuccessForm = function(callback) {
@@ -2302,7 +2300,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     $rootScope.$on('tbForm_OnConnectionError', callback);
                 };
 
-                me.openDialog = function(template, model) {
+                me.openDialog = function (template, model) {
+                    if (angular.isUndefined(template))
+                        template = tubularTemplateService.generatePopup(model);
+
                     var dialog = $modal.open({
                         templateUrl: template,
                         backdropClass: 'fullHeight',
