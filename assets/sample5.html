@@ -45,7 +45,7 @@
                     <tb-row-set ng-repeat="(groupKey, rowGroup) in $parent.$component.rows | groupBy: $parent.$component.groupBy">
                         <tb-row-template>
                             <tb-row-group-header group="rowGroup" class="info">
-                                {{groupKey}}
+                                {{groupKey}} - Count {{rowGroup.length}}
                             </tb-row-group-header>
                         </tb-row-template>
                         <tb-row-template ng-repeat="row in rowGroup"

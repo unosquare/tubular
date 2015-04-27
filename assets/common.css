@@ -45,7 +45,18 @@ footer {
 .navbar {
     margin: 0;
     border-width: 0;
+    background-color: #333;
+    color: #FFF;
+    text-transform: lowercase;
 }
 .jumbotron {
     background-image: url('background.png');
+}
+.navbar-nav>li>a, a.navbar-brand {
+    color: white;
+    border-bottom: 2px solid #333;
+}
+.navbar-nav>li>a:hover, a:hover.navbar-brand {
+    background-color: #333;
+    border-bottom: 2px solid #44c5db;
 }
