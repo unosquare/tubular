@@ -75,7 +75,8 @@
 
         <div class="row" ng-hide="step != 1">
             <div class="col-xs-12">
-                <textarea ng-model="basemodel" class="form-control" rows="10" placeholder="Paste here a JSON model or an OData URL"></textarea>
+                <textarea ng-model="basemodel" class="form-control" rows="10" 
+                          placeholder="Paste here a JSON model or an OData URL"></textarea>
                 <hr />
             </div>
         </div>
@@ -134,11 +135,9 @@
                         <input ng-model="formOptions.ModelKey" class="form-control" />
                     </div>
                     <div class="col-xs-4">
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" ng-model="formOptions.SaveButton"> Show Save Button?
-                            </label>
-                        </div>
+                        <label>Form Layout</label>
+                        <select ng-model="formOptions.Layout" class="form-control"
+                                ng-options="option for option in formLayouts"></select>
                     </div>
                     <div class="col-xs-4">
                         <div class="checkbox">
@@ -146,13 +145,6 @@
                                 <input type="checkbox" ng-model="formOptions.CancelButton"> Show Cancel Button?
                             </label>
                         </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-xs-4">
-                        <label>Form Layout</label>
-                        <select ng-model="formOptions.Layout" class="form-control"
-                                ng-options="option for option in formLayouts"></select>
                     </div>
                 </div>
                 <div class="row">
@@ -176,8 +168,16 @@
             <div class="col-md-12">
                 <div role="tabpanel" id="samplePreview">
                     <ul class="nav nav-pills" role="tablist">
-                        <li role="presentation" class="active"><a href="#preview" aria-controls="preview" role="tab" data-toggle="tab">Preview</a></li>
-                        <li role="presentation"><a href="#code" aria-controls="code" role="tab" data-toggle="tab">Code</a></li>
+                        <li role="presentation" class="active">
+                            <a href="#preview" aria-controls="preview" role="tab" data-toggle="tab">
+                                <i class="fa fa-table"></i>&nbsp;Preview
+                            </a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#code" aria-controls="code" role="tab" data-toggle="tab">
+                                <i class="fa fa-code"></i>&nbsp;Code
+                            </a>
+                        </li>
                     </ul>
                     <hr />
                     <div class="tab-content">
@@ -190,6 +190,9 @@
                             </div>
                         </div>
                         <div role="tabpanel" class="tab-pane" id="code">
+                            <div class="clip_button btn btn-info btn-sm">
+                                <i class="fa fa-clipboard"></i>&nbsp; Copy
+                            </div>
                             <div hljs source="gridmodel"></div>
                         </div>
                     </div>
@@ -204,6 +207,12 @@
         $('#samplePreview ul.nav a').click(function(e) {
             e.preventDefault();
             $(this).tab('show');
+        });
+
+        new ZeroClipboard($('.clip_button')).on('ready', function () {
+            this.on('copy', function (event) {
+                event.clipboardData.setData('text/plain', $(event.target).next().text());
+            });
         });
     });
 </script>

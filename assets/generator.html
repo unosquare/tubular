@@ -182,8 +182,12 @@
             <div class="col-md-12">
                 <div role="tabpanel" id="samplePreview">
                     <ul class="nav nav-pills" role="tablist">
-                        <li role="presentation" class="active"><a href="#preview" aria-controls="preview" role="tab" data-toggle="tab">Preview</a></li>
-                        <li role="presentation"><a href="#code" aria-controls="code" role="tab" data-toggle="tab">Code</a></li>
+                        <li role="presentation" class="active">
+                            <a href="#preview" aria-controls="preview" role="tab" data-toggle="tab">Preview</a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#code" aria-controls="code" role="tab" data-toggle="tab">Code</a>
+                        </li>
                     </ul>
                     <hr />
                     <div class="tab-content">
@@ -196,6 +200,9 @@
                             </div>
                         </div>
                         <div role="tabpanel" class="tab-pane" id="code">
+                            <div class="clip_button btn btn-info btn-sm">
+                                <i class="fa fa-clipboard"></i>&nbsp; Copy
+                            </div>
                             <div hljs source="gridmodel"></div>
                         </div>
                     </div>
@@ -211,6 +218,12 @@
         $('#samplePreview ul.nav a').click(function (e) {
             e.preventDefault();
             $(this).tab('show');
+        });
+
+        new ZeroClipboard($('.clip_button')).on('ready', function () {
+            this.on('copy', function (event) {
+                event.clipboardData.setData('text/plain', $(event.target).next().text());
+            });
         });
     });
 </script>

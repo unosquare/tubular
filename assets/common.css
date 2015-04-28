@@ -88,3 +88,9 @@ a.navbar-brand:hover, a.navbar-brand:focus  {
         font-size: 26px;
         font-weight: bold;
     }
+    .clip_button {
+        position: absolute;
+    }
+    .clip_button + div > pre {
+        padding-top: 30px;
+    }

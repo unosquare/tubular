@@ -126,9 +126,7 @@
                     Mode: 'Read-Only'
                 };
                 $scope.formOptions = {
-                    SaveButton: true,
                     CancelButton: true,
-                    IsNew: true,
                     SaveUrl: '',
                     SaveMethod: 'POST',
                     Layout: 'Simple',
@@ -290,4 +288,6 @@
         'app.routes',
         'app.controllers'
     ]);
+
+    ZeroClipboard.config({ swfPath: "//cdn.jsdelivr.net/zeroclipboard/2.2.0/ZeroClipboard.swf" });
 })();

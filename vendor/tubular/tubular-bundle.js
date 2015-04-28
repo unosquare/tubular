@@ -1980,7 +1980,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 return;
 
                             $scope.gridDataService.getByKey($scope.serverUrl, $scope.modelKey).promise.then(
-                                function (data) {
+                                function(data) {
                                     $scope.model = new TubularModel($scope, data, $scope.gridDataService);
                                     $scope.bindFields();
                                 }, function(error) {
@@ -2032,13 +2032,16 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             var colsByRow = scope.layout == 'two-columns' ? 6 : 4;
 
                             var fieldNodes = scope.fields
-                                .map(function (el) { var no = $(lElement).find('*[name=' + el.Name + '][type!=hidden]'); return no.length == 0 ? null : $(no[0]); })
-                                .filter(function (el) { return el != null; });
+                                .map(function(el) {
+                                    var no = $(lElement).find('*[name=' + el.Name + '][type!=hidden]');
+                                    return no.length == 0 ? null : $(no[0]);
+                                })
+                                .filter(function(el) { return el != null; });
 
                             var sum = 0;
                             var count = 0;
 
-                            angular.forEach(fieldNodes, function (node) {
+                            angular.forEach(fieldNodes, function(node) {
                                 sum += colsByRow;
                                 var lastNode = $(node).wrap('<div class="col-xs-' + colsByRow + '" />');
                                 var p = lastNode.parent();
@@ -2064,6 +2067,43 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         }
                     };
                 }
+            };
+        }
+    ]).directive('tbFormButtons',
+    [
+        function() {
+            return {
+                template: '<div>' +
+                    '<button class="btn btn-primary" ng-click="save()" ng-disabled="!form.model.$valid()">{{ saveCaption || \'Save\' }}</button>' +
+                    '<button class="btn btn-danger" ng-click="cancel()" ng-show="showCancel">{{ cancelCaption || \'Cancel\' }}</button>' +
+                    '</div>',
+                restrict: 'E',
+                replace: true,
+                transclude: true,
+                scope: {
+                    saveCaption: '@',
+                    cancelCaption: '@',
+                    saveAction: '&',
+                    cancelAction: '&',
+                    showCancel: '=?'
+                },
+                controller: [
+                    '$scope', '$attrs', function ($scope, $attrs) {
+                        $scope.form = $scope.$parent.$parent;
+                        $scope.showCancel = $scope.showCancel || true;
+
+                        $scope.save = function() {
+                            var func = ($attrs.saveAction ? $scope.saveAction : $scope.form.save);
+
+                            return func();
+                        };
+
+                        $scope.cancel = function() {
+                            var func = ($attrs.cancelAction ? $scope.cancelAction : $scope.form.cancel);
+                            return func();
+                        };
+                    }
+                ],
             };
         }
     ]);
@@ -2901,7 +2941,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             };
 
             me.getByKey = function (url, key) {
-                return me.get(url + key);
+                return { promise: me.get(url + key).promise.then(function (data) { return data.data; }) };
             };
         }
     ]);
@@ -3029,7 +3069,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 };
 
                 me.getByKey = function (url, key) {
-                    return { promise: tubularHttp.get(url + "(" + key + ")").promise.then(function(data) { return data.data; }) };
+                    return tubularHttp.get(url + "(" + key + ")");
                 };
             }
         ]);
