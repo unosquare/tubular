@@ -106,18 +106,42 @@
                     </thead>
                     <tbody>
                         <tr ng-repeat="row in columns">
-                            <td>{{row.Name}}</td>
-                            <td><select ng-options="dataType for dataType in editorTypes" class="form-control" ng-model="row.EditorType"></select></td>
-                            <td><input type="text" class="form-control" ng-model="row.Label" /></td>
-                            <td class="text-center"><input type="checkbox" ng-model="row.ShowLabel" /></td>
-                            <td><input type="text" class="form-control" ng-model="row.Placeholder" /></td>
-                            <td class="text-center"><input type="checkbox" ng-model="row.Required" /></td>
-                            <td class="text-center"><input type="checkbox" ng-model="row.ReadOnly" /></td>
+                            <td>
+                                {{row.Name}}
+                            </td>
+                            <td>
+                                <select ng-options="dataType for dataType in editorTypes" 
+                                        class="form-control" ng-model="row.EditorType"></select>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" ng-model="row.Label"
+                                             ng-disabled="row.EditorType == 'tbHiddenField'" />
+                            </td>
+                            <td class="text-center">
+                                <input type="checkbox" ng-model="row.ShowLabel"
+                                             ng-disabled="row.EditorType == 'tbHiddenField'" />
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" ng-model="row.Placeholder"
+                                             ng-disabled="row.EditorType == 'tbHiddenField'" />
+                            </td>
+                            <td class="text-center">
+                                <input type="checkbox" ng-model="row.Required"
+                                             ng-disabled="row.EditorType == 'tbHiddenField'" />
+                            </td>
+                            <td class="text-center">
+                                <input type="checkbox" ng-model="row.ReadOnly"
+                                             ng-disabled="row.EditorType == 'tbHiddenField'" />
+                            </td>
                             <td>
                                 <input type="text" class="form-control" ng-model="row.Format"
-                                       ng-disabled="row.EditorType == 'tbSimpleEditor' || row.EditorType == 'tbDropdownEditor' || row.EditorType == 'tbCheckboxField'" />
+                                       ng-disabled="row.EditorType == 'tbHiddenField' || row.EditorType == 'tbSimpleEditor' || 
+                                                    row.EditorType == 'tbDropdownEditor' || row.EditorType == 'tbCheckboxField'" />
                             </td>
-                            <td><input type="text" class="form-control" ng-model="row.Help" /></td>
+                            <td>
+                                <input type="text" class="form-control" ng-model="row.Help"
+                                             ng-disabled="row.EditorType == 'tbHiddenField'"  />
+                            </td>
                             <td>
                                 <button class="btn btn-danger btn-xs" ng-click="removeColumn(row)">Remove</button>
                             </td>
@@ -132,7 +156,7 @@
                         <label>
                             Model Key&nbsp;<i class="fa fa-question-circle" data-toggle="tooltip" title="Empty if you don't want to load a record'"></i>
                         </label>
-                        <input ng-model="formOptions.ModelKey" class="form-control" />
+                        <input ng-model="formOptions.ModelKey" class="form-control" placeholder="Leave empty for New Record" />
                     </div>
                     <div class="col-xs-4">
                         <label>Form Layout</label>
@@ -140,11 +164,9 @@
                                 ng-options="option for option in formLayouts"></select>
                     </div>
                     <div class="col-xs-4">
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" ng-model="formOptions.CancelButton"> Show Cancel Button?
-                            </label>
-                        </div>
+                        <button type="button" class="btn btn-default" ng-model="formOptions.CancelButton" btn-checkbox>
+                            Show Cancel Button
+                        </button>
                     </div>
                 </div>
                 <div class="row">
@@ -152,7 +174,7 @@
                     <p>Configure the server URL.</p>
                     <div class="col-xs-4">
                         <label>Save Url</label>
-                        <input type="text" ng-model="formOptions.SaveUrl" class="form-control" />
+                        <input type="text" ng-model="formOptions.SaveUrl" class="form-control" placeholder="Valid URL" />
                     </div>
                     <div class="col-xs-4">
                         <label>Save Http Method</label>

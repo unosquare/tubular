@@ -7,38 +7,56 @@
     </div>
 </div>
 <div class="container" ng-controller="tubularSampleCtrl">
-    <div class="sample-content" ng-repeat="t in tutorial">
-        <div class="row">
-            <div class="col-xs-12">
-                <h1 id="{{t.key}}">{{t.title}}</h1>
+    <div class="sample-content panel panel-default" ng-repeat="t in tutorial">
+        <div class="panel-heading" id="{{t.key}}">
+            {{t.title}}
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-3 col-xs-12">
+                    <p>{{t.body}}</p>
+
+                    <button class="btn btn-primary btn-block" ng-click="toggleCode(t.key)" ng-hide="source[t.key]">
+                        <i class="fa fa-code"></i>&nbsp;Show Code
+                    </button>
+                    <button class="btn btn-primary btn-block" ng-click="toggleCode(t.key)" ng-show="source[t.key]">
+                        <i class="fa fa-table"></i>&nbsp;Show Sample
+                    </button>
+                    <button class="btn btn-default btn-block" ng-click="openCode(t.key)">
+                        <i class="fa fa-pencil"></i>&nbsp;Export to Plunker
+                    </button>
+                </div>
+                <div class="col-md-9 col-xs-12">
+                    <div ng-include src="'assets/' + t.key + '.html'" ng-hide="source[t.key]"></div>
+                    <div ng-show="source[t.key]">
+                        <div class="clip_button btn btn-info btn-sm">
+                            <i class="fa fa-clipboard"></i>&nbsp; Copy
+                        </div>
+                        <div hljs source="source[t.key]"></div>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-3 col-xs-12">
-                <p>{{t.body}}</p>
-                <button class="btn btn-primary btn-block" ng-click="toggleCode(t.key)" ng-hide="source[t.key]">
-                    <i class="fa fa-code"></i>&nbsp;Show Code
-                </button>
-                <button class="btn btn-primary btn-block" ng-click="toggleCode(t.key)" ng-show="source[t.key]">
-                    <i class="fa fa-table"></i>&nbsp;Show Sample
-                </button>
-                <button class="btn btn-default btn-block" ng-click="openCode(t.key)">
-                    <i class="fa fa-pencil"></i>&nbsp;Export to Plunker
-                </button>
-                <a ng-click="scrollTo(t.next)" ng-show="t.next" class="btn btn-success btn-block">
+        <div class="panel-footer">
+            <div class="pull-right">
+                <a ng-click="scrollTo(t.next)" ng-show="t.next" class="btn btn-success">
                     <i class="fa fa-star"></i>&nbsp;Next Sample
                 </a>
             </div>
-            <div class="col-md-9 col-xs-12">
-                <div ng-include src="'assets/' + t.key + '.html'" ng-hide="source[t.key]"></div>
-                <div hljs source="source[t.key]" ng-show="source[t.key]"></div>
-            </div>
-        </div>
-        <div class="col-xs-12" ng-show="t.next">
-            <hr />
+            <div class="clearfix"></div>
         </div>
     </div>
     <div class="pull-right">
         <a ng-click="scrollTo('intro')">Back to Top</a>
     </div>
 </div>
+
+<script>
+    $(function () {
+        new ZeroClipboard($('.clip_button')).on('ready', function () {
+            this.on('copy', function (event) {
+                event.clipboardData.setData('text/plain', $(event.target).next().text());
+            });
+        });
+    });
+</script>

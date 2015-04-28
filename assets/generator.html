@@ -130,40 +130,25 @@
                 <hr />
                 <div class="row">
                     <h4>UI Options</h4>
-                    <p>Please select which additional UI elements wants to show in your view.</p>
-                    <div class="col-xs-4">
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" ng-model="uiOptions.Pager"> Show Pager?
-                            </label>
-                        </div>
-                    </div>
-                    <div class="col-xs-4">
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" ng-model="uiOptions.FreeTextSearch"> Show Free-text Search?
-                            </label>
-                        </div>
-                    </div>
-                    <div class="col-xs-4">
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" ng-model="uiOptions.PageSizeSelector"> Show Page Size Selector?
-                            </label>
-                        </div>
-                    </div>
-                    <div class="col-xs-4">
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" ng-model="uiOptions.PagerInfo"> Show Pager Info?
-                            </label>
-                        </div>
-                    </div>
-                    <div class="col-xs-4">
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" ng-model="uiOptions.PagerInfo"> Show Export CSV & Print Button?
-                            </label>
+                   
+                    <div class="col-xs-8">
+                        <p>Please select which additional UI elements wants to show in your view.</p>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-default" ng-model="uiOptions.Pager" btn-checkbox>
+                                Pager
+                            </button>
+                            <button type="button" class="btn btn-default" ng-model="uiOptions.FreeTextSearch" btn-checkbox>
+                                Free-text Search
+                            </button>
+                            <button type="button" class="btn btn-default" ng-model="uiOptions.PageSizeSelector" btn-checkbox>
+                                Page Size Selector
+                            </button>
+                            <button type="button" class="btn btn-default" ng-model="uiOptions.PagerInfo" btn-checkbox>
+                                Page Size Info
+                            </button>
+                            <button type="button" class="btn btn-default" ng-model="uiOptions.ExportCsv" btn-checkbox>
+                                Export CSV & Print Button
+                            </button>
                         </div>
                     </div>
                     <div class="col-xs-4">
