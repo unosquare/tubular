@@ -18,15 +18,13 @@
                     }).otherwise({
                         redirectTo: '/'
                     });
-
-                //$locationProvider.html5Mode(true);
             }
         ]);
 
     angular.module('app.controllers', ['tubular.services', 'LocalStorageModule', 'app.generator'])
         .controller('tubularSampleCtrl', [
             '$scope', '$location', '$anchorScroll', '$templateCache', '$http', 'tubularGenerator',
-            function ($scope, $location, $anchorScroll, $templateCache, $http, tubularGenerator) {
+            function($scope, $location, $anchorScroll, $templateCache, $http, tubularGenerator) {
                 $scope.source = [];
                 $scope.tutorial = [
                     {
@@ -103,178 +101,188 @@
             }
         ]).controller('tubularGeneratorCtrl', [
             '$scope', '$http', '$templateCache', 'tubularGenerator', 'localStorageService',
-        function ($scope, $http, $templateCache, tubularGenerator, localStorageService) {
-            // Options
-            $scope.dataTypes = ['numeric', 'date', 'boolean', 'string'];
-            $scope.editorTypes = ['tbSimpleEditor', 'tbNumericEditor', 'tbDateTimeEditor', 'tbDateEditor',
-                'tbDropdownEditor', 'tbTypeaheadEditor', 'tbHiddenField', 'tbCheckboxField', 'tbTextArea'];
-            $scope.gridMode = ['Read-Only', 'Inline', 'Popup'];
-            $scope.httpMethods = ['POST', 'PUT'];
+            function($scope, $http, $templateCache, tubularGenerator, localStorageService) {
+                // Options
+                $scope.dataTypes = ['numeric', 'date', 'boolean', 'string'];
+                $scope.editorTypes = [
+                    'tbSimpleEditor', 'tbNumericEditor', 'tbDateTimeEditor', 'tbDateEditor',
+                    'tbDropdownEditor', 'tbTypeaheadEditor', 'tbHiddenField', 'tbCheckboxField', 'tbTextArea'
+                ];
+                $scope.gridMode = ['Read-Only', 'Inline', 'Popup'];
+                $scope.httpMethods = ['POST', 'PUT'];
+                $scope.formLayouts = ['Simple', 'Two-columns', 'Three-columns'];
 
-            $scope.templatename = '';
-            $scope.basemodel = '';
-            $scope.step = 1;
-            $scope.dataUrl = '';
-            $scope.isOData = false;
-            $scope.uiOptions = {
-                Pager: true,
-                FreeTextSearch: true,
-                PageSizeSelector: true,
-                PagerInfo: true,
-                ExportCsv: true,
-                Mode: 'Read-Only'
-            };
-            $scope.formOptions = {
-                SaveButton: true,
-                CancelButton: true,
-                IsNew: true,
-                SaveUrl: '',
-                SaveMethod: 'POST'
-            };
-            $scope.views = localStorageService.get('generator_views') || [];
-            $scope.gridId = ($scope.views.length + 1);
-
-            $scope.generateModel = function() {
                 $scope.templatename = '';
-                $scope.jsonstring = '';
+                $scope.basemodel = '';
+                $scope.step = 1;
+                $scope.dataUrl = '';
+                $scope.isOData = false;
+                $scope.uiOptions = {
+                    Pager: true,
+                    FreeTextSearch: true,
+                    PageSizeSelector: true,
+                    PagerInfo: true,
+                    ExportCsv: true,
+                    Mode: 'Read-Only'
+                };
+                $scope.formOptions = {
+                    SaveButton: true,
+                    CancelButton: true,
+                    IsNew: true,
+                    SaveUrl: '',
+                    SaveMethod: 'POST',
+                    Layout: 'Simple',
+                    ModelKey: ''
+                };
+                $scope.views = localStorageService.get('generator_views') || [];
+                $scope.gridId = ($scope.views.length + 1);
 
-                if ($scope.basemodel.indexOf('http') === 0) {
-                    $scope.dataUrl = $scope.basemodel;
+                $scope.generateModel = function() {
+                    $scope.templatename = '';
+                    $scope.jsonstring = '';
 
-                    $http.get($scope.basemodel).success(function(data) {
-                        tubularGenerator.createColumns(data.value, $scope);
-                        $scope.isOData = true;
+                    if ($scope.basemodel.indexOf('http') === 0) {
+                        $scope.dataUrl = $scope.basemodel;
+
+                        $http.get($scope.basemodel).success(function(data) {
+                            tubularGenerator.createColumns(data.value, $scope);
+                            $scope.isOData = true;
+                            $scope.step++;
+                            $scope.formOptions.SaveUrl = $scope.dataUrl;
+                        });
+                    } else {
+                        var model = angular.fromJson($scope.basemodel);
+                        tubularGenerator.createColumns(model, $scope);
+
+                        $scope.jsonstring = JSON.stringify({
+                            Counter: 0,
+                            Payload: model,
+                            TotalRecordCount: model.length,
+                            FilteredRecordCount: model.length,
+                            TotalPages: 1,
+                            CurrentPage: 1
+                        }, undefined, 2);
+
+                        $scope.dataUrl = window.URL.createObjectURL(new Blob([$scope.jsonstring], { type: "application/json" }));
                         $scope.step++;
                         $scope.formOptions.SaveUrl = $scope.dataUrl;
-                    });
-                } else {
-                    var model = angular.fromJson($scope.basemodel);
-                    tubularGenerator.createColumns(model, $scope);
+                    }
+                };
 
-                    $scope.jsonstring = JSON.stringify({
-                        Counter: 0,
-                        Payload: model,
-                        TotalRecordCount: model.length,
-                        FilteredRecordCount: model.length,
-                        TotalPages: 1,
-                        CurrentPage: 1
-                    }, undefined, 2);
+                $scope.runFormTemplate = function() {
+                    $scope.gridmodel = tubularGenerator.runFormTemplate($scope);
 
-                    $scope.dataUrl = window.URL.createObjectURL(new Blob([$scope.jsonstring], { type: "application/json" }));
+                    $templateCache.put('tubulartemplate.html', $scope.gridmodel);
+                    $scope.templatename = 'tubulartemplate.html';
+
                     $scope.step++;
-                    $scope.formOptions.SaveUrl = $scope.dataUrl;
                 }
-            };
 
-            $scope.runFormTemplate = function() {
-                $scope.gridmodel = tubularGenerator.runFormTemplate($scope);
+                $scope.runGridTemplate = function() {
+                    $scope.gridmodel = tubularGenerator.runGridTemplate($scope);
 
-                $templateCache.put('tubulartemplate.html', $scope.gridmodel);
-                $scope.templatename = 'tubulartemplate.html';
+                    $templateCache.put('tubulartemplate.html', $scope.gridmodel);
+                    $scope.templatename = 'tubulartemplate.html';
 
-                $scope.step++;
-            }
+                    $scope.step++;
+                };
 
-            $scope.runGridTemplate = function() {
-                $scope.gridmodel = tubularGenerator.runGridTemplate($scope);
+                $scope.useSample = function() {
+                    $http.get('data/generatorsample.json').
+                        success(function(data) {
+                            $scope.basemodel = angular.toJson(data);
+                            $scope.generateModel();
+                        });
+                };
 
-                $templateCache.put('tubulartemplate.html', $scope.gridmodel);
-                $scope.templatename = 'tubulartemplate.html';
+                $scope.useServerSample = function() {
+                    $scope.basemodel = "http://services.odata.org/V3/Northwind/Northwind.svc/Orders";
+                    $scope.generateModel();
+                };
 
-                $scope.step++;
-            };
+                $scope.revert = function() {
+                    $scope.templatename = '';
+                    $scope.step--;
+                };
 
-            $scope.useSample = function() {
-                $http.get('data/generatorsample.json').
-                    success(function(data) {
-                        $scope.basemodel = angular.toJson(data);
-                        $scope.generateModel();
-                    });
-            };
+                $scope.cleanPlunker = function(filename) {
+                    $scope.clearViews();
+                    $scope.plunker(filename);
+                }
 
-            $scope.useServerSample = function() {
-                $scope.basemodel = "http://services.odata.org/V3/Northwind/Northwind.svc/Orders";
-                $scope.generateModel();
-            };
+                $scope.plunker = function(filename) {
+                    $http.get('generator/index.html').
+                        success(function(data) {
+                            var appJs = tubularGenerator.DefaultJs;
+                            var files = [
+                                { name: 'index.html', content: data },
+                                { name: 'README.md', content: tubularGenerator.DefaultReadme }
+                            ];
 
-            $scope.revert = function () {
-                $scope.templatename = '';
-                $scope.step--;
-            };
+                            if ($scope.views.length == 0) {
+                                var tempUrl = $scope.dataUrl;
 
-            $scope.cleanPlunker = function(filename) {
-                $scope.clearViews();
-                $scope.plunker(filename);
-            }
+                                if (angular.isDefined($scope.jsonstring) && $scope.jsonstring !== '') {
+                                    tempUrl = 'data.json';
+                                    files.push({ name: tempUrl, content: $scope.jsonstring });
+                                }
 
-            $scope.plunker = function(filename) {
-                $http.get('generator/index.html').
-                    success(function(data) {
-                        var appJs = tubularGenerator.DefaultJs;
-                        var files = [
-                            { name: 'index.html', content: data },
-                            { name: 'README.md', content: tubularGenerator.DefaultReadme }
-                        ];
+                                files.push({ name: filename + '.html', content: $scope.gridmodel.replace(/server-url="(.[^"]+)"/g, 'server-url="' + tempUrl + '"') });
+                                appJs = appJs.replace(/grid.html/g, filename + '.html');
+                            } else {
+                                for (var prop in $scope.views) {
+                                    var view = $scope.views[prop];
+                                    files.push(view);
 
-                        if ($scope.views.length == 0) {
-                            var tempUrl = $scope.dataUrl;
-
-                            if (angular.isDefined($scope.jsonstring) && $scope.jsonstring !== '') {
-                                tempUrl = 'data.json';
-                                files.push({ name: tempUrl, content: $scope.jsonstring });
-                            }
-
-                            files.push({ name: filename + '.html', content: $scope.gridmodel.replace(/server-url="(.[^"]+)"/g, 'server-url="' + tempUrl + '"') });
-                        } else {
-                            for (var prop in $scope.views) {
-                                var view = $scope.views[prop];
-                                files.push(view);
-
-                                if (view.indexOf('.html') > 0) {
-                                    appJs = appJs.replace(/grid.html/g, view);
+                                    if (view.indexOf('.html') > 0) {
+                                        appJs = appJs.replace(/grid.html/g, view);
+                                    }
                                 }
                             }
-                        }
 
-                        // TODO: Generate route for all
-                        files.push({ name: 'app.js', content: appJs });
+                            // TODO: Generate route for all
+                            files.push({ name: 'app.js', content: appJs });
 
-                        tubularGenerator.exportPluker(files);
+                            tubularGenerator.exportPluker(files);
+                        });
+                };
+
+                $scope.save = function(filename) {
+                    var tempUrl = $scope.dataUrl;
+
+                    if (angular.isDefined($scope.jsonstring) && $scope.jsonstring !== '') {
+                        tempUrl = 'data' + ($scope.gridId) + '.json';
+                        $scope.views.push({ name: tempUrl, content: $scope.jsonstring });
+                    }
+
+                    $scope.views.push({
+                        name: filename + ($scope.gridId++) + '.html',
+                        content: $scope.gridmodel.replace(/server-url="(.[^"]+)"/g, 'server-url="' + tempUrl + '"')
                     });
-            };
 
-            $scope.save = function(filename) {
-                var tempUrl = $scope.dataUrl;
+                    localStorageService.set('generator_views', $scope.views);
+                    $scope.step = 1;
+                    $scope.basemodel = '';
+                };
 
-                if (angular.isDefined($scope.jsonstring) && $scope.jsonstring !== '') {
-                    tempUrl = 'data' + ($scope.gridId) + '.json';
-                    $scope.views.push({ name: tempUrl, content: $scope.jsonstring });
+                $scope.clearViews = function() {
+                    localStorageService.remove('generator_views');
+                    $scope.views = [];
+                    $scope.gridId = ($scope.views.length + 1);
                 }
 
-                $scope.views.push({
-                    name: filename + ($scope.gridId++) + '.html',
-                    content: $scope.gridmodel.replace(/server-url="(.[^"]+)"/g, 'server-url="' + tempUrl + '"')
-                });
-
-                localStorageService.set('generator_views', $scope.views);
-                $scope.step = 1;
-                $scope.basemodel = '';
-            };
-
-            $scope.clearViews = function() {
-                localStorageService.remove('generator_views');
-                $scope.views = [];
-                $scope.gridId = ($scope.views.length + 1);
+                $scope.removeColumn = function(row) {
+                    var index = $scope.columns.indexOf(row);
+                    if (index > -1) {
+                        $scope.columns.splice(index, 1);
+                    }
+                };
             }
-
-            $scope.removeColumn = function(row) {
-                var index = $scope.columns.indexOf(row);
-                if (index > -1) {
-                    $scope.columns.splice(index, 1);
-                }
-            };
-        }
-    ]);
+        ]).config([
+            '$sceDelegateProvider', function($sceDelegateProvider) {
+                $sceDelegateProvider.resourceUrlWhitelist(['self', 'http://services.odata.org/**']);
+            }
+        ]);
 
     angular.module('app', [
         'hljs',
