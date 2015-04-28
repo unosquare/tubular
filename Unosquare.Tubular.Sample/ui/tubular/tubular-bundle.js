@@ -1976,6 +1976,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 return;
                             }
 
+                            if (angular.isUndefined($scope.modelKey) || $scope.modelKey == null || $scope.modelKey == '')
+                                return;
+
                             $scope.gridDataService.getByKey($scope.serverUrl, $scope.modelKey).promise.then(
                                 function (data) {
                                     $scope.model = new TubularModel($scope, data, $scope.gridDataService);
