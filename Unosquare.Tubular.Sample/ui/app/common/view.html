@@ -1,6 +1,6 @@
 ﻿<div class="container" ng-controller="tubularSampleCtrl as sample">
     <script type="text/ng-template" id="myModalContent.html">
-        <tb-form model="Model">
+        <tb-form model="Model" layout="two-columns">
             <div class="modal-header">
                 <h3 class="modal-title">Edit Order {{Model.OrderID}}</h3>
             </div>
@@ -8,11 +8,11 @@
                 <tb-simple-editor min="3" show-label="true" name="CustomerName">
                 </tb-simple-editor>
                 <tb-typeahead-editor value="Model.ShipperCity" name="ShipperCity"
-                                   show-label="true" required="true"
-                                   options-url="api/orders/cities">
+                                     show-label="true" required="true"
+                                     options-url="api/orders/cities">
                 </tb-typeahead-editor>
-                <tb-numeric-editor min="1" max="100" name="Amount" show-label="true" 
-                                   required="true" format="'C'">
+                <tb-numeric-editor min="1" max="100" name="Amount" show-label="true"
+                                   required="true" format="C">
                 </tb-numeric-editor>
                 <tb-date-editor required="true" name="ShippedDate" show-label="true">
                 </tb-date-editor>
@@ -118,7 +118,7 @@
                                         </tb-typeahead-editor>
                                     </tb-cell-template>
                                     <tb-cell-template>
-                                        <tb-numeric-editor value="$component.tempRow.Amount"
+                                        <tb-numeric-editor value="$component.tempRow.Amount" format="C"
                                                            state="$component.tempRow.$state.Amount" min="0" max="100"
                                                            required="true">
                                         </tb-numeric-editor>
@@ -132,53 +132,53 @@
                                     </tb-cell-template>
                                 </tb-row-template>
 
-                                <tb-row-template ng-repeat="cells in $component.rows" row-model="cells" selectable="true">
+                                <tb-row-template ng-repeat="row in $component.rows" row-model="row" selectable="true">
                                     <tb-cell-template ng-class="{'danger': rowModel.$hasChanges}">
-                                        <input type="checkbox" ng-model="cells.$selected" class="hidden-xs hidden-sm"
+                                        <input type="checkbox" ng-model="row.$selected" class="hidden-xs hidden-sm"
                                                ng-click="$parent.changeSelection()" />
                                         <div class="btn-group">
-                                            <tb-save-button model="cells" save-css="btn-xs hidden-xs hidden-sm"
+                                            <tb-save-button model="row" save-css="btn-xs hidden-xs hidden-sm"
                                                             cancel-css="btn-danger btn-xs">
                                             </tb-save-button>
-                                            <tb-edit-button model="cells" css="btn-xs hidden-xs hidden-sm">
+                                            <tb-edit-button model="row" css="btn-xs hidden-xs hidden-sm">
                                             </tb-edit-button>
-                                            <button ng-click="cells.editPopup('myModalContent.html')" class="btn btn-default btn-xs"
-                                                    ng-hide="cells.$isEditing">
+                                            <button ng-click="row.editPopup('myModalContent.html')" class="btn btn-default btn-xs"
+                                                    ng-hide="row.$isEditing">
                                                 Popup
                                             </button>
-                                            <button ng-click="cells.editForm('/form')" class="btn btn-default btn-xs hidden-xs hidden-sm"
-                                                    ng-hide="cells.$isEditing">
+                                            <button ng-click="row.editForm('/form')" class="btn btn-default btn-xs hidden-xs hidden-sm"
+                                                    ng-hide="row.$isEditing">
                                                 Page
                                             </button>
-                                            <tb-remove-button model="cells" class="btn-danger btn-xs" caption="Delete">
+                                            <tb-remove-button model="row" class="btn-danger btn-xs" caption="Delete">
                                             </tb-remove-button>
                                         </div>
                                     </tb-cell-template>
                                     <tb-cell-template class="text-center">
-                                        <a href="#">{{cells.OrderID}}</a>
+                                        <a href="#">{{row.OrderID}}</a>
                                     </tb-cell-template>
                                     <tb-cell-template>
-                                        <span ng-hide="cells.$isEditing">{{cells.CustomerName}}</span>
-                                        <div ng-show="cells.$isEditing">
-                                            <input type="text" ng-model="cells.CustomerName" class="form-control" />
+                                        <span ng-hide="row.$isEditing">{{row.CustomerName}}</span>
+                                        <div ng-show="row.$isEditing">
+                                            <input type="text" ng-model="row.CustomerName" class="form-control" />
                                         </div>
                                     </tb-cell-template>
                                     <tb-cell-template>
-                                        <tb-dropdown-editor is-editing="cells.$isEditing" value="cells.ShipperCity"
-                                                            state="cells.$state.ShipperCity" options-url="api/orders/cities">
+                                        <tb-dropdown-editor is-editing="row.$isEditing" value="row.ShipperCity"
+                                                            state="row.$state.ShipperCity" options-url="api/orders/cities">
                                         </tb-dropdown-editor>
                                     </tb-cell-template>
                                     <tb-cell-template class="text-right col-xs-2">
-                                        <tb-numeric-editor is-editing="cells.$isEditing" value="cells.Amount" state="cells.$state.Amount" format="C"
+                                        <tb-numeric-editor is-editing="row.$isEditing" value="row.Amount" state="row.$state.Amount" format="C"
                                                            min="1" max="100" required="true">
                                         </tb-numeric-editor>
                                     </tb-cell-template>
                                     <tb-cell-template class="text-right">
-                                        <tb-date-editor is-editing="cells.$isEditing" value="cells.ShippedDate">
+                                        <tb-date-editor is-editing="row.$isEditing" value="row.ShippedDate">
                                         </tb-date-editor>
                                     </tb-cell-template>
                                     <tb-cell-template class="text-center">
-                                        <input type="checkbox" ng-model="cells.IsShipped" ng-disabled="!cells.$isEditing" />
+                                        <input type="checkbox" ng-model="row.IsShipped" ng-disabled="!row.$isEditing" />
                                     </tb-cell-template>
                                 </tb-row-template>
                             </tb-row-set>
@@ -217,12 +217,12 @@
                         </tb-column>
                     </tb-column-definitions>
                     <tb-row-set>
-                        <tb-row-template ng-repeat="cells in $component.rows" row-model="cells">
+                        <tb-row-template ng-repeat="row in $component.rows" row-model="row">
                             <tb-cell-template>
-                                {{cells.Id}}
+                                {{row.Id}}
                             </tb-cell-template>
                             <tb-cell-template>
-                                {{cells.UserName}}
+                                {{row.UserName}}
                             </tb-cell-template>
                         </tb-row-template>
                     </tb-row-set>

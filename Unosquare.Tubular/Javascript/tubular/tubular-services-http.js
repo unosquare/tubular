@@ -234,10 +234,8 @@
             };
 
             me.get = function (url) {
-                return me.retrieveDataAsync({
-                    serverUrl: url,
-                    requestMethod: 'GET',
-                });
+                // TODO: How to know if we need Token
+                return { promise: $http.get(url) };
             };
 
             me.delete = function(url) {

@@ -120,7 +120,7 @@
                 };
 
                 me.getByKey = function (url, key) {
-                    return tubularHttp.get(url + "(" + key + ")");
+                    return { promise: tubularHttp.get(url + "(" + key + ")").promise.then(function(data) { return data.data; }) };
                 };
             }
         ]);

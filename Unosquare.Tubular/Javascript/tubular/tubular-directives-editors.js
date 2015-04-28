@@ -222,7 +222,7 @@
                 restrict: 'E',
                 replace: true,
                 transclude: true,
-                scope: angular.extend({ options: '=?', optionsUrl: '@' }, tubularEditorService.defaultScope),
+                scope: angular.extend({ options: '=?', optionsUrl: '@', optionsMethod: '@?' }, tubularEditorService.defaultScope),
                 controller: [
                     '$scope', function($scope) {
                         tubularEditorService.setupScope($scope);
@@ -234,7 +234,7 @@
 
                             var currentRequest = tubularHttp.retrieveDataAsync({
                                 serverUrl: $scope.optionsUrl,
-                                requestMethod: 'GET' // TODO: RequestMethod
+                                requestMethod: $scope.optionsMethod || 'GET'
                             });
 
                             var value = $scope.value;
@@ -278,7 +278,7 @@
                 restrict: 'E',
                 replace: true,
                 transclude: true,
-                scope: angular.extend({ options: '=?', optionsUrl: '@' }, tubularEditorService.defaultScope),
+                scope: angular.extend({ options: '=?', optionsUrl: '@', optionsMethod: '@?' }, tubularEditorService.defaultScope),
                 controller: [
                     '$scope', function($scope) {
                         tubularEditorService.setupScope($scope);
@@ -288,7 +288,7 @@
                             if (angular.isDefined($scope.optionsUrl)) {
                                 return tubularHttp.retrieveDataAsync({
                                     serverUrl: $scope.optionsUrl + '?search=' + val,
-                                    requestMethod: 'GET' // TODO: RequestMethod
+                                    requestMethod: $scope.optionsMethod || 'GET'
                                 }).promise;
                             }
 

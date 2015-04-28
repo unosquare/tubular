@@ -1533,7 +1533,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 restrict: 'E',
                 replace: true,
                 transclude: true,
-                scope: angular.extend({ options: '=?', optionsUrl: '@' }, tubularEditorService.defaultScope),
+                scope: angular.extend({ options: '=?', optionsUrl: '@', optionsMethod: '@?' }, tubularEditorService.defaultScope),
                 controller: [
                     '$scope', function($scope) {
                         tubularEditorService.setupScope($scope);
@@ -1545,7 +1545,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                             var currentRequest = tubularHttp.retrieveDataAsync({
                                 serverUrl: $scope.optionsUrl,
-                                requestMethod: 'GET' // TODO: RequestMethod
+                                requestMethod: $scope.optionsMethod || 'GET'
                             });
 
                             var value = $scope.value;
@@ -1589,7 +1589,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 restrict: 'E',
                 replace: true,
                 transclude: true,
-                scope: angular.extend({ options: '=?', optionsUrl: '@' }, tubularEditorService.defaultScope),
+                scope: angular.extend({ options: '=?', optionsUrl: '@', optionsMethod: '@?' }, tubularEditorService.defaultScope),
                 controller: [
                     '$scope', function($scope) {
                         tubularEditorService.setupScope($scope);
@@ -1599,7 +1599,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             if (angular.isDefined($scope.optionsUrl)) {
                                 return tubularHttp.retrieveDataAsync({
                                     serverUrl: $scope.optionsUrl + '?search=' + val,
-                                    requestMethod: 'GET' // TODO: RequestMethod
+                                    requestMethod: $scope.optionsMethod || 'GET'
                                 }).promise;
                             }
 
@@ -1893,7 +1893,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
     [
         function() {
             return {
-                template: '<form ng-transclude></form>',
+                template: '<form ng-transclude class="{{layout}}"></form>',
                 restrict: 'E',
                 replace: true,
                 transclude: true,
@@ -1906,12 +1906,14 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     modelKey: '@?',
                     gridDataService: '=?service',
                     gridDataServiceName: '@?serviceName',
+                    layout: '@?'
                 },
                 controller: [
                     '$scope', '$routeParams', 'tubularModel', 'tubularHttp', 'tubularOData',
                     function($scope, $routeParams, TubularModel, tubularHttp, tubularOData) {
                         $scope.tubularDirective = 'tubular-form';
                         $scope.serverSaveMethod = $scope.serverSaveMethod || 'POST';
+                        $scope.layout = $scope.layout || '';
                         $scope.fields = [];
                         $scope.hasFieldsDefinitions = false;
                         // Try to load a key from markup or route
@@ -1943,7 +1945,6 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             angular.forEach($scope.fields, function(field) {
                                 field.$parent.Model = $scope.model;
 
-                                // TODO: this behavior is nice, but I don't know how to apply to inline editors
                                 if (field.$editorType == 'input' &&
                                     angular.equals(field.value, $scope.model[field.Name]) == false) {
                                     field.value = (field.DataType == 'date') ? new Date($scope.model[field.Name]) : $scope.model[field.Name];
@@ -1976,9 +1977,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             }
 
                             $scope.gridDataService.getByKey($scope.serverUrl, $scope.modelKey).promise.then(
-                                function(data) {
+                                function (data) {
                                     $scope.model = new TubularModel($scope, data, $scope.gridDataService);
-
                                     $scope.bindFields();
                                 }, function(error) {
                                     $scope.$emit('tbForm_OnConnectionError', error);
@@ -2024,6 +2024,40 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         pre: function(scope, lElement, lAttrs, lController, lTransclude) {},
                         post: function(scope, lElement, lAttrs, lController, lTransclude) {
                             scope.hasFieldsDefinitions = true;
+                            if (scope.layout == '') return;
+
+                            var colsByRow = scope.layout == 'two-columns' ? 6 : 4;
+
+                            var fieldNodes = scope.fields
+                                .map(function (el) { var no = $(lElement).find('*[name=' + el.Name + '][type!=hidden]'); return no.length == 0 ? null : $(no[0]); })
+                                .filter(function (el) { return el != null; });
+
+                            var sum = 0;
+                            var count = 0;
+
+                            angular.forEach(fieldNodes, function (node) {
+                                sum += colsByRow;
+                                var lastNode = $(node).wrap('<div class="col-xs-' + colsByRow + '" />');
+                                var p = lastNode.parent();
+
+                                if (++count == fieldNodes.length && sum != 12) {
+                                    if (p.prev().is("div.col-xs-4"))
+                                        p.prev().andSelf().wrapAll('<div class="row" />');
+                                    else
+                                        p.wrap('<div class="row" />');
+
+                                    return;
+                                }
+
+                                if (sum == 12) {
+                                    if (colsByRow == 6)
+                                        p.prev().andSelf().wrapAll('<div class="row" />');
+                                    else
+                                        p.prev().andSelf().prev().andSelf().wrapAll('<div class="row" />');
+
+                                    sum = 0;
+                                }
+                            });
                         }
                     };
                 }
@@ -2836,10 +2870,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             };
 
             me.get = function (url) {
-                return me.retrieveDataAsync({
-                    serverUrl: url,
-                    requestMethod: 'GET',
-                });
+                // TODO: How to know if we need Token
+                return { promise: $http.get(url) };
             };
 
             me.delete = function(url) {
@@ -2994,7 +3026,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 };
 
                 me.getByKey = function (url, key) {
-                    return tubularHttp.get(url + "(" + key + ")");
+                    return { promise: tubularHttp.get(url + "(" + key + ")").promise.then(function(data) { return data.data; }) };
                 };
             }
         ]);
