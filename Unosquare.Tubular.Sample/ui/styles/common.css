@@ -1,0 +1,36 @@
+﻿.pagination > li > a:hover,
+.pager > li > a:hover,
+.pagination > li > span:hover,
+.pager > li > span:hover {
+    top: 0;
+    border-bottom-width: 4px;
+}
+
+.btn:hover {
+    margin-top: 0;
+    border-bottom-width: 4px;
+}
+
+.navbar {
+    margin: 0;
+    border-width: 0;
+    background-color: #333;
+    color: #FFF;
+    text-transform: lowercase;
+}
+.navbar-nav>li>a {
+    color: white;
+    border-bottom: 2px solid #333;
+    padding-bottom: 4px;
+    margin-bottom: 8px;
+}
+.navbar-nav>li>a:hover, .navbar-nav>li>a:focus {
+    background-color: #333;
+    border-bottom: 2px solid #44c5db;
+}
+a.navbar-brand {
+    color: white;
+}
+a.navbar-brand:hover, a.navbar-brand:focus  {
+    color: #44c5db
+}

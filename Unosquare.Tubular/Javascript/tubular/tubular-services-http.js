@@ -262,7 +262,7 @@
             };
 
             me.getByKey = function (url, key) {
-                return me.get(url + key);
+                return { promise: me.get(url + key).promise.then(function (data) { return data.data; }) };
             };
         }
     ]);

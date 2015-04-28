@@ -1,33 +1,4 @@
 ﻿<div class="container" ng-controller="tubularSampleCtrl as sample">
-    <script type="text/ng-template" id="myModalContent.html">
-        <tb-form model="Model" layout="two-columns">
-            <div class="modal-header">
-                <h3 class="modal-title">Edit Order {{Model.OrderID}}</h3>
-            </div>
-            <div class="modal-body">
-                <tb-simple-editor min="3" show-label="true" name="CustomerName">
-                </tb-simple-editor>
-                <tb-typeahead-editor value="Model.ShipperCity" name="ShipperCity"
-                                     show-label="true" required="true"
-                                     options-url="api/orders/cities">
-                </tb-typeahead-editor>
-                <tb-numeric-editor min="1" max="100" name="Amount" show-label="true"
-                                   required="true" format="C">
-                </tb-numeric-editor>
-                <tb-date-editor required="true" name="ShippedDate" show-label="true">
-                </tb-date-editor>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-primary" ng-click="savePopup()" ng-disabled="!Model.$valid()">
-                    Save
-                </button>
-                <button class="btn btn-danger" ng-click="closePopup()">
-                    Cancel
-                </button>
-            </div>
-        </tb-form>
-    </script>
-
     <tb-grid server-url="/api/orders/paged" server-save-url="/api/orders/save"
              page-size="20" class="row" on-before-get-data="sample.onTableController">
         <div class="tubular-overlay" ng-show="$parent.currentRequest != null">
@@ -79,7 +50,7 @@
                                     <tb-column-header>{{label}}</tb-column-header>
                                     <tb-column-options-filter options-url="/api/orders/cities"></tb-column-options-filter>
                                 </tb-column>
-                                <tb-column name="Amount" label="Amount" column-type="numeric">
+                                <tb-column name="Amount" label="Amount" column-type="numeric" sortable="true">
                                     <tb-column-header>{{label}}</tb-column-header>
                                     <tb-column-filter></tb-column-filter>
                                 </tb-column>
@@ -142,7 +113,7 @@
                                             </tb-save-button>
                                             <tb-edit-button model="row" css="btn-xs hidden-xs hidden-sm">
                                             </tb-edit-button>
-                                            <button ng-click="row.editPopup('myModalContent.html')" class="btn btn-default btn-xs"
+                                            <button ng-click="row.editPopup('/ui/app/common/popup.html')" class="btn btn-default btn-xs"
                                                     ng-hide="row.$isEditing">
                                                 Popup
                                             </button>
@@ -169,7 +140,8 @@
                                         </tb-dropdown-editor>
                                     </tb-cell-template>
                                     <tb-cell-template class="text-right col-xs-2">
-                                        <tb-numeric-editor is-editing="row.$isEditing" value="row.Amount" state="row.$state.Amount" format="C"
+                                        <tb-numeric-editor is-editing="row.$isEditing" value="row.Amount" 
+                                                           state="row.$state.Amount" format="C"
                                                            min="1" max="100" required="true">
                                         </tb-numeric-editor>
                                     </tb-cell-template>
@@ -199,7 +171,9 @@
 
     <hr />
     
-    <h3>Sample using minimum settings and internal datasource</h3>
+    <div class="page-header">
+        <h3>Sample using minimum settings and internal datasource</h3>
+    </div>
 
     <tb-grid service="sample.myService" class="row">
 
