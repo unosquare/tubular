@@ -2981,9 +2981,12 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     url += url.indexOf('?') > 0 ? '&' : '?';
                     url += '$format=json&$inlinecount=allpages';
 
-                    url += "&$select=" + params.Columns.map(function(el) { return el.Name; }).join(',');
-                    url += "&$skip=" + params.Skip;
-                    url += "&$top=" + params.Take;
+                    url += "&$select=" + params.Columns.map(function (el) { return el.Name; }).join(',');
+
+                    if (params.Take != -1) {
+                        url += "&$skip=" + params.Skip;
+                        url += "&$top=" + params.Take;
+                    }
 
                     var order = params.Columns
                         .filter(function(el) { return el.SortOrder > 0; })
@@ -3069,7 +3072,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 };
 
                 me.getByKey = function (url, key) {
-                    return tubularHttp.get(url + "(" + key + ")");
+                    return { promise: tubularHttp.get(url + "(" + key + ")").promise.then(function (data) { return data.data; }) };
                 };
             }
         ]);
