@@ -1023,7 +1023,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         '<button class="btn btn-default"><i class="fa fa-times-circle"></i></button>' +
                         '</span>' +
                         '<div>' +
-                    '<div>',
+                        '<div>',
                 restrict: 'E',
                 replace: true,
                 transclude: false,
@@ -1037,7 +1037,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         $scope.tubularDirective = 'tubular-grid-text-search';
                         $scope.lastSearch = "";
 
-                        $scope.$watch("$component.search.Text", function (val, prev) {
+                        $scope.$watch("$component.search.Text", function(val, prev) {
                             if (angular.isUndefined(val)) return;
                             if (val === prev) return;
 
@@ -1076,7 +1076,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     icon: '@'
                 },
                 controller: [
-                    '$scope', '$element', function ($scope, $element) {
+                    '$scope', '$element', function($scope, $element) {
                         $scope.showIcon = angular.isDefined($scope.icon);
                         $scope.showCaption = !($scope.showIcon && angular.isUndefined($scope.caption));
                         $scope.confirmDelete = function() {
@@ -1179,20 +1179,21 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     css: '@'
                 },
                 controller: [
-                    '$scope', function ($scope) {
-                    $scope.component = $scope.$parent.$parent.$component;
-                        $scope.edit = function () {
+                    '$scope', function($scope) {
+                        $scope.component = $scope.$parent.$parent.$component;
+                        $scope.edit = function() {
                             if ($scope.component.editorMode == 'popup') {
                                 $scope.model.editPopup();
                             } else {
                                 $scope.model.edit();
                             }
                         };
-                }]
+                    }
+                ]
             };
         }
     ]).directive('tbPageSizeSelector', [
-        function () {
+        function() {
 
             return {
                 require: '^tbGrid',
@@ -1262,8 +1263,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             return {
                 require: '^tbGrid',
                 template: '<button class="btn btn-default" ng-click="printGrid()">' +
-                        '<span class="fa fa-print"></span>&nbsp;Print' +
-                        '</button>',
+                    '<span class="fa fa-print"></span>&nbsp;Print' +
+                    '</button>',
                 restrict: 'E',
                 replace: true,
                 transclude: true,
@@ -1279,12 +1280,15 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             $scope.$component.getFullDataSource(function(data) {
                                 var tableHtml = "<table class='table table-bordered table-striped'><thead><tr>"
                                     + $scope.$component.columns.map(function(el) {
-                                         return "<th>" + (el.Label || el.Name) + "</th>";
+                                        return "<th>" + (el.Label || el.Name) + "</th>";
                                     }).join(" ")
                                     + "</tr></thead>"
                                     + "<tbody>"
                                     + data.map(function(row) {
-                                         return "<tr>" + row.map(function(cell) { return "<td>" + cell + "</td>"; }).join(" ") + "</tr>";
+                                        if (typeof (row) === 'object')
+                                            row = $.map(row, function(el) { return el; });
+
+                                        return "<tr>" + row.map(function(cell) { return "<td>" + cell + "</td>"; }).join(" ") + "</tr>";
                                     }).join(" ")
                                     + "</tbody>"
                                     + "</table>";
