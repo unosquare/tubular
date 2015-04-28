@@ -15,10 +15,7 @@
                     '<div class="modal-body">' +
                     me.generateFields(columns) +
                     '</div>' +
-                    '<div class="modal-footer">' +
-                    '<button class="btn btn-primary" ng-click="savePopup()" ng-disabled="!Model.$valid()">Save</button>' +
-                    '<button class="btn btn-danger" ng-click="closePopup()">Cancel</button>' +
-                    '</div>' +
+                    '<tb-form-buttons class="modal-footer" save-action="savePopup()" cancel-action="closePopup()"></tb-form-buttons>' +
                     '</tb-form>';
 
                 $templateCache.put(templateName, template);
