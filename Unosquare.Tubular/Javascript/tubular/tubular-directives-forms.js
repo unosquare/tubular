@@ -187,7 +187,7 @@
             return {
                 template: '<div>' +
                     '<button class="btn btn-primary" ng-click="save()" ng-disabled="!form.model.$valid()">{{ saveCaption || \'Save\' }}</button>' +
-                    '<button class="btn btn-danger" ng-click="cancel()">{{ cancelCaption || \'Cancel\' }}</button>' +
+                    '<button class="btn btn-danger" ng-click="cancel()" ng-show="showCancel">{{ cancelCaption || \'Cancel\' }}</button>' +
                     '</div>',
                 restrict: 'E',
                 replace: true,
@@ -196,12 +196,14 @@
                     saveCaption: '@',
                     cancelCaption: '@',
                     saveAction: '&',
-                    cancelAction: '&'
+                    cancelAction: '&',
+                    showCancel: '=?'
                 },
                 controller: [
                     '$scope', '$attrs', function ($scope, $attrs) {
                         $scope.form = $scope.$parent.$parent;
-                        
+                        $scope.showCancel = $scope.showCancel || true;
+
                         $scope.save = function() {
                             var func = ($attrs.saveAction ? $scope.saveAction : $scope.form.save);
 
