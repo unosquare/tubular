@@ -22,7 +22,6 @@ div.tubular-grid {
         }
 
 /* Tubular Pager Styles */
-
 div.tubular-pager {
     margin: 0;
 }
@@ -122,20 +121,22 @@ div.panel > table.tubular-grid-table.table-bordered > thead > tr > th {
     line-height: 22px;
 }
 
-div.panel > table.tubular-grid-table.table-bordered > thead > tr > th:last-child {
-    border-right-width: 0;
-}
+    div.panel > table.tubular-grid-table.table-bordered > thead > tr > th:last-child {
+        border-right-width: 0;
+    }
 
 div.panel > table.tubular-grid-table.table-bordered > tbody > tr > td {
     border-right: 1px solid #ddd;
 }
 
-div.panel > table.tubular-grid-table.table-bordered > tbody > tr > td:last-child {
-    border-right-width: 0;
-}
+    div.panel > table.tubular-grid-table.table-bordered > tbody > tr > td:last-child {
+        border-right-width: 0;
+    }
 
 table.tubular-grid-table {
     font-size: 11px;
+    table-layout: fixed;
+    width: 100%;
 }
 
     table.tubular-grid-table div.form-group {
@@ -180,6 +181,21 @@ table.tubular-grid-table tr th {
     padding: 2px;
 }
 
+table.tubular-grid-table thead tr th.column-action {
+    width: 75px;
+}
+
+table.tubular-grid-table tbody tr td {
+    overflow: hidden;
+    -ms-text-overflow: ellipsis;
+    -o-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+}
+
+    table.tubular-grid-table tbody tr td.no-wrap {
+        white-space: nowrap;
+    }
+
 table.tubular-grid-table thead tr th i.fa {
     font-weight: normal;
     font-size: 10px;
@@ -212,15 +228,15 @@ table.tubular-grid-table thead tr th div.tubular-column-menu {
             outline: none;
         }
 
-        table.tubular-grid-table thead tr th div.tubular-column-menu button i.fa,
-        table.tubular-grid-table thead tr th div.tubular-column-menu button i.glyphicon {
-            font-size: 10px;
-        }
+    table.tubular-grid-table thead tr th div.tubular-column-menu button i.fa,
+    table.tubular-grid-table thead tr th div.tubular-column-menu button i.glyphicon {
+        font-size: 10px;
+    }
 
-        table.tubular-grid-table tbody td.row-group {
-            font-weight: bolder;
-            text-transform: capitalize;
-        }
+table.tubular-grid-table tbody td.row-group {
+    font-weight: bolder;
+    text-transform: capitalize;
+}
 
 form.tubular-column-filter-form {
     min-width: 230px;
@@ -230,9 +246,9 @@ form.tubular-column-filter-form {
         height: inherit;
     }
 
-    form.tubular-column-filter-form input[type=checkbox]:after {
-        content: "Check to filter";
-    }
+        form.tubular-column-filter-form input[type=checkbox]:after {
+            content: "Check to filter";
+        }
 
 div.fullHeight, .modal-backdrop.in {
     height: 100%;
@@ -249,8 +265,11 @@ input.ng-pristine + span.help-block.error-block {
 .has-error .form-control.ng-pristine {
     border: 1px solid #e7e7e7;
 }
-/* Responsive table for mobiles https://techblog.livingsocial.com/blog/2015/04/06/responsive-tables-in-pure-css/ */
 
+ul.dropdown-menu a {
+    cursor: pointer;
+}
+/* Responsive table for mobiles https://techblog.livingsocial.com/blog/2015/04/06/responsive-tables-in-pure-css/ */
 @media screen and (max-width: 500px) {
 
     table.responsive-mobile {
@@ -270,8 +289,8 @@ input.ng-pristine + span.help-block.error-block {
         table.responsive-mobile td {
             display: block;
             text-align: right;
-            font-size: 13px;
-            height: 24px;
+            font-size: 14px;
+            height: 28px;
             border-bottom: 1px dotted #ccc;
         }
 
@@ -284,7 +303,4 @@ input.ng-pristine + span.help-block.error-block {
                 float: left;
                 font-weight: bold;
             }
-}
-ul.dropdown-menu a {
-    cursor: pointer;
 }
