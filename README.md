@@ -66,6 +66,9 @@ Finally update your modules to include Tubular, for example if your module is ca
 ```javascript
 angular.module('app', ['ngRoute','ngCookies','tubular.directives']);
 ```
+##Boilerplate
+
+We have a basic <a href="https://github.com/unosquare/tubular-boilerplate">Boilerplate</a> with all that you need to start your project. We are planning a <a href="http://yeoman.io/">Yeoman Generator</a>.
 
 ## Samples
 
@@ -109,7 +112,3 @@ The following HTML represents a basic grid. You don't need to add anything else 
 ```
 
 Tubular works directly with either your own OData service or, you can also have it consume custom calls using our .NET library to handle Tubular's models.
-
-## Tubular Models
-
-Tubular uses a special model to represent requests and expects a specific JSON payload. More details to come.
