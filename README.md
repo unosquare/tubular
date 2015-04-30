@@ -1,5 +1,4 @@
-
-# Tubular
+# Tubular [![Build Status](https://travis-ci.org/unosquare/tubular.svg?branch=master)](https://travis-ci.org/unosquare/tubular)
 
 A set of <a href="https://angularjs.org/" target="_blank">AngularJS</a> directives and C# classes designed to rapidly build modern web applications.  Tubular features a fully templateable grid with lots of features such as server-side pagination, multi-column sorting and filtering, built-in export to CSV (client-side), and in-line editing of rows via templates.
 
@@ -27,6 +26,18 @@ PM> Install-Package Tubular.ServerSide
 # install Tubular package and add it to bower.json
 $ bower install tubular --save
 </pre>
+
+## npm Installation
+
+[![npm version](https://badge.fury.io/js/tubular.svg)](http://badge.fury.io/js/tubular)
+
+The npm package only contains **Tubular Template Module**, if you want to use Tubular controls please install Bower package.
+
+<pre>
+# install Tubular package and add it to package.json
+$ npm install tubular --save
+</pre>
+
 
 ## Dependencies
 
