@@ -10,6 +10,7 @@
   </settings>
   <!--The order of the <file> elements determines the order of the files in the bundle.-->
   <files>
+    <file>tubular/node-module.js</file>
     <file>angular-filter/watcher.js</file>
     <file>angular-filter/group-by.js</file>
     <file>tubular/tubular.js</file>

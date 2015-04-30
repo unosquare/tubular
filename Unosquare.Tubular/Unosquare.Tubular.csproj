@@ -67,6 +67,7 @@
     <Content Include="Javascript\tubular-bundle.min.js">
       <DependentUpon>tubular-bundle.js</DependentUpon>
     </Content>
+    <Content Include="Javascript\tubular\node-module.js" />
     <Content Include="Javascript\tubular\tubular-directives-filters.js" />
     <Content Include="Javascript\tubular\tubular-directives-filters.min.js">
       <DependentUpon>tubular-directives-filters.js</DependentUpon>
@@ -156,14 +157,12 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>IF EXIST $(SolutionDir)dist\ copy $(ProjectDir)Css\*.css $(SolutionDir)dist\
+    <PostBuildEvent Condition=" '$(OS)' != 'Unix' ">IF EXIST $(SolutionDir)dist\ copy $(ProjectDir)Css\*.css $(SolutionDir)dist\
 IF EXIST $(SolutionDir)dist\ copy $(ProjectDir)Javascript\*.js $(SolutionDir)dist\</PostBuildEvent>
   </PropertyGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+  <PropertyGroup>
+    <PostBuildEvent>IF EXIST $(SolutionDir)dist\ copy $(ProjectDir)Css\*.css $(SolutionDir)dist\
+IF EXIST $(SolutionDir)dist\ copy $(ProjectDir)Javascript\*.js $(SolutionDir)dist\
+IF EXIST $(SolutionDir)dist\ copy $(ProjectDir)Javascript\tubular\node-module.js $(SolutionDir)dist\</PostBuildEvent>
+  </PropertyGroup>
 </Project>

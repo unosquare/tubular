@@ -1,4 +1,210 @@
-﻿///#source 1 1 angular-filter/watcher.js
+﻿///#source 1 1 tubular/node-module.js
+'use strict';
+
+var tubularTemplateServiceModule = {
+    isNumber: function (value) { return typeof value === 'number'; },
+
+    isDate: function(value) {
+        return toString.call(value) === '[object Date]';
+    },
+
+    createColumns: function(model) {
+        var jsonModel = (model instanceof Array && model.length > 0) ? model[0] : model;
+        var columns = [];
+
+        for (var prop in jsonModel) {
+            if (jsonModel.hasOwnProperty(prop)) {
+                var value = jsonModel[prop];
+                // Ignore functions
+                if (prop[0] === '$' || typeof (value) === 'function') continue;
+                // Ignore null value, but maybe evaluate another item if there is anymore
+                if (value == null) continue;
+
+                if (this.isNumber(value) || parseFloat(value).toString() == value) {
+                    columns.push({ Name: prop, DataType: 'numeric', Template: '{{row.' + prop + '}}' });
+                } else if (this.isDate(value) || isNaN((new Date(value)).getTime()) == false) {
+                    columns.push({ Name: prop, DataType: 'date', Template: '{{row.' + prop + ' | date}}' });
+                } else if (value.toLowerCase() == 'true' || value.toLowerCase() == 'false') {
+                    columns.push({ Name: prop, DataType: 'boolean', Template: '{{row.' + prop + ' ? "TRUE" : "FALSE" }}' });
+                } else {
+                    var newColumn = { Name: prop, DataType: 'string', Template: '{{row.' + prop + '}}' };
+
+                    if ((/e(-|)mail/ig).test(newColumn.Name)) {
+                        newColumn.Template = '<a href="mailto:' + newColumn.Template + '">' + newColumn.Template + '</a>';
+                    }
+
+                    columns.push(newColumn);
+                }
+            }
+        }
+
+        var firstSort = false;
+
+        for (var column in columns) {
+            if (columns.hasOwnProperty(column)) {
+                var columnObj = columns[column];
+                columnObj.Label = columnObj.Name.replace(/([a-z])([A-Z])/g, '$1 $2');
+                columnObj.EditorType = this.getEditorTypeByDateType(columnObj.DataType);
+
+                // Grid attributes
+                columnObj.Searchable = columnObj.DataType === 'string';
+                columnObj.Filter = true;
+                columnObj.Visible = true;
+                columnObj.Sortable = true;
+                columnObj.IsKey = false;
+                columnObj.SortOrder = -1;
+                // Form attributes
+                columnObj.ShowLabel = true;
+                columnObj.Placeholder = '';
+                columnObj.Format = '';
+                columnObj.Help = '';
+                columnObj.Required = true;
+                columnObj.ReadOnly = false;
+
+                if (firstSort === false) {
+                    columnObj.IsKey = true;
+                    columnObj.SortOrder = 1;
+                    firstSort = true;
+                }
+            }
+        }
+
+        return columns;
+    },
+
+    generateFields: function(columns) {
+        return columns.map(function(el) {
+            var editorTag = el.EditorType.replace(/([A-Z])/g, function($1) { return "-" + $1.toLowerCase(); });
+
+            return '\r\n\t<' + editorTag + ' name="' + el.Name + '" label="' + el.Label + '" editor-type="' + el.DataType + '" ' +
+                '\r\n\t\tshow-label="' + el.ShowLabel + '" placeholder="' + el.Placeholder + '" required="' + el.Required + '" ' +
+                '\r\n\t\tread-only="' + el.ReadOnly + '" format="' + el.Format + '" help="' + el.Help + '">' +
+                '\r\n\t</' + editorTag + '>';
+        }).join('');
+    },
+
+    generatePopup: function(model, title) {
+        var columns = this.createColumns(model);
+
+        return '<tb-form model="Model">' +
+            '<div class="modal-header"><h3 class="modal-title">' + (title || 'Edit Row') + '</h3></div>' +
+            '<div class="modal-body">' +
+            this.generateFields(columns) +
+            '</div>' +
+            '<tb-form-buttons class="modal-footer" save-action="savePopup()" cancel-action="closePopup()"></tb-form-buttons>' +
+            '</tb-form>';
+
+    },
+
+    getEditorTypeByDateType: function(dataType) {
+        switch (dataType) {
+        case 'date':
+            return 'tbDateTimeEditor';
+        case 'numeric':
+            return 'tbNumericEditor';
+        case 'boolean':
+            return 'tbCheckboxField';
+        default:
+            return 'tbSimpleEditor';
+        }
+    },
+
+    generateForm: function(fields, options) {
+        var layout = options.Layout == 'Simple' ? '' : options.Layout.toLowerCase();
+
+        return '<tb-form layout="' + layout + '" server-save-method="' + options.SaveMethod + '" ' +
+            'model-key="' + options.ModelKey + '"' +
+            'server-url="' + options.dataUrl + '" server-save-url="' + options.SaveUrl + '" ' +
+            (options.isOData ? ' service-name="odata"' : '') + '>' +
+            '\r\n\t<h1>Autogenerated Form</h1>' +
+            this.generateFields(fields) +
+            '\r\n\t<tb-form-buttons show-cancel="' + options.CancelButton + '"></tb-form-buttons>' +
+            '\r\n</tb-form>';
+    },
+
+    generateGrid: function(columns, options) {
+        var topToolbar = '';
+        var bottomToolbar = '';
+
+        if (options.Pager) {
+            topToolbar += '\r\n\t<tb-grid-pager class="col-md-6"></tb-grid-pager>';
+            bottomToolbar += '\r\n\t<tb-grid-pager class="col-md-6"></tb-grid-pager>';
+        }
+
+        if (options.ExportCsv) {
+            topToolbar += '\r\n\t<div class="col-md-3">' +
+                '\r\n\t\t<div class="btn-group">' +
+                '\r\n\t\t<tb-print-button title="Tubular" class="btn-sm"></tb-print-button>' +
+                '\r\n\t\t<tb-export-button filename="tubular.csv" css="btn-sm"></tb-export-button>' +
+                '\r\n\t\t</div>' +
+                '\r\n\t</div>';
+        }
+
+        if (options.FreeTextSearch) {
+            topToolbar += '\r\n\t<tb-text-search class="col-md-3" css="input-sm"></tb-text-search>';
+        }
+
+        if (options.PageSizeSelector) {
+            bottomToolbar += '\r\n\t<tb-page-size-selector class="col-md-3" selectorcss="input-sm"></tb-page-size-selector>';
+        }
+
+        if (options.PagerInfo) {
+            bottomToolbar += '\r\n\t<tb-grid-pager-info class="col-md-3"></tb-grid-pager-info>';
+        }
+
+        return '<h1>Autogenerated Grid</h1>' +
+            '\r\n<div class="container">' +
+            '\r\n<tb-grid server-url="' + options.dataUrl + '" request-method="GET" class="row" require-authentication="false" page-size="10"' +
+            (options.isOData ? ' service-name="odata"' : '') +
+            (options.Mode != 'Read-Only' ? ' editor-mode="' + options.Mode.toLowerCase() + '"' : '') + '>' +
+            (topToolbar === '' ? '' : '\r\n\t<div class="row">' + topToolbar + '\r\n\t</div>') +
+            '\r\n\t<div class="row">' +
+            '\r\n\t<div class="col-md-12">' +
+            '\r\n\t<div class="panel panel-default panel-rounded">' +
+            '\r\n\t<tb-grid-table class="table-bordered">' +
+            '\r\n\t<tb-column-definitions>' +
+            (options.Mode != 'Read-Only' ? '\r\n\t\t<tb-column label="Actions"><tb-column-header>{{label}}</tb-column-header></tb-column>' : '') +
+            columns.map(function(el) {
+                return '\r\n\t\t<tb-column name="' + el.Name + '" label="' + el.Label + '" column-type="' + el.DataType + '" sortable="' + el.Sortable + '" ' +
+                    '\r\n\t\t\tsort-order="' + el.SortOrder + '" is-key="' + el.IsKey + '" searchable="' + el.Searchable + '" visible="' + el.Visible + '">' +
+                    (el.Filter ? '<tb-column-filter></tb-column-filter>' : '') +
+                    '\r\n\t\t\t<tb-column-header>{{label}}</tb-column-header>' +
+                    '\r\n\t\t</tb-column>';
+            }).join('') +
+            '\r\n\t</tb-column-definitions>' +
+            '\r\n\t<tb-row-set>' +
+            '\r\n\t<tb-row-template ng-repeat="row in $component.rows" row-model="row">' +
+            (options.Mode != 'Read-Only' ? '\r\n\t\t<tb-cell-template>' +
+                (options.Mode == 'Inline' ? '\r\n\t\t\t<tb-save-button model="row"></tb-save-button>' : '') +
+                '\r\n\t\t\t<tb-edit-button model="row"></tb-edit-button>' +
+                '\r\n\t\t</tb-cell-template>' : '') +
+            columns.map(function(el) {
+                var editorTag = el.EditorType.replace(/([A-Z])/g, function($1) { return "-" + $1.toLowerCase(); });
+
+                return '\r\n\t\t<tb-cell-template column-name="' + el.Name + '">' +
+                    (options.Mode == 'Inline' ?
+                        '<' + editorTag + ' is-editing="row.$isEditing" value="row.' + el.Name + '"></' + editorTag + '>' :
+                        '\r\n\t\t\t' + el.Template) +
+                    '\r\n\t\t</tb-cell-template>';
+            }).join('') +
+            '\r\n\t</tb-row-template>' +
+            '\r\n\t</tb-row-set>' +
+            '\r\n\t</tb-grid-table>' +
+            '\r\n\t</div>' +
+            '\r\n\t</div>' +
+            '\r\n\t</div>' +
+            (bottomToolbar === '' ? '' : '\r\n\t<div class="row">' + bottomToolbar + '\r\n\t</div>') +
+            '\r\n</tb-grid>' +
+            '\r\n</div>';
+    }
+};
+
+try {
+    module.exports = tubularTemplateServiceModule;
+} catch (e) {
+    // Ignore
+}
+///#source 1 1 angular-filter/watcher.js
 /**
  * @ngdoc provider
  * @name filterWatcher
@@ -3092,107 +3298,23 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
             me.generatePopup = function(model, title) {
                 var templateName = 'temp' + (new Date().getTime()) + '.html';
-                var columns = me.createColumns(model);
-                
-                var template = '<tb-form model="Model">' +
-                    '<div class="modal-header"><h3 class="modal-title">' + (title || 'Edit Row') + '</h3></div>' +
-                    '<div class="modal-body">' +
-                    me.generateFields(columns) +
-                    '</div>' +
-                    '<tb-form-buttons class="modal-footer" save-action="savePopup()" cancel-action="closePopup()"></tb-form-buttons>' +
-                    '</tb-form>';
+                var template = tubularTemplateServiceModule.generatePopup(model, title);
 
                 $templateCache.put(templateName, template);
 
                 return templateName;
             };
 
-            me.generateFields = function(columns) {
-                return columns.map(function(el) {
-                    var editorTag = el.EditorType.replace(/([A-Z])/g, function($1) { return "-" + $1.toLowerCase(); });
-
-                    return '\r\n\t<' + editorTag + ' name="' + el.Name + '" label="' + el.Label + '" editor-type="' + el.DataType + '" ' +
-                        '\r\n\t\tshow-label="' + el.ShowLabel + '" placeholder="' + el.Placeholder + '" required="' + el.Required + '" ' +
-                        '\r\n\t\tread-only="' + el.ReadOnly + '" format="' + el.Format + '" help="' + el.Help + '">' +
-                        '\r\n\t</' + editorTag + '>';
-                }).join('');
-            };
-
-            me.getEditorTypeByDateType = function(dataType) {
-                switch (dataType) {
-                case 'date':
-                    return 'tbDateTimeEditor';
-                case 'numeric':
-                    return 'tbNumericEditor';
-                case 'boolean':
-                    return 'tbCheckboxField';
-                default:
-                    return 'tbSimpleEditor';
-                }
-            };
-
             me.createColumns = function(model) {
-                var jsonModel = (angular.isArray(model) && model.length > 0) ? model[0] : model;
-                var columns = [];
+                return tubularTemplateServiceModule.createColumns(model);
+            }
 
-                for (var prop in jsonModel) {
-                    if (jsonModel.hasOwnProperty(prop)) {
-                        var value = jsonModel[prop];
-                        // Ignore functions
-                        if (prop[0] === '$' || typeof (value) === 'function') continue;
-                        // Ignore null value, but maybe evaluate another item if there is anymore
-                        if (value == null) continue;
+            me.generateForm = function(fields, options) {
+                return tubularTemplateServiceModule.generateForm(fields, options);
+            };
 
-                        if (angular.isNumber(value) || parseFloat(value).toString() == value) {
-                            columns.push({ Name: prop, DataType: 'numeric', Template: '{{row.' + prop + '}}' });
-                        } else if (angular.isDate(value) || isNaN((new Date(value)).getTime()) == false) {
-                            columns.push({ Name: prop, DataType: 'date', Template: '{{row.' + prop + ' | date}}' });
-                        } else if (value.toLowerCase() == 'true' || value.toLowerCase() == 'false') {
-                            columns.push({ Name: prop, DataType: 'boolean', Template: '{{row.' + prop + ' ? "TRUE" : "FALSE" }}' });
-                        } else {
-                            var newColumn = { Name: prop, DataType: 'string', Template: '{{row.' + prop + '}}' };
-
-                            if ((/e(-|)mail/ig).test(newColumn.Name)) {
-                                newColumn.Template = '<a href="mailto:' + newColumn.Template + '">' + newColumn.Template + '</a>';
-                            }
-
-                            columns.push(newColumn);
-                        }
-                    }
-                }
-
-                var firstSort = false;
-
-                for (var column in columns) {
-                    if (columns.hasOwnProperty(column)) {
-                        var columnObj = columns[column];
-                        columnObj.Label = columnObj.Name.replace(/([a-z])([A-Z])/g, '$1 $2');
-                        columnObj.EditorType = me.getEditorTypeByDateType(columnObj.DataType);
-
-                        // Grid attributes
-                        columnObj.Searchable = columnObj.DataType === 'string';
-                        columnObj.Filter = true;
-                        columnObj.Visible = true;
-                        columnObj.Sortable = true;
-                        columnObj.IsKey = false;
-                        columnObj.SortOrder = -1;
-                        // Form attributes
-                        columnObj.ShowLabel = true;
-                        columnObj.Placeholder = '';
-                        columnObj.Format = '';
-                        columnObj.Help = '';
-                        columnObj.Required = true;
-                        columnObj.ReadOnly = false;
-
-                        if (firstSort === false) {
-                            columnObj.IsKey = true;
-                            columnObj.SortOrder = 1;
-                            firstSort = true;
-                        }
-                    }
-                }
-
-                return columns;
+            me.generateGrid = function(columns, options) {
+                return tubularTemplateServiceModule.generateGrid(columns, options);
             };
         }
     ]);
