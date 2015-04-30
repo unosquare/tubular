@@ -157,7 +157,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent  Condition=" '$(OS)' != 'Unix'">IF EXIST $(SolutionDir)dist\ copy $(ProjectDir)Css\*.css $(SolutionDir)dist\
+    <PostBuildEvent Condition=" '$(OS)' != 'Unix'">IF EXIST $(SolutionDir)dist\ copy $(ProjectDir)Css\*.css $(SolutionDir)dist\
 IF EXIST $(SolutionDir)dist\ copy $(ProjectDir)Javascript\*.js $(SolutionDir)dist\
 IF EXIST $(SolutionDir)dist\ copy $(ProjectDir)Javascript\tubular\node-module.js $(SolutionDir)dist\</PostBuildEvent>
   </PropertyGroup>
