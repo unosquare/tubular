@@ -1,8 +1,8 @@
 # Tubular [![Build Status](https://travis-ci.org/unosquare/tubular.svg?branch=master)](https://travis-ci.org/unosquare/tubular)
 
-A set of <a href="https://angularjs.org/" target="_blank">AngularJS</a> directives and C# classes designed to rapidly build modern web applications.  Tubular features a fully templateable grid with lots of features such as server-side pagination, multi-column sorting and filtering, built-in export to CSV (client-side), and in-line editing of rows via templates.
+A set of <a href="https://angularjs.org/" target="_blank">AngularJS</a> directives and C# classes designed to rapidly build modern web applications.  The centerpiece of Tubular is its fully templateable grid with lots of features such as server-side pagination, multi-column sorting and filtering, built-in export to CSV (client-side), and in-line editing of rows via templates.
 
-Please visit first our <a href="http://unosquare.github.io/tubular" target="_blank">Tubular Website</a> to know about the project and start coding directly with the Tubular Generator.
+Please visit the <a href="http://unosquare.github.io/tubular" target="_blank">Tubular GitHub Page</a> to learn how quickly you can start coding. Don't forget to check out the Tubular Generator which quickly turns models into an awesome UIs!
 
 ## NuGet Installation
 
@@ -31,7 +31,7 @@ $ bower install tubular --save
 
 [![npm version](https://badge.fury.io/js/tubular.svg)](http://badge.fury.io/js/tubular)
 
-The npm package only contains **Tubular Template Module**, if you want to use Tubular controls please install Bower package.
+The npm package only contains the **Tubular Template Module**, if you want to use all of Tubular's features, please install the Bower package instead.
 
 <pre>
 # install Tubular package and add it to package.json
@@ -53,9 +53,9 @@ You will need to reference the following JS libraries in order to use Tubular in
 
 Also, if you use the Visual Studio you will need the excellent <a href="http://vswebessentials.com/download" target="_blank">Web Essentials</a> plug-in in order to generate the Tubular bundles.
 
-## Using CDN
+## Using a CDN
 
-You can get all dependencies using the next lines in your initial HTML page. <a href="http://www.jsdelivr.com/">jsDelivr</a> has almost everything you need.
+You can get all the dependencies using the following links in your master HTML page. <a href="http://www.jsdelivr.com/">jsDelivr</a> provides almost everything you need to import.
 
 ```html
 <link rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap/3.3.4/css/bootstrap.min.css" />
@@ -65,25 +65,26 @@ You can get all dependencies using the next lines in your initial HTML page. <a 
 <script src="//cdnjs.cloudflare.com/ajax/libs/angular-local-storage/0.1.5/angular-local-storage.min.js"></script>
 ```
 
-Then you need to grab your own Tubular copy or you can use the same CDN to retrieve Tubular CSS and JS files.
+Then you will need to either grab your own copy of Tubular or you use jsDelivr to reference Tubular CSS and JS files.
 
 ```html
 <link rel="stylesheet" href="//cdn.jsdelivr.net/tubular/latest/tubular-bundle.min.css" />
 <script src="//cdn.jsdelivr.net/tubular/latest/tubular-bundle.min.js"></script>
 ```
 
-Finally update your modules to include Tubular, for example if your module is called <i>app</i>.
+Finally update your modules to include Tubular, for example if your module is called <i>app</i>, then you will need to add Tubular as a dependency as follows:
 
 ```javascript
 angular.module('app', ['ngRoute','ngCookies','tubular.directives']);
 ```
+
 ##Boilerplate
 
-We have a basic <a href="https://github.com/unosquare/tubular-boilerplate">Boilerplate</a> with all that you need to start your project. We are planning a <a href="http://yeoman.io/">Yeoman Generator</a>.
+We have a basic <a href="https://github.com/unosquare/tubular-boilerplate" target="_blank">Boilerplate</a> with everything that you need to start your own tubular project. We are already working on a <a href="http://yeoman.io/" taget="_blank">Yeoman Generator</a>. Check out the <a href="https://github.com/unosquare/generator-tubular" target="_blank">generator-tubular</a> repository to check out our progress.
 
 ## Samples
 
-You can check out the <a href="http://unosquare.github.io/tubular" target="_blank">Tubular GitHub Pages</a> to get a few examples. We still need to work on more samples and better documentation, but we feel what we have now will get you up to speed for now.
+You can check out the <a href="http://unosquare.github.io/tubular" target="_blank">Tubular GitHub Page</a> to get a few examples. We still need to work on more samples and better documentation, but we feel what we have now will get you up to speed very quickly :).
 
 The following HTML represents a basic grid. You don't need to add anything else to your controller! Everything you need is to create your markup.
 
@@ -122,4 +123,4 @@ The following HTML represents a basic grid. You don't need to add anything else 
     </div>
 ```
 
-Tubular works directly with either your own OData service or, you can also have it consume custom calls using our .NET library to handle Tubular's models.
+Tubular works directly with either your own OData service or a custom RESTful call. You can simplify your RESTful API significantly by using our .NET Tubular.ServerSide library which handles IQueryables easily.
