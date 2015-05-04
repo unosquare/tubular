@@ -1,11 +1,6 @@
 ﻿<div class="container" ng-controller="tubularSampleCtrl as sample">
     <tb-grid server-url="/api/orders/paged" server-save-url="/api/orders/save"
              page-size="20" class="row" on-before-get-data="sample.onTableController">
-        <div class="tubular-overlay" ng-show="$parent.currentRequest != null">
-            <div>
-                <div class="fa fa-refresh fa-2x fa-spin"></div>
-            </div>
-        </div>
 
         <!-- Main full-width container -->
         <div class="col-md-12">
@@ -19,7 +14,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="panel panel-default panel-rounded">
-                        <tb-grid-table class="table tubular-grid-table table-bordered table-responsive table-striped table-hover table-condensed">
+                        <tb-grid-table class="table tubular-grid-table table-bordered table-responsive table-striped table-hover responsive-mobile">
                             <tb-column-definitions>
                                 <tb-column class="text-center">
                                     <div class="btn-group btn-group-xs">
@@ -36,7 +31,7 @@
                                         </button>
                                     </div>
                                 </tb-column>
-                                <tb-column name="OrderID" label="Order ID" sortable="true" sort-order="1"
+                                <tb-column name="OrderID" label="Order ID" sortable="true" sort-order="1" class="column-sm"
                                            sort-direction="Ascending" is-key="true">
                                     <tb-column-header>ID</tb-column-header>
                                 </tb-column>
@@ -54,11 +49,11 @@
                                     <tb-column-header>{{label}}</tb-column-header>
                                     <tb-column-filter></tb-column-filter>
                                 </tb-column>
-                                <tb-column name="ShippedDate" label="Date" column-type="datetime">
+                                <tb-column name="ShippedDate" label="Date" column-type="datetime" class="column-md">
                                     <tb-column-header>{{label}}</tb-column-header>
                                     <tb-column-date-time-filter></tb-column-date-time-filter>
                                 </tb-column>
-                                <tb-column name="IsShipped" column-type="boolean">
+                                <tb-column name="IsShipped" column-type="boolean" class="column-md">
                                     <tb-column-header>Shipped?</tb-column-header>
                                     <tb-column-filter></tb-column-filter>
                                 </tb-column>
@@ -125,31 +120,31 @@
                                             </tb-remove-button>
                                         </div>
                                     </tb-cell-template>
-                                    <tb-cell-template class="text-center">
+                                    <tb-cell-template class="text-center" column-name="CustomerName">
                                         <a href="#">{{row.OrderID}}</a>
                                     </tb-cell-template>
-                                    <tb-cell-template>
+                                    <tb-cell-template column-name="CustomerName">
                                         <span ng-hide="row.$isEditing">{{row.CustomerName}}</span>
                                         <div ng-show="row.$isEditing">
                                             <input type="text" ng-model="row.CustomerName" class="form-control" />
                                         </div>
                                     </tb-cell-template>
-                                    <tb-cell-template>
+                                    <tb-cell-template column-name="ShipperCity">
                                         <tb-dropdown-editor is-editing="row.$isEditing" value="row.ShipperCity"
                                                             state="row.$state.ShipperCity" options-url="api/orders/cities">
                                         </tb-dropdown-editor>
                                     </tb-cell-template>
-                                    <tb-cell-template class="text-right col-xs-2">
-                                        <tb-numeric-editor is-editing="row.$isEditing" value="row.Amount" 
+                                    <tb-cell-template class="text-right" column-name="Amount">
+                                        <tb-numeric-editor is-editing="row.$isEditing" value="row.Amount"
                                                            state="row.$state.Amount" format="C"
                                                            min="1" max="100" required="true">
                                         </tb-numeric-editor>
                                     </tb-cell-template>
-                                    <tb-cell-template class="text-right">
+                                    <tb-cell-template class="text-right" column-name="ShippedDate">
                                         <tb-date-editor is-editing="row.$isEditing" value="row.ShippedDate">
                                         </tb-date-editor>
                                     </tb-cell-template>
-                                    <tb-cell-template class="text-center">
+                                    <tb-cell-template class="text-center" column-name="IsShipped">
                                         <input type="checkbox" ng-model="row.IsShipped" ng-disabled="!row.$isEditing" />
                                     </tb-cell-template>
                                 </tb-row-template>
@@ -170,7 +165,7 @@
     </tb-grid>
 
     <hr />
-    
+
     <div class="page-header">
         <h3>Sample using minimum settings and internal datasource</h3>
     </div>
@@ -183,7 +178,7 @@
                 <tb-grid-table class="table tubular-grid-table table-bordered">
                     <tb-column-definitions>
                         <tb-column name="Id" sortable="true" sort-order="1"
-                                        sort-direction="Descending" is-key="true">
+                                   sort-direction="Descending" is-key="true">
                             <tb-column-header>{{label}}</tb-column-header>
                         </tb-column>
                         <tb-column name="UserName">

@@ -4,7 +4,10 @@
     angular.module('tubular.directives').directive('tbGrid', [
             function() {
                 return {
-                    template: '<div class="tubular-grid" ng-transclude></div>',
+                    template: '<div class="tubular-grid">' +
+                        '<div class="tubular-overlay" ng-show="showLoading && currentRequest != null"><div><div class="fa fa-refresh fa-2x fa-spin"></div></div></div>' +
+                        '<ng-transclude></ng-transclude>' +
+                        '</div>',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
@@ -20,6 +23,7 @@
                         requireAuthentication: '@?',
                         name: '@?gridName',
                         editorMode: '@?',
+                        showLoading: '=?'
                     },
                     controller: [
                         '$scope', 'localStorageService', 'tubularPopupService', 'tubularModel', 'tubularHttp', 'tubularOData','$routeParams',
@@ -52,6 +56,7 @@
                             $scope.editorMode = $scope.editorMode || 'none';
                             $scope.canSaveState = false;
                             $scope.groupBy = '';
+                            $scope.showLoading = $scope.showLoading || true;
 
                             // Helper to use OData without controller
                             if ($scope.gridDataServiceName === 'odata') {

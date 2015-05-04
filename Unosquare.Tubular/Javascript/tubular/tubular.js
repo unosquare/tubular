@@ -38,7 +38,7 @@
                     symbol = symbol || "$";
                     fractionSize = fractionSize || 2;
 
-                    if (format == 'C') {
+                    if (format === 'C') {
                         return $filter('currency')(input, symbol, fractionSize);
                     }
 

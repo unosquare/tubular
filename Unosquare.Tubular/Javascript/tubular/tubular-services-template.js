@@ -17,7 +17,7 @@
 
             me.createColumns = function(model) {
                 return tubularTemplateServiceModule.createColumns(model);
-            }
+            };
 
             me.generateForm = function(fields, options) {
                 return tubularTemplateServiceModule.generateForm(fields, options);

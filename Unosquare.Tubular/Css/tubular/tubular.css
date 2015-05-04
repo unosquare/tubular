@@ -147,6 +147,13 @@ th.show-xl, td.show-xl {
     display: none;
 }
 
+table.tubular-grid-table thead tr th.column-sm {
+    width: 50px;
+}
+table.tubular-grid-table thead tr th.column-md {
+    width: 90px;
+}
+
 @media (min-width: 768px) {
     table.tubular-grid-table {
         font-size: 12px;
@@ -155,6 +162,14 @@ th.show-xl, td.show-xl {
     div.tubular-pager .pagination > li > a {
         font-size: 12px;
         min-width: 37px;
+    }
+
+    table.tubular-grid-table thead tr th.column-sm {
+        width: 80px;
+    }
+
+    table.tubular-grid-table thead tr th.column-md {
+        width: 130px;
     }
 }
 
@@ -192,9 +207,13 @@ table.tubular-grid-table tbody tr td {
     text-overflow: ellipsis;
 }
 
-    table.tubular-grid-table tbody tr td.no-wrap {
+    table.tubular-grid-table tbody tr td.no-wrap, table.tubular-grid-table tbody tr td.no-wrap span  {
         white-space: nowrap;
     }
+
+table.tubular-grid-table tbody tr td.cell-menu {
+    overflow: visible;
+}
 
 table.tubular-grid-table thead tr th i.fa {
     font-weight: normal;

@@ -96,7 +96,7 @@
                                 if (angular.isUndefined(this.$state)) this.$state = {};
                                 this.$state[key] = {
                                     $valid: function() {
-                                        return this.$errors.length == 0;
+                                        return this.$errors.length === 0;
                                     },
                                     $errors: []
                                 };

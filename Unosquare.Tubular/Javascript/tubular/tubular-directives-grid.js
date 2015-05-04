@@ -6,7 +6,7 @@
             return {
                 require: '^tbGrid',
                 template:
-                    '<div>' +
+                    '<div class="tubular-grid-search">' +
                         '<div class="input-group input-group-sm">' +
                         '<span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>' +
                         '<input type="search" class="form-control" placeholder="search . . ." maxlength="20" ' +
@@ -99,11 +99,11 @@
 
             return {
                 require: '^tbGrid',
-                template: '<div><button ng-click="save()" class="btn btn-default {{ saveCss || \'\' }}" ' +
-                    'ng-disabled="!model.$valid()" ng-show="model.$isEditing">' +
+                template: '<div ng-show="model.$isEditing"><button ng-click="save()" class="btn btn-default {{ saveCss || \'\' }}" ' +
+                    'ng-disabled="!model.$valid()">' +
                     '{{ saveCaption || \'Save\' }}' +
                     '</button>' +
-                    '<button ng-click="cancel()" class="btn {{ cancelCss || \'btn-default\' }}" ng-show="model.$isEditing">' +
+                    '<button ng-click="cancel()" class="btn {{ cancelCss || \'btn-default\' }}">' +
                     '{{ cancelCaption || \'Cancel\' }}' +
                     '</button></div>',
                 restrict: 'E',

@@ -234,8 +234,17 @@
             };
 
             me.get = function (url) {
-                // TODO: How to know if we need Token
-                return { promise: $http.get(url) };
+                if (me.requireAuthentication && me.isAuthenticated() == false) {
+                    // Return empty dataset
+                    return {
+                        promise: $q(function (resolve, reject) {
+                            resolve(null);
+                        }),
+                        cancel: cancel
+                    };
+                }
+
+                return { promise: $http.get(url).then(function (data) { return data.data; }) };
             };
 
             me.delete = function(url) {
@@ -262,7 +271,7 @@
             };
 
             me.getByKey = function (url, key) {
-                return { promise: me.get(url + key).promise.then(function (data) { return data.data; }) };
+                return { promise: me.get(url + key) };
             };
         }
     ]);

@@ -28,7 +28,7 @@
                                 $scope.savePopup = function() {
                                     var result = $scope.Model.save();
 
-                                    if (result === false) return;
+                                    if (angular.isUndefined(result) || result === false) return;
 
                                     result.then(
                                         function(data) {
@@ -266,7 +266,7 @@
                         if (angular.isUndefined(scope.state)) {
                             scope.state = {
                                 $valid: function() {
-                                    return this.$errors == 0;
+                                    return this.$errors === 0;
                                 },
                                 $errors: []
                             };
