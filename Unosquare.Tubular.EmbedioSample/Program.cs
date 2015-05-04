@@ -5,53 +5,6 @@ using Unosquare.Labs.EmbedIO.Modules;
 
 namespace Unosquare.Tubular.EmbedioSample
 {
-    public class Logger : Unosquare.Labs.EmbedIO.ILog
-    {
-        public void Info(object message)
-        {
-            InfoFormat(message.ToString(), null);
-        }
-
-        public void Error(object message)
-        {
-            ErrorFormat(message.ToString(), null);
-        }
-
-        public void Error(object message, Exception exception)
-        {
-            ErrorFormat(message.ToString(), null);
-            ErrorFormat(exception.ToString(), null);
-        }
-
-        private void WriteLine(ConsoleColor color, string format, params object[] args)
-        {
-            var current = Console.ForegroundColor;
-            Console.ForegroundColor = color;
-            Console.WriteLine(format, args);
-            Console.ForegroundColor = current;
-        }
-
-        public void InfoFormat(string format, params object[] args)
-        {
-            WriteLine(ConsoleColor.Blue, format, args);
-        }
-
-        public void WarnFormat(string format, params object[] args)
-        {
-            WriteLine(ConsoleColor.Yellow, format, args);
-        }
-
-        public void ErrorFormat(string format, params object[] args)
-        {
-            WriteLine(ConsoleColor.Red, format, args);
-        }
-
-        public void DebugFormat(string format, params object[] args)
-        {
-            WriteLine(ConsoleColor.Cyan, format, args);
-        }
-    }
-
     internal class Program
     {
         /// <summary>
@@ -88,7 +41,7 @@ namespace Unosquare.Tubular.EmbedioSample
 
             // Our web server is disposable. Note that if you don't want to use logging,
             // there are alternate constructors that allow you to skip specifying an ILog object.
-            using (var server = new WebServer(url, new Logger()))
+            using (var server = new WebServer(url, new Labs.EmbedIO.Log.SimpleConsoleLog()))
             {
                 // First, we will configure our web server by adding Modules.
 
