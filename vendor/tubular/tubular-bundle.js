@@ -1,4 +1,238 @@
-﻿///#source 1 1 angular-filter/watcher.js
+﻿///#source 1 1 tubular/node-module.js
+'use strict';
+
+var tubularTemplateServiceModule = {
+    enums: {
+        dataTypes: ['numeric', 'date', 'boolean', 'string'],
+        editorTypes: ['tbSimpleEditor', 'tbNumericEditor', 'tbDateTimeEditor', 'tbDateEditor',
+                    'tbDropdownEditor', 'tbTypeaheadEditor', 'tbHiddenField', 'tbCheckboxField', 'tbTextArea'],
+        httpMethods: ['POST', 'PUT', 'GET', 'DELETE'],
+        gridModes: ['Read-Only', 'Inline', 'Popup', 'Page'],
+        formLayouts: ['Simple', 'Two-columns', 'Three-columns'],
+    },
+
+    defaults: {
+        gridOptions: {
+            Pager: true,
+            FreeTextSearch: true,
+            PageSizeSelector: true,
+            PagerInfo: true,
+            ExportCsv: true,
+            Mode: 'Read-Only'
+        },
+        formOptions: {
+            CancelButton: true,
+            SaveUrl: '',
+            SaveMethod: 'POST',
+            Layout: 'Simple',
+            ModelKey: ''
+        }
+    },
+
+    isNumber: function (value) { return typeof value === 'number'; },
+
+    isDate: function(value) {
+        return toString.call(value) === '[object Date]';
+    },
+
+    createColumns: function(model) {
+        var jsonModel = (model instanceof Array && model.length > 0) ? model[0] : model;
+        var columns = [];
+
+        for (var prop in jsonModel) {
+            if (jsonModel.hasOwnProperty(prop)) {
+                var value = jsonModel[prop];
+                // Ignore functions
+                if (prop[0] === '$' || typeof (value) === 'function') continue;
+                // Ignore null value, but maybe evaluate another item if there is anymore
+                if (value == null) continue;
+
+                if (this.isNumber(value) || parseFloat(value).toString() == value) {
+                    columns.push({ Name: prop, DataType: 'numeric', Template: '{{row.' + prop + '}}' });
+                } else if (this.isDate(value) || isNaN((new Date(value)).getTime()) == false) {
+                    columns.push({ Name: prop, DataType: 'date', Template: '{{row.' + prop + ' | date}}' });
+                } else if (value.toLowerCase() == 'true' || value.toLowerCase() == 'false') {
+                    columns.push({ Name: prop, DataType: 'boolean', Template: '{{row.' + prop + ' ? "TRUE" : "FALSE" }}' });
+                } else {
+                    var newColumn = { Name: prop, DataType: 'string', Template: '{{row.' + prop + '}}' };
+
+                    if ((/e(-|)mail/ig).test(newColumn.Name)) {
+                        newColumn.Template = '<a href="mailto:' + newColumn.Template + '">' + newColumn.Template + '</a>';
+                    }
+
+                    columns.push(newColumn);
+                }
+            }
+        }
+
+        var firstSort = false;
+
+        for (var column in columns) {
+            if (columns.hasOwnProperty(column)) {
+                var columnObj = columns[column];
+                columnObj.Label = columnObj.Name.replace(/([a-z])([A-Z])/g, '$1 $2');
+                columnObj.EditorType = this.getEditorTypeByDateType(columnObj.DataType);
+
+                // Grid attributes
+                columnObj.Searchable = columnObj.DataType === 'string';
+                columnObj.Filter = true;
+                columnObj.Visible = true;
+                columnObj.Sortable = true;
+                columnObj.IsKey = false;
+                columnObj.SortOrder = -1;
+                // Form attributes
+                columnObj.ShowLabel = true;
+                columnObj.Placeholder = '';
+                columnObj.Format = '';
+                columnObj.Help = '';
+                columnObj.Required = true;
+                columnObj.ReadOnly = false;
+
+                if (firstSort === false) {
+                    columnObj.IsKey = true;
+                    columnObj.SortOrder = 1;
+                    firstSort = true;
+                }
+            }
+        }
+
+        return columns;
+    },
+
+    generateFields: function(columns) {
+        return columns.map(function(el) {
+            var editorTag = el.EditorType.replace(/([A-Z])/g, function($1) { return "-" + $1.toLowerCase(); });
+
+            return '\r\n\t<' + editorTag + ' name="' + el.Name + '" label="' + el.Label + '" editor-type="' + el.DataType + '" ' +
+                '\r\n\t\tshow-label="' + el.ShowLabel + '" placeholder="' + el.Placeholder + '" required="' + el.Required + '" ' +
+                '\r\n\t\tread-only="' + el.ReadOnly + '" format="' + el.Format + '" help="' + el.Help + '">' +
+                '\r\n\t</' + editorTag + '>';
+        }).join('');
+    },
+
+    generatePopup: function(model, title) {
+        var columns = this.createColumns(model);
+
+        return '<tb-form model="Model">' +
+            '<div class="modal-header"><h3 class="modal-title">' + (title || 'Edit Row') + '</h3></div>' +
+            '<div class="modal-body">' +
+            this.generateFields(columns) +
+            '</div>' +
+            '<tb-form-buttons class="modal-footer" save-action="savePopup()" cancel-action="closePopup()"></tb-form-buttons>' +
+            '</tb-form>';
+    },
+
+    getEditorTypeByDateType: function(dataType) {
+        switch (dataType) {
+        case 'date':
+            return 'tbDateTimeEditor';
+        case 'numeric':
+            return 'tbNumericEditor';
+        case 'boolean':
+            return 'tbCheckboxField';
+        default:
+            return 'tbSimpleEditor';
+        }
+    },
+
+    generateForm: function(fields, options) {
+        var layout = options.Layout == 'Simple' ? '' : options.Layout.toLowerCase();
+
+        return '<tb-form layout="' + layout + '" server-save-method="' + options.SaveMethod + '" ' +
+            'model-key="' + options.ModelKey + '"' +
+            'server-url="' + options.dataUrl + '" server-save-url="' + options.SaveUrl + '" ' +
+            (options.isOData ? ' service-name="odata"' : '') + '>' +
+            '\r\n\t<h1>Autogenerated Form</h1>' +
+            this.generateFields(fields) +
+            '\r\n\t<tb-form-buttons show-cancel="' + options.CancelButton + '"></tb-form-buttons>' +
+            '\r\n</tb-form>';
+    },
+
+    generateGrid: function(columns, options) {
+        var topToolbar = '';
+        var bottomToolbar = '';
+
+        if (options.Pager) {
+            topToolbar += '\r\n\t<tb-grid-pager class="col-md-6"></tb-grid-pager>';
+            bottomToolbar += '\r\n\t<tb-grid-pager class="col-md-6"></tb-grid-pager>';
+        }
+
+        if (options.ExportCsv) {
+            topToolbar += '\r\n\t<div class="col-md-3">' +
+                '\r\n\t\t<div class="btn-group">' +
+                '\r\n\t\t<tb-print-button title="Tubular" class="btn-sm"></tb-print-button>' +
+                '\r\n\t\t<tb-export-button filename="tubular.csv" css="btn-sm"></tb-export-button>' +
+                '\r\n\t\t</div>' +
+                '\r\n\t</div>';
+        }
+
+        if (options.FreeTextSearch) {
+            topToolbar += '\r\n\t<tb-text-search class="col-md-3" css="input-sm"></tb-text-search>';
+        }
+
+        if (options.PageSizeSelector) {
+            bottomToolbar += '\r\n\t<tb-page-size-selector class="col-md-3" selectorcss="input-sm"></tb-page-size-selector>';
+        }
+
+        if (options.PagerInfo) {
+            bottomToolbar += '\r\n\t<tb-grid-pager-info class="col-md-3"></tb-grid-pager-info>';
+        }
+
+        // TODO: If it's page mode add button
+
+        return '<h1>Autogenerated Grid</h1>' +
+            '\r\n<div class="container">' +
+            '\r\n<tb-grid server-url="' + options.dataUrl + '" request-method="GET" class="row" require-authentication="false" page-size="10"' +
+            (options.isOData ? ' service-name="odata"' : '') +
+            (options.Mode != 'Read-Only' ? ' editor-mode="' + options.Mode.toLowerCase() + '"' : '') + '>' +
+            (topToolbar === '' ? '' : '\r\n\t<div class="row">' + topToolbar + '\r\n\t</div>') +
+            '\r\n\t<div class="row">' +
+            '\r\n\t<div class="col-md-12">' +
+            '\r\n\t<div class="panel panel-default panel-rounded">' +
+            '\r\n\t<tb-grid-table class="table-bordered">' +
+            '\r\n\t<tb-column-definitions>' +
+            (options.Mode != 'Read-Only' ? '\r\n\t\t<tb-column label="Actions"><tb-column-header>{{label}}</tb-column-header></tb-column>' : '') +
+            columns.map(function(el) {
+                return '\r\n\t\t<tb-column name="' + el.Name + '" label="' + el.Label + '" column-type="' + el.DataType + '" sortable="' + el.Sortable + '" ' +
+                    '\r\n\t\t\tsort-order="' + el.SortOrder + '" is-key="' + el.IsKey + '" searchable="' + el.Searchable + '" visible="' + el.Visible + '">' +
+                    (el.Filter ? '<tb-column-filter></tb-column-filter>' : '') +
+                    '\r\n\t\t\t<tb-column-header>{{label}}</tb-column-header>' +
+                    '\r\n\t\t</tb-column>';
+            }).join('') +
+            '\r\n\t</tb-column-definitions>' +
+            '\r\n\t<tb-row-set>' +
+            '\r\n\t<tb-row-template ng-repeat="row in $component.rows" row-model="row">' +
+            (options.Mode != 'Read-Only' ? '\r\n\t\t<tb-cell-template>' +
+                (options.Mode == 'Inline' ? '\r\n\t\t\t<tb-save-button model="row"></tb-save-button>' : '') +
+                '\r\n\t\t\t<tb-edit-button model="row"></tb-edit-button>' +
+                '\r\n\t\t</tb-cell-template>' : '') +
+            columns.map(function(el) {
+                var editorTag = el.EditorType.replace(/([A-Z])/g, function($1) { return "-" + $1.toLowerCase(); });
+
+                return '\r\n\t\t<tb-cell-template column-name="' + el.Name + '">' +
+                    (options.Mode == 'Inline' ?
+                        '<' + editorTag + ' is-editing="row.$isEditing" value="row.' + el.Name + '"></' + editorTag + '>' :
+                        '\r\n\t\t\t' + el.Template) +
+                    '\r\n\t\t</tb-cell-template>';
+            }).join('') +
+            '\r\n\t</tb-row-template>' +
+            '\r\n\t</tb-row-set>' +
+            '\r\n\t</tb-grid-table>' +
+            '\r\n\t</div>' +
+            '\r\n\t</div>' +
+            '\r\n\t</div>' +
+            (bottomToolbar === '' ? '' : '\r\n\t<div class="row">' + bottomToolbar + '\r\n\t</div>') +
+            '\r\n</tb-grid>' +
+            '\r\n</div>';
+    }
+};
+
+try {
+    module.exports = tubularTemplateServiceModule;
+} catch (e) {
+    // Ignore
+}
+///#source 1 1 angular-filter/watcher.js
 /**
  * @ngdoc provider
  * @name filterWatcher
@@ -233,7 +467,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     symbol = symbol || "$";
                     fractionSize = fractionSize || 2;
 
-                    if (format == 'C') {
+                    if (format === 'C') {
                         return $filter('currency')(input, symbol, fractionSize);
                     }
 
@@ -275,7 +509,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
     angular.module('tubular.directives').directive('tbGrid', [
             function() {
                 return {
-                    template: '<div class="tubular-grid" ng-transclude></div>',
+                    template: '<div class="tubular-grid">' +
+                        '<div class="tubular-overlay" ng-show="showLoading && currentRequest != null"><div><div class="fa fa-refresh fa-2x fa-spin"></div></div></div>' +
+                        '<ng-transclude></ng-transclude>' +
+                        '</div>',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
@@ -291,6 +528,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         requireAuthentication: '@?',
                         name: '@?gridName',
                         editorMode: '@?',
+                        showLoading: '=?'
                     },
                     controller: [
                         '$scope', 'localStorageService', 'tubularPopupService', 'tubularModel', 'tubularHttp', 'tubularOData','$routeParams',
@@ -323,6 +561,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             $scope.editorMode = $scope.editorMode || 'none';
                             $scope.canSaveState = false;
                             $scope.groupBy = '';
+                            $scope.showLoading = $scope.showLoading || true;
 
                             // Helper to use OData without controller
                             if ($scope.gridDataServiceName === 'odata') {
@@ -1014,7 +1253,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             return {
                 require: '^tbGrid',
                 template:
-                    '<div>' +
+                    '<div class="tubular-grid-search">' +
                         '<div class="input-group input-group-sm">' +
                         '<span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>' +
                         '<input type="search" class="form-control" placeholder="search . . ." maxlength="20" ' +
@@ -1107,11 +1346,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
             return {
                 require: '^tbGrid',
-                template: '<div><button ng-click="save()" class="btn btn-default {{ saveCss || \'\' }}" ' +
-                    'ng-disabled="!model.$valid()" ng-show="model.$isEditing">' +
+                template: '<div ng-show="model.$isEditing"><button ng-click="save()" class="btn btn-default {{ saveCss || \'\' }}" ' +
+                    'ng-disabled="!model.$valid()">' +
                     '{{ saveCaption || \'Save\' }}' +
                     '</button>' +
-                    '<button ng-click="cancel()" class="btn {{ cancelCss || \'btn-default\' }}" ng-show="model.$isEditing">' +
+                    '<button ng-click="cancel()" class="btn {{ cancelCss || \'btn-default\' }}">' +
                     '{{ cancelCaption || \'Cancel\' }}' +
                     '</button></div>',
                 restrict: 'E',
@@ -2211,7 +2450,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 if (angular.isUndefined(this.$state)) this.$state = {};
                                 this.$state[key] = {
                                     $valid: function() {
-                                        return this.$errors.length == 0;
+                                        return this.$errors.length === 0;
                                     },
                                     $errors: []
                                 };
@@ -2395,7 +2634,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 $scope.savePopup = function() {
                                     var result = $scope.Model.save();
 
-                                    if (result === false) return;
+                                    if (angular.isUndefined(result) || result === false) return;
 
                                     result.then(
                                         function(data) {
@@ -2633,7 +2872,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         if (angular.isUndefined(scope.state)) {
                             scope.state = {
                                 $valid: function() {
-                                    return this.$errors == 0;
+                                    return this.$errors === 0;
                                 },
                                 $errors: []
                             };
@@ -2917,8 +3156,17 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             };
 
             me.get = function (url) {
-                // TODO: How to know if we need Token
-                return { promise: $http.get(url) };
+                if (me.requireAuthentication && me.isAuthenticated() == false) {
+                    // Return empty dataset
+                    return {
+                        promise: $q(function (resolve, reject) {
+                            resolve(null);
+                        }),
+                        cancel: cancel
+                    };
+                }
+
+                return { promise: $http.get(url).then(function (data) { return data.data; }) };
             };
 
             me.delete = function(url) {
@@ -2945,7 +3193,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             };
 
             me.getByKey = function (url, key) {
-                return { promise: me.get(url + key).promise.then(function (data) { return data.data; }) };
+                return { promise: me.get(url + key) };
             };
         }
     ]);
@@ -3082,234 +3330,40 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
         ]);
 })();
 ///#source 1 1 tubular/tubular-services-template.js
+(function() {
+    'use strict';
 
-'use strict';
+    angular.module('tubular.services').service('tubularTemplateService', [
+        '$templateCache',
+        function tubularTemplateService($templateCache) {
+            var me = this;
 
-var tubularTemplateServiceModule = {
-    createColumns: function(model) {
-        var jsonModel = (model instanceof Array && model.length > 0) ? model[0] : model;
-        var columns = [];
+            me.enums = tubularTemplateServiceModule.enums;
+            me.defaults = tubularTemplateServiceModule.defaults;
 
-        for (var prop in jsonModel) {
-            if (jsonModel.hasOwnProperty(prop)) {
-                var value = jsonModel[prop];
-                // Ignore functions
-                if (prop[0] === '$' || typeof (value) === 'function') continue;
-                // Ignore null value, but maybe evaluate another item if there is anymore
-                if (value == null) continue;
+            me.generatePopup = function(model, title) {
+                var templateName = 'temp' + (new Date().getTime()) + '.html';
+                var template = tubularTemplateServiceModule.generatePopup(model, title);
 
-                if (angular.isNumber(value) || parseFloat(value).toString() == value) {
-                    columns.push({ Name: prop, DataType: 'numeric', Template: '{{row.' + prop + '}}' });
-                } else if (angular.isDate(value) || isNaN((new Date(value)).getTime()) == false) {
-                    columns.push({ Name: prop, DataType: 'date', Template: '{{row.' + prop + ' | date}}' });
-                } else if (value.toLowerCase() == 'true' || value.toLowerCase() == 'false') {
-                    columns.push({ Name: prop, DataType: 'boolean', Template: '{{row.' + prop + ' ? "TRUE" : "FALSE" }}' });
-                } else {
-                    var newColumn = { Name: prop, DataType: 'string', Template: '{{row.' + prop + '}}' };
+                $templateCache.put(templateName, template);
 
-                    if ((/e(-|)mail/ig).test(newColumn.Name)) {
-                        newColumn.Template = '<a href="mailto:' + newColumn.Template + '">' + newColumn.Template + '</a>';
-                    }
+                return templateName;
+            };
 
-                    columns.push(newColumn);
-                }
-            }
+            me.createColumns = function(model) {
+                return tubularTemplateServiceModule.createColumns(model);
+            };
+
+            me.generateForm = function(fields, options) {
+                return tubularTemplateServiceModule.generateForm(fields, options);
+            };
+
+            me.generateGrid = function(columns, options) {
+                return tubularTemplateServiceModule.generateGrid(columns, options);
+            };
         }
-
-        var firstSort = false;
-
-        for (var column in columns) {
-            if (columns.hasOwnProperty(column)) {
-                var columnObj = columns[column];
-                columnObj.Label = columnObj.Name.replace(/([a-z])([A-Z])/g, '$1 $2');
-                columnObj.EditorType = this.getEditorTypeByDateType(columnObj.DataType);
-
-                // Grid attributes
-                columnObj.Searchable = columnObj.DataType === 'string';
-                columnObj.Filter = true;
-                columnObj.Visible = true;
-                columnObj.Sortable = true;
-                columnObj.IsKey = false;
-                columnObj.SortOrder = -1;
-                // Form attributes
-                columnObj.ShowLabel = true;
-                columnObj.Placeholder = '';
-                columnObj.Format = '';
-                columnObj.Help = '';
-                columnObj.Required = true;
-                columnObj.ReadOnly = false;
-
-                if (firstSort === false) {
-                    columnObj.IsKey = true;
-                    columnObj.SortOrder = 1;
-                    firstSort = true;
-                }
-            }
-        }
-
-        return columns;
-    },
-
-    generateFields: function(columns) {
-        return columns.map(function (el) {
-            var editorTag = el.EditorType.replace(/([A-Z])/g, function ($1) { return "-" + $1.toLowerCase(); });
-
-            return '\r\n\t<' + editorTag + ' name="' + el.Name + '" label="' + el.Label + '" editor-type="' + el.DataType + '" ' +
-                '\r\n\t\tshow-label="' + el.ShowLabel + '" placeholder="' + el.Placeholder + '" required="' + el.Required + '" ' +
-                '\r\n\t\tread-only="' + el.ReadOnly + '" format="' + el.Format + '" help="' + el.Help + '">' +
-                '\r\n\t</' + editorTag + '>';
-        }).join('');
-    },
-
-    generatePopup: function (model, title) {
-        var columns = this.createColumns(model);
-
-        return '<tb-form model="Model">' +
-            '<div class="modal-header"><h3 class="modal-title">' + (title || 'Edit Row') + '</h3></div>' +
-            '<div class="modal-body">' +
-            this.generateFields(columns) +
-            '</div>' +
-            '<tb-form-buttons class="modal-footer" save-action="savePopup()" cancel-action="closePopup()"></tb-form-buttons>' +
-            '</tb-form>';
-
-    },
-
-    getEditorTypeByDateType: function(dataType) {
-        switch (dataType) {
-            case 'date':
-                return 'tbDateTimeEditor';
-            case 'numeric':
-                return 'tbNumericEditor';
-            case 'boolean':
-                return 'tbCheckboxField';
-            default:
-                return 'tbSimpleEditor';
-        }
-    },
-
-    generateForm: function (fields, options) {
-        var layout = options.Layout == 'Simple' ? '' : options.Layout.toLowerCase();
-
-        return '<tb-form layout="' + layout + '" server-save-method="' + options.SaveMethod + '" ' +
-            'model-key="' + options.ModelKey + '"' +
-            'server-url="' + options.dataUrl + '" server-save-url="' + options.SaveUrl + '" ' +
-            (options.isOData ? ' service-name="odata"' : '') + '>' +
-            '\r\n\t<h1>Autogenerated Form</h1>' +
-            this.generateFields(fields) +
-            '\r\n\t<tb-form-buttons show-cancel="' + options.CancelButton + '"></tb-form-buttons>' +
-            '\r\n</tb-form>';
-    },
-
-    generateGrid: function (columns, options) {
-        var topToolbar = '';
-        var bottomToolbar = '';
-
-        if (options.Pager) {
-            topToolbar += '\r\n\t<tb-grid-pager class="col-md-6"></tb-grid-pager>';
-            bottomToolbar += '\r\n\t<tb-grid-pager class="col-md-6"></tb-grid-pager>';
-        }
-
-        if (options.ExportCsv) {
-            topToolbar += '\r\n\t<div class="col-md-3">' +
-                '\r\n\t\t<div class="btn-group">' +
-                '\r\n\t\t<tb-print-button title="Tubular" class="btn-sm"></tb-print-button>' +
-                '\r\n\t\t<tb-export-button filename="tubular.csv" css="btn-sm"></tb-export-button>' +
-                '\r\n\t\t</div>' +
-                '\r\n\t</div>';
-        }
-
-        if (options.FreeTextSearch) {
-            topToolbar += '\r\n\t<tb-text-search class="col-md-3" css="input-sm"></tb-text-search>';
-        }
-
-        if (options.PageSizeSelector) {
-            bottomToolbar += '\r\n\t<tb-page-size-selector class="col-md-3" selectorcss="input-sm"></tb-page-size-selector>';
-        }
-
-        if (options.PagerInfo) {
-            bottomToolbar += '\r\n\t<tb-grid-pager-info class="col-md-3"></tb-grid-pager-info>';
-        }
-
-        return '<h1>Autogenerated Grid</h1>' +
-            '\r\n<div class="container">' +
-            '\r\n<tb-grid server-url="' + options.dataUrl + '" request-method="GET" class="row" require-authentication="false" page-size="10"' +
-            (options.isOData ? ' service-name="odata"' : '') +
-            (options.Mode != 'Read-Only' ? ' editor-mode="' + options.Mode.toLowerCase() + '"' : '') + '>' +
-            (topToolbar === '' ? '' : '\r\n\t<div class="row">' + topToolbar + '\r\n\t</div>') +
-            '\r\n\t<div class="row">' +
-            '\r\n\t<div class="col-md-12">' +
-            '\r\n\t<div class="panel panel-default panel-rounded">' +
-            '\r\n\t<tb-grid-table class="table-bordered">' +
-            '\r\n\t<tb-column-definitions>' +
-            (options.Mode != 'Read-Only' ? '\r\n\t\t<tb-column label="Actions"><tb-column-header>{{label}}</tb-column-header></tb-column>' : '') +
-            columns.map(function (el) {
-                return '\r\n\t\t<tb-column name="' + el.Name + '" label="' + el.Label + '" column-type="' + el.DataType + '" sortable="' + el.Sortable + '" ' +
-                    '\r\n\t\t\tsort-order="' + el.SortOrder + '" is-key="' + el.IsKey + '" searchable="' + el.Searchable + '" visible="' + el.Visible + '">' +
-                    (el.Filter ? '<tb-column-filter></tb-column-filter>' : '') +
-                    '\r\n\t\t\t<tb-column-header>{{label}}</tb-column-header>' +
-                    '\r\n\t\t</tb-column>';
-            }).join('') +
-            '\r\n\t</tb-column-definitions>' +
-            '\r\n\t<tb-row-set>' +
-            '\r\n\t<tb-row-template ng-repeat="row in $component.rows" row-model="row">' +
-            (options.Mode != 'Read-Only' ? '\r\n\t\t<tb-cell-template>' +
-                (options.Mode == 'Inline' ? '\r\n\t\t\t<tb-save-button model="row"></tb-save-button>' : '') +
-                '\r\n\t\t\t<tb-edit-button model="row"></tb-edit-button>' +
-                '\r\n\t\t</tb-cell-template>' : '') +
-            columns.map(function (el) {
-                var editorTag = el.EditorType.replace(/([A-Z])/g, function ($1) { return "-" + $1.toLowerCase(); });
-
-                return '\r\n\t\t<tb-cell-template column-name="' + el.Name + '">' +
-                    (options.Mode == 'Inline' ?
-                        '<' + editorTag + ' is-editing="row.$isEditing" value="row.' + el.Name + '"></' + editorTag + '>' :
-                        '\r\n\t\t\t' + el.Template) +
-                    '\r\n\t\t</tb-cell-template>';
-            }).join('') +
-            '\r\n\t</tb-row-template>' +
-            '\r\n\t</tb-row-set>' +
-            '\r\n\t</tb-grid-table>' +
-            '\r\n\t</div>' +
-            '\r\n\t</div>' +
-            '\r\n\t</div>' +
-            (bottomToolbar === '' ? '' : '\r\n\t<div class="row">' + bottomToolbar + '\r\n\t</div>') +
-            '\r\n</tb-grid>' +
-            '\r\n</div>';
-    }
-};
-
-try {
-    module.exports = tubularTemplateServiceModule;
-} catch (e) {
-    // Ignore
-}
-
-angular.module('tubular.services').service('tubularTemplateService', [
-    '$templateCache',
-    function tubularTemplateService($templateCache) {
-        var me = this;
-
-        me.generatePopup = function(model, title) {
-            var templateName = 'temp' + (new Date().getTime()) + '.html';
-            var template = tubularTemplateServiceModule.generatePopup(model, title);
-
-            $templateCache.put(templateName, template);
-
-            return templateName;
-        };
-
-        me.createColumns = function(model) {
-            return tubularTemplateServiceModule.createColumns(model);
-        }
-
-        me.generateForm = function (fields, options) {
-            return tubularTemplateServiceModule.generateForm(fields, options);
-        };
-
-        me.generateGrid = function(columns, options) {
-            return tubularTemplateServiceModule.generateGrid(columns, options);
-        };
-    }
-]);
+    ]);
+})();
 ///#source 1 1 tadaaapickr/tadaaapickr.pack.js
 /**
  * Usage example

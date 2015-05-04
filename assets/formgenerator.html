@@ -110,7 +110,7 @@
                                 {{row.Name}}
                             </td>
                             <td>
-                                <select ng-options="dataType for dataType in editorTypes" 
+                                <select ng-options="dataType for dataType in enums.editorTypes" 
                                         class="form-control" ng-model="row.EditorType"></select>
                             </td>
                             <td>
@@ -161,7 +161,7 @@
                     <div class="col-xs-4">
                         <label>Form Layout</label>
                         <select ng-model="formOptions.Layout" class="form-control"
-                                ng-options="option for option in formLayouts"></select>
+                                ng-options="option for option in enums.formLayouts"></select>
                     </div>
                     <div class="col-xs-4">
                         <button type="button" class="btn btn-default" ng-model="formOptions.CancelButton" btn-checkbox>
@@ -179,7 +179,7 @@
                     <div class="col-xs-4">
                         <label>Save Http Method</label>
                         <select ng-model="formOptions.SaveMethod" class="form-control"
-                                ng-options="option for option in httpMethods"></select>
+                                ng-options="option for option in enums.httpMethods"></select>
                     </div>
                 </div>
                 <hr />

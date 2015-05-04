@@ -100,38 +100,19 @@
                 }
             }
         ]).controller('tubularGeneratorCtrl', [
-            '$scope', '$http', '$templateCache', 'tubularGenerator', 'localStorageService',
-            function($scope, $http, $templateCache, tubularGenerator, localStorageService) {
+            '$scope', '$http', '$templateCache', 'tubularGenerator', 'localStorageService', 'tubularTemplateService',
+            function ($scope, $http, $templateCache, tubularGenerator, localStorageService, tubularTemplateService) {
                 // Options
-                $scope.dataTypes = ['numeric', 'date', 'boolean', 'string'];
-                $scope.editorTypes = [
-                    'tbSimpleEditor', 'tbNumericEditor', 'tbDateTimeEditor', 'tbDateEditor',
-                    'tbDropdownEditor', 'tbTypeaheadEditor', 'tbHiddenField', 'tbCheckboxField', 'tbTextArea'
-                ];
-                $scope.gridMode = ['Read-Only', 'Inline', 'Popup'];
-                $scope.httpMethods = ['POST', 'PUT'];
-                $scope.formLayouts = ['Simple', 'Two-columns', 'Three-columns'];
+                $scope.enums = tubularTemplateService.enums;
 
                 $scope.templatename = '';
                 $scope.basemodel = '';
                 $scope.step = 1;
                 $scope.dataUrl = '';
                 $scope.isOData = false;
-                $scope.uiOptions = {
-                    Pager: true,
-                    FreeTextSearch: true,
-                    PageSizeSelector: true,
-                    PagerInfo: true,
-                    ExportCsv: true,
-                    Mode: 'Read-Only'
-                };
-                $scope.formOptions = {
-                    CancelButton: true,
-                    SaveUrl: '',
-                    SaveMethod: 'POST',
-                    Layout: 'Simple',
-                    ModelKey: ''
-                };
+                $scope.uiOptions = tubularTemplateService.defaults.gridOptions;
+                $scope.formOptions = tubularTemplateService.defaults.formOptions;
+
                 $scope.views = localStorageService.get('generator_views') || [];
                 $scope.gridId = ($scope.views.length + 1);
 
