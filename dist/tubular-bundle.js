@@ -3338,6 +3338,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
         function tubularTemplateService($templateCache) {
             var me = this;
 
+            me.enums = tubularTemplateServiceModule.enums;
+            me.defaults = tubularTemplateServiceModule.defaults;
+
             me.generatePopup = function(model, title) {
                 var templateName = 'temp' + (new Date().getTime()) + '.html';
                 var template = tubularTemplateServiceModule.generatePopup(model, title);
