@@ -144,7 +144,7 @@
     <Content Include="ui\app\common\popup.html" />
     <Content Include="ui\app\common\view.html" />
     <Content Include="ui\media\favicon.ico" />
-    <Content Include="ui\media\favicon.png" />
+    <Content Include="ui\media\tubular.png" />
     <Content Include="ui\styles\common.css" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
