@@ -1,8 +1,13 @@
 ﻿<tb-grid server-url="http://services.odata.org/V3/Northwind/Northwind.svc/Orders" request-method="GET"
          service-name="odata" page-size="10" require-authentication="false">
     <div class="row">
-        <tb-grid-pager class="col-md-8 col-xs-12"></tb-grid-pager>
-        <tb-text-search class="col-md-4 col-xs-12"></tb-text-search>
+        <tb-grid-pager class="col-md-6 col-xs-12"></tb-grid-pager>
+        <div class="col-md-6 col-xs-12">
+            <div class="btn-group">
+                <tb-export-button filename="data.csv"></tb-export-button>
+                <tb-print-button title="Sample"></tb-print-button>
+            </div>
+        </div>
     </div>
     <div class="row">
         <div class="col-md-12">
@@ -35,34 +40,29 @@
                                 <span>{{label}}</span>
                             </tb-column-header>
                         </tb-column>
-                        <tb-column name="ShipCountry" sortable="true" searchable="true" is-grouping="true">
+                        <tb-column name="ShipCountry" sortable="true" searchable="true">
                             <tb-column-filter operator="Contains"></tb-column-filter>
                             <tb-column-header>
                                 <span>{{label}}</span>
                             </tb-column-header>
                         </tb-column>
                     </tb-column-definitions>
-                    <tb-row-set ng-repeat="(groupKey, rowGroup) in $parent.$component.rows | groupBy: $parent.$component.groupBy">
-                        <tb-row-template>
-                            <tb-row-group-header group="rowGroup" class="info">
-                                {{groupKey}} - Count {{rowGroup.length}}
-                            </tb-row-group-header>
-                        </tb-row-template>
-                        <tb-row-template ng-repeat="row in rowGroup"
+                    <tb-row-set>
+                        <tb-row-template ng-repeat="row in $component.rows"
                                          row-model="row" selectable="false">
-                            <tb-cell-template column-name="OrderID">
+                            <tb-cell-template>
                                 {{row.OrderID}}
                             </tb-cell-template>
-                            <tb-cell-template column-name="CustomerID">
+                            <tb-cell-template>
                                 {{row.CustomerID}}
                             </tb-cell-template>
-                            <tb-cell-template column-name="OrderDate">
+                            <tb-cell-template>
                                 {{row.OrderDate | date: 'short'}}
                             </tb-cell-template>
-                            <tb-cell-template column-name="ShipCity">
+                            <tb-cell-template>
                                 {{row.ShipCity}}
                             </tb-cell-template>
-                            <tb-cell-template column-name="ShipCountry">
+                            <tb-cell-template>
                                 {{row.ShipCountry}}
                             </tb-cell-template>
                         </tb-row-template>
