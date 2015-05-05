@@ -7,6 +7,12 @@
         "type": "git",
         "url": "https://github.com/unosquare/tubular"
     },
+    "keywords": [
+        "grid",
+        "forms",
+        "bootstrap",
+        "angularjs"
+    ],
     "main": [
         "dist/tubular-bundle.js",
         "dist/tubular-bundle.css"

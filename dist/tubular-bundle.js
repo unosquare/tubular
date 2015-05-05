@@ -2623,7 +2623,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             };
 
             me.exportToCsv = function(filename, header, rows, visibility) {
-                var processRow = function(row) {
+                var processRow = function (row) {
+                    if (typeof (row) === 'object')
+                        row = Object.keys(row).map(function (key) { return row[key]; });
+
                     var finalVal = '';
                     for (var j = 0; j < row.length; j++) {
                         if (visibility[j] === false) continue;
@@ -2650,7 +2653,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     csvFile += processRow(rows[i]);
                 }
 
-                var blob = new Blob([csvFile], { type: 'text/csv;charset=utf-8;' });
+                // Add "\uFEFF" like UTF-8 BOM
+                var blob = new Blob(["\uFEFF" + csvFile], { type: 'text/csv;charset=utf-8;' });
                 saveAs(blob, filename);
             };
         })
