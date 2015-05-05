@@ -1,7 +1,17 @@
 ﻿(function() {
     'use strict';
 
-    angular.module('tubular.directives').directive('tbGrid', [
+    angular.module('tubular.directives')
+
+    /**
+     * @ngdoc directive
+     * @name tbGrid
+     * @restrict E
+     *
+     * @description
+     * The `tbGrid` directive is the base to create any grid.
+     */
+        .directive('tbGrid', [
             function() {
                 return {
                     template: '<div class="tubular-grid">' +

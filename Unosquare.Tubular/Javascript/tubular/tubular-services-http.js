@@ -2,7 +2,15 @@
     'use strict';
 
     // User Service based on https://bitbucket.org/david.antaramian/so-21662778-spa-authentication-example
-    angular.module('tubular.services').service('tubularHttp', [
+    angular.module('tubular.services')
+        /**
+         * @ngdoc service
+         * @name tubularHttp
+         *
+         * @description
+         * Use `tubularHttp` to connect a grid or a form to a HTTP Resource.
+         */
+        .service('tubularHttp', [
         '$http', '$timeout', '$q', '$cacheFactory', '$cookieStore', function tubularHttp($http, $timeout, $q, $cacheFactory, $cookieStore) {
             function isAuthenticationExpired(expirationDate) {
                 var now = new Date();

@@ -1,6 +1,8 @@
 ﻿(function() {
     'use strict';
-
+    /**
+     * Contains common services
+     */
     angular.module('tubular.services', ['ui.bootstrap', 'ngCookies'])
         .service('tubularPopupService', [
             '$modal', '$rootScope', 'tubularTemplateService', function tubularPopupService($modal, $rootScope, tubularTemplateService) {

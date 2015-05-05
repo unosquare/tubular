@@ -1,6 +1,9 @@
 ﻿(function() {
     'use strict';
-
+    /**
+     * Tubular Directives module.
+     * It depends upon {@link tubular.services} and {@link tubular.models}.
+     */
     angular.module('tubular.directives', ['tubular.services', 'tubular.models', 'LocalStorageModule','a8m.group-by'])
         .config([
             'localStorageServiceProvider', function (localStorageServiceProvider) {

@@ -438,7 +438,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 ///#source 1 1 tubular/tubular.js
 (function() {
     'use strict';
-
+    /**
+     * Tubular Directives module.
+     * It depends upon {@link tubular.services} and {@link tubular.models}.
+     */
     angular.module('tubular.directives', ['tubular.services', 'tubular.models', 'LocalStorageModule','a8m.group-by'])
         .config([
             'localStorageServiceProvider', function (localStorageServiceProvider) {
@@ -515,7 +518,17 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 (function() {
     'use strict';
 
-    angular.module('tubular.directives').directive('tbGrid', [
+    angular.module('tubular.directives')
+
+    /**
+     * @ngdoc directive
+     * @name tbGrid
+     * @restrict E
+     *
+     * @description
+     * The `tbGrid` directive is the base to create any grid.
+     */
+        .directive('tbGrid', [
             function() {
                 return {
                     template: '<div class="tubular-grid">' +
@@ -2547,7 +2560,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 ///#source 1 1 tubular/tubular-services.js
 (function() {
     'use strict';
-
+    /**
+     * Contains common services
+     */
     angular.module('tubular.services', ['ui.bootstrap', 'ngCookies'])
         .service('tubularPopupService', [
             '$modal', '$rootScope', 'tubularTemplateService', function tubularPopupService($modal, $rootScope, tubularTemplateService) {
@@ -2869,7 +2884,15 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
     'use strict';
 
     // User Service based on https://bitbucket.org/david.antaramian/so-21662778-spa-authentication-example
-    angular.module('tubular.services').service('tubularHttp', [
+    angular.module('tubular.services')
+        /**
+         * @ngdoc service
+         * @name tubularHttp
+         *
+         * @description
+         * Use `tubularHttp` to connect a grid or a form to a HTTP Resource.
+         */
+        .service('tubularHttp', [
         '$http', '$timeout', '$q', '$cacheFactory', '$cookieStore', function tubularHttp($http, $timeout, $q, $cacheFactory, $cookieStore) {
             function isAuthenticationExpired(expirationDate) {
                 var now = new Date();
