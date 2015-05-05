@@ -527,6 +527,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
      *
      * @description
      * The `tbGrid` directive is the base to create any grid.
+     * 
+     * @scope
+     * 
+     * @param {string} serverUrl Set the HTTP URL where the data comes.
+     * @param {string} serverSaveUrl Set the HTTP URL where the data will be saved.
      */
         .directive('tbGrid', [
             function() {
@@ -2154,9 +2159,18 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 (function() {
     'use strict';
 
-    angular.module('tubular.directives').directive('tbForm',
-    [
-        function() {
+    angular.module('tubular.directives')
+    /**
+     * @ngdoc directive
+     * @name tbForm
+     * @restrict E
+     *
+     * @description
+     * The `tbForm` directive is the base to create any form.
+     * 
+     * @scope
+     */
+        .directive('tbForm',[function() {
             return {
                 template: '<form ng-transclude></form>',
                 restrict: 'E',

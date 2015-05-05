@@ -1,10 +1,16 @@
+{% include "lib/macros.html" %}
 {% block body %}
 <div class="page-header">
     <h1>{$ doc.name $} <small>directive in {$ doc.module.name $}</small></h1>
 </div>
 
 <div>
-  {$ doc.description | marked $}
+    {$ doc.description | marked $}
+    
+    {% if doc.params %}
+    <h3>Directive's attributes</h3>
+    {$ paramTable(doc.params) $}
+    {% endif %}
 </div>
 
 {% include "partials/dependencies.template.html" %}
