@@ -187,6 +187,9 @@
                             if (angular.isUndefined(dataService) || dataService == null)
                                 throw 'Define DataService to your model.';
 
+                            if (angular.isUndefined($scope.serverSaveUrl) || $scope.serverSaveUrl == null)
+                                throw 'Define a Save URL.';
+
                             if (obj.$hasChanges == false) return false;
 
                             obj.$isLoading = true;
