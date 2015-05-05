@@ -123,6 +123,7 @@
                 };
 
                 me.getByKey = function (url, key) {
+                    tubularHttp.setRequireAuthentication(me.requireAuthentication);
                     return tubularHttp.get(url + "(" + key + ")");
                 };
             }

@@ -17,7 +17,8 @@
                     isNew: '@',
                     modelKey: '@?',
                     gridDataService: '=?service',
-                    gridDataServiceName: '@?serviceName'
+                    gridDataServiceName: '@?serviceName',
+                    requireAuthentication: '=?'
                 },
                 controller: [
                     '$scope', '$routeParams', 'tubularModel', 'tubularHttp', 'tubularOData',
@@ -35,6 +36,10 @@
                         if ($scope.gridDataServiceName === 'odata') {
                             $scope.gridDataService = tubularOData;
                         }
+
+                        // Setup require authentication
+                        $scope.requireAuthentication = angular.isUndefined($scope.requireAuthentication) ? true : $scope.requireAuthentication;
+                        $scope.gridDataService.setRequireAuthentication($scope.requireAuthentication);
 
                         $scope.addField = function(item) {
                             if (item.name === null) return;

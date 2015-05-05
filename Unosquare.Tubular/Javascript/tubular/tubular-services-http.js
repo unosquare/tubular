@@ -235,12 +235,17 @@
 
             me.get = function (url) {
                 if (me.requireAuthentication && me.isAuthenticated() == false) {
+                    var canceller = $q.defer();
+
                     // Return empty dataset
                     return {
                         promise: $q(function (resolve, reject) {
                             resolve(null);
                         }),
-                        cancel: cancel
+                        cancel: function (reason) {
+                            console.error(reason);
+                            canceller.resolve(reason);
+                        }
                     };
                 }
 
