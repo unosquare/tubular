@@ -1,23 +1,27 @@
 {% block body %}
-<div>
-  <h2>{$ doc.name $} Module</h2>
 
-  <div>
-  {$ doc.description | marked $}
-  </div>
-  {% include "partials/dependencies.template.html" %}
+<div class="page-header">
+    <h1>{$ doc.name $} Module</h1>
+</div>
+<div>
+    {$ doc.description | marked $}
 </div>
 
 {% for groupName, group in doc.groups %}
 {% if group.children.length %}
 
-<h3>{$ group  $}</h3>
-<ul>
-{% for component in group.children %}
-<li>{$ component $}
-    {%- if component.description %} - {$ component.description $}{% endif -%}
-</li>
-{%- endfor %}
+<h3>{$ group.name $}</h3>
+<ul class="list-group">
+    {% for component in group.children %}
+    {%- if component.name %}
+    <li class="list-group-item">
+        <a ng-click="internalLink('{$ component.name $}')">
+            {$ component.name $}
+        </a>
+        {%- if component.description %} - {$ component.description $}{% endif -%}
+    </li>
+    {% endif -%}
+    {%- endfor %}
 </ul>
 {%- endif %}
 {%- endfor %}

@@ -1,6 +1,7 @@
 {% block body %}
-<h2>{$ doc.name $}</h2>
-<h3>filter in {$ doc.module $}</h3>
+<div class="page-header">
+    <h1>{$ doc.name $} <small>filter in {$ doc.module.name $}</small></h1>
+</div>
 
 <div>
   {$ doc.description | marked $}

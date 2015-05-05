@@ -12,7 +12,7 @@ gulp.task('dgeni', function() {
                 var doc = docs[i];
 
                 if (typeof (doc.name) === 'undefined' || typeof (doc.outputPath) === 'undefined') continue;
-                if (doc.outputPath.indexOf('a8m') > 0 || doc.docType == 'componentGroup') continue;
+                if (doc.outputPath.indexOf('a8m') > 0 || doc.docType == 'componentGroup'  || doc.docType == 'ngConstant') continue;
 
                 data.push({ name: doc.name, url: doc.outputPath, docType: doc.docType });
             }
