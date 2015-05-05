@@ -1,0 +1,30 @@
+{
+  "name": "tubular-documentation",
+  "description": "A set of AngularJS directives and designed to rapidly build modern web applications.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/unosquare/tubular"
+  },
+  "keywords": [
+    "grid",
+    "forms",
+    "scaffolder",
+    "bootstrap",
+    "angularjs"
+  ],
+  "author": "Mario Divece <mario@unosquare.com>",
+  "contributors": [
+    {
+      "name": "Geovanni Perez",
+      "email": "geovanni.perez@gmail.com"
+    }
+  ],
+  "license": "MIT",
+  "homepage": "http://unosquare.github.io/tubular",
+  "devDependencies": {
+    "canonical-path": "0.0.2",
+    "dgeni": "^0.4.1",
+    "dgeni-packages": "git://github.com/angular/dgeni-packages.git#angular-docs",
+    "gulp": "^3.8.11"
+  }
+}

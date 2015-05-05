@@ -1,0 +1,11 @@
+{% block body %}
+<h2>{$ doc.title $} in {$ doc.module.name $}</h2>
+
+<ul>
+{% for component in doc.children %}
+<li>{$ component $}
+    {%- if component.description %} - {$ component.description $}{% endif -%}
+</li>
+{%- endfor %}
+</ul>
+{% endblock %}

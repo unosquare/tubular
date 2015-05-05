@@ -15,6 +15,8 @@
                         templateUrl: 'assets/generator.html',
                     }).when('/FormGenerator', {
                         templateUrl: 'assets/formgenerator.html',
+                    }).when('/Documentation', {
+                        templateUrl: 'assets/documentation.html',
                     }).otherwise({
                         redirectTo: '/'
                     });
@@ -267,7 +269,34 @@
                     }
                 };
             }
-        ]).config([
+        ]).controller('tubularDocCtrl', ['$scope', '$http', '$anchorScroll', '$location', function ($scope, $http, $anchorScroll, $location) {
+            $scope.internalLink = function (url) {
+                var find = $scope.items.filter(function (el) { return el.name == url; });
+
+                if (find.length > 0)
+                    $scope.open(find[0].url);
+            }
+
+            $scope.open = function (url) {
+                if (url.indexOf('http') == 0) {
+                    document.location = url;
+                    return;
+                }
+
+                $scope.doc = 'docs/build/' + url;
+                $location.hash('top');
+                $anchorScroll();
+            }
+
+            $http.get('data/documentation.json').then(function(data) {
+                $scope.items = data.data;
+
+                // Load Angular Components API
+                $scope.items.push({ name: '$http', url: 'https://docs.angularjs.org/api/ng/service/$http', docType: 'external' });
+                $scope.items.push({ name: '$q', url: 'https://docs.angularjs.org/api/ng/service/$q', docType: 'external' });
+            });
+        }])
+        .config([
             '$sceDelegateProvider', function($sceDelegateProvider) {
                 $sceDelegateProvider.resourceUrlWhitelist(['self', 'http://services.odata.org/**']);
             }

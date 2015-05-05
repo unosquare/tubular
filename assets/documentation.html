@@ -1,0 +1,21 @@
+﻿<div class="jumbotron">
+    <div class="container">
+        <h1 id="top"><img src="assets/tubular-icon.png" alt="tubular" /> Tubular Documentation</h1>
+    </div>
+</div>
+<div class="container" ng-controller="tubularDocCtrl">
+    <div class="row">
+        <div class="col-md-3">
+            <div ng-repeat="(key, group) in items | filter: { docType: '!external' } | groupBy: 'docType'">
+                <h3>{{key}}</h3>
+                <div class="list-group">
+                    <a class="list-group-item" ng-repeat="item in group | orderBy: 'name'" ng-click="open(item.url)">{{item.name}}</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div ng-include="doc">Please select an element</div>
+        </div>
+    </div>
+</div>

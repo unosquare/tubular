@@ -1,0 +1,11 @@
+{% if doc.dependencies.length -%}
+
+<h3>Dependencies</h3>
+
+<ul class="list-group">
+    {%- for dependency in doc.dependencies %}
+    <a class="list-group-item" ng-click="internalLink('{$ dependency $}')">{$ dependency $}</a>
+    {%- endfor %}
+</ul>
+
+{%- endif %}

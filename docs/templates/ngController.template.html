@@ -1,0 +1,10 @@
+{% block body %}
+<h2>{$ doc.name $}</h2>
+<h3>controller in {$ doc.module $}</h3>
+
+<div>
+  {$ doc.description | marked $}
+</div>
+
+{% include "partials/dependencies.template.html" %}
+{% endblock %}

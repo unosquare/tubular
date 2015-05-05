@@ -1,0 +1,11 @@
+{% block body %}
+<div class="page-header">
+    <h1>{$ doc.name $} <small>service in {$ doc.module.name $}</small></h1>
+</div>
+
+<div>
+  {$ doc.description | marked $}
+</div>
+
+{% include "partials/dependencies.template.html" %}
+{% endblock %}
