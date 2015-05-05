@@ -212,7 +212,11 @@
                                     files.push({ name: tempUrl, content: $scope.jsonstring });
                                 }
 
-                                files.push({ name: filename + '.html', content: $scope.gridmodel.replace(/server-url="(.[^"]+)"/g, 'server-url="' + tempUrl + '"') });
+                                files.push({
+                                    name: filename + '.html',
+                                    content: $scope.gridmodel.replace(/server-url="(.[^"]+)"/g, 'server-url="' + tempUrl + '"')
+                                });
+
                                 appJs = appJs.replace(/grid.html/g, filename + '.html');
                             } else {
                                 for (var prop in $scope.views) {
