@@ -271,7 +271,7 @@
             };
 
             me.getByKey = function (url, key) {
-                return { promise: me.get(url + key) };
+                return me.get(url + key);
             };
         }
     ]);

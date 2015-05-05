@@ -5,7 +5,7 @@
     [
         function() {
             return {
-                template: '<form ng-transclude class="{{layout}}"></form>',
+                template: '<form ng-transclude></form>',
                 restrict: 'E',
                 replace: true,
                 transclude: true,
@@ -17,15 +17,13 @@
                     isNew: '@',
                     modelKey: '@?',
                     gridDataService: '=?service',
-                    gridDataServiceName: '@?serviceName',
-                    layout: '@?'
+                    gridDataServiceName: '@?serviceName'
                 },
                 controller: [
                     '$scope', '$routeParams', 'tubularModel', 'tubularHttp', 'tubularOData',
                     function($scope, $routeParams, TubularModel, tubularHttp, tubularOData) {
                         $scope.tubularDirective = 'tubular-form';
                         $scope.serverSaveMethod = $scope.serverSaveMethod || 'POST';
-                        $scope.layout = $scope.layout || '';
                         $scope.fields = [];
                         $scope.hasFieldsDefinitions = false;
                         // Try to load a key from markup or route
@@ -139,83 +137,9 @@
                         pre: function(scope, lElement, lAttrs, lController, lTransclude) {},
                         post: function(scope, lElement, lAttrs, lController, lTransclude) {
                             scope.hasFieldsDefinitions = true;
-                            if (scope.layout == '') return;
-
-                            var colsByRow = scope.layout == 'two-columns' ? 6 : 4;
-
-                            var fieldNodes = scope.fields
-                                .map(function(el) {
-                                    var no = $(lElement).find('*[name=' + el.Name + '][type!=hidden]');
-                                    return no.length == 0 ? null : $(no[0]);
-                                })
-                                .filter(function(el) { return el != null; });
-
-                            var sum = 0;
-                            var count = 0;
-
-                            angular.forEach(fieldNodes, function(node) {
-                                sum += colsByRow;
-                                var lastNode = $(node).wrap('<div class="col-xs-' + colsByRow + '" />');
-                                var p = lastNode.parent();
-
-                                if (++count == fieldNodes.length && sum != 12) {
-                                    if (p.prev().is("div.col-xs-4"))
-                                        p.prev().andSelf().wrapAll('<div class="row" />');
-                                    else
-                                        p.wrap('<div class="row" />');
-
-                                    return;
-                                }
-
-                                if (sum == 12) {
-                                    if (colsByRow == 6)
-                                        p.prev().andSelf().wrapAll('<div class="row" />');
-                                    else
-                                        p.prev().andSelf().prev().andSelf().wrapAll('<div class="row" />');
-
-                                    sum = 0;
-                                }
-                            });
                         }
                     };
                 }
-            };
-        }
-    ]).directive('tbFormButtons',
-    [
-        function() {
-            return {
-                template: '<div>' +
-                    '<button class="btn btn-primary" ng-click="save()" ng-disabled="!form.model.$valid()">{{ saveCaption || \'Save\' }}</button>' +
-                    '<button class="btn btn-danger" ng-click="cancel()" ng-show="showCancel">{{ cancelCaption || \'Cancel\' }}</button>' +
-                    '</div>',
-                restrict: 'E',
-                replace: true,
-                transclude: true,
-                scope: {
-                    saveCaption: '@',
-                    cancelCaption: '@',
-                    saveAction: '&',
-                    cancelAction: '&',
-                    showCancel: '=?'
-                },
-                controller: [
-                    '$scope', '$attrs', function ($scope, $attrs) {
-                        $scope.form = $scope.$parent.$parent;
-                        $scope.showCancel = $scope.showCancel || true;
-
-                        $scope.save = function() {
-                            var func = ($attrs.saveAction ? $scope.saveAction : $scope.form.save);
-
-                            return func();
-                        };
-
-                        $scope.cancel = function() {
-                            var func = ($attrs.cancelAction ? $scope.cancelAction : $scope.form.cancel);
-                            return func();
-                        };
-                    }
-                ],
             };
         }
     ]);

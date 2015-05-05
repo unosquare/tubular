@@ -6,8 +6,14 @@
         <div class="col-md-12">
             <!-- Top toolbar nested row -->
             <div class="row">
-                <tb-grid-pager class="col-md-8 col-xs-12"></tb-grid-pager>
-                <tb-text-search class="col-md-4 col-xs-12"></tb-text-search>
+                <tb-grid-pager class="col-md-6 col-xs-12"></tb-grid-pager>
+                <div class="col-md-3 col-xs-6">
+                    <div class="btn-group">
+                        <tb-export-button filename="data.csv"></tb-export-button>
+                        <tb-print-button title="Sample"></tb-print-button>
+                    </div>
+                </div>
+                <tb-text-search class="col-md-3 col-xs-6"></tb-text-search>
             </div>
 
             <!-- Main grid nested row -->
@@ -161,42 +167,6 @@
                 <tb-grid-pager-info class="col-md-3 col-xs-6"></tb-grid-pager-info>
             </div>
 
-        </div>
-    </tb-grid>
-
-    <hr />
-
-    <div class="page-header">
-        <h3>Sample using minimum settings and internal datasource</h3>
-    </div>
-
-    <tb-grid service="sample.myService" class="row">
-
-        <!-- Main grid nested row -->
-        <div class="col-md-12 col-xs-12">
-            <div class="panel panel-default panel-rounded">
-                <tb-grid-table class="table tubular-grid-table table-bordered">
-                    <tb-column-definitions>
-                        <tb-column name="Id" sortable="true" sort-order="1"
-                                   sort-direction="Descending" is-key="true">
-                            <tb-column-header>{{label}}</tb-column-header>
-                        </tb-column>
-                        <tb-column name="UserName">
-                            <tb-column-header>{{label}}</tb-column-header>
-                        </tb-column>
-                    </tb-column-definitions>
-                    <tb-row-set>
-                        <tb-row-template ng-repeat="row in $component.rows" row-model="row">
-                            <tb-cell-template>
-                                {{row.Id}}
-                            </tb-cell-template>
-                            <tb-cell-template>
-                                {{row.UserName}}
-                            </tb-cell-template>
-                        </tb-row-template>
-                    </tb-row-set>
-                </tb-grid-table>
-            </div>
         </div>
     </tb-grid>
 </div>

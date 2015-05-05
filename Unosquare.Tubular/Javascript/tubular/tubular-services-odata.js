@@ -123,7 +123,7 @@
                 };
 
                 me.getByKey = function (url, key) {
-                    return { promise: tubularHttp.get(url + "(" + key + ")").promise.then(function (data) { return data.data; }) };
+                    return tubularHttp.get(url + "(" + key + ")");
                 };
             }
         ]);

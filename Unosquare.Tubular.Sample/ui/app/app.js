@@ -22,28 +22,7 @@
             }
         ]);
 
-    angular.module('app.services', []).service('myService', [
-        '$q', function myService($q) {
-            var me = this;
-
-            me.saveDataAsync = function(model, request) {
-                // DO NOTHING
-            };
-
-            me.retrieveDataAsync = function(request) {
-                return {
-                    promise: $q(function(resolve, reject) {
-                        resolve({
-                            Payload: [["Pepe", "P"], ["Pepe 2", "P"]]
-                        });
-                    }),
-                    cancel: function() {}
-                };
-            };
-        }
-    ]);
-
-    angular.module('app.controllers', ['app.services'])
+    angular.module('app.controllers', [])
         .controller('TitleController', [
             '$scope', '$route', function($scope, $route) {
                 var me = this;
@@ -54,23 +33,13 @@
             }
         ])
         .controller('tubularSampleCtrl', [
-            '$scope', '$location', 'myService', function($scope, $location, myService) {
+            '$scope', '$location', function($scope, $location) {
                 var me = this;
-                me.alert = function(arg, component) {
-                    if (angular.isUndefined(component)) {
-                        alert(arg);
-                    } else {
-                        alert('fired from sample controller:' + arg + '; record count is: ' + component.rows.length);
-                    }
-                };
-
                 me.onTableController = function() {
                     console.log('On Before Get Data Event: fired.');
                 };
 
                 me.defaultDate = new Date();
-
-                me.myService = myService;
 
                 // Grid Events
                 $scope.$on('tbGrid_OnBeforeRequest', function(event, eventData) { console.log(eventData); });
@@ -99,7 +68,6 @@
     angular.module('app', [
         'tubular.directives',
         'app.routes',
-        'app.services',
         'app.controllers'
     ]);
 })();

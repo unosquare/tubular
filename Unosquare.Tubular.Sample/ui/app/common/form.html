@@ -1,5 +1,5 @@
 ﻿<div class="container" ng-controller="tubularSampleCtrl as sample">
-    <tb-form server-url="/api/orders/" layout="three-columns"
+    <tb-form server-url="/api/orders/"
              server-save-url="/api/orders/save">
         <div class="row">
             <div class="col-md-10">
@@ -27,7 +27,8 @@
                 </tb-hidden-field>
 
                 <hr />
-                <tb-form-buttons class="btn-group"></tb-form-buttons>
+                <button class="btn btn-primary" ng-click="$parent.save()" ng-disabled="!$parent.model.$valid()">Save</button>
+                <button class="btn btn-danger" ng-click="$parent.cancel()">Go Back</button>
             </div>
         </div>
     </tb-form>
