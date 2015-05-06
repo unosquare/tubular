@@ -8,7 +8,8 @@
          * @restrict E
          *
          * @description
-         * The `tbGrid` directive is the base to create any grid.
+         * The `tbGrid` directive is the base to create any grid. This is the root node where you should start
+         * designing your grid. Don't need to add a `controller`.
          * 
          * @scope
          * 
@@ -723,8 +724,6 @@
          * The `tbEmptyGrid` directive is a helper to show a "No records found" message when the grid has not rows.
          * 
          * This class must be inside a `tbRowSet` directive.
-         * 
-         * @scope
          */
         .directive('tbEmptyGrid', [
             function() {
@@ -751,26 +750,22 @@
          * @description
          * The `tbRowGroupHeader` directive is a cell template to show grouping information.
          * 
-         * This class must be inside a `td` directive.
+         * This class must be inside a `tbRowSet` directive.
          * 
          * @scope
-         * 
-         * @param {object} group The object value from the `ngRepeat` using `groupBy` filter.
          */
         .directive('tbRowGroupHeader', [
             function() {
 
                 return {
                     require: '^tbRowTemplate',
-                    template: '<td class="row-group" colspan="{{group[0].$count}}">' +
+                    template: '<td class="row-group" colspan="{{$parent.$component.columns.length + 1}}">' +
                         '<ng-transclude></ng-transclude>' +
                         '</td>',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
-                    scope: {
-                        group: '='
-                    }
+                    scope: {}
                 };
             }
         ]);

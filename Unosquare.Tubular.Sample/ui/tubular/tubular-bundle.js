@@ -482,9 +482,13 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
         /**
          * @ngdoc filter
          * @name errormessage
+         * @kind function
          *
          * @description
          * Use `errormessage` to retrieve the friendly message possible in a HTTP Error object.
+         * 
+         * @param {object} input Input to filter.
+         * @returns {string} Formatted error message.
          */
         .filter('errormessage', function () {
             return function (input) {
@@ -499,6 +503,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
         /**
          * @ngdoc filter
          * @name numberorcurrency
+         * @kind function
          *
          * @description
          * `numberorcurrency` is a hack to hold `currency` and `number` in a single filter.
@@ -520,6 +525,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
         /**
          * @ngdoc filter
          * @name characters
+         * @kind function
          *
          * @description
          * `characters` filter truncates a sentence to a number of characters.
@@ -564,7 +570,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @restrict E
          *
          * @description
-         * The `tbGrid` directive is the base to create any grid.
+         * The `tbGrid` directive is the base to create any grid. This is the root node where you should start
+         * designing your grid. Don't need to add a `controller`.
          * 
          * @scope
          * 
@@ -1279,8 +1286,6 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * The `tbEmptyGrid` directive is a helper to show a "No records found" message when the grid has not rows.
          * 
          * This class must be inside a `tbRowSet` directive.
-         * 
-         * @scope
          */
         .directive('tbEmptyGrid', [
             function() {
@@ -1307,26 +1312,22 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @description
          * The `tbRowGroupHeader` directive is a cell template to show grouping information.
          * 
-         * This class must be inside a `td` directive.
+         * This class must be inside a `tbRowSet` directive.
          * 
          * @scope
-         * 
-         * @param {object} group The object value from the `ngRepeat` using `groupBy` filter.
          */
         .directive('tbRowGroupHeader', [
             function() {
 
                 return {
                     require: '^tbRowTemplate',
-                    template: '<td class="row-group" colspan="{{group[0].$count}}">' +
+                    template: '<td class="row-group" colspan="{{$parent.$component.columns.length + 1}}">' +
                         '<ng-transclude></ng-transclude>' +
                         '</td>',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
-                    scope: {
-                        group: '='
-                    }
+                    scope: {}
                 };
             }
         ]);

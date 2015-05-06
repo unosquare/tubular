@@ -44,9 +44,13 @@
         /**
          * @ngdoc filter
          * @name errormessage
+         * @kind function
          *
          * @description
          * Use `errormessage` to retrieve the friendly message possible in a HTTP Error object.
+         * 
+         * @param {object} input Input to filter.
+         * @returns {string} Formatted error message.
          */
         .filter('errormessage', function () {
             return function (input) {
@@ -61,6 +65,7 @@
         /**
          * @ngdoc filter
          * @name numberorcurrency
+         * @kind function
          *
          * @description
          * `numberorcurrency` is a hack to hold `currency` and `number` in a single filter.
@@ -82,6 +87,7 @@
         /**
          * @ngdoc filter
          * @name characters
+         * @kind function
          *
          * @description
          * `characters` filter truncates a sentence to a number of characters.
