@@ -4,7 +4,8 @@
 <ul class="list-group">
     
     <li class="list-group-item">
-        tbGrid - The `tbGrid` directive is the base to create any grid.</li>
+        tbGrid - The `tbGrid` directive is the base to create any grid. This is the root node where you should start
+designing your grid. Don't need to add a `controller`.</li>
     <li class="list-group-item">
         tbGridTable - The `tbGridTable` directive generate the HTML table where all the columns and rowsets can be defined. 
 `tbGridTable` requires a parent `tbGrid`.
@@ -45,22 +46,21 @@ This class must be inside a `tbRowSet` directive.</li>
     <li class="list-group-item">
         tbRowGroupHeader - The `tbRowGroupHeader` directive is a cell template to show grouping information.
 
-This class must be inside a `td` directive.</li>
+This class must be inside a `tbRowSet` directive.</li>
     <li class="list-group-item">
-        tbTextSearch - The `tbTextSearch` directive is the basic input to show in a grid or form.
-It uses the `TubularModel` to retrieve column or field information.</li>
+        tbTextSearch - The `tbTextSearch` directive is visual component to enable free-text search in a grid.</li>
     <li class="list-group-item">
-        tbRemoveButton</li>
+        tbRemoveButton - The `tbRemoveButton` directive is visual helper to show a Remove button with a popover to confirm the action.</li>
     <li class="list-group-item">
-        tbSaveButton</li>
+        tbSaveButton - The `tbSaveButton` directive is visual helper to show a Save button and Cancel button.</li>
     <li class="list-group-item">
-        tbEditButton</li>
+        tbEditButton - The `tbEditButton` directive is visual helper to create an Edit button.</li>
     <li class="list-group-item">
-        tbPageSizeSelector</li>
+        tbPageSizeSelector - The `tbPageSizeSelector` directive is visual helper to render a dropdown to allow user select how many rows by page.</li>
     <li class="list-group-item">
-        tbExportButton</li>
+        tbExportButton - The `tbExportButton` directive is visual helper to render a button to export grid to CSV format.</li>
     <li class="list-group-item">
-        tbPrintButton</li>
+        tbPrintButton - The `tbPrintButton` directive is visual helper to render a button to print the `tbGrid`.</li>
     <li class="list-group-item">
         tbGridPager - The `tbGridPager` directive generates a pager connected to the parent `tbGrid`.</li>
     <li class="list-group-item">

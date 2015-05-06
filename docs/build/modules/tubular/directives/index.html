@@ -17,17 +17,19 @@
     <li class="list-group-item">
         <a ng-click="internalLink('errormessage')">
             errormessage
-        </a></li>
+        </a> - Use `errormessage` to retrieve the friendly message possible in a HTTP Error object.</li>
     
     <li class="list-group-item">
         <a ng-click="internalLink('numberorcurrency')">
             numberorcurrency
-        </a></li>
+        </a> - `numberorcurrency` is a hack to hold `currency` and `number` in a single filter.</li>
     
     <li class="list-group-item">
         <a ng-click="internalLink('characters')">
             characters
-        </a></li>
+        </a> - `characters` filter truncates a sentence to a number of characters.
+
+Based on https://github.com/sparkalow/angular-truncate/blob/master/src/truncate.js</li>
     
 </ul>
 
@@ -38,7 +40,8 @@
     <li class="list-group-item">
         <a ng-click="internalLink('tbGrid')">
             tbGrid
-        </a> - The `tbGrid` directive is the base to create any grid.</li>
+        </a> - The `tbGrid` directive is the base to create any grid. This is the root node where you should start
+designing your grid. Don't need to add a `controller`.</li>
     
     <li class="list-group-item">
         <a ng-click="internalLink('tbGridTable')">
@@ -106,43 +109,42 @@ This class must be inside a `tbRowSet` directive.</li>
             tbRowGroupHeader
         </a> - The `tbRowGroupHeader` directive is a cell template to show grouping information.
 
-This class must be inside a `td` directive.</li>
+This class must be inside a `tbRowSet` directive.</li>
     
     <li class="list-group-item">
         <a ng-click="internalLink('tbTextSearch')">
             tbTextSearch
-        </a> - The `tbTextSearch` directive is the basic input to show in a grid or form.
-It uses the `TubularModel` to retrieve column or field information.</li>
+        </a> - The `tbTextSearch` directive is visual component to enable free-text search in a grid.</li>
     
     <li class="list-group-item">
         <a ng-click="internalLink('tbRemoveButton')">
             tbRemoveButton
-        </a></li>
+        </a> - The `tbRemoveButton` directive is visual helper to show a Remove button with a popover to confirm the action.</li>
     
     <li class="list-group-item">
         <a ng-click="internalLink('tbSaveButton')">
             tbSaveButton
-        </a></li>
+        </a> - The `tbSaveButton` directive is visual helper to show a Save button and Cancel button.</li>
     
     <li class="list-group-item">
         <a ng-click="internalLink('tbEditButton')">
             tbEditButton
-        </a></li>
+        </a> - The `tbEditButton` directive is visual helper to create an Edit button.</li>
     
     <li class="list-group-item">
         <a ng-click="internalLink('tbPageSizeSelector')">
             tbPageSizeSelector
-        </a></li>
+        </a> - The `tbPageSizeSelector` directive is visual helper to render a dropdown to allow user select how many rows by page.</li>
     
     <li class="list-group-item">
         <a ng-click="internalLink('tbExportButton')">
             tbExportButton
-        </a></li>
+        </a> - The `tbExportButton` directive is visual helper to render a button to export grid to CSV format.</li>
     
     <li class="list-group-item">
         <a ng-click="internalLink('tbPrintButton')">
             tbPrintButton
-        </a></li>
+        </a> - The `tbPrintButton` directive is visual helper to render a button to print the `tbGrid`.</li>
     
     <li class="list-group-item">
         <a ng-click="internalLink('tbGridPager')">
@@ -274,6 +276,6 @@ TODO: List params from tubularGridFilterService</li>
     <li class="list-group-item">
         <a ng-click="internalLink('tubularConst')">
             tubularConst
-        </a></li>
+        </a> - The `tubularConst` holds some UI constants.</li>
     
 </ul>

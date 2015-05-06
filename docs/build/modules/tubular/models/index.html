@@ -3,8 +3,8 @@
     <h1>tubular.models Module</h1>
 </div>
 <div>
-    <p>Tubular Models module. 
-It contains model&#39;s factories to be use in <a href="modules/tubular/directives/"><code>tubular.directives</code></a> like <code>tubularModel</code> and <code>tubulargGridColumnModel</code>.</p>
+    <p>Tubular Models module. </p>
+<p>It contains model&#39;s factories to be use in <a href="modules/tubular/directives/"><code>tubular.directives</code></a> like <code>tubularModel</code> and <code>tubulargGridColumnModel</code>.</p>
 
 </div>
 
@@ -17,16 +17,20 @@ It contains model&#39;s factories to be use in <a href="modules/tubular/directiv
     <li class="list-group-item">
         <a ng-click="internalLink('tubulargGridColumnModel')">
             tubulargGridColumnModel
-        </a></li>
+        </a> - The `tubulargGridColumnModel` factory is the base to generate a column model to use with `tbGrid`.
+
+This model doesn't need to be created in your controller, the `tbGrid` generate it from any `tbColumn`.</li>
     
     <li class="list-group-item">
         <a ng-click="internalLink('tubulargGridFilterModel')">
             tubulargGridFilterModel
-        </a></li>
+        </a> - The `tubulargGridFilterModel` factory is the base to generate a filter model to use with `tbGrid`.
+
+This model doesn't need to be created in your controller, the `tubularGridFilterService` generate it.</li>
     
     <li class="list-group-item">
         <a ng-click="internalLink('tubularModel')">
             tubularModel
-        </a></li>
+        </a> - The `tubularModel` factory is the base to generate a row model to use with `tbGrid` and `tbForm`.</li>
     
 </ul>

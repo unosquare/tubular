@@ -17,7 +17,9 @@
                         templateUrl: 'assets/formgenerator.html',
                     }).when('/Documentation', {
                         templateUrl: 'assets/documentation.html',
-                    }).otherwise({
+                    })
+                    // TODO: Add Documentation/Param
+                    .otherwise({
                         redirectTo: '/'
                     });
             }
@@ -31,19 +33,22 @@
                 $scope.tutorial = [
                     {
                         title: 'Basic Layout with JSON datasource',
-                        body: 'First grid shows a basic layout, without any additional feature or special column. Just a plain grid using a JSON datasource.',
+                        body: 'First grid shows a basic layout, without any additional feature or special column. ' +
+                            'Just a plain grid using a JSON datasource.',
                         key: 'sample',
                         next: 'sample2'
                     },
                     {
                         title: 'Grid with Paginations using OData',
-                        body: 'Adding a new feature: the pagination. This demo is using an OData datasource and you can move across the pages and change the size.',
+                        body: 'Adding a new feature: the pagination. ' +
+                            'This demo is using an OData datasource and you can move across the pages and change the size.',
                         key: 'sample2',
                         next: 'sample3'
                     },
                     {
                         title: 'Grid with common features using OData',
-                        body: 'The grid can be extended to include features like sorting and filtering. Press Ctrl key to sort by multiple columns.',
+                        body: 'The grid can be extended to include features like sorting and filtering. ' +
+                            'Press Ctrl key to sort by multiple columns.',
                         key: 'sample3',
                         next: 'sample4'
                     },
@@ -67,7 +72,8 @@
                     },
                     {
                         title: 'Inline editors (read-only)',
-                        body: 'You can add inline editors just defining a Save URL and assigning some controls. This demo is read-only, but you can get the idea.',
+                        body: 'You can add inline editors just defining a Save URL and assigning some controls. ' +
+                            'This demo is read-only, but you can get the idea.',
                         key: 'sample7',
                         next: null
                     }
@@ -107,7 +113,8 @@
                         });
                 }
             }
-        ]).controller('tubularGeneratorCtrl', [
+        ])
+        .controller('tubularGeneratorCtrl', [
             '$scope', '$http', '$templateCache', 'tubularGenerator', 'localStorageService', 'tubularTemplateService',
             function ($scope, $http, $templateCache, tubularGenerator, localStorageService, tubularTemplateService) {
                 // Options
@@ -269,7 +276,8 @@
                     }
                 };
             }
-        ]).controller('tubularDocCtrl', ['$scope', '$http', '$anchorScroll', '$location', function ($scope, $http, $anchorScroll, $location) {
+        ])
+        .controller('tubularDocCtrl', ['$scope', '$http', '$anchorScroll', '$location', function ($scope, $http, $anchorScroll, $location) {
             $scope.internalLink = function (url) {
                 var find = $scope.items.filter(function (el) { return el.name == url; });
 
@@ -294,6 +302,14 @@
                 // Load Angular Components API
                 $scope.items.push({ name: '$http', url: 'https://docs.angularjs.org/api/ng/service/$http', docType: 'external' });
                 $scope.items.push({ name: '$q', url: 'https://docs.angularjs.org/api/ng/service/$q', docType: 'external' });
+                $scope.items.push({ name: '$compile', url: 'https://docs.angularjs.org/api/ng/service/$compile', docType: 'external' });
+                $scope.items.push({ name: '$timeout', url: 'https://docs.angularjs.org/api/ng/service/$timeout', docType: 'external' });
+                $scope.items.push({ name: '$templateCache', url: 'https://docs.angularjs.org/api/ng/service/$templateCache', docType: 'external' });
+                $scope.items.push({ name: '$cacheFactory', url: 'https://docs.angularjs.org/api/ng/service/$cacheFactory', docType: 'external' });
+                $scope.items.push({ name: '$cookieStore', url: 'https://docs.angularjs.org/api/ngCookies/service/$cookieStore', docType: 'external' });
+                $scope.items.push({ name: '$rootScope', url: 'https://docs.angularjs.org/api/ng/service/$rootScope', docType: 'external' });
+                $scope.items.push({ name: '$modal', url: 'https://angular-ui.github.io/bootstrap/#/modal', docType: 'external' });
+                $scope.items.push({ name: '$location', url: 'https://docs.angularjs.org/api/ng/service/$location', docType: 'external' });
             });
         }])
         .config([
