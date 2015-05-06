@@ -2,6 +2,14 @@
     'use strict';
 
     angular.module('tubular.directives')
+        /**
+         * @ngdoc directive
+         * @name tbColumnFilterButtons
+         * @restrict E
+         *
+         * @description
+         * The `tbColumnFilterButtons` is an internal directive, and it is used to show basic filtering buttons.
+         */
         .directive('tbColumnFilterButtons', [function () {
             return {
                 template: '<div class="btn-group"><a class="btn btn-sm btn-success" ng-click="applyFilter()">Apply</a>' +
@@ -13,6 +21,14 @@
                 transclude: true,
             };
         }])
+        /**
+         * @ngdoc directive
+         * @name tbColumnFilterColumnSelector
+         * @restrict E
+         *
+         * @description
+         * The `tbColumnFilterColumnSelector` is an internal directive, and it is used to show columns selector popup.
+         */
         .directive('tbColumnFilterColumnSelector', [function() {
             return {
                 template: '<div><hr /><h4>Columns Selector</h4><button class="btn btn-sm btn-default" ng-click="openColumnsSelector()">Select Columns</button></div>',
@@ -21,6 +37,17 @@
                 transclude: true,
             };
         }])
+        /**
+         * @ngdoc directive
+         * @name tbColumnFilter
+         * @restrict E
+         *
+         * @description
+         * The `tbColumnFilter` directive is a the basic filter popover. You need to define it inside a `tbColumn`.
+         * 
+         * The parent scope will provide information about the data type.
+         * TODO: List params from tubularGridFilterService
+         */
         .directive('tbColumnFilter', [
             'tubularGridFilterService', function(tubularGridFilterService) {
 
@@ -59,6 +86,18 @@
                 };
             }
         ])
+        /**
+         * @ngdoc directive
+         * @name tbColumnDateTimeFilter
+         * @restrict E
+         *
+         * @description
+         * The `tbColumnDateTimeFilter` directive is a specific filter with Date and Time editors, instead regular inputs.
+         * 
+         * The parent scope will provide information about the data type.
+         * 
+         * TODO: List params from tubularGridFilterService
+         */
         .directive('tbColumnDateTimeFilter', [
             'tubularGridFilterService', function(tubularGridFilterService) {
 
@@ -123,6 +162,16 @@
                 };
             }
         ])
+        /**
+         * @ngdoc directive
+         * @name tbColumnOptionsFilter
+         * @restrict E
+         *
+         * @description
+         * The `tbColumnOptionsFilter` directive is a filter with an dropdown listing all the possible values to filter.
+         * 
+         * TODO: List params from tubularGridFilterService
+         */
         .directive('tbColumnOptionsFilter', [
             'tubularGridFilterService', 'tubularHttp', function(tubularGridFilterService, tubularHttp) {
 

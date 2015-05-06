@@ -2,15 +2,28 @@
     'use strict';
 
     angular.module('tubular.directives')
-
-    /**
-     * @ngdoc directive
-     * @name tbGrid
-     * @restrict E
-     *
-     * @description
-     * The `tbGrid` directive is the base to create any grid.
-     */
+        /**
+         * @ngdoc directive
+         * @name tbGrid
+         * @restrict E
+         *
+         * @description
+         * The `tbGrid` directive is the base to create any grid.
+         * 
+         * @scope
+         * 
+         * @param {string} serverUrl Set the HTTP URL where the data comes.
+         * @param {string} serverSaveUrl Set the HTTP URL where the data will be saved.
+         * @param {int} pageSize Define how many records to show in a page, default 20.
+         * @param {function} onBeforeGetData Callback to execute before to get data from service.
+         * @param {string} requestMethod Set HTTP Method to get data.
+         * @param {object} gridDataService Define Data service (instance) to retrieve data, defaults `tubularHttp`.
+         * @param {string} gridDataServiceName Define Data service (name) to retrieve data, defaults `tubularHttp`.
+         * @param {bool} requireAuthentication Set if authentication check must be executed, default true.
+         * @param {string} name Grid's name, used to store metainfo in localstorage.
+         * @param {string} editorMode Define if grid is read-only or it has editors (inline or popup).
+         * @param {bool} showLoading Set if an overlay will show when it's loading data, default true.
+         */
         .directive('tbGrid', [
             function() {
                 return {
@@ -36,9 +49,9 @@
                         showLoading: '=?'
                     },
                     controller: [
-                        '$scope', 'localStorageService', 'tubularPopupService', 'tubularModel', 'tubularHttp', 'tubularOData','$routeParams',
-                function ($scope, localStorageService, tubularPopupService, TubularModel, tubularHttp, tubularOData, $routeParams) {
-                           
+                        '$scope', 'localStorageService', 'tubularPopupService', 'tubularModel', 'tubularHttp', 'tubularOData', '$routeParams',
+                        function($scope, localStorageService, tubularPopupService, TubularModel, tubularHttp, tubularOData, $routeParams) {
+
                             $scope.tubularDirective = 'tubular-grid';
                             $scope.columns = [];
                             $scope.rows = [];
@@ -196,7 +209,7 @@
                                         $scope.rows = data.Payload.map(function(el) {
                                             var model = new TubularModel($scope, el, $scope.gridDataService);
 
-                                            model.editPopup = function (template) {
+                                            model.editPopup = function(template) {
                                                 tubularPopupService.openDialog(template, model);
                                             };
 
@@ -383,13 +396,24 @@
                 };
             }
         ])
+        /**
+         * @ngdoc directive
+         * @name tbGridPager
+         * @restrict E
+         *
+         * @description
+         * The `tbGridPager` directive generates a pager connected to the parent `tbGrid`.
+         * 
+         * @scope
+         */
         .directive('tbGridPager', [
             '$timeout', function($timeout) {
                 return {
                     require: '^tbGrid',
                     template:
                         '<div class="tubular-pager">' +
-                            '<pagination ng-disabled="$component.isEmpty" direction-links="true" boundary-links="true" total-items="$component.filteredRecordCount"' +
+                            '<pagination ng-disabled="$component.isEmpty" direction-links="true" ' +
+                            'boundary-links="true" total-items="$component.filteredRecordCount" ' +
                             'items-per-page="$component.pageSize" max-size="5" ng-model="pagerPageNumber" ng-change="pagerPageChanged()">' +
                             '</pagination>' +
                             '<div>',
@@ -440,6 +464,19 @@
                 };
             }
         ])
+        /**
+         * @ngdoc directive
+         * @name tbGridTable
+         * @restrict E
+         *
+         * @description
+         * The `tbGridTable` directive generate the HTML table where all the columns and rowsets can be defined. 
+         * `tbGridTable` requires a parent `tbGrid`.
+         * 
+         * This directive is replace by a `table` HTML element.
+         * 
+         * @scope
+         */
         .directive('tbGridTable', [
             function() {
                 return {
@@ -458,6 +495,18 @@
                 };
             }
         ])
+        /**
+         * @ngdoc directive
+         * @name tbColumnDefinitions
+         * @restrict E
+         *
+         * @description
+         * The `tbColumnDefinitions` directive is a parent node to fill with `tbColumn`.
+         * 
+         * This directive is replace by a `thead` HTML element.
+         * 
+         * @scope
+         */
         .directive('tbColumnDefinitions', [
             function() {
 
@@ -485,6 +534,19 @@
                 };
             }
         ])
+        /**
+         * @ngdoc directive
+         * @name tbColumn
+         * @restrict E
+         *
+         * @description
+         * The `tbColumn` directive creates a column in the grid's model. 
+         * All the attributes are used to generate a `ColumnModel`.
+         * 
+         * This directive is replace by a `th` HTML element.
+         * TODO: Document ColumnModel attributes
+         * @scope
+         */
         .directive('tbColumn', [
             'tubulargGridColumnModel', function(ColumnModel) {
                 return {
@@ -522,12 +584,27 @@
                 };
             }
         ])
+        /**
+         * @ngdoc directive
+         * @name tbColumnHeader
+         * @restrict E
+         *
+         * @description
+         * The `tbColumnHeader` directive creates a column header, and it must be inside a `tbColumn`. 
+         * This directive has functionality to sort the column, the `sortable` attribute is declared in the parent element.
+         * 
+         * This directive is replace by an `a` HTML element.
+         * 
+         * @scope
+         */
         .directive('tbColumnHeader', [
             '$timeout', 'tubularConst', function($timeout, tubularConst) {
 
                 return {
                     require: '^tbColumn',
-                    template: '<a title="Click to sort. Press Ctrl to sort by multiple columns" class="column-header" ng-transclude href="javascript:void(0)" ng-click="sortColumn($event)"></a>',
+                    template: '<a title="Click to sort. Press Ctrl to sort by multiple columns" ' +
+                        'class="column-header" ng-transclude href="javascript:void(0)" ' +
+                        'ng-click="sortColumn($event)"></a>',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
@@ -580,6 +657,18 @@
                 };
             }
         ])
+        /**
+         * @ngdoc directive
+         * @name tbRowSet
+         * @restrict E
+         *
+         * @description
+         * The `tbRowSet` directive is used to handle any `tbRowTemplate`. You can define multiples `tbRowSet` for grouping.
+         * 
+         * This directive is replace by an `tbody` HTML element.
+         * 
+         * @scope
+         */
         .directive('tbRowSet', [
             function() {
 
@@ -599,6 +688,21 @@
                 };
             }
         ])
+        /**
+         * @ngdoc directive
+         * @name tbRowTemplate
+         * @restrict E
+         *
+         * @description
+         * The `tbRowTemplate` directive should be use with a `ngRepeat` to iterate all the rows or grouped rows in a rowset.
+         * 
+         * This directive is replace by an `tr` HTML element.
+         * 
+         * @scope
+         * 
+         * @param {object} rowModel Set the current row, if you are using a ngRepeat you must to use the current element variable here.
+         * @param {bool} selectable Flag the rowset to allow user to select rows.
+         */
         .directive('tbRowTemplate', [
             function() {
 
@@ -632,6 +736,21 @@
                 };
             }
         ])
+        /**
+         * @ngdoc directive
+         * @name tbCellTemplate
+         * @restrict E
+         *
+         * @description
+         * The `tbCellTemplate` directive represents the final table element, a cell, where it can 
+         * hold an inline editor or a plain AngularJS expression related to the current element in the `ngRepeat`.
+         * 
+         * This directive is replace by an `td` HTML element.
+         * 
+         * @scope
+         * 
+         * @param {string} columnName Setting the related column, by passing the name, the cell can share attributes (like visibiility) with the column.
+         */
         .directive('tbCellTemplate', [
             function() {
 
@@ -663,6 +782,16 @@
                 };
             }
         ])
+        /**
+         * @ngdoc directive
+         * @name tbGridPagerInfo
+         * @restrict E
+         *
+         * @description
+         * The `tbGridPagerInfo` directive shows how many records are shown in a page and total rows.
+         * 
+         * @scope
+         */
         .directive('tbGridPagerInfo', [
             function() {
                 return {
@@ -716,6 +845,18 @@
                 };
             }
         ])
+        /**
+         * @ngdoc directive
+         * @name tbEmptyGrid
+         * @restrict E
+         *
+         * @description
+         * The `tbEmptyGrid` directive is a helper to show a "No records found" message when the grid has not rows.
+         * 
+         * This class must be inside a `tbRowSet` directive.
+         * 
+         * @scope
+         */
         .directive('tbEmptyGrid', [
             function() {
 
@@ -732,12 +873,29 @@
                     scope: false
                 };
             }
-        ]).directive('tbRowGroupHeader', [
+        ])
+        /**
+         * @ngdoc directive
+         * @name tbRowGroupHeader
+         * @restrict E
+         *
+         * @description
+         * The `tbRowGroupHeader` directive is a cell template to show grouping information.
+         * 
+         * This class must be inside a `td` directive.
+         * 
+         * @scope
+         * 
+         * @param {object} group The object value from the `ngRepeat` using `groupBy` filter.
+         */
+        .directive('tbRowGroupHeader', [
             function() {
 
                 return {
                     require: '^tbRowTemplate',
-                    template: '<td class="row-group" colspan="{{group[0].$count}}"><ng-transclude></ng-transclude></td>',
+                    template: '<td class="row-group" colspan="{{group[0].$count}}">' +
+                        '<ng-transclude></ng-transclude>' +
+                        '</td>',
                     restrict: 'E',
                     replace: true,
                     transclude: true,

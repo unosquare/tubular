@@ -1,9 +1,18 @@
 ﻿(function() {
     'use strict';
 
-    angular.module('tubular.directives').directive('tbForm',
-    [
-        function() {
+    angular.module('tubular.directives')
+    /**
+     * @ngdoc directive
+     * @name tbForm
+     * @restrict E
+     *
+     * @description
+     * The `tbForm` directive is the base to create any form.
+     * 
+     * @scope
+     */
+        .directive('tbForm',[function() {
             return {
                 template: '<form ng-transclude></form>',
                 restrict: 'E',
