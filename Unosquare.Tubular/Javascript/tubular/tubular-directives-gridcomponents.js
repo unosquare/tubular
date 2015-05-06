@@ -8,15 +8,11 @@
          * @restrict E
          *
          * @description
-         * The `tbTextSearch` directive is the basic input to show in a grid or form.
-         * It uses the `TubularModel` to retrieve column or field information.
+         * The `tbTextSearch` directive is visual component to enable free-text search in a grid.
          * 
          * @scope
-         * 
-         * @param {string} serverUrl Set the HTTP URL where the data comes.
          */
-        .directive('tbTextSearch', [
-        function() {
+        .directive('tbTextSearch', [function() {
             return {
                 require: '^tbGrid',
                 template:
@@ -33,9 +29,7 @@
                 restrict: 'E',
                 replace: true,
                 transclude: false,
-                scope: {
-                    css: '@'
-                },
+                scope: {},
                 terminal: false,
                 controller: [
                     '$scope', function($scope) {
@@ -64,8 +58,22 @@
                 ]
             };
         }
-    ]).directive('tbRemoveButton', [
-        '$compile', function($compile) {
+        ])
+        /**
+         * @ngdoc directive
+         * @name tbRemoveButton
+         * @restrict E
+         *
+         * @description
+         * The `tbRemoveButton` directive is visual helper to show a Remove button with a popover to confirm the action.
+         * 
+         * @scope
+         * 
+         * @param {object} model The row to remove.
+         * @param {string} caption Set the caption to use in the button, default Remove.
+         * @param {string} icon Set the CSS icon's class, the button can have only icon.
+         */
+        .directive('tbRemoveButton', ['$compile', function($compile) {
 
             return {
                 require: '^tbGrid',
@@ -108,8 +116,25 @@
                 ]
             };
         }
-    ]).directive('tbSaveButton', [
-        function() {
+        ])
+        /**
+         * @ngdoc directive
+         * @name tbSaveButton
+         * @restrict E
+         *
+         * @description
+         * The `tbSaveButton` directive is visual helper to show a Save button and Cancel button.
+         * 
+         * @scope
+         * 
+         * @param {object} model The row to remove.
+         * @param {boolean} isNew Set if the row is a new record.
+         * @param {string} saveCaption Set the caption to use in Save the button, default Save.
+         * @param {string} saveCss Add a CSS class to Save button.
+         * @param {string} cancelCaption Set the caption to use in cancel the button, default Cancel.
+         * @param {string} cancelCss Add a CSS class to Cancel button.
+         */
+        .directive('tbSaveButton', [function() {
 
             return {
                 require: '^tbGrid',
@@ -126,7 +151,6 @@
                 scope: {
                     model: '=',
                     isNew: '=?',
-                    component: '=?',
                     saveCaption: '@',
                     saveCss: '@',
                     cancelCaption: '@',
@@ -135,11 +159,6 @@
                 controller: [
                     '$scope', function($scope) {
                         $scope.isNew = $scope.isNew || false;
-
-                        if ($scope.isNew) {
-                            if (angular.isUndefined($scope.component))
-                                throw 'Define component.';
-                        }
 
                         $scope.save = function() {
                             if ($scope.isNew) {
@@ -169,8 +188,22 @@
                 ]
             };
         }
-    ]).directive('tbEditButton', [
-        function() {
+        ])
+        /**
+         * @ngdoc directive
+         * @name tbEditButton
+         * @restrict E
+         *
+         * @description
+         * The `tbEditButton` directive is visual helper to create an Edit button.
+         * 
+         * @scope
+         * 
+         * @param {object} model The row to remove.
+         * @param {string} caption Set the caption to use in the button, default Edit.
+         * @param {string} css Add a CSS class to the button.
+         */
+        .directive('tbEditButton', [function() {
 
             return {
                 require: '^tbGrid',
@@ -198,8 +231,23 @@
                 ]
             };
         }
-    ]).directive('tbPageSizeSelector', [
-        function() {
+        ])
+        /**
+         * @ngdoc directive
+         * @name tbPageSizeSelector
+         * @restrict E
+         *
+         * @description
+         * The `tbPageSizeSelector` directive is visual helper to render a dropdown to allow user select how many rows by page.
+         * 
+         * @scope
+         * 
+         * @param {string} caption Set the caption to use in the button, default "Page size:".
+         * @param {string} css Add a CSS class to the `div` HTML element.
+         * @param {string} selectorCss Add a CSS class to the `select` HTML element.
+         * @param {array} options Set the page options array, default ['10', '20', '50', '100'].
+         */
+        .directive('tbPageSizeSelector', [function() {
 
             return {
                 require: '^tbGrid',
@@ -227,8 +275,21 @@
                 ]
             };
         }
-    ]).directive('tbExportButton', [
-        function() {
+        ])
+        /**
+         * @ngdoc directive
+         * @name tbExportButton
+         * @restrict E
+         *
+         * @description
+         * The `tbExportButton` directive is visual helper to render a button to export grid to CSV format.
+         * 
+         * @scope
+         * 
+         * @param {string} filename Set the export file name.
+         * @param {string} css Add a CSS class to the `button` HTML element.
+         */
+        .directive('tbExportButton', [function() {
 
             return {
                 require: '^tbGrid',
@@ -263,8 +324,21 @@
                 ]
             };
         }
-    ]).directive('tbPrintButton', [
-        function() {
+        ])
+        /**
+         * @ngdoc directive
+         * @name tbPrintButton
+         * @restrict E
+         *
+         * @description
+         * The `tbPrintButton` directive is visual helper to render a button to print the `tbGrid`.
+         * 
+         * @scope
+         * 
+         * @param {string} title Set the document's title.
+         * @param {string} printCss Set a stylesheet URL to attach to print mode.
+         */
+        .directive('tbPrintButton', [function() {
 
             return {
                 require: '^tbGrid',

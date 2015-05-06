@@ -2,8 +2,16 @@
     'use strict';
 
     angular.module('tubular.services')
-        .service('tubularOData', [
-            'tubularHttp', function tubularOData(tubularHttp) {
+        /**
+         * @ngdoc service
+         * @name tubularOData
+         *
+         * @description
+         * Use `tubularOData` to connect a grid or a form to an OData Resource.
+         * 
+         * This service provides authentication using bearer-tokens.
+         */
+        .service('tubularOData', ['tubularHttp', function tubularOData(tubularHttp) {
                 var me = this;
 
                 me.requireAuthentication = true;

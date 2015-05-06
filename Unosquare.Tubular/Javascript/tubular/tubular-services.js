@@ -2,10 +2,21 @@
     'use strict';
 
     /**
+     * @ngdoc module
+     * @name tubular.services
+     * 
+     * @description
      * Tubular Services module. 
      * It contains common services like Http and OData clients, and filtering and printing services.
      */
     angular.module('tubular.services', ['ui.bootstrap', 'ngCookies'])
+        /**
+         * @ngdoc service
+         * @name tubularPopupService
+         *
+         * @description
+         * Use `tubularPopupService` to show or generate popups with a `tbForm` inside.
+         */
         .service('tubularPopupService', [
             '$modal', '$rootScope', 'tubularTemplateService', function tubularPopupService($modal, $rootScope, tubularTemplateService) {
                 var me = this;
@@ -18,7 +29,7 @@
                     $rootScope.$on('tbForm_OnConnectionError', callback);
                 };
 
-                me.openDialog = function (template, model) {
+                me.openDialog = function(template, model) {
                     if (angular.isUndefined(template))
                         template = tubularTemplateService.generatePopup(model);
 
@@ -61,6 +72,13 @@
                 };
             }
         ])
+        /**
+         * @ngdoc service
+         * @name tubularGridExportService
+         *
+         * @description
+         * Use `tubularGridExportService` to export your `tbGrid` to CSV format.
+         */
         .service('tubularGridExportService', function tubularGridExportService() {
             var me = this;
 
@@ -94,9 +112,9 @@
             };
 
             me.exportToCsv = function(filename, header, rows, visibility) {
-                var processRow = function (row) {
+                var processRow = function(row) {
                     if (typeof (row) === 'object')
-                        row = Object.keys(row).map(function (key) { return row[key]; });
+                        row = Object.keys(row).map(function(key) { return row[key]; });
 
                     var finalVal = '';
                     for (var j = 0; j < row.length; j++) {
@@ -129,6 +147,13 @@
                 saveAs(blob, filename);
             };
         })
+        /**
+         * @ngdoc service
+         * @name tubularGridFilterService
+         *
+         * @description
+         * The `tubularGridFilterService` service is a internal helper to setup any `FilterModel` with a UI.
+         */
         .service('tubularGridFilterService', [
             'tubulargGridFilterModel', '$compile', '$modal', function tubularGridFilterService(FilterModel, $compile, $modal) {
                 var me = this;
@@ -231,6 +256,13 @@
                 };
             }
         ])
+        /**
+         * @ngdoc service
+         * @name tubularEditorService
+         *
+         * @description
+         * The `tubularEditorService` service is a internal helper to setup any `TubularModel` with a UI.
+         */
         .service('tubularEditorService', [
             function tubularEditorService() {
                 var me = this;
@@ -274,7 +306,7 @@
                         if (angular.isUndefined(scope.state)) {
                             scope.state = {
                                 $valid: function() {
-                                    return this.$errors === 0;
+                                    return this.$errors.length === 0;
                                 },
                                 $errors: []
                             };

@@ -9,6 +9,8 @@
          *
          * @description
          * Use `tubularHttp` to connect a grid or a form to a HTTP Resource.
+         * 
+         * This service provides authentication using bearer-tokens.
          */
         .service('tubularHttp', [
         '$http', '$timeout', '$q', '$cacheFactory', '$cookieStore', function tubularHttp($http, $timeout, $q, $cacheFactory, $cookieStore) {
