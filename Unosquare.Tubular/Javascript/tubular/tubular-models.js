@@ -1,6 +1,10 @@
 ﻿(function() {
         'use strict';
-        
+
+        /**                                           
+         * Tubular Models module. 
+         * It contains model's factories to be use in {@link tubular.directives} like `tubularModel` and `tubulargGridColumnModel`.
+         */
         angular.module('tubular.models', [])
             .factory('tubulargGridColumnModel', function() {
 

@@ -1,7 +1,9 @@
 ﻿(function() {
     'use strict';
+
     /**
-     * Contains common services
+     * Tubular Services module. 
+     * It contains common services like Http and OData clients, and filtering and printing services.
      */
     angular.module('tubular.services', ['ui.bootstrap', 'ngCookies'])
         .service('tubularPopupService', [

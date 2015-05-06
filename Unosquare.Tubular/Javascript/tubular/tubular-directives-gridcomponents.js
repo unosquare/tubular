@@ -1,7 +1,21 @@
 ﻿(function() {
     'use strict';
 
-    angular.module('tubular.directives').directive('tbTextSearch', [
+    angular.module('tubular.directives')
+        /**
+         * @ngdoc directive
+         * @name tbTextSearch
+         * @restrict E
+         *
+         * @description
+         * The `tbTextSearch` directive is the basic input to show in a grid or form.
+         * It uses the `TubularModel` to retrieve column or field information.
+         * 
+         * @scope
+         * 
+         * @param {string} serverUrl Set the HTTP URL where the data comes.
+         */
+        .directive('tbTextSearch', [
         function() {
             return {
                 require: '^tbGrid',
