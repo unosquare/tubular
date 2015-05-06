@@ -43,9 +43,10 @@ It contains common services like Http and OData clients, and filtering and print
     <li class="list-group-item">
         <a ng-click="internalLink('tubularHttp')">
             tubularHttp
-        </a> - Use `tubularHttp` to connect a grid or a form to a HTTP Resource.
+        </a> - Use `tubularHttp` to connect a grid or a form to a HTTP Resource. Internally this service is
+using `$http` to make all the connections.
 
-This service provides authentication using bearer-tokens.</li>
+This service provides authentication using bearer-tokens. Based on https://bitbucket.org/david.antaramian/so-21662778-spa-authentication-example</li>
     
     <li class="list-group-item">
         <a ng-click="internalLink('tubularOData')">

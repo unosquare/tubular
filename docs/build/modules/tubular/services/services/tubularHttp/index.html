@@ -4,8 +4,9 @@
 </div>
 
 <div>
-  <p>Use <code>tubularHttp</code> to connect a grid or a form to a HTTP Resource.</p>
-<p>This service provides authentication using bearer-tokens.</p>
+  <p>Use <code>tubularHttp</code> to connect a grid or a form to a HTTP Resource. Internally this service is
+using <code>$http</code> to make all the connections.</p>
+<p>This service provides authentication using bearer-tokens. Based on <a href="https://bitbucket.org/david.antaramian/so-21662778-spa-authentication-example">https://bitbucket.org/david.antaramian/so-21662778-spa-authentication-example</a></p>
 
 </div>
 
@@ -16,5 +17,5 @@
     <a class="list-group-item" ng-click="internalLink('$timeout')">$timeout</a>
     <a class="list-group-item" ng-click="internalLink('$q')">$q</a>
     <a class="list-group-item" ng-click="internalLink('$cacheFactory')">$cacheFactory</a>
-    <a class="list-group-item" ng-click="internalLink('$cookieStore')">$cookieStore</a>
+    <a class="list-group-item" ng-click="internalLink('$cookies')">$cookies</a>
 </ul>
