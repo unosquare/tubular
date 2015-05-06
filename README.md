@@ -6,9 +6,7 @@ Tubular is a set of <a href="https://angularjs.org/" target="_blank">AngularJS</
 
 Please visit the <a href="http://unosquare.github.io/tubular" target="_blank">Tubular GitHub Page</a> to learn how quickly you can start coding. Don't forget to check out the Tubular Generator which quickly turns models into an awesome UIs!
 
-## NuGet Installation
-
-[![NuGet version](https://badge.fury.io/nu/tubular.svg)](http://badge.fury.io/nu/tubular)
+## NuGet Installation [![NuGet version](https://badge.fury.io/nu/tubular.svg)](http://badge.fury.io/nu/tubular)
 
 ### Package containing only the client-side stuff
 
@@ -22,16 +20,14 @@ PM> Install-Package Tubular
 PM> Install-Package Tubular.ServerSide
 </pre>
 
-## Bower Installation
+## Bower Installation [![Bower version](https://badge.fury.io/bo/tubular.svg)](http://badge.fury.io/bo/tubular)
 
 <pre>
 # install Tubular package and add it to bower.json
 $ bower install tubular --save
 </pre>
 
-## npm Installation
-
-[![npm version](https://badge.fury.io/js/tubular.svg)](http://badge.fury.io/js/tubular)
+## npm Installation [![npm version](https://badge.fury.io/js/tubular.svg)](http://badge.fury.io/js/tubular)
 
 The npm package only contains the **Tubular Template Module**, if you want to use all of Tubular's features, please install the Bower package instead.
 
