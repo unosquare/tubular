@@ -1,16 +1,16 @@
 ﻿(function () {
     'use strict';
 
-    // User Service based on https://bitbucket.org/david.antaramian/so-21662778-spa-authentication-example
     angular.module('tubular.services')
         /**
          * @ngdoc service
          * @name tubularHttp
          *
          * @description
-         * Use `tubularHttp` to connect a grid or a form to a HTTP Resource.
+         * Use `tubularHttp` to connect a grid or a form to a HTTP Resource. Internally this service is
+         * using `$http` to make all the connections.
          * 
-         * This service provides authentication using bearer-tokens.
+         * This service provides authentication using bearer-tokens. Based on https://bitbucket.org/david.antaramian/so-21662778-spa-authentication-example
          */
         .service('tubularHttp', [
         '$http', '$timeout', '$q', '$cacheFactory', '$cookieStore', function tubularHttp($http, $timeout, $q, $cacheFactory, $cookieStore) {
@@ -32,10 +32,11 @@
 
             function retrieveSavedData() {
                 var savedData = $cookieStore.get('auth_data');
-                if (typeof savedData === 'undefined') {
-                    throw new Exception('No authentication data exists');
+
+                if (typeof savedData === 'undefined' || savedData == null) {
+                    throw 'No authentication data exists';
                 } else if (isAuthenticationExpired(savedData.expirationDate)) {
-                    throw new Exception('Authentication token has already expired');
+                    throw 'Authentication token has already expired';
                 } else {
                     me.userData = savedData;
                     setHttpAuthHeader();
