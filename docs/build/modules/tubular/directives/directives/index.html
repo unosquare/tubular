@@ -6,29 +6,49 @@
     <li class="list-group-item">
         tbGrid - The `tbGrid` directive is the base to create any grid.</li>
     <li class="list-group-item">
-        tbGridPager</li>
+        tbGridTable - The `tbGridTable` directive generate the HTML table where all the columns and rowsets can be defined. 
+`tbGridTable` requires a parent `tbGrid`.
+
+This directive is replace by a `table` HTML element.</li>
     <li class="list-group-item">
-        tbGridTable</li>
+        tbColumnDefinitions - The `tbColumnDefinitions` directive is a parent node to fill with `tbColumn`.
+
+This directive is replace by a `thead` HTML element.</li>
     <li class="list-group-item">
-        tbColumnDefinitions</li>
+        tbColumn - The `tbColumn` directive creates a column in the grid's model. 
+All the attributes are used to generate a `ColumnModel`.
+
+This directive is replace by a `th` HTML element.
+TODO: Document ColumnModel attributes</li>
     <li class="list-group-item">
-        tbColumn</li>
+        tbColumnHeader - The `tbColumnHeader` directive creates a column header, and it must be inside a `tbColumn`. 
+This directive has functionality to sort the column, the `sortable` attribute is declared in the parent element.
+
+This directive is replace by an `a` HTML element.</li>
     <li class="list-group-item">
-        tbColumnHeader</li>
+        tbRowSet - The `tbRowSet` directive is used to handle any `tbRowTemplate`. You can define multiples `tbRowSet` for grouping.
+
+This directive is replace by an `tbody` HTML element.</li>
     <li class="list-group-item">
-        tbRowSet</li>
+        tbRowTemplate - The `tbRowTemplate` directive should be use with a `ngRepeat` to iterate all the rows or grouped rows in a rowset.
+
+This directive is replace by an `tr` HTML element.</li>
     <li class="list-group-item">
-        tbRowTemplate</li>
+        tbCellTemplate - The `tbCellTemplate` directive represents the final table element, a cell, where it can 
+hold an inline editor or a plain AngularJS expression related to the current element in the `ngRepeat`.
+
+This directive is replace by an `td` HTML element.</li>
     <li class="list-group-item">
-        tbCellTemplate</li>
+        tbEmptyGrid - The `tbEmptyGrid` directive is a helper to show a "No records found" message when the grid has not rows.
+
+This class must be inside a `tbRowSet` directive.</li>
     <li class="list-group-item">
-        tbGridPagerInfo</li>
+        tbRowGroupHeader - The `tbRowGroupHeader` directive is a cell template to show grouping information.
+
+This class must be inside a `td` directive.</li>
     <li class="list-group-item">
-        tbEmptyGrid</li>
-    <li class="list-group-item">
-        tbRowGroupHeader</li>
-    <li class="list-group-item">
-        tbTextSearch</li>
+        tbTextSearch - The `tbTextSearch` directive is the basic input to show in a grid or form.
+It uses the `TubularModel` to retrieve column or field information.</li>
     <li class="list-group-item">
         tbRemoveButton</li>
     <li class="list-group-item">
@@ -42,33 +62,73 @@
     <li class="list-group-item">
         tbPrintButton</li>
     <li class="list-group-item">
-        tbSimpleEditor</li>
+        tbGridPager - The `tbGridPager` directive generates a pager connected to the parent `tbGrid`.</li>
     <li class="list-group-item">
-        tbNumericEditor</li>
+        tbGridPagerInfo - The `tbGridPagerInfo` directive shows how many records are shown in a page and total rows.</li>
     <li class="list-group-item">
-        tbDateTimeEditor</li>
+        tbSimpleEditor - The `tbSimpleEditor` directive is the basic input to show in a grid or form.
+It uses the `TubularModel` to retrieve column or field information.
+
+TODO: Define attributes</li>
     <li class="list-group-item">
-        tbDateEditor</li>
+        tbNumericEditor - The `tbNumericEditor` directive is numeric input, similar to `tbSimpleEditor` 
+but can render an addon to the input visual element.
+
+It uses the `TubularModel` to retrieve column or field information.</li>
     <li class="list-group-item">
-        tbDropdownEditor</li>
+        tbDateTimeEditor - The `tbDateTimeEditor` directive is date/time input. It uses the `datetime-local` HTML5 attribute, but if this
+components fails it falls back to a jQuery datepicker.
+
+It uses the `TubularModel` to retrieve column or field information.</li>
     <li class="list-group-item">
-        tbTypeaheadEditor</li>
+        tbDateEditor - The `tbDateEditor` directive is date input. It uses the `datetime-local` HTML5 attribute, but if this
+components fails it falls back to a jQuery datepicker.
+
+Similar to `tbDateTimeEditor` but without a timepicker.
+
+It uses the `TubularModel` to retrieve column or field information.</li>
     <li class="list-group-item">
-        tbHiddenField</li>
+        tbDropdownEditor - The `tbDropdownEditor` directive is drowpdown editor, it can get information from a HTTP 
+source or it can be an object declared in the attributes.
+
+It uses the `TubularModel` to retrieve column or field information.</li>
     <li class="list-group-item">
-        tbCheckboxField</li>
+        tbTypeaheadEditor - The `tbTypeaheadEditor` directive is autocomplete editor, it can get information from a HTTP source or it can get them
+from a object declared in the attributes.
+
+It uses the `TubularModel` to retrieve column or field information.</li>
     <li class="list-group-item">
-        tbTextArea</li>
+        tbHiddenField - The `tbHiddenField` directive represents a hidden field.
+
+It uses the `TubularModel` to retrieve column or field information.</li>
     <li class="list-group-item">
-        tbColumnFilterButtons</li>
+        tbCheckboxField - The `tbCheckboxField` directive represents a checkbox field.
+
+It uses the `TubularModel` to retrieve column or field information.</li>
     <li class="list-group-item">
-        tbColumnFilterColumnSelector</li>
+        tbTextArea - The `tbTextArea` directive represents a textarea field. 
+Similar to `tbSimpleEditor` but with a `textarea` HTML element instead of `input`.
+
+It uses the `TubularModel` to retrieve column or field information.</li>
     <li class="list-group-item">
-        tbColumnFilter</li>
+        tbColumnFilterButtons - The `tbColumnFilterButtons` is an internal directive, and it is used to show basic filtering buttons.</li>
     <li class="list-group-item">
-        tbColumnDateTimeFilter</li>
+        tbColumnFilterColumnSelector - The `tbColumnFilterColumnSelector` is an internal directive, and it is used to show columns selector popup.</li>
     <li class="list-group-item">
-        tbColumnOptionsFilter</li>
+        tbColumnFilter - The `tbColumnFilter` directive is a the basic filter popover. You need to define it inside a `tbColumn`.
+
+The parent scope will provide information about the data type.
+TODO: List params from tubularGridFilterService</li>
+    <li class="list-group-item">
+        tbColumnDateTimeFilter - The `tbColumnDateTimeFilter` directive is a specific filter with Date and Time editors, instead regular inputs.
+
+The parent scope will provide information about the data type.
+
+TODO: List params from tubularGridFilterService</li>
+    <li class="list-group-item">
+        tbColumnOptionsFilter - The `tbColumnOptionsFilter` directive is a filter with an dropdown listing all the possible values to filter.
+
+TODO: List params from tubularGridFilterService</li>
     <li class="list-group-item">
         tbForm - The `tbForm` directive is the base to create any form.</li>
 </ul>
