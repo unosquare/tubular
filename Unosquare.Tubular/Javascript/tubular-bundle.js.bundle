@@ -15,7 +15,8 @@
     <file>angular-filter/group-by.js</file>
     <file>tubular/tubular.js</file>
     <file>tubular/tubular-directives.js</file>
-    <file>tubular/tubular-directives-grid.js</file>
+    <file>tubular/tubular-directives-gridcomponents.js</file>
+    <file>tubular/tubular-directives-gridpager.js</file>
     <file>tubular/tubular-directives-editors.js</file>
     <file>tubular/tubular-directives-filters.js</file>
     <file>tubular/tubular-directives-forms.js</file>
