@@ -69,91 +69,25 @@
     </Content>
     <Content Include="Javascript\tubular\node-module.js" />
     <Content Include="Javascript\tubular\tubular-directives-filters.js" />
-    <Content Include="Javascript\tubular\tubular-directives-filters.min.js">
-      <DependentUpon>tubular-directives-filters.js</DependentUpon>
-    </Content>
     <Content Include="Javascript\tubular\tubular-directives-forms.js" />
-    <Content Include="Javascript\tubular\tubular-directives-forms.min.js">
-      <DependentUpon>tubular-directives-forms.js</DependentUpon>
-    </Content>
     <Content Include="Javascript\tubular\tubular-directives-grid.js" />
-    <Content Include="Javascript\tubular\tubular-directives-grid.min.js">
-      <DependentUpon>tubular-directives-grid.js</DependentUpon>
-    </Content>
     <Content Include="Javascript\tubular\tubular-directives.js" />
-    <Content Include="Javascript\tubular\tubular-directives.min.js">
-      <DependentUpon>tubular-directives.js</DependentUpon>
-    </Content>
     <Content Include="Javascript\tubular\tubular-models.js" />
-    <Content Include="Javascript\tubular\tubular-models.min.js">
-      <DependentUpon>tubular-models.js</DependentUpon>
-    </Content>
     <Content Include="Javascript\tubular\tubular-services-http.js" />
-    <Content Include="Javascript\tubular\tubular-services-http.min.js">
-      <DependentUpon>tubular-services-http.js</DependentUpon>
-    </Content>
     <Content Include="Javascript\tubular\tubular-services-odata.js" />
-    <Content Include="Javascript\tubular\tubular-services-odata.min.js">
-      <DependentUpon>tubular-services-odata.js</DependentUpon>
-    </Content>
     <Content Include="Javascript\tubular\tubular-services-template.js" />
-    <Content Include="Javascript\tubular\tubular-services-template.min.js">
-      <DependentUpon>tubular-services-template.js</DependentUpon>
-    </Content>
     <Content Include="Javascript\tubular\tubular-services.js" />
-    <Content Include="Javascript\tubular\tubular-services.min.js">
-      <DependentUpon>tubular-services.js</DependentUpon>
-    </Content>
     <Content Include="Javascript\tubular\tubular.js" />
-    <Content Include="Javascript\tubular\tubular.min.js">
-      <DependentUpon>tubular.js</DependentUpon>
-    </Content>
     <None Include="app.config" />
-    <Content Include="Javascript\tubular\tubular-directives-editors.min.js.map">
-      <DependentUpon>tubular-directives-editors.min.js</DependentUpon>
-    </Content>
-    <Content Include="Javascript\tubular\tubular-directives-filters.min.js.map">
-      <DependentUpon>tubular-directives-filters.min.js</DependentUpon>
-    </Content>
-    <Content Include="Javascript\tubular\tubular-directives-forms.min.js.map">
-      <DependentUpon>tubular-directives-forms.min.js</DependentUpon>
-    </Content>
-    <Content Include="Javascript\tubular\tubular-models.min.js.map">
-      <DependentUpon>tubular-models.min.js</DependentUpon>
-    </Content>
-    <Content Include="Javascript\tubular\tubular-services.min.js.map">
-      <DependentUpon>tubular-services.min.js</DependentUpon>
-    </Content>
-    <Content Include="Javascript\tubular\tubular.min.js.map">
-      <DependentUpon>tubular.min.js</DependentUpon>
-    </Content>
     <None Include="Css\tubular-bundle.css.bundle" />
     <None Include="Javascript\tubular-bundle.js.bundle" />
     <None Include="Javascript\tubular-bundle.min.js.map">
       <DependentUpon>tubular-bundle.min.js</DependentUpon>
     </None>
-    <None Include="Javascript\tubular\tubular-directives-grid.min.js.map">
-      <DependentUpon>tubular-directives-grid.min.js</DependentUpon>
-    </None>
-    <None Include="Javascript\tubular\tubular-directives.min.js.map">
-      <DependentUpon>tubular-directives.min.js</DependentUpon>
-    </None>
-    <None Include="Javascript\tubular\tubular-services-http.min.js.map">
-      <DependentUpon>tubular-services-http.min.js</DependentUpon>
-    </None>
-    <None Include="Javascript\tubular\tubular-services-odata.min.js.map">
-      <DependentUpon>tubular-services-odata.min.js</DependentUpon>
-    </None>
-    <None Include="Javascript\tubular\tubular-services-template.min.js.map">
-      <DependentUpon>tubular-services-template.min.js</DependentUpon>
-    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Javascript\tubular\tubular-directives-editors.js" />
-    <Content Include="Javascript\tubular\tubular-directives-editors.min.js">
-      <DependentUpon>tubular-directives-editors.js</DependentUpon>
-    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
