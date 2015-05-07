@@ -119,10 +119,7 @@
                 return function($scope, data, dataService) {
                     var obj = {
                         $key: "",
-                        $count: 0,
                         $addField: function(key, value) {
-                            this.$count++;
-
                             this[key] = value;
                             if (angular.isUndefined(this.$original)) this.$original = {};
                             this.$original[key] = value;

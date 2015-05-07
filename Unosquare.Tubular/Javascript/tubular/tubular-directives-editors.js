@@ -444,12 +444,13 @@
 
                 return {
                     template: '<div ng-class="{ \'form-group\' : isEditing, \'has-error\' : !$valid }">' +
-                        '<span ng-hide="isEditing">{{value}}</span>' +
-                        '<label>' +
-                        '<input type="checkbox" ng-show="isEditing" ng-model="value" ng-required="required" /> ' +
-                        '<span ng-show="showLabel">{{label}}</span>' +
+                        '<span ng-hide="isEditing">{{value ? checkedValue : uncheckedValue}}</span>' +
+                        '<label ng-show="isEditing" ng-click="toggleValue()">' +
+                        '<input type="checkbox" ng-model="value" class="tubular-checkbox" /> ' +
+                        '<span>{{label}}</span>' +
                         '</label>' +
-                        '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">' +
+                        '<span class="help-block error-block" ng-show="isEditing" ' +
+                        'ng-repeat="error in state.$errors">' +
                         '{{error}}' +
                         '</span>' +
                         '<span class="help-block" ng-show="isEditing && help">{{help}}</span>' +
@@ -457,9 +458,19 @@
                     restrict: 'E',
                     replace: true,
                     transclude: true,
-                    scope: tubularEditorService.defaultScope,
+                    scope: angular.extend({
+                        checkedValue: '=?',
+                        uncheckedValue: '=?'
+                    }, tubularEditorService.defaultScope),
                     controller: [
-                        '$scope', function($scope) {
+                        '$scope', function ($scope) {
+                            $scope.checkedValue = angular.isDefined($scope.checkedValue) ? $scope.checkedValue : true;
+                            $scope.uncheckedValue = angular.isDefined($scope.uncheckedValue) ? $scope.uncheckedValue : false;
+
+                            $scope.toggleValue = function () {
+                                $scope.value = ($scope.value === $scope.checkedValue) ? $scope.uncheckedValue : $scope.checkedValue;
+                            };
+
                             tubularEditorService.setupScope($scope);
                         }
                     ]

@@ -10,7 +10,7 @@ var tubularTemplateServiceModule = {
         httpMethods: ['POST', 'PUT', 'GET', 'DELETE'],
         gridModes: ['Read-Only', 'Inline', 'Popup', 'Page'],
         formLayouts: ['Simple', 'Two-columns', 'Three-columns'],
-        sortDirections: ['Ascending','Descending']
+        sortDirections: ['Ascending', 'Descending']
     },
 
     defaults: {
@@ -30,6 +30,88 @@ var tubularTemplateServiceModule = {
             Layout: 'Simple',
             ModelKey: '',
             RequireAuthentication: false
+        },
+        fieldsSettings: {
+            'tbSimpleEditor': {
+                ShowLabel: true,
+                Placeholder: true,
+                Format: false,
+                Help: true,
+                Required: true,
+                ReadOnly: true,
+                EditorType: true
+            },
+            'tbNumericEditor': {
+                ShowLabel: true,
+                Placeholder: true,
+                Format: true,
+                Help: true,
+                Required: true,
+                ReadOnly: true,
+                EditorType: false
+            },
+            'tbDateTimeEditor': {
+                ShowLabel: true,
+                Placeholder: false,
+                Format: true,
+                Help: true,
+                Required: true,
+                ReadOnly: true,
+                EditorType: false
+            },
+            'tbDateEditor': {
+                ShowLabel: true,
+                Placeholder: false,
+                Format: true,
+                Help: true,
+                Required: true,
+                ReadOnly: true,
+                EditorType: false
+            },
+            'tbDropdownEditor': {
+                ShowLabel: true,
+                Placeholder: false,
+                Format: false,
+                Help: true,
+                Required: true,
+                ReadOnly: true,
+                EditorType: false
+            },
+            'tbTypeaheadEditor': {
+                ShowLabel: true,
+                Placeholder: true,
+                Format: false,
+                Help: true,
+                Required: true,
+                ReadOnly: true,
+                EditorType: false
+            },
+            'tbHiddenField': {
+                ShowLabel: false,
+                Placeholder: false,
+                Format: false,
+                Help: false,
+                Required: false,
+                ReadOnly: false,
+                EditorType: false
+            },
+            'tbCheckboxField': {
+                ShowLabel: false,
+                Placeholder: false,
+                Format: false,
+                Help: true,
+                Required: false,
+                ReadOnly: true,
+                EditorType: false
+            },
+            'tbTextArea': {
+                ShowLabel: true,
+                Placeholder: true,
+                Help: true,
+                Required: true,
+                ReadOnly: true,
+                EditorType: false
+            }
         }
     },
 
@@ -107,11 +189,17 @@ var tubularTemplateServiceModule = {
     generateFieldsArray: function(columns) {
         return columns.map(function(el) {
             var editorTag = el.EditorType.replace(/([A-Z])/g, function($1) { return "-" + $1.toLowerCase(); });
-
-            return '\r\n\t<' + editorTag + ' name="' + el.Name + '" label="' + el.Label + '" editor-type="' + el.DataType + '" ' +
-                '\r\n\t\tshow-label="' + el.ShowLabel + '" placeholder="' + el.Placeholder + '" required="' + el.Required + '" ' +
-                '\r\n\t\tread-only="' + el.ReadOnly + '" format="' + el.Format + '" help="' + el.Help + '">' +
-                '\r\n\t</' + editorTag + '>';
+            var defaults = tubularTemplateServiceModule.defaults.fieldsSettings[el.EditorType];
+            
+            return '\r\n\t<' + editorTag + ' name="' + el.Name + '"' +
+                (defaults.EditorType ? '\r\n\t\teditor-type="' + el.DataType + '" ' : '') +
+                (defaults.ShowLabel ? '\r\n\t\tlabel="' + el.Label + '" show-label="' + el.ShowLabel + '"' : '') +
+                (defaults.Placeholder ? '\r\n\t\tplaceholder="' + el.Placeholder + '"' : '') +
+                (defaults.Required ? '\r\n\t\trequired="' + el.Required + '"' : '') +
+                (defaults.ReadOnly ? '\r\n\t\tread-only="' + el.ReadOnly + '"' : '') +
+                (defaults.Format ? '\r\n\t\tformat="' + el.Format + '"' : '') +
+                (defaults.Help ? '\r\n\t\thelp="' + el.Help + '"' : '') +
+                '>\r\n\t</' + editorTag + '>';
         });
     },
 
@@ -185,6 +273,20 @@ var tubularTemplateServiceModule = {
             '\r\n</tb-form>';
     },
 
+    generateCells: function(columns, mode) {
+        return columns.map(function(el) {
+            var editorTag = el.EditorType.replace(/([A-Z])/g, function($1) { return "-" + $1.toLowerCase(); });
+
+            return '\r\n\t\t<tb-cell-template column-name="' + el.Name + '">' +
+                '\r\n\t\t\t' +
+                (mode == 'Inline' ?
+                    '<' + editorTag + ' is-editing="row.$isEditing" value="row.' + el.Name + '">' +
+                    '</' + editorTag + '>' :
+                     el.Template) +
+                '\r\n\t\t</tb-cell-template>';
+        }).join('');
+    },
+
     generateGrid: function(columns, options) {
         var topToolbar = '';
         var bottomToolbar = '';
@@ -244,15 +346,7 @@ var tubularTemplateServiceModule = {
                 (options.Mode == 'Inline' ? '\r\n\t\t\t<tb-save-button model="row"></tb-save-button>' : '') +
                 '\r\n\t\t\t<tb-edit-button model="row"></tb-edit-button>' +
                 '\r\n\t\t</tb-cell-template>' : '') +
-            columns.map(function(el) {
-                var editorTag = el.EditorType.replace(/([A-Z])/g, function($1) { return "-" + $1.toLowerCase(); });
-
-                return '\r\n\t\t<tb-cell-template column-name="' + el.Name + '">' +
-                    (options.Mode == 'Inline' ?
-                        '<' + editorTag + ' is-editing="row.$isEditing" value="row.' + el.Name + '"></' + editorTag + '>' :
-                        '\r\n\t\t\t' + el.Template) +
-                    '\r\n\t\t</tb-cell-template>';
-            }).join('') +
+            this.generateCells(columns, options.Mode) +
             '\r\n\t</tb-row-template>' +
             '\r\n\t</tb-row-set>' +
             '\r\n\t</tb-grid-table>' +

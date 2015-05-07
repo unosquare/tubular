@@ -11,7 +11,7 @@ var tubularTemplateServiceModule = {
         httpMethods: ['POST', 'PUT', 'GET', 'DELETE'],
         gridModes: ['Read-Only', 'Inline', 'Popup', 'Page'],
         formLayouts: ['Simple', 'Two-columns', 'Three-columns'],
-        sortDirections: ['Ascending','Descending']
+        sortDirections: ['Ascending', 'Descending']
     },
 
     defaults: {
@@ -31,6 +31,88 @@ var tubularTemplateServiceModule = {
             Layout: 'Simple',
             ModelKey: '',
             RequireAuthentication: false
+        },
+        fieldsSettings: {
+            'tbSimpleEditor': {
+                ShowLabel: true,
+                Placeholder: true,
+                Format: false,
+                Help: true,
+                Required: true,
+                ReadOnly: true,
+                EditorType: true
+            },
+            'tbNumericEditor': {
+                ShowLabel: true,
+                Placeholder: true,
+                Format: true,
+                Help: true,
+                Required: true,
+                ReadOnly: true,
+                EditorType: false
+            },
+            'tbDateTimeEditor': {
+                ShowLabel: true,
+                Placeholder: false,
+                Format: true,
+                Help: true,
+                Required: true,
+                ReadOnly: true,
+                EditorType: false
+            },
+            'tbDateEditor': {
+                ShowLabel: true,
+                Placeholder: false,
+                Format: true,
+                Help: true,
+                Required: true,
+                ReadOnly: true,
+                EditorType: false
+            },
+            'tbDropdownEditor': {
+                ShowLabel: true,
+                Placeholder: false,
+                Format: false,
+                Help: true,
+                Required: true,
+                ReadOnly: true,
+                EditorType: false
+            },
+            'tbTypeaheadEditor': {
+                ShowLabel: true,
+                Placeholder: true,
+                Format: false,
+                Help: true,
+                Required: true,
+                ReadOnly: true,
+                EditorType: false
+            },
+            'tbHiddenField': {
+                ShowLabel: false,
+                Placeholder: false,
+                Format: false,
+                Help: false,
+                Required: false,
+                ReadOnly: false,
+                EditorType: false
+            },
+            'tbCheckboxField': {
+                ShowLabel: false,
+                Placeholder: false,
+                Format: false,
+                Help: true,
+                Required: false,
+                ReadOnly: true,
+                EditorType: false
+            },
+            'tbTextArea': {
+                ShowLabel: true,
+                Placeholder: true,
+                Help: true,
+                Required: true,
+                ReadOnly: true,
+                EditorType: false
+            }
         }
     },
 
@@ -108,11 +190,17 @@ var tubularTemplateServiceModule = {
     generateFieldsArray: function(columns) {
         return columns.map(function(el) {
             var editorTag = el.EditorType.replace(/([A-Z])/g, function($1) { return "-" + $1.toLowerCase(); });
-
-            return '\r\n\t<' + editorTag + ' name="' + el.Name + '" label="' + el.Label + '" editor-type="' + el.DataType + '" ' +
-                '\r\n\t\tshow-label="' + el.ShowLabel + '" placeholder="' + el.Placeholder + '" required="' + el.Required + '" ' +
-                '\r\n\t\tread-only="' + el.ReadOnly + '" format="' + el.Format + '" help="' + el.Help + '">' +
-                '\r\n\t</' + editorTag + '>';
+            var defaults = tubularTemplateServiceModule.defaults.fieldsSettings[el.EditorType];
+            
+            return '\r\n\t<' + editorTag + ' name="' + el.Name + '"' +
+                (defaults.EditorType ? '\r\n\t\teditor-type="' + el.DataType + '" ' : '') +
+                (defaults.ShowLabel ? '\r\n\t\tlabel="' + el.Label + '" show-label="' + el.ShowLabel + '"' : '') +
+                (defaults.Placeholder ? '\r\n\t\tplaceholder="' + el.Placeholder + '"' : '') +
+                (defaults.Required ? '\r\n\t\trequired="' + el.Required + '"' : '') +
+                (defaults.ReadOnly ? '\r\n\t\tread-only="' + el.ReadOnly + '"' : '') +
+                (defaults.Format ? '\r\n\t\tformat="' + el.Format + '"' : '') +
+                (defaults.Help ? '\r\n\t\thelp="' + el.Help + '"' : '') +
+                '>\r\n\t</' + editorTag + '>';
         });
     },
 
@@ -186,6 +274,20 @@ var tubularTemplateServiceModule = {
             '\r\n</tb-form>';
     },
 
+    generateCells: function(columns, mode) {
+        return columns.map(function(el) {
+            var editorTag = el.EditorType.replace(/([A-Z])/g, function($1) { return "-" + $1.toLowerCase(); });
+
+            return '\r\n\t\t<tb-cell-template column-name="' + el.Name + '">' +
+                '\r\n\t\t\t' +
+                (mode == 'Inline' ?
+                    '<' + editorTag + ' is-editing="row.$isEditing" value="row.' + el.Name + '">' +
+                    '</' + editorTag + '>' :
+                     el.Template) +
+                '\r\n\t\t</tb-cell-template>';
+        }).join('');
+    },
+
     generateGrid: function(columns, options) {
         var topToolbar = '';
         var bottomToolbar = '';
@@ -245,15 +347,7 @@ var tubularTemplateServiceModule = {
                 (options.Mode == 'Inline' ? '\r\n\t\t\t<tb-save-button model="row"></tb-save-button>' : '') +
                 '\r\n\t\t\t<tb-edit-button model="row"></tb-edit-button>' +
                 '\r\n\t\t</tb-cell-template>' : '') +
-            columns.map(function(el) {
-                var editorTag = el.EditorType.replace(/([A-Z])/g, function($1) { return "-" + $1.toLowerCase(); });
-
-                return '\r\n\t\t<tb-cell-template column-name="' + el.Name + '">' +
-                    (options.Mode == 'Inline' ?
-                        '<' + editorTag + ' is-editing="row.$isEditing" value="row.' + el.Name + '"></' + editorTag + '>' :
-                        '\r\n\t\t\t' + el.Template) +
-                    '\r\n\t\t</tb-cell-template>';
-            }).join('') +
+            this.generateCells(columns, options.Mode) +
             '\r\n\t</tb-row-template>' +
             '\r\n\t</tb-row-set>' +
             '\r\n\t</tb-grid-table>' +
@@ -983,6 +1077,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 });
                             };
 
+                            $scope.visibleColumns = function() {
+                                return $scope.columns.filter(function(el) { return el.Visible; }).length;
+                            }
+
                             $scope.$emit('tbGrid_OnGreetParentController', $scope);
                         }
                     ]
@@ -1351,7 +1449,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                 return {
                     require: '^tbRowTemplate',
-                    template: '<td class="row-group" colspan="{{$parent.$component.columns.length + 1}}">' +
+                    template: '<td class="row-group" colspan="{{$parent.$component.visibleColumns()}}">' +
                         '<ng-transclude></ng-transclude>' +
                         '</td>',
                     restrict: 'E',
@@ -2341,12 +2439,13 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                 return {
                     template: '<div ng-class="{ \'form-group\' : isEditing, \'has-error\' : !$valid }">' +
-                        '<span ng-hide="isEditing">{{value}}</span>' +
-                        '<label>' +
-                        '<input type="checkbox" ng-show="isEditing" ng-model="value" ng-required="required" /> ' +
-                        '<span ng-show="showLabel">{{label}}</span>' +
+                        '<span ng-hide="isEditing">{{value ? checkedValue : uncheckedValue}}</span>' +
+                        '<label ng-show="isEditing" ng-click="toggleValue()">' +
+                        '<input type="checkbox" ng-model="value" class="tubular-checkbox" /> ' +
+                        '<span>{{label}}</span>' +
                         '</label>' +
-                        '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">' +
+                        '<span class="help-block error-block" ng-show="isEditing" ' +
+                        'ng-repeat="error in state.$errors">' +
                         '{{error}}' +
                         '</span>' +
                         '<span class="help-block" ng-show="isEditing && help">{{help}}</span>' +
@@ -2354,9 +2453,19 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     restrict: 'E',
                     replace: true,
                     transclude: true,
-                    scope: tubularEditorService.defaultScope,
+                    scope: angular.extend({
+                        checkedValue: '=?',
+                        uncheckedValue: '=?'
+                    }, tubularEditorService.defaultScope),
                     controller: [
-                        '$scope', function($scope) {
+                        '$scope', function ($scope) {
+                            $scope.checkedValue = angular.isDefined($scope.checkedValue) ? $scope.checkedValue : true;
+                            $scope.uncheckedValue = angular.isDefined($scope.uncheckedValue) ? $scope.uncheckedValue : false;
+
+                            $scope.toggleValue = function () {
+                                $scope.value = ($scope.value === $scope.checkedValue) ? $scope.uncheckedValue : $scope.checkedValue;
+                            };
+
                             tubularEditorService.setupScope($scope);
                         }
                     ]
@@ -2942,10 +3051,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 return function($scope, data, dataService) {
                     var obj = {
                         $key: "",
-                        $count: 0,
                         $addField: function(key, value) {
-                            this.$count++;
-
                             this[key] = value;
                             if (angular.isUndefined(this.$original)) this.$original = {};
                             this.$original[key] = value;

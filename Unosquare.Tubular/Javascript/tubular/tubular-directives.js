@@ -391,6 +391,10 @@
                                 });
                             };
 
+                            $scope.visibleColumns = function() {
+                                return $scope.columns.filter(function(el) { return el.Visible; }).length;
+                            }
+
                             $scope.$emit('tbGrid_OnGreetParentController', $scope);
                         }
                     ]
@@ -759,7 +763,7 @@
 
                 return {
                     require: '^tbRowTemplate',
-                    template: '<td class="row-group" colspan="{{$parent.$component.columns.length + 1}}">' +
+                    template: '<td class="row-group" colspan="{{$parent.$component.visibleColumns()}}">' +
                         '<ng-transclude></ng-transclude>' +
                         '</td>',
                     restrict: 'E',
