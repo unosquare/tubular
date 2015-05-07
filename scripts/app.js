@@ -127,6 +127,7 @@
                 $scope.isOData = false;
                 $scope.uiOptions = tubularTemplateService.defaults.gridOptions;
                 $scope.formOptions = tubularTemplateService.defaults.formOptions;
+                $scope.fieldsSettings = tubularTemplateService.defaults.fieldsSettings;
 
                 $scope.views = localStorageService.get('generator_views') || [];
                 $scope.gridId = ($scope.views.length + 1);
