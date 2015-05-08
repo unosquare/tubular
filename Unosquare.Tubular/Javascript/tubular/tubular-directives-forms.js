@@ -51,16 +51,6 @@
                             $scope.requireAuthentication = angular.isUndefined($scope.requireAuthentication) ? true : $scope.requireAuthentication;
                             $scope.gridDataService.setRequireAuthentication($scope.requireAuthentication);
 
-                            $scope.addField = function(item) {
-                                if (item.name === null) return;
-
-                                if ($scope.hasFieldsDefinitions !== false)
-                                    throw 'Cannot define more fields. Field definitions have been sealed';
-
-                                item.Name = item.name;
-                                $scope.fields.push(item);
-                            };
-
                             $scope.$watch('hasFieldsDefinitions', function(newVal) {
                                 if (newVal !== true) return;
                                 $scope.retrieveData();

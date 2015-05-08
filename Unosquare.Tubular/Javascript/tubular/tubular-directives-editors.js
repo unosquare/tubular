@@ -11,9 +11,24 @@
          * The `tbSimpleEditor` directive is the basic input to show in a grid or form.
          * It uses the `TubularModel` to retrieve column or field information.
          * 
-         * TODO: Define attributes
-         * 
          * @scope
+         * 
+         * @param {object} value Set the value.
+                    state: '=?',
+                    isEditing: '=?',
+                    editorType: '@',
+                    showLabel: '=?',
+                    label: '@?',
+                    required: '=?',
+                    format: '@?',
+                    min: '=?',
+                    max: '=?',
+                    name: '@',
+                    defaultValue: '=?',
+                    IsKey: '@',
+                    placeholder: '@?',
+                    readOnly: '=?',
+                    help: '@?'
          */
         .directive('tbSimpleEditor', [
             'tubularEditorService', function(tubularEditorService) {

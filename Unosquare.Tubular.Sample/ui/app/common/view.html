@@ -141,13 +141,12 @@
                                         </tb-dropdown-editor>
                                     </tb-cell-template>
                                     <tb-cell-template class="text-right" column-name="Amount">
-                                        <tb-numeric-editor is-editing="row.$isEditing" value="row.Amount"
-                                                           state="row.$state.Amount" format="C"
-                                                           min="1" max="100" required="true">
+                                        <tb-numeric-editor is-editing="row.$isEditing" name="Amount"
+                                                           format="C" min="1" max="100" required="true">
                                         </tb-numeric-editor>
                                     </tb-cell-template>
                                     <tb-cell-template class="text-right" column-name="ShippedDate">
-                                        <tb-date-editor is-editing="row.$isEditing" value="row.ShippedDate">
+                                        <tb-date-editor is-editing="row.$isEditing" name="ShippedDate">
                                         </tb-date-editor>
                                     </tb-cell-template>
                                     <tb-cell-template class="text-center" column-name="IsShipped">

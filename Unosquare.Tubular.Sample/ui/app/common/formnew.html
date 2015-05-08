@@ -6,11 +6,11 @@
 
                 <tb-simple-editor min="3" show-label="true" name="CustomerName">
                 </tb-simple-editor>
-                <tb-dropdown-editor name="ShipperCity" value="Model.ShipperCity" state="Model.$state.ShipperCity"
+                <tb-dropdown-editor name="ShipperCity" value="Model.ShipperCity"
                                          show-label="true" required="true"
                                          options-url="api/orders/cities">
                 </tb-dropdown-editor>
-                <tb-numeric-editor name="Amount" value="Model.Amount" min="1" max="100" state="Model.$state.Amount"
+                <tb-numeric-editor name="Amount" value="Model.Amount" min="1" max="100" format="C"
                                         show-label="true" required="true" default-value="100">
                 </tb-numeric-editor>
 
@@ -20,11 +20,9 @@
 
                 <tb-hidden-field name="OrderID" is-key="true" value="Model.OrderID">
                 </tb-hidden-field>
-                
-                <div class="form-control">
-                    <label>Is Shipped?</label>
-                    <input type="checkbox" ng-model="Model.IsShipped" />
-                </div>
+
+                <tb-checkbox-field value="Model.IsShipped" name="IsShipped" show-label="true" label="Is Shipped?">
+                </tb-checkbox-field>
 
                 <hr />
 

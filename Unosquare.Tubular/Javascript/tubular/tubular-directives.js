@@ -652,13 +652,47 @@
                     replace: true,
                     transclude: true,
                     scope: {
-                        rowModel: '=',
+                        model: '=rowModel',
                         selectable: '@'
                     },
                     controller: [
-                        '$scope', function($scope) {
+                        '$scope', function ($scope) {
+                            $scope.tubularDirective = 'tubular-rowset';
+                            $scope.fields = [];
+                            $scope.hasFieldsDefinitions = false;
                             $scope.selectableBool = $scope.selectable !== "false";
                             $scope.$component = $scope.$parent.$parent.$parent.$component;
+
+                            $scope.$watch('hasFieldsDefinitions', function (newVal) {
+                                if (newVal !== true || angular.isUndefined($scope.model)) return;
+
+                                $scope.bindFields();
+                            });
+
+                            $scope.bindFields = function () {
+                                // TODO: refactor this to use with tbForm
+                                angular.forEach($scope.fields, function (field) {
+                                    field.$parent.Model = $scope.model;
+
+                                    if (field.$editorType == 'input' &&
+                                        angular.equals(field.value, $scope.model[field.Name]) == false) {
+                                        field.value = (field.DataType == 'date') ? new Date($scope.model[field.Name]) : $scope.model[field.Name];
+
+                                        $scope.$watch(function() {
+                                            return field.value;
+                                        }, function(value) {
+                                            $scope.model[field.Name] = value;
+                                        });
+                                    }
+
+                                    // Ignores models without state
+                                    if (angular.isUndefined($scope.model.$state)) return;
+
+                                    if (angular.equals(field.state, $scope.model.$state[field.Name]) == false) {
+                                        field.state = $scope.model.$state[field.Name];
+                                    }
+                                });
+                            }
 
                             if ($scope.selectableBool && angular.isUndefined($scope.rowModel) === false) {
                                 $scope.$component.selectFromSession($scope.rowModel);
@@ -669,7 +703,15 @@
                                 $scope.$component.changeSelection(rowModel);
                             };
                         }
-                    ]
+                    ],
+                    compile: function compile(cElement, cAttrs) {
+                        return {
+                            pre: function (scope, lElement, lAttrs, lController, lTransclude) { },
+                            post: function (scope, lElement, lAttrs, lController, lTransclude) {
+                                scope.hasFieldsDefinitions = true;
+                            }
+                        };
+                    }
                 };
             }
         ])

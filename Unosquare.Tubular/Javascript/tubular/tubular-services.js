@@ -269,7 +269,6 @@
 
                 me.defaultScope = {
                     value: '=?',
-                    state: '=?',
                     isEditing: '=?',
                     editorType: '@',
                     showLabel: '=?',
@@ -342,8 +341,16 @@
                     while (true) {
                         if (parent == null) break;
                         if (angular.isUndefined(parent.tubularDirective) == false &&
-                            parent.tubularDirective === 'tubular-form') {
-                            parent.addField(scope);
+                            (parent.tubularDirective === 'tubular-form' ||
+                            parent.tubularDirective === 'tubular-rowset')) {
+                            if (scope.name === null) return;
+
+                            if (parent.hasFieldsDefinitions !== false)
+                                throw 'Cannot define more fields. Field definitions have been sealed';
+
+                            scope.Name = scope.name;
+                            parent.fields.push(scope);
+
                             break;
                         }
 
