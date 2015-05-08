@@ -670,27 +670,8 @@
                             });
 
                             $scope.bindFields = function () {
-                                // TODO: refactor this to use with tbForm
                                 angular.forEach($scope.fields, function (field) {
-                                    field.$parent.Model = $scope.model;
-
-                                    if (field.$editorType == 'input' &&
-                                        angular.equals(field.value, $scope.model[field.Name]) == false) {
-                                        field.value = (field.DataType == 'date') ? new Date($scope.model[field.Name]) : $scope.model[field.Name];
-
-                                        $scope.$watch(function() {
-                                            return field.value;
-                                        }, function(value) {
-                                            $scope.model[field.Name] = value;
-                                        });
-                                    }
-
-                                    // Ignores models without state
-                                    if (angular.isUndefined($scope.model.$state)) return;
-
-                                    if (angular.equals(field.state, $scope.model.$state[field.Name]) == false) {
-                                        field.state = $scope.model.$state[field.Name];
-                                    }
+                                    field.bindScope();
                                 });
                             }
 
