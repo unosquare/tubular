@@ -1,0 +1,20 @@
+{
+    "Name": "Id",
+    "DataType": "numeric",
+    "Template": "{{row.Id}}",
+    "Label": "Id",
+    "EditorType": "tbNumericEditor",
+    "Searchable": false,
+    "Filter": true,
+    "Visible": true,
+    "Sortable": true,
+    "IsKey": true,
+    "SortOrder": 1,
+    "SortDirection": "Ascending",
+    "ShowLabel": true,
+    "Placeholder": "",
+    "Format": "",
+    "Help": "",
+    "Required": true,
+    "ReadOnly": false
+}

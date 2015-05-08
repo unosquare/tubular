@@ -1,25 +1,33 @@
 {
-    "name": "tubular",
-    "filename": "tubular-bundle.min.js",
-    "version": "0.9.10",
-    "description": "A set of AngularJS directives and designed to rapidly build modern web applications.",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/unosquare/tubular"
-    },
-    "keywords": [
-        "grid",
-        "forms",
-        "scaffolder",
-        "bootstrap",
-        "angularjs"
-    ],
-    "author": "Mario Divece <mario@unosquare.com>",
-    "contributors": [ { "name": "Geovanni Perez", "email": "geovanni.perez@gmail.com" } ],
-    "license": "MIT",
-    "homepage": "http://unosquare.github.io/tubular",
-    "main": "dist/node-module.js",
-    "files": [
-        "dist/node-module.js"
-    ]
+  "name": "tubular",
+  "filename": "tubular-bundle.min.js",
+  "version": "0.9.10",
+  "description": "A set of AngularJS directives and designed to rapidly build modern web applications.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/unosquare/tubular"
+  },
+  "keywords": [
+    "grid",
+    "forms",
+    "scaffolder",
+    "bootstrap",
+    "angularjs"
+  ],
+  "author": "Mario Divece <mario@unosquare.com>",
+  "contributors": [
+    {
+      "name": "Geovanni Perez",
+      "email": "geovanni.perez@gmail.com"
+    }
+  ],
+  "license": "MIT",
+  "homepage": "http://unosquare.github.io/tubular",
+  "main": "dist/node-module.js",
+  "files": [
+    "dist/node-module.js"
+  ],
+  "devDependencies": {
+    "mocha": "^2.2.4"
+  }
 }
