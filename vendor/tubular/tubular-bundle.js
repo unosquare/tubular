@@ -1338,13 +1338,46 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     replace: true,
                     transclude: true,
                     scope: {
-                        rowModel: '=',
+                        model: '=rowModel',
                         selectable: '@'
                     },
                     controller: [
-                        '$scope', function($scope) {
+                        '$scope', function ($scope) {
+                            $scope.tubularDirective = 'tubular-rowset';
+                            $scope.fields = [];
+                            $scope.hasFieldsDefinitions = false;
                             $scope.selectableBool = $scope.selectable !== "false";
                             $scope.$component = $scope.$parent.$parent.$parent.$component;
+
+                            $scope.$watch('hasFieldsDefinitions', function (newVal) {
+                                if (newVal !== true || angular.isUndefined($scope.model)) return;
+
+                                $scope.bindFields();
+                            });
+
+                            $scope.bindFields = function() {
+                                angular.forEach($scope.fields, function (field) {
+                                    field.$parent.Model = $scope.model;
+
+                                    if (field.$editorType == 'input' &&
+                                        angular.equals(field.value, $scope.model[field.Name]) == false) {
+                                        field.value = (field.DataType == 'date') ? new Date($scope.model[field.Name]) : $scope.model[field.Name];
+
+                                        $scope.$watch(function() {
+                                            return field.value;
+                                        }, function(value) {
+                                            $scope.model[field.Name] = value;
+                                        });
+                                    }
+
+                                    // Ignores models without state
+                                    if (angular.isUndefined($scope.model.$state)) return;
+
+                                    if (angular.equals(field.state, $scope.model.$state[field.Name]) == false) {
+                                        field.state = $scope.model.$state[field.Name];
+                                    }
+                                });
+                            }
 
                             if ($scope.selectableBool && angular.isUndefined($scope.rowModel) === false) {
                                 $scope.$component.selectFromSession($scope.rowModel);
@@ -1355,7 +1388,15 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 $scope.$component.changeSelection(rowModel);
                             };
                         }
-                    ]
+                    ],
+                    compile: function compile(cElement, cAttrs) {
+                        return {
+                            pre: function (scope, lElement, lAttrs, lController, lTransclude) { },
+                            post: function (scope, lElement, lAttrs, lController, lTransclude) {
+                                scope.hasFieldsDefinitions = true;
+                            }
+                        };
+                    }
                 };
             }
         ])
@@ -2006,9 +2047,24 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * The `tbSimpleEditor` directive is the basic input to show in a grid or form.
          * It uses the `TubularModel` to retrieve column or field information.
          * 
-         * TODO: Define attributes
-         * 
          * @scope
+         * 
+         * @param {object} value Set the value.
+                    state: '=?',
+                    isEditing: '=?',
+                    editorType: '@',
+                    showLabel: '=?',
+                    label: '@?',
+                    required: '=?',
+                    format: '@?',
+                    min: '=?',
+                    max: '=?',
+                    name: '@',
+                    defaultValue: '=?',
+                    IsKey: '@',
+                    placeholder: '@?',
+                    readOnly: '=?',
+                    help: '@?'
          */
         .directive('tbSimpleEditor', [
             'tubularEditorService', function(tubularEditorService) {
@@ -2821,16 +2877,6 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             $scope.requireAuthentication = angular.isUndefined($scope.requireAuthentication) ? true : $scope.requireAuthentication;
                             $scope.gridDataService.setRequireAuthentication($scope.requireAuthentication);
 
-                            $scope.addField = function(item) {
-                                if (item.name === null) return;
-
-                                if ($scope.hasFieldsDefinitions !== false)
-                                    throw 'Cannot define more fields. Field definitions have been sealed';
-
-                                item.Name = item.name;
-                                $scope.fields.push(item);
-                            };
-
                             $scope.$watch('hasFieldsDefinitions', function(newVal) {
                                 if (newVal !== true) return;
                                 $scope.retrieveData();
@@ -3487,7 +3533,6 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                 me.defaultScope = {
                     value: '=?',
-                    state: '=?',
                     isEditing: '=?',
                     editorType: '@',
                     showLabel: '=?',
@@ -3560,8 +3605,16 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     while (true) {
                         if (parent == null) break;
                         if (angular.isUndefined(parent.tubularDirective) == false &&
-                            parent.tubularDirective === 'tubular-form') {
-                            parent.addField(scope);
+                            (parent.tubularDirective === 'tubular-form' ||
+                            parent.tubularDirective === 'tubular-rowset')) {
+                            if (scope.name === null) return;
+
+                            if (parent.hasFieldsDefinitions !== false)
+                                throw 'Cannot define more fields. Field definitions have been sealed';
+
+                            scope.Name = scope.name;
+                            parent.fields.push(scope);
+
                             break;
                         }
 
