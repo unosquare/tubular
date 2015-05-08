@@ -1,2 +1,8 @@
 language: csharp
 solution: Unosquare.Tubular.Lib.sln
+install:
+  - nuget restore Unosquare.Tubular.Lib.sln
+  - npm install -g mocha
+script:
+  - xbuild /p:Configuration=Release Unosquare.Tubular.Lib.sln
+  - mocha
