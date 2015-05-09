@@ -289,28 +289,6 @@ input.ng-pristine + span.help-block.error-block {
 ul.dropdown-menu a {
     cursor: pointer;
 }
-/* Checkbox FontAwesome http://codepen.io/jamesbarnett/pen/yILjk */
-input[type=checkbox].tubular-checkbox {
-    display: none;
-}
-    /* to hide the checkbox itself */
-    input[type=checkbox].tubular-checkbox + span:before {
-        font-family: FontAwesome;
-        display: inline-block;
-        font-size: 120%;
-    }
-
-    input[type=checkbox].tubular-checkbox + span:before {
-        content: "\f096";
-        letter-spacing: 10px;
-    }
-
-    /* space between checkbox and label */
-    input[type=checkbox].tubular-checkbox:checked + span:before {
-        content: "\f046";
-        letter-spacing: 8px;
-    }
-/* allow space for check mark */
 
 /* Responsive table for mobiles https://techblog.livingsocial.com/blog/2015/04/06/responsive-tables-in-pure-css/ */
 @media screen and (max-width: 500px) {

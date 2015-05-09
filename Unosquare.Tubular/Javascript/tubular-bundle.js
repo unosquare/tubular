@@ -167,7 +167,7 @@ var tubularTemplateServiceModule = {
                 columnObj.Sortable = true;
                 columnObj.IsKey = false;
                 columnObj.SortOrder = 0;
-                columnObj.SortDirection = 'Ascending';
+                columnObj.SortDirection = '';
                 // Form attributes
                 columnObj.ShowLabel = true;
                 columnObj.Placeholder = '';
@@ -179,6 +179,7 @@ var tubularTemplateServiceModule = {
                 if (firstSort === false) {
                     columnObj.IsKey = true;
                     columnObj.SortOrder = 1;
+                    columnObj.SortDirection = 'Ascending';
                     firstSort = true;
                 }
             }
@@ -334,9 +335,11 @@ var tubularTemplateServiceModule = {
             '\r\n\t<tb-column-definitions>' +
             (options.Mode != 'Read-Only' ? '\r\n\t\t<tb-column label="Actions"><tb-column-header>{{label}}</tb-column-header></tb-column>' : '') +
             columns.map(function(el) {
-                return '\r\n\t\t<tb-column name="' + el.Name + '" label="' + el.Label + '" column-type="' + el.DataType + '" sort-direction="' + el.SortDirection + '" sortable="' + el.Sortable + '" ' +
-                    '\r\n\t\t\tsort-order="' + el.SortOrder + '" is-key="' + el.IsKey + '" searchable="' + el.Searchable + '" visible="' + el.Visible + '">' +
-                    (el.Filter ? '<tb-column-filter></tb-column-filter>' : '') +
+                return '\r\n\t\t<tb-column name="' + el.Name + '" label="' + el.Label + '" column-type="' + el.DataType + '" sortable="' + el.Sortable + '" ' +
+                    '\r\n\t\t\tis-key="' + el.IsKey + '" searchable="' + el.Searchable + '" ' +
+                    (el.Sortable ? '\r\n\t\t\tsort-direction="' + el.SortDirection + '" sort-order="' + el.SortOrder + '" ' : ' ') +
+                    'visible="' + el.Visible + '">' +
+                    (el.Filter ? '\r\n\t\t\t<tb-column-filter></tb-column-filter>' : '') +
                     '\r\n\t\t\t<tb-column-header>{{label}}</tb-column-header>' +
                     '\r\n\t\t</tb-column>';
             }).join('') +
@@ -2476,11 +2479,12 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             'tubularEditorService', function(tubularEditorService) {
 
                 return {
-                    template: '<div ng-class="{ \'form-group\' : isEditing, \'has-error\' : !$valid }">' +
+                    template: '<div ng-class="{ \'form-group\' : isEditing, \'has-error\' : !$valid }" class="checkbox">' +
                         '<span ng-hide="isEditing">{{value ? checkedValue : uncheckedValue}}</span>' +
-                        '<label ng-show="isEditing" ng-click="toggleValue()">' +
-                        '<input type="checkbox" ng-model="value" class="tubular-checkbox" /> ' +
-                        '<span>{{label}}</span>' +
+                        '<input ng-show="isEditing" type="checkbox" ng-model="value" ng-disabled="readOnly"' +
+                        'class="tubular-checkbox" id="{{name}}" /> ' +
+                        '<label ng-show="isEditing" for="{{name}}">' +
+                        '{{label}}' +
                         '</label>' +
                         '<span class="help-block error-block" ng-show="isEditing" ' +
                         'ng-repeat="error in state.$errors">' +
@@ -2496,13 +2500,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         uncheckedValue: '=?'
                     }, tubularEditorService.defaultScope),
                     controller: [
-                        '$scope', function ($scope) {
+                        '$scope', '$element', function ($scope, $element) {
                             $scope.checkedValue = angular.isDefined($scope.checkedValue) ? $scope.checkedValue : true;
                             $scope.uncheckedValue = angular.isDefined($scope.uncheckedValue) ? $scope.uncheckedValue : false;
-
-                            $scope.toggleValue = function () {
-                                $scope.value = ($scope.value === $scope.checkedValue) ? $scope.uncheckedValue : $scope.checkedValue;
-                            };
 
                             tubularEditorService.setupScope($scope);
                         }

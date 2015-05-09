@@ -166,7 +166,7 @@ var tubularTemplateServiceModule = {
                 columnObj.Sortable = true;
                 columnObj.IsKey = false;
                 columnObj.SortOrder = 0;
-                columnObj.SortDirection = 'Ascending';
+                columnObj.SortDirection = '';
                 // Form attributes
                 columnObj.ShowLabel = true;
                 columnObj.Placeholder = '';
@@ -178,6 +178,7 @@ var tubularTemplateServiceModule = {
                 if (firstSort === false) {
                     columnObj.IsKey = true;
                     columnObj.SortOrder = 1;
+                    columnObj.SortDirection = 'Ascending';
                     firstSort = true;
                 }
             }
@@ -333,9 +334,11 @@ var tubularTemplateServiceModule = {
             '\r\n\t<tb-column-definitions>' +
             (options.Mode != 'Read-Only' ? '\r\n\t\t<tb-column label="Actions"><tb-column-header>{{label}}</tb-column-header></tb-column>' : '') +
             columns.map(function(el) {
-                return '\r\n\t\t<tb-column name="' + el.Name + '" label="' + el.Label + '" column-type="' + el.DataType + '" sort-direction="' + el.SortDirection + '" sortable="' + el.Sortable + '" ' +
-                    '\r\n\t\t\tsort-order="' + el.SortOrder + '" is-key="' + el.IsKey + '" searchable="' + el.Searchable + '" visible="' + el.Visible + '">' +
-                    (el.Filter ? '<tb-column-filter></tb-column-filter>' : '') +
+                return '\r\n\t\t<tb-column name="' + el.Name + '" label="' + el.Label + '" column-type="' + el.DataType + '" sortable="' + el.Sortable + '" ' +
+                    '\r\n\t\t\tis-key="' + el.IsKey + '" searchable="' + el.Searchable + '" ' +
+                    (el.Sortable ? '\r\n\t\t\tsort-direction="' + el.SortDirection + '" sort-order="' + el.SortOrder + '" ' : ' ') +
+                    'visible="' + el.Visible + '">' +
+                    (el.Filter ? '\r\n\t\t\t<tb-column-filter></tb-column-filter>' : '') +
                     '\r\n\t\t\t<tb-column-header>{{label}}</tb-column-header>' +
                     '\r\n\t\t</tb-column>';
             }).join('') +

@@ -458,11 +458,12 @@
             'tubularEditorService', function(tubularEditorService) {
 
                 return {
-                    template: '<div ng-class="{ \'form-group\' : isEditing, \'has-error\' : !$valid }">' +
+                    template: '<div ng-class="{ \'form-group\' : isEditing, \'has-error\' : !$valid }" class="checkbox">' +
                         '<span ng-hide="isEditing">{{value ? checkedValue : uncheckedValue}}</span>' +
-                        '<label ng-show="isEditing" ng-click="toggleValue()">' +
-                        '<input type="checkbox" ng-model="value" class="tubular-checkbox" /> ' +
-                        '<span>{{label}}</span>' +
+                        '<input ng-show="isEditing" type="checkbox" ng-model="value" ng-disabled="readOnly"' +
+                        'class="tubular-checkbox" id="{{name}}" /> ' +
+                        '<label ng-show="isEditing" for="{{name}}">' +
+                        '{{label}}' +
                         '</label>' +
                         '<span class="help-block error-block" ng-show="isEditing" ' +
                         'ng-repeat="error in state.$errors">' +
@@ -478,13 +479,9 @@
                         uncheckedValue: '=?'
                     }, tubularEditorService.defaultScope),
                     controller: [
-                        '$scope', function ($scope) {
+                        '$scope', '$element', function ($scope, $element) {
                             $scope.checkedValue = angular.isDefined($scope.checkedValue) ? $scope.checkedValue : true;
                             $scope.uncheckedValue = angular.isDefined($scope.uncheckedValue) ? $scope.uncheckedValue : false;
-
-                            $scope.toggleValue = function () {
-                                $scope.value = ($scope.value === $scope.checkedValue) ? $scope.uncheckedValue : $scope.checkedValue;
-                            };
 
                             tubularEditorService.setupScope($scope);
                         }

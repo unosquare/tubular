@@ -13,6 +13,7 @@
   <!--The order of the <file> elements determines the order of the files in the bundle.-->
   <files>
     <file>/Css/tadaaapickr/tadaaapickr.css</file>
+    <file>/Css/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css</file>
     <file>/Css/tubular/tubular.css</file>
   </files>
 </bundle>

@@ -50,6 +50,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Css\awesome-bootstrap-checkbox\awesome-bootstrap-checkbox.css" />
     <Content Include="Css\tadaaapickr\tadaaapickr.css" />
     <Content Include="Css\tubular-bundle.css">
       <DependentUpon>tubular-bundle.css.bundle</DependentUpon>
