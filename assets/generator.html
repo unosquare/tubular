@@ -103,26 +103,47 @@
                                 Sort Order
                                 &nbsp;<i class="fa fa-question-circle" data-toggle="tooltip" title="If you set any order different to -1, it will sort in the first request"></i>
                             </th>
+                            <th>Sort Direction</th>
                             <th>Visible</th>
                             <th>&nbsp;</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr ng-repeat="row in columns">
-                            <td class="text-center"><input type="checkbox" ng-model="row.IsKey" /></td>
+                            <td class="text-center">
+                                <tb-checkbox-field value="row.IsKey"></tb-checkbox-field>
+                            </td>
                             <td>{{row.Name}}</td>
                             <td><input type="text" class="form-control" ng-model="row.Label" /></td>
                             <td>
                                 <select ng-options="dataType for dataType in enums.dataTypes" class="form-control" ng-model="row.DataType"></select>
                             </td>
                             <td><input type="text" class="form-control" ng-model="row.Template" /></td>
-                            <td><input type="checkbox" ng-model="row.Filter" /></td>
-                            <td class="text-center"><input type="checkbox" ng-model="row.Searchable" /></td>
-                            <td class="text-center"><input type="checkbox" ng-model="row.Sortable" /></td>
-                            <td>
-                                <input type="number" class="form-control" ng-model="row.SortOrder" ng-show="row.Sortable" />
+                            <td class="text-center">
+                                <tb-checkbox-field value="row.Filter"></tb-checkbox-field>
                             </td>
-                            <td class="text-center"><input type="checkbox" ng-model="row.Visible" /></td>
+                            <td class="text-center">
+                                <tb-checkbox-field value="row.Searchable"></tb-checkbox-field>
+                            </td>
+                            <td class="text-center">
+                                <tb-checkbox-field value="row.Sortable"></tb-checkbox-field>
+                            </td>
+                            <td>
+                                <input type="number" class="form-control" min="0" max="50"
+                                       ng-model="row.SortOrder" ng-disabled="row.Sortable == false" />
+                            </td>
+                            <td>
+                                <select class="form-control"
+                                        ng-model="row.SortDirection" 
+                                        ng-disabled="row.Sortable == false || row.SortOrder <= 0">
+                                    <option value="">- Not set -</option>
+                                    <option value="Ascending">Ascending</option>
+                                    <option value="Descending">Descending</option>
+                                </select>
+                            </td>
+                            <td class="text-center">
+                                <tb-checkbox-field value="row.Visible"></tb-checkbox-field>
+                            </td>
                             <td>
                                 <button class="btn btn-danger btn-xs" ng-click="removeColumn(row)">Remove</button>
                             </td>

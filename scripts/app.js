@@ -15,10 +15,9 @@
                         templateUrl: 'assets/generator.html',
                     }).when('/FormGenerator', {
                         templateUrl: 'assets/formgenerator.html',
-                    }).when('/Documentation', {
+                    }).when('/Documentation/:param?', {
                         templateUrl: 'assets/documentation.html',
                     })
-                    // TODO: Add Documentation/Param
                     .otherwise({
                         redirectTo: '/'
                     });
@@ -278,7 +277,8 @@
                 };
             }
         ])
-        .controller('tubularDocCtrl', ['$scope', '$http', '$anchorScroll', '$location', function ($scope, $http, $anchorScroll, $location) {
+        .controller('tubularDocCtrl',
+        ['$scope', '$http', '$anchorScroll', '$location', '$routeParams', function ($scope, $http, $anchorScroll, $location, $routeParams) {
             $scope.internalLink = function (url) {
                 var find = $scope.items.filter(function (el) { return el.name == url; });
 
@@ -311,6 +311,10 @@
                 $scope.items.push({ name: '$rootScope', url: 'https://docs.angularjs.org/api/ng/service/$rootScope', docType: 'external' });
                 $scope.items.push({ name: '$modal', url: 'https://angular-ui.github.io/bootstrap/#/modal', docType: 'external' });
                 $scope.items.push({ name: '$location', url: 'https://docs.angularjs.org/api/ng/service/$location', docType: 'external' });
+
+                if (angular.isDefined($routeParams.param)) {
+                    $scope.open($routeParams.param);
+                }
             });
         }])
         .config([

@@ -120,20 +120,23 @@
                                        ng-disabled="row.EditorType == 'tbHiddenField'" />
                             </td>
                             <td class="text-center">
-                                <input type="checkbox" ng-model="row.ShowLabel"
-                                       ng-disabled="fieldsSettings[row.EditorType].ShowLabel == false" />
+                                <tb-checkbox-field value="row.ShowLabel"
+                                                   read-only="fieldsSettings[row.EditorType].ShowLabel == false">
+                                </tb-checkbox-field>
                             </td>
                             <td>
                                 <input type="text" class="form-control" ng-model="row.Placeholder"
                                        ng-disabled="fieldsSettings[row.EditorType].Placeholder == false" />
                             </td>
                             <td class="text-center">
-                                <input type="checkbox" ng-model="row.Required"
-                                       ng-disabled="fieldsSettings[row.EditorType].Required == false" />
+                                <tb-checkbox-field value="row.Required"
+                                                   read-only="fieldsSettings[row.EditorType].Required == false">
+                                </tb-checkbox-field>
                             </td>
                             <td class="text-center">
-                                <input type="checkbox" ng-model="row.ReadOnly"
-                                       ng-disabled="fieldsSettings[row.EditorType].ReadOnly == false" />
+                                <tb-checkbox-field value="row.ReadOnly"
+                                                   read-only="fieldsSettings[row.EditorType].ReadOnly == false">
+                                </tb-checkbox-field>
                             </td>
                             <td>
                                 <input type="text" class="form-control" ng-model="row.Format"
