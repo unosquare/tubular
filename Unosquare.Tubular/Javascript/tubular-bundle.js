@@ -2632,8 +2632,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         '<h4>{{filterTitle}}</h4>' +
                         '<form class="tubular-column-filter-form" onsubmit="return false;">' +
                         '<select class="form-control" ng-model="filter.Operator" ng-hide="dataType == \'boolean\'"></select>' +
+                        '<div  ng-class="{ \'checkbox\': dataType == \'boolean\' }">' +
                         '<input class="form-control" type="{{ dataType == \'boolean\' ? \'checkbox\' : \'search\'}}" ng-model="filter.Text" placeholder="Value" ' +
-                        'ng-disabled="filter.Operator == \'None\'" />' +
+                        'ng-disabled="filter.Operator == \'None\'" />'+
+                        '<label ng-show="dataType == \'boolean\'">Check to filter</label></div>' +
                         '<input type="search" class="form-control" ng-model="filter.Argument[0]" ng-show="filter.Operator == \'Between\'" />' +
                         '<hr />' +
                         '<tb-column-filter-buttons></tb-column-filter-buttons>' +
@@ -3480,7 +3482,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         scope.filter.Operator = 'Equals';
                     }
 
-                    if (scope.dataType === 'numeric') {
+                    if (scope.dataType === 'numeric' || scope.dataType === 'boolean') {
                         scope.filter.Argument = [1];
                         scope.filter.Operator = 'Equals';
                     }

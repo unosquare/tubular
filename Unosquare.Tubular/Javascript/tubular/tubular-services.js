@@ -252,7 +252,7 @@
                         scope.filter.Operator = 'Equals';
                     }
 
-                    if (scope.dataType === 'numeric') {
+                    if (scope.dataType === 'numeric' || scope.dataType === 'boolean') {
                         scope.filter.Argument = [1];
                         scope.filter.Operator = 'Equals';
                     }
