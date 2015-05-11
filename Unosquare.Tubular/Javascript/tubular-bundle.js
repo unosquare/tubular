@@ -3452,6 +3452,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             return $compile($(this).next().html())(scope);
                         },
                     });
+                    
+                    $(el).find('[data-toggle="popover"]').on('show.bs.popover', function (e) {
+                        $("[rel=popover]").not(e.target).popover("destroy");
+                        $(".popover").remove();
+                    });
 
                     $(el).find('[data-toggle="popover"]').on('shown.bs.popover', openCallback);
                 };
