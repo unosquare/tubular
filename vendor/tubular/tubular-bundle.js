@@ -2394,7 +2394,6 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     controller: [
                         '$scope', function($scope) {
                             tubularEditorService.setupScope($scope);
-                            $scope.$editorType = 'select';
                             $scope.dataIsLoaded = false;
 
                             $scope.loadData = function() {
@@ -2481,7 +2480,6 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     controller: [
                         '$scope', function($scope) {
                             tubularEditorService.setupScope($scope);
-                            $scope.$editorType = 'select';
 
                             $scope.getValues = function(val) {
                                 if (angular.isDefined($scope.optionsUrl)) {
@@ -3615,7 +3613,6 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     scope.readOnly = scope.readOnly || false;
                     scope.format = scope.format || defaultFormat;
                     scope.$valid = true;
-                    scope.$editorType = 'input';
 
                     scope.$watch('value', function(newValue, oldValue) {
                         if (angular.isUndefined(oldValue) && angular.isUndefined(newValue)) return;
@@ -3672,8 +3669,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             scope.bindScope = function() {
                                 scope.$parent.Model = parent.model;
 
-                                if (scope.$editorType == 'input' &&
-                                    angular.equals(scope.value, parent.model[scope.Name]) == false) {
+                                if (angular.equals(scope.value, parent.model[scope.Name]) == false) {
                                     scope.value = (scope.DataType == 'date') ? new Date(parent.model[scope.Name]) : parent.model[scope.Name];
 
                                     parent.$watch(function() {

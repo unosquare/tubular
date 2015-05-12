@@ -29,7 +29,7 @@
             'tubularTemplateService', 'formPostData', function tubularGenerator(tubularTemplateService, formPostData) {
                 var me = this;
 
-                me.DefaultJs = "angular.module('app', ['ngRoute','ngCookies','tubular.directives']).config(['$routeProvider', function($routeProvider) {$routeProvider.when('/', {templateUrl: 'grid.html',}).otherwise({redirectTo: '/'}); } ]);";
+                me.DefaultJs = "angular.module('app', ['ngRoute','tubular.directives']).config(['$routeProvider', function($routeProvider) {$routeProvider.when('/', {templateUrl: 'grid.html',}).otherwise({redirectTo: '/'}); } ]);";
                 me.DefaultReadme = '#Tubular WebApp\r\nYou can add your content now. Create more views @ [Tubular](http://unosquare.github.io/tubular)';
 
                 me.createColumns = function(model, scope) {

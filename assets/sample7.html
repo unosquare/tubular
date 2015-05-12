@@ -53,20 +53,21 @@
                                 </tb-edit-button>
                             </tb-cell-template>
                             <tb-cell-template>
-                                <tb-simple-editor is-editing="row.$isEditing" value="row.CustomerID">
+                                <tb-simple-editor is-editing="row.$isEditing" name="CustomerID">
                                 </tb-simple-editor>
                             </tb-cell-template>
                             <tb-cell-template>
-                                <tb-date-editor is-editing="row.$isEditing" value="row.OrderDate">
+                                <tb-date-editor is-editing="row.$isEditing" name="OrderDate">
                                 </tb-date-editor>
                             </tb-cell-template>
                             <tb-cell-template>
-                                <tb-simple-editor is-editing="row.$isEditing" value="row.ShipCity">
+                                <tb-simple-editor is-editing="row.$isEditing" name="ShipCity">
                                 </tb-simple-editor>
                             </tb-cell-template>
                             <tb-cell-template>
-                                <tb-simple-editor is-editing="row.$isEditing" value="row.ShipCountry">
-                                </tb-simple-editor>
+                                <tb-dropdown-editor is-editing="row.$isEditing" name="ShipCountry"
+                                                  options="['France','Germany','Brazil','Belgium']">
+                                </tb-dropdown-editor>
                             </tb-cell-template>
                         </tb-row-template>
                     </tb-row-set>
