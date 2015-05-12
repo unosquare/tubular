@@ -283,8 +283,6 @@
                     min: '=?',
                     max: '=?',
                     name: '@',
-                    defaultValue: '=?',
-                    IsKey: '@',
                     placeholder: '@?',
                     readOnly: '=?',
                     help: '@?'
@@ -298,11 +296,6 @@
                     scope.readOnly = scope.readOnly || false;
                     scope.format = scope.format || defaultFormat;
                     scope.$valid = true;
-                    scope.$editorType = 'input';
-
-                    if (angular.isUndefined(scope.defaultValue) == false && angular.isUndefined(scope.value)) {
-                        scope.value = scope.defaultValue;
-                    }
 
                     scope.$watch('value', function(newValue, oldValue) {
                         if (angular.isUndefined(oldValue) && angular.isUndefined(newValue)) return;
@@ -359,8 +352,7 @@
                             scope.bindScope = function() {
                                 scope.$parent.Model = parent.model;
 
-                                if (scope.$editorType == 'input' &&
-                                    angular.equals(scope.value, parent.model[scope.Name]) == false) {
+                                if (angular.equals(scope.value, parent.model[scope.Name]) == false) {
                                     scope.value = (scope.DataType == 'date') ? new Date(parent.model[scope.Name]) : parent.model[scope.Name];
 
                                     parent.$watch(function() {

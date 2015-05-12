@@ -20,6 +20,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Folder", "Solution
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unosquare.Tubular.EmbedioSample", "Unosquare.Tubular.EmbedioSample\Unosquare.Tubular.EmbedioSample.csproj", "{91590BE4-DBFD-4A67-943C-AF47EEF3F386}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{FD6CA34B-8A08-425F-8363-FB72CC78F256}"
+	ProjectSection(SolutionItems) = preProject
+		test\firstcolumn.json = test\firstcolumn.json
+		test\models.json = test\models.json
+		test\test.js = test\test.js
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

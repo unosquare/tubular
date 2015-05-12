@@ -1170,8 +1170,19 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * All the attributes are used to generate a `ColumnModel`.
          * 
          * This directive is replace by a `th` HTML element.
-         * TODO: Document ColumnModel attributes
+         * 
          * @scope
+         * 
+         * @param {string} name Set the column name.
+         * @param {string} label Set the column label, if empty column's name is used.
+         * @param {boolean} sortable Set if column is sortable.
+         * @param {number} sortOrder Set the sorting order, -1 if you don't want to set one.
+         * @param {string} sortDirection Set the sorting direction, empty for none and valid values: Ascending and Descending.
+         * @param {boolean} isKey Set if column is Model's key.
+         * @param {boolean} searchable Set if column is searchable.
+         * @param {boolean} visible Set if column is visible.
+         * @param {string} columnType Set the column data type. Values: string, numeric, date, datetime, or boolean.
+         * @param {boolean} isGrouping Define a group key.
          */
         .directive('tbColumn', [
             'tubulargGridColumnModel', function(ColumnModel) {
@@ -2034,22 +2045,18 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * 
          * @scope
          * 
+         * @param {string} name Set the field name.
          * @param {object} value Set the value.
-                    state: '=?',
-                    isEditing: '=?',
-                    editorType: '@',
-                    showLabel: '=?',
-                    label: '@?',
-                    required: '=?',
-                    format: '@?',
-                    min: '=?',
-                    max: '=?',
-                    name: '@',
-                    defaultValue: '=?',
-                    IsKey: '@',
-                    placeholder: '@?',
-                    readOnly: '=?',
-                    help: '@?'
+         * @param {boolean} isEditing Indicate if the field is showing editor.
+         * @param {string} editorType Set what HTML input type should display.
+         * @param {boolean} showLabel Set if the label should be display.
+         * @param {string} label Set the field's label otherwise the name is used.
+         * @param {string} placeholder Set the placeholder text.
+         * @param {string} help Set the help text.
+         * @param {boolean} required Set if the field is required.
+         * @param {boolean} readOnly Set if the field is read-only.
+         * @param {number} min Set the minimum characters.
+         * @param {number} max Set the maximum characters.
          */
         .directive('tbSimpleEditor', [
             'tubularEditorService', function(tubularEditorService) {
@@ -2105,6 +2112,19 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * It uses the `TubularModel` to retrieve column or field information.
          * 
          * @scope
+         * 
+         * @param {string} name Set the field name.
+         * @param {object} value Set the value.
+         * @param {boolean} isEditing Indicate if the field is showing editor.
+         * @param {boolean} showLabel Set if the label should be display.
+         * @param {string} label Set the field's label otherwise the name is used.
+         * @param {string} placeholder Set the placeholder text.
+         * @param {string} help Set the help text.
+         * @param {boolean} required Set if the field is required.
+         * @param {string} format Indicate the format to use, C for currency otherwise number.
+         * @param {boolean} readOnly Set if the field is read-only.
+         * @param {number} min Set the minimum value.
+         * @param {number} max Set the maximum value.
          */
         .directive('tbNumericEditor', [
             'tubularEditorService', function(tubularEditorService) {
@@ -2161,6 +2181,18 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * It uses the `TubularModel` to retrieve column or field information.
          * 
          * @scope
+         * 
+         * @param {string} name Set the field name.
+         * @param {object} value Set the value.
+         * @param {boolean} isEditing Indicate if the field is showing editor.
+         * @param {boolean} showLabel Set if the label should be display.
+         * @param {string} label Set the field's label otherwise the name is used.
+         * @param {string} help Set the help text.
+         * @param {boolean} required Set if the field is required.
+         * @param {string} format Indicate the format to use, default "yyyy-MM-dd HH:mm".
+         * @param {boolean} readOnly Set if the field is read-only.
+         * @param {number} min Set the minimum value.
+         * @param {number} max Set the maximum value.
          */
         .directive('tbDateTimeEditor', [
             'tubularEditorService', function(tubularEditorService) {
@@ -2236,6 +2268,18 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * It uses the `TubularModel` to retrieve column or field information.
          * 
          * @scope
+         * 
+         * @param {string} name Set the field name.
+         * @param {object} value Set the value.
+         * @param {boolean} isEditing Indicate if the field is showing editor.
+         * @param {boolean} showLabel Set if the label should be display.
+         * @param {string} label Set the field's label otherwise the name is used.
+         * @param {string} help Set the help text.
+         * @param {boolean} required Set if the field is required.
+         * @param {string} format Indicate the format to use, default "yyyy-MM-dd".
+         * @param {boolean} readOnly Set if the field is read-only.
+         * @param {number} min Set the minimum value.
+         * @param {number} max Set the maximum value.
          */
         .directive('tbDateEditor', [
             'tubularEditorService', function(tubularEditorService) {
@@ -2317,6 +2361,17 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * It uses the `TubularModel` to retrieve column or field information.
          * 
          * @scope
+         * 
+         * @param {string} name Set the field name.
+         * @param {object} value Set the value.
+         * @param {boolean} isEditing Indicate if the field is showing editor.
+         * @param {boolean} showLabel Set if the label should be display.
+         * @param {string} label Set the field's label otherwise the name is used.
+         * @param {string} help Set the help text.
+         * @param {boolean} required Set if the field is required.
+         * @param {object} options Set the options to display.
+         * @param {string} optionsUrl Set the Http Url where to retrieve the values.
+         * @param {string} optionsMethod Set the Http Method where to retrieve the values.
          */
         .directive('tbDropdownEditor', [
             'tubularEditorService', 'tubularHttp', function(tubularEditorService, tubularHttp) {
@@ -2339,7 +2394,6 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     controller: [
                         '$scope', function($scope) {
                             tubularEditorService.setupScope($scope);
-                            $scope.$editorType = 'select';
                             $scope.dataIsLoaded = false;
 
                             $scope.loadData = function() {
@@ -2389,6 +2443,17 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * It uses the `TubularModel` to retrieve column or field information.
          * 
          * @scope
+         * 
+         * @param {string} name Set the field name.
+         * @param {object} value Set the value.
+         * @param {boolean} isEditing Indicate if the field is showing editor.
+         * @param {boolean} showLabel Set if the label should be display.
+         * @param {string} label Set the field's label otherwise the name is used.
+         * @param {string} help Set the help text.
+         * @param {boolean} required Set if the field is required.
+         * @param {object} options Set the options to display.
+         * @param {string} optionsUrl Set the Http Url where to retrieve the values.
+         * @param {string} optionsMethod Set the Http Method where to retrieve the values.
          */
         .directive('tbTypeaheadEditor', [
             'tubularEditorService', 'tubularHttp', '$q', function(tubularEditorService, tubularHttp, $q) {
@@ -2415,7 +2480,6 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     controller: [
                         '$scope', function($scope) {
                             tubularEditorService.setupScope($scope);
-                            $scope.$editorType = 'select';
 
                             $scope.getValues = function(val) {
                                 if (angular.isDefined($scope.optionsUrl)) {
@@ -2445,12 +2509,14 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * It uses the `TubularModel` to retrieve column or field information.
          * 
          * @scope
+         * @param {string} name Set the field name.
+         * @param {object} value Set the value.
          */
         .directive('tbHiddenField', [
             'tubularEditorService', function(tubularEditorService) {
 
                 return {
-                    template: '<input type="hidden" ng-show="isEditing" ng-model="value" class="form-control"  />',
+                    template: '<input type="hidden" ng-model="value" class="form-control"  />',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
@@ -2474,6 +2540,14 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * It uses the `TubularModel` to retrieve column or field information.
          * 
          * @scope
+         * @param {string} name Set the field name.
+         * @param {object} value Set the value.
+         * @param {object} checkedValue Set the checked value.
+         * @param {object} uncheckedValue Set the unchecked value.
+         * @param {boolean} isEditing Indicate if the field is showing editor.
+         * @param {boolean} showLabel Set if the label should be display.
+         * @param {string} label Set the field's label otherwise the name is used.
+         * @param {string} help Set the help text.
          */
         .directive('tbCheckboxField', [
             'tubularEditorService', function(tubularEditorService) {
@@ -2522,6 +2596,18 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * It uses the `TubularModel` to retrieve column or field information.
          * 
          * @scope
+         * 
+         * @param {string} name Set the field name.
+         * @param {object} value Set the value.
+         * @param {boolean} isEditing Indicate if the field is showing editor.
+         * @param {boolean} showLabel Set if the label should be display.
+         * @param {string} label Set the field's label otherwise the name is used.
+         * @param {string} placeholder Set the placeholder text.
+         * @param {string} help Set the help text.
+         * @param {boolean} required Set if the field is required.
+         * @param {boolean} readOnly Set if the field is read-only.
+         * @param {number} min Set the minimum characters.
+         * @param {number} max Set the maximum characters.
          */
         .directive('tbTextArea', [
             'tubularEditorService', function(tubularEditorService) {
@@ -2743,6 +2829,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @description
          * The `tbColumnOptionsFilter` directive is a filter with an dropdown listing all the possible values to filter.
          * 
+         * @scope
          * TODO: List params from tubularGridFilterService
          */
         .directive('tbColumnOptionsFilter', [
@@ -3513,8 +3600,6 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     min: '=?',
                     max: '=?',
                     name: '@',
-                    defaultValue: '=?',
-                    IsKey: '@',
                     placeholder: '@?',
                     readOnly: '=?',
                     help: '@?'
@@ -3528,11 +3613,6 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     scope.readOnly = scope.readOnly || false;
                     scope.format = scope.format || defaultFormat;
                     scope.$valid = true;
-                    scope.$editorType = 'input';
-
-                    if (angular.isUndefined(scope.defaultValue) == false && angular.isUndefined(scope.value)) {
-                        scope.value = scope.defaultValue;
-                    }
 
                     scope.$watch('value', function(newValue, oldValue) {
                         if (angular.isUndefined(oldValue) && angular.isUndefined(newValue)) return;
@@ -3589,8 +3669,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             scope.bindScope = function() {
                                 scope.$parent.Model = parent.model;
 
-                                if (scope.$editorType == 'input' &&
-                                    angular.equals(scope.value, parent.model[scope.Name]) == false) {
+                                if (angular.equals(scope.value, parent.model[scope.Name]) == false) {
                                     scope.value = (scope.DataType == 'date') ? new Date(parent.model[scope.Name]) : parent.model[scope.Name];
 
                                     parent.$watch(function() {

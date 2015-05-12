@@ -172,6 +172,7 @@
          * @description
          * The `tbColumnOptionsFilter` directive is a filter with an dropdown listing all the possible values to filter.
          * 
+         * @scope
          * TODO: List params from tubularGridFilterService
          */
         .directive('tbColumnOptionsFilter', [

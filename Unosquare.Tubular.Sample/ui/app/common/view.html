@@ -80,8 +80,7 @@
                                         <span class="small">ID is autoassigned</span>
                                     </tb-cell-template>
                                     <tb-cell-template>
-                                        <tb-simple-editor value="$component.tempRow.CustomerName"
-                                                          state="Model.$state.CustomerName" required="true">
+                                        <tb-simple-editor value="$component.tempRow.CustomerName" required="true">
                                         </tb-simple-editor>
                                     </tb-cell-template>
                                     <tb-cell-template>
@@ -91,8 +90,7 @@
                                     </tb-cell-template>
                                     <tb-cell-template>
                                         <tb-numeric-editor value="$component.tempRow.Amount" format="C"
-                                                           state="$component.tempRow.$state.Amount" min="0" max="100"
-                                                           required="true">
+                                                           min="0" max="100" required="true">
                                         </tb-numeric-editor>
                                     </tb-cell-template>
                                     <tb-cell-template class="text-right col-md-3">
@@ -137,7 +135,7 @@
                                     </tb-cell-template>
                                     <tb-cell-template column-name="ShipperCity">
                                         <tb-dropdown-editor is-editing="row.$isEditing" value="row.ShipperCity"
-                                                            state="row.$state.ShipperCity" options-url="api/orders/cities">
+                                                            options-url="api/orders/cities">
                                         </tb-dropdown-editor>
                                     </tb-cell-template>
                                     <tb-cell-template class="text-right" column-name="Amount">
@@ -150,7 +148,8 @@
                                         </tb-date-editor>
                                     </tb-cell-template>
                                     <tb-cell-template class="text-center" column-name="IsShipped">
-                                        <input type="checkbox" ng-model="row.IsShipped" ng-disabled="!row.$isEditing" />
+                                        <tb-checkbox-editor is-editing="row.$isEditing" name="IsShipped">
+                                        </tb-checkbox-editor>
                                     </tb-cell-template>
                                 </tb-row-template>
                             </tb-row-set>

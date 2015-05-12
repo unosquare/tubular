@@ -481,8 +481,19 @@
          * All the attributes are used to generate a `ColumnModel`.
          * 
          * This directive is replace by a `th` HTML element.
-         * TODO: Document ColumnModel attributes
+         * 
          * @scope
+         * 
+         * @param {string} name Set the column name.
+         * @param {string} label Set the column label, if empty column's name is used.
+         * @param {boolean} sortable Set if column is sortable.
+         * @param {number} sortOrder Set the sorting order, -1 if you don't want to set one.
+         * @param {string} sortDirection Set the sorting direction, empty for none and valid values: Ascending and Descending.
+         * @param {boolean} isKey Set if column is Model's key.
+         * @param {boolean} searchable Set if column is searchable.
+         * @param {boolean} visible Set if column is visible.
+         * @param {string} columnType Set the column data type. Values: string, numeric, date, datetime, or boolean.
+         * @param {boolean} isGrouping Define a group key.
          */
         .directive('tbColumn', [
             'tubulargGridColumnModel', function(ColumnModel) {

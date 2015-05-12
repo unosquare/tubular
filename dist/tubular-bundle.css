@@ -631,10 +631,6 @@ form.tubular-column-filter-form {
         height: inherit;
     }
 
-        form.tubular-column-filter-form input[type=checkbox]:after {
-            content: "Check to filter";
-        }
-
 div.fullHeight, .modal-backdrop.in {
     height: 100%;
 }

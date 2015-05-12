@@ -13,22 +13,18 @@
          * 
          * @scope
          * 
+         * @param {string} name Set the field name.
          * @param {object} value Set the value.
-                    state: '=?',
-                    isEditing: '=?',
-                    editorType: '@',
-                    showLabel: '=?',
-                    label: '@?',
-                    required: '=?',
-                    format: '@?',
-                    min: '=?',
-                    max: '=?',
-                    name: '@',
-                    defaultValue: '=?',
-                    IsKey: '@',
-                    placeholder: '@?',
-                    readOnly: '=?',
-                    help: '@?'
+         * @param {boolean} isEditing Indicate if the field is showing editor.
+         * @param {string} editorType Set what HTML input type should display.
+         * @param {boolean} showLabel Set if the label should be display.
+         * @param {string} label Set the field's label otherwise the name is used.
+         * @param {string} placeholder Set the placeholder text.
+         * @param {string} help Set the help text.
+         * @param {boolean} required Set if the field is required.
+         * @param {boolean} readOnly Set if the field is read-only.
+         * @param {number} min Set the minimum characters.
+         * @param {number} max Set the maximum characters.
          */
         .directive('tbSimpleEditor', [
             'tubularEditorService', function(tubularEditorService) {
@@ -84,6 +80,19 @@
          * It uses the `TubularModel` to retrieve column or field information.
          * 
          * @scope
+         * 
+         * @param {string} name Set the field name.
+         * @param {object} value Set the value.
+         * @param {boolean} isEditing Indicate if the field is showing editor.
+         * @param {boolean} showLabel Set if the label should be display.
+         * @param {string} label Set the field's label otherwise the name is used.
+         * @param {string} placeholder Set the placeholder text.
+         * @param {string} help Set the help text.
+         * @param {boolean} required Set if the field is required.
+         * @param {string} format Indicate the format to use, C for currency otherwise number.
+         * @param {boolean} readOnly Set if the field is read-only.
+         * @param {number} min Set the minimum value.
+         * @param {number} max Set the maximum value.
          */
         .directive('tbNumericEditor', [
             'tubularEditorService', function(tubularEditorService) {
@@ -140,6 +149,18 @@
          * It uses the `TubularModel` to retrieve column or field information.
          * 
          * @scope
+         * 
+         * @param {string} name Set the field name.
+         * @param {object} value Set the value.
+         * @param {boolean} isEditing Indicate if the field is showing editor.
+         * @param {boolean} showLabel Set if the label should be display.
+         * @param {string} label Set the field's label otherwise the name is used.
+         * @param {string} help Set the help text.
+         * @param {boolean} required Set if the field is required.
+         * @param {string} format Indicate the format to use, default "yyyy-MM-dd HH:mm".
+         * @param {boolean} readOnly Set if the field is read-only.
+         * @param {number} min Set the minimum value.
+         * @param {number} max Set the maximum value.
          */
         .directive('tbDateTimeEditor', [
             'tubularEditorService', function(tubularEditorService) {
@@ -215,6 +236,18 @@
          * It uses the `TubularModel` to retrieve column or field information.
          * 
          * @scope
+         * 
+         * @param {string} name Set the field name.
+         * @param {object} value Set the value.
+         * @param {boolean} isEditing Indicate if the field is showing editor.
+         * @param {boolean} showLabel Set if the label should be display.
+         * @param {string} label Set the field's label otherwise the name is used.
+         * @param {string} help Set the help text.
+         * @param {boolean} required Set if the field is required.
+         * @param {string} format Indicate the format to use, default "yyyy-MM-dd".
+         * @param {boolean} readOnly Set if the field is read-only.
+         * @param {number} min Set the minimum value.
+         * @param {number} max Set the maximum value.
          */
         .directive('tbDateEditor', [
             'tubularEditorService', function(tubularEditorService) {
@@ -296,6 +329,17 @@
          * It uses the `TubularModel` to retrieve column or field information.
          * 
          * @scope
+         * 
+         * @param {string} name Set the field name.
+         * @param {object} value Set the value.
+         * @param {boolean} isEditing Indicate if the field is showing editor.
+         * @param {boolean} showLabel Set if the label should be display.
+         * @param {string} label Set the field's label otherwise the name is used.
+         * @param {string} help Set the help text.
+         * @param {boolean} required Set if the field is required.
+         * @param {object} options Set the options to display.
+         * @param {string} optionsUrl Set the Http Url where to retrieve the values.
+         * @param {string} optionsMethod Set the Http Method where to retrieve the values.
          */
         .directive('tbDropdownEditor', [
             'tubularEditorService', 'tubularHttp', function(tubularEditorService, tubularHttp) {
@@ -318,7 +362,6 @@
                     controller: [
                         '$scope', function($scope) {
                             tubularEditorService.setupScope($scope);
-                            $scope.$editorType = 'select';
                             $scope.dataIsLoaded = false;
 
                             $scope.loadData = function() {
@@ -368,6 +411,17 @@
          * It uses the `TubularModel` to retrieve column or field information.
          * 
          * @scope
+         * 
+         * @param {string} name Set the field name.
+         * @param {object} value Set the value.
+         * @param {boolean} isEditing Indicate if the field is showing editor.
+         * @param {boolean} showLabel Set if the label should be display.
+         * @param {string} label Set the field's label otherwise the name is used.
+         * @param {string} help Set the help text.
+         * @param {boolean} required Set if the field is required.
+         * @param {object} options Set the options to display.
+         * @param {string} optionsUrl Set the Http Url where to retrieve the values.
+         * @param {string} optionsMethod Set the Http Method where to retrieve the values.
          */
         .directive('tbTypeaheadEditor', [
             'tubularEditorService', 'tubularHttp', '$q', function(tubularEditorService, tubularHttp, $q) {
@@ -394,7 +448,6 @@
                     controller: [
                         '$scope', function($scope) {
                             tubularEditorService.setupScope($scope);
-                            $scope.$editorType = 'select';
 
                             $scope.getValues = function(val) {
                                 if (angular.isDefined($scope.optionsUrl)) {
@@ -424,12 +477,14 @@
          * It uses the `TubularModel` to retrieve column or field information.
          * 
          * @scope
+         * @param {string} name Set the field name.
+         * @param {object} value Set the value.
          */
         .directive('tbHiddenField', [
             'tubularEditorService', function(tubularEditorService) {
 
                 return {
-                    template: '<input type="hidden" ng-show="isEditing" ng-model="value" class="form-control"  />',
+                    template: '<input type="hidden" ng-model="value" class="form-control"  />',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
@@ -453,6 +508,14 @@
          * It uses the `TubularModel` to retrieve column or field information.
          * 
          * @scope
+         * @param {string} name Set the field name.
+         * @param {object} value Set the value.
+         * @param {object} checkedValue Set the checked value.
+         * @param {object} uncheckedValue Set the unchecked value.
+         * @param {boolean} isEditing Indicate if the field is showing editor.
+         * @param {boolean} showLabel Set if the label should be display.
+         * @param {string} label Set the field's label otherwise the name is used.
+         * @param {string} help Set the help text.
          */
         .directive('tbCheckboxField', [
             'tubularEditorService', function(tubularEditorService) {
@@ -501,6 +564,18 @@
          * It uses the `TubularModel` to retrieve column or field information.
          * 
          * @scope
+         * 
+         * @param {string} name Set the field name.
+         * @param {object} value Set the value.
+         * @param {boolean} isEditing Indicate if the field is showing editor.
+         * @param {boolean} showLabel Set if the label should be display.
+         * @param {string} label Set the field's label otherwise the name is used.
+         * @param {string} placeholder Set the placeholder text.
+         * @param {string} help Set the help text.
+         * @param {boolean} required Set if the field is required.
+         * @param {boolean} readOnly Set if the field is read-only.
+         * @param {number} min Set the minimum characters.
+         * @param {number} max Set the maximum characters.
          */
         .directive('tbTextArea', [
             'tubularEditorService', function(tubularEditorService) {
