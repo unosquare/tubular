@@ -41,7 +41,7 @@
                                            sort-direction="Ascending" is-key="true">
                                     <tb-column-header>ID</tb-column-header>
                                 </tb-column>
-                                <tb-column name="CustomerName" label="Customer" searchable="true">
+                                <tb-column name="CustomerName" label="Customer" searchable="true" sortable="true">
                                     <tb-column-filter title="Filter Customer"></tb-column-filter>
                                     <tb-column-header>
                                         <span>{{label}}</span>
@@ -67,7 +67,7 @@
 
                             <tb-row-set>
                                 <tb-empty-grid></tb-empty-grid>
-                                <tb-row-template class="success" ng-show="$component.tempRow.$isEditing">
+                                <tb-row-template ng-show="$component.tempRow.$isEditing">
                                     <tb-cell-template>
                                         <div class="btn-group btn-group-xs">
                                             <tb-save-button model="$component.tempRow" save-css="hidden-xs hidden-sm"
@@ -125,7 +125,7 @@
                                         </div>
                                     </tb-cell-template>
                                     <tb-cell-template class="text-center" column-name="CustomerName">
-                                        <a href="#">{{row.OrderID}}</a>
+                                        <a href="/form/{{row.OrderID}}">{{row.OrderID}}</a>
                                     </tb-cell-template>
                                     <tb-cell-template column-name="CustomerName">
                                         <span ng-hide="row.$isEditing">{{row.CustomerName}}</span>
@@ -134,7 +134,7 @@
                                         </div>
                                     </tb-cell-template>
                                     <tb-cell-template column-name="ShipperCity">
-                                        <tb-dropdown-editor is-editing="row.$isEditing" value="row.ShipperCity"
+                                        <tb-dropdown-editor is-editing="row.$isEditing" name="ShipperCity"
                                                             options-url="api/orders/cities">
                                         </tb-dropdown-editor>
                                     </tb-cell-template>
@@ -148,8 +148,8 @@
                                         </tb-date-editor>
                                     </tb-cell-template>
                                     <tb-cell-template class="text-center" column-name="IsShipped">
-                                        <tb-checkbox-editor is-editing="row.$isEditing" name="IsShipped">
-                                        </tb-checkbox-editor>
+                                        <tb-checkbox-field is-editing="row.$isEditing" name="IsShipped">
+                                        </tb-checkbox-field>
                                     </tb-cell-template>
                                 </tb-row-template>
                             </tb-row-set>
@@ -164,7 +164,6 @@
                 <tb-page-size-selector class="col-md-3 col-xs-6"></tb-page-size-selector>
                 <tb-grid-pager-info class="col-md-3 col-xs-6"></tb-grid-pager-info>
             </div>
-
         </div>
     </tb-grid>
 </div>

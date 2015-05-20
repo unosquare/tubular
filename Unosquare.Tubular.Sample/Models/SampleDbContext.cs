@@ -7,9 +7,8 @@ namespace Unosquare.Tubular.Sample.Models
         public SampleDbContext() : base("SampleDbContext") { }
 
         public SampleDbContext(bool lazyLoadingEnable)
-            : base()
         {
-            this.Configuration.LazyLoadingEnabled = lazyLoadingEnable;
+            Configuration.LazyLoadingEnabled = lazyLoadingEnable;
         }
 
         public DbSet<Order> Orders { get; set; }

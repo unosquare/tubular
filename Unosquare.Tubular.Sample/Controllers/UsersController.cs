@@ -1,23 +1,19 @@
-﻿using System.Threading.Tasks;
-using System.Web.Http;
-using Unosquare.Tubular.ObjectModel;
-using Unosquare.Tubular.Sample.Models;
-
-namespace Unosquare.Tubular.Sample.Controllers
+﻿namespace Unosquare.Tubular.Sample.Controllers
 {
+    using System.Web.Http;
+    using Unosquare.Tubular.ObjectModel;
+    using Unosquare.Tubular.Sample.Models;
+
     [RoutePrefix("api/users")]
     public class UsersController : ApiController
     {
-
-        [AllowAnonymous]
         [HttpPost, Route("paged")]
-        public async Task<IHttpActionResult> GridData([FromBody] GridDataRequest request)
+        public IHttpActionResult GridData([FromBody] GridDataRequest request)
         {
             using (var context = new SampleDbContext(false))
             {
-                return Ok(await Task.Run(() => request.CreateGridDataResponse(context.SystemUsers.AsNoTracking())));
+                return Ok(request.CreateGridDataResponse(context.SystemUsers.AsNoTracking()));
             }
         }
-
     }
 }

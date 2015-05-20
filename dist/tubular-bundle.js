@@ -2628,7 +2628,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     transclude: true,
                     scope: tubularEditorService.defaultScope,
                     controller: [
-                        '$scope', function($scope) {
+                        '$scope', function ($scope) {
                             $scope.validate = function() {
                                 if (angular.isUndefined($scope.min) == false && angular.isUndefined($scope.value) == false) {
                                     if ($scope.value.length < parseInt($scope.min)) {
@@ -2703,7 +2703,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * The `tbColumnFilter` directive is a the basic filter popover. You need to define it inside a `tbColumn`.
          * 
          * The parent scope will provide information about the data type.
-         * TODO: List params from tubularGridFilterService
+         * 
+         * @param {string} text Set the search text.
+         * @param {string} operator Set the initial operator, default depends on data type.
          */
         .directive('tbColumnFilter', [
             'tubularGridFilterService', function(tubularGridFilterService) {
@@ -2755,7 +2757,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * 
          * The parent scope will provide information about the data type.
          * 
-         * TODO: List params from tubularGridFilterService
+         * @param {string} text Set the search text.
+         * @param {object} argument Set the search object (if the search is text use text attribute).
+         * @param {string} operator Set the initial operator, default depends on data type.
          */
         .directive('tbColumnDateTimeFilter', [
             'tubularGridFilterService', function(tubularGridFilterService) {
@@ -2830,7 +2834,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * The `tbColumnOptionsFilter` directive is a filter with an dropdown listing all the possible values to filter.
          * 
          * @scope
-         * TODO: List params from tubularGridFilterService
+         * 
+         * @param {object} argument Set the search object.
+         * @param {string} operator Set the initial operator, default depends on data type.
+         * @param {string} optionsUrl Set the URL to retrieve options
          */
         .directive('tbColumnOptionsFilter', [
             'tubularGridFilterService', 'tubularHttp', function(tubularGridFilterService, tubularHttp) {
@@ -4003,7 +4010,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @name tubularOData
          *
          * @description
-         * Use `tubularOData` to connect a grid or a form to an OData Resource.
+         * Use `tubularOData` to connect a grid or a form to an OData Resource. Must filters are working
+         * and sorting and pagination too.
          * 
          * This service provides authentication using bearer-tokens.
          */

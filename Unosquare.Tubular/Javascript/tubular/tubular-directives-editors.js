@@ -596,7 +596,7 @@
                     transclude: true,
                     scope: tubularEditorService.defaultScope,
                     controller: [
-                        '$scope', function($scope) {
+                        '$scope', function ($scope) {
                             $scope.validate = function() {
                                 if (angular.isUndefined($scope.min) == false && angular.isUndefined($scope.value) == false) {
                                     if ($scope.value.length < parseInt($scope.min)) {

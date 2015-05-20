@@ -1,35 +1,24 @@
-﻿using System.Data.Entity;
-using System.Linq;
-using System.Net.Http;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using System.Web.Http;
-using Unosquare.Tubular.ObjectModel;
-using Unosquare.Tubular.Sample.Models;
-
-namespace Unosquare.Tubular.Sample.Controllers
+﻿namespace Unosquare.Tubular.Sample.Controllers
 {
+    using System.Data.Entity;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using System.Web.Http;
+    using Unosquare.Tubular.ObjectModel;
+    using Unosquare.Tubular.Sample.Models;
+
     [RoutePrefix("api/orders")]
     public class OrdersController : ApiController
     {
-
-        //[Authorize(Roles = "user")]
-        [AllowAnonymous]
         [HttpGet, Route("")]
         public async Task<IHttpActionResult> Get()
         {
-            var userPrincipal = this.ControllerContext.RequestContext.Principal as ClaimsPrincipal;
-
-            var userName = userPrincipal.Identity.Name;
-            var userRoles = userPrincipal.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value);
-
             using (var context = new SampleDbContext(false))
             {
                 return Ok(await context.Orders.AsNoTracking().ToListAsync());
             }
         }
 
-        [AllowAnonymous]
         [HttpGet, Route("{id}")]
         public async Task<IHttpActionResult> Get(string id)
         {
@@ -45,18 +34,15 @@ namespace Unosquare.Tubular.Sample.Controllers
             }
         }
 
-        [AllowAnonymous]
         [HttpPost, Route("paged")]
         public async Task<IHttpActionResult> GridData([FromBody] GridDataRequest request)
         {
             using (var context = new SampleDbContext(false))
             {
-                //await Task.Delay(500);
                 return Ok(await Task.Run(() => request.CreateGridDataResponse(context.Orders.AsNoTracking())));
             }
         }
 
-        [AllowAnonymous]
         [HttpPut, Route("save")]
         public async Task<IHttpActionResult> UpdateOrder([FromBody] GridDataUpdateRow<Order> request)
         {
@@ -82,7 +68,6 @@ namespace Unosquare.Tubular.Sample.Controllers
             }
         }
 
-        [AllowAnonymous]
         [HttpPost, Route("save")]
         public async Task<IHttpActionResult> CreateOrder([FromBody] Order order)
         {
@@ -98,7 +83,6 @@ namespace Unosquare.Tubular.Sample.Controllers
             }
         }
 
-        [AllowAnonymous]
         [HttpDelete, Route("save/{id}")]
         public async Task<IHttpActionResult> DeleteOrder(string id)
         {
@@ -121,20 +105,6 @@ namespace Unosquare.Tubular.Sample.Controllers
             }
         }
 
-        [HttpGet, Route("html")]
-        public IHttpActionResult GetHtml()
-        {
-            var content = new System.Text.StringBuilder();
-            content.AppendLine("<!DOCTYPE html>");
-            content.AppendLine("<html><head></head><body>HELLO!</body></html>");
-            var response = new HttpResponseMessage()
-            {
-                Content = new StringContent(content.ToString(), System.Text.Encoding.UTF8, "text/html")
-            };
-            return ResponseMessage(response);
-        }
-
-        [AllowAnonymous]
         [HttpGet, Route("cities")]
         public async Task<IHttpActionResult> GetCities()
         {

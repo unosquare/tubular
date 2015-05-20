@@ -1,21 +1,42 @@
-﻿
-namespace Unosquare.Tubular.ObjectModel
+﻿namespace Unosquare.Tubular.ObjectModel
 {
+    /// <summary>
+    /// Represents a Tubular's filter (by column).
+    /// 
+    /// This object is only used to be serialized/deserialized between
+    /// the API and Tubular
+    /// </summary>
     public class Filter
     {
+        /// <summary>
+        /// Initialize a Filter with default params
+        /// </summary>
         public Filter()
         {
-            this.Operator = CompareOperators.None;
-            this.OptionsUrl = string.Empty;
-            this.Name = string.Empty;
-            this.Text = string.Empty;
-            this.Required = false;
+            Operator = CompareOperators.None;
+            OptionsUrl = string.Empty;
+            Name = string.Empty;
+            Text = string.Empty;
         }
 
+        /// <summary>
+        /// Filter name
+        /// </summary>
         public string Name { get; set; }
+
+        /// <summary>
+        /// Filter search text
+        /// </summary>
         public string Text { get; set; }
-        public bool Required { get; set; }
+
+        /// <summary>
+        /// Filter search params
+        /// </summary>
         public string[] Argument { get; set; }
+
+        /// <summary>
+        /// Filter's operator
+        /// </summary>
         public CompareOperators Operator { get; set; }
 
         /// <summary>

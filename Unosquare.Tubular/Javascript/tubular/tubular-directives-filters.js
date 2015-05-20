@@ -46,7 +46,9 @@
          * The `tbColumnFilter` directive is a the basic filter popover. You need to define it inside a `tbColumn`.
          * 
          * The parent scope will provide information about the data type.
-         * TODO: List params from tubularGridFilterService
+         * 
+         * @param {string} text Set the search text.
+         * @param {string} operator Set the initial operator, default depends on data type.
          */
         .directive('tbColumnFilter', [
             'tubularGridFilterService', function(tubularGridFilterService) {
@@ -98,7 +100,9 @@
          * 
          * The parent scope will provide information about the data type.
          * 
-         * TODO: List params from tubularGridFilterService
+         * @param {string} text Set the search text.
+         * @param {object} argument Set the search object (if the search is text use text attribute).
+         * @param {string} operator Set the initial operator, default depends on data type.
          */
         .directive('tbColumnDateTimeFilter', [
             'tubularGridFilterService', function(tubularGridFilterService) {
@@ -173,7 +177,10 @@
          * The `tbColumnOptionsFilter` directive is a filter with an dropdown listing all the possible values to filter.
          * 
          * @scope
-         * TODO: List params from tubularGridFilterService
+         * 
+         * @param {object} argument Set the search object.
+         * @param {string} operator Set the initial operator, default depends on data type.
+         * @param {string} optionsUrl Set the URL to retrieve options
          */
         .directive('tbColumnOptionsFilter', [
             'tubularGridFilterService', 'tubularHttp', function(tubularGridFilterService, tubularHttp) {

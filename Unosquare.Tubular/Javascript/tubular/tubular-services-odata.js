@@ -7,7 +7,8 @@
          * @name tubularOData
          *
          * @description
-         * Use `tubularOData` to connect a grid or a form to an OData Resource.
+         * Use `tubularOData` to connect a grid or a form to an OData Resource. Must filters are working
+         * and sorting and pagination too.
          * 
          * This service provides authentication using bearer-tokens.
          */

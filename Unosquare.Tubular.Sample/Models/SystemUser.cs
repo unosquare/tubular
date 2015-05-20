@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace Unosquare.Tubular.Sample.Models
+﻿namespace Unosquare.Tubular.Sample.Models
 {
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+
     [Table("SystemUsers")]
     public class SystemUser : Microsoft.AspNet.Identity.IUser
     {

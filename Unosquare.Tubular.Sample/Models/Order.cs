@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace Unosquare.Tubular.Sample.Models
+﻿namespace Unosquare.Tubular.Sample.Models
 {
+    using System;
+
     public class Order
     {
         public int OrderID { get; set; }
