@@ -18,8 +18,8 @@
          * @param {int} pageSize Define how many records to show in a page, default 20.
          * @param {function} onBeforeGetData Callback to execute before to get data from service.
          * @param {string} requestMethod Set HTTP Method to get data.
-         * @param {object} gridDataService Define Data service (instance) to retrieve data, defaults `tubularHttp`.
-         * @param {string} gridDataServiceName Define Data service (name) to retrieve data, defaults `tubularHttp`.
+         * @param {object} dataService Define Data service (instance) to retrieve data, defaults `tubularHttp`.
+         * @param {string} dataServiceName Define Data service (name) to retrieve data, defaults `tubularHttp`.
          * @param {bool} requireAuthentication Set if authentication check must be executed, default true.
          * @param {string} name Grid's name, used to store metainfo in localstorage.
          * @param {string} editorMode Define if grid is read-only or it has editors (inline or popup).
@@ -42,8 +42,8 @@
                         pageSize: '@?',
                         onBeforeGetData: '=?',
                         requestMethod: '@',
-                        gridDataService: '=?service',
-                        gridDataServiceName: '@?serviceName',
+                        dataService: '=?service',
+                        dataServiceName: '@?serviceName',
                         requireAuthentication: '@?',
                         name: '@?gridName',
                         editorMode: '@?',
@@ -74,7 +74,7 @@
                             };
                             $scope.isEmpty = false;
                             $scope.tempRow = new TubularModel($scope, {});
-                            $scope.gridDataService = $scope.gridDataService || tubularHttp;
+                            $scope.dataService = $scope.dataService || tubularHttp;
                             $scope.requireAuthentication = $scope.requireAuthentication || true;
                             $scope.name = $scope.name || 'tbgrid';
                             $scope.editorMode = $scope.editorMode || 'none';
@@ -83,8 +83,8 @@
                             $scope.showLoading = $scope.showLoading || true;
 
                             // Helper to use OData without controller
-                            if ($scope.gridDataServiceName === 'odata') {
-                                $scope.gridDataService = tubularOData;
+                            if ($scope.dataServiceName === 'odata') {
+                                $scope.dataService = tubularOData;
                             }
 
                             $scope.$watch('columns', function() {
@@ -104,7 +104,7 @@
                             };
 
                             $scope.newRow = function(template, popup) {
-                                $scope.tempRow = new TubularModel($scope, {}, $scope.gridDataService);
+                                $scope.tempRow = new TubularModel($scope, {}, $scope.dataService);
                                 $scope.tempRow.$isNew = true;
                                 $scope.tempRow.$isEditing = true;
 
@@ -123,7 +123,7 @@
                                     requireAuthentication: $scope.requireAuthentication,
                                 };
 
-                                $scope.currentRequest = $scope.gridDataService.retrieveDataAsync(request);
+                                $scope.currentRequest = $scope.dataService.retrieveDataAsync(request);
 
                                 $scope.currentRequest.promise.then(
                                     function(data) {
@@ -190,7 +190,7 @@
 
                                 $scope.$emit('tbGrid_OnBeforeRequest', request);
 
-                                $scope.currentRequest = $scope.gridDataService.retrieveDataAsync(request);
+                                $scope.currentRequest = $scope.dataService.retrieveDataAsync(request);
 
                                 $scope.currentRequest.promise.then(
                                     function(data) {
@@ -208,7 +208,7 @@
                                         $scope.dataSource = data;
 
                                         $scope.rows = data.Payload.map(function(el) {
-                                            var model = new TubularModel($scope, el, $scope.gridDataService);
+                                            var model = new TubularModel($scope, el, $scope.dataService);
 
                                             model.editPopup = function(template) {
                                                 tubularPopupService.openDialog(template, model);
@@ -366,7 +366,7 @@
                             };
 
                             $scope.getFullDataSource = function(callback) {
-                                $scope.gridDataService.retrieveDataAsync({
+                                $scope.dataService.retrieveDataAsync({
                                     serverUrl: $scope.serverUrl,
                                     requestMethod: $scope.requestMethod,
                                     timeout: $scope.requestTimeout,

@@ -26,8 +26,8 @@
                         serverSaveMethod: '@',
                         isNew: '@',
                         modelKey: '@?',
-                        gridDataService: '=?service',
-                        gridDataServiceName: '@?serviceName',
+                        dataService: '=?service',
+                        dataServiceName: '@?serviceName',
                         requireAuthentication: '=?'
                     },
                     controller: [
@@ -40,16 +40,16 @@
                             // Try to load a key from markup or route
                             $scope.modelKey = $scope.modelKey || $routeParams.param;
 
-                            $scope.gridDataService = $scope.gridDataService || tubularHttp;
+                            $scope.dataService = $scope.dataService || tubularHttp;
 
                             // Helper to use OData without controller
-                            if ($scope.gridDataServiceName === 'odata') {
-                                $scope.gridDataService = tubularOData;
+                            if ($scope.dataServiceName === 'odata') {
+                                $scope.dataService = tubularOData;
                             }
 
                             // Setup require authentication
                             $scope.requireAuthentication = angular.isUndefined($scope.requireAuthentication) ? true : $scope.requireAuthentication;
-                            $scope.gridDataService.setRequireAuthentication($scope.requireAuthentication);
+                            $scope.dataService.setRequireAuthentication($scope.requireAuthentication);
 
                             $scope.$watch('hasFieldsDefinitions', function(newVal) {
                                 if (newVal !== true) return;
@@ -65,7 +65,7 @@
                             $scope.retrieveData = function() {
                                 if (angular.isUndefined($scope.serverUrl)) {
                                     if (angular.isUndefined($scope.model)) {
-                                        $scope.model = new TubularModel($scope, {}, $scope.gridDataService);
+                                        $scope.model = new TubularModel($scope, {}, $scope.dataService);
                                     }
 
                                     $scope.bindFields();
@@ -76,9 +76,9 @@
                                 if (angular.isUndefined($scope.modelKey) || $scope.modelKey == null || $scope.modelKey == '')
                                     return;
 
-                                $scope.gridDataService.getByKey($scope.serverUrl, $scope.modelKey).promise.then(
+                                $scope.dataService.getByKey($scope.serverUrl, $scope.modelKey).promise.then(
                                     function(data) {
-                                        $scope.model = new TubularModel($scope, data, $scope.gridDataService);
+                                        $scope.model = new TubularModel($scope, data, $scope.dataService);
                                         $scope.bindFields();
                                     }, function(error) {
                                         $scope.$emit('tbForm_OnConnectionError', error);

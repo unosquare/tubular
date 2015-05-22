@@ -183,7 +183,7 @@
          * @param {string} optionsUrl Set the URL to retrieve options
          */
         .directive('tbColumnOptionsFilter', [
-            'tubularGridFilterService', 'tubularHttp', function(tubularGridFilterService, tubularHttp) {
+            'tubularGridFilterService', function(tubularGridFilterService) {
 
                 return {
                     require: '^tbColumn',
@@ -207,11 +207,11 @@
                     controller: [
                         '$scope', function($scope) {
                             $scope.dataIsLoaded = false;
-
+                            
                             $scope.getOptionsFromUrl = function() {
                                 if ($scope.dataIsLoaded) return;
 
-                                var currentRequest = tubularHttp.retrieveDataAsync({
+                                var currentRequest = $scope.$component.dataService.retrieveDataAsync({
                                     serverUrl: $scope.filter.OptionsUrl,
                                     requestMethod: 'GET'
                                 });
