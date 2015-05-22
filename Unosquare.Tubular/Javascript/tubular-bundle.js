@@ -2766,7 +2766,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                 return {
                     require: '^tbColumn',
-                    template: '<div ngTransclude class="btn-group tubular-column-filter">' +
+                    template: '<div ngTransclude class="btn-group tubular-column-menu">' +
                         '<button class="tubular-column-filter-button btn btn-xs btn-default" data-toggle="popover" data-placement="bottom" ' +
                         'ng-class="{ \'btn-success\': filter.Text != null }">' +
                         '<i class="fa fa-filter"></i></button>' +
@@ -2844,14 +2844,14 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                 return {
                     require: '^tbColumn',
-                    template: '<div class="tubular-column-filter">' +
+                    template: '<div class="tubular-column-menu">' +
                         '<button class="tubular-column-filter-button btn btn-xs btn-default" data-toggle="popover" data-placement="bottom" ' +
                         'ng-class="{ \'btn-success\': (filter.Argument.length > 0) }">' +
                         '<i class="fa fa-filter"></i></button>' +
                         '<div style="display: none;">' +
                         '<h4>{{filterTitle}}</h4>' +
                         '<form class="tubular-column-filter-form" onsubmit="return false;">' +
-                        '<select class="form-control" ng-model="filter.Argument" ng-options="item for item in optionsItems" multiple></select>' +
+                        '<select class="form-control checkbox-list" ng-model="filter.Argument" ng-options="item for item in optionsItems" multiple></select>' +
                         '<hr />' + // Maybe we should add checkboxes or something like that
                         '<tb-column-filter-buttons></tb-column-filter-buttons>' +
                         '<tb-column-filter-column-selector ng-show="columnSelector"></tb-column-filter-column-selector>' +
@@ -3487,8 +3487,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     scope.$component = scope.$parent.$component;
                     scope.filterTitle = "Filter";
 
-                    scope.clearFilter = function() {
-                        scope.filter.Operator = 'None';
+                    scope.clearFilter = function () {
+                        if (scope.filter.Operator != 'Multiple')
+                            scope.filter.Operator = 'None';
+
                         scope.filter.Text = '';
                         scope.filter.Argument = [];
 

@@ -163,8 +163,10 @@
                     scope.$component = scope.$parent.$component;
                     scope.filterTitle = "Filter";
 
-                    scope.clearFilter = function() {
-                        scope.filter.Operator = 'None';
+                    scope.clearFilter = function () {
+                        if (scope.filter.Operator != 'Multiple')
+                            scope.filter.Operator = 'None';
+
                         scope.filter.Text = '';
                         scope.filter.Argument = [];
 

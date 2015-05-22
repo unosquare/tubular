@@ -20,6 +20,7 @@
         ///   <c>true</c> if this instance is valid; otherwise, <c>false</c>.
         /// </value>
         public bool IsValid { get; protected set; }
+
         /// <summary>
         /// Gets or sets the user.
         /// </summary>
@@ -27,6 +28,7 @@
         /// The user.
         /// </value>
         public IUser User { get; protected set; }
+
         /// <summary>
         /// Gets or sets the roles.
         /// </summary>
@@ -34,6 +36,7 @@
         /// The roles.
         /// </value>
         public IRole[] Roles { get; protected set; }
+
         /// <summary>
         /// Gets or sets the error message.
         /// </summary>
@@ -53,7 +56,7 @@
         /// or
         /// Object cannot be null;roles
         /// </exception>
-        static public UserAuthenticationResult CreateAuthorizedResult(IUser user, IRole[] roles)
+        public static UserAuthenticationResult CreateAuthorizedResult(IUser user, IRole[] roles)
         {
             if (user == null) throw new ArgumentException("Object cannot be null", "user");
             if (roles == null) throw new ArgumentException("Object cannot be null", "roles");
@@ -74,7 +77,7 @@
         /// </summary>
         /// <param name="message">The message.</param>
         /// <returns></returns>
-        static public UserAuthenticationResult CreateErrorResult(string message)
+        public static UserAuthenticationResult CreateErrorResult(string message)
         {
             if (string.IsNullOrWhiteSpace(message))
                 message = "Invalid credentials.";
@@ -89,6 +92,5 @@
 
             return result;
         }
-   
     }
 }

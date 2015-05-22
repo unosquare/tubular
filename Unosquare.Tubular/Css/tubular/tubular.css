@@ -286,6 +286,37 @@ ul.dropdown-menu a {
     cursor: pointer;
 }
 
+select.checkbox-list option:before {
+    content: "";
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 1px solid #cccccc;
+    border-radius: 3px;
+    background-color: #fff;
+    margin-right: 2px;
+    -webkit-transition: border 0.15s ease-in-out, color 0.15s ease-in-out;
+    -o-transition: border 0.15s ease-in-out, color 0.15s ease-in-out;
+    transition: border 0.15s ease-in-out, color 0.15s ease-in-out;
+}
+
+select.checkbox-list option:checked:before {
+  font-family: 'FontAwesome';
+  content: "\f00c";
+}
+select.checkbox-list option:checked, select.checkbox-list option:hover, select.checkbox-list option:focus,
+select.checkbox-list:hover option:checked {
+    background: #CCC repeat url("data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=");
+}
+
+select.checkbox-list:hover option:checked, select.checkbox-list:focus option:checked {
+    background: none;
+}
+
+select.checkbox-list:hover option:checked:before, select.checkbox-list:focus option:checked {
+    background-color: #ccc;
+}
+
 /* Responsive table for mobiles https://techblog.livingsocial.com/blog/2015/04/06/responsive-tables-in-pure-css/ */
 @media screen and (max-width: 500px) {
 

@@ -310,5 +310,21 @@
                 .Distinct()
                 .Take(8);
         }
+
+        /// <summary>
+        /// Generates a list with distinct values to use in TypeAhead UI control
+        /// </summary>
+        /// <param name="dataSource">The IQueryable source</param>
+        /// <param name="fieldName">The field to filter</param>
+        /// <param name="records">How many records, 0 to retrieve all</param>
+        /// <returns>The filtered IQueryable</returns>
+        public static IQueryable CreateTypeAheadList(this IQueryable dataSource, string fieldName, int records = 8)
+        {
+            dataSource = dataSource
+                .Select(fieldName)
+                .Distinct();
+
+            return records > 0 ? dataSource.Take(records) : dataSource;
+        }
     }
 }

@@ -1,17 +1,27 @@
-﻿using Microsoft.Owin.Security.OAuth;
-using System;
-using System.Security.Claims;
-using System.Threading.Tasks;
-
-namespace Unosquare.Tubular.Security
+﻿namespace Unosquare.Tubular.Security
 {
+    using Microsoft.Owin.Security.OAuth;
+    using System;
+    using System.Security.Claims;
+    using System.Threading.Tasks;
+
+    /// <summary>
+    /// Basic OAuth authorization provider
+    /// </summary>
     public class BasicOAuthAuthorizationProvider : OAuthAuthorizationServerProvider
     {
         private const string OAuthInvalidGrant = "invalid_grant";
         private const string OAuthAllowOriginHeader = "Access-Control-Allow-Origin";
 
+        /// <summary>
+        /// Authentication Task
+        /// </summary>
         public Func<OAuthGrantResourceOwnerCredentialsContext, Task<UserAuthenticationResult>> AuthenticateAsync { get; protected set; }
 
+        /// <summary>
+        /// Initialize the authorization provider
+        /// </summary>
+        /// <param name="authenticateFunction">The Authenticate function</param>
         public BasicOAuthAuthorizationProvider(Func<OAuthGrantResourceOwnerCredentialsContext, Task<UserAuthenticationResult>> authenticateFunction)
             : base()
         {
