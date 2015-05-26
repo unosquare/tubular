@@ -2374,7 +2374,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @param {string} optionsMethod Set the Http Method where to retrieve the values.
          */
         .directive('tbDropdownEditor', [
-            'tubularEditorService', 'tubularHttp', function(tubularEditorService, tubularHttp) {
+            'tubularEditorService', function(tubularEditorService) {
 
                 return {
                     template: '<div ng-class="{ \'form-group\' : isEditing, \'has-error\' : !$valid }">' +
@@ -2392,14 +2392,17 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     transclude: true,
                     scope: angular.extend({ options: '=?', optionsUrl: '@', optionsMethod: '@?' }, tubularEditorService.defaultScope),
                     controller: [
-                        '$scope', function($scope) {
+                        '$scope', function ($scope) {
                             tubularEditorService.setupScope($scope);
                             $scope.dataIsLoaded = false;
 
                             $scope.loadData = function() {
                                 if ($scope.dataIsLoaded) return;
 
-                                var currentRequest = tubularHttp.retrieveDataAsync({
+                                if (angular.isUndefined($scope.$component) || $scope.$component == null)
+                                    throw 'You need to define a parent Form or Grid';
+
+                                var currentRequest = $scope.$component.dataService.retrieveDataAsync({
                                     serverUrl: $scope.optionsUrl,
                                     requestMethod: $scope.optionsMethod || 'GET'
                                 });
@@ -2456,7 +2459,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @param {string} optionsMethod Set the Http Method where to retrieve the values.
          */
         .directive('tbTypeaheadEditor', [
-            'tubularEditorService', 'tubularHttp', '$q', function(tubularEditorService, tubularHttp, $q) {
+            'tubularEditorService', '$q', function(tubularEditorService, $q) {
 
                 return {
                     template: '<div ng-class="{ \'form-group\' : isEditing, \'has-error\' : !$valid }">' +
@@ -2483,7 +2486,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                             $scope.getValues = function(val) {
                                 if (angular.isDefined($scope.optionsUrl)) {
-                                    return tubularHttp.retrieveDataAsync({
+                                    if (angular.isUndefined($scope.$component) || $scope.$component == null)
+                                        throw 'You need to define a parent Form or Grid';
+
+                                    return $scope.$component.dataService.retrieveDataAsync({
                                         serverUrl: $scope.optionsUrl + '?search=' + val,
                                         requestMethod: $scope.optionsMethod || 'GET'
                                     }).promise;
@@ -2851,7 +2857,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         '<div style="display: none;">' +
                         '<h4>{{filterTitle}}</h4>' +
                         '<form class="tubular-column-filter-form" onsubmit="return false;">' +
-                        '<select class="form-control checkbox-list" ng-model="filter.Argument" ng-options="item for item in optionsItems" multiple></select>' +
+                        '<select class="form-control checkbox-list" ng-model="filter.Argument" ng-options="item for item in optionsItems" multiple ng-disabled="dataIsLoaded == false"></select>' +
                         '<hr />' + // Maybe we should add checkboxes or something like that
                         '<tb-column-filter-buttons></tb-column-filter-buttons>' +
                         '<tb-column-filter-column-selector ng-show="columnSelector"></tb-column-filter-column-selector>' +
@@ -2865,8 +2871,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         '$scope', function($scope) {
                             $scope.dataIsLoaded = false;
                             
-                            $scope.getOptionsFromUrl = function() {
-                                if ($scope.dataIsLoaded) return;
+                            $scope.getOptionsFromUrl = function () {
+                                if ($scope.dataIsLoaded) {
+                                    $scope.$apply();
+                                    return;
+                                }
 
                                 var currentRequest = $scope.$component.dataService.retrieveDataAsync({
                                     serverUrl: $scope.filter.OptionsUrl,
@@ -2912,7 +2921,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @restrict E
          *
          * @description
-         * The `tbForm` directive is the base to create any form.
+         * The `tbForm` directive is the base to create any form. You can define a `dataService` and a
+         * `modelKey` to autoload a record. The `serverSaveUrl` can be used to create a new or update
+         * an existing record.
          * 
          * @scope
          */
@@ -3651,7 +3662,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         if (angular.isUndefined(scope.value) && scope.required) {
                             scope.$valid = false;
                             scope.state.$errors = ["Field is required"];
-                            scope.$parent.Model.$state[scope.Name] = scope.state;
+
+                            if (angular.isDefined(scope.$parent.Model))
+                                scope.$parent.Model.$state[scope.Name] = scope.state;
+
                             return;
                         }
 
@@ -3674,6 +3688,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             if (parent.hasFieldsDefinitions !== false)
                                 throw 'Cannot define more fields. Field definitions have been sealed';
 
+                            scope.$component = parent;
                             scope.Name = scope.name;
                             scope.bindScope = function() {
                                 scope.$parent.Model = parent.model;

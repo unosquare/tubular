@@ -327,7 +327,10 @@
                         if (angular.isUndefined(scope.value) && scope.required) {
                             scope.$valid = false;
                             scope.state.$errors = ["Field is required"];
-                            scope.$parent.Model.$state[scope.Name] = scope.state;
+
+                            if (angular.isDefined(scope.$parent.Model))
+                                scope.$parent.Model.$state[scope.Name] = scope.state;
+
                             return;
                         }
 
@@ -350,6 +353,7 @@
                             if (parent.hasFieldsDefinitions !== false)
                                 throw 'Cannot define more fields. Field definitions have been sealed';
 
+                            scope.$component = parent;
                             scope.Name = scope.name;
                             scope.bindScope = function() {
                                 scope.$parent.Model = parent.model;

@@ -194,7 +194,7 @@
                         '<div style="display: none;">' +
                         '<h4>{{filterTitle}}</h4>' +
                         '<form class="tubular-column-filter-form" onsubmit="return false;">' +
-                        '<select class="form-control checkbox-list" ng-model="filter.Argument" ng-options="item for item in optionsItems" multiple></select>' +
+                        '<select class="form-control checkbox-list" ng-model="filter.Argument" ng-options="item for item in optionsItems" multiple ng-disabled="dataIsLoaded == false"></select>' +
                         '<hr />' + // Maybe we should add checkboxes or something like that
                         '<tb-column-filter-buttons></tb-column-filter-buttons>' +
                         '<tb-column-filter-column-selector ng-show="columnSelector"></tb-column-filter-column-selector>' +
@@ -208,8 +208,11 @@
                         '$scope', function($scope) {
                             $scope.dataIsLoaded = false;
                             
-                            $scope.getOptionsFromUrl = function() {
-                                if ($scope.dataIsLoaded) return;
+                            $scope.getOptionsFromUrl = function () {
+                                if ($scope.dataIsLoaded) {
+                                    $scope.$apply();
+                                    return;
+                                }
 
                                 var currentRequest = $scope.$component.dataService.retrieveDataAsync({
                                     serverUrl: $scope.filter.OptionsUrl,

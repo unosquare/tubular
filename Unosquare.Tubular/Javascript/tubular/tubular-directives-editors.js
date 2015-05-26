@@ -342,7 +342,7 @@
          * @param {string} optionsMethod Set the Http Method where to retrieve the values.
          */
         .directive('tbDropdownEditor', [
-            'tubularEditorService', 'tubularHttp', function(tubularEditorService, tubularHttp) {
+            'tubularEditorService', function(tubularEditorService) {
 
                 return {
                     template: '<div ng-class="{ \'form-group\' : isEditing, \'has-error\' : !$valid }">' +
@@ -360,14 +360,17 @@
                     transclude: true,
                     scope: angular.extend({ options: '=?', optionsUrl: '@', optionsMethod: '@?' }, tubularEditorService.defaultScope),
                     controller: [
-                        '$scope', function($scope) {
+                        '$scope', function ($scope) {
                             tubularEditorService.setupScope($scope);
                             $scope.dataIsLoaded = false;
 
                             $scope.loadData = function() {
                                 if ($scope.dataIsLoaded) return;
 
-                                var currentRequest = tubularHttp.retrieveDataAsync({
+                                if (angular.isUndefined($scope.$component) || $scope.$component == null)
+                                    throw 'You need to define a parent Form or Grid';
+
+                                var currentRequest = $scope.$component.dataService.retrieveDataAsync({
                                     serverUrl: $scope.optionsUrl,
                                     requestMethod: $scope.optionsMethod || 'GET'
                                 });
@@ -424,7 +427,7 @@
          * @param {string} optionsMethod Set the Http Method where to retrieve the values.
          */
         .directive('tbTypeaheadEditor', [
-            'tubularEditorService', 'tubularHttp', '$q', function(tubularEditorService, tubularHttp, $q) {
+            'tubularEditorService', '$q', function(tubularEditorService, $q) {
 
                 return {
                     template: '<div ng-class="{ \'form-group\' : isEditing, \'has-error\' : !$valid }">' +
@@ -451,7 +454,10 @@
 
                             $scope.getValues = function(val) {
                                 if (angular.isDefined($scope.optionsUrl)) {
-                                    return tubularHttp.retrieveDataAsync({
+                                    if (angular.isUndefined($scope.$component) || $scope.$component == null)
+                                        throw 'You need to define a parent Form or Grid';
+
+                                    return $scope.$component.dataService.retrieveDataAsync({
                                         serverUrl: $scope.optionsUrl + '?search=' + val,
                                         requestMethod: $scope.optionsMethod || 'GET'
                                     }).promise;

@@ -707,8 +707,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @param {int} pageSize Define how many records to show in a page, default 20.
          * @param {function} onBeforeGetData Callback to execute before to get data from service.
          * @param {string} requestMethod Set HTTP Method to get data.
-         * @param {object} gridDataService Define Data service (instance) to retrieve data, defaults `tubularHttp`.
-         * @param {string} gridDataServiceName Define Data service (name) to retrieve data, defaults `tubularHttp`.
+         * @param {object} dataService Define Data service (instance) to retrieve data, defaults `tubularHttp`.
+         * @param {string} dataServiceName Define Data service (name) to retrieve data, defaults `tubularHttp`.
          * @param {bool} requireAuthentication Set if authentication check must be executed, default true.
          * @param {string} name Grid's name, used to store metainfo in localstorage.
          * @param {string} editorMode Define if grid is read-only or it has editors (inline or popup).
@@ -731,8 +731,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         pageSize: '@?',
                         onBeforeGetData: '=?',
                         requestMethod: '@',
-                        gridDataService: '=?service',
-                        gridDataServiceName: '@?serviceName',
+                        dataService: '=?service',
+                        dataServiceName: '@?serviceName',
                         requireAuthentication: '@?',
                         name: '@?gridName',
                         editorMode: '@?',
@@ -763,7 +763,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             };
                             $scope.isEmpty = false;
                             $scope.tempRow = new TubularModel($scope, {});
-                            $scope.gridDataService = $scope.gridDataService || tubularHttp;
+                            $scope.dataService = $scope.dataService || tubularHttp;
                             $scope.requireAuthentication = $scope.requireAuthentication || true;
                             $scope.name = $scope.name || 'tbgrid';
                             $scope.editorMode = $scope.editorMode || 'none';
@@ -772,8 +772,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             $scope.showLoading = $scope.showLoading || true;
 
                             // Helper to use OData without controller
-                            if ($scope.gridDataServiceName === 'odata') {
-                                $scope.gridDataService = tubularOData;
+                            if ($scope.dataServiceName === 'odata') {
+                                $scope.dataService = tubularOData;
                             }
 
                             $scope.$watch('columns', function() {
@@ -793,7 +793,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             };
 
                             $scope.newRow = function(template, popup) {
-                                $scope.tempRow = new TubularModel($scope, {}, $scope.gridDataService);
+                                $scope.tempRow = new TubularModel($scope, {}, $scope.dataService);
                                 $scope.tempRow.$isNew = true;
                                 $scope.tempRow.$isEditing = true;
 
@@ -812,7 +812,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     requireAuthentication: $scope.requireAuthentication,
                                 };
 
-                                $scope.currentRequest = $scope.gridDataService.retrieveDataAsync(request);
+                                $scope.currentRequest = $scope.dataService.retrieveDataAsync(request);
 
                                 $scope.currentRequest.promise.then(
                                     function(data) {
@@ -879,7 +879,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                                 $scope.$emit('tbGrid_OnBeforeRequest', request);
 
-                                $scope.currentRequest = $scope.gridDataService.retrieveDataAsync(request);
+                                $scope.currentRequest = $scope.dataService.retrieveDataAsync(request);
 
                                 $scope.currentRequest.promise.then(
                                     function(data) {
@@ -897,7 +897,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                         $scope.dataSource = data;
 
                                         $scope.rows = data.Payload.map(function(el) {
-                                            var model = new TubularModel($scope, el, $scope.gridDataService);
+                                            var model = new TubularModel($scope, el, $scope.dataService);
 
                                             model.editPopup = function(template) {
                                                 tubularPopupService.openDialog(template, model);
@@ -1055,7 +1055,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             };
 
                             $scope.getFullDataSource = function(callback) {
-                                $scope.gridDataService.retrieveDataAsync({
+                                $scope.dataService.retrieveDataAsync({
                                     serverUrl: $scope.serverUrl,
                                     requestMethod: $scope.requestMethod,
                                     timeout: $scope.requestTimeout,
@@ -2374,7 +2374,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @param {string} optionsMethod Set the Http Method where to retrieve the values.
          */
         .directive('tbDropdownEditor', [
-            'tubularEditorService', 'tubularHttp', function(tubularEditorService, tubularHttp) {
+            'tubularEditorService', function(tubularEditorService) {
 
                 return {
                     template: '<div ng-class="{ \'form-group\' : isEditing, \'has-error\' : !$valid }">' +
@@ -2392,14 +2392,17 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     transclude: true,
                     scope: angular.extend({ options: '=?', optionsUrl: '@', optionsMethod: '@?' }, tubularEditorService.defaultScope),
                     controller: [
-                        '$scope', function($scope) {
+                        '$scope', function ($scope) {
                             tubularEditorService.setupScope($scope);
                             $scope.dataIsLoaded = false;
 
                             $scope.loadData = function() {
                                 if ($scope.dataIsLoaded) return;
 
-                                var currentRequest = tubularHttp.retrieveDataAsync({
+                                if (angular.isUndefined($scope.$component) || $scope.$component == null)
+                                    throw 'You need to define a parent Form or Grid';
+
+                                var currentRequest = $scope.$component.dataService.retrieveDataAsync({
                                     serverUrl: $scope.optionsUrl,
                                     requestMethod: $scope.optionsMethod || 'GET'
                                 });
@@ -2456,7 +2459,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @param {string} optionsMethod Set the Http Method where to retrieve the values.
          */
         .directive('tbTypeaheadEditor', [
-            'tubularEditorService', 'tubularHttp', '$q', function(tubularEditorService, tubularHttp, $q) {
+            'tubularEditorService', '$q', function(tubularEditorService, $q) {
 
                 return {
                     template: '<div ng-class="{ \'form-group\' : isEditing, \'has-error\' : !$valid }">' +
@@ -2483,7 +2486,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                             $scope.getValues = function(val) {
                                 if (angular.isDefined($scope.optionsUrl)) {
-                                    return tubularHttp.retrieveDataAsync({
+                                    if (angular.isUndefined($scope.$component) || $scope.$component == null)
+                                        throw 'You need to define a parent Form or Grid';
+
+                                    return $scope.$component.dataService.retrieveDataAsync({
                                         serverUrl: $scope.optionsUrl + '?search=' + val,
                                         requestMethod: $scope.optionsMethod || 'GET'
                                     }).promise;
@@ -2766,7 +2772,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                 return {
                     require: '^tbColumn',
-                    template: '<div ngTransclude class="btn-group tubular-column-filter">' +
+                    template: '<div ngTransclude class="btn-group tubular-column-menu">' +
                         '<button class="tubular-column-filter-button btn btn-xs btn-default" data-toggle="popover" data-placement="bottom" ' +
                         'ng-class="{ \'btn-success\': filter.Text != null }">' +
                         '<i class="fa fa-filter"></i></button>' +
@@ -2840,18 +2846,18 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @param {string} optionsUrl Set the URL to retrieve options
          */
         .directive('tbColumnOptionsFilter', [
-            'tubularGridFilterService', 'tubularHttp', function(tubularGridFilterService, tubularHttp) {
+            'tubularGridFilterService', function(tubularGridFilterService) {
 
                 return {
                     require: '^tbColumn',
-                    template: '<div class="tubular-column-filter">' +
+                    template: '<div class="tubular-column-menu">' +
                         '<button class="tubular-column-filter-button btn btn-xs btn-default" data-toggle="popover" data-placement="bottom" ' +
                         'ng-class="{ \'btn-success\': (filter.Argument.length > 0) }">' +
                         '<i class="fa fa-filter"></i></button>' +
                         '<div style="display: none;">' +
                         '<h4>{{filterTitle}}</h4>' +
                         '<form class="tubular-column-filter-form" onsubmit="return false;">' +
-                        '<select class="form-control" ng-model="filter.Argument" ng-options="item for item in optionsItems" multiple></select>' +
+                        '<select class="form-control checkbox-list" ng-model="filter.Argument" ng-options="item for item in optionsItems" multiple ng-disabled="dataIsLoaded == false"></select>' +
                         '<hr />' + // Maybe we should add checkboxes or something like that
                         '<tb-column-filter-buttons></tb-column-filter-buttons>' +
                         '<tb-column-filter-column-selector ng-show="columnSelector"></tb-column-filter-column-selector>' +
@@ -2864,11 +2870,14 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     controller: [
                         '$scope', function($scope) {
                             $scope.dataIsLoaded = false;
+                            
+                            $scope.getOptionsFromUrl = function () {
+                                if ($scope.dataIsLoaded) {
+                                    $scope.$apply();
+                                    return;
+                                }
 
-                            $scope.getOptionsFromUrl = function() {
-                                if ($scope.dataIsLoaded) return;
-
-                                var currentRequest = tubularHttp.retrieveDataAsync({
+                                var currentRequest = $scope.$component.dataService.retrieveDataAsync({
                                     serverUrl: $scope.filter.OptionsUrl,
                                     requestMethod: 'GET'
                                 });
@@ -2912,7 +2921,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @restrict E
          *
          * @description
-         * The `tbForm` directive is the base to create any form.
+         * The `tbForm` directive is the base to create any form. You can define a `dataService` and a
+         * `modelKey` to autoload a record. The `serverSaveUrl` can be used to create a new or update
+         * an existing record.
          * 
          * @scope
          */
@@ -2930,8 +2941,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         serverSaveMethod: '@',
                         isNew: '@',
                         modelKey: '@?',
-                        gridDataService: '=?service',
-                        gridDataServiceName: '@?serviceName',
+                        dataService: '=?service',
+                        dataServiceName: '@?serviceName',
                         requireAuthentication: '=?'
                     },
                     controller: [
@@ -2944,16 +2955,16 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             // Try to load a key from markup or route
                             $scope.modelKey = $scope.modelKey || $routeParams.param;
 
-                            $scope.gridDataService = $scope.gridDataService || tubularHttp;
+                            $scope.dataService = $scope.dataService || tubularHttp;
 
                             // Helper to use OData without controller
-                            if ($scope.gridDataServiceName === 'odata') {
-                                $scope.gridDataService = tubularOData;
+                            if ($scope.dataServiceName === 'odata') {
+                                $scope.dataService = tubularOData;
                             }
 
                             // Setup require authentication
                             $scope.requireAuthentication = angular.isUndefined($scope.requireAuthentication) ? true : $scope.requireAuthentication;
-                            $scope.gridDataService.setRequireAuthentication($scope.requireAuthentication);
+                            $scope.dataService.setRequireAuthentication($scope.requireAuthentication);
 
                             $scope.$watch('hasFieldsDefinitions', function(newVal) {
                                 if (newVal !== true) return;
@@ -2969,7 +2980,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             $scope.retrieveData = function() {
                                 if (angular.isUndefined($scope.serverUrl)) {
                                     if (angular.isUndefined($scope.model)) {
-                                        $scope.model = new TubularModel($scope, {}, $scope.gridDataService);
+                                        $scope.model = new TubularModel($scope, {}, $scope.dataService);
                                     }
 
                                     $scope.bindFields();
@@ -2980,9 +2991,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 if (angular.isUndefined($scope.modelKey) || $scope.modelKey == null || $scope.modelKey == '')
                                     return;
 
-                                $scope.gridDataService.getByKey($scope.serverUrl, $scope.modelKey).promise.then(
+                                $scope.dataService.getByKey($scope.serverUrl, $scope.modelKey).promise.then(
                                     function(data) {
-                                        $scope.model = new TubularModel($scope, data, $scope.gridDataService);
+                                        $scope.model = new TubularModel($scope, data, $scope.dataService);
                                         $scope.bindFields();
                                     }, function(error) {
                                         $scope.$emit('tbForm_OnConnectionError', error);
@@ -3487,8 +3498,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     scope.$component = scope.$parent.$component;
                     scope.filterTitle = "Filter";
 
-                    scope.clearFilter = function() {
-                        scope.filter.Operator = 'None';
+                    scope.clearFilter = function () {
+                        if (scope.filter.Operator != 'Multiple')
+                            scope.filter.Operator = 'None';
+
                         scope.filter.Text = '';
                         scope.filter.Argument = [];
 
@@ -3649,7 +3662,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         if (angular.isUndefined(scope.value) && scope.required) {
                             scope.$valid = false;
                             scope.state.$errors = ["Field is required"];
-                            scope.$parent.Model.$state[scope.Name] = scope.state;
+
+                            if (angular.isDefined(scope.$parent.Model))
+                                scope.$parent.Model.$state[scope.Name] = scope.state;
+
                             return;
                         }
 
@@ -3672,6 +3688,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             if (parent.hasFieldsDefinitions !== false)
                                 throw 'Cannot define more fields. Field definitions have been sealed';
 
+                            scope.$component = parent;
                             scope.Name = scope.name;
                             scope.bindScope = function() {
                                 scope.$parent.Model = parent.model;

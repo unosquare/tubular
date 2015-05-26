@@ -8,7 +8,9 @@
          * @restrict E
          *
          * @description
-         * The `tbForm` directive is the base to create any form.
+         * The `tbForm` directive is the base to create any form. You can define a `dataService` and a
+         * `modelKey` to autoload a record. The `serverSaveUrl` can be used to create a new or update
+         * an existing record.
          * 
          * @scope
          */
