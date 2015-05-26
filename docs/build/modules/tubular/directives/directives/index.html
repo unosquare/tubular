@@ -114,16 +114,15 @@ It uses the `TubularModel` to retrieve column or field information.</li>
     <li class="list-group-item">
         tbColumnFilter - The `tbColumnFilter` directive is a the basic filter popover. You need to define it inside a `tbColumn`.
 
-The parent scope will provide information about the data type.
-TODO: List params from tubularGridFilterService</li>
+The parent scope will provide information about the data type.</li>
     <li class="list-group-item">
         tbColumnDateTimeFilter - The `tbColumnDateTimeFilter` directive is a specific filter with Date and Time editors, instead regular inputs.
 
-The parent scope will provide information about the data type.
-
-TODO: List params from tubularGridFilterService</li>
+The parent scope will provide information about the data type.</li>
     <li class="list-group-item">
         tbColumnOptionsFilter - The `tbColumnOptionsFilter` directive is a filter with an dropdown listing all the possible values to filter.</li>
     <li class="list-group-item">
-        tbForm - The `tbForm` directive is the base to create any form.</li>
+        tbForm - The `tbForm` directive is the base to create any form. You can define a `dataService` and a
+`modelKey` to autoload a record. The `serverSaveUrl` can be used to create a new or update
+an existing record.</li>
 </ul>

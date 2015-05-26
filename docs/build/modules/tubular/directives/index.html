@@ -240,17 +240,14 @@ It uses the `TubularModel` to retrieve column or field information.</li>
             tbColumnFilter
         </a> - The `tbColumnFilter` directive is a the basic filter popover. You need to define it inside a `tbColumn`.
 
-The parent scope will provide information about the data type.
-TODO: List params from tubularGridFilterService</li>
+The parent scope will provide information about the data type.</li>
     
     <li class="list-group-item">
         <a ng-click="internalLink('tbColumnDateTimeFilter')">
             tbColumnDateTimeFilter
         </a> - The `tbColumnDateTimeFilter` directive is a specific filter with Date and Time editors, instead regular inputs.
 
-The parent scope will provide information about the data type.
-
-TODO: List params from tubularGridFilterService</li>
+The parent scope will provide information about the data type.</li>
     
     <li class="list-group-item">
         <a ng-click="internalLink('tbColumnOptionsFilter')">
@@ -260,7 +257,9 @@ TODO: List params from tubularGridFilterService</li>
     <li class="list-group-item">
         <a ng-click="internalLink('tbForm')">
             tbForm
-        </a> - The `tbForm` directive is the base to create any form.</li>
+        </a> - The `tbForm` directive is the base to create any form. You can define a `dataService` and a
+`modelKey` to autoload a record. The `serverSaveUrl` can be used to create a new or update
+an existing record.</li>
     
 </ul>
 
