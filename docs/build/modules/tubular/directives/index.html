@@ -3,7 +3,7 @@
     <h1>tubular.directives Module</h1>
 </div>
 <div>
-    <p>Tubular Directives module. All the required directives are in this module.</p>
+    <p>Tubular Directives module. It contains all the directives.</p>
 <p>It depends upon <a href="modules/tubular/services/"><code>tubular.services</code></a> and <a href="modules/tubular/models/"><code>tubular.models</code></a>.</p>
 
 </div>
@@ -13,23 +13,6 @@
 
 <h3>filters</h3>
 <ul class="list-group">
-    
-    <li class="list-group-item">
-        <a ng-click="internalLink('errormessage')">
-            errormessage
-        </a> - Use `errormessage` to retrieve the friendly message possible in a HTTP Error object.</li>
-    
-    <li class="list-group-item">
-        <a ng-click="internalLink('numberorcurrency')">
-            numberorcurrency
-        </a> - `numberorcurrency` is a hack to hold `currency` and `number` in a single filter.</li>
-    
-    <li class="list-group-item">
-        <a ng-click="internalLink('characters')">
-            characters
-        </a> - `characters` filter truncates a sentence to a number of characters.
-
-Based on https://github.com/sparkalow/angular-truncate/blob/master/src/truncate.js</li>
     
 </ul>
 
@@ -260,16 +243,5 @@ The parent scope will provide information about the data type.</li>
         </a> - The `tbForm` directive is the base to create any form. You can define a `dataService` and a
 `modelKey` to autoload a record. The `serverSaveUrl` can be used to create a new or update
 an existing record.</li>
-    
-</ul>
-
-
-<h3>constants</h3>
-<ul class="list-group">
-    
-    <li class="list-group-item">
-        <a ng-click="internalLink('tubularConst')">
-            tubularConst
-        </a> - The `tubularConst` holds some UI constants.</li>
     
 </ul>
