@@ -1,7 +1,16 @@
 ﻿(function() {
     'use strict';
 
-    angular.module('tubular.directives')
+    /**
+     * @ngdoc module
+     * @name tubular.directives
+     * 
+     * @description 
+     * Tubular Directives module. It contains all the directives.
+     * 
+     * It depends upon {@link tubular.services} and {@link tubular.models}.
+     */
+    angular.module('tubular.directives', ['tubular.services', 'tubular.models'])
         /**
          * @ngdoc directive
          * @name tbGrid
@@ -15,11 +24,11 @@
          * 
          * @param {string} serverUrl Set the HTTP URL where the data comes.
          * @param {string} serverSaveUrl Set the HTTP URL where the data will be saved.
+         * @param {string} serverSaveMethod Set HTTP Method to save data.
          * @param {int} pageSize Define how many records to show in a page, default 20.
          * @param {function} onBeforeGetData Callback to execute before to get data from service.
          * @param {string} requestMethod Set HTTP Method to get data.
-         * @param {object} dataService Define Data service (instance) to retrieve data, defaults `tubularHttp`.
-         * @param {string} dataServiceName Define Data service (name) to retrieve data, defaults `tubularHttp`.
+         * @param {string} serviceName Define Data service (name) to retrieve data, defaults `tubularHttp`.
          * @param {bool} requireAuthentication Set if authentication check must be executed, default true.
          * @param {string} name Grid's name, used to store metainfo in localstorage.
          * @param {string} editorMode Define if grid is read-only or it has editors (inline or popup).
@@ -42,7 +51,6 @@
                         pageSize: '@?',
                         onBeforeGetData: '=?',
                         requestMethod: '@',
-                        dataService: '=?service',
                         dataServiceName: '@?serviceName',
                         requireAuthentication: '@?',
                         name: '@?gridName',
@@ -50,8 +58,8 @@
                         showLoading: '=?'
                     },
                     controller: [
-                        '$scope', 'localStorageService', 'tubularPopupService', 'tubularModel', 'tubularHttp', 'tubularOData', '$routeParams',
-                        function($scope, localStorageService, tubularPopupService, TubularModel, tubularHttp, tubularOData, $routeParams) {
+                        '$scope', 'localStorageService', 'tubularPopupService', 'tubularModel', 'tubularHttp', '$routeParams',
+                        function($scope, localStorageService, tubularPopupService, TubularModel, tubularHttp, $routeParams) {
 
                             $scope.tubularDirective = 'tubular-grid';
                             $scope.columns = [];
@@ -74,18 +82,13 @@
                             };
                             $scope.isEmpty = false;
                             $scope.tempRow = new TubularModel($scope, {});
-                            $scope.dataService = $scope.dataService || tubularHttp;
+                            $scope.dataService = tubularHttp.getDataService($scope.dataServiceName);
                             $scope.requireAuthentication = $scope.requireAuthentication || true;
                             $scope.name = $scope.name || 'tbgrid';
                             $scope.editorMode = $scope.editorMode || 'none';
                             $scope.canSaveState = false;
                             $scope.groupBy = '';
                             $scope.showLoading = $scope.showLoading || true;
-
-                            // Helper to use OData without controller
-                            if ($scope.dataServiceName === 'odata') {
-                                $scope.dataService = tubularOData;
-                            }
 
                             $scope.$watch('columns', function() {
                                 if ($scope.hasColumnsDefinitions === false || $scope.canSaveState === false)

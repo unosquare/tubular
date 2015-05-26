@@ -570,29 +570,36 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
     /**
      * @ngdoc module
-     * @name tubular.directives
+     * @name tubular
      * 
      * @description 
-     * Tubular Directives module. All the required directives are in this module.
+     * Tubular module. Entry point to get all the Tubular functionality.
      * 
-     * It depends upon {@link tubular.services} and {@link tubular.models}.
+     * It depends upon  {@link tubular.directives}, {@link tubular.services} and {@link tubular.models}.
      */
-    angular.module('tubular.directives', ['tubular.services', 'tubular.models', 'LocalStorageModule','a8m.group-by'])
+    angular.module('tubular', ['tubular.directives', 'tubular.services', 'tubular.models', 'LocalStorageModule', 'a8m.group-by'])
         .config([
-            'localStorageServiceProvider', function (localStorageServiceProvider) {
+            'localStorageServiceProvider', function(localStorageServiceProvider) {
                 localStorageServiceProvider.setPrefix('tubular');
 
                 // define console methods if not defined
                 if (typeof console === "undefined") {
                     window.console = {
-                        log: function () { },
-                        debug: function () { },
-                        error: function () { },
-                        assert: function () { },
-                        info: function () { },
-                        warn: function () { },
+                        log: function() {},
+                        debug: function() {},
+                        error: function() {},
+                        assert: function() {},
+                        info: function() {},
+                        warn: function() {},
                     };
                 }
+            }
+        ])
+        .run(['tubularHttp', 'tubularOData', 'tubularLocalData',
+            function (tubularHttp, tubularOData, tubularLocalData) {
+                // register data services
+                tubularHttp.registerService('odata', tubularOData);
+                tubularHttp.registerService('local', tubularLocalData);
             }
         ])
         /**
@@ -617,8 +624,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @param {object} input Input to filter.
          * @returns {string} Formatted error message.
          */
-        .filter('errormessage', function () {
-            return function (input) {
+        .filter('errormessage', function() {
+            return function(input) {
                 if (angular.isDefined(input) && angular.isDefined(input.data) &&
                     input.data != null &&
                     angular.isDefined(input.data.ExceptionMessage))
@@ -636,8 +643,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * `numberorcurrency` is a hack to hold `currency` and `number` in a single filter.
          */
         .filter('numberorcurrency', [
-            '$filter', function ($filter) {
-                return function (input, format, symbol, fractionSize) {
+            '$filter', function($filter) {
+                return function(input, format, symbol, fractionSize) {
                     symbol = symbol || "$";
                     fractionSize = fractionSize || 2;
 
@@ -658,9 +665,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * `characters` filter truncates a sentence to a number of characters.
          * 
          * Based on https://github.com/sparkalow/angular-truncate/blob/master/src/truncate.js
-         */ 
-        .filter('characters', function () {
-            return function (input, chars, breakOnWord) {
+         */
+        .filter('characters', function() {
+            return function(input, chars, breakOnWord) {
                 if (isNaN(chars)) return input;
                 if (chars <= 0) return '';
 
@@ -690,7 +697,16 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 (function() {
     'use strict';
 
-    angular.module('tubular.directives')
+    /**
+     * @ngdoc module
+     * @name tubular.directives
+     * 
+     * @description 
+     * Tubular Directives module. It contains all the directives.
+     * 
+     * It depends upon {@link tubular.services} and {@link tubular.models}.
+     */
+    angular.module('tubular.directives', ['tubular.services', 'tubular.models'])
         /**
          * @ngdoc directive
          * @name tbGrid
@@ -704,11 +720,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * 
          * @param {string} serverUrl Set the HTTP URL where the data comes.
          * @param {string} serverSaveUrl Set the HTTP URL where the data will be saved.
+         * @param {string} serverSaveMethod Set HTTP Method to save data.
          * @param {int} pageSize Define how many records to show in a page, default 20.
          * @param {function} onBeforeGetData Callback to execute before to get data from service.
          * @param {string} requestMethod Set HTTP Method to get data.
-         * @param {object} dataService Define Data service (instance) to retrieve data, defaults `tubularHttp`.
-         * @param {string} dataServiceName Define Data service (name) to retrieve data, defaults `tubularHttp`.
+         * @param {string} serviceName Define Data service (name) to retrieve data, defaults `tubularHttp`.
          * @param {bool} requireAuthentication Set if authentication check must be executed, default true.
          * @param {string} name Grid's name, used to store metainfo in localstorage.
          * @param {string} editorMode Define if grid is read-only or it has editors (inline or popup).
@@ -731,7 +747,6 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         pageSize: '@?',
                         onBeforeGetData: '=?',
                         requestMethod: '@',
-                        dataService: '=?service',
                         dataServiceName: '@?serviceName',
                         requireAuthentication: '@?',
                         name: '@?gridName',
@@ -739,8 +754,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         showLoading: '=?'
                     },
                     controller: [
-                        '$scope', 'localStorageService', 'tubularPopupService', 'tubularModel', 'tubularHttp', 'tubularOData', '$routeParams',
-                        function($scope, localStorageService, tubularPopupService, TubularModel, tubularHttp, tubularOData, $routeParams) {
+                        '$scope', 'localStorageService', 'tubularPopupService', 'tubularModel', 'tubularHttp', '$routeParams',
+                        function($scope, localStorageService, tubularPopupService, TubularModel, tubularHttp, $routeParams) {
 
                             $scope.tubularDirective = 'tubular-grid';
                             $scope.columns = [];
@@ -763,18 +778,13 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             };
                             $scope.isEmpty = false;
                             $scope.tempRow = new TubularModel($scope, {});
-                            $scope.dataService = $scope.dataService || tubularHttp;
+                            $scope.dataService = tubularHttp.getDataService($scope.dataServiceName);
                             $scope.requireAuthentication = $scope.requireAuthentication || true;
                             $scope.name = $scope.name || 'tbgrid';
                             $scope.editorMode = $scope.editorMode || 'none';
                             $scope.canSaveState = false;
                             $scope.groupBy = '';
                             $scope.showLoading = $scope.showLoading || true;
-
-                            // Helper to use OData without controller
-                            if ($scope.dataServiceName === 'odata') {
-                                $scope.dataService = tubularOData;
-                            }
 
                             $scope.$watch('columns', function() {
                                 if ($scope.hasColumnsDefinitions === false || $scope.canSaveState === false)
@@ -2926,6 +2936,15 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * an existing record.
          * 
          * @scope
+         * 
+         * @param {string} serverUrl Set the HTTP URL where the data comes.
+         * @param {string} serverSaveUrl Set the HTTP URL where the data will be saved.
+         * @param {string} serverSaveMethod Set HTTP Method to save data.
+         * @param {object} model The object model to show in the form.
+         * @param {boolean} isNew Set if the form is for create a new record.
+         * @param {string} modelKey Defines the fields to use like Keys.
+         * @param {string} serviceName Define Data service (name) to retrieve data, defaults `tubularHttp`.
+         * @param {bool} requireAuthentication Set if authentication check must be executed, default true.
          */
         .directive('tbForm', [
             function() {
@@ -2941,26 +2960,20 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         serverSaveMethod: '@',
                         isNew: '@',
                         modelKey: '@?',
-                        dataService: '=?service',
                         dataServiceName: '@?serviceName',
                         requireAuthentication: '=?'
                     },
                     controller: [
-                        '$scope', '$routeParams', 'tubularModel', 'tubularHttp', 'tubularOData',
-                        function($scope, $routeParams, TubularModel, tubularHttp, tubularOData) {
+                        '$scope', '$routeParams', 'tubularModel', 'tubularHttp',
+                        function($scope, $routeParams, TubularModel, tubularHttp) {
                             $scope.tubularDirective = 'tubular-form';
                             $scope.serverSaveMethod = $scope.serverSaveMethod || 'POST';
                             $scope.fields = [];
                             $scope.hasFieldsDefinitions = false;
+                            $scope.dataService = tubularHttp.getDataService($scope.dataServiceName);
+
                             // Try to load a key from markup or route
                             $scope.modelKey = $scope.modelKey || $routeParams.param;
-
-                            $scope.dataService = $scope.dataService || tubularHttp;
-
-                            // Helper to use OData without controller
-                            if ($scope.dataServiceName === 'odata') {
-                                $scope.dataService = tubularOData;
-                            }
 
                             // Setup require authentication
                             $scope.requireAuthentication = angular.isUndefined($scope.requireAuthentication) ? true : $scope.requireAuthentication;
@@ -3477,7 +3490,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     csvFile += processRow(rows[i]);
                 }
 
-                // Add "\uFEFF" like UTF-8 BOM
+                // Add "\uFEFF" (UTF-8 BOM)
                 var blob = new Blob(["\uFEFF" + csvFile], { type: 'text/csv;charset=utf-8;' });
                 saveAs(blob, filename);
             };
@@ -3570,6 +3583,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     $(el).find('[data-toggle="popover"]').on('shown.bs.popover', openCallback);
                 };
 
+                /**
+                 * Creates a `FilterModel` using a scope and an Attributes array
+                 */
                 me.createFilterModel = function(scope, lAttrs) {
                     scope.filter = new FilterModel(lAttrs);
                     scope.filter.Name = scope.$parent.column.Name;
@@ -3625,6 +3641,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     help: '@?'
                 };
 
+                /**
+                 * Setups a new Editor, this functions is like a common class constructor to be used
+                 * with all the tubularEditors.
+                 */
                 me.setupScope = function(scope, defaultFormat) {
                     scope.isEditing = angular.isUndefined(scope.isEditing) ? true : scope.isEditing;
                     scope.showLabel = scope.showLabel || false;
@@ -3688,7 +3708,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             if (parent.hasFieldsDefinitions !== false)
                                 throw 'Cannot define more fields. Field definitions have been sealed';
 
-                            scope.$component = parent;
+                            scope.$component = parent.tubularDirective === 'tubular-form' ? parent : parent.$component;
+
                             scope.Name = scope.name;
                             scope.bindScope = function() {
                                 scope.$parent.Model = parent.model;
@@ -3728,7 +3749,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
     angular.module('tubular.services')
         /**
-         * @ngdoc service
+         * @ngdoc servicetubularHttp
          * @name tubularHttp
          *
          * @description
@@ -3815,17 +3836,15 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
             me.authenticate = function(username, password, successCallback, errorCallback, persistData) {
                 this.removeAuthentication();
-                var config = {
+                
+                $http({
                     method: 'POST',
                     url: '/api/token',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
                     },
                     data: 'grant_type=password&username=' + username + '&password=' + password,
-                };
-
-                $http(config)
-                    .success(function(data) {
+                }).success(function(data) {
                         me.userData.isAuthenticated = true;
                         me.userData.username = data.userName;
                         me.userData.bearerToken = data.access_token;
@@ -4014,11 +4033,26 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             me.getByKey = function (url, key) {
                 return me.get(url + key);
             };
+
+            // This is a kind of factory to retrieve a DataService
+            me.instances = [];
+
+            me.registerService = function(name, instance) {
+                me.instances[name] = instance;
+            };
+
+            me.getDataService = function(name) {
+                if (angular.isUndefined(name) || name == null || name == 'tubularHttp') return me;
+
+                var instance = me.instances[name];
+
+                return instance == null ? me : instance;
+            };
         }
     ]);
 })();
 ///#source 1 1 tubular/tubular-services-odata.js
-(function () {
+(function() {
     'use strict';
 
     angular.module('tubular.services')
@@ -4032,12 +4066,13 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * 
          * This service provides authentication using bearer-tokens.
          */
-        .service('tubularOData', ['tubularHttp', function tubularOData(tubularHttp) {
+        .service('tubularOData', [
+            'tubularHttp', function tubularOData(tubularHttp) {
                 var me = this;
-
+                
                 me.requireAuthentication = true;
 
-                me.setRequireAuthentication = function (val) {
+                me.setRequireAuthentication = function(val) {
                     me.requireAuthentication = val;
                 };
 
@@ -4061,7 +4096,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     url += url.indexOf('?') > 0 ? '&' : '?';
                     url += '$format=json&$inlinecount=allpages';
 
-                    url += "&$select=" + params.Columns.map(function (el) { return el.Name; }).join(',');
+                    url += "&$select=" + params.Columns.map(function(el) { return el.Name; }).join(',');
 
                     if (params.Take != -1) {
                         url += "&$skip=" + params.Skip;
@@ -4130,7 +4165,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     };
                 };
 
-                me.saveDataAsync = function (model, request) {
+                me.saveDataAsync = function(model, request) {
                     tubularHttp.setRequireAuthentication(request.requireAuthentication || me.requireAuthentication);
                     return tubularHttp.saveDataAsync(model, request); //TODO: Check how to handle
                 };
@@ -4151,9 +4186,137 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     return tubularHttp.put(url, data);
                 };
 
-                me.getByKey = function (url, key) {
+                me.getByKey = function(url, key) {
                     tubularHttp.setRequireAuthentication(me.requireAuthentication);
                     return tubularHttp.get(url + "(" + key + ")");
+                };
+            }
+        ]);
+})();
+///#source 1 1 tubular/tubular-services-localdata.js
+(function() {
+    'use strict';
+
+    angular.module('tubular.services')
+        /**
+         * @ngdoc service
+         * @name tubularLocalData
+         *
+         * @description
+         * Use `tubularLocalData` to connect a grid or a form to a local
+         * JSON database.
+         */
+        .service('tubularLocalData', [
+            'tubularHttp', '$q', '$filter', function tubularOData(tubularHttp, $q, $filter) {
+                var me = this;
+
+                me.database = null;
+
+                me.retrieveDataAsync = function(request) {
+                    request.requireAuthentication = false;
+                    var cancelFunc = function(reason) {
+                        console.error(reason);
+                        $q.defer().resolve(reason);
+                    };
+
+                    // If database is null, retrieve it
+                    if (me.database == null) {
+                        return {
+                            promise: $q(function(resolve, reject) {
+                                resolve(tubularHttp.retrieveDataAsync(request).promise.then(function(data) {
+                                    me.database = data;
+                                    // TODO: Maybe check dataset and convert DATES
+                                    return me.pageRequest(request.data);
+                                }));
+                            }),
+                            cancel: cancelFunc
+                        };
+                    }
+
+                    return {
+                        promise: $q(function(resolve, reject) {
+                            resolve(me.pageRequest(request.data));
+                        }),
+                        cancel: cancelFunc
+                    };
+                };
+
+                me.pageRequest = function(request) {
+                    var set = me.database;
+
+                    // Get columns with sort
+                    // TODO: Check SortOrder 
+                    var sorts = request.Columns
+                        .filter(function(el) { return el.SortOrder > 0; })
+                        .map(function(el) { return (el.SortDirection == 'Descending' ? '-' : '') + el.Name; });
+
+                    for (var sort in sorts)
+                        set = $filter('orderBy')(set, sorts[sort]);
+
+                    // Get filters (only Contains)
+                    var filters = request.Columns
+                        .filter(function (el) { return el.Filter != null && el.Filter.Text != null; })
+                        .map(function (el) {
+                        var obj = {};
+                        if (el.Filter.Operator == 'Contains')
+                            obj[el.Name] = el.Filter.Text;
+
+                            return obj;
+                        });
+
+                    if (filters.length > 0) {
+                        var filtersPattern = {};
+                        for (var i in filters) {
+                            for (var k in filters[i])
+                                filtersPattern[k] = filters[i][k];
+                        }
+
+                        set = $filter('filter')(set, filtersPattern);
+                    }
+
+                    // TODO: Free text search
+
+                    var response = {
+                        Counter: 0,
+                        CurrentPage: 1,
+                        FilteredRecordCount: set.length,
+                        TotalRecordCount: set.length
+                    };
+
+                    response.Payload = set.slice(request.Skip, request.Take + request.Skip);
+                    response.TotalRecordCount = response.Payload.length;
+
+                    response.TotalPages = (response.FilteredRecordCount + request.Take - 1) / request.Take;
+
+                    if (response.TotalPages > 0) {
+                        response.CurrentPage = 1 + ((request.Skip / response.FilteredRecordCount) * response.TotalPages);
+                    }
+
+                    return response;
+                };
+
+                me.saveDataAsync = function (model, request) {
+                    // TODO: COMPLETE
+                };
+
+                me.get = function(url) {
+                    // TODO: COMPLETE
+                };
+
+                me.delete = function(url) {
+                    // TODO: COMPLETE
+                };
+
+                me.post = function(url, data) {
+                    // TODO: COMPLETE
+                };
+
+                me.put = function(url, data) {
+                    // TODO: COMPLETE
+                };
+
+                me.getByKey = function(url, key) {
+                    // TODO: COMPLETE
                 };
             }
         ]);

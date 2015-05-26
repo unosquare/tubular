@@ -13,6 +13,15 @@
          * an existing record.
          * 
          * @scope
+         * 
+         * @param {string} serverUrl Set the HTTP URL where the data comes.
+         * @param {string} serverSaveUrl Set the HTTP URL where the data will be saved.
+         * @param {string} serverSaveMethod Set HTTP Method to save data.
+         * @param {object} model The object model to show in the form.
+         * @param {boolean} isNew Set if the form is for create a new record.
+         * @param {string} modelKey Defines the fields to use like Keys.
+         * @param {string} serviceName Define Data service (name) to retrieve data, defaults `tubularHttp`.
+         * @param {bool} requireAuthentication Set if authentication check must be executed, default true.
          */
         .directive('tbForm', [
             function() {
@@ -28,26 +37,20 @@
                         serverSaveMethod: '@',
                         isNew: '@',
                         modelKey: '@?',
-                        dataService: '=?service',
                         dataServiceName: '@?serviceName',
                         requireAuthentication: '=?'
                     },
                     controller: [
-                        '$scope', '$routeParams', 'tubularModel', 'tubularHttp', 'tubularOData',
-                        function($scope, $routeParams, TubularModel, tubularHttp, tubularOData) {
+                        '$scope', '$routeParams', 'tubularModel', 'tubularHttp',
+                        function($scope, $routeParams, TubularModel, tubularHttp) {
                             $scope.tubularDirective = 'tubular-form';
                             $scope.serverSaveMethod = $scope.serverSaveMethod || 'POST';
                             $scope.fields = [];
                             $scope.hasFieldsDefinitions = false;
+                            $scope.dataService = tubularHttp.getDataService($scope.dataServiceName);
+
                             // Try to load a key from markup or route
                             $scope.modelKey = $scope.modelKey || $routeParams.param;
-
-                            $scope.dataService = $scope.dataService || tubularHttp;
-
-                            // Helper to use OData without controller
-                            if ($scope.dataServiceName === 'odata') {
-                                $scope.dataService = tubularOData;
-                            }
 
                             // Setup require authentication
                             $scope.requireAuthentication = angular.isUndefined($scope.requireAuthentication) ? true : $scope.requireAuthentication;

@@ -5,29 +5,36 @@
 
     /**
      * @ngdoc module
-     * @name tubular.directives
+     * @name tubular
      * 
      * @description 
-     * Tubular Directives module. All the required directives are in this module.
+     * Tubular module. Entry point to get all the Tubular functionality.
      * 
-     * It depends upon {@link tubular.services} and {@link tubular.models}.
+     * It depends upon  {@link tubular.directives}, {@link tubular.services} and {@link tubular.models}.
      */
-    angular.module('tubular.directives', ['tubular.services', 'tubular.models', 'LocalStorageModule','a8m.group-by'])
+    angular.module('tubular', ['tubular.directives', 'tubular.services', 'tubular.models', 'LocalStorageModule', 'a8m.group-by'])
         .config([
-            'localStorageServiceProvider', function (localStorageServiceProvider) {
+            'localStorageServiceProvider', function(localStorageServiceProvider) {
                 localStorageServiceProvider.setPrefix('tubular');
 
                 // define console methods if not defined
                 if (typeof console === "undefined") {
                     window.console = {
-                        log: function () { },
-                        debug: function () { },
-                        error: function () { },
-                        assert: function () { },
-                        info: function () { },
-                        warn: function () { },
+                        log: function() {},
+                        debug: function() {},
+                        error: function() {},
+                        assert: function() {},
+                        info: function() {},
+                        warn: function() {},
                     };
                 }
+            }
+        ])
+        .run(['tubularHttp', 'tubularOData', 'tubularLocalData',
+            function (tubularHttp, tubularOData, tubularLocalData) {
+                // register data services
+                tubularHttp.registerService('odata', tubularOData);
+                tubularHttp.registerService('local', tubularLocalData);
             }
         ])
         /**
@@ -52,8 +59,8 @@
          * @param {object} input Input to filter.
          * @returns {string} Formatted error message.
          */
-        .filter('errormessage', function () {
-            return function (input) {
+        .filter('errormessage', function() {
+            return function(input) {
                 if (angular.isDefined(input) && angular.isDefined(input.data) &&
                     input.data != null &&
                     angular.isDefined(input.data.ExceptionMessage))
@@ -71,8 +78,8 @@
          * `numberorcurrency` is a hack to hold `currency` and `number` in a single filter.
          */
         .filter('numberorcurrency', [
-            '$filter', function ($filter) {
-                return function (input, format, symbol, fractionSize) {
+            '$filter', function($filter) {
+                return function(input, format, symbol, fractionSize) {
                     symbol = symbol || "$";
                     fractionSize = fractionSize || 2;
 
@@ -93,9 +100,9 @@
          * `characters` filter truncates a sentence to a number of characters.
          * 
          * Based on https://github.com/sparkalow/angular-truncate/blob/master/src/truncate.js
-         */ 
-        .filter('characters', function () {
-            return function (input, chars, breakOnWord) {
+         */
+        .filter('characters', function() {
+            return function(input, chars, breakOnWord) {
                 if (isNaN(chars)) return input;
                 if (chars <= 0) return '';
 

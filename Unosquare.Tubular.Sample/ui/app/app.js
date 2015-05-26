@@ -51,7 +51,7 @@
 
                 $scope.$on('tbForm_OnSuccessfulSave', function(data) {
                     toastr.success("Record updated");
-                    $location.path('/');
+                    document.location = document.location;
                 });
 
                 $scope.$on('tbForm_OnSavingNoChanges', function(model) {
@@ -66,7 +66,7 @@
         ]);
 
     angular.module('app', [
-        'tubular.directives',
+        'tubular',
         'app.routes',
         'app.controllers'
     ]);

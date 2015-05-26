@@ -55,7 +55,7 @@
                                     <tb-column-header>{{label}}</tb-column-header>
                                     <tb-column-filter></tb-column-filter>
                                 </tb-column>
-                                <tb-column name="ShippedDate" label="Date" column-type="datetime" class="column-md">
+                                <tb-column name="ShippedDate" label="Date" column-type="date" class="column-md">
                                     <tb-column-header>{{label}}</tb-column-header>
                                     <tb-column-date-time-filter></tb-column-date-time-filter>
                                 </tb-column>
@@ -103,7 +103,7 @@
                                 </tb-row-template>
 
                                 <tb-row-template ng-repeat="row in $component.rows" row-model="row" selectable="true">
-                                    <tb-cell-template ng-class="{'danger': rowModel.$hasChanges}">
+                                    <tb-cell-template ng-class="{'danger': rowModel.$hasChanges}" class="cell-menu">
                                         <input type="checkbox" ng-model="row.$selected" class="hidden-xs hidden-sm"
                                                ng-click="$parent.changeSelection()" />
                                         <div class="btn-group">

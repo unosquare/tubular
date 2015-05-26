@@ -3,7 +3,7 @@
 
     angular.module('tubular.services')
         /**
-         * @ngdoc service
+         * @ngdoc servicetubularHttp
          * @name tubularHttp
          *
          * @description
@@ -90,17 +90,15 @@
 
             me.authenticate = function(username, password, successCallback, errorCallback, persistData) {
                 this.removeAuthentication();
-                var config = {
+                
+                $http({
                     method: 'POST',
                     url: '/api/token',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
                     },
                     data: 'grant_type=password&username=' + username + '&password=' + password,
-                };
-
-                $http(config)
-                    .success(function(data) {
+                }).success(function(data) {
                         me.userData.isAuthenticated = true;
                         me.userData.username = data.userName;
                         me.userData.bearerToken = data.access_token;
@@ -288,6 +286,21 @@
 
             me.getByKey = function (url, key) {
                 return me.get(url + key);
+            };
+
+            // This is a kind of factory to retrieve a DataService
+            me.instances = [];
+
+            me.registerService = function(name, instance) {
+                me.instances[name] = instance;
+            };
+
+            me.getDataService = function(name) {
+                if (angular.isUndefined(name) || name == null || name == 'tubularHttp') return me;
+
+                var instance = me.instances[name];
+
+                return instance == null ? me : instance;
             };
         }
     ]);

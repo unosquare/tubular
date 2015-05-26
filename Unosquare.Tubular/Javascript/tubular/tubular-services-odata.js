@@ -1,4 +1,4 @@
-﻿(function () {
+﻿(function() {
     'use strict';
 
     angular.module('tubular.services')
@@ -12,12 +12,13 @@
          * 
          * This service provides authentication using bearer-tokens.
          */
-        .service('tubularOData', ['tubularHttp', function tubularOData(tubularHttp) {
+        .service('tubularOData', [
+            'tubularHttp', function tubularOData(tubularHttp) {
                 var me = this;
-
+                
                 me.requireAuthentication = true;
 
-                me.setRequireAuthentication = function (val) {
+                me.setRequireAuthentication = function(val) {
                     me.requireAuthentication = val;
                 };
 
@@ -41,7 +42,7 @@
                     url += url.indexOf('?') > 0 ? '&' : '?';
                     url += '$format=json&$inlinecount=allpages';
 
-                    url += "&$select=" + params.Columns.map(function (el) { return el.Name; }).join(',');
+                    url += "&$select=" + params.Columns.map(function(el) { return el.Name; }).join(',');
 
                     if (params.Take != -1) {
                         url += "&$skip=" + params.Skip;
@@ -110,7 +111,7 @@
                     };
                 };
 
-                me.saveDataAsync = function (model, request) {
+                me.saveDataAsync = function(model, request) {
                     tubularHttp.setRequireAuthentication(request.requireAuthentication || me.requireAuthentication);
                     return tubularHttp.saveDataAsync(model, request); //TODO: Check how to handle
                 };
@@ -131,7 +132,7 @@
                     return tubularHttp.put(url, data);
                 };
 
-                me.getByKey = function (url, key) {
+                me.getByKey = function(url, key) {
                     tubularHttp.setRequireAuthentication(me.requireAuthentication);
                     return tubularHttp.get(url + "(" + key + ")");
                 };

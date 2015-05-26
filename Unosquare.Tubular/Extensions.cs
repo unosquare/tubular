@@ -148,6 +148,23 @@
             return response;
         }
 
+        // TODO: This code is for use with Dynamic LINQ, but It needs EF
+        //private static bool isDynamicLinqReady = false;
+
+        //private static void FixDynamicLinq()
+        //{
+        //    var type = typeof(DynamicQueryable).Assembly.GetType("System.Linq.Dynamic.ExpressionParser");
+
+        //    FieldInfo field = type.GetField("predefinedTypes", BindingFlags.Static | BindingFlags.NonPublic);
+
+        //    Type[] predefinedTypes = (Type[])field.GetValue(null);
+
+        //    Array.Resize(ref predefinedTypes, predefinedTypes.Length + 1);
+        //    predefinedTypes[predefinedTypes.Length - 1] = typeof(EntityFunctions); // Your type
+
+        //    field.SetValue(null, predefinedTypes);
+        //}
+
         private static IQueryable FilterResponse(GridDataRequest request, IQueryable subset, GridDataResponse response)
         {
             // Perform Searching
@@ -177,11 +194,17 @@
                 {
                     case CompareOperators.Equals:
                         if (String.IsNullOrWhiteSpace(column.Filter.Text)) continue;
+
+                        // TODO: This code is for use with Dynamic LINQ, but It needs EF
+                        //if (column.DataType == DataType.Date.ToString().ToLower())
+                        //    searchLambda.AppendFormat("EntityFunctions.TruncateTime({0}) == @{1} &&", column.Name, searchParamArgs.Count);
+                        //else
                         searchLambda.AppendFormat("{0} == @{1} &&", column.Name, searchParamArgs.Count);
 
                         if (column.DataType == DataType.Numeric.ToString().ToLower())
                             searchParamArgs.Add(Decimal.Parse(column.Filter.Text));
-                        else if (column.DataType == DataType.DateTime.ToString().ToLower())
+                        else if (column.DataType == DataType.DateTime.ToString().ToLower() ||
+                                 column.DataType == DataType.Date.ToString().ToLower())
                             searchParamArgs.Add(DateTime.Parse(column.Filter.Text));
                         else if (column.DataType == DataType.Boolean.ToString().ToLower())
                             searchParamArgs.Add(Boolean.Parse(column.Filter.Text));

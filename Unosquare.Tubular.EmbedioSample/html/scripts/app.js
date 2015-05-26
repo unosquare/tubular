@@ -3,7 +3,7 @@
 
     angular.module('app', [
             'ngRoute',
-            'tubular.directives'
+            'tubular'
         ]).controller('TitleController', [
             '$scope', '$route', function($scope, $route) {
                 var me = this;

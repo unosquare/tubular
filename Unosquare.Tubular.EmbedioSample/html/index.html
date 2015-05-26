@@ -1,138 +1,220 @@
 ﻿<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:ng="http://angularjs.org/" lang="en" ng-app="app">
-<head>
-    <base href="/">
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="A set of AngularJS directives and C# classes designed to rapidly build modern web applications">
-    <meta name="keywords" content="application, html5, angularjs, responsive, web api">
-    <meta name="author" content="Unosquare Labs">
+    <head>
+        <base href="/">
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="A set of AngularJS directives and C# classes designed to rapidly build modern web applications">
+        <meta name="keywords" content="application, html5, angularjs, responsive, web api">
+        <meta name="author" content="Unosquare Labs">
 
-    <title>Unosquare - Tubular + EmbedIO Sample</title>
+        <title>Unosquare - Tubular + EmbedIO Sample</title>
 
-    <!-- Favicons -->
-    <link rel="icon" href="favicon.ico" />
+        <!-- Favicons -->
+        <link rel="icon" href="favicon.ico" />
 
-    <!-- CSS (from CDN) -->
-    <link rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap/3.3.4/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootswatch/3.3.4/lumen/bootstrap.min.css" />
-    <link rel="stylesheet" href="//cdn.jsdelivr.net/fontawesome/4.3.0/css/font-awesome.min.css" />
-    <link rel="stylesheet" href="//cdn.jsdelivr.net/toastr/2.0.1/toastr.css" />
+        <!-- CSS (from CDN) -->
+        <link rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap/3.3.4/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootswatch/3.3.4/lumen/bootstrap.min.css" />
+        <link rel="stylesheet" href="//cdn.jsdelivr.net/fontawesome/4.3.0/css/font-awesome.min.css" />
+        <link rel="stylesheet" href="//cdn.jsdelivr.net/toastr/2.0.1/toastr.css" />
 
-    <link rel="stylesheet" href="/vendor/tubular/tubular-bundle.css" />
+        <link rel="stylesheet" href="/vendor/tubular/tubular-bundle.css" />
 
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
+            <script src="//cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
 
-    <script src="//cdn.jsdelivr.net/g/jquery,bootstrap,angularjs(angular.min.js+angular-animate.min.js+angular-cookies.min.js+angular-route.min.js),toastr,angular.bootstrap(ui-bootstrap.min.js+ui-bootstrap-tpls.min.js)"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/angular-local-storage/0.1.5/angular-local-storage.min.js"></script>
+        <script src="//cdn.jsdelivr.net/g/jquery,bootstrap,angularjs(angular.min.js+angular-animate.min.js+angular-cookies.min.js+angular-route.min.js),toastr,angular.bootstrap(ui-bootstrap.min.js+ui-bootstrap-tpls.min.js)"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/angular-local-storage/0.1.5/angular-local-storage.min.js"></script>
 
-    <!-- Angular Application files -->
-    <script src="/vendor/tubular/tubular-bundle.js"></script>
-    <script src="/scripts/app.js"></script>
-</head>
+        <!-- Angular Application files -->
+        <script src="/vendor/tubular/tubular-bundle.js"></script>
+        <script src="/scripts/app.js"></script>
+    </head>
 
-<body ng-cloak>
-    <header class="navbar navbar-static-top" id="top" role="banner">
+    <body ng-cloak>
+        <header class="navbar navbar-static-top" id="top" role="banner">
+            <div class="container">
+                <div class="navbar-header">
+                    <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target=".bs-navbar-collapse">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                    <a href="http://unosquare.github.io/" class="navbar-brand">
+                        unosquare
+                    </a>
+                </div>
+                <nav class="collapse navbar-collapse bs-navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li>
+                            <a href="http://unosquare.github.io/embedio/">EmbedIO</a>
+                        </li>
+                        <li>
+                            <a href="http://unosquare.github.io/tubular/">Tubular</a>
+                        </li>
+                        <li>
+                            <a href="https://unopasscore.codeplex.com/">PassCore</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </header>
+
         <div class="container">
-            <div class="navbar-header">
-                <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target=".bs-navbar-collapse">
-                    <i class="fa fa-bars"></i>
-                </button>
-                <a href="http://unosquare.github.io/" class="navbar-brand">
-                    unosquare
-                </a>
-            </div>
-            <nav class="collapse navbar-collapse bs-navbar-collapse">
-                <ul class="nav navbar-nav">
-                    <li>
-                        <a href="http://unosquare.github.io/embedio/">EmbedIO</a>
-                    </li>
-                    <li>
-                        <a href="http://unosquare.github.io/tubular/">Tubular</a>
-                    </li>
-                    <li>
-                        <a href="https://unopasscore.codeplex.com/">PassCore</a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-    </header>
+            <h1>Tubular + EmbedIO <sample>sample</sample></h1>
 
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <h1>Tubular + EmbedIO <sample>sample</sample></h1>
-            </div>
-        </div>
+            <h3>Using EmbedIO Web API</h3>
 
-        <tb-grid server-url="/api/people" page-size="10">
-            <div class="row">
-                <tb-grid-pager class="col-md-8 col-xs-12"></tb-grid-pager>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="panel panel-default panel-rounded">
-                        <tb-grid-table class="table tubular-grid-table table-bordered responsive-mobile">
-                            <tb-column-definitions>
-                                <tb-column name="Key" sortable="true" sort-order="1"
-                                           sort-direction="Ascending" is-key="true"
-                                           column-type="numeric">
-                                    <tb-column-filter operator="Equals"></tb-column-filter>
-                                    <tb-column-header>
-                                        <span>{{label}}</span>
-                                    </tb-column-header>
-                                </tb-column>
-                                <tb-column name="Name" sortable="true">
-                                    <tb-column-filter operator="Equals"></tb-column-filter>
-                                    <tb-column-header>
-                                        <span>{{label}}</span>
-                                    </tb-column-header>
-                                </tb-column>
-                                <tb-column name="Age" sortable="true" column-type="numeric">
-                                    <tb-column-filter operator="Equals"></tb-column-filter>
-                                    <tb-column-header>
-                                        <span>{{label}}</span>
-                                    </tb-column-header>
-                                </tb-column>
-                                <tb-column name="EmailAddress" sortable="true">
-                                    <tb-column-filter operator="Contains"></tb-column-filter>
-                                    <tb-column-header>
-                                        <span>{{label}}</span>
-                                    </tb-column-header>
-                                </tb-column>
-                            </tb-column-definitions>
-                            <tb-row-set>
-                                <tb-row-template ng-repeat="cells in $component.rows"
-                                                 row-model="cells" selectable="false">
-                                    <tb-cell-template column-name="Key">
-                                        {{cells.Key}}
-                                    </tb-cell-template>
-                                    <tb-cell-template column-name="Name">
-                                        {{cells.Name}}
-                                    </tb-cell-template>
-                                    <tb-cell-template column-name="Age">
-                                        {{cells.Age}}
-                                    </tb-cell-template>
-                                    <tb-cell-template column-name="EmailAddress">
-                                        {{cells.EmailAddress}}
-                                    </tb-cell-template>
-                                </tb-row-template>
-                            </tb-row-set>
-                        </tb-grid-table>
+            <tb-grid server-url="/api/people" page-size="10">
+                <div class="row">
+                    <tb-grid-pager class="col-md-8 col-xs-12"></tb-grid-pager>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel panel-default panel-rounded">
+                            <tb-grid-table class="table tubular-grid-table table-bordered responsive-mobile">
+                                <tb-column-definitions>
+                                    <tb-column name="Key" sortable="true" sort-order="1"
+                                               sort-direction="Ascending" is-key="true"
+                                               column-type="numeric">
+                                        <tb-column-filter operator="Equals"></tb-column-filter>
+                                        <tb-column-header>
+                                            <span>{{label}}</span>
+                                        </tb-column-header>
+                                    </tb-column>
+                                    <tb-column name="Name" sortable="true">
+                                        <tb-column-filter operator="Equals"></tb-column-filter>
+                                        <tb-column-header>
+                                            <span>{{label}}</span>
+                                        </tb-column-header>
+                                    </tb-column>
+                                    <tb-column name="Age" sortable="true" column-type="numeric">
+                                        <tb-column-filter operator="Equals"></tb-column-filter>
+                                        <tb-column-header>
+                                            <span>{{label}}</span>
+                                        </tb-column-header>
+                                    </tb-column>
+                                    <tb-column name="EmailAddress" sortable="true">
+                                        <tb-column-filter operator="Contains"></tb-column-filter>
+                                        <tb-column-header>
+                                            <span>{{label}}</span>
+                                        </tb-column-header>
+                                    </tb-column>
+                                </tb-column-definitions>
+                                <tb-row-set>
+                                    <tb-row-template ng-repeat="cells in $component.rows"
+                                                     row-model="cells" selectable="false">
+                                        <tb-cell-template column-name="Key">
+                                            {{cells.Key}}
+                                        </tb-cell-template>
+                                        <tb-cell-template column-name="Name">
+                                            {{cells.Name}}
+                                        </tb-cell-template>
+                                        <tb-cell-template column-name="Age">
+                                            {{cells.Age}}
+                                        </tb-cell-template>
+                                        <tb-cell-template column-name="EmailAddress">
+                                            {{cells.EmailAddress}}
+                                        </tb-cell-template>
+                                    </tb-row-template>
+                                </tb-row-set>
+                            </tb-grid-table>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="row">
-                <tb-page-size-selector class="col-xs-6" selectorcss="input-sm">
-                </tb-page-size-selector>
-                <tb-grid-pager-info class="col-xs-6"></tb-grid-pager-info>
-            </div>
-        </tb-grid>
-    </div>
-</body>
+                <div class="row">
+                    <tb-page-size-selector class="col-xs-6" selectorcss="input-sm">
+                    </tb-page-size-selector>
+                    <tb-grid-pager-info class="col-xs-6"></tb-grid-pager-info>
+                </div>
+            </tb-grid>
+            <hr />
+            <h3>Using Local JSON</h3>
+
+            <tb-grid server-url="/data/database.json" page-size="10" service-name="local"
+                     request-method="GET">
+                <div class="row">
+                    <tb-grid-pager class="col-md-8 col-xs-12"></tb-grid-pager>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel panel-default panel-rounded">
+                            <tb-grid-table class="table tubular-grid-table table-bordered responsive-mobile">
+                                <tb-column-definitions>
+                                    <tb-column name="Id" sortable="true" sort-order="1"
+                                               sort-direction="Ascending">
+                                        <tb-column-filter></tb-column-filter>
+                                        <tb-column-header>
+                                            <span>{{label}}</span>
+                                        </tb-column-header>
+                                    </tb-column>
+                                    <tb-column name="Name" sortable="true">
+                                        <tb-column-filter></tb-column-filter>
+                                        <tb-column-header>
+                                            <span>{{label}}</span>
+                                        </tb-column-header>
+                                    </tb-column>
+                                    <tb-column name="Company" sortable="true">
+                                        <tb-column-filter></tb-column-filter>
+                                        <tb-column-header>
+                                            <span>{{label}}</span>
+                                        </tb-column-header>
+                                    </tb-column>
+                                    <tb-column name="Email" sortable="true">
+                                        <tb-column-filter></tb-column-filter>
+                                        <tb-column-header>
+                                            <span>{{label}}</span>
+                                        </tb-column-header>
+                                    </tb-column>
+                                    <tb-column name="PhoneNumber" sortable="true">
+                                        <tb-column-filter></tb-column-filter>
+                                        <tb-column-header>
+                                            <span>{{label}}</span>
+                                        </tb-column-header>
+                                    </tb-column>
+                                    <tb-column name="Birthdays" sortable="true">
+                                        <tb-column-filter></tb-column-filter>
+                                        <tb-column-header>
+                                            <span>{{label}}</span>
+                                        </tb-column-header>
+                                    </tb-column>
+                                </tb-column-definitions>
+                                <tb-row-set>
+                                    <tb-row-template ng-repeat="cells in $component.rows"
+                                                     row-model="cells" selectable="false">
+                                        <tb-cell-template column-name="Id">
+                                            {{cells.Id}}
+                                        </tb-cell-template>
+                                        <tb-cell-template column-name="Name">
+                                            {{cells.Name}}
+                                        </tb-cell-template>
+                                        <tb-cell-template column-name="Company">
+                                            {{cells.Company}}
+                                        </tb-cell-template>
+                                        <tb-cell-template column-name="Email">
+                                            {{cells.Email}}
+                                        </tb-cell-template>
+                                        <tb-cell-template column-name="PhoneNumber">
+                                            {{cells.PhoneNumber}}
+                                        </tb-cell-template>
+                                        <tb-cell-template column-name="Birthdays">
+                                            {{cells.Birthdays | date}}
+                                        </tb-cell-template>
+                                    </tb-row-template>
+                                </tb-row-set>
+                            </tb-grid-table>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <tb-page-size-selector class="col-xs-6" selectorcss="input-sm">
+                    </tb-page-size-selector>
+                    <tb-grid-pager-info class="col-xs-6"></tb-grid-pager-info>
+                </div>
+            </tb-grid>
+        </div>
+    </body>
 </html>

@@ -24,6 +24,7 @@
     <file>tubular/tubular-services.js</file>
     <file>tubular/tubular-services-http.js</file>
     <file>tubular/tubular-services-odata.js</file>
+    <file>tubular/tubular-services-localdata.js</file>
     <file>tubular/tubular-services-template.js</file>
     <file>tadaaapickr/tadaaapickr.pack.js</file>
   </files>

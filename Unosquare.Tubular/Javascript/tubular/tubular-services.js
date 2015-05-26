@@ -142,7 +142,7 @@
                     csvFile += processRow(rows[i]);
                 }
 
-                // Add "\uFEFF" like UTF-8 BOM
+                // Add "\uFEFF" (UTF-8 BOM)
                 var blob = new Blob(["\uFEFF" + csvFile], { type: 'text/csv;charset=utf-8;' });
                 saveAs(blob, filename);
             };
@@ -235,6 +235,9 @@
                     $(el).find('[data-toggle="popover"]').on('shown.bs.popover', openCallback);
                 };
 
+                /**
+                 * Creates a `FilterModel` using a scope and an Attributes array
+                 */
                 me.createFilterModel = function(scope, lAttrs) {
                     scope.filter = new FilterModel(lAttrs);
                     scope.filter.Name = scope.$parent.column.Name;
@@ -290,6 +293,10 @@
                     help: '@?'
                 };
 
+                /**
+                 * Setups a new Editor, this functions is like a common class constructor to be used
+                 * with all the tubularEditors.
+                 */
                 me.setupScope = function(scope, defaultFormat) {
                     scope.isEditing = angular.isUndefined(scope.isEditing) ? true : scope.isEditing;
                     scope.showLabel = scope.showLabel || false;
@@ -353,7 +360,8 @@
                             if (parent.hasFieldsDefinitions !== false)
                                 throw 'Cannot define more fields. Field definitions have been sealed';
 
-                            scope.$component = parent;
+                            scope.$component = parent.tubularDirective === 'tubular-form' ? parent : parent.$component;
+
                             scope.Name = scope.name;
                             scope.bindScope = function() {
                                 scope.$parent.Model = parent.model;
