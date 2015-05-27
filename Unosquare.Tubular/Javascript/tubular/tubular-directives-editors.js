@@ -348,7 +348,7 @@
                     template: '<div ng-class="{ \'form-group\' : isEditing, \'has-error\' : !$valid }">' +
                         '<span ng-hide="isEditing">{{ value }}</span>' +
                         '<label ng-show="showLabel">{{ label }}</label>' +
-                        '<select ng-options="d for d in options" ng-show="isEditing" ng-model="value" class="form-control" ' +
+                        '<select ng-options="{{ selectOptions }}" ng-show="isEditing" ng-model="value" class="form-control" ' +
                         'ng-required="required" />' +
                         '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">' +
                         '{{error}}' +
@@ -358,11 +358,15 @@
                     restrict: 'E',
                     replace: true,
                     transclude: true,
-                    scope: angular.extend({ options: '=?', optionsUrl: '@', optionsMethod: '@?' }, tubularEditorService.defaultScope),
+                    scope: angular.extend({ options: '=?', optionsUrl: '@', optionsMethod: '@?', optionLabel: '@?' }, tubularEditorService.defaultScope),
                     controller: [
                         '$scope', function ($scope) {
                             tubularEditorService.setupScope($scope);
                             $scope.dataIsLoaded = false;
+                            $scope.selectOptions = "d for d in options";
+                            if (angular.isDefined($scope.optionLabel)) {
+                                $scope.selectOptions = "d." + $scope.optionLabel + " for d in options";
+                            }
 
                             $scope.loadData = function() {
                                 if ($scope.dataIsLoaded) return;
@@ -379,7 +383,7 @@
                                 $scope.value = '';
 
                                 currentRequest.promise.then(
-                                    function(data) {
+                                    function (data) {
                                         $scope.options = data;
                                         $scope.dataIsLoaded = true;
                                         $scope.value = value;

@@ -2403,7 +2403,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     template: '<div ng-class="{ \'form-group\' : isEditing, \'has-error\' : !$valid }">' +
                         '<span ng-hide="isEditing">{{ value }}</span>' +
                         '<label ng-show="showLabel">{{ label }}</label>' +
-                        '<select ng-options="d for d in options" ng-show="isEditing" ng-model="value" class="form-control" ' +
+                        '<select ng-options="{{ selectOptions }}" ng-show="isEditing" ng-model="value" class="form-control" ' +
                         'ng-required="required" />' +
                         '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">' +
                         '{{error}}' +
@@ -2413,11 +2413,15 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     restrict: 'E',
                     replace: true,
                     transclude: true,
-                    scope: angular.extend({ options: '=?', optionsUrl: '@', optionsMethod: '@?' }, tubularEditorService.defaultScope),
+                    scope: angular.extend({ options: '=?', optionsUrl: '@', optionsMethod: '@?', optionLabel: '@?' }, tubularEditorService.defaultScope),
                     controller: [
                         '$scope', function ($scope) {
                             tubularEditorService.setupScope($scope);
                             $scope.dataIsLoaded = false;
+                            $scope.selectOptions = "d for d in options";
+                            if (angular.isDefined($scope.optionLabel)) {
+                                $scope.selectOptions = "d." + $scope.optionLabel + " for d in options";
+                            }
 
                             $scope.loadData = function() {
                                 if ($scope.dataIsLoaded) return;
@@ -2434,7 +2438,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 $scope.value = '';
 
                                 currentRequest.promise.then(
-                                    function(data) {
+                                    function (data) {
                                         $scope.options = data;
                                         $scope.dataIsLoaded = true;
                                         $scope.value = value;
@@ -4247,6 +4251,17 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 };
 
                 me.pageRequest = function(request) {
+                    var response = {
+                        Counter: 0,
+                        CurrentPage: 1,
+                        FilteredRecordCount: 0,
+                        TotalRecordCount: 0,
+                        Payload: [],
+                        TotalPages: 0
+                    };
+
+                    if (me.database.length == 0) return response;
+
                     var set = me.database;
 
                     // Get columns with sort
@@ -4260,11 +4275,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                     // Get filters (only Contains)
                     var filters = request.Columns
-                        .filter(function (el) { return el.Filter != null && el.Filter.Text != null; })
-                        .map(function (el) {
-                        var obj = {};
-                        if (el.Filter.Operator == 'Contains')
-                            obj[el.Name] = el.Filter.Text;
+                        .filter(function(el) { return el.Filter != null && el.Filter.Text != null; })
+                        .map(function(el) {
+                            var obj = {};
+                            if (el.Filter.Operator == 'Contains')
+                                obj[el.Name] = el.Filter.Text;
 
                             return obj;
                         });
@@ -4281,26 +4296,19 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                     // TODO: Free text search
 
-                    var response = {
-                        Counter: 0,
-                        CurrentPage: 1,
-                        FilteredRecordCount: set.length,
-                        TotalRecordCount: set.length
-                    };
-
+                    response.FilteredRecordCount = set.length;
+                    response.TotalRecordCount = set.length;
                     response.Payload = set.slice(request.Skip, request.Take + request.Skip);
-                    response.TotalRecordCount = response.Payload.length;
-
                     response.TotalPages = (response.FilteredRecordCount + request.Take - 1) / request.Take;
 
                     if (response.TotalPages > 0) {
-                        response.CurrentPage = 1 + ((request.Skip / response.FilteredRecordCount) * response.TotalPages);
+                        response.CurrentPage = Math.trunc(1 + ((request.Skip / response.FilteredRecordCount) * response.TotalPages));
                     }
 
                     return response;
                 };
 
-                me.saveDataAsync = function (model, request) {
+                me.saveDataAsync = function(model, request) {
                     // TODO: COMPLETE
                 };
 

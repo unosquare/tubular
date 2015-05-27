@@ -46,6 +46,17 @@
                 };
 
                 me.pageRequest = function(request) {
+                    var response = {
+                        Counter: 0,
+                        CurrentPage: 1,
+                        FilteredRecordCount: 0,
+                        TotalRecordCount: 0,
+                        Payload: [],
+                        TotalPages: 0
+                    };
+
+                    if (me.database.length == 0) return response;
+
                     var set = me.database;
 
                     // Get columns with sort
@@ -59,11 +70,11 @@
 
                     // Get filters (only Contains)
                     var filters = request.Columns
-                        .filter(function (el) { return el.Filter != null && el.Filter.Text != null; })
-                        .map(function (el) {
-                        var obj = {};
-                        if (el.Filter.Operator == 'Contains')
-                            obj[el.Name] = el.Filter.Text;
+                        .filter(function(el) { return el.Filter != null && el.Filter.Text != null; })
+                        .map(function(el) {
+                            var obj = {};
+                            if (el.Filter.Operator == 'Contains')
+                                obj[el.Name] = el.Filter.Text;
 
                             return obj;
                         });
@@ -80,26 +91,19 @@
 
                     // TODO: Free text search
 
-                    var response = {
-                        Counter: 0,
-                        CurrentPage: 1,
-                        FilteredRecordCount: set.length,
-                        TotalRecordCount: set.length
-                    };
-
+                    response.FilteredRecordCount = set.length;
+                    response.TotalRecordCount = set.length;
                     response.Payload = set.slice(request.Skip, request.Take + request.Skip);
-                    response.TotalRecordCount = response.Payload.length;
-
                     response.TotalPages = (response.FilteredRecordCount + request.Take - 1) / request.Take;
 
                     if (response.TotalPages > 0) {
-                        response.CurrentPage = 1 + ((request.Skip / response.FilteredRecordCount) * response.TotalPages);
+                        response.CurrentPage = Math.trunc(1 + ((request.Skip / response.FilteredRecordCount) * response.TotalPages));
                     }
 
                     return response;
                 };
 
-                me.saveDataAsync = function (model, request) {
+                me.saveDataAsync = function(model, request) {
                     // TODO: COMPLETE
                 };
 
