@@ -97,6 +97,13 @@
                                 localStorageService.set($scope.name + "_columns", $scope.columns);
                             }, true);
 
+                            $scope.$watch('serverUrl', function (newVal, prevVal) {
+                                if ($scope.hasColumnsDefinitions === false || $scope.currentRequest != null || newVal == prevVal)
+                                    return;
+                                
+                                $scope.retrieveData();
+                            }, true);
+
                             $scope.addColumn = function(item) {
                                 if (item.Name === null) return;
 
@@ -161,7 +168,10 @@
                                 }
                             };
 
-                            $scope.retrieveData = function() {
+                            $scope.retrieveData = function () {
+                                // If the ServerUrl is empty skip data load
+                                if ($scope.serverUrl == '') return;
+
                                 $scope.canSaveState = true;
                                 $scope.verifyColumns();
 

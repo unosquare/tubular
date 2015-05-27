@@ -174,10 +174,12 @@
                     canceller.resolve(reason);
                 };
 
+                if (angular.isUndefined(request.requireAuthentication)) {
+                    request.requireAuthentication = me.requireAuthentication;
+                }
+
                 if (angular.isString(request.requireAuthentication)) {
                     request.requireAuthentication = request.requireAuthentication == "true";
-                } else {
-                    request.requireAuthentication = request.requireAuthentication || me.requireAuthentication;
                 }
 
                 if (request.requireAuthentication && me.isAuthenticated() == false) {

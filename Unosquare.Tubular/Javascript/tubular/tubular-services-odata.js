@@ -16,12 +16,6 @@
             'tubularHttp', function tubularOData(tubularHttp) {
                 var me = this;
                 
-                me.requireAuthentication = true;
-
-                me.setRequireAuthentication = function(val) {
-                    me.requireAuthentication = val;
-                };
-
                 // {0} represents column name and {1} represents filter value
                 me.operatorsMapping = {
                     'None': '',
@@ -84,8 +78,6 @@
                     request.data = null;
                     request.serverUrl = url;
 
-                    tubularHttp.setRequireAuthentication(request.requireAuthentication || me.requireAuthentication);
-
                     var response = tubularHttp.retrieveDataAsync(request);
 
                     var promise = response.promise.then(function(data) {
@@ -112,7 +104,6 @@
                 };
 
                 me.saveDataAsync = function(model, request) {
-                    tubularHttp.setRequireAuthentication(request.requireAuthentication || me.requireAuthentication);
                     return tubularHttp.saveDataAsync(model, request); //TODO: Check how to handle
                 };
 
@@ -133,7 +124,6 @@
                 };
 
                 me.getByKey = function(url, key) {
-                    tubularHttp.setRequireAuthentication(me.requireAuthentication);
                     return tubularHttp.get(url + "(" + key + ")");
                 };
             }

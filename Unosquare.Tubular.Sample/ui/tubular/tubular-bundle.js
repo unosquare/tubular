@@ -796,6 +796,13 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 localStorageService.set($scope.name + "_columns", $scope.columns);
                             }, true);
 
+                            $scope.$watch('serverUrl', function (newVal, prevVal) {
+                                if ($scope.hasColumnsDefinitions === false || $scope.currentRequest != null || newVal == prevVal)
+                                    return;
+                                
+                                $scope.retrieveData();
+                            }, true);
+
                             $scope.addColumn = function(item) {
                                 if (item.Name === null) return;
 
@@ -860,7 +867,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 }
                             };
 
-                            $scope.retrieveData = function() {
+                            $scope.retrieveData = function () {
+                                // If the ServerUrl is empty skip data load
+                                if ($scope.serverUrl == '') return;
+
                                 $scope.canSaveState = true;
                                 $scope.verifyColumns();
 
@@ -2980,7 +2990,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                             // Setup require authentication
                             $scope.requireAuthentication = angular.isUndefined($scope.requireAuthentication) ? true : $scope.requireAuthentication;
-                            $scope.dataService.setRequireAuthentication($scope.requireAuthentication);
+                            tubularHttp.setRequireAuthentication($scope.requireAuthentication);
 
                             $scope.$watch('hasFieldsDefinitions', function(newVal) {
                                 if (newVal !== true) return;
@@ -3923,10 +3933,12 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     canceller.resolve(reason);
                 };
 
+                if (angular.isUndefined(request.requireAuthentication)) {
+                    request.requireAuthentication = me.requireAuthentication;
+                }
+
                 if (angular.isString(request.requireAuthentication)) {
                     request.requireAuthentication = request.requireAuthentication == "true";
-                } else {
-                    request.requireAuthentication = request.requireAuthentication || me.requireAuthentication;
                 }
 
                 if (request.requireAuthentication && me.isAuthenticated() == false) {
@@ -4073,12 +4085,6 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             'tubularHttp', function tubularOData(tubularHttp) {
                 var me = this;
                 
-                me.requireAuthentication = true;
-
-                me.setRequireAuthentication = function(val) {
-                    me.requireAuthentication = val;
-                };
-
                 // {0} represents column name and {1} represents filter value
                 me.operatorsMapping = {
                     'None': '',
@@ -4141,8 +4147,6 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     request.data = null;
                     request.serverUrl = url;
 
-                    tubularHttp.setRequireAuthentication(request.requireAuthentication || me.requireAuthentication);
-
                     var response = tubularHttp.retrieveDataAsync(request);
 
                     var promise = response.promise.then(function(data) {
@@ -4169,7 +4173,6 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 };
 
                 me.saveDataAsync = function(model, request) {
-                    tubularHttp.setRequireAuthentication(request.requireAuthentication || me.requireAuthentication);
                     return tubularHttp.saveDataAsync(model, request); //TODO: Check how to handle
                 };
 
@@ -4190,7 +4193,6 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 };
 
                 me.getByKey = function(url, key) {
-                    tubularHttp.setRequireAuthentication(me.requireAuthentication);
                     return tubularHttp.get(url + "(" + key + ")");
                 };
             }
