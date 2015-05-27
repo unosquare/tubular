@@ -2990,7 +2990,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                             // Setup require authentication
                             $scope.requireAuthentication = angular.isUndefined($scope.requireAuthentication) ? true : $scope.requireAuthentication;
-                            $scope.dataService.setRequireAuthentication = $scope.requireAuthentication;
+                            tubularHttp.setRequireAuthentication($scope.requireAuthentication);
 
                             $scope.$watch('hasFieldsDefinitions', function(newVal) {
                                 if (newVal !== true) return;
