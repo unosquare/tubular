@@ -7,6 +7,10 @@
     "type": "git",
     "url": "https://github.com/unosquare/tubular"
   },
+  "scripts": {
+    "test": "./node_modules/mocha/bin/mocha",
+    "test-travis": "./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- -R spec"
+  },
   "keywords": [
     "grid",
     "forms",
@@ -28,6 +32,8 @@
     "dist/node-module.js"
   ],
   "devDependencies": {
+    "coveralls": "^2.11.2",
+    "istanbul": "^0.3.14",
     "mocha": "^2.2.4"
   }
 }

@@ -5,4 +5,5 @@ install:
   - npm install -g mocha
 script:
   - xbuild /p:Configuration=Release Unosquare.Tubular.Lib.sln
-  - mocha
+  - npm run-script test-travis
+  - cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
