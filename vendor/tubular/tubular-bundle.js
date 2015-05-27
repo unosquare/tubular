@@ -796,6 +796,13 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 localStorageService.set($scope.name + "_columns", $scope.columns);
                             }, true);
 
+                            $scope.$watch('serverUrl', function (newVal, prevVal) {
+                                if ($scope.hasColumnsDefinitions === false || $scope.currentRequest != null || newVal == prevVal)
+                                    return;
+                                
+                                $scope.retrieveData();
+                            }, true);
+
                             $scope.addColumn = function(item) {
                                 if (item.Name === null) return;
 
@@ -860,7 +867,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 }
                             };
 
-                            $scope.retrieveData = function() {
+                            $scope.retrieveData = function () {
+                                // If the ServerUrl is empty skip data load
+                                if ($scope.serverUrl == '') return;
+
                                 $scope.canSaveState = true;
                                 $scope.verifyColumns();
 
@@ -2980,7 +2990,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                             // Setup require authentication
                             $scope.requireAuthentication = angular.isUndefined($scope.requireAuthentication) ? true : $scope.requireAuthentication;
-                            $scope.dataService.setRequireAuthentication($scope.requireAuthentication);
+                            $scope.dataService.setRequireAuthentication = $scope.requireAuthentication;
 
                             $scope.$watch('hasFieldsDefinitions', function(newVal) {
                                 if (newVal !== true) return;
