@@ -8,8 +8,8 @@
     "url": "https://github.com/unosquare/tubular"
   },
   "scripts": {
-    "test": "node ./node_modules/mocha/bin/mocha",
-    "test-travis": "node ./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- -R spec"
+    "test": "./node_modules/mocha/bin/mocha",
+    "test-travis": "npm install && ./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- -R spec"
   },
   "keywords": [
     "grid",
