@@ -403,7 +403,6 @@ div.tubular-pager {
         }
 
 /* Tubular Grid Overlay and animation */
-
 div.tubular-overlay {
     position: absolute;
     width: 100%;
@@ -452,8 +451,6 @@ div.tubular-overlay {
         opacity: 0;
         padding: 0 10px;
     }
-
-/* Tubular General Overlay and animation */
 
 div.tubular-general-overlay {
     position: absolute;
@@ -662,13 +659,15 @@ select.checkbox-list option:before {
     margin-right: 2px;
     -webkit-transition: border 0.15s ease-in-out, color 0.15s ease-in-out;
     -o-transition: border 0.15s ease-in-out, color 0.15s ease-in-out;
+    -moz-transition: border 0.15s ease-in-out, color 0.15s ease-in-out;
     transition: border 0.15s ease-in-out, color 0.15s ease-in-out;
 }
 
 select.checkbox-list option:checked:before {
-  font-family: 'FontAwesome';
-  content: "\f00c";
+    font-family: 'FontAwesome';
+    content: "\f00c";
 }
+
 select.checkbox-list option:checked, select.checkbox-list option:hover, select.checkbox-list option:focus,
 select.checkbox-list:hover option:checked {
     background: #CCC repeat url("data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=");
@@ -678,9 +677,9 @@ select.checkbox-list:hover option:checked, select.checkbox-list:focus option:che
     background: none;
 }
 
-select.checkbox-list:hover option:checked:before, select.checkbox-list:focus option:checked {
-    background-color: #ccc;
-}
+    select.checkbox-list:hover option:checked:before, select.checkbox-list:focus option:checked {
+        background-color: #ccc;
+    }
 
 /* Responsive table for mobiles https://techblog.livingsocial.com/blog/2015/04/06/responsive-tables-in-pure-css/ */
 @media screen and (max-width: 500px) {

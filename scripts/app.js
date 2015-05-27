@@ -115,7 +115,7 @@
         ])
         .controller('tubularGeneratorCtrl', [
             '$scope', '$http', '$templateCache', 'tubularGenerator', 'localStorageService', 'tubularTemplateService',
-            function ($scope, $http, $templateCache, tubularGenerator, localStorageService, tubularTemplateService) {
+            function($scope, $http, $templateCache, tubularGenerator, localStorageService, tubularTemplateService) {
                 // Options
                 $scope.enums = tubularTemplateService.enums;
 
@@ -123,10 +123,11 @@
                 $scope.basemodel = '';
                 $scope.step = 1;
                 $scope.dataUrl = '';
-                $scope.isOData = false;
                 $scope.uiOptions = tubularTemplateService.defaults.gridOptions;
                 $scope.formOptions = tubularTemplateService.defaults.formOptions;
                 $scope.fieldsSettings = tubularTemplateService.defaults.fieldsSettings;
+                $scope.uiOptions.ServiceName = 'local';
+                $scope.formOptions.ServiceName = 'local';
 
                 $scope.views = localStorageService.get('generator_views') || [];
                 $scope.gridId = ($scope.views.length + 1);
@@ -140,24 +141,17 @@
 
                         $http.get($scope.basemodel).success(function(data) {
                             tubularGenerator.createColumns(data.value, $scope);
-                            $scope.isOData = true;
+                            $scope.uiOptions.ServiceName = 'odata';
+                            $scope.formOptions.ServiceName = 'odata';
+
                             $scope.step++;
                             $scope.formOptions.SaveUrl = $scope.dataUrl;
                         });
                     } else {
                         var model = angular.fromJson($scope.basemodel);
+
                         tubularGenerator.createColumns(model, $scope);
-
-                        $scope.jsonstring = JSON.stringify({
-                            Counter: 0,
-                            Payload: model,
-                            TotalRecordCount: model.length,
-                            FilteredRecordCount: model.length,
-                            TotalPages: 1,
-                            CurrentPage: 1
-                        }, undefined, 2);
-
-                        $scope.dataUrl = window.URL.createObjectURL(new Blob([$scope.jsonstring], { type: "application/json" }));
+                        $scope.dataUrl = window.URL.createObjectURL(new Blob([$scope.basemodel], { type: "application/json" }));
                         $scope.step++;
                         $scope.formOptions.SaveUrl = $scope.dataUrl;
                     }
@@ -278,45 +272,49 @@
             }
         ])
         .controller('tubularDocCtrl',
-        ['$scope', '$http', '$anchorScroll', '$location', '$routeParams', function ($scope, $http, $anchorScroll, $location, $routeParams) {
-            $scope.internalLink = function (url) {
-                var find = $scope.items.filter(function (el) { return el.name == url; });
+        [
+            '$scope', '$http', '$anchorScroll', '$location', '$routeParams',
+            function($scope, $http, $anchorScroll, $location, $routeParams) {
+                $scope.internalLink = function(url) {
+                    var find = $scope.items.filter(function(el) { return el.name == url; });
 
-                if (find.length > 0)
-                    $scope.open(find[0].url);
-            }
-
-            $scope.open = function (url) {
-                if (url.indexOf('http') == 0) {
-                    document.location = url;
-                    return;
+                    if (find.length > 0)
+                        $scope.open(find[0].url);
                 }
 
-                $scope.doc = 'docs/build/' + url;
-                $location.hash('top');
-                $anchorScroll();
-            }
+                $scope.open = function(url) {
+                    if (url.indexOf('http') == 0) {
+                        document.location = url;
+                        return;
+                    }
 
-            $http.get('data/documentation.json').then(function(data) {
-                $scope.items = data.data;
-
-                // Load Angular Components API
-                $scope.items.push({ name: '$http', url: 'https://docs.angularjs.org/api/ng/service/$http', docType: 'external' });
-                $scope.items.push({ name: '$q', url: 'https://docs.angularjs.org/api/ng/service/$q', docType: 'external' });
-                $scope.items.push({ name: '$compile', url: 'https://docs.angularjs.org/api/ng/service/$compile', docType: 'external' });
-                $scope.items.push({ name: '$timeout', url: 'https://docs.angularjs.org/api/ng/service/$timeout', docType: 'external' });
-                $scope.items.push({ name: '$templateCache', url: 'https://docs.angularjs.org/api/ng/service/$templateCache', docType: 'external' });
-                $scope.items.push({ name: '$cacheFactory', url: 'https://docs.angularjs.org/api/ng/service/$cacheFactory', docType: 'external' });
-                $scope.items.push({ name: '$cookieStore', url: 'https://docs.angularjs.org/api/ngCookies/service/$cookieStore', docType: 'external' });
-                $scope.items.push({ name: '$rootScope', url: 'https://docs.angularjs.org/api/ng/service/$rootScope', docType: 'external' });
-                $scope.items.push({ name: '$modal', url: 'https://angular-ui.github.io/bootstrap/#/modal', docType: 'external' });
-                $scope.items.push({ name: '$location', url: 'https://docs.angularjs.org/api/ng/service/$location', docType: 'external' });
-
-                if (angular.isDefined($routeParams.param)) {
-                    $scope.open($routeParams.param);
+                    $scope.doc = 'docs/build/' + url;
+                    $location.hash('top');
+                    $anchorScroll();
                 }
-            });
-        }])
+
+                $http.get('data/documentation.json').then(function(data) {
+                    $scope.items = data.data;
+
+                    // Load Angular Components API
+                    $scope.items.push({ name: '$http', url: 'https://docs.angularjs.org/api/ng/service/$http', docType: 'external' });
+                    $scope.items.push({ name: '$q', url: 'https://docs.angularjs.org/api/ng/service/$q', docType: 'external' });
+                    $scope.items.push({ name: '$compile', url: 'https://docs.angularjs.org/api/ng/service/$compile', docType: 'external' });
+                    $scope.items.push({ name: '$timeout', url: 'https://docs.angularjs.org/api/ng/service/$timeout', docType: 'external' });
+                    $scope.items.push({ name: '$templateCache', url: 'https://docs.angularjs.org/api/ng/service/$templateCache', docType: 'external' });
+                    $scope.items.push({ name: '$cacheFactory', url: 'https://docs.angularjs.org/api/ng/service/$cacheFactory', docType: 'external' });
+                    $scope.items.push({ name: '$cookieStore', url: 'https://docs.angularjs.org/api/ngCookies/service/$cookieStore', docType: 'external' });
+                    $scope.items.push({ name: '$rootScope', url: 'https://docs.angularjs.org/api/ng/service/$rootScope', docType: 'external' });
+                    $scope.items.push({ name: '$modal', url: 'https://angular-ui.github.io/bootstrap/#/modal', docType: 'external' });
+                    $scope.items.push({ name: '$location', url: 'https://docs.angularjs.org/api/ng/service/$location', docType: 'external' });
+                    $scope.items.push({ name: '$filter', url: 'https://docs.angularjs.org/api/ng/service/$filter', docType: 'external' });
+
+                    if (angular.isDefined($routeParams.param)) {
+                        $scope.open($routeParams.param);
+                    }
+                });
+            }
+        ])
         .config([
             '$sceDelegateProvider', function($sceDelegateProvider) {
                 $sceDelegateProvider.resourceUrlWhitelist(['self', 'http://services.odata.org/**']);
@@ -325,7 +323,7 @@
 
     angular.module('app', [
         'hljs',
-        'tubular.directives',
+        'tubular',
         'app.routes',
         'app.controllers'
     ]);
