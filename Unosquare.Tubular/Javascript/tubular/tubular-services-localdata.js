@@ -55,7 +55,7 @@
                         TotalPages: 0
                     };
 
-                    if (me.database.length == 0) return response;
+                    if (me.database.length === 0) return response;
 
                     var set = me.database;
 
@@ -65,12 +65,15 @@
                         .filter(function(el) { return el.SortOrder > 0; })
                         .map(function(el) { return (el.SortDirection == 'Descending' ? '-' : '') + el.Name; });
 
-                    for (var sort in sorts)
-                        set = $filter('orderBy')(set, sorts[sort]);
+                    for (var sort in sorts) {
+                        if (sorts.hasOwnProperty(sort)) {
+                            set = $filter('orderBy')(set, sorts[sort]);
+                        }
+                    }
 
                     // Get filters (only Contains)
                     var filters = request.Columns
-                        .filter(function(el) { return el.Filter != null && el.Filter.Text != null; })
+                        .filter(function(el) { return el.Filter && el.Filter.Text; })
                         .map(function(el) {
                             var obj = {};
                             if (el.Filter.Operator == 'Contains')
@@ -81,9 +84,15 @@
 
                     if (filters.length > 0) {
                         var filtersPattern = {};
+
                         for (var i in filters) {
-                            for (var k in filters[i])
-                                filtersPattern[k] = filters[i][k];
+                            if (filters.hasOwnProperty(i)) {
+                                for (var k in filters[i]) {
+                                    if (filters[i].hasOwnProperty(k)) {
+                                        filtersPattern[k] = filters[i][k];
+                                    }
+                                }
+                            }
                         }
 
                         set = $filter('filter')(set, filtersPattern);
@@ -103,28 +112,34 @@
                     return response;
                 };
 
-                me.saveDataAsync = function(model, request) {
-                    // TODO: COMPLETE
+                me.saveDataAsync = function (model, request) {
+                    // TODO: Complete
+                    me.database.push(model);
                 };
 
-                me.get = function(url) {
-                    // TODO: COMPLETE
+                me.get = function (url) {
+                    // Just pass the URL to TubularHttp for now
+                    tubularHttp.get(url);
                 };
 
-                me.delete = function(url) {
-                    // TODO: COMPLETE
+                me.delete = function (url) {
+                    // Just pass the URL to TubularHttp for now
+                    tubularHttp.delete(url);
                 };
 
-                me.post = function(url, data) {
-                    // TODO: COMPLETE
+                me.post = function (url, data) {
+                    // Just pass the URL to TubularHttp for now
+                    tubularHttp.post(url, data);
                 };
 
-                me.put = function(url, data) {
-                    // TODO: COMPLETE
+                me.put = function (url, data) {
+                    // Just pass the URL to TubularHttp for now
+                    tubularHttp.put(url, data);
                 };
 
-                me.getByKey = function(url, key) {
-                    // TODO: COMPLETE
+                me.getByKey = function (url, key) {
+                    // Just pass the URL to TubularHttp for now
+                    tubularHttp.getByKey(url, key);
                 };
             }
         ]);

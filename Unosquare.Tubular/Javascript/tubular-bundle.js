@@ -1,4 +1,5 @@
 ﻿///#source 1 1 tubular/node-module.js
+/*jslint node: true */
 'use strict';
 
 var tubularTemplateServiceModule = {
@@ -141,7 +142,7 @@ var tubularTemplateServiceModule = {
                     columns.push({ Name: prop, DataType: 'numeric', Template: '{{row.' + prop + '}}' });
                 } else if (this.isDate(value) || isNaN((new Date(value)).getTime()) == false) {
                     columns.push({ Name: prop, DataType: 'date', Template: '{{row.' + prop + ' | date}}' });
-                } else if (value.toLowerCase() == 'true' || value.toLowerCase() == 'false') {
+                } else if (value.toLowerCase() === 'true' || value.toLowerCase() === 'false') {
                     columns.push({ Name: prop, DataType: 'boolean', Template: '{{row.' + prop + ' ? "TRUE" : "FALSE" }}' });
                 } else {
                     var newColumn = { Name: prop, DataType: 'string', Template: '{{row.' + prop + '}}' };
@@ -241,7 +242,7 @@ var tubularTemplateServiceModule = {
     },
 
     generateForm: function(fields, options) {
-        var layout = options.Layout == 'Simple' ? '' : options.Layout.toLowerCase();
+        var layout = options.Layout === 'Simple' ? '' : options.Layout.toLowerCase();
         var fieldsArray = this.generateFieldsArray(fields);
         var fieldsMarkup = '';
 
@@ -630,7 +631,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
         .filter('errormessage', function() {
             return function(input) {
                 if (angular.isDefined(input) && angular.isDefined(input.data) &&
-                    input.data != null &&
+                    input.data &&
                     angular.isDefined(input.data.ExceptionMessage))
                     return input.data.ExceptionMessage;
 
@@ -797,14 +798,14 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             }, true);
 
                             $scope.$watch('serverUrl', function (newVal, prevVal) {
-                                if ($scope.hasColumnsDefinitions === false || $scope.currentRequest != null || newVal == prevVal)
+                                if ($scope.hasColumnsDefinitions === false || $scope.currentRequest || newVal === prevVal)
                                     return;
                                 
                                 $scope.retrieveData();
                             }, true);
 
                             $scope.addColumn = function(item) {
-                                if (item.Name === null) return;
+                                if (item.Name == null) return;
 
                                 if ($scope.hasColumnsDefinitions !== false)
                                     throw 'Cannot define more columns. Column definitions have been sealed';
@@ -848,22 +849,24 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                             $scope.verifyColumns = function() {
                                 var columns = localStorageService.get($scope.name + "_columns");
-                                if (columns === null || columns === "") {
+                                if (columns == null || columns === "") {
                                     // Nothing in settings, saving initial state
                                     localStorageService.set($scope.name + "_columns", $scope.columns);
                                     return;
                                 }
 
                                 for (var index in columns) {
-                                    var columnName = columns[index].Name;
-                                    var filtered = $scope.columns.filter(function(el) { return el.Name == columnName; });
+                                    if (columns.hasOwnProperty(index)) {
+                                        var columnName = columns[index].Name;
+                                        var filtered = $scope.columns.filter(function(el) { return el.Name == columnName; });
 
-                                    if (filtered.length == 0) continue;
+                                        if (filtered.length == 0) continue;
 
-                                    var current = filtered[0];
-                                    // Updates visibility by now
-                                    current.Visible = columns[index].Visible;
-                                    // TODO: Restore filters
+                                        var current = filtered[0];
+                                        // Updates visibility by now
+                                        current.Visible = columns[index].Visible;
+                                        // TODO: Restore filters
+                                    }
                                 }
                             };
 
@@ -1034,7 +1037,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                             $scope.selectedRows = function() {
                                 var rows = localStorageService.get($scope.name + "_rows");
-                                if (rows === null || rows === "") {
+                                if (rows == null || rows === "") {
                                     rows = [];
                                 }
 
@@ -1105,7 +1108,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                             $scope.visibleColumns = function() {
                                 return $scope.columns.filter(function(el) { return el.Visible; }).length;
-                            }
+                            };
 
                             $scope.$emit('tbGrid_OnGreetParentController', $scope);
                         }
@@ -1172,9 +1175,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             $scope.tubularDirective = 'tubular-column-definitions';
                         }
                     ],
-                    compile: function compile(cElement, cAttrs) {
+                    compile: function compile() {
                         return {
-                            pre: function(scope, lElement, lAttrs, lController, lTransclude) {},
                             post: function(scope, lElement, lAttrs, lController, lTransclude) {
                                 scope.$component.hasColumnsDefinitions = true;
                             }
@@ -1227,7 +1229,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             };
                         }
                     ],
-                    compile: function compile(cElement, cAttrs) {
+                    compile: function compile() {
                         return {
                             pre: function(scope, lElement, lAttrs, lController, lTransclude) {
                                 lAttrs.label = lAttrs.label || (lAttrs.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
@@ -1236,8 +1238,6 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 scope.$component.addColumn(column);
                                 scope.column = column;
                                 scope.label = column.Label;
-                            },
-                            post: function(scope, lElement, lAttrs, lController, lTransclude) {
                             }
                         };
                     }
@@ -1276,7 +1276,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             };
                         }
                     ],
-                    compile: function compile(cElement, cAttrs) {
+                    compile: function compile() {
                         return {
                             pre: function(scope, lElement, lAttrs, lController, lTransclude) {
                                 var refreshIcon = function(icon) {
@@ -1307,7 +1307,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             post: function(scope, lElement, lAttrs, lController, lTransclude) {
                                 scope.label = scope.$parent.label;
 
-                                if (scope.$parent.column.Sortable == false) {
+                                if (scope.$parent.column.Sortable === false) {
                                     var text = scope.label || lElement.text();
                                     lElement.replaceWith('<span>' + text + '</span>');
                                 }
@@ -1392,11 +1392,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 $scope.bindFields();
                             });
 
-                            $scope.bindFields = function () {
-                                angular.forEach($scope.fields, function (field) {
+                            $scope.bindFields = function() {
+                                angular.forEach($scope.fields, function(field) {
                                     field.bindScope();
                                 });
-                            }
+                            };
 
                             if ($scope.selectableBool && angular.isUndefined($scope.rowModel) === false) {
                                 $scope.$component.selectFromSession($scope.rowModel);
@@ -1408,9 +1408,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             };
                         }
                     ],
-                    compile: function compile(cElement, cAttrs) {
+                    compile: function compile() {
                         return {
-                            pre: function (scope, lElement, lAttrs, lController, lTransclude) { },
                             post: function (scope, lElement, lAttrs, lController, lTransclude) {
                                 scope.hasFieldsDefinitions = true;
                             }
@@ -1744,7 +1743,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     '$scope', function($scope) {
                         $scope.component = $scope.$parent.$parent.$component;
                         $scope.edit = function() {
-                            if ($scope.component.editorMode == 'popup') {
+                            if ($scope.component.editorMode === 'popup') {
                                 $scope.model.editPopup();
                             } else {
                                 $scope.model.edit();
@@ -1962,9 +1961,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             };
                         }
                     ],
-                    compile: function compile(cElement, cAttrs) {
+                    compile: function compile() {
                         return {
-                            pre: function (scope, lElement, lAttrs, lController, lTransclude) { },
                             post: function (scope, lElement, lAttrs, lController, lTransclude) {
                                 scope.firstButtonClass = lAttrs.firstButtonClass || 'fa fa-fast-backward';
                                 scope.prevButtonClass = lAttrs.prevButtonClass || 'fa fa-backward';
@@ -2100,7 +2098,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     controller: [
                         '$scope', function($scope) {
                             $scope.validate = function() {
-                                if (angular.isUndefined($scope.min) == false && angular.isUndefined($scope.value) == false) {
+                                if (angular.isUndefined($scope.min) === false && angular.isUndefined($scope.value) === false) {
                                     if ($scope.value.length < parseInt($scope.min)) {
                                         $scope.$valid = false;
                                         $scope.state.$errors = ["The fields needs to be minimum " + $scope.min + " chars"];
@@ -2108,7 +2106,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     }
                                 }
 
-                                if (angular.isUndefined($scope.max) == false && angular.isUndefined($scope.value) == false) {
+                                if (angular.isUndefined($scope.max) === false && angular.isUndefined($scope.value) === false) {
                                     if ($scope.value.length > parseInt($scope.max)) {
                                         $scope.$valid = false;
                                         $scope.state.$errors = ["The fields needs to be maximum " + $scope.min + " chars"];
@@ -2258,9 +2256,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             tubularEditorService.setupScope($scope, 'yyyy-MM-dd HH:mm');
                         }
                     ],
-                    compile: function compile(cElement, cAttrs) {
+                    compile: function compile() {
                         return {
-                            pre: function(scope, lElement, lAttrs, lController, lTransclude) {},
                             post: function(scope, lElement, lAttrs, lController, lTransclude) {
                                 var inp = $(lElement).find("input[type=datetime-local]")[0];
                                 if (inp.type !== 'datetime-local') {
@@ -2353,9 +2350,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             tubularEditorService.setupScope($scope, 'yyyy-MM-dd');
                         }
                     ],
-                    compile: function compile(cElement, cAttrs) {
+                    compile: function compile() {
                         return {
-                            pre: function(scope, lElement, lAttrs, lController, lTransclude) {},
                             post: function(scope, lElement, lAttrs, lController, lTransclude) {
                                 var inp = $(lElement).find("input[type=date]")[0];
                                 if (inp.type != 'date') {
@@ -2607,7 +2603,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         uncheckedValue: '=?'
                     }, tubularEditorService.defaultScope),
                     controller: [
-                        '$scope', '$element', function ($scope, $element) {
+                        '$scope', '$element', function ($scope) {
                             $scope.checkedValue = angular.isDefined($scope.checkedValue) ? $scope.checkedValue : true;
                             $scope.uncheckedValue = angular.isDefined($scope.uncheckedValue) ? $scope.uncheckedValue : false;
 
@@ -2767,7 +2763,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     replace: true,
                     transclude: true,
                     scope: false,
-                    compile: function compile(cElement, cAttrs) {
+                    compile: function compile() {
                         return {
                             pre: function(scope, lElement, lAttrs, lController, lTransclude) {
                                 tubularGridFilterService.applyFilterFuncs(scope, lElement, lAttrs);
@@ -2825,7 +2821,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             $scope.format = 'yyyy-MM-dd';
                         }
                     ],
-                    compile: function compile(cElement, cAttrs) {
+                    compile: function compile() {
                         return {
                             pre: function(scope, lElement, lAttrs, lController, lTransclude) {
                                 tubularGridFilterService.applyFilterFuncs(scope, lElement, lAttrs, function() {
@@ -2919,7 +2915,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             };
                         }
                     ],
-                    compile: function compile(cElement, cAttrs) {
+                    compile: function compile() {
                         return {
                             pre: function(scope, lElement, lAttrs, lController, lTransclude) {
                                 tubularGridFilterService.applyFilterFuncs(scope, lElement, lAttrs,function() {
@@ -3018,7 +3014,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     return;
                                 }
 
-                                if (angular.isUndefined($scope.modelKey) || $scope.modelKey == null || $scope.modelKey == '')
+                                if (angular.isUndefined($scope.modelKey) || $scope.modelKey == null || $scope.modelKey === '')
                                     return;
 
                                 $scope.dataService.getByKey($scope.serverUrl, $scope.modelKey).promise.then(
@@ -3064,9 +3060,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             };
                         }
                     ],
-                    compile: function compile(cElement, cAttrs) {
+                    compile: function compile() {
                         return {
-                            pre: function(scope, lElement, lAttrs, lController, lTransclude) {},
                             post: function(scope, lElement, lAttrs, lController, lTransclude) {
                                 scope.hasFieldsDefinitions = true;
                             }
@@ -3214,8 +3209,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             $scope.$watch(function() {
                                 return obj[key];
                             }, function(newValue, oldValue) {
-                                if (newValue == oldValue) return;
-                                obj.$hasChanges = obj[key] != obj.$original[key];
+                                if (newValue === oldValue) return;
+                                obj.$hasChanges = obj[key] !== obj.$original[key];
                             });
                         }
                     };
@@ -3484,7 +3479,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     var finalVal = '';
                     for (var j = 0; j < row.length; j++) {
                         if (visibility[j] === false) continue;
-                        var innerValue = row[j] === null ? '' : row[j].toString();
+                        var innerValue = row[j] == null ? '' : row[j].toString();
                         if (row[j] instanceof Date) {
                             innerValue = row[j].toLocaleString();
                         }
@@ -3509,7 +3504,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                 // Add "\uFEFF" (UTF-8 BOM)
                 var blob = new Blob(["\uFEFF" + csvFile], { type: 'text/csv;charset=utf-8;' });
-                saveAs(blob, filename);
+                window.saveAs(blob, filename);
             };
         })
         /**
@@ -3945,7 +3940,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     request.requireAuthentication = request.requireAuthentication == "true";
                 }
 
-                if (request.requireAuthentication && me.isAuthenticated() == false) {
+                if (request.requireAuthentication && me.isAuthenticated() === false) {
                     // Return empty dataset
                     return {
                         promise: $q(function(resolve, reject) {
@@ -4125,7 +4120,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         url += "&$orderby=" + order.join(',');
 
                     var filter = params.Columns
-                        .filter(function(el) { return el.Filter != null && el.Filter.Text != null; })
+                        .filter(function(el) { return el.Filter && el.Filter.Text; })
                         .map(function(el) {
                             return me.operatorsMapping[el.Filter.Operator]
                                 .replace('{0}', el.Name)
@@ -4134,7 +4129,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         .filter(function(el) { return el.length > 1; });
 
 
-                    if (params.Search != null && params.Search.Operator == 'Auto') {
+                    if (params.Search && params.Search.Operator === 'Auto') {
                         var freetext = params.Columns
                             .filter(function(el) { return el.Searchable; })
                             .map(function(el) {
@@ -4260,7 +4255,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         TotalPages: 0
                     };
 
-                    if (me.database.length == 0) return response;
+                    if (me.database.length === 0) return response;
 
                     var set = me.database;
 
@@ -4270,12 +4265,15 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         .filter(function(el) { return el.SortOrder > 0; })
                         .map(function(el) { return (el.SortDirection == 'Descending' ? '-' : '') + el.Name; });
 
-                    for (var sort in sorts)
-                        set = $filter('orderBy')(set, sorts[sort]);
+                    for (var sort in sorts) {
+                        if (sorts.hasOwnProperty(sort)) {
+                            set = $filter('orderBy')(set, sorts[sort]);
+                        }
+                    }
 
                     // Get filters (only Contains)
                     var filters = request.Columns
-                        .filter(function(el) { return el.Filter != null && el.Filter.Text != null; })
+                        .filter(function(el) { return el.Filter && el.Filter.Text; })
                         .map(function(el) {
                             var obj = {};
                             if (el.Filter.Operator == 'Contains')
@@ -4286,9 +4284,15 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                     if (filters.length > 0) {
                         var filtersPattern = {};
+
                         for (var i in filters) {
-                            for (var k in filters[i])
-                                filtersPattern[k] = filters[i][k];
+                            if (filters.hasOwnProperty(i)) {
+                                for (var k in filters[i]) {
+                                    if (filters[i].hasOwnProperty(k)) {
+                                        filtersPattern[k] = filters[i][k];
+                                    }
+                                }
+                            }
                         }
 
                         set = $filter('filter')(set, filtersPattern);
@@ -4308,28 +4312,34 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     return response;
                 };
 
-                me.saveDataAsync = function(model, request) {
-                    // TODO: COMPLETE
+                me.saveDataAsync = function (model, request) {
+                    // TODO: Complete
+                    me.database.push(model);
                 };
 
-                me.get = function(url) {
-                    // TODO: COMPLETE
+                me.get = function (url) {
+                    // Just pass the URL to TubularHttp for now
+                    tubularHttp.get(url);
                 };
 
-                me.delete = function(url) {
-                    // TODO: COMPLETE
+                me.delete = function (url) {
+                    // Just pass the URL to TubularHttp for now
+                    tubularHttp.delete(url);
                 };
 
-                me.post = function(url, data) {
-                    // TODO: COMPLETE
+                me.post = function (url, data) {
+                    // Just pass the URL to TubularHttp for now
+                    tubularHttp.post(url, data);
                 };
 
-                me.put = function(url, data) {
-                    // TODO: COMPLETE
+                me.put = function (url, data) {
+                    // Just pass the URL to TubularHttp for now
+                    tubularHttp.put(url, data);
                 };
 
-                me.getByKey = function(url, key) {
-                    // TODO: COMPLETE
+                me.getByKey = function (url, key) {
+                    // Just pass the URL to TubularHttp for now
+                    tubularHttp.getByKey(url, key);
                 };
             }
         ]);
@@ -4348,8 +4358,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * 
          * This service is just a facade to the node module expose like `tubularTemplateServiceModule`.
          */
-        .service('tubularTemplateService', [
-            '$templateCache',
+        .service('tubularTemplateService', ['$templateCache',
             function tubularTemplateService($templateCache) {
                 var me = this;
 

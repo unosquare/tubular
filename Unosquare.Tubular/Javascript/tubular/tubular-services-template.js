@@ -11,8 +11,7 @@
          * 
          * This service is just a facade to the node module expose like `tubularTemplateServiceModule`.
          */
-        .service('tubularTemplateService', [
-            '$templateCache',
+        .service('tubularTemplateService', ['$templateCache',
             function tubularTemplateService($templateCache) {
                 var me = this;
 

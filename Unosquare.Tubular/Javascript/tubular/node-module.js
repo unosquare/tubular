@@ -1,4 +1,5 @@
-﻿'use strict';
+﻿/*jslint node: true */
+'use strict';
 
 var tubularTemplateServiceModule = {
     enums: {
@@ -140,7 +141,7 @@ var tubularTemplateServiceModule = {
                     columns.push({ Name: prop, DataType: 'numeric', Template: '{{row.' + prop + '}}' });
                 } else if (this.isDate(value) || isNaN((new Date(value)).getTime()) == false) {
                     columns.push({ Name: prop, DataType: 'date', Template: '{{row.' + prop + ' | date}}' });
-                } else if (value.toLowerCase() == 'true' || value.toLowerCase() == 'false') {
+                } else if (value.toLowerCase() === 'true' || value.toLowerCase() === 'false') {
                     columns.push({ Name: prop, DataType: 'boolean', Template: '{{row.' + prop + ' ? "TRUE" : "FALSE" }}' });
                 } else {
                     var newColumn = { Name: prop, DataType: 'string', Template: '{{row.' + prop + '}}' };
@@ -240,7 +241,7 @@ var tubularTemplateServiceModule = {
     },
 
     generateForm: function(fields, options) {
-        var layout = options.Layout == 'Simple' ? '' : options.Layout.toLowerCase();
+        var layout = options.Layout === 'Simple' ? '' : options.Layout.toLowerCase();
         var fieldsArray = this.generateFieldsArray(fields);
         var fieldsMarkup = '';
 

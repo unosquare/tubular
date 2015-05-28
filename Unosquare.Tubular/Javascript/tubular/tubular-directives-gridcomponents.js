@@ -221,7 +221,7 @@
                     '$scope', function($scope) {
                         $scope.component = $scope.$parent.$parent.$component;
                         $scope.edit = function() {
-                            if ($scope.component.editorMode == 'popup') {
+                            if ($scope.component.editorMode === 'popup') {
                                 $scope.model.editPopup();
                             } else {
                                 $scope.model.edit();

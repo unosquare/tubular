@@ -119,7 +119,7 @@
                     var finalVal = '';
                     for (var j = 0; j < row.length; j++) {
                         if (visibility[j] === false) continue;
-                        var innerValue = row[j] === null ? '' : row[j].toString();
+                        var innerValue = row[j] == null ? '' : row[j].toString();
                         if (row[j] instanceof Date) {
                             innerValue = row[j].toLocaleString();
                         }
@@ -144,7 +144,7 @@
 
                 // Add "\uFEFF" (UTF-8 BOM)
                 var blob = new Blob(["\uFEFF" + csvFile], { type: 'text/csv;charset=utf-8;' });
-                saveAs(blob, filename);
+                window.saveAs(blob, filename);
             };
         })
         /**

@@ -135,8 +135,8 @@
                             $scope.$watch(function() {
                                 return obj[key];
                             }, function(newValue, oldValue) {
-                                if (newValue == oldValue) return;
-                                obj.$hasChanges = obj[key] != obj.$original[key];
+                                if (newValue === oldValue) return;
+                                obj.$hasChanges = obj[key] !== obj.$original[key];
                             });
                         }
                     };

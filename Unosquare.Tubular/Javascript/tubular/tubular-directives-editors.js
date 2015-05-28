@@ -45,7 +45,7 @@
                     controller: [
                         '$scope', function($scope) {
                             $scope.validate = function() {
-                                if (angular.isUndefined($scope.min) == false && angular.isUndefined($scope.value) == false) {
+                                if (angular.isUndefined($scope.min) === false && angular.isUndefined($scope.value) === false) {
                                     if ($scope.value.length < parseInt($scope.min)) {
                                         $scope.$valid = false;
                                         $scope.state.$errors = ["The fields needs to be minimum " + $scope.min + " chars"];
@@ -53,7 +53,7 @@
                                     }
                                 }
 
-                                if (angular.isUndefined($scope.max) == false && angular.isUndefined($scope.value) == false) {
+                                if (angular.isUndefined($scope.max) === false && angular.isUndefined($scope.value) === false) {
                                     if ($scope.value.length > parseInt($scope.max)) {
                                         $scope.$valid = false;
                                         $scope.state.$errors = ["The fields needs to be maximum " + $scope.min + " chars"];
@@ -203,9 +203,8 @@
                             tubularEditorService.setupScope($scope, 'yyyy-MM-dd HH:mm');
                         }
                     ],
-                    compile: function compile(cElement, cAttrs) {
+                    compile: function compile() {
                         return {
-                            pre: function(scope, lElement, lAttrs, lController, lTransclude) {},
                             post: function(scope, lElement, lAttrs, lController, lTransclude) {
                                 var inp = $(lElement).find("input[type=datetime-local]")[0];
                                 if (inp.type !== 'datetime-local') {
@@ -298,9 +297,8 @@
                             tubularEditorService.setupScope($scope, 'yyyy-MM-dd');
                         }
                     ],
-                    compile: function compile(cElement, cAttrs) {
+                    compile: function compile() {
                         return {
-                            pre: function(scope, lElement, lAttrs, lController, lTransclude) {},
                             post: function(scope, lElement, lAttrs, lController, lTransclude) {
                                 var inp = $(lElement).find("input[type=date]")[0];
                                 if (inp.type != 'date') {
@@ -552,7 +550,7 @@
                         uncheckedValue: '=?'
                     }, tubularEditorService.defaultScope),
                     controller: [
-                        '$scope', '$element', function ($scope, $element) {
+                        '$scope', '$element', function ($scope) {
                             $scope.checkedValue = angular.isDefined($scope.checkedValue) ? $scope.checkedValue : true;
                             $scope.uncheckedValue = angular.isDefined($scope.uncheckedValue) ? $scope.uncheckedValue : false;
 

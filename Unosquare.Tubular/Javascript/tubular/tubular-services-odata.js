@@ -52,7 +52,7 @@
                         url += "&$orderby=" + order.join(',');
 
                     var filter = params.Columns
-                        .filter(function(el) { return el.Filter != null && el.Filter.Text != null; })
+                        .filter(function(el) { return el.Filter && el.Filter.Text; })
                         .map(function(el) {
                             return me.operatorsMapping[el.Filter.Operator]
                                 .replace('{0}', el.Name)
@@ -61,7 +61,7 @@
                         .filter(function(el) { return el.length > 1; });
 
 
-                    if (params.Search != null && params.Search.Operator == 'Auto') {
+                    if (params.Search && params.Search.Operator === 'Auto') {
                         var freetext = params.Columns
                             .filter(function(el) { return el.Searchable; })
                             .map(function(el) {

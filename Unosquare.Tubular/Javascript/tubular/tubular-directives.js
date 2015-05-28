@@ -98,14 +98,14 @@
                             }, true);
 
                             $scope.$watch('serverUrl', function (newVal, prevVal) {
-                                if ($scope.hasColumnsDefinitions === false || $scope.currentRequest != null || newVal == prevVal)
+                                if ($scope.hasColumnsDefinitions === false || $scope.currentRequest || newVal === prevVal)
                                     return;
                                 
                                 $scope.retrieveData();
                             }, true);
 
                             $scope.addColumn = function(item) {
-                                if (item.Name === null) return;
+                                if (item.Name == null) return;
 
                                 if ($scope.hasColumnsDefinitions !== false)
                                     throw 'Cannot define more columns. Column definitions have been sealed';
@@ -149,22 +149,24 @@
 
                             $scope.verifyColumns = function() {
                                 var columns = localStorageService.get($scope.name + "_columns");
-                                if (columns === null || columns === "") {
+                                if (columns == null || columns === "") {
                                     // Nothing in settings, saving initial state
                                     localStorageService.set($scope.name + "_columns", $scope.columns);
                                     return;
                                 }
 
                                 for (var index in columns) {
-                                    var columnName = columns[index].Name;
-                                    var filtered = $scope.columns.filter(function(el) { return el.Name == columnName; });
+                                    if (columns.hasOwnProperty(index)) {
+                                        var columnName = columns[index].Name;
+                                        var filtered = $scope.columns.filter(function(el) { return el.Name == columnName; });
 
-                                    if (filtered.length == 0) continue;
+                                        if (filtered.length == 0) continue;
 
-                                    var current = filtered[0];
-                                    // Updates visibility by now
-                                    current.Visible = columns[index].Visible;
-                                    // TODO: Restore filters
+                                        var current = filtered[0];
+                                        // Updates visibility by now
+                                        current.Visible = columns[index].Visible;
+                                        // TODO: Restore filters
+                                    }
                                 }
                             };
 
@@ -335,7 +337,7 @@
 
                             $scope.selectedRows = function() {
                                 var rows = localStorageService.get($scope.name + "_rows");
-                                if (rows === null || rows === "") {
+                                if (rows == null || rows === "") {
                                     rows = [];
                                 }
 
@@ -406,7 +408,7 @@
 
                             $scope.visibleColumns = function() {
                                 return $scope.columns.filter(function(el) { return el.Visible; }).length;
-                            }
+                            };
 
                             $scope.$emit('tbGrid_OnGreetParentController', $scope);
                         }
@@ -473,9 +475,8 @@
                             $scope.tubularDirective = 'tubular-column-definitions';
                         }
                     ],
-                    compile: function compile(cElement, cAttrs) {
+                    compile: function compile() {
                         return {
-                            pre: function(scope, lElement, lAttrs, lController, lTransclude) {},
                             post: function(scope, lElement, lAttrs, lController, lTransclude) {
                                 scope.$component.hasColumnsDefinitions = true;
                             }
@@ -528,7 +529,7 @@
                             };
                         }
                     ],
-                    compile: function compile(cElement, cAttrs) {
+                    compile: function compile() {
                         return {
                             pre: function(scope, lElement, lAttrs, lController, lTransclude) {
                                 lAttrs.label = lAttrs.label || (lAttrs.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
@@ -537,8 +538,6 @@
                                 scope.$component.addColumn(column);
                                 scope.column = column;
                                 scope.label = column.Label;
-                            },
-                            post: function(scope, lElement, lAttrs, lController, lTransclude) {
                             }
                         };
                     }
@@ -577,7 +576,7 @@
                             };
                         }
                     ],
-                    compile: function compile(cElement, cAttrs) {
+                    compile: function compile() {
                         return {
                             pre: function(scope, lElement, lAttrs, lController, lTransclude) {
                                 var refreshIcon = function(icon) {
@@ -608,7 +607,7 @@
                             post: function(scope, lElement, lAttrs, lController, lTransclude) {
                                 scope.label = scope.$parent.label;
 
-                                if (scope.$parent.column.Sortable == false) {
+                                if (scope.$parent.column.Sortable === false) {
                                     var text = scope.label || lElement.text();
                                     lElement.replaceWith('<span>' + text + '</span>');
                                 }
@@ -693,11 +692,11 @@
                                 $scope.bindFields();
                             });
 
-                            $scope.bindFields = function () {
-                                angular.forEach($scope.fields, function (field) {
+                            $scope.bindFields = function() {
+                                angular.forEach($scope.fields, function(field) {
                                     field.bindScope();
                                 });
-                            }
+                            };
 
                             if ($scope.selectableBool && angular.isUndefined($scope.rowModel) === false) {
                                 $scope.$component.selectFromSession($scope.rowModel);
@@ -709,9 +708,8 @@
                             };
                         }
                     ],
-                    compile: function compile(cElement, cAttrs) {
+                    compile: function compile() {
                         return {
-                            pre: function (scope, lElement, lAttrs, lController, lTransclude) { },
                             post: function (scope, lElement, lAttrs, lController, lTransclude) {
                                 scope.hasFieldsDefinitions = true;
                             }

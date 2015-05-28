@@ -78,7 +78,7 @@
                                     return;
                                 }
 
-                                if (angular.isUndefined($scope.modelKey) || $scope.modelKey == null || $scope.modelKey == '')
+                                if (angular.isUndefined($scope.modelKey) || $scope.modelKey == null || $scope.modelKey === '')
                                     return;
 
                                 $scope.dataService.getByKey($scope.serverUrl, $scope.modelKey).promise.then(
@@ -124,9 +124,8 @@
                             };
                         }
                     ],
-                    compile: function compile(cElement, cAttrs) {
+                    compile: function compile() {
                         return {
-                            pre: function(scope, lElement, lAttrs, lController, lTransclude) {},
                             post: function(scope, lElement, lAttrs, lController, lTransclude) {
                                 scope.hasFieldsDefinitions = true;
                             }

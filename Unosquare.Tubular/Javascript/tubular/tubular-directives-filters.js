@@ -77,7 +77,7 @@
                     replace: true,
                     transclude: true,
                     scope: false,
-                    compile: function compile(cElement, cAttrs) {
+                    compile: function compile() {
                         return {
                             pre: function(scope, lElement, lAttrs, lController, lTransclude) {
                                 tubularGridFilterService.applyFilterFuncs(scope, lElement, lAttrs);
@@ -135,7 +135,7 @@
                             $scope.format = 'yyyy-MM-dd';
                         }
                     ],
-                    compile: function compile(cElement, cAttrs) {
+                    compile: function compile() {
                         return {
                             pre: function(scope, lElement, lAttrs, lController, lTransclude) {
                                 tubularGridFilterService.applyFilterFuncs(scope, lElement, lAttrs, function() {
@@ -229,7 +229,7 @@
                             };
                         }
                     ],
-                    compile: function compile(cElement, cAttrs) {
+                    compile: function compile() {
                         return {
                             pre: function(scope, lElement, lAttrs, lController, lTransclude) {
                                 tubularGridFilterService.applyFilterFuncs(scope, lElement, lAttrs,function() {

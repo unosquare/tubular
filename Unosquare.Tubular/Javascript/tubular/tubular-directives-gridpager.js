@@ -44,9 +44,8 @@
                             };
                         }
                     ],
-                    compile: function compile(cElement, cAttrs) {
+                    compile: function compile() {
                         return {
-                            pre: function (scope, lElement, lAttrs, lController, lTransclude) { },
                             post: function (scope, lElement, lAttrs, lController, lTransclude) {
                                 scope.firstButtonClass = lAttrs.firstButtonClass || 'fa fa-fast-backward';
                                 scope.prevButtonClass = lAttrs.prevButtonClass || 'fa fa-backward';

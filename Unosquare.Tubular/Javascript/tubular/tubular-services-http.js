@@ -182,7 +182,7 @@
                     request.requireAuthentication = request.requireAuthentication == "true";
                 }
 
-                if (request.requireAuthentication && me.isAuthenticated() == false) {
+                if (request.requireAuthentication && me.isAuthenticated() === false) {
                     // Return empty dataset
                     return {
                         promise: $q(function(resolve, reject) {
