@@ -118,16 +118,20 @@
                             $scope.validate = function() {
                                 if (angular.isUndefined($scope.min) == false && angular.isUndefined($scope.value) == false) {
                                     $scope.$valid = $scope.value >= $scope.min;
-                                    if ($scope.$valid == false)
+                                    if ($scope.$valid == false) {
                                         $scope.state.$errors = ["The minimum is " + $scope.min];
+                                    }
                                 }
 
-                                if ($scope.$valid == false) return;
+                                if ($scope.$valid == false) {
+                                    return;
+                                }
 
                                 if (angular.isUndefined($scope.max) == false && angular.isUndefined($scope.value) == false) {
                                     $scope.$valid = $scope.value <= $scope.max;
-                                    if ($scope.$valid == false)
+                                    if ($scope.$valid == false) {
                                         $scope.state.$errors = ["The maximum is " + $scope.max];
+                                    }
                                 }
                             };
 
@@ -187,16 +191,20 @@
                             $scope.validate = function() {
                                 if (angular.isUndefined($scope.min) == false) {
                                     $scope.$valid = $scope.value >= $scope.min;
-                                    if ($scope.$valid == false)
+                                    if ($scope.$valid == false) {
                                         $scope.state.$errors = ["The minimum is " + $scope.min];
+                                    }
                                 }
 
-                                if ($scope.$valid == false) return;
+                                if ($scope.$valid == false) {
+                                    return;
+                                }
 
                                 if (angular.isUndefined($scope.max) == false) {
                                     $scope.$valid = $scope.value <= $scope.max;
-                                    if ($scope.$valid == false)
+                                    if ($scope.$valid == false) {
                                         $scope.state.$errors = ["The maximum is " + $scope.max];
+                                    }
                                 }
                             };
 
@@ -274,16 +282,20 @@
                                 $scope.validate = function() {
                                     if (angular.isUndefined($scope.min) == false) {
                                         $scope.$valid = $scope.value >= $scope.min;
-                                        if ($scope.$valid == false)
+                                        if ($scope.$valid == false) {
                                             $scope.state.$errors = ["The minimum is " + $scope.min];
+                                        }
                                     }
 
-                                    if ($scope.$valid == false) return;
+                                    if ($scope.$valid == false) {
+                                        return;
+                                    }
 
                                     if (angular.isUndefined($scope.max) == false) {
                                         $scope.$valid = $scope.value <= $scope.max;
-                                        if ($scope.$valid == false)
+                                        if ($scope.$valid == false) {
                                             $scope.state.$errors = ["The maximum is " + $scope.max];
+                                        }
                                     }
                                 };
 
@@ -367,10 +379,13 @@
                             }
 
                             $scope.loadData = function() {
-                                if ($scope.dataIsLoaded) return;
+                                if ($scope.dataIsLoaded) {
+                                    return;
+                                }
 
-                                if (angular.isUndefined($scope.$component) || $scope.$component == null)
+                                if (angular.isUndefined($scope.$component) || $scope.$component == null) {
                                     throw 'You need to define a parent Form or Grid';
+                                }
 
                                 var currentRequest = $scope.$component.dataService.retrieveDataAsync({
                                     serverUrl: $scope.optionsUrl,
@@ -395,7 +410,9 @@
                                     $scope.loadData();
                                 } else {
                                     $scope.$watch('isEditing', function() {
-                                        if ($scope.isEditing) $scope.loadData();
+                                        if ($scope.isEditing) {
+                                            $scope.loadData();
+                                        }
                                     });
                                 }
                             }

@@ -14,8 +14,6 @@
             'tubularHttp', '$q', '$filter', function tubularOData(tubularHttp, $q, $filter) {
                 var me = this;
 
-                me.database = null;
-
                 me.retrieveDataAsync = function(request) {
                     request.requireAuthentication = false;
                     var cancelFunc = function(reason) {
@@ -24,28 +22,18 @@
                     };
 
                     // If database is null, retrieve it
-                    if (me.database == null) {
-                        return {
-                            promise: $q(function(resolve, reject) {
-                                resolve(tubularHttp.retrieveDataAsync(request).promise.then(function(data) {
-                                    me.database = data;
-                                    // TODO: Maybe check dataset and convert DATES
-                                    return me.pageRequest(request.data);
-                                }));
-                            }),
-                            cancel: cancelFunc
-                        };
-                    }
-
                     return {
                         promise: $q(function(resolve, reject) {
-                            resolve(me.pageRequest(request.data));
+                            resolve(tubularHttp.retrieveDataAsync(request).promise.then(function(data) {
+                                // TODO: Maybe check dataset and convert DATES
+                                return me.pageRequest(request.data, data);
+                            }));
                         }),
                         cancel: cancelFunc
                     };
                 };
 
-                me.pageRequest = function(request) {
+                me.pageRequest = function(request, database) {
                     var response = {
                         Counter: 0,
                         CurrentPage: 1,
@@ -55,9 +43,9 @@
                         TotalPages: 0
                     };
 
-                    if (me.database.length === 0) return response;
+                    if (database.length === 0) return response;
 
-                    var set = me.database;
+                    var set = database;
 
                     // Get columns with sort
                     // TODO: Check SortOrder 
@@ -112,32 +100,31 @@
                     return response;
                 };
 
-                me.saveDataAsync = function (model, request) {
+                me.saveDataAsync = function(model, request) {
                     // TODO: Complete
-                    me.database.push(model);
                 };
 
-                me.get = function (url) {
+                me.get = function(url) {
                     // Just pass the URL to TubularHttp for now
                     tubularHttp.get(url);
                 };
 
-                me.delete = function (url) {
+                me.delete = function(url) {
                     // Just pass the URL to TubularHttp for now
                     tubularHttp.delete(url);
                 };
 
-                me.post = function (url, data) {
+                me.post = function(url, data) {
                     // Just pass the URL to TubularHttp for now
                     tubularHttp.post(url, data);
                 };
 
-                me.put = function (url, data) {
+                me.put = function(url, data) {
                     // Just pass the URL to TubularHttp for now
                     tubularHttp.put(url, data);
                 };
 
-                me.getByKey = function (url, key) {
+                me.getByKey = function(url, key) {
                     // Just pass the URL to TubularHttp for now
                     tubularHttp.getByKey(url, key);
                 };
