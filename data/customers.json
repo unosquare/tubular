@@ -1,37 +1,46 @@
-﻿{
-    "Counter": 0,
-    "Payload": [
-        [
-            "Microsoft",
-            10
-        ],
-        [
-            "Unosquare",
-            10
-        ],
-        [
-            "Google",
-            50
-        ],
-        [
-            "Apple",
-            60
-        ],
-        [
-            "Wikipedia",
-            40
-        ],
-        [
-            "Facebook",
-            40
-        ],
-        [
-            "Tubular",
-            30
-        ]
-    ],
-    "TotalRecordCount": 2,
-    "FilteredRecordCount": 2,
-    "TotalPages": 1,
-    "CurrentPage": 1
-}
+﻿[
+    {
+        "CustomerName": "Microsoft",
+        "Invoices": 10
+    },
+    {
+        "CustomerName": "Microsoft",
+        "Invoices": 20
+    },
+    {
+        "CustomerName": "Apple",
+        "Invoices": 50
+    },
+    {
+        "CustomerName": "Unosquare",
+        "Invoices": 40
+    },
+    {
+        "CustomerName": "Microsoft",
+        "Invoices": 60
+    },
+    {
+        "CustomerName": "Microsoft",
+        "Invoices": 10
+    },
+    {
+        "CustomerName": "Google",
+        "Invoices": 80
+    },
+    {
+        "CustomerName": "Unosquare",
+        "Invoices": 90
+    },
+    {
+        "CustomerName": "Unosquare",
+        "Invoices": 40
+    },
+    {
+        "CustomerName": "Unosquare",
+        "Invoices": 90
+    },
+    {
+        "CustomerName": "Unosquare",
+        "Invoices": 90
+    }
+]
