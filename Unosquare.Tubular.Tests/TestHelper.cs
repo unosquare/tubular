@@ -17,6 +17,8 @@ namespace Unosquare.Tubular.Tests
         [SetUp]
         public void SetUp()
         {
+            Effort.Provider.EffortProviderConfiguration.RegisterProvider();
+
             var connection = DbConnectionFactory.CreateTransient();
             _context = new SampleEntities(connection);
 
