@@ -201,15 +201,26 @@
                         //else
                         searchLambda.AppendFormat("{0} == @{1} &&", column.Name, searchParamArgs.Count);
 
-                        if (column.DataType == DataType.Numeric.ToString().ToLower())
+                        if (String.Equals(column.DataType, DataType.Numeric.ToString(),
+                            StringComparison.CurrentCultureIgnoreCase))
+                        {
                             searchParamArgs.Add(Decimal.Parse(column.Filter.Text));
-                        else if (column.DataType == DataType.DateTime.ToString().ToLower() ||
-                                 column.DataType == DataType.Date.ToString().ToLower())
+                        }
+                        else if (
+                            String.Equals(column.DataType, DataType.DateTime.ToString(),
+                                StringComparison.CurrentCultureIgnoreCase) ||
+                            String.Equals(column.DataType, DataType.Date.ToString(), StringComparison.CurrentCultureIgnoreCase))
+                        {
                             searchParamArgs.Add(DateTime.Parse(column.Filter.Text));
-                        else if (column.DataType == DataType.Boolean.ToString().ToLower())
+                        }
+                        else if (String.Equals(column.DataType, DataType.Boolean.ToString(), StringComparison.CurrentCultureIgnoreCase))
+                        {
                             searchParamArgs.Add(Boolean.Parse(column.Filter.Text));
+                        }
                         else
+                        {
                             searchParamArgs.Add(column.Filter.Text);
+                        }
 
                         break;
                     case CompareOperators.Contains:
@@ -227,7 +238,7 @@
                     case CompareOperators.Gte:
                         searchLambda.AppendFormat("{0} >= @{1} &&", column.Name, searchParamArgs.Count);
 
-                        if (column.DataType == DataType.Numeric.ToString().ToLower())
+                        if (String.Equals(column.DataType, DataType.Numeric.ToString(), StringComparison.CurrentCultureIgnoreCase))
                             searchParamArgs.Add(decimal.Parse(column.Filter.Text));
                         else
                             searchParamArgs.Add(DateTime.Parse(column.Filter.Text));
@@ -236,7 +247,7 @@
                     case CompareOperators.Gt:
                         searchLambda.AppendFormat("{0} > @{1} &&", column.Name, searchParamArgs.Count);
 
-                        if (column.DataType == DataType.Numeric.ToString().ToLower())
+                        if (String.Equals(column.DataType, DataType.Numeric.ToString(), StringComparison.CurrentCultureIgnoreCase))
                             searchParamArgs.Add(decimal.Parse(column.Filter.Text));
                         else
                             searchParamArgs.Add(DateTime.Parse(column.Filter.Text));
@@ -245,7 +256,7 @@
                     case CompareOperators.Lte:
                         searchLambda.AppendFormat("{0} <= @{1} &&", column.Name, searchParamArgs.Count);
 
-                        if (column.DataType == DataType.Numeric.ToString().ToLower())
+                        if (String.Equals(column.DataType, DataType.Numeric.ToString(), StringComparison.CurrentCultureIgnoreCase))
                             searchParamArgs.Add(decimal.Parse(column.Filter.Text));
                         else
                             searchParamArgs.Add(DateTime.Parse(column.Filter.Text));
@@ -254,7 +265,7 @@
                     case CompareOperators.Lt:
                         searchLambda.AppendFormat("{0} < @{1} &&", column.Name, searchParamArgs.Count);
 
-                        if (column.DataType == DataType.Numeric.ToString().ToLower())
+                        if (String.Equals(column.DataType, DataType.Numeric.ToString(), StringComparison.CurrentCultureIgnoreCase))
                             searchParamArgs.Add(decimal.Parse(column.Filter.Text));
                         else
                             searchParamArgs.Add(DateTime.Parse(column.Filter.Text));
@@ -281,7 +292,7 @@
                         searchLambda.AppendFormat("(({0} >= @{1}) &&  ({0} <= @{2})) &&", column.Name,
                             searchParamArgs.Count, searchParamArgs.Count + 1);
 
-                        if (column.DataType == DataType.Numeric.ToString().ToLower())
+                        if (String.Equals(column.DataType, DataType.Numeric.ToString(), StringComparison.CurrentCultureIgnoreCase))
                         {
                             searchParamArgs.Add(decimal.Parse(column.Filter.Text));
                             searchParamArgs.Add(decimal.Parse(column.Filter.Argument[0]));
@@ -324,14 +335,15 @@
         /// <param name="dataSource">The IQueryable source</param>
         /// <param name="fieldName">The field to filter</param>
         /// <param name="filter">The LINQ expression</param>
+        /// <param name="records">How many records to retrieve, default 8</param>
         /// <returns>The filtered IQueryable</returns>
-        public static IQueryable CreateTypeAheadList(this IQueryable dataSource, string fieldName, string filter)
+        public static IQueryable<string> CreateTypeAheadList(this IQueryable dataSource, string fieldName, string filter, int records = 8)
         {
             // TODO: I need to connect this to a better platform
             return dataSource.CreateDynamicFilteredSet(fieldName, filter)
-                .Select(fieldName)
+                .Select(fieldName + ".ToString()")
                 .Distinct()
-                .Take(8);
+                .Take(records) as IQueryable<string>;
         }
 
         /// <summary>
@@ -341,13 +353,13 @@
         /// <param name="fieldName">The field to filter</param>
         /// <param name="records">How many records, 0 to retrieve all</param>
         /// <returns>The filtered IQueryable</returns>
-        public static IQueryable CreateTypeAheadList(this IQueryable dataSource, string fieldName, int records = 8)
+        public static IQueryable<string> CreateTypeAheadList(this IQueryable dataSource, string fieldName, int records = 8)
         {
             dataSource = dataSource
-                .Select(fieldName)
+                .Select(fieldName + ".ToString()")
                 .Distinct();
 
-            return records > 0 ? dataSource.Take(records) : dataSource;
+            return (records > 0 ? dataSource.Take(records) : dataSource) as IQueryable<string>;
         }
     }
 }

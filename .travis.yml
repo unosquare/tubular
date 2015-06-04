@@ -2,8 +2,10 @@ language: csharp
 solution: Unosquare.Tubular.Lib.sln
 install:
   - nuget restore Unosquare.Tubular.Lib.sln
+  - nuget install NUnit.Runners -Version 2.6.4 -OutputDirectory testrunner
   - npm install -g mocha
 script:
   - xbuild /p:Configuration=Release Unosquare.Tubular.Lib.sln
+  - mono ./testrunner/NUnit.Runners.2.6.4/tools/nunit-console.exe ./Unosquare.Tubular.Tests/bin/Release/Unosquare.Tubular.Tests.dll
   - npm run-script test-travis
   - cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js

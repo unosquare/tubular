@@ -27,6 +27,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{FD6CA34B-8
 		test\test.js = test\test.js
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unosquare.Tubular.Tests", "Unosquare.Tubular.Tests\Unosquare.Tubular.Tests.csproj", "{2B9D1173-BB0F-4B39-8E65-17C08F69C4BB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +51,10 @@ Global
 		{91590BE4-DBFD-4A67-943C-AF47EEF3F386}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{91590BE4-DBFD-4A67-943C-AF47EEF3F386}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{91590BE4-DBFD-4A67-943C-AF47EEF3F386}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B9D1173-BB0F-4B39-8E65-17C08F69C4BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B9D1173-BB0F-4B39-8E65-17C08F69C4BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B9D1173-BB0F-4B39-8E65-17C08F69C4BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B9D1173-BB0F-4B39-8E65-17C08F69C4BB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

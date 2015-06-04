@@ -134,9 +134,14 @@ var tubularTemplateServiceModule = {
             if (jsonModel.hasOwnProperty(prop)) {
                 var value = jsonModel[prop];
                 // Ignore functions
-                if (prop[0] === '$' || typeof (value) === 'function') continue;
+                if (prop[0] === '$' || typeof (value) === 'function') {
+                    continue;
+                }
+
                 // Ignore null value, but maybe evaluate another item if there is anymore
-                if (value == null) continue;
+                if (value == null) {
+                    continue;
+                }
 
                 if (this.isNumber(value) || parseFloat(value).toString() == value) {
                     columns.push({ Name: prop, DataType: 'numeric', Template: '{{row.' + prop + '}}' });
@@ -2171,16 +2176,20 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             $scope.validate = function() {
                                 if (angular.isUndefined($scope.min) == false && angular.isUndefined($scope.value) == false) {
                                     $scope.$valid = $scope.value >= $scope.min;
-                                    if ($scope.$valid == false)
+                                    if ($scope.$valid == false) {
                                         $scope.state.$errors = ["The minimum is " + $scope.min];
+                                    }
                                 }
 
-                                if ($scope.$valid == false) return;
+                                if ($scope.$valid == false) {
+                                    return;
+                                }
 
                                 if (angular.isUndefined($scope.max) == false && angular.isUndefined($scope.value) == false) {
                                     $scope.$valid = $scope.value <= $scope.max;
-                                    if ($scope.$valid == false)
+                                    if ($scope.$valid == false) {
                                         $scope.state.$errors = ["The maximum is " + $scope.max];
+                                    }
                                 }
                             };
 
@@ -2240,16 +2249,20 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             $scope.validate = function() {
                                 if (angular.isUndefined($scope.min) == false) {
                                     $scope.$valid = $scope.value >= $scope.min;
-                                    if ($scope.$valid == false)
+                                    if ($scope.$valid == false) {
                                         $scope.state.$errors = ["The minimum is " + $scope.min];
+                                    }
                                 }
 
-                                if ($scope.$valid == false) return;
+                                if ($scope.$valid == false) {
+                                    return;
+                                }
 
                                 if (angular.isUndefined($scope.max) == false) {
                                     $scope.$valid = $scope.value <= $scope.max;
-                                    if ($scope.$valid == false)
+                                    if ($scope.$valid == false) {
                                         $scope.state.$errors = ["The maximum is " + $scope.max];
+                                    }
                                 }
                             };
 
@@ -2327,16 +2340,20 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 $scope.validate = function() {
                                     if (angular.isUndefined($scope.min) == false) {
                                         $scope.$valid = $scope.value >= $scope.min;
-                                        if ($scope.$valid == false)
+                                        if ($scope.$valid == false) {
                                             $scope.state.$errors = ["The minimum is " + $scope.min];
+                                        }
                                     }
 
-                                    if ($scope.$valid == false) return;
+                                    if ($scope.$valid == false) {
+                                        return;
+                                    }
 
                                     if (angular.isUndefined($scope.max) == false) {
                                         $scope.$valid = $scope.value <= $scope.max;
-                                        if ($scope.$valid == false)
+                                        if ($scope.$valid == false) {
                                             $scope.state.$errors = ["The maximum is " + $scope.max];
+                                        }
                                     }
                                 };
 
@@ -2420,10 +2437,13 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             }
 
                             $scope.loadData = function() {
-                                if ($scope.dataIsLoaded) return;
+                                if ($scope.dataIsLoaded) {
+                                    return;
+                                }
 
-                                if (angular.isUndefined($scope.$component) || $scope.$component == null)
+                                if (angular.isUndefined($scope.$component) || $scope.$component == null) {
                                     throw 'You need to define a parent Form or Grid';
+                                }
 
                                 var currentRequest = $scope.$component.dataService.retrieveDataAsync({
                                     serverUrl: $scope.optionsUrl,
@@ -2448,7 +2468,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     $scope.loadData();
                                 } else {
                                     $scope.$watch('isEditing', function() {
-                                        if ($scope.isEditing) $scope.loadData();
+                                        if ($scope.isEditing) {
+                                            $scope.loadData();
+                                        }
                                     });
                                 }
                             }
@@ -4214,8 +4236,6 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             'tubularHttp', '$q', '$filter', function tubularOData(tubularHttp, $q, $filter) {
                 var me = this;
 
-                me.database = null;
-
                 me.retrieveDataAsync = function(request) {
                     request.requireAuthentication = false;
                     var cancelFunc = function(reason) {
@@ -4224,28 +4244,18 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     };
 
                     // If database is null, retrieve it
-                    if (me.database == null) {
-                        return {
-                            promise: $q(function(resolve, reject) {
-                                resolve(tubularHttp.retrieveDataAsync(request).promise.then(function(data) {
-                                    me.database = data;
-                                    // TODO: Maybe check dataset and convert DATES
-                                    return me.pageRequest(request.data);
-                                }));
-                            }),
-                            cancel: cancelFunc
-                        };
-                    }
-
                     return {
                         promise: $q(function(resolve, reject) {
-                            resolve(me.pageRequest(request.data));
+                            resolve(tubularHttp.retrieveDataAsync(request).promise.then(function(data) {
+                                // TODO: Maybe check dataset and convert DATES
+                                return me.pageRequest(request.data, data);
+                            }));
                         }),
                         cancel: cancelFunc
                     };
                 };
 
-                me.pageRequest = function(request) {
+                me.pageRequest = function(request, database) {
                     var response = {
                         Counter: 0,
                         CurrentPage: 1,
@@ -4255,9 +4265,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         TotalPages: 0
                     };
 
-                    if (me.database.length === 0) return response;
+                    if (database.length === 0) return response;
 
-                    var set = me.database;
+                    var set = database;
 
                     // Get columns with sort
                     // TODO: Check SortOrder 
@@ -4312,32 +4322,31 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     return response;
                 };
 
-                me.saveDataAsync = function (model, request) {
+                me.saveDataAsync = function(model, request) {
                     // TODO: Complete
-                    me.database.push(model);
                 };
 
-                me.get = function (url) {
+                me.get = function(url) {
                     // Just pass the URL to TubularHttp for now
                     tubularHttp.get(url);
                 };
 
-                me.delete = function (url) {
+                me.delete = function(url) {
                     // Just pass the URL to TubularHttp for now
                     tubularHttp.delete(url);
                 };
 
-                me.post = function (url, data) {
+                me.post = function(url, data) {
                     // Just pass the URL to TubularHttp for now
                     tubularHttp.post(url, data);
                 };
 
-                me.put = function (url, data) {
+                me.put = function(url, data) {
                     // Just pass the URL to TubularHttp for now
                     tubularHttp.put(url, data);
                 };
 
-                me.getByKey = function (url, key) {
+                me.getByKey = function(url, key) {
                     // Just pass the URL to TubularHttp for now
                     tubularHttp.getByKey(url, key);
                 };
@@ -4358,8 +4367,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * 
          * This service is just a facade to the node module expose like `tubularTemplateServiceModule`.
          */
-        .service('tubularTemplateService', [
-            '$templateCache',
+        .service('tubularTemplateService', ['$templateCache',
             function tubularTemplateService($templateCache) {
                 var me = this;
 

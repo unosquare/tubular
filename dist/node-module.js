@@ -133,9 +133,14 @@ var tubularTemplateServiceModule = {
             if (jsonModel.hasOwnProperty(prop)) {
                 var value = jsonModel[prop];
                 // Ignore functions
-                if (prop[0] === '$' || typeof (value) === 'function') continue;
+                if (prop[0] === '$' || typeof (value) === 'function') {
+                    continue;
+                }
+
                 // Ignore null value, but maybe evaluate another item if there is anymore
-                if (value == null) continue;
+                if (value == null) {
+                    continue;
+                }
 
                 if (this.isNumber(value) || parseFloat(value).toString() == value) {
                     columns.push({ Name: prop, DataType: 'numeric', Template: '{{row.' + prop + '}}' });
