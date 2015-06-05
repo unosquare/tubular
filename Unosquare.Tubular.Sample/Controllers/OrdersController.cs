@@ -10,15 +10,6 @@
     [RoutePrefix("api/orders")]
     public class OrdersController : ApiController
     {
-        [HttpGet, Route("")]
-        public async Task<IHttpActionResult> Get()
-        {
-            using (var context = new SampleDbContext(false))
-            {
-                return Ok(await context.Orders.AsNoTracking().ToListAsync());
-            }
-        }
-
         [HttpGet, Route("{id}")]
         public async Task<IHttpActionResult> Get(string id)
         {
