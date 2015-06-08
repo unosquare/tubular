@@ -84,6 +84,7 @@
                             $scope.tempRow = new TubularModel($scope, {});
                             $scope.dataService = tubularHttp.getDataService($scope.dataServiceName);
                             $scope.requireAuthentication = $scope.requireAuthentication || true;
+                            tubularHttp.setRequireAuthentication($scope.requireAuthentication);
                             $scope.name = $scope.name || 'tbgrid';
                             $scope.editorMode = $scope.editorMode || 'none';
                             $scope.canSaveState = false;
