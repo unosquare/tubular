@@ -89,7 +89,7 @@
 
                 $scope.toggleCode = function(tag) {
                     if ($scope.source[tag] == null) {
-                        $scope.source[tag] = $templateCache.get('assets/' + tag + '.html')[1];
+                        $scope.source[tag] = $templateCache.get('assets/' + tag + '.html');
                     } else {
                         $scope.source[tag] = null;
                     }
@@ -107,7 +107,7 @@
                                 { name: 'index.html', content: data },
                                 { name: 'README.md', content: tubularGenerator.DefaultReadme },
                                 { name: 'app.js', content: tubularGenerator.DefaultJs },
-                                { name: 'grid.html', content: $templateCache.get('assets/' + tag + '.html')[1] }
+                                { name: 'grid.html', content: $templateCache.get('assets/' + tag + '.html') }
                             ]);
                         });
                 }

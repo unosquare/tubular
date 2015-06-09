@@ -17,7 +17,7 @@
                 </tb-column-definitions>
                 <tb-row-set>
                     <tb-row-template ng-repeat="row in $component.rows"
-                                     row-model="row">
+                                     row-model="row" selectable="false">
                         <tb-cell-template>
                             {{row.CustomerName}}
                         </tb-cell-template>
