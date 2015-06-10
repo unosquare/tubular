@@ -512,7 +512,7 @@
          * @param {boolean} isGrouping Define a group key.
          */
         .directive('tbColumn', [
-            'tubulargGridColumnModel', function(ColumnModel) {
+            'tubularGridColumnModel', function(ColumnModel) {
                 return {
                     require: '^tbColumnDefinitions',
                     template: '<th ng-transclude ng-class="{sortable: column.Sortable}" ng-show="column.Visible"></th>',

@@ -8,28 +8,32 @@
     * @description
     * Tubular Models module. 
     * 
-    * It contains model's factories to be use in {@link tubular.directives} like `tubularModel` and `tubulargGridColumnModel`.
+    * It contains model's factories to be use in {@link tubular.directives} like `tubularModel` and `tubularGridColumnModel`.
     */
     angular.module('tubular.models', [])
        /**
         * @ngdoc factory
-        * @name tubulargGridColumnModel
+        * @name tubularGridColumnModel
         *
         * @description
-        * The `tubulargGridColumnModel` factory is the base to generate a column model to use with `tbGrid`.
+        * The `tubularGridColumnModel` factory is the base to generate a column model to use with `tbGrid`.
         * 
         * This model doesn't need to be created in your controller, the `tbGrid` generate it from any `tbColumn`.
         */
-        .factory('tubulargGridColumnModel', function() {
+        .factory('tubularGridColumnModel', function() {
 
             var parseSortDirection = function(value) {
-                if (angular.isUndefined(value))
+                if (angular.isUndefined(value)) {
                     return 'None';
+                }
 
-                if (value.indexOf('Asc') === 0 || value.indexOf('asc') === 0)
+                if (value.indexOf('Asc') === 0 || value.indexOf('asc') === 0) {
                     return 'Ascending';
-                if (value.indexOf('Desc') === 0 || value.indexOf('desc') === 0)
+                }
+
+                if (value.indexOf('Desc') === 0 || value.indexOf('desc') === 0) {
                     return 'Descending';
+                }
 
                 return 'None';
             };
@@ -151,8 +155,9 @@
                         angular.forEach($scope.columns, function(col, key) {
                             var value = data[key] || data[col.Name];
 
-                            if (angular.isUndefined(value) && data[key] === 0)
+                            if (angular.isUndefined(value) && data[key] === 0) {
                                 value = 0;
+                            }
 
                             obj.$addField(col.Name, value);
 
@@ -215,13 +220,15 @@
 
                     // Returns a save promise
                     obj.save = function() {
-                        if (angular.isUndefined(dataService) || dataService == null)
+                        if (angular.isUndefined(dataService) || dataService == null) {
                             throw 'Define DataService to your model.';
+                        }
 
-                        if (angular.isUndefined($scope.serverSaveUrl) || $scope.serverSaveUrl == null)
+                        if (angular.isUndefined($scope.serverSaveUrl) || $scope.serverSaveUrl == null) {
                             throw 'Define a Save URL.';
+                        }
 
-                        if (obj.$hasChanges == false) return false;
+                        if (obj.$isNew == false && obj.$hasChanges == false) return false;
 
                         obj.$isLoading = true;
 
