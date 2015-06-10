@@ -225,11 +225,12 @@
 
                                         $scope.rows = data.Payload.map(function(el) {
                                             var model = new TubularModel($scope, el, $scope.dataService);
+                                            model.$component = $scope;
 
                                             model.editPopup = function(template) {
                                                 tubularPopupService.openDialog(template, model);
                                             };
-
+                                            
                                             return model;
                                         });
 
@@ -670,8 +671,8 @@
                 return {
                     require: '^tbRowSet',
                     template: '<tr ng-transclude' +
-                        ' ng-class="{\'info\': selectableBool && rowModel.$selected}"' +
-                        ' ng-click="changeSelection(rowModel)"></tr>',
+                        ' ng-class="{\'info\': selectableBool && model.$selected}"' +
+                        ' ng-click="changeSelection(model)"></tr>',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
@@ -681,10 +682,11 @@
                     },
                     controller: [
                         '$scope', function ($scope) {
+                            // TODO: Rename this directive
                             $scope.tubularDirective = 'tubular-rowset';
                             $scope.fields = [];
                             $scope.hasFieldsDefinitions = false;
-                            $scope.selectableBool = $scope.selectable !== "false";
+                            $scope.selectableBool = $scope.selectable == "true";
                             $scope.$component = $scope.$parent.$parent.$parent.$component;
 
                             $scope.$watch('hasFieldsDefinitions', function (newVal) {
@@ -699,12 +701,12 @@
                                 });
                             };
 
-                            if ($scope.selectableBool && angular.isUndefined($scope.rowModel) === false) {
-                                $scope.$component.selectFromSession($scope.rowModel);
+                            if ($scope.selectableBool && angular.isDefined($scope.model)) {
+                                $scope.$component.selectFromSession($scope.model);
                             }
 
                             $scope.changeSelection = function(rowModel) {
-                                if ($scope.selectableBool == false) return;
+                                if ($scope.selectableBool === false) return;
                                 $scope.$component.changeSelection(rowModel);
                             };
                         }

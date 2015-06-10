@@ -49,12 +49,18 @@
                 // Form Events
                 $scope.$on('tbForm_OnConnectionError', function(error) { toastr.error(error.statusText || "Connection error"); });
 
-                $scope.$on('tbForm_OnSuccessfulSave', function(data) {
+                $scope.$on('tbForm_OnSuccessfulSave', function (event, data) {
                     toastr.success("Record updated");
                     document.location = document.location;
                 });
 
-                $scope.$on('tbForm_OnSavingNoChanges', function(model) {
+                $scope.$on('tbGrid_OnSuccessfulSave', function (event, data, gridScope) {
+                    toastr.success("Record updated");
+                    console.log(data);
+                    console.log(gridScope);
+                });
+
+                $scope.$on('tbForm_OnSavingNoChanges', function (event, model) {
                     toastr.warning("Nothing to save");
                     $location.path('/');
                 });

@@ -339,11 +339,14 @@ select.checkbox-list:hover option:checked, select.checkbox-list:focus option:che
 
         table.responsive-mobile td {
             display: block;
-            text-align: right;
             font-size: 14px;
             height: 28px;
             border-bottom: 1px dotted #ccc;
         }
+
+            table.responsive-mobile td:not(.text-center) {
+                text-align: right;
+            }
 
             table.responsive-mobile td:last-child {
                 border-bottom: 0;

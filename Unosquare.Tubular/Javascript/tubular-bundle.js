@@ -930,11 +930,12 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                                         $scope.rows = data.Payload.map(function(el) {
                                             var model = new TubularModel($scope, el, $scope.dataService);
+                                            model.$component = $scope;
 
                                             model.editPopup = function(template) {
                                                 tubularPopupService.openDialog(template, model);
                                             };
-
+                                            
                                             return model;
                                         });
 
@@ -1375,8 +1376,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 return {
                     require: '^tbRowSet',
                     template: '<tr ng-transclude' +
-                        ' ng-class="{\'info\': selectableBool && rowModel.$selected}"' +
-                        ' ng-click="changeSelection(rowModel)"></tr>',
+                        ' ng-class="{\'info\': selectableBool && model.$selected}"' +
+                        ' ng-click="changeSelection(model)"></tr>',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
@@ -1386,10 +1387,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     },
                     controller: [
                         '$scope', function ($scope) {
+                            // TODO: Rename this directive
                             $scope.tubularDirective = 'tubular-rowset';
                             $scope.fields = [];
                             $scope.hasFieldsDefinitions = false;
-                            $scope.selectableBool = $scope.selectable !== "false";
+                            $scope.selectableBool = $scope.selectable == "true";
                             $scope.$component = $scope.$parent.$parent.$parent.$component;
 
                             $scope.$watch('hasFieldsDefinitions', function (newVal) {
@@ -1404,12 +1406,12 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 });
                             };
 
-                            if ($scope.selectableBool && angular.isUndefined($scope.rowModel) === false) {
-                                $scope.$component.selectFromSession($scope.rowModel);
+                            if ($scope.selectableBool && angular.isDefined($scope.model)) {
+                                $scope.$component.selectFromSession($scope.model);
                             }
 
                             $scope.changeSelection = function(rowModel) {
-                                if ($scope.selectableBool == false) return;
+                                if ($scope.selectableBool === false) return;
                                 $scope.$component.changeSelection(rowModel);
                             };
                         }
@@ -1703,7 +1705,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             $scope.currentRequest.then(
                                 function(data) {
                                     $scope.model.$isEditing = false;
-                                    $scope.$emit('tbGrid_OnSuccessfulSave', data);
+                                    $scope.$emit('tbGrid_OnSuccessfulSave', data, $scope.model.$component);
                                 }, function(error) {
                                     $scope.$emit('tbGrid_OnConnectionError', error);
                                 });
@@ -3903,8 +3905,12 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     });
             };
 
-            me.saveDataAsync = function(model, request) {
+            me.saveDataAsync = function (model, request) {
+                var component = model.$component;
+                model.$component = null;
                 var clone = angular.copy(model);
+                model.$component = component;
+
                 var originalClone = angular.copy(model.$original);
 
                 delete clone.$isEditing;

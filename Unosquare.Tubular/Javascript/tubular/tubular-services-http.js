@@ -122,8 +122,12 @@
                     });
             };
 
-            me.saveDataAsync = function(model, request) {
+            me.saveDataAsync = function (model, request) {
+                var component = model.$component;
+                model.$component = null;
                 var clone = angular.copy(model);
+                model.$component = component;
+
                 var originalClone = angular.copy(model.$original);
 
                 delete clone.$isEditing;

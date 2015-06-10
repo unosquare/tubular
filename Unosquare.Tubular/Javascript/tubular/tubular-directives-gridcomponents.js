@@ -175,7 +175,7 @@
                             $scope.currentRequest.then(
                                 function(data) {
                                     $scope.model.$isEditing = false;
-                                    $scope.$emit('tbGrid_OnSuccessfulSave', data);
+                                    $scope.$emit('tbGrid_OnSuccessfulSave', data, $scope.model.$component);
                                 }, function(error) {
                                     $scope.$emit('tbGrid_OnConnectionError', error);
                                 });
