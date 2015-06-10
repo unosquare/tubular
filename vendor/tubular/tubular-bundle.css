@@ -501,8 +501,12 @@ table.tubular-grid-table {
     width: 100%;
 }
 
-    table.tubular-grid-table div.form-group {
+    table.tubular-grid-table .form-group {
         margin-bottom: 0;
+    }
+
+    table.tubular-grid-table .radio, table.tubular-grid-table .checkbox {
+        margin: 0;
     }
 
 th.show-xl, td.show-xl {
@@ -559,7 +563,7 @@ table.tubular-grid-table tr th {
     padding: 2px;
 }
 
-table.tubular-grid-table thead tr th.column-action {
+table.tubular-grid-table thead tr .column-action {
     width: 75px;
 }
 
@@ -574,9 +578,9 @@ table.tubular-grid-table tbody tr td {
         white-space: nowrap;
     }
 
-    table.tubular-grid-table tbody tr td.cell-menu {
-        overflow: visible;
-    }
+table.tubular-grid-table tbody tr .cell-menu {
+    overflow: visible;
+}
 
 table.tubular-grid-table thead tr th i.fa {
     font-weight: normal;
@@ -611,11 +615,11 @@ table.tubular-grid-table thead tr th div.tubular-column-menu {
         }
 
     table.tubular-grid-table thead tr th div.tubular-column-menu button i.fa,
-    table.tubular-grid-table thead tr th div.tubular-column-menu button i.glyphicon {
+    table.tubular-grid-table thead tr th div.tubular-column-menu button .glyphicon {
         font-size: 10px;
     }
 
-table.tubular-grid-table tbody td.row-group {
+table.tubular-grid-table tbody .row-group {
     font-weight: bolder;
     text-transform: capitalize;
 }
@@ -628,15 +632,15 @@ form.tubular-column-filter-form {
         height: inherit;
     }
 
-div.fullHeight, .modal-backdrop.in {
+.fullHeight, .modal-backdrop.in {
     height: 100%;
 }
 
-div.tubular-remove-popover {
+.tubular-remove-popover {
     min-width: 120px;
 }
 
-input.ng-pristine + span.help-block.error-block {
+input.ng-pristine + .help-block.error-block {
     display: none;
 }
 
@@ -644,7 +648,7 @@ input.ng-pristine + span.help-block.error-block {
     border: 1px solid #e7e7e7;
 }
 
-ul.dropdown-menu a {
+.dropdown-menu a {
     cursor: pointer;
 }
 
@@ -700,11 +704,14 @@ select.checkbox-list:hover option:checked, select.checkbox-list:focus option:che
 
         table.responsive-mobile td {
             display: block;
-            text-align: right;
             font-size: 14px;
             height: 28px;
             border-bottom: 1px dotted #ccc;
         }
+
+            table.responsive-mobile td:not(.text-center) {
+                text-align: right;
+            }
 
             table.responsive-mobile td:last-child {
                 border-bottom: 0;
