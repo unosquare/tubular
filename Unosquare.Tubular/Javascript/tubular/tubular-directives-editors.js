@@ -350,6 +350,8 @@
          * @param {object} options Set the options to display.
          * @param {string} optionsUrl Set the Http Url where to retrieve the values.
          * @param {string} optionsMethod Set the Http Method where to retrieve the values.
+         * @param {string} optionLabel Set the property to get the labels
+         * @param {string} optionKey Set the property to get the keys
          */
         .directive('tbDropdownEditor', [
             'tubularEditorService', function(tubularEditorService) {
@@ -368,14 +370,18 @@
                     restrict: 'E',
                     replace: true,
                     transclude: true,
-                    scope: angular.extend({ options: '=?', optionsUrl: '@', optionsMethod: '@?', optionLabel: '@?' }, tubularEditorService.defaultScope),
+                    scope: angular.extend({ options: '=?', optionsUrl: '@', optionsMethod: '@?', optionLabel: '@?', optionKey: '@?' }, tubularEditorService.defaultScope),
                     controller: [
-                        '$scope', function ($scope) {
+                        '$scope', function($scope) {
                             tubularEditorService.setupScope($scope);
                             $scope.dataIsLoaded = false;
                             $scope.selectOptions = "d for d in options";
                             if (angular.isDefined($scope.optionLabel)) {
                                 $scope.selectOptions = "d." + $scope.optionLabel + " for d in options";
+
+                                if (angular.isDefined($scope.optionKey)) {
+                                    $scope.selectOptions = 'd.' + $scope.optionKey + ' as ' + $scope.selectOptions;
+                                }
                             }
 
                             $scope.loadData = function() {
@@ -396,7 +402,7 @@
                                 $scope.value = '';
 
                                 currentRequest.promise.then(
-                                    function (data) {
+                                    function(data) {
                                         $scope.options = data;
                                         $scope.dataIsLoaded = true;
                                         $scope.value = value;
@@ -567,7 +573,7 @@
                         uncheckedValue: '=?'
                     }, tubularEditorService.defaultScope),
                     controller: [
-                        '$scope', '$element', function ($scope) {
+                        '$scope', '$element', function($scope) {
                             $scope.checkedValue = angular.isDefined($scope.checkedValue) ? $scope.checkedValue : true;
                             $scope.uncheckedValue = angular.isDefined($scope.uncheckedValue) ? $scope.uncheckedValue : false;
 
@@ -621,7 +627,7 @@
                     transclude: true,
                     scope: tubularEditorService.defaultScope,
                     controller: [
-                        '$scope', function ($scope) {
+                        '$scope', function($scope) {
                             $scope.validate = function() {
                                 if (angular.isUndefined($scope.min) == false && angular.isUndefined($scope.value) == false) {
                                     if ($scope.value.length < parseInt($scope.min)) {
