@@ -175,6 +175,11 @@
                             $scope.currentRequest.then(
                                 function(data) {
                                     $scope.model.$isEditing = false;
+
+                                    if (angular.isDefined($scope.model.$component) && angular.isDefined($scope.model.$component.autoRefresh) && $scope.model.$component.autoRefresh) {
+                                        $scope.model.$component.retrieveData();
+                                    }
+
                                     $scope.$emit('tbGrid_OnSuccessfulSave', data, $scope.model.$component);
                                 }, function(error) {
                                     $scope.$emit('tbGrid_OnConnectionError', error);

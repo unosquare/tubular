@@ -739,6 +739,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @param {string} name Grid's name, used to store metainfo in localstorage.
          * @param {string} editorMode Define if grid is read-only or it has editors (inline or popup).
          * @param {bool} showLoading Set if an overlay will show when it's loading data, default true.
+         * @param {bool} autoRefresh Set if the grid refresh after any insertion or update, default true.
          */
         .directive('tbGrid', [
             function() {
@@ -761,7 +762,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         requireAuthentication: '@?',
                         name: '@?gridName',
                         editorMode: '@?',
-                        showLoading: '=?'
+                        showLoading: '=?',
+                        autoRefresh: '=?'
                     },
                     controller: [
                         '$scope', 'localStorageService', 'tubularPopupService', 'tubularModel', 'tubularHttp', '$routeParams',
@@ -796,6 +798,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             $scope.canSaveState = false;
                             $scope.groupBy = '';
                             $scope.showLoading = $scope.showLoading || true;
+                            $scope.autoRefresh = $scope.autoRefresh || true;
 
                             $scope.$watch('columns', function() {
                                 if ($scope.hasColumnsDefinitions === false || $scope.canSaveState === false)
@@ -827,7 +830,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                                 if (angular.isDefined(template)) {
                                     if (angular.isDefined(popup) && popup) {
-                                        tubularPopupService.openDialog(template, $scope.tempRow);
+                                        tubularPopupService.openDialog(template, $scope.tempRow, $scope);
                                     }
                                 }
                             };
@@ -934,7 +937,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                             model.$component = $scope;
 
                                             model.editPopup = function(template) {
-                                                tubularPopupService.openDialog(template, model);
+                                                tubularPopupService.openDialog(template, model, $scope);
                                             };
                                             
                                             return model;
@@ -1706,6 +1709,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             $scope.currentRequest.then(
                                 function(data) {
                                     $scope.model.$isEditing = false;
+
+                                    if (angular.isDefined($scope.model.$component) && angular.isDefined($scope.model.$component.autoRefresh) && $scope.model.$component.autoRefresh) {
+                                        $scope.model.$component.retrieveData();
+                                    }
+
                                     $scope.$emit('tbGrid_OnSuccessfulSave', data, $scope.model.$component);
                                 }, function(error) {
                                     $scope.$emit('tbGrid_OnConnectionError', error);
@@ -3067,7 +3075,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 }
 
                                 $scope.currentRequest.then(
-                                        function(data) {
+                                        function (data) {
+                                            if (angular.isDefined($scope.model.$component) && angular.isDefined($scope.model.$component.autoRefresh) && $scope.model.$component.autoRefresh) {
+                                                $scope.model.$component.retrieveData();
+                                            }
+
                                             $scope.$emit('tbForm_OnSuccessfulSave', data);
                                         }, function(error) {
                                             $scope.$emit('tbForm_OnConnectionError', error);
@@ -3428,7 +3440,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     $rootScope.$on('tbForm_OnConnectionError', callback);
                 };
 
-                me.openDialog = function(template, model) {
+                me.openDialog = function(template, model, gridScope) {
                     if (angular.isUndefined(template))
                         template = tubularTemplateService.generatePopup(model);
 
@@ -3449,6 +3461,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                             $scope.$emit('tbForm_OnSuccessfulSave', data);
                                             $rootScope.$broadcast('tbForm_OnSuccessfulSave', data);
                                             $scope.Model.$isLoading = false;
+                                            if (gridScope.autoRefresh) gridScope.retrieveData();
                                             dialog.close();
                                         }, function(error) {
                                             $scope.$emit('tbForm_OnConnectionError', error);

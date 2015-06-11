@@ -99,7 +99,11 @@
                                 }
 
                                 $scope.currentRequest.then(
-                                        function(data) {
+                                        function (data) {
+                                            if (angular.isDefined($scope.model.$component) && angular.isDefined($scope.model.$component.autoRefresh) && $scope.model.$component.autoRefresh) {
+                                                $scope.model.$component.retrieveData();
+                                            }
+
                                             $scope.$emit('tbForm_OnSuccessfulSave', data);
                                         }, function(error) {
                                             $scope.$emit('tbForm_OnConnectionError', error);

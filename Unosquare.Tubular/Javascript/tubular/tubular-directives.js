@@ -33,6 +33,7 @@
          * @param {string} name Grid's name, used to store metainfo in localstorage.
          * @param {string} editorMode Define if grid is read-only or it has editors (inline or popup).
          * @param {bool} showLoading Set if an overlay will show when it's loading data, default true.
+         * @param {bool} autoRefresh Set if the grid refresh after any insertion or update, default true.
          */
         .directive('tbGrid', [
             function() {
@@ -55,7 +56,8 @@
                         requireAuthentication: '@?',
                         name: '@?gridName',
                         editorMode: '@?',
-                        showLoading: '=?'
+                        showLoading: '=?',
+                        autoRefresh: '=?'
                     },
                     controller: [
                         '$scope', 'localStorageService', 'tubularPopupService', 'tubularModel', 'tubularHttp', '$routeParams',
@@ -90,6 +92,7 @@
                             $scope.canSaveState = false;
                             $scope.groupBy = '';
                             $scope.showLoading = $scope.showLoading || true;
+                            $scope.autoRefresh = $scope.autoRefresh || true;
 
                             $scope.$watch('columns', function() {
                                 if ($scope.hasColumnsDefinitions === false || $scope.canSaveState === false)
@@ -121,7 +124,7 @@
 
                                 if (angular.isDefined(template)) {
                                     if (angular.isDefined(popup) && popup) {
-                                        tubularPopupService.openDialog(template, $scope.tempRow);
+                                        tubularPopupService.openDialog(template, $scope.tempRow, $scope);
                                     }
                                 }
                             };
@@ -228,7 +231,7 @@
                                             model.$component = $scope;
 
                                             model.editPopup = function(template) {
-                                                tubularPopupService.openDialog(template, model);
+                                                tubularPopupService.openDialog(template, model, $scope);
                                             };
                                             
                                             return model;

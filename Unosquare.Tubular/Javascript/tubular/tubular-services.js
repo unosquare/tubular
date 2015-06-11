@@ -29,7 +29,7 @@
                     $rootScope.$on('tbForm_OnConnectionError', callback);
                 };
 
-                me.openDialog = function(template, model) {
+                me.openDialog = function(template, model, gridScope) {
                     if (angular.isUndefined(template))
                         template = tubularTemplateService.generatePopup(model);
 
@@ -50,6 +50,7 @@
                                             $scope.$emit('tbForm_OnSuccessfulSave', data);
                                             $rootScope.$broadcast('tbForm_OnSuccessfulSave', data);
                                             $scope.Model.$isLoading = false;
+                                            if (gridScope.autoRefresh) gridScope.retrieveData();
                                             dialog.close();
                                         }, function(error) {
                                             $scope.$emit('tbForm_OnConnectionError', error);
