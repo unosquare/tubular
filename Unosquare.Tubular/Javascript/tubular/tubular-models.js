@@ -228,22 +228,16 @@
                             throw 'Define a Save URL.';
                         }
 
-                        if (obj.$isNew == false && obj.$hasChanges == false) return false;
+                        if (obj.$isNew == false && obj.$hasChanges == false) {
+                            return false;
+                        }
 
                         obj.$isLoading = true;
 
-                        if (obj.$isNew) {
-                            return dataService.retrieveDataAsync({
-                                serverUrl: $scope.serverSaveUrl,
-                                requestMethod: $scope.serverSaveMethod,
-                                data: obj
-                            }).promise;
-                        } else {
-                            return dataService.saveDataAsync(obj, {
-                                serverUrl: $scope.serverSaveUrl,
-                                requestMethod: 'PUT'
-                            }).promise;
-                        }
+                        return dataService.saveDataAsync(obj, {
+                            serverUrl: $scope.serverSaveUrl,
+                            requestMethod: obj.$isNew ? $scope.serverSaveMethod : 'PUT'
+                        }).promise;
                     };
 
                     obj.edit = function() {

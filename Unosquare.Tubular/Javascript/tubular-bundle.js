@@ -827,6 +827,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 $scope.tempRow = new TubularModel($scope, {}, $scope.dataService);
                                 $scope.tempRow.$isNew = true;
                                 $scope.tempRow.$isEditing = true;
+                                $scope.tempRow.$component = $scope;
 
                                 if (angular.isDefined(template)) {
                                     if (angular.isDefined(popup) && popup) {
@@ -1740,21 +1741,19 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * 
          * @param {object} model The row to remove.
          * @param {string} caption Set the caption to use in the button, default Edit.
-         * @param {string} css Add a CSS class to the button.
          */
         .directive('tbEditButton', [function() {
 
             return {
                 require: '^tbGrid',
-                template: '<button ng-click="edit()" class="btn btn-default {{ css || \'\' }}" ' +
+                template: '<button ng-click="edit()" class="btn btn-default" ' +
                     'ng-hide="model.$isEditing">{{ caption || \'Edit\' }}</button>',
                 restrict: 'E',
                 replace: true,
                 transclude: true,
                 scope: {
                     model: '=',
-                    caption: '@',
-                    css: '@'
+                    caption: '@'
                 },
                 controller: [
                     '$scope', function($scope) {
@@ -2173,7 +2172,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         '<label ng-show="showLabel">{{ label }}</label>' +
                         '<div class="input-group" ng-show="isEditing">' +
                         '<div class="input-group-addon" ng-show="format == \'C\'">$</div>' +
-                        '<input type="number" placeholder="{{placeholder}}" ng-model="value" class="form-control" ' +
+                        '<input type="number" step="any" placeholder="{{placeholder}}" ng-model="value" class="form-control" ' +
                         'ng-required="required" ng-readonly="readOnly" />' +
                         '</div>' +
                         '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
@@ -3346,22 +3345,16 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             throw 'Define a Save URL.';
                         }
 
-                        if (obj.$isNew == false && obj.$hasChanges == false) return false;
+                        if (obj.$isNew == false && obj.$hasChanges == false) {
+                            return false;
+                        }
 
                         obj.$isLoading = true;
 
-                        if (obj.$isNew) {
-                            return dataService.retrieveDataAsync({
-                                serverUrl: $scope.serverSaveUrl,
-                                requestMethod: $scope.serverSaveMethod,
-                                data: obj
-                            }).promise;
-                        } else {
-                            return dataService.saveDataAsync(obj, {
-                                serverUrl: $scope.serverSaveUrl,
-                                requestMethod: 'PUT'
-                            }).promise;
-                        }
+                        return dataService.saveDataAsync(obj, {
+                            serverUrl: $scope.serverSaveUrl,
+                            requestMethod: obj.$isNew ? $scope.serverSaveMethod : 'PUT'
+                        }).promise;
                     };
 
                     obj.edit = function() {
@@ -3946,17 +3939,24 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 delete clone.$original;
                 delete clone.$state;
                 delete clone.$valid;
+                delete clone.$component;
+                delete clone.$isLoading;
 
-                request.data = {
-                    Old: originalClone,
-                    New: clone
-                };
+                if (model.$isNew) {
+                    request.data = clone; 
+                } else {
+                    request.data = {
+                        Old: originalClone,
+                        New: clone
+                    };
+                }
 
                 var dataRequest = me.retrieveDataAsync(request);
 
                 dataRequest.promise.then(function(data) {
                     model.$hasChanges = false;
                     model.resetOriginal();
+
                     return data;
                 });
 

@@ -206,21 +206,19 @@
          * 
          * @param {object} model The row to remove.
          * @param {string} caption Set the caption to use in the button, default Edit.
-         * @param {string} css Add a CSS class to the button.
          */
         .directive('tbEditButton', [function() {
 
             return {
                 require: '^tbGrid',
-                template: '<button ng-click="edit()" class="btn btn-default {{ css || \'\' }}" ' +
+                template: '<button ng-click="edit()" class="btn btn-default" ' +
                     'ng-hide="model.$isEditing">{{ caption || \'Edit\' }}</button>',
                 restrict: 'E',
                 replace: true,
                 transclude: true,
                 scope: {
                     model: '=',
-                    caption: '@',
-                    css: '@'
+                    caption: '@'
                 },
                 controller: [
                     '$scope', function($scope) {

@@ -121,6 +121,7 @@
                                 $scope.tempRow = new TubularModel($scope, {}, $scope.dataService);
                                 $scope.tempRow.$isNew = true;
                                 $scope.tempRow.$isEditing = true;
+                                $scope.tempRow.$component = $scope;
 
                                 if (angular.isDefined(template)) {
                                     if (angular.isDefined(popup) && popup) {

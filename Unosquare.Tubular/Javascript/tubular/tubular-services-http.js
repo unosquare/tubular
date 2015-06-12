@@ -136,17 +136,24 @@
                 delete clone.$original;
                 delete clone.$state;
                 delete clone.$valid;
+                delete clone.$component;
+                delete clone.$isLoading;
 
-                request.data = {
-                    Old: originalClone,
-                    New: clone
-                };
+                if (model.$isNew) {
+                    request.data = clone; 
+                } else {
+                    request.data = {
+                        Old: originalClone,
+                        New: clone
+                    };
+                }
 
                 var dataRequest = me.retrieveDataAsync(request);
 
                 dataRequest.promise.then(function(data) {
                     model.$hasChanges = false;
                     model.resetOriginal();
+
                     return data;
                 });
 

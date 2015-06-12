@@ -42,22 +42,27 @@
                 me.defaultDate = new Date();
 
                 // Grid Events
-                $scope.$on('tbGrid_OnBeforeRequest', function(event, eventData) { console.log(eventData); });
-                $scope.$on('tbGrid_OnRemove', function(data) { toastr.success("Record removed"); });
-                $scope.$on('tbGrid_OnConnectionError', function(error) { toastr.error(error.statusText || "Connection error"); });
+                $scope.$on('tbGrid_OnBeforeRequest', function(event, eventData) {
+                     console.log(eventData);
+                });
+
+                $scope.$on('tbGrid_OnRemove', function(data) {
+                     toastr.success("Record removed");
+                });
+
+                $scope.$on('tbGrid_OnConnectionError', function(error) {
+                     toastr.error(error.statusText || "Connection error");
+                });
+
+                $scope.$on('tbGrid_OnSuccessfulSave', function (event, data, gridScope) {
+                    toastr.success("Record updated");
+                });
 
                 // Form Events
                 $scope.$on('tbForm_OnConnectionError', function(error) { toastr.error(error.statusText || "Connection error"); });
 
                 $scope.$on('tbForm_OnSuccessfulSave', function (event, data) {
                     toastr.success("Record updated");
-                    document.location = document.location;
-                });
-
-                $scope.$on('tbGrid_OnSuccessfulSave', function (event, data, gridScope) {
-                    toastr.success("Record updated");
-                    console.log(data);
-                    console.log(gridScope);
                 });
 
                 $scope.$on('tbForm_OnSavingNoChanges', function (event, model) {
