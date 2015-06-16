@@ -104,9 +104,11 @@
                         me.userData.bearerToken = data.access_token;
                         me.userData.expirationDate = new Date(data['.expires']);
                         setHttpAuthHeader();
-                        if (persistData === true) {
+
+                        if (persistData) {
                             saveData();
                         }
+
                         if (typeof successCallback === 'function') {
                             successCallback();
                         }
@@ -138,6 +140,7 @@
                 delete clone.$valid;
                 delete clone.$component;
                 delete clone.$isLoading;
+                delete clone.$isNew;
 
                 if (model.$isNew) {
                     request.data = clone; 

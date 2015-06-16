@@ -710,7 +710,7 @@
                             }
 
                             $scope.changeSelection = function(rowModel) {
-                                if ($scope.selectableBool === false) return;
+                                if (!$scope.selectableBool) return;
                                 $scope.$component.changeSelection(rowModel);
                             };
                         }

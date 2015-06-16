@@ -184,7 +184,7 @@ var tubularTemplateServiceModule = {
                 columnObj.Required = true;
                 columnObj.ReadOnly = false;
 
-                if (firstSort === false) {
+                if (!firstSort) {
                     columnObj.IsKey = true;
                     columnObj.SortOrder = 1;
                     columnObj.SortDirection = 'Ascending';

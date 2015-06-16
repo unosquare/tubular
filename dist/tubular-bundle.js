@@ -185,7 +185,7 @@ var tubularTemplateServiceModule = {
                 columnObj.Required = true;
                 columnObj.ReadOnly = false;
 
-                if (firstSort === false) {
+                if (!firstSort) {
                     columnObj.IsKey = true;
                     columnObj.SortOrder = 1;
                     columnObj.SortDirection = 'Ascending';
@@ -1415,7 +1415,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             }
 
                             $scope.changeSelection = function(rowModel) {
-                                if ($scope.selectableBool === false) return;
+                                if (!$scope.selectableBool) return;
                                 $scope.$component.changeSelection(rowModel);
                             };
                         }
@@ -2113,7 +2113,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     controller: [
                         '$scope', function($scope) {
                             $scope.validate = function() {
-                                if (angular.isUndefined($scope.min) === false && angular.isUndefined($scope.value) === false) {
+                                if (angular.isDefined($scope.min) && angular.isDefined($scope.value)) {
                                     if ($scope.value.length < parseInt($scope.min)) {
                                         $scope.$valid = false;
                                         $scope.state.$errors = ["The fields needs to be minimum " + $scope.min + " chars"];
@@ -2121,7 +2121,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     }
                                 }
 
-                                if (angular.isUndefined($scope.max) === false && angular.isUndefined($scope.value) === false) {
+                                if (angular.isDefined($scope.max) && angular.isDefined($scope.value)) {
                                     if ($scope.value.length > parseInt($scope.max)) {
                                         $scope.$valid = false;
                                         $scope.state.$errors = ["The fields needs to be maximum " + $scope.min + " chars"];
@@ -2184,20 +2184,20 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     controller: [
                         '$scope', function($scope) {
                             $scope.validate = function() {
-                                if (angular.isUndefined($scope.min) == false && angular.isUndefined($scope.value) == false) {
+                                if (angular.isDefined($scope.min) && angular.isDefined($scope.value)) {
                                     $scope.$valid = $scope.value >= $scope.min;
-                                    if ($scope.$valid == false) {
+                                    if (!$scope.$valid) {
                                         $scope.state.$errors = ["The minimum is " + $scope.min];
                                     }
                                 }
 
-                                if ($scope.$valid == false) {
+                                if (!$scope.$valid) {
                                     return;
                                 }
 
-                                if (angular.isUndefined($scope.max) == false && angular.isUndefined($scope.value) == false) {
+                                if (angular.isDefined($scope.max) && angular.isDefined($scope.value)) {
                                     $scope.$valid = $scope.value <= $scope.max;
-                                    if ($scope.$valid == false) {
+                                    if (!$scope.$valid) {
                                         $scope.state.$errors = ["The maximum is " + $scope.max];
                                     }
                                 }
@@ -2257,20 +2257,20 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             $scope.DataType = "date";
 
                             $scope.validate = function() {
-                                if (angular.isUndefined($scope.min) == false) {
+                                if (angular.isDefined($scope.min)) {
                                     $scope.$valid = $scope.value >= $scope.min;
-                                    if ($scope.$valid == false) {
+                                    if (!$scope.$valid) {
                                         $scope.state.$errors = ["The minimum is " + $scope.min];
                                     }
                                 }
 
-                                if ($scope.$valid == false) {
+                                if (!$scope.$valid) {
                                     return;
                                 }
 
-                                if (angular.isUndefined($scope.max) == false) {
+                                if (angular.isDefined($scope.max)) {
                                     $scope.$valid = $scope.value <= $scope.max;
-                                    if ($scope.$valid == false) {
+                                    if (!$scope.$valid) {
                                         $scope.state.$errors = ["The maximum is " + $scope.max];
                                     }
                                 }
@@ -2348,20 +2348,22 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                             $scope.validate = function() {
                                 $scope.validate = function() {
-                                    if (angular.isUndefined($scope.min) == false) {
+                                    if (angular.isDefined($scope.min)) {
                                         $scope.$valid = $scope.value >= $scope.min;
-                                        if ($scope.$valid == false) {
+
+                                        if (!$scope.$valid) {
                                             $scope.state.$errors = ["The minimum is " + $scope.min];
                                         }
                                     }
 
-                                    if ($scope.$valid == false) {
+                                    if (!$scope.$valid) {
                                         return;
                                     }
 
-                                    if (angular.isUndefined($scope.max) == false) {
+                                    if (angular.isDefined($scope.max)) {
                                         $scope.$valid = $scope.value <= $scope.max;
-                                        if ($scope.$valid == false) {
+
+                                        if (!$scope.$valid) {
                                             $scope.state.$errors = ["The maximum is " + $scope.max];
                                         }
                                     }
@@ -2444,6 +2446,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             tubularEditorService.setupScope($scope);
                             $scope.dataIsLoaded = false;
                             $scope.selectOptions = "d for d in options";
+
                             if (angular.isDefined($scope.optionLabel)) {
                                 $scope.selectOptions = "d." + $scope.optionLabel + " for d in options";
 
@@ -2479,7 +2482,12 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     });
                             };
 
-                            if (angular.isUndefined($scope.optionsUrl) == false) {
+                            if (angular.isDefined($scope.optionsUrl)) {
+                                $scope.$watch('optionsUrl', function () {
+                                    $scope.dataIsLoaded = false;
+                                    $scope.loadData();
+                                });
+
                                 if ($scope.isEditing) {
                                     $scope.loadData();
                                 } else {
@@ -2697,7 +2705,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     controller: [
                         '$scope', function($scope) {
                             $scope.validate = function() {
-                                if (angular.isUndefined($scope.min) == false && angular.isUndefined($scope.value) == false) {
+                                if (angular.isDefined($scope.min) && angular.isDefined($scope.value)) {
                                     if ($scope.value.length < parseInt($scope.min)) {
                                         $scope.$valid = false;
                                         $scope.state.$errors = ["The fields needs to be minimum " + $scope.min + " chars"];
@@ -2705,7 +2713,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     }
                                 }
 
-                                if (angular.isUndefined($scope.max) == false && angular.isUndefined($scope.value) == false) {
+                                if (angular.isDefined($scope.max) && angular.isDefined($scope.value)) {
                                     if ($scope.value.length > parseInt($scope.max)) {
                                         $scope.$valid = false;
                                         $scope.state.$errors = ["The fields needs to be maximum " + $scope.min + " chars"];
@@ -3912,9 +3920,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         me.userData.bearerToken = data.access_token;
                         me.userData.expirationDate = new Date(data['.expires']);
                         setHttpAuthHeader();
-                        if (persistData === true) {
+
+                        if (persistData) {
                             saveData();
                         }
+
                         if (typeof successCallback === 'function') {
                             successCallback();
                         }
@@ -3946,6 +3956,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 delete clone.$valid;
                 delete clone.$component;
                 delete clone.$isLoading;
+                delete clone.$isNew;
 
                 if (model.$isNew) {
                     request.data = clone; 
