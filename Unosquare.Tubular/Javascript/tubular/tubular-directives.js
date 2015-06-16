@@ -30,7 +30,7 @@
          * @param {string} requestMethod Set HTTP Method to get data.
          * @param {string} serviceName Define Data service (name) to retrieve data, defaults `tubularHttp`.
          * @param {bool} requireAuthentication Set if authentication check must be executed, default true.
-         * @param {string} name Grid's name, used to store metainfo in localstorage.
+         * @param {string} gridName Grid's name, used to store metainfo in localstorage.
          * @param {string} editorMode Define if grid is read-only or it has editors (inline or popup).
          * @param {bool} showLoading Set if an overlay will show when it's loading data, default true.
          * @param {bool} autoRefresh Set if the grid refresh after any insertion or update, default true.

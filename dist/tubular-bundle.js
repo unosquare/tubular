@@ -576,11 +576,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 (function() {
     'use strict';
 
-    // TODO: Maybe I need to create a tubular module to move filters and constants
-
     /**
      * @ngdoc module
      * @name tubular
+     * @version 0.9.16
      * 
      * @description 
      * Tubular module. Entry point to get all the Tubular functionality.
@@ -736,7 +735,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @param {string} requestMethod Set HTTP Method to get data.
          * @param {string} serviceName Define Data service (name) to retrieve data, defaults `tubularHttp`.
          * @param {bool} requireAuthentication Set if authentication check must be executed, default true.
-         * @param {string} name Grid's name, used to store metainfo in localstorage.
+         * @param {string} gridName Grid's name, used to store metainfo in localstorage.
          * @param {string} editorMode Define if grid is read-only or it has editors (inline or popup).
          * @param {bool} showLoading Set if an overlay will show when it's loading data, default true.
          * @param {bool} autoRefresh Set if the grid refresh after any insertion or update, default true.
@@ -3518,8 +3517,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
             me.exportToCsv = function(filename, header, rows, visibility) {
                 var processRow = function(row) {
-                    if (typeof (row) === 'object')
+                    if (typeof (row) === 'object') {
                         row = Object.keys(row).map(function(key) { return row[key]; });
+                    }
 
                     var finalVal = '';
                     for (var j = 0; j < row.length; j++) {
@@ -3730,6 +3730,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         if (angular.isDefined(scope.$parent.Model)) {
                             if (angular.isDefined(scope.$parent.Model[scope.name])) {
                                 scope.$parent.Model[scope.name] = newValue;
+
+                                if (angular.isUndefined(scope.$parent.Model.$state)) {
+                                    scope.$parent.Model.$state = [];
+                                }
+
                                 scope.$parent.Model.$state[scope.Name] = scope.state;
                             } else if (angular.isDefined(scope.$parent.Model.$addField)) {
                                 scope.$parent.Model.$addField(scope.name, newValue);

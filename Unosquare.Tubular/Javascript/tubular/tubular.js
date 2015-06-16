@@ -1,11 +1,10 @@
 ﻿(function() {
     'use strict';
 
-    // TODO: Maybe I need to create a tubular module to move filters and constants
-
     /**
      * @ngdoc module
      * @name tubular
+     * @version 0.9.16
      * 
      * @description 
      * Tubular module. Entry point to get all the Tubular functionality.

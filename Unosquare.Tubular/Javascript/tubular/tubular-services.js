@@ -114,8 +114,9 @@
 
             me.exportToCsv = function(filename, header, rows, visibility) {
                 var processRow = function(row) {
-                    if (typeof (row) === 'object')
+                    if (typeof (row) === 'object') {
                         row = Object.keys(row).map(function(key) { return row[key]; });
+                    }
 
                     var finalVal = '';
                     for (var j = 0; j < row.length; j++) {
@@ -326,6 +327,11 @@
                         if (angular.isDefined(scope.$parent.Model)) {
                             if (angular.isDefined(scope.$parent.Model[scope.name])) {
                                 scope.$parent.Model[scope.name] = newValue;
+
+                                if (angular.isUndefined(scope.$parent.Model.$state)) {
+                                    scope.$parent.Model.$state = [];
+                                }
+
                                 scope.$parent.Model.$state[scope.Name] = scope.state;
                             } else if (angular.isDefined(scope.$parent.Model.$addField)) {
                                 scope.$parent.Model.$addField(scope.name, newValue);
