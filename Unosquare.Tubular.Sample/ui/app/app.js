@@ -61,16 +61,16 @@
                 // Form Events
                 $scope.$on('tbForm_OnConnectionError', function(error) { toastr.error(error.statusText || "Connection error"); });
 
-                $scope.$on('tbForm_OnSuccessfulSave', function (event, data) {
+                $scope.$on('tbForm_OnSuccessfulSave', function (event, data, formScope) {
                     toastr.success("Record updated");
                 });
 
-                $scope.$on('tbForm_OnSavingNoChanges', function (event, model) {
+                $scope.$on('tbForm_OnSavingNoChanges', function (event, formScope) {
                     toastr.warning("Nothing to save");
                     $location.path('/');
                 });
 
-                $scope.$on('tbForm_OnCancel', function(model) {
+                $scope.$on('tbForm_OnCancel', function (model, error, formScope) {
                     $location.path('/');
                 });
             }

@@ -3060,8 +3060,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     return;
                                 }
 
-                                if (angular.isUndefined($scope.modelKey) || $scope.modelKey == null || $scope.modelKey === '')
+                                if (angular.isUndefined($scope.modelKey) ||
+                                    $scope.modelKey == null ||
+                                    $scope.modelKey === '') {
                                     return;
+                                }
 
                                 $scope.dataService.getByKey($scope.serverUrl, $scope.modelKey).promise.then(
                                     function(data) {
@@ -3076,19 +3079,21 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 $scope.currentRequest = $scope.model.save();
 
                                 if ($scope.currentRequest === false) {
-                                    $scope.$emit('tbForm_OnSavingNoChanges', $scope.model);
+                                    $scope.$emit('tbForm_OnSavingNoChanges', $scope);
                                     return;
                                 }
 
                                 $scope.currentRequest.then(
                                         function (data) {
-                                            if (angular.isDefined($scope.model.$component) && angular.isDefined($scope.model.$component.autoRefresh) && $scope.model.$component.autoRefresh) {
+                                            if (angular.isDefined($scope.model.$component) &&
+                                                angular.isDefined($scope.model.$component.autoRefresh) &&
+                                                $scope.model.$component.autoRefresh) {
                                                 $scope.model.$component.retrieveData();
                                             }
 
-                                            $scope.$emit('tbForm_OnSuccessfulSave', data);
+                                            $scope.$emit('tbForm_OnSuccessfulSave', data, $scope);
                                         }, function(error) {
-                                            $scope.$emit('tbForm_OnConnectionError', error);
+                                            $scope.$emit('tbForm_OnConnectionError', error, $scope);
                                         })
                                     .then(function() {
                                         $scope.model.$isLoading = false;
@@ -3107,6 +3112,12 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                             $scope.cancel = function() {
                                 $scope.$emit('tbForm_OnCancel', $scope.model);
+                            };
+
+                            $scope.clear = function() {
+                                angular.forEach($scope.fields, function (field) {
+                                    field.value = null;
+                                });
                             };
                         }
                     ],
