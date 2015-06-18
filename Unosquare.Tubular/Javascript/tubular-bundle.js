@@ -1896,16 +1896,26 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         $scope.printGrid = function() {
                             $scope.$component.getFullDataSource(function(data) {
                                 var tableHtml = "<table class='table table-bordered table-striped'><thead><tr>"
-                                    + $scope.$component.columns.map(function(el) {
+                                    + $scope.$component.columns
+                                    .filter(function (c) { return c.Visible; })
+                                    .map(function (el) {
                                         return "<th>" + (el.Label || el.Name) + "</th>";
                                     }).join(" ")
                                     + "</tr></thead>"
                                     + "<tbody>"
-                                    + data.map(function(row) {
-                                        if (typeof (row) === 'object')
+                                    + data.map(function (row) {
+                                        if (typeof (row) === 'object') {
                                             row = $.map(row, function(el) { return el; });
+                                        }
 
-                                        return "<tr>" + row.map(function(cell) { return "<td>" + cell + "</td>"; }).join(" ") + "</tr>";
+                                        return "<tr>" + row.map(function(cell, index) {
+                                            if (angular.isDefined($scope.$component.columns[index]) &&
+                                            !$scope.$component.columns[index].Visible) {
+                                                return "";
+                                            }
+
+                                            return "<td>" + cell + "</td>";
+                                        }).join(" ") + "</tr>";
                                     }).join(" ")
                                     + "</tbody>"
                                     + "</table>";

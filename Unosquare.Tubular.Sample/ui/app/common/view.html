@@ -1,5 +1,5 @@
 ﻿<div class="container" ng-controller="tubularSampleCtrl as sample">
-    <tb-grid server-url="/api/orders/paged" server-save-url="/api/orders/save"
+    <tb-grid server-url="/api/orders/paged" server-save-url="/api/orders/save" require-authentication="false"
              page-size="20" class="row" on-before-get-data="sample.onTableController">
 
         <!-- Main full-width container -->
@@ -60,7 +60,7 @@
                                     <tb-column-header>{{label}}</tb-column-header>
                                     <tb-column-date-time-filter></tb-column-date-time-filter>
                                 </tb-column>
-                                <tb-column name="IsShipped" column-type="boolean" class="column-md">
+                                <tb-column name="IsShipped" column-type="boolean" class="column-md" visible="false">
                                     <tb-column-header>Shipped?</tb-column-header>
                                     <tb-column-filter></tb-column-filter>
                                 </tb-column>
@@ -109,7 +109,7 @@
                                 <tb-row-template ng-repeat="row in $component.rows" row-model="row" selectable="true">
                                     <tb-cell-template ng-class="{'danger': rowModel.$hasChanges}" class="cell-menu">
                                         <input type="checkbox" ng-model="row.$selected" class="hidden-xs hidden-sm"
-                                               ng-click="$parent.changeSelection()"/>
+                                               ng-click="$parent.changeSelection()" />
                                         <div class="btn-group">
                                             <tb-save-button model="row" save-css="btn-xs hidden-xs hidden-sm"
                                                             cancel-css="btn-danger btn-xs">
@@ -134,7 +134,7 @@
                                     <tb-cell-template column-name="CustomerName">
                                         <span ng-hide="row.$isEditing">{{row.CustomerName}}</span>
                                         <div ng-show="row.$isEditing">
-                                            <input type="text" ng-model="row.CustomerName" class="form-control"/>
+                                            <input type="text" ng-model="row.CustomerName" class="form-control" />
                                         </div>
                                     </tb-cell-template>
                                     <tb-cell-template column-name="ShipperCity">
