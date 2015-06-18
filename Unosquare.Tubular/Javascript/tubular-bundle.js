@@ -3517,7 +3517,6 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
             me.getColumns = function(gridScope) {
                 return gridScope.columns
-                    .filter(function(c) { return c.Visible; })
                     .map(function(c) { return c.Name.replace(/([a-z])([A-Z])/g, '$1 $2'); });
             };
 
@@ -3544,7 +3543,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 gridScope.currentRequest = null;
             };
 
-            me.exportToCsv = function(filename, header, rows, visibility) {
+            me.exportToCsv = function (filename, header, rows, visibility) {
                 var processRow = function(row) {
                     if (typeof (row) === 'object') {
                         row = Object.keys(row).map(function(key) { return row[key]; });
@@ -3552,16 +3551,25 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                     var finalVal = '';
                     for (var j = 0; j < row.length; j++) {
-                        if (visibility[j] === false) continue;
+                        if (!visibility[j]) {
+                             continue;
+                        }
+
                         var innerValue = row[j] == null ? '' : row[j].toString();
+
                         if (row[j] instanceof Date) {
                             innerValue = row[j].toLocaleString();
                         }
+
                         var result = innerValue.replace(/"/g, '""');
-                        if (result.search(/("|,|\n)/g) >= 0)
+
+                        if (result.search(/("|,|\n)/g) >= 0) {
                             result = '"' + result + '"';
-                        if (j > 0)
+                        }
+
+                        if (j > 0) {
                             finalVal += ',';
+                        }
                         finalVal += result;
                     }
                     return finalVal + '\n';

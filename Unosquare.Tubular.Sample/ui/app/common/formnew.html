@@ -1,5 +1,6 @@
 ﻿<div class="container" ng-controller="tubularSampleCtrl as sample">
-    <tb-form server-save-url="/api/orders/save" is-new="true">
+    <tb-form server-save-url="/api/orders/save" is-new="true"
+             require-authentication="false">
         <div class="row">
             <div class="col-md-9">
                 <h3>New Order</h3>
@@ -7,15 +8,15 @@
                 <tb-simple-editor min="3" show-label="true" name="CustomerName">
                 </tb-simple-editor>
                 <tb-dropdown-editor name="ShipperCity" value="Model.ShipperCity"
-                                         show-label="true" required="true"
-                                         options-url="api/orders/cities">
+                                    show-label="true" required="true"
+                                    options-url="api/orders/cities">
                 </tb-dropdown-editor>
                 <tb-numeric-editor name="Amount" value="Model.Amount" min="1" max="100" format="C"
-                                        show-label="true" required="true" default-value="100">
+                                   show-label="true" required="true" default-value="100">
                 </tb-numeric-editor>
 
-                <tb-date-editor name="ShippedDate" required="true" format="'dd-MM-yyyy'" show-label="true" 
-                                     default-value="sample.defaultDate">
+                <tb-date-editor name="ShippedDate" required="true" format="'dd-MM-yyyy'" show-label="true"
+                                default-value="sample.defaultDate">
                 </tb-date-editor>
 
                 <tb-hidden-field name="OrderID" is-key="true" value="Model.OrderID">
