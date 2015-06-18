@@ -579,7 +579,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
     /**
      * @ngdoc module
      * @name tubular
-     * @version 0.9.16
+     * @version 0.9.17
      * 
      * @description 
      * Tubular module. Entry point to get all the Tubular functionality.

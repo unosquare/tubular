@@ -4,7 +4,7 @@
     /**
      * @ngdoc module
      * @name tubular
-     * @version 0.9.16
+     * @version 0.9.17
      * 
      * @description 
      * Tubular module. Entry point to get all the Tubular functionality.

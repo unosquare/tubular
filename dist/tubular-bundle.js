@@ -579,7 +579,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
     /**
      * @ngdoc module
      * @name tubular
-     * @version 0.9.16
+     * @version 0.9.17
      * 
      * @description 
      * Tubular module. Entry point to get all the Tubular functionality.
@@ -3552,7 +3552,6 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     var finalVal = '';
                     for (var j = 0; j < row.length; j++) {
                         if (!visibility[j]) {
-                            console.log("Escape", j);
                              continue;
                         }
 
