@@ -3906,12 +3906,17 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     isAuthenticated: false,
                     username: '',
                     bearerToken: '',
-                    expirationDate: null,
+                    expirationDate: null
                 };
 
                 me.cache = $cacheFactory('tubularHttpCache');
                 me.useCache = true;
                 me.requireAuthentication = true;
+                me.tokenUrl = '/api/token';
+
+                me.setTokenUrl = function(val) {
+                    me.tokenUrl = val;
+                };
 
                 me.isAuthenticated = function() {
                     if (!me.userData.isAuthenticated || isAuthenticationExpired(me.userData.expirationDate)) {
@@ -3940,7 +3945,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                     $http({
                             method: 'POST',
-                            url: '/api/token',
+                            url: me.tokenUrl,
                             headers: {
                                 'Content-Type': 'application/x-www-form-urlencoded'
                             },
@@ -4129,7 +4134,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 me.delete = function(url) {
                     return me.retrieveDataAsync({
                         serverUrl: url,
-                        requestMethod: 'DELETE',
+                        requestMethod: 'DELETE'
                     });
                 };
 
