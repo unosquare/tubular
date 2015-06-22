@@ -107,7 +107,7 @@
                             data: 'grant_type=password&username=' + username + '&password=' + password
                         }).success(function(data) {
                             me.userData.isAuthenticated = true;
-                            me.userData.username = data.userName;
+                            me.userData.username = data.userName || username;
                             me.userData.bearerToken = data.access_token;
                             me.userData.expirationDate = new Date();
                             me.userData.expirationDate = new Date(me.userData.expirationDate.getTime() + data.expires_in * 1000);

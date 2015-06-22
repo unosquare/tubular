@@ -350,14 +350,17 @@
                             scope.$valid = false;
                             scope.state.$errors = ["Field is required"];
 
-                            if (angular.isDefined(scope.$parent.Model))
+                            if (angular.isDefined(scope.$parent.Model)) {
                                 scope.$parent.Model.$state[scope.Name] = scope.state;
+                            }
 
                             return;
                         }
 
                         // Check if we have a validation function, otherwise return
-                        if (angular.isUndefined(scope.validate)) return;
+                        if (angular.isUndefined(scope.validate)) {
+                            return;
+                        }
 
                         scope.validate();
                     });
@@ -367,13 +370,14 @@
                     // We try to find a Tubular Form in the parents
                     while (true) {
                         if (parent == null) break;
-                        if (angular.isUndefined(parent.tubularDirective) == false &&
+                        if (angular.isDefined(parent.tubularDirective) &&
                             (parent.tubularDirective === 'tubular-form' ||
                             parent.tubularDirective === 'tubular-rowset')) {
                             if (scope.name === null) return;
 
-                            if (parent.hasFieldsDefinitions !== false)
+                            if (parent.hasFieldsDefinitions !== false) {
                                 throw 'Cannot define more fields. Field definitions have been sealed';
+                            }
 
                             scope.$component = parent.tubularDirective === 'tubular-form' ? parent : parent.$component;
 
@@ -381,7 +385,7 @@
                             scope.bindScope = function() {
                                 scope.$parent.Model = parent.model;
 
-                                if (angular.equals(scope.value, parent.model[scope.Name]) == false) {
+                                if (angular.equals(scope.value, parent.model[scope.Name]) === false) {
                                     scope.value = (scope.DataType == 'date') ? new Date(parent.model[scope.Name]) : parent.model[scope.Name];
 
                                     parent.$watch(function() {
@@ -392,7 +396,9 @@
                                 }
 
                                 // Ignores models without state
-                                if (angular.isUndefined(parent.model.$state)) return;
+                                if (angular.isUndefined(parent.model.$state)) {
+                                    return;
+                                }
 
                                 if (angular.equals(scope.state, parent.model.$state[scope.Name]) == false) {
                                     scope.state = parent.model.$state[scope.Name];

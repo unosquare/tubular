@@ -145,7 +145,7 @@ var tubularTemplateServiceModule = {
 
                 if (this.isNumber(value) || parseFloat(value).toString() == value) {
                     columns.push({ Name: prop, DataType: 'numeric', Template: '{{row.' + prop + '}}' });
-                } else if (this.isDate(value) || isNaN((new Date(value)).getTime()) == false) {
+                } else if (this.isDate(value) || isNaN((new Date(value)).getTime()) === false) {
                     columns.push({ Name: prop, DataType: 'date', Template: '{{row.' + prop + ' | date}}' });
                 } else if (value.toLowerCase() === 'true' || value.toLowerCase() === 'false') {
                     columns.push({ Name: prop, DataType: 'boolean', Template: '{{row.' + prop + ' ? "TRUE" : "FALSE" }}' });
@@ -1422,7 +1422,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     ],
                     compile: function compile() {
                         return {
-                            post: function (scope, lElement, lAttrs, lController, lTransclude) {
+                            post: function (scope) {
                                 scope.hasFieldsDefinitions = true;
                             }
                         };
@@ -3782,14 +3782,17 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             scope.$valid = false;
                             scope.state.$errors = ["Field is required"];
 
-                            if (angular.isDefined(scope.$parent.Model))
+                            if (angular.isDefined(scope.$parent.Model)) {
                                 scope.$parent.Model.$state[scope.Name] = scope.state;
+                            }
 
                             return;
                         }
 
                         // Check if we have a validation function, otherwise return
-                        if (angular.isUndefined(scope.validate)) return;
+                        if (angular.isUndefined(scope.validate)) {
+                            return;
+                        }
 
                         scope.validate();
                     });
@@ -3799,13 +3802,14 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     // We try to find a Tubular Form in the parents
                     while (true) {
                         if (parent == null) break;
-                        if (angular.isUndefined(parent.tubularDirective) == false &&
+                        if (angular.isDefined(parent.tubularDirective) &&
                             (parent.tubularDirective === 'tubular-form' ||
                             parent.tubularDirective === 'tubular-rowset')) {
                             if (scope.name === null) return;
 
-                            if (parent.hasFieldsDefinitions !== false)
+                            if (parent.hasFieldsDefinitions !== false) {
                                 throw 'Cannot define more fields. Field definitions have been sealed';
+                            }
 
                             scope.$component = parent.tubularDirective === 'tubular-form' ? parent : parent.$component;
 
@@ -3813,7 +3817,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             scope.bindScope = function() {
                                 scope.$parent.Model = parent.model;
 
-                                if (angular.equals(scope.value, parent.model[scope.Name]) == false) {
+                                if (angular.equals(scope.value, parent.model[scope.Name]) === false) {
                                     scope.value = (scope.DataType == 'date') ? new Date(parent.model[scope.Name]) : parent.model[scope.Name];
 
                                     parent.$watch(function() {
@@ -3824,7 +3828,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 }
 
                                 // Ignores models without state
-                                if (angular.isUndefined(parent.model.$state)) return;
+                                if (angular.isUndefined(parent.model.$state)) {
+                                    return;
+                                }
 
                                 if (angular.equals(scope.state, parent.model.$state[scope.Name]) == false) {
                                     scope.state = parent.model.$state[scope.Name];
@@ -3952,7 +3958,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             data: 'grant_type=password&username=' + username + '&password=' + password
                         }).success(function(data) {
                             me.userData.isAuthenticated = true;
-                            me.userData.username = data.userName;
+                            me.userData.username = data.userName || username;
                             me.userData.bearerToken = data.access_token;
                             me.userData.expirationDate = new Date();
                             me.userData.expirationDate = new Date(me.userData.expirationDate.getTime() + data.expires_in * 1000);

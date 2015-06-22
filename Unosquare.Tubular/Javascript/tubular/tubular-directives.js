@@ -717,7 +717,7 @@
                     ],
                     compile: function compile() {
                         return {
-                            post: function (scope, lElement, lAttrs, lController, lTransclude) {
+                            post: function (scope) {
                                 scope.hasFieldsDefinitions = true;
                             }
                         };
