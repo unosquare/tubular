@@ -145,7 +145,7 @@ var tubularTemplateServiceModule = {
 
                 if (this.isNumber(value) || parseFloat(value).toString() == value) {
                     columns.push({ Name: prop, DataType: 'numeric', Template: '{{row.' + prop + '}}' });
-                } else if (this.isDate(value) || isNaN((new Date(value)).getTime()) == false) {
+                } else if (this.isDate(value) || isNaN((new Date(value)).getTime()) === false) {
                     columns.push({ Name: prop, DataType: 'date', Template: '{{row.' + prop + ' | date}}' });
                 } else if (value.toLowerCase() === 'true' || value.toLowerCase() === 'false') {
                     columns.push({ Name: prop, DataType: 'boolean', Template: '{{row.' + prop + ' ? "TRUE" : "FALSE" }}' });
@@ -3913,7 +3913,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 me.useCache = true;
                 me.requireAuthentication = true;
                 me.tokenUrl = '/api/token';
-
+                
                 me.setTokenUrl = function(val) {
                     me.tokenUrl = val;
                 };
@@ -4112,23 +4112,27 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     };
                 };
 
-                me.get = function(url) {
-                    if (me.requireAuthentication && me.isAuthenticated() == false) {
+                me.get = function (url, params) {
+                    if (me.requireAuthentication && !me.isAuthenticated()) {
                         var canceller = $q.defer();
 
                         // Return empty dataset
                         return {
-                            promise: $q(function(resolve, reject) {
+                            promise: $q(function (resolve, reject) {
                                 resolve(null);
                             }),
-                            cancel: function(reason) {
+                            cancel: function (reason) {
                                 console.error(reason);
                                 canceller.resolve(reason);
                             }
                         };
                     }
 
-                    return { promise: $http.get(url).then(function(data) { return data.data; }) };
+                    return { promise: $http.get(url, params).then(function (data) { return data.data; }) };
+                };
+
+                me.getBinary = function (url) {
+                    return me.get(url, { responseType: 'arraybuffer' });
                 };
 
                 me.delete = function(url) {
