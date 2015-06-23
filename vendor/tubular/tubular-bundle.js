@@ -145,7 +145,7 @@ var tubularTemplateServiceModule = {
 
                 if (this.isNumber(value) || parseFloat(value).toString() == value) {
                     columns.push({ Name: prop, DataType: 'numeric', Template: '{{row.' + prop + '}}' });
-                } else if (this.isDate(value) || isNaN((new Date(value)).getTime()) == false) {
+                } else if (this.isDate(value) || isNaN((new Date(value)).getTime()) === false) {
                     columns.push({ Name: prop, DataType: 'date', Template: '{{row.' + prop + ' | date}}' });
                 } else if (value.toLowerCase() === 'true' || value.toLowerCase() === 'false') {
                     columns.push({ Name: prop, DataType: 'boolean', Template: '{{row.' + prop + ' ? "TRUE" : "FALSE" }}' });
@@ -185,7 +185,7 @@ var tubularTemplateServiceModule = {
                 columnObj.Required = true;
                 columnObj.ReadOnly = false;
 
-                if (firstSort === false) {
+                if (!firstSort) {
                     columnObj.IsKey = true;
                     columnObj.SortOrder = 1;
                     columnObj.SortDirection = 'Ascending';
@@ -576,11 +576,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 (function() {
     'use strict';
 
-    // TODO: Maybe I need to create a tubular module to move filters and constants
-
     /**
      * @ngdoc module
      * @name tubular
+     * @version 0.9.17
      * 
      * @description 
      * Tubular module. Entry point to get all the Tubular functionality.
@@ -736,9 +735,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @param {string} requestMethod Set HTTP Method to get data.
          * @param {string} serviceName Define Data service (name) to retrieve data, defaults `tubularHttp`.
          * @param {bool} requireAuthentication Set if authentication check must be executed, default true.
-         * @param {string} name Grid's name, used to store metainfo in localstorage.
+         * @param {string} gridName Grid's name, used to store metainfo in localstorage.
          * @param {string} editorMode Define if grid is read-only or it has editors (inline or popup).
          * @param {bool} showLoading Set if an overlay will show when it's loading data, default true.
+         * @param {bool} autoRefresh Set if the grid refresh after any insertion or update, default true.
          */
         .directive('tbGrid', [
             function() {
@@ -761,7 +761,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         requireAuthentication: '@?',
                         name: '@?gridName',
                         editorMode: '@?',
-                        showLoading: '=?'
+                        showLoading: '=?',
+                        autoRefresh: '=?'
                     },
                     controller: [
                         '$scope', 'localStorageService', 'tubularPopupService', 'tubularModel', 'tubularHttp', '$routeParams',
@@ -796,6 +797,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             $scope.canSaveState = false;
                             $scope.groupBy = '';
                             $scope.showLoading = $scope.showLoading || true;
+                            $scope.autoRefresh = $scope.autoRefresh || true;
 
                             $scope.$watch('columns', function() {
                                 if ($scope.hasColumnsDefinitions === false || $scope.canSaveState === false)
@@ -824,10 +826,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 $scope.tempRow = new TubularModel($scope, {}, $scope.dataService);
                                 $scope.tempRow.$isNew = true;
                                 $scope.tempRow.$isEditing = true;
+                                $scope.tempRow.$component = $scope;
 
                                 if (angular.isDefined(template)) {
                                     if (angular.isDefined(popup) && popup) {
-                                        tubularPopupService.openDialog(template, $scope.tempRow);
+                                        tubularPopupService.openDialog(template, $scope.tempRow, $scope);
                                     }
                                 }
                             };
@@ -934,7 +937,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                             model.$component = $scope;
 
                                             model.editPopup = function(template) {
-                                                tubularPopupService.openDialog(template, model);
+                                                tubularPopupService.openDialog(template, model, $scope);
                                             };
                                             
                                             return model;
@@ -1412,14 +1415,14 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             }
 
                             $scope.changeSelection = function(rowModel) {
-                                if ($scope.selectableBool === false) return;
+                                if (!$scope.selectableBool) return;
                                 $scope.$component.changeSelection(rowModel);
                             };
                         }
                     ],
                     compile: function compile() {
                         return {
-                            post: function (scope, lElement, lAttrs, lController, lTransclude) {
+                            post: function (scope) {
                                 scope.hasFieldsDefinitions = true;
                             }
                         };
@@ -1706,6 +1709,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             $scope.currentRequest.then(
                                 function(data) {
                                     $scope.model.$isEditing = false;
+
+                                    if (angular.isDefined($scope.model.$component) && angular.isDefined($scope.model.$component.autoRefresh) && $scope.model.$component.autoRefresh) {
+                                        $scope.model.$component.retrieveData();
+                                    }
+
                                     $scope.$emit('tbGrid_OnSuccessfulSave', data, $scope.model.$component);
                                 }, function(error) {
                                     $scope.$emit('tbGrid_OnConnectionError', error);
@@ -1732,21 +1740,19 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * 
          * @param {object} model The row to remove.
          * @param {string} caption Set the caption to use in the button, default Edit.
-         * @param {string} css Add a CSS class to the button.
          */
         .directive('tbEditButton', [function() {
 
             return {
                 require: '^tbGrid',
-                template: '<button ng-click="edit()" class="btn btn-default {{ css || \'\' }}" ' +
+                template: '<button ng-click="edit()" class="btn btn-default" ' +
                     'ng-hide="model.$isEditing">{{ caption || \'Edit\' }}</button>',
                 restrict: 'E',
                 replace: true,
                 transclude: true,
                 scope: {
                     model: '=',
-                    caption: '@',
-                    css: '@'
+                    caption: '@'
                 },
                 controller: [
                     '$scope', function($scope) {
@@ -1890,16 +1896,26 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         $scope.printGrid = function() {
                             $scope.$component.getFullDataSource(function(data) {
                                 var tableHtml = "<table class='table table-bordered table-striped'><thead><tr>"
-                                    + $scope.$component.columns.map(function(el) {
+                                    + $scope.$component.columns
+                                    .filter(function (c) { return c.Visible; })
+                                    .map(function (el) {
                                         return "<th>" + (el.Label || el.Name) + "</th>";
                                     }).join(" ")
                                     + "</tr></thead>"
                                     + "<tbody>"
-                                    + data.map(function(row) {
-                                        if (typeof (row) === 'object')
+                                    + data.map(function (row) {
+                                        if (typeof (row) === 'object') {
                                             row = $.map(row, function(el) { return el; });
+                                        }
 
-                                        return "<tr>" + row.map(function(cell) { return "<td>" + cell + "</td>"; }).join(" ") + "</tr>";
+                                        return "<tr>" + row.map(function(cell, index) {
+                                            if (angular.isDefined($scope.$component.columns[index]) &&
+                                            !$scope.$component.columns[index].Visible) {
+                                                return "";
+                                            }
+
+                                            return "<td>" + cell + "</td>";
+                                        }).join(" ") + "</tr>";
                                     }).join(" ")
                                     + "</tbody>"
                                     + "</table>";
@@ -2107,7 +2123,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     controller: [
                         '$scope', function($scope) {
                             $scope.validate = function() {
-                                if (angular.isUndefined($scope.min) === false && angular.isUndefined($scope.value) === false) {
+                                if (angular.isDefined($scope.min) && angular.isDefined($scope.value)) {
                                     if ($scope.value.length < parseInt($scope.min)) {
                                         $scope.$valid = false;
                                         $scope.state.$errors = ["The fields needs to be minimum " + $scope.min + " chars"];
@@ -2115,7 +2131,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     }
                                 }
 
-                                if (angular.isUndefined($scope.max) === false && angular.isUndefined($scope.value) === false) {
+                                if (angular.isDefined($scope.max) && angular.isDefined($scope.value)) {
                                     if ($scope.value.length > parseInt($scope.max)) {
                                         $scope.$valid = false;
                                         $scope.state.$errors = ["The fields needs to be maximum " + $scope.min + " chars"];
@@ -2165,7 +2181,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         '<label ng-show="showLabel">{{ label }}</label>' +
                         '<div class="input-group" ng-show="isEditing">' +
                         '<div class="input-group-addon" ng-show="format == \'C\'">$</div>' +
-                        '<input type="number" placeholder="{{placeholder}}" ng-model="value" class="form-control" ' +
+                        '<input type="number" step="any" placeholder="{{placeholder}}" ng-model="value" class="form-control" ' +
                         'ng-required="required" ng-readonly="readOnly" />' +
                         '</div>' +
                         '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
@@ -2178,20 +2194,20 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     controller: [
                         '$scope', function($scope) {
                             $scope.validate = function() {
-                                if (angular.isUndefined($scope.min) == false && angular.isUndefined($scope.value) == false) {
+                                if (angular.isDefined($scope.min) && angular.isDefined($scope.value)) {
                                     $scope.$valid = $scope.value >= $scope.min;
-                                    if ($scope.$valid == false) {
+                                    if (!$scope.$valid) {
                                         $scope.state.$errors = ["The minimum is " + $scope.min];
                                     }
                                 }
 
-                                if ($scope.$valid == false) {
+                                if (!$scope.$valid) {
                                     return;
                                 }
 
-                                if (angular.isUndefined($scope.max) == false && angular.isUndefined($scope.value) == false) {
+                                if (angular.isDefined($scope.max) && angular.isDefined($scope.value)) {
                                     $scope.$valid = $scope.value <= $scope.max;
-                                    if ($scope.$valid == false) {
+                                    if (!$scope.$valid) {
                                         $scope.state.$errors = ["The maximum is " + $scope.max];
                                     }
                                 }
@@ -2251,20 +2267,20 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             $scope.DataType = "date";
 
                             $scope.validate = function() {
-                                if (angular.isUndefined($scope.min) == false) {
+                                if (angular.isDefined($scope.min)) {
                                     $scope.$valid = $scope.value >= $scope.min;
-                                    if ($scope.$valid == false) {
+                                    if (!$scope.$valid) {
                                         $scope.state.$errors = ["The minimum is " + $scope.min];
                                     }
                                 }
 
-                                if ($scope.$valid == false) {
+                                if (!$scope.$valid) {
                                     return;
                                 }
 
-                                if (angular.isUndefined($scope.max) == false) {
+                                if (angular.isDefined($scope.max)) {
                                     $scope.$valid = $scope.value <= $scope.max;
-                                    if ($scope.$valid == false) {
+                                    if (!$scope.$valid) {
                                         $scope.state.$errors = ["The maximum is " + $scope.max];
                                     }
                                 }
@@ -2342,20 +2358,22 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                             $scope.validate = function() {
                                 $scope.validate = function() {
-                                    if (angular.isUndefined($scope.min) == false) {
+                                    if (angular.isDefined($scope.min)) {
                                         $scope.$valid = $scope.value >= $scope.min;
-                                        if ($scope.$valid == false) {
+
+                                        if (!$scope.$valid) {
                                             $scope.state.$errors = ["The minimum is " + $scope.min];
                                         }
                                     }
 
-                                    if ($scope.$valid == false) {
+                                    if (!$scope.$valid) {
                                         return;
                                     }
 
-                                    if (angular.isUndefined($scope.max) == false) {
+                                    if (angular.isDefined($scope.max)) {
                                         $scope.$valid = $scope.value <= $scope.max;
-                                        if ($scope.$valid == false) {
+
+                                        if (!$scope.$valid) {
                                             $scope.state.$errors = ["The maximum is " + $scope.max];
                                         }
                                     }
@@ -2412,6 +2430,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @param {object} options Set the options to display.
          * @param {string} optionsUrl Set the Http Url where to retrieve the values.
          * @param {string} optionsMethod Set the Http Method where to retrieve the values.
+         * @param {string} optionLabel Set the property to get the labels
+         * @param {string} optionKey Set the property to get the keys
          */
         .directive('tbDropdownEditor', [
             'tubularEditorService', function(tubularEditorService) {
@@ -2430,14 +2450,19 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     restrict: 'E',
                     replace: true,
                     transclude: true,
-                    scope: angular.extend({ options: '=?', optionsUrl: '@', optionsMethod: '@?', optionLabel: '@?' }, tubularEditorService.defaultScope),
+                    scope: angular.extend({ options: '=?', optionsUrl: '@', optionsMethod: '@?', optionLabel: '@?', optionKey: '@?' }, tubularEditorService.defaultScope),
                     controller: [
-                        '$scope', function ($scope) {
+                        '$scope', function($scope) {
                             tubularEditorService.setupScope($scope);
                             $scope.dataIsLoaded = false;
                             $scope.selectOptions = "d for d in options";
+
                             if (angular.isDefined($scope.optionLabel)) {
                                 $scope.selectOptions = "d." + $scope.optionLabel + " for d in options";
+
+                                if (angular.isDefined($scope.optionKey)) {
+                                    $scope.selectOptions = 'd.' + $scope.optionKey + ' as ' + $scope.selectOptions;
+                                }
                             }
 
                             $scope.loadData = function() {
@@ -2458,7 +2483,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 $scope.value = '';
 
                                 currentRequest.promise.then(
-                                    function (data) {
+                                    function(data) {
                                         $scope.options = data;
                                         $scope.dataIsLoaded = true;
                                         $scope.value = value;
@@ -2467,7 +2492,12 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     });
                             };
 
-                            if (angular.isUndefined($scope.optionsUrl) == false) {
+                            if (angular.isDefined($scope.optionsUrl)) {
+                                $scope.$watch('optionsUrl', function () {
+                                    $scope.dataIsLoaded = false;
+                                    $scope.loadData();
+                                });
+
                                 if ($scope.isEditing) {
                                     $scope.loadData();
                                 } else {
@@ -2629,7 +2659,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         uncheckedValue: '=?'
                     }, tubularEditorService.defaultScope),
                     controller: [
-                        '$scope', '$element', function ($scope) {
+                        '$scope', '$element', function($scope) {
                             $scope.checkedValue = angular.isDefined($scope.checkedValue) ? $scope.checkedValue : true;
                             $scope.uncheckedValue = angular.isDefined($scope.uncheckedValue) ? $scope.uncheckedValue : false;
 
@@ -2683,9 +2713,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     transclude: true,
                     scope: tubularEditorService.defaultScope,
                     controller: [
-                        '$scope', function ($scope) {
+                        '$scope', function($scope) {
                             $scope.validate = function() {
-                                if (angular.isUndefined($scope.min) == false && angular.isUndefined($scope.value) == false) {
+                                if (angular.isDefined($scope.min) && angular.isDefined($scope.value)) {
                                     if ($scope.value.length < parseInt($scope.min)) {
                                         $scope.$valid = false;
                                         $scope.state.$errors = ["The fields needs to be minimum " + $scope.min + " chars"];
@@ -2693,7 +2723,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     }
                                 }
 
-                                if (angular.isUndefined($scope.max) == false && angular.isUndefined($scope.value) == false) {
+                                if (angular.isDefined($scope.max) && angular.isDefined($scope.value)) {
                                     if ($scope.value.length > parseInt($scope.max)) {
                                         $scope.$valid = false;
                                         $scope.state.$errors = ["The fields needs to be maximum " + $scope.min + " chars"];
@@ -3040,8 +3070,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     return;
                                 }
 
-                                if (angular.isUndefined($scope.modelKey) || $scope.modelKey == null || $scope.modelKey === '')
+                                if (angular.isUndefined($scope.modelKey) ||
+                                    $scope.modelKey == null ||
+                                    $scope.modelKey === '') {
                                     return;
+                                }
 
                                 $scope.dataService.getByKey($scope.serverUrl, $scope.modelKey).promise.then(
                                     function(data) {
@@ -3056,15 +3089,21 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 $scope.currentRequest = $scope.model.save();
 
                                 if ($scope.currentRequest === false) {
-                                    $scope.$emit('tbForm_OnSavingNoChanges', $scope.model);
+                                    $scope.$emit('tbForm_OnSavingNoChanges', $scope);
                                     return;
                                 }
 
                                 $scope.currentRequest.then(
-                                        function(data) {
-                                            $scope.$emit('tbForm_OnSuccessfulSave', data);
+                                        function (data) {
+                                            if (angular.isDefined($scope.model.$component) &&
+                                                angular.isDefined($scope.model.$component.autoRefresh) &&
+                                                $scope.model.$component.autoRefresh) {
+                                                $scope.model.$component.retrieveData();
+                                            }
+
+                                            $scope.$emit('tbForm_OnSuccessfulSave', data, $scope);
                                         }, function(error) {
-                                            $scope.$emit('tbForm_OnConnectionError', error);
+                                            $scope.$emit('tbForm_OnConnectionError', error, $scope);
                                         })
                                     .then(function() {
                                         $scope.model.$isLoading = false;
@@ -3083,6 +3122,12 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                             $scope.cancel = function() {
                                 $scope.$emit('tbForm_OnCancel', $scope.model);
+                            };
+
+                            $scope.clear = function() {
+                                angular.forEach($scope.fields, function (field) {
+                                    field.value = null;
+                                });
                             };
                         }
                     ],
@@ -3328,22 +3373,16 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             throw 'Define a Save URL.';
                         }
 
-                        if (obj.$isNew == false && obj.$hasChanges == false) return false;
+                        if (obj.$isNew == false && obj.$hasChanges == false) {
+                            return false;
+                        }
 
                         obj.$isLoading = true;
 
-                        if (obj.$isNew) {
-                            return dataService.retrieveDataAsync({
-                                serverUrl: $scope.serverSaveUrl,
-                                requestMethod: $scope.serverSaveMethod,
-                                data: obj
-                            }).promise;
-                        } else {
-                            return dataService.saveDataAsync(obj, {
-                                serverUrl: $scope.serverSaveUrl,
-                                requestMethod: 'PUT'
-                            }).promise;
-                        }
+                        return dataService.saveDataAsync(obj, {
+                            serverUrl: $scope.serverSaveUrl,
+                            requestMethod: obj.$isNew ? $scope.serverSaveMethod : 'PUT'
+                        }).promise;
                     };
 
                     obj.edit = function() {
@@ -3422,7 +3461,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     $rootScope.$on('tbForm_OnConnectionError', callback);
                 };
 
-                me.openDialog = function(template, model) {
+                me.openDialog = function(template, model, gridScope) {
                     if (angular.isUndefined(template))
                         template = tubularTemplateService.generatePopup(model);
 
@@ -3443,6 +3482,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                             $scope.$emit('tbForm_OnSuccessfulSave', data);
                                             $rootScope.$broadcast('tbForm_OnSuccessfulSave', data);
                                             $scope.Model.$isLoading = false;
+                                            if (gridScope.autoRefresh) gridScope.retrieveData();
                                             dialog.close();
                                         }, function(error) {
                                             $scope.$emit('tbForm_OnConnectionError', error);
@@ -3477,7 +3517,6 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
             me.getColumns = function(gridScope) {
                 return gridScope.columns
-                    .filter(function(c) { return c.Visible; })
                     .map(function(c) { return c.Name.replace(/([a-z])([A-Z])/g, '$1 $2'); });
             };
 
@@ -3504,23 +3543,33 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 gridScope.currentRequest = null;
             };
 
-            me.exportToCsv = function(filename, header, rows, visibility) {
+            me.exportToCsv = function (filename, header, rows, visibility) {
                 var processRow = function(row) {
-                    if (typeof (row) === 'object')
+                    if (typeof (row) === 'object') {
                         row = Object.keys(row).map(function(key) { return row[key]; });
+                    }
 
                     var finalVal = '';
                     for (var j = 0; j < row.length; j++) {
-                        if (visibility[j] === false) continue;
+                        if (!visibility[j]) {
+                             continue;
+                        }
+
                         var innerValue = row[j] == null ? '' : row[j].toString();
+
                         if (row[j] instanceof Date) {
                             innerValue = row[j].toLocaleString();
                         }
+
                         var result = innerValue.replace(/"/g, '""');
-                        if (result.search(/("|,|\n)/g) >= 0)
+
+                        if (result.search(/("|,|\n)/g) >= 0) {
                             result = '"' + result + '"';
-                        if (j > 0)
+                        }
+
+                        if (j > 0) {
                             finalVal += ',';
+                        }
                         finalVal += result;
                     }
                     return finalVal + '\n';
@@ -3718,6 +3767,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         if (angular.isDefined(scope.$parent.Model)) {
                             if (angular.isDefined(scope.$parent.Model[scope.name])) {
                                 scope.$parent.Model[scope.name] = newValue;
+
+                                if (angular.isUndefined(scope.$parent.Model.$state)) {
+                                    scope.$parent.Model.$state = [];
+                                }
+
                                 scope.$parent.Model.$state[scope.Name] = scope.state;
                             } else if (angular.isDefined(scope.$parent.Model.$addField)) {
                                 scope.$parent.Model.$addField(scope.name, newValue);
@@ -3728,14 +3782,17 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             scope.$valid = false;
                             scope.state.$errors = ["Field is required"];
 
-                            if (angular.isDefined(scope.$parent.Model))
+                            if (angular.isDefined(scope.$parent.Model)) {
                                 scope.$parent.Model.$state[scope.Name] = scope.state;
+                            }
 
                             return;
                         }
 
                         // Check if we have a validation function, otherwise return
-                        if (angular.isUndefined(scope.validate)) return;
+                        if (angular.isUndefined(scope.validate)) {
+                            return;
+                        }
 
                         scope.validate();
                     });
@@ -3745,13 +3802,14 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     // We try to find a Tubular Form in the parents
                     while (true) {
                         if (parent == null) break;
-                        if (angular.isUndefined(parent.tubularDirective) == false &&
+                        if (angular.isDefined(parent.tubularDirective) &&
                             (parent.tubularDirective === 'tubular-form' ||
                             parent.tubularDirective === 'tubular-rowset')) {
                             if (scope.name === null) return;
 
-                            if (parent.hasFieldsDefinitions !== false)
+                            if (parent.hasFieldsDefinitions !== false) {
                                 throw 'Cannot define more fields. Field definitions have been sealed';
+                            }
 
                             scope.$component = parent.tubularDirective === 'tubular-form' ? parent : parent.$component;
 
@@ -3759,7 +3817,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             scope.bindScope = function() {
                                 scope.$parent.Model = parent.model;
 
-                                if (angular.equals(scope.value, parent.model[scope.Name]) == false) {
+                                if (angular.equals(scope.value, parent.model[scope.Name]) === false) {
                                     scope.value = (scope.DataType == 'date') ? new Date(parent.model[scope.Name]) : parent.model[scope.Name];
 
                                     parent.$watch(function() {
@@ -3770,7 +3828,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 }
 
                                 // Ignores models without state
-                                if (angular.isUndefined(parent.model.$state)) return;
+                                if (angular.isUndefined(parent.model.$state)) {
+                                    return;
+                                }
 
                                 if (angular.equals(scope.state, parent.model.$state[scope.Name]) == false) {
                                     scope.state = parent.model.$state[scope.Name];
@@ -3789,7 +3849,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
         ]);
 })();
 ///#source 1 1 tubular/tubular-services-http.js
-(function () {
+(function() {
     'use strict';
 
     angular.module('tubular.services')
@@ -3804,303 +3864,328 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * This service provides authentication using bearer-tokens. Based on https://bitbucket.org/david.antaramian/so-21662778-spa-authentication-example
          */
         .service('tubularHttp', [
-        '$http', '$timeout', '$q', '$cacheFactory', '$cookieStore', function tubularHttp($http, $timeout, $q, $cacheFactory, $cookieStore) {
-            function isAuthenticationExpired(expirationDate) {
-                var now = new Date();
-                expirationDate = new Date(expirationDate);
+            '$http', '$timeout', '$q', '$cacheFactory', '$cookieStore',
+            function tubularHttp($http, $timeout, $q, $cacheFactory, $cookieStore) {
+                var me = this;
 
-                return expirationDate - now <= 0;
-            }
+                function isAuthenticationExpired(expirationDate) {
+                    var now = new Date();
+                    expirationDate = new Date(expirationDate);
 
-            function saveData() {
-                removeData();
-                $cookieStore.put('auth_data', me.userData);
-            }
-
-            function removeData() {
-                $cookieStore.remove('auth_data');
-            }
-
-            function retrieveSavedData() {
-                var savedData = $cookieStore.get('auth_data');
-
-                if (typeof savedData === 'undefined' || savedData == null) {
-                    throw 'No authentication data exists';
-                } else if (isAuthenticationExpired(savedData.expirationDate)) {
-                    throw 'Authentication token has already expired';
-                } else {
-                    me.userData = savedData;
-                    setHttpAuthHeader();
+                    return expirationDate - now <= 0;
                 }
-            }
 
-            function clearUserData() {
-                me.userData.isAuthenticated = false;
-                me.userData.username = '';
-                me.userData.bearerToken = '';
-                me.userData.expirationDate = null;
-            }
+                function removeData() {
+                    $cookieStore.remove('auth_data');
+                }
 
-            function setHttpAuthHeader() {
-                $http.defaults.headers.common.Authorization = 'Bearer ' + me.userData.bearerToken;
-            }
+                function saveData() {
+                    removeData();
+                    $cookieStore.put('auth_data', me.userData);
+                }
 
-            var me = this;
-            me.userData = {
-                isAuthenticated: false,
-                username: '',
-                bearerToken: '',
-                expirationDate: null,
-            };
+                function setHttpAuthHeader() {
+                    $http.defaults.headers.common.Authorization = 'Bearer ' + me.userData.bearerToken;
+                }
 
-            me.cache = $cacheFactory('tubularHttpCache');
-            me.useCache = true;
-            me.requireAuthentication = true;
+                function retrieveSavedData() {
+                    var savedData = $cookieStore.get('auth_data');
 
-            me.isAuthenticated = function() {
-                if (!me.userData.isAuthenticated || isAuthenticationExpired(me.userData.expirationDate)) {
-                    try {
-                        retrieveSavedData();
-                    } catch (e) {
-                        return false;
+                    if (typeof savedData === 'undefined' || savedData == null) {
+                        throw 'No authentication data exists';
+                    } else if (isAuthenticationExpired(savedData.expirationDate)) {
+                        throw 'Authentication token has already expired';
+                    } else {
+                        me.userData = savedData;
+                        setHttpAuthHeader();
                     }
                 }
 
-                return true;
-            };
+                function clearUserData() {
+                    me.userData.isAuthenticated = false;
+                    me.userData.username = '';
+                    me.userData.bearerToken = '';
+                    me.userData.expirationDate = null;
+                }
 
-            me.setRequireAuthentication = function(val) {
-                me.requireAuthentication = val;
-            };
+                me.userData = {
+                    isAuthenticated: false,
+                    username: '',
+                    bearerToken: '',
+                    expirationDate: null
+                };
 
-            me.removeAuthentication = function() {
-                removeData();
-                clearUserData();
-                $http.defaults.headers.common.Authorization = null;
-            };
-
-            me.authenticate = function(username, password, successCallback, errorCallback, persistData) {
-                this.removeAuthentication();
+                me.cache = $cacheFactory('tubularHttpCache');
+                me.useCache = true;
+                me.requireAuthentication = true;
+                me.tokenUrl = '/api/token';
                 
-                $http({
-                    method: 'POST',
-                    url: '/api/token',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    data: 'grant_type=password&username=' + username + '&password=' + password,
-                }).success(function(data) {
-                        me.userData.isAuthenticated = true;
-                        me.userData.username = data.userName;
-                        me.userData.bearerToken = data.access_token;
-                        me.userData.expirationDate = new Date(data['.expires']);
-                        setHttpAuthHeader();
-                        if (persistData === true) {
-                            saveData();
+                me.setTokenUrl = function(val) {
+                    me.tokenUrl = val;
+                };
+
+                me.isAuthenticated = function() {
+                    if (!me.userData.isAuthenticated || isAuthenticationExpired(me.userData.expirationDate)) {
+                        try {
+                            retrieveSavedData();
+                        } catch (e) {
+                            return false;
                         }
-                        if (typeof successCallback === 'function') {
-                            successCallback();
-                        }
-                    })
-                    .error(function(data) {
-                        if (typeof errorCallback === 'function') {
-                            if (data.error_description) {
-                                errorCallback(data.error_description);
-                            } else {
-                                errorCallback('Unable to contact server; please, try again later.');
+                    }
+
+                    return true;
+                };
+
+                me.setRequireAuthentication = function(val) {
+                    me.requireAuthentication = val;
+                };
+
+                me.removeAuthentication = function() {
+                    removeData();
+                    clearUserData();
+                    $http.defaults.headers.common.Authorization = null;
+                };
+
+                me.authenticate = function(username, password, successCallback, errorCallback, persistData) {
+                    this.removeAuthentication();
+
+                    $http({
+                            method: 'POST',
+                            url: me.tokenUrl,
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            data: 'grant_type=password&username=' + username + '&password=' + password
+                        }).success(function(data) {
+                            me.userData.isAuthenticated = true;
+                            me.userData.username = data.userName || username;
+                            me.userData.bearerToken = data.access_token;
+                            me.userData.expirationDate = new Date();
+                            me.userData.expirationDate = new Date(me.userData.expirationDate.getTime() + data.expires_in * 1000);
+
+                            setHttpAuthHeader();
+
+                            if (persistData) {
+                                saveData();
                             }
-                        }
+
+                            if (typeof successCallback === 'function') {
+                                successCallback();
+                            }
+                        })
+                        .error(function(data) {
+                            if (typeof errorCallback === 'function') {
+                                if (data.error_description) {
+                                    errorCallback(data.error_description);
+                                } else {
+                                    errorCallback('Unable to contact server; please, try again later.');
+                                }
+                            }
+                        });
+                };
+
+                me.saveDataAsync = function(model, request) {
+                    var component = model.$component;
+                    model.$component = null;
+                    var clone = angular.copy(model);
+                    model.$component = component;
+
+                    var originalClone = angular.copy(model.$original);
+
+                    delete clone.$isEditing;
+                    delete clone.$hasChanges;
+                    delete clone.$selected;
+                    delete clone.$original;
+                    delete clone.$state;
+                    delete clone.$valid;
+                    delete clone.$component;
+                    delete clone.$isLoading;
+                    delete clone.$isNew;
+
+                    if (model.$isNew) {
+                        request.data = clone;
+                    } else {
+                        request.data = {
+                            Old: originalClone,
+                            New: clone
+                        };
+                    }
+
+                    var dataRequest = me.retrieveDataAsync(request);
+
+                    dataRequest.promise.then(function(data) {
+                        model.$hasChanges = false;
+                        model.resetOriginal();
+
+                        return data;
                     });
-            };
 
-            me.saveDataAsync = function (model, request) {
-                var component = model.$component;
-                model.$component = null;
-                var clone = angular.copy(model);
-                model.$component = component;
-
-                var originalClone = angular.copy(model.$original);
-
-                delete clone.$isEditing;
-                delete clone.$hasChanges;
-                delete clone.$selected;
-                delete clone.$original;
-                delete clone.$state;
-                delete clone.$valid;
-
-                request.data = {
-                    Old: originalClone,
-                    New: clone
+                    return dataRequest;
                 };
 
-                var dataRequest = me.retrieveDataAsync(request);
-
-                dataRequest.promise.then(function(data) {
-                    model.$hasChanges = false;
-                    model.resetOriginal();
-                    return data;
-                });
-
-                return dataRequest;
-            };
-
-            me.getExpirationDate = function() {
-                var date = new Date();
-                var minutes = 5;
-                return new Date(date.getTime() + minutes * 60000);
-            };
-
-            me.checksum = function(obj) {
-                var keys = Object.keys(obj).sort();
-                var output = [], prop;
-                for (var i = 0; i < keys.length; i++) {
-                    prop = keys[i];
-                    output.push(prop);
-                    output.push(obj[prop]);
-                }
-                return JSON.stringify(output);
-            };
-
-            me.retrieveDataAsync = function(request) {
-                var canceller = $q.defer();
-
-                var cancel = function(reason) {
-                    console.error(reason);
-                    canceller.resolve(reason);
+                me.getExpirationDate = function() {
+                    var date = new Date();
+                    var minutes = 5;
+                    return new Date(date.getTime() + minutes * 60000);
                 };
 
-                if (angular.isUndefined(request.requireAuthentication)) {
-                    request.requireAuthentication = me.requireAuthentication;
-                }
+                me.checksum = function(obj) {
+                    var keys = Object.keys(obj).sort();
+                    var output = [], prop;
+                    for (var i = 0; i < keys.length; i++) {
+                        prop = keys[i];
+                        output.push(prop);
+                        output.push(obj[prop]);
+                    }
+                    return JSON.stringify(output);
+                };
 
-                if (angular.isString(request.requireAuthentication)) {
-                    request.requireAuthentication = request.requireAuthentication == "true";
-                }
+                me.retrieveDataAsync = function(request) {
+                    var canceller = $q.defer();
 
-                if (request.requireAuthentication && me.isAuthenticated() === false) {
-                    // Return empty dataset
-                    return {
-                        promise: $q(function(resolve, reject) {
-                            resolve(null);
-                        }),
-                        cancel: cancel
+                    var cancel = function(reason) {
+                        console.error(reason);
+                        canceller.resolve(reason);
                     };
-                }
 
-                var checksum = me.checksum(request);
+                    if (angular.isUndefined(request.requireAuthentication)) {
+                        request.requireAuthentication = me.requireAuthentication;
+                    }
 
-                if ((request.requestMethod == 'GET' || request.requestMethod == 'POST') && me.useCache) {
-                    var data = me.cache.get(checksum);
+                    if (angular.isString(request.requireAuthentication)) {
+                        request.requireAuthentication = request.requireAuthentication == "true";
+                    }
 
-                    if (angular.isDefined(data) && data.Expiration.getTime() > new Date().getTime()) {
+                    if (request.requireAuthentication && me.isAuthenticated() === false) {
+                        // Return empty dataset
                         return {
                             promise: $q(function(resolve, reject) {
-                                resolve(data.Set);
+                                resolve(null);
                             }),
                             cancel: cancel
                         };
                     }
-                }
 
-                var promise = $http({
-                    url: request.serverUrl,
-                    method: request.requestMethod,
-                    data: request.data,
-                    timeout: canceller.promise
-                }).then(function(response) {
-                    $timeout.cancel(timeoutHanlder);
+                    var checksum = me.checksum(request);
 
-                    if (me.useCache) {
-                        me.cache.put(checksum, { Expiration: me.getExpirationDate(), Set: response.data });
-                    }
+                    if ((request.requestMethod == 'GET' || request.requestMethod == 'POST') && me.useCache) {
+                        var data = me.cache.get(checksum);
 
-                    return response.data;
-                }, function (error) {
-                    if (angular.isDefined(error) && angular.isDefined(error.status) && error.status == 401) {
-                        if (me.isAuthenticated()) {
-                            me.removeAuthentication();
-                            // Let's trigger a refresh
-                            document.location = document.location;
+                        if (angular.isDefined(data) && data.Expiration.getTime() > new Date().getTime()) {
+                            return {
+                                promise: $q(function(resolve, reject) {
+                                    resolve(data.Set);
+                                }),
+                                cancel: cancel
+                            };
                         }
                     }
 
-                    return $q.reject(error);
-                });
+                    var promise = $http({
+                        url: request.serverUrl,
+                        method: request.requestMethod,
+                        data: request.data,
+                        timeout: canceller.promise
+                    }).then(function(response) {
+                        $timeout.cancel(timeoutHanlder);
 
-                request.timeout = request.timeout || 15000;
+                        if (me.useCache) {
+                            me.cache.put(checksum, { Expiration: me.getExpirationDate(), Set: response.data });
+                        }
 
-                var timeoutHanlder = $timeout(function() {
-                    cancel('Timed out');
-                }, request.timeout);
+                        return response.data;
+                    }, function(error) {
+                        if (angular.isDefined(error) && angular.isDefined(error.status) && error.status == 401) {
+                            if (me.isAuthenticated()) {
+                                me.removeAuthentication();
+                                // Let's trigger a refresh
+                                document.location = document.location;
+                            }
+                        }
 
-                return {
-                    promise: promise,
-                    cancel: cancel
-                };
-            };
+                        return $q.reject(error);
+                    });
 
-            me.get = function (url) {
-                if (me.requireAuthentication && me.isAuthenticated() == false) {
-                    var canceller = $q.defer();
+                    request.timeout = request.timeout || 15000;
 
-                    // Return empty dataset
+                    var timeoutHanlder = $timeout(function() {
+                        cancel('Timed out');
+                    }, request.timeout);
+
                     return {
-                        promise: $q(function (resolve, reject) {
-                            resolve(null);
-                        }),
-                        cancel: function (reason) {
-                            console.error(reason);
-                            canceller.resolve(reason);
-                        }
+                        promise: promise,
+                        cancel: cancel
                     };
-                }
+                };
 
-                return { promise: $http.get(url).then(function (data) { return data.data; }) };
-            };
+                me.get = function (url, params) {
+                    if (me.requireAuthentication && !me.isAuthenticated()) {
+                        var canceller = $q.defer();
 
-            me.delete = function(url) {
-                return me.retrieveDataAsync({
-                    serverUrl: url,
-                    requestMethod: 'DELETE',
-                });
-            };
+                        // Return empty dataset
+                        return {
+                            promise: $q(function (resolve, reject) {
+                                resolve(null);
+                            }),
+                            cancel: function (reason) {
+                                console.error(reason);
+                                canceller.resolve(reason);
+                            }
+                        };
+                    }
 
-            me.post = function(url, data) {
-                return me.retrieveDataAsync({
-                    serverUrl: url,
-                    requestMethod: 'POST',
-                    data: data
-                });
-            };
+                    return { promise: $http.get(url, params).then(function (data) { return data.data; }) };
+                };
 
-            me.put = function(url, data) {
-                return me.retrieveDataAsync({
-                    serverUrl: url,
-                    requestMethod: 'PUT',
-                    data: data
-                });
-            };
+                me.getBinary = function (url) {
+                    return me.get(url, { responseType: 'arraybuffer' });
+                };
 
-            me.getByKey = function (url, key) {
-                return me.get(url + key);
-            };
+                me.delete = function(url) {
+                    return me.retrieveDataAsync({
+                        serverUrl: url,
+                        requestMethod: 'DELETE'
+                    });
+                };
 
-            // This is a kind of factory to retrieve a DataService
-            me.instances = [];
+                me.post = function(url, data) {
+                    return me.retrieveDataAsync({
+                        serverUrl: url,
+                        requestMethod: 'POST',
+                        data: data
+                    });
+                };
 
-            me.registerService = function(name, instance) {
-                me.instances[name] = instance;
-            };
+                me.put = function(url, data) {
+                    return me.retrieveDataAsync({
+                        serverUrl: url,
+                        requestMethod: 'PUT',
+                        data: data
+                    });
+                };
 
-            me.getDataService = function(name) {
-                if (angular.isUndefined(name) || name == null || name == 'tubularHttp') return me;
+                me.getByKey = function(url, key) {
+                    return me.get(url + key);
+                };
 
-                var instance = me.instances[name];
+                // This is a kind of factory to retrieve a DataService
+                me.instances = [];
 
-                return instance == null ? me : instance;
-            };
-        }
-    ]);
+                me.registerService = function(name, instance) {
+                    me.instances[name] = instance;
+                };
+
+                me.getDataService = function(name) {
+                    if (angular.isUndefined(name) || name == null || name == 'tubularHttp') {
+                        return me;
+                    }
+
+                    var instance = me.instances[name];
+
+                    return instance == null ? me : instance;
+                };
+            }
+        ]);
 })();
 ///#source 1 1 tubular/tubular-services-odata.js
 (function() {
