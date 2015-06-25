@@ -106,7 +106,10 @@
 
             return function(attrs) {
                 this.Text = attrs.text || null;
-                this.Argument = attrs.argument || null;
+                this.Argument = null;
+                if (attrs.argument) {
+                    this.Argument = [attrs.argument];
+                }
                 this.Operator = attrs.operator || 'Contains';
                 this.OptionsUrl = attrs.optionsUrl || null;
             };
@@ -125,7 +128,9 @@
                         $key: "",
                         $addField: function(key, value) {
                             this[key] = value;
-                            if (angular.isUndefined(this.$original)) this.$original = {};
+                            if (angular.isUndefined(this.$original)) {
+                                this.$original = {};
+                            }
                             this.$original[key] = value;
 
                             if (angular.isUndefined(this.$state)) this.$state = {};

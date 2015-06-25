@@ -2638,7 +2638,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             'tubularEditorService', function(tubularEditorService) {
 
                 return {
-                    template: '<div ng-class="{ \'form-group\' : isEditing, \'has-error\' : !$valid }" class="checkbox">' +
+                    template: '<div ng-class="{ \'form-group\' : isEditing, \'has-error\' : !$valid }" class="tubular-checkbox">' +
                         '<span ng-hide="isEditing">{{value ? checkedValue : uncheckedValue}}</span>' +
                         '<input ng-show="isEditing" type="checkbox" ng-model="value" ng-disabled="readOnly"' +
                         'class="tubular-checkbox" id="{{name}}" /> ' +
@@ -3251,7 +3251,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
             return function(attrs) {
                 this.Text = attrs.text || null;
-                this.Argument = attrs.argument || null;
+                this.Argument = null;
+                if (attrs.argument) {
+                    this.Argument = [attrs.argument];
+                }
                 this.Operator = attrs.operator || 'Contains';
                 this.OptionsUrl = attrs.optionsUrl || null;
             };
@@ -3270,7 +3273,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         $key: "",
                         $addField: function(key, value) {
                             this[key] = value;
-                            if (angular.isUndefined(this.$original)) this.$original = {};
+                            if (angular.isUndefined(this.$original)) {
+                                this.$original = {};
+                            }
                             this.$original[key] = value;
 
                             if (angular.isUndefined(this.$state)) this.$state = {};

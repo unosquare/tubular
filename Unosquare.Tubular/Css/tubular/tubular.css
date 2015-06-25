@@ -141,7 +141,7 @@ table.tubular-grid-table {
         margin-bottom: 0;
     }
 
-    table.tubular-grid-table .radio, table.tubular-grid-table .checkbox {
+    table.tubular-grid-table .radio, table.tubular-grid-table .tubular-checkbox {
         margin: 0;
     }
 
