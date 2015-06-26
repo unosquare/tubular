@@ -111,6 +111,7 @@
                             me.userData.bearerToken = data.access_token;
                             me.userData.expirationDate = new Date();
                             me.userData.expirationDate = new Date(me.userData.expirationDate.getTime() + data.expires_in * 1000);
+                            me.userData.role = data.role;
 
                             setHttpAuthHeader();
 
