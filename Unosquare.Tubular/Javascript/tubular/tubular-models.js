@@ -241,7 +241,7 @@
 
                         return dataService.saveDataAsync(obj, {
                             serverUrl: $scope.serverSaveUrl,
-                            requestMethod: obj.$isNew ? $scope.serverSaveMethod : 'PUT'
+                            requestMethod: obj.$isNew ? ($scope.serverSaveMethod || 'POST') : 'PUT'
                         }).promise;
                     };
 

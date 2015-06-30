@@ -458,15 +458,17 @@
          * @param {object} options Set the options to display.
          * @param {string} optionsUrl Set the Http Url where to retrieve the values.
          * @param {string} optionsMethod Set the Http Method where to retrieve the values.
+         * @param {string} optionLabel Set the property to get the labels
          */
         .directive('tbTypeaheadEditor', [
-            'tubularEditorService', '$q', function(tubularEditorService, $q) {
+            'tubularEditorService', '$q', function (tubularEditorService, $q, $filter) {
 
                 return {
                     template: '<div ng-class="{ \'form-group\' : isEditing, \'has-error\' : !$valid }">' +
                         '<span ng-hide="isEditing">{{ value }}</span>' +
                         '<label ng-show="showLabel">{{ label }}</label>' +
-                        '<input ng-show="isEditing" ng-model="value" class="form-control" typeahead="o for o in getValues($viewValue)" ' +
+                        '<input ng-show="isEditing" ng-model="value" placeholder="{{placeholder}}" ' +
+                        'class="form-control" typeahead="{{ selectOptions }}" ' +
                         'ng-required="required" />' +
                         '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">' +
                         '{{error}}' +
@@ -479,13 +481,19 @@
                     scope: angular.extend({
                         options: '=?',
                         optionsUrl: '@',
-                        optionsMethod: '@?'
+                        optionsMethod: '@?',
+                        optionLabel: '@?'
                     }, tubularEditorService.defaultScope),
                     controller: [
-                        '$scope', function($scope) {
+                        '$scope', function ($scope) {
                             tubularEditorService.setupScope($scope);
+                            $scope.selectOptions = "d for d in getValues($viewValue)";
 
-                            $scope.getValues = function(val) {
+                            if (angular.isDefined($scope.optionLabel)) {
+                                $scope.selectOptions = "d as d." + $scope.optionLabel + " for d in getValues($viewValue)";
+                            }
+
+                            $scope.getValues = function (val) {
                                 if (angular.isDefined($scope.optionsUrl)) {
                                     if (angular.isUndefined($scope.$component) || $scope.$component == null)
                                         throw 'You need to define a parent Form or Grid';
@@ -496,7 +504,7 @@
                                     }).promise;
                                 }
 
-                                return $q(function(resolve) {
+                                return $q(function (resolve) {
                                     resolve($scope.options);
                                 });
                             };

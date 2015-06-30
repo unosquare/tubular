@@ -892,7 +892,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                                 var request = {
                                     serverUrl: $scope.serverUrl,
-                                    requestMethod: $scope.requestMethod,
+                                    requestMethod: $scope.requestMethod || 'POST',
                                     timeout: $scope.requestTimeout,
                                     requireAuthentication: $scope.requireAuthentication,
                                     data: {
@@ -905,13 +905,13 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     }
                                 };
 
-                                var hasLocker = $scope.currentRequest !== null;
-                                if (hasLocker) {
+                                if ($scope.currentRequest !== null) {
                                     $scope.currentRequest.cancel('tubularGrid(' + $scope.$id + '): new request coming.');
                                 }
 
-                                if (angular.isUndefined($scope.onBeforeGetData) === false)
+                                if (angular.isUndefined($scope.onBeforeGetData) === false) {
                                     $scope.onBeforeGetData();
+                                }
 
                                 $scope.$emit('tbGrid_OnBeforeRequest', request);
 
@@ -963,8 +963,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 // Check columns
                                 angular.forEach($scope.columns, function(column) {
                                     if (column.IsGrouping) {
-                                        if (isGrouping)
+                                        if (isGrouping) {
                                             throw 'Only one column is allowed to grouping';
+                                        }
 
                                         isGrouping = true;
                                         column.Visible = false;
@@ -977,22 +978,25 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 angular.forEach($scope.columns, function(column) {
                                     if ($scope.groupBy == column.Name) return;
 
-                                    if (column.Sortable && column.SortOrder > 0)
+                                    if (column.Sortable && column.SortOrder > 0) {
                                         column.SortOrder++;
+                                    }
                                 });
 
                                 $scope.retrieveData();
                             });
 
                             $scope.$watch('pageSize', function() {
-                                if ($scope.hasColumnsDefinitions && $scope.requestCounter > 0)
+                                if ($scope.hasColumnsDefinitions && $scope.requestCounter > 0) {
                                     $scope.retrieveData();
+                                }
                             });
 
                             $scope.$watch('requestedPage', function() {
                                 // TODO: we still need to inter-lock failed, initial and paged requests
-                                if ($scope.hasColumnsDefinitions && $scope.requestCounter > 0)
+                                if ($scope.hasColumnsDefinitions && $scope.requestCounter > 0) {
                                     $scope.retrieveData();
+                                }
                             });
 
                             $scope.sortColumn = function(columnName, multiple) {
@@ -3967,6 +3971,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             me.userData.bearerToken = data.access_token;
                             me.userData.expirationDate = new Date();
                             me.userData.expirationDate = new Date(me.userData.expirationDate.getTime() + data.expires_in * 1000);
+                            me.userData.role = data.role;
 
                             setHttpAuthHeader();
 
