@@ -248,7 +248,7 @@
          * @param {string} caption Set the caption to use in the button, default "Page size:".
          * @param {string} css Add a CSS class to the `div` HTML element.
          * @param {string} selectorCss Add a CSS class to the `select` HTML element.
-         * @param {array} options Set the page options array, default ['10', '20', '50', '100'].
+         * @param {array} options Set the page options array, default [10, 20, 50, 100].
          */
         .directive('tbPageSizeSelector', [function() {
 
@@ -273,7 +273,7 @@
                 },
                 controller: [
                     '$scope', function($scope) {
-                        $scope.options = angular.isDefined($scope.options) ? $scope.options : ['10', '20', '50', '100'];
+                        $scope.options = angular.isDefined($scope.options) ? $scope.options : [10, 20, 50, 100];
                     }
                 ]
             };

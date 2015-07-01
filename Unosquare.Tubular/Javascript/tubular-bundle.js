@@ -740,6 +740,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @param {bool} showLoading Set if an overlay will show when it's loading data, default true.
          * @param {bool} autoRefresh Set if the grid refresh after any insertion or update, default true.
          * @param {bool} savePage Set if the grid autosave current page, default true.
+         * @param {bool} savePageSize Set if the grid autosave page size, default true.
          */
         .directive('tbGrid', [
             function() {
@@ -764,7 +765,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         editorMode: '@?',
                         showLoading: '=?',
                         autoRefresh: '=?',
-                        savePage: '=?'
+                        savePage: '=?',
+                        savePageSize: '=?'
                     },
                     controller: [
                         '$scope', 'localStorageService', 'tubularPopupService', 'tubularModel', 'tubularHttp', '$routeParams',
@@ -776,6 +778,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                             $scope.savePage = $scope.savePage || true;
                             $scope.currentPage = $scope.savePage ? (localStorageService.get($scope.name + "_page") || 1) : 1;
+
+                            $scope.savePageSize = $scope.savePageSize || true;
+                            $scope.pageSize = 20;
 
                             $scope.totalPages = 0;
                             $scope.totalRecordCount = 0;
@@ -890,9 +895,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                                 $scope.canSaveState = true;
                                 $scope.verifyColumns();
+                                $scope.pageSize = $scope.savePageSize ? (localStorageService.get($scope.name + "_pageSize") || 20) : 20;
 
-                                $scope.pageSize = $scope.pageSize || 20;
-                                
                                 var request = {
                                     serverUrl: $scope.serverUrl,
                                     requestMethod: $scope.requestMethod || 'POST',
@@ -995,6 +999,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                             $scope.$watch('pageSize', function() {
                                 if ($scope.hasColumnsDefinitions && $scope.requestCounter > 0) {
+                                    if ($scope.savePageSize) {
+                                        localStorageService.set($scope.name + "_pageSize", $scope.pageSize);
+                                    }
                                     $scope.retrieveData();
                                 }
                             });
@@ -1793,7 +1800,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @param {string} caption Set the caption to use in the button, default "Page size:".
          * @param {string} css Add a CSS class to the `div` HTML element.
          * @param {string} selectorCss Add a CSS class to the `select` HTML element.
-         * @param {array} options Set the page options array, default ['10', '20', '50', '100'].
+         * @param {array} options Set the page options array, default [10, 20, 50, 100].
          */
         .directive('tbPageSizeSelector', [function() {
 
@@ -1818,7 +1825,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 },
                 controller: [
                     '$scope', function($scope) {
-                        $scope.options = angular.isDefined($scope.options) ? $scope.options : ['10', '20', '50', '100'];
+                        $scope.options = angular.isDefined($scope.options) ? $scope.options : [10, 20, 50, 100];
                     }
                 ]
             };

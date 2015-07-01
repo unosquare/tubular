@@ -35,6 +35,7 @@
          * @param {bool} showLoading Set if an overlay will show when it's loading data, default true.
          * @param {bool} autoRefresh Set if the grid refresh after any insertion or update, default true.
          * @param {bool} savePage Set if the grid autosave current page, default true.
+         * @param {bool} savePageSize Set if the grid autosave page size, default true.
          */
         .directive('tbGrid', [
             function() {
@@ -59,7 +60,8 @@
                         editorMode: '@?',
                         showLoading: '=?',
                         autoRefresh: '=?',
-                        savePage: '=?'
+                        savePage: '=?',
+                        savePageSize: '=?'
                     },
                     controller: [
                         '$scope', 'localStorageService', 'tubularPopupService', 'tubularModel', 'tubularHttp', '$routeParams',
@@ -71,6 +73,9 @@
 
                             $scope.savePage = $scope.savePage || true;
                             $scope.currentPage = $scope.savePage ? (localStorageService.get($scope.name + "_page") || 1) : 1;
+
+                            $scope.savePageSize = $scope.savePageSize || true;
+                            $scope.pageSize = 20;
 
                             $scope.totalPages = 0;
                             $scope.totalRecordCount = 0;
@@ -185,9 +190,8 @@
 
                                 $scope.canSaveState = true;
                                 $scope.verifyColumns();
+                                $scope.pageSize = $scope.savePageSize ? (localStorageService.get($scope.name + "_pageSize") || 20) : 20;
 
-                                $scope.pageSize = $scope.pageSize || 20;
-                                
                                 var request = {
                                     serverUrl: $scope.serverUrl,
                                     requestMethod: $scope.requestMethod || 'POST',
@@ -290,6 +294,9 @@
 
                             $scope.$watch('pageSize', function() {
                                 if ($scope.hasColumnsDefinitions && $scope.requestCounter > 0) {
+                                    if ($scope.savePageSize) {
+                                        localStorageService.set($scope.name + "_pageSize", $scope.pageSize);
+                                    }
                                     $scope.retrieveData();
                                 }
                             });
