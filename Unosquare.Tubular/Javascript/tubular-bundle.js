@@ -739,6 +739,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @param {string} editorMode Define if grid is read-only or it has editors (inline or popup).
          * @param {bool} showLoading Set if an overlay will show when it's loading data, default true.
          * @param {bool} autoRefresh Set if the grid refresh after any insertion or update, default true.
+         * @param {bool} savePage Set if the grid autosave current page, default true.
          */
         .directive('tbGrid', [
             function() {
@@ -762,20 +763,24 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         name: '@?gridName',
                         editorMode: '@?',
                         showLoading: '=?',
-                        autoRefresh: '=?'
+                        autoRefresh: '=?',
+                        savePage: '=?'
                     },
                     controller: [
                         '$scope', 'localStorageService', 'tubularPopupService', 'tubularModel', 'tubularHttp', '$routeParams',
                         function($scope, localStorageService, tubularPopupService, TubularModel, tubularHttp, $routeParams) {
-
+                            $scope.name = $scope.name || 'tbgrid';
                             $scope.tubularDirective = 'tubular-grid';
                             $scope.columns = [];
                             $scope.rows = [];
-                            $scope.currentPage = 0;
+
+                            $scope.savePage = $scope.savePage || true;
+                            $scope.currentPage = $scope.savePage ? (localStorageService.get($scope.name + "_page") || 1) : 1;
+
                             $scope.totalPages = 0;
                             $scope.totalRecordCount = 0;
                             $scope.filteredRecordCount = 0;
-                            $scope.requestedPage = 1;
+                            $scope.requestedPage = $scope.currentPage;
                             $scope.hasColumnsDefinitions = false;
                             $scope.requestCounter = 0;
                             $scope.requestMethod = $scope.requestMethod || 'POST';
@@ -792,7 +797,6 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             $scope.dataService = tubularHttp.getDataService($scope.dataServiceName);
                             $scope.requireAuthentication = $scope.requireAuthentication || true;
                             tubularHttp.setRequireAuthentication($scope.requireAuthentication);
-                            $scope.name = $scope.name || 'tbgrid';
                             $scope.editorMode = $scope.editorMode || 'none';
                             $scope.canSaveState = false;
                             $scope.groupBy = '';
@@ -870,7 +874,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                         var columnName = columns[index].Name;
                                         var filtered = $scope.columns.filter(function(el) { return el.Name == columnName; });
 
-                                        if (filtered.length == 0) continue;
+                                        if (filtered.length === 0) continue;
 
                                         var current = filtered[0];
                                         // Updates visibility by now
@@ -888,8 +892,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 $scope.verifyColumns();
 
                                 $scope.pageSize = $scope.pageSize || 20;
-                                var page = $scope.requestedPage == 0 ? 1 : $scope.requestedPage;
-
+                                
                                 var request = {
                                     serverUrl: $scope.serverUrl,
                                     requestMethod: $scope.requestMethod || 'POST',
@@ -898,7 +901,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     data: {
                                         Count: $scope.requestCounter,
                                         Columns: $scope.columns,
-                                        Skip: (page - 1) * $scope.pageSize,
+                                        Skip: ($scope.requestedPage - 1) * $scope.pageSize,
                                         Take: parseInt($scope.pageSize),
                                         Search: $scope.search,
                                         TimezoneOffset: new Date().getTimezoneOffset()
@@ -947,7 +950,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                         $scope.totalPages = data.TotalPages;
                                         $scope.totalRecordCount = data.TotalRecordCount;
                                         $scope.filteredRecordCount = data.FilteredRecordCount;
-                                        $scope.isEmpty = $scope.filteredRecordCount == 0;
+                                        $scope.isEmpty = $scope.filteredRecordCount === 0;
+
+                                        if ($scope.savePage) {
+                                            localStorageService.set($scope.name + "_page", $scope.currentPage);
+                                        }
                                     }, function(error) {
                                         $scope.requestedPage = $scope.currentPage;
                                         $scope.$emit('tbGrid_OnConnectionError', error);
@@ -992,7 +999,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 }
                             });
 
-                            $scope.$watch('requestedPage', function() {
+                            $scope.$watch('requestedPage', function () {
                                 // TODO: we still need to inter-lock failed, initial and paged requests
                                 if ($scope.hasColumnsDefinitions && $scope.requestCounter > 0) {
                                     $scope.retrieveData();
@@ -1966,7 +1973,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         '<div class="tubular-pager">' +
                             '<pagination ng-disabled="$component.isEmpty" direction-links="true" ' +
                             'boundary-links="true" total-items="$component.filteredRecordCount" ' +
-                            'items-per-page="$component.pageSize" max-size="5" ng-model="pagerPageNumber" ng-change="pagerPageChanged()">' +
+                            'items-per-page="$component.pageSize" max-size="5" ng-model="$component.currentPage" ng-change="pagerPageChanged()">' +
                             '</pagination>' +
                             '<div>',
                     restrict: 'E',
@@ -1979,12 +1986,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             $scope.$component = $scope.$parent.$parent;
                             $scope.tubularDirective = 'tubular-grid-pager';
 
-                            $scope.$component.$watch('currentPage', function (value) {
-                                $scope.pagerPageNumber = value;
-                            });
-
                             $scope.pagerPageChanged = function () {
-                                $scope.$component.requestedPage = $scope.pagerPageNumber;
+                                $scope.$component.requestedPage = $scope.$component.currentPage;
                                 var allLinks = $element.find('li a');
                                 $(allLinks).blur();
                             };
@@ -2540,15 +2543,17 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @param {object} options Set the options to display.
          * @param {string} optionsUrl Set the Http Url where to retrieve the values.
          * @param {string} optionsMethod Set the Http Method where to retrieve the values.
+         * @param {string} optionLabel Set the property to get the labels
          */
         .directive('tbTypeaheadEditor', [
-            'tubularEditorService', '$q', function(tubularEditorService, $q) {
+            'tubularEditorService', '$q', function (tubularEditorService, $q, $filter) {
 
                 return {
                     template: '<div ng-class="{ \'form-group\' : isEditing, \'has-error\' : !$valid }">' +
                         '<span ng-hide="isEditing">{{ value }}</span>' +
                         '<label ng-show="showLabel">{{ label }}</label>' +
-                        '<input ng-show="isEditing" ng-model="value" class="form-control" typeahead="o for o in getValues($viewValue)" ' +
+                        '<input ng-show="isEditing" ng-model="value" placeholder="{{placeholder}}" ' +
+                        'class="form-control" typeahead="{{ selectOptions }}" ' +
                         'ng-required="required" />' +
                         '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">' +
                         '{{error}}' +
@@ -2561,13 +2566,19 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     scope: angular.extend({
                         options: '=?',
                         optionsUrl: '@',
-                        optionsMethod: '@?'
+                        optionsMethod: '@?',
+                        optionLabel: '@?'
                     }, tubularEditorService.defaultScope),
                     controller: [
-                        '$scope', function($scope) {
+                        '$scope', function ($scope) {
                             tubularEditorService.setupScope($scope);
+                            $scope.selectOptions = "d for d in getValues($viewValue)";
 
-                            $scope.getValues = function(val) {
+                            if (angular.isDefined($scope.optionLabel)) {
+                                $scope.selectOptions = "d as d." + $scope.optionLabel + " for d in getValues($viewValue)";
+                            }
+
+                            $scope.getValues = function (val) {
                                 if (angular.isDefined($scope.optionsUrl)) {
                                     if (angular.isUndefined($scope.$component) || $scope.$component == null)
                                         throw 'You need to define a parent Form or Grid';
@@ -2578,7 +2589,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     }).promise;
                                 }
 
-                                return $q(function(resolve) {
+                                return $q(function (resolve) {
                                     resolve($scope.options);
                                 });
                             };
@@ -3390,7 +3401,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                         return dataService.saveDataAsync(obj, {
                             serverUrl: $scope.serverSaveUrl,
-                            requestMethod: obj.$isNew ? $scope.serverSaveMethod : 'PUT'
+                            requestMethod: obj.$isNew ? ($scope.serverSaveMethod || 'POST') : 'PUT'
                         }).promise;
                     };
 
@@ -3756,6 +3767,13 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     scope.readOnly = scope.readOnly || false;
                     scope.format = scope.format || defaultFormat;
                     scope.$valid = true;
+
+                    // HACK: I need to know why
+                    scope.$watch('label', function (n, o) {
+                        if (angular.isUndefined(n)) {
+                            scope.label = (scope.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
+                        }
+                    });
 
                     scope.$watch('value', function(newValue, oldValue) {
                         if (angular.isUndefined(oldValue) && angular.isUndefined(newValue)) return;

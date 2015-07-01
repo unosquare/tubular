@@ -34,6 +34,7 @@
          * @param {string} editorMode Define if grid is read-only or it has editors (inline or popup).
          * @param {bool} showLoading Set if an overlay will show when it's loading data, default true.
          * @param {bool} autoRefresh Set if the grid refresh after any insertion or update, default true.
+         * @param {bool} savePage Set if the grid autosave current page, default true.
          */
         .directive('tbGrid', [
             function() {
@@ -57,20 +58,24 @@
                         name: '@?gridName',
                         editorMode: '@?',
                         showLoading: '=?',
-                        autoRefresh: '=?'
+                        autoRefresh: '=?',
+                        savePage: '=?'
                     },
                     controller: [
                         '$scope', 'localStorageService', 'tubularPopupService', 'tubularModel', 'tubularHttp', '$routeParams',
                         function($scope, localStorageService, tubularPopupService, TubularModel, tubularHttp, $routeParams) {
-
+                            $scope.name = $scope.name || 'tbgrid';
                             $scope.tubularDirective = 'tubular-grid';
                             $scope.columns = [];
                             $scope.rows = [];
-                            $scope.currentPage = 0;
+
+                            $scope.savePage = $scope.savePage || true;
+                            $scope.currentPage = $scope.savePage ? (localStorageService.get($scope.name + "_page") || 1) : 1;
+
                             $scope.totalPages = 0;
                             $scope.totalRecordCount = 0;
                             $scope.filteredRecordCount = 0;
-                            $scope.requestedPage = 1;
+                            $scope.requestedPage = $scope.currentPage;
                             $scope.hasColumnsDefinitions = false;
                             $scope.requestCounter = 0;
                             $scope.requestMethod = $scope.requestMethod || 'POST';
@@ -87,7 +92,6 @@
                             $scope.dataService = tubularHttp.getDataService($scope.dataServiceName);
                             $scope.requireAuthentication = $scope.requireAuthentication || true;
                             tubularHttp.setRequireAuthentication($scope.requireAuthentication);
-                            $scope.name = $scope.name || 'tbgrid';
                             $scope.editorMode = $scope.editorMode || 'none';
                             $scope.canSaveState = false;
                             $scope.groupBy = '';
@@ -165,7 +169,7 @@
                                         var columnName = columns[index].Name;
                                         var filtered = $scope.columns.filter(function(el) { return el.Name == columnName; });
 
-                                        if (filtered.length == 0) continue;
+                                        if (filtered.length === 0) continue;
 
                                         var current = filtered[0];
                                         // Updates visibility by now
@@ -183,8 +187,7 @@
                                 $scope.verifyColumns();
 
                                 $scope.pageSize = $scope.pageSize || 20;
-                                var page = $scope.requestedPage == 0 ? 1 : $scope.requestedPage;
-
+                                
                                 var request = {
                                     serverUrl: $scope.serverUrl,
                                     requestMethod: $scope.requestMethod || 'POST',
@@ -193,7 +196,7 @@
                                     data: {
                                         Count: $scope.requestCounter,
                                         Columns: $scope.columns,
-                                        Skip: (page - 1) * $scope.pageSize,
+                                        Skip: ($scope.requestedPage - 1) * $scope.pageSize,
                                         Take: parseInt($scope.pageSize),
                                         Search: $scope.search,
                                         TimezoneOffset: new Date().getTimezoneOffset()
@@ -242,7 +245,11 @@
                                         $scope.totalPages = data.TotalPages;
                                         $scope.totalRecordCount = data.TotalRecordCount;
                                         $scope.filteredRecordCount = data.FilteredRecordCount;
-                                        $scope.isEmpty = $scope.filteredRecordCount == 0;
+                                        $scope.isEmpty = $scope.filteredRecordCount === 0;
+
+                                        if ($scope.savePage) {
+                                            localStorageService.set($scope.name + "_page", $scope.currentPage);
+                                        }
                                     }, function(error) {
                                         $scope.requestedPage = $scope.currentPage;
                                         $scope.$emit('tbGrid_OnConnectionError', error);
@@ -287,7 +294,7 @@
                                 }
                             });
 
-                            $scope.$watch('requestedPage', function() {
+                            $scope.$watch('requestedPage', function () {
                                 // TODO: we still need to inter-lock failed, initial and paged requests
                                 if ($scope.hasColumnsDefinitions && $scope.requestCounter > 0) {
                                     $scope.retrieveData();

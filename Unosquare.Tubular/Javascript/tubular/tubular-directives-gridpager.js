@@ -20,7 +20,7 @@
                         '<div class="tubular-pager">' +
                             '<pagination ng-disabled="$component.isEmpty" direction-links="true" ' +
                             'boundary-links="true" total-items="$component.filteredRecordCount" ' +
-                            'items-per-page="$component.pageSize" max-size="5" ng-model="pagerPageNumber" ng-change="pagerPageChanged()">' +
+                            'items-per-page="$component.pageSize" max-size="5" ng-model="$component.currentPage" ng-change="pagerPageChanged()">' +
                             '</pagination>' +
                             '<div>',
                     restrict: 'E',
@@ -33,12 +33,8 @@
                             $scope.$component = $scope.$parent.$parent;
                             $scope.tubularDirective = 'tubular-grid-pager';
 
-                            $scope.$component.$watch('currentPage', function (value) {
-                                $scope.pagerPageNumber = value;
-                            });
-
                             $scope.pagerPageChanged = function () {
-                                $scope.$component.requestedPage = $scope.pagerPageNumber;
+                                $scope.$component.requestedPage = $scope.$component.currentPage;
                                 var allLinks = $element.find('li a');
                                 $(allLinks).blur();
                             };
