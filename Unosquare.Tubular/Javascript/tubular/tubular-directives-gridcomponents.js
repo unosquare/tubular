@@ -35,13 +35,14 @@
                     '$scope', function($scope) {
                         $scope.$component = $scope.$parent.$parent;
                         $scope.tubularDirective = 'tubular-grid-text-search';
-                        $scope.lastSearch = "";
+                        $scope.lastSearch = $scope.$component.search.Text;
 
                         $scope.$watch("$component.search.Text", function(val, prev) {
                             if (angular.isUndefined(val)) return;
                             if (val === prev) return;
 
                             if ($scope.lastSearch !== "" && val === "") {
+                                $scope.$component.saveSearch();
                                 $scope.$component.search.Operator = 'None';
                                 $scope.$component.retrieveData();
                                 return;
@@ -51,6 +52,7 @@
                             if (val === $scope.lastSearch) return;
 
                             $scope.lastSearch = val;
+                            $scope.$component.saveSearch();
                             $scope.$component.search.Operator = 'Auto';
                             $scope.$component.retrieveData();
                         });

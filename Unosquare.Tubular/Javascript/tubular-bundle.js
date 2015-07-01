@@ -741,6 +741,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @param {bool} autoRefresh Set if the grid refresh after any insertion or update, default true.
          * @param {bool} savePage Set if the grid autosave current page, default true.
          * @param {bool} savePageSize Set if the grid autosave page size, default true.
+         * @param {bool} saveSearch Set if the grid autosave search, default true.
          */
         .directive('tbGrid', [
             function() {
@@ -766,7 +767,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         showLoading: '=?',
                         autoRefresh: '=?',
                         savePage: '=?',
-                        savePageSize: '=?'
+                        savePageSize: '=?',
+                        saveSearch: '=?'
                     },
                     controller: [
                         '$scope', 'localStorageService', 'tubularPopupService', 'tubularModel', 'tubularHttp', '$routeParams',
@@ -782,6 +784,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             $scope.savePageSize = $scope.savePageSize || true;
                             $scope.pageSize = 20;
 
+                            $scope.saveSearch = $scope.saveSearch || true;
                             $scope.totalPages = 0;
                             $scope.totalRecordCount = 0;
                             $scope.filteredRecordCount = 0;
@@ -792,7 +795,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             $scope.serverSaveMethod = $scope.serverSaveMethod || 'POST';
                             $scope.requestTimeout = 10000;
                             $scope.currentRequest = null;
-                            $scope.autoSearch = $routeParams.param || '';
+                            $scope.autoSearch = $routeParams.param || ($scope.saveSearch ? (localStorageService.get($scope.name + "_search") || '') : '');
                             $scope.search = {
                                 Text: $scope.autoSearch,
                                 Operator: $scope.autoSearch == '' ? 'None' : 'Auto'
@@ -821,6 +824,15 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 
                                 $scope.retrieveData();
                             }, true);
+
+                            $scope.saveSearch = function() {
+                                if ($scope.saveSearch) {
+                                    if ($scope.search.Text === '')
+                                        localStorageService.remove($scope.name + "_search");
+                                    else
+                                        localStorageService.set($scope.name + "_search", $scope.search.Text);
+                                }
+                            };
 
                             $scope.addColumn = function(item) {
                                 if (item.Name == null) return;
@@ -1587,13 +1599,14 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     '$scope', function($scope) {
                         $scope.$component = $scope.$parent.$parent;
                         $scope.tubularDirective = 'tubular-grid-text-search';
-                        $scope.lastSearch = "";
+                        $scope.lastSearch = $scope.$component.search.Text;
 
                         $scope.$watch("$component.search.Text", function(val, prev) {
                             if (angular.isUndefined(val)) return;
                             if (val === prev) return;
 
                             if ($scope.lastSearch !== "" && val === "") {
+                                $scope.$component.saveSearch();
                                 $scope.$component.search.Operator = 'None';
                                 $scope.$component.retrieveData();
                                 return;
@@ -1603,6 +1616,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             if (val === $scope.lastSearch) return;
 
                             $scope.lastSearch = val;
+                            $scope.$component.saveSearch();
                             $scope.$component.search.Operator = 'Auto';
                             $scope.$component.retrieveData();
                         });
