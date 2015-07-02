@@ -138,6 +138,7 @@
                         if (j > 0) {
                             finalVal += ',';
                         }
+
                         finalVal += result;
                     }
                     return finalVal + '\n';
@@ -179,12 +180,18 @@
 
                         scope.filter.Text = '';
                         scope.filter.Argument = [];
-
-                        scope.$component.retrieveData();
-                        scope.close();
+                        scope.applyFilter();
                     };
 
-                    scope.applyFilter = function() {
+                    scope.applyFilter = function () {
+                        var columns = scope.$component.columns.filter(function (el) {
+                            return el.Name === scope.filter.Name;
+                        });
+
+                        if (columns.length !== 0) {
+                            columns[0].Filter = scope.filter;
+                        }
+
                         scope.$component.retrieveData();
                         scope.close();
                     };
@@ -251,12 +258,21 @@
                 me.createFilterModel = function(scope, lAttrs) {
                     scope.filter = new FilterModel(lAttrs);
                     scope.filter.Name = scope.$parent.column.Name;
-
                     var columns = scope.$component.columns.filter(function(el) {
                         return el.Name === scope.filter.Name;
                     });
 
                     if (columns.length === 0) return;
+
+                    scope.$watch('filter', function (n) {
+                        if (n.Text == null && columns[0].Filter.Text != n.Text) {
+                            n.Text = columns[0].Filter.Text;
+
+                            if (columns[0].Filter.Operator != n.Operator) {
+                                n.Operator = columns[0].Filter.Operator;
+                            }
+                        }
+                    });
 
                     columns[0].Filter = scope.filter;
                     scope.dataType = columns[0].DataType;

@@ -812,33 +812,37 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             $scope.autoRefresh = $scope.autoRefresh || true;
 
                             $scope.$watch('columns', function() {
-                                if ($scope.hasColumnsDefinitions === false || $scope.canSaveState === false)
+                                if ($scope.hasColumnsDefinitions === false || $scope.canSaveState === false) {
                                     return;
+                                }
 
                                 localStorageService.set($scope.name + "_columns", $scope.columns);
                             }, true);
 
                             $scope.$watch('serverUrl', function (newVal, prevVal) {
-                                if ($scope.hasColumnsDefinitions === false || $scope.currentRequest || newVal === prevVal)
+                                if ($scope.hasColumnsDefinitions === false || $scope.currentRequest || newVal === prevVal) {
                                     return;
-                                
+                                }
+
                                 $scope.retrieveData();
                             }, true);
 
                             $scope.saveSearch = function() {
                                 if ($scope.saveSearch) {
-                                    if ($scope.search.Text === '')
+                                    if ($scope.search.Text === '') {
                                         localStorageService.remove($scope.name + "_search");
-                                    else
+                                    } else {
                                         localStorageService.set($scope.name + "_search", $scope.search.Text);
+                                    }
                                 }
                             };
 
                             $scope.addColumn = function(item) {
                                 if (item.Name == null) return;
 
-                                if ($scope.hasColumnsDefinitions !== false)
+                                if ($scope.hasColumnsDefinitions !== false) {
                                     throw 'Cannot define more columns. Column definitions have been sealed';
+                                }
 
                                 $scope.columns.push(item);
                             };
@@ -896,7 +900,15 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                         var current = filtered[0];
                                         // Updates visibility by now
                                         current.Visible = columns[index].Visible;
-                                        // TODO: Restore filters
+
+                                        // Update Filters
+                                        if (current.Filter != null && current.Filter.Text != null) {
+                                            continue;
+                                        }
+
+                                        if (columns[index].Filter != null && columns[index].Filter.Text != null && columns[index].Filter.Operator != 'None') {
+                                            current.Filter = columns[index].Filter;
+                                        }
                                     }
                                 }
                             };
@@ -1218,7 +1230,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     ],
                     compile: function compile() {
                         return {
-                            post: function(scope, lElement, lAttrs, lController, lTransclude) {
+                            post: function(scope) {
                                 scope.$component.hasColumnsDefinitions = true;
                             }
                         };
@@ -1272,7 +1284,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     ],
                     compile: function compile() {
                         return {
-                            pre: function(scope, lElement, lAttrs, lController, lTransclude) {
+                            pre: function(scope, lElement, lAttrs) {
                                 lAttrs.label = lAttrs.label || (lAttrs.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
 
                                 var column = new ColumnModel(lAttrs);
@@ -1319,7 +1331,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     ],
                     compile: function compile() {
                         return {
-                            pre: function(scope, lElement, lAttrs, lController, lTransclude) {
+                            pre: function(scope, lElement) {
                                 var refreshIcon = function(icon) {
                                     $(icon).removeClass(tubularConst.upCssClass);
                                     $(icon).removeClass(tubularConst.downCssClass);
@@ -1345,7 +1357,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     refreshIcon(icon);
                                 }, 0);
                             },
-                            post: function(scope, lElement, lAttrs, lController, lTransclude) {
+                            post: function(scope, lElement) {
                                 scope.label = scope.$parent.label;
 
                                 if (scope.$parent.column.Sortable === false) {
@@ -3611,6 +3623,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         if (j > 0) {
                             finalVal += ',';
                         }
+
                         finalVal += result;
                     }
                     return finalVal + '\n';
@@ -3652,12 +3665,18 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                         scope.filter.Text = '';
                         scope.filter.Argument = [];
-
-                        scope.$component.retrieveData();
-                        scope.close();
+                        scope.applyFilter();
                     };
 
-                    scope.applyFilter = function() {
+                    scope.applyFilter = function () {
+                        var columns = scope.$component.columns.filter(function (el) {
+                            return el.Name === scope.filter.Name;
+                        });
+
+                        if (columns.length !== 0) {
+                            columns[0].Filter = scope.filter;
+                        }
+
                         scope.$component.retrieveData();
                         scope.close();
                     };
@@ -3724,12 +3743,21 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 me.createFilterModel = function(scope, lAttrs) {
                     scope.filter = new FilterModel(lAttrs);
                     scope.filter.Name = scope.$parent.column.Name;
-
                     var columns = scope.$component.columns.filter(function(el) {
                         return el.Name === scope.filter.Name;
                     });
 
                     if (columns.length === 0) return;
+
+                    scope.$watch('filter', function (n) {
+                        if (n.Text == null && columns[0].Filter.Text != n.Text) {
+                            n.Text = columns[0].Filter.Text;
+
+                            if (columns[0].Filter.Operator != n.Operator) {
+                                n.Operator = columns[0].Filter.Operator;
+                            }
+                        }
+                    });
 
                     columns[0].Filter = scope.filter;
                     scope.dataType = columns[0].DataType;

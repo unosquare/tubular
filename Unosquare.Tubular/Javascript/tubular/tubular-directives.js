@@ -107,33 +107,37 @@
                             $scope.autoRefresh = $scope.autoRefresh || true;
 
                             $scope.$watch('columns', function() {
-                                if ($scope.hasColumnsDefinitions === false || $scope.canSaveState === false)
+                                if ($scope.hasColumnsDefinitions === false || $scope.canSaveState === false) {
                                     return;
+                                }
 
                                 localStorageService.set($scope.name + "_columns", $scope.columns);
                             }, true);
 
                             $scope.$watch('serverUrl', function (newVal, prevVal) {
-                                if ($scope.hasColumnsDefinitions === false || $scope.currentRequest || newVal === prevVal)
+                                if ($scope.hasColumnsDefinitions === false || $scope.currentRequest || newVal === prevVal) {
                                     return;
-                                
+                                }
+
                                 $scope.retrieveData();
                             }, true);
 
                             $scope.saveSearch = function() {
                                 if ($scope.saveSearch) {
-                                    if ($scope.search.Text === '')
+                                    if ($scope.search.Text === '') {
                                         localStorageService.remove($scope.name + "_search");
-                                    else
+                                    } else {
                                         localStorageService.set($scope.name + "_search", $scope.search.Text);
+                                    }
                                 }
                             };
 
                             $scope.addColumn = function(item) {
                                 if (item.Name == null) return;
 
-                                if ($scope.hasColumnsDefinitions !== false)
+                                if ($scope.hasColumnsDefinitions !== false) {
                                     throw 'Cannot define more columns. Column definitions have been sealed';
+                                }
 
                                 $scope.columns.push(item);
                             };
@@ -191,7 +195,15 @@
                                         var current = filtered[0];
                                         // Updates visibility by now
                                         current.Visible = columns[index].Visible;
-                                        // TODO: Restore filters
+
+                                        // Update Filters
+                                        if (current.Filter != null && current.Filter.Text != null) {
+                                            continue;
+                                        }
+
+                                        if (columns[index].Filter != null && columns[index].Filter.Text != null && columns[index].Filter.Operator != 'None') {
+                                            current.Filter = columns[index].Filter;
+                                        }
                                     }
                                 }
                             };
@@ -513,7 +525,7 @@
                     ],
                     compile: function compile() {
                         return {
-                            post: function(scope, lElement, lAttrs, lController, lTransclude) {
+                            post: function(scope) {
                                 scope.$component.hasColumnsDefinitions = true;
                             }
                         };
@@ -567,7 +579,7 @@
                     ],
                     compile: function compile() {
                         return {
-                            pre: function(scope, lElement, lAttrs, lController, lTransclude) {
+                            pre: function(scope, lElement, lAttrs) {
                                 lAttrs.label = lAttrs.label || (lAttrs.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
 
                                 var column = new ColumnModel(lAttrs);
@@ -614,7 +626,7 @@
                     ],
                     compile: function compile() {
                         return {
-                            pre: function(scope, lElement, lAttrs, lController, lTransclude) {
+                            pre: function(scope, lElement) {
                                 var refreshIcon = function(icon) {
                                     $(icon).removeClass(tubularConst.upCssClass);
                                     $(icon).removeClass(tubularConst.downCssClass);
@@ -640,7 +652,7 @@
                                     refreshIcon(icon);
                                 }, 0);
                             },
-                            post: function(scope, lElement, lAttrs, lController, lTransclude) {
+                            post: function(scope, lElement) {
                                 scope.label = scope.$parent.label;
 
                                 if (scope.$parent.column.Sortable === false) {
