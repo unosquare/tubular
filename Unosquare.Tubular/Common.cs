@@ -39,6 +39,10 @@
         /// </summary>
         Equals,
         /// <summary>
+        /// Not Equals operator
+        /// </summary>
+        NotEquals,
+        /// <summary>
         /// Contains filter
         /// </summary>
         Contains,

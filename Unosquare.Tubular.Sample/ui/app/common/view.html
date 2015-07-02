@@ -1,6 +1,6 @@
 ﻿<div class="container" ng-controller="tubularSampleCtrl as sample">
     <tb-grid server-url="/api/orders/paged" server-save-url="/api/orders/save" require-authentication="false"
-             page-size="20" class="row" on-before-get-data="sample.onTableController">
+             name="samplegrid" page-size="20" class="row" on-before-get-data="sample.onTableController">
 
         <!-- Main full-width container -->
         <div class="col-md-12">

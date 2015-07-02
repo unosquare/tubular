@@ -20,6 +20,7 @@
                 me.operatorsMapping = {
                     'None': '',
                     'Equals': "{0} eq {1}",
+                    'NotEquals': "{0} ne {1}",
                     'Contains': "substringof({1}, {0}) eq true",
                     'StartsWith': "startswith({0}, {1}) eq true",
                     'EndsWith': "endswith({0}, {1}) eq true",

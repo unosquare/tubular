@@ -739,6 +739,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @param {string} editorMode Define if grid is read-only or it has editors (inline or popup).
          * @param {bool} showLoading Set if an overlay will show when it's loading data, default true.
          * @param {bool} autoRefresh Set if the grid refresh after any insertion or update, default true.
+         * @param {bool} savePage Set if the grid autosave current page, default true.
+         * @param {bool} savePageSize Set if the grid autosave page size, default true.
+         * @param {bool} saveSearch Set if the grid autosave search, default true.
          */
         .directive('tbGrid', [
             function() {
@@ -762,27 +765,37 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         name: '@?gridName',
                         editorMode: '@?',
                         showLoading: '=?',
-                        autoRefresh: '=?'
+                        autoRefresh: '=?',
+                        savePage: '=?',
+                        savePageSize: '=?',
+                        saveSearch: '=?'
                     },
                     controller: [
                         '$scope', 'localStorageService', 'tubularPopupService', 'tubularModel', 'tubularHttp', '$routeParams',
                         function($scope, localStorageService, tubularPopupService, TubularModel, tubularHttp, $routeParams) {
-
+                            $scope.name = $scope.name || 'tbgrid';
                             $scope.tubularDirective = 'tubular-grid';
                             $scope.columns = [];
                             $scope.rows = [];
-                            $scope.currentPage = 0;
+
+                            $scope.savePage = $scope.savePage || true;
+                            $scope.currentPage = $scope.savePage ? (localStorageService.get($scope.name + "_page") || 1) : 1;
+
+                            $scope.savePageSize = $scope.savePageSize || true;
+                            $scope.pageSize = 20;
+
+                            $scope.saveSearch = $scope.saveSearch || true;
                             $scope.totalPages = 0;
                             $scope.totalRecordCount = 0;
                             $scope.filteredRecordCount = 0;
-                            $scope.requestedPage = 1;
+                            $scope.requestedPage = $scope.currentPage;
                             $scope.hasColumnsDefinitions = false;
                             $scope.requestCounter = 0;
                             $scope.requestMethod = $scope.requestMethod || 'POST';
                             $scope.serverSaveMethod = $scope.serverSaveMethod || 'POST';
                             $scope.requestTimeout = 10000;
                             $scope.currentRequest = null;
-                            $scope.autoSearch = $routeParams.param || '';
+                            $scope.autoSearch = $routeParams.param || ($scope.saveSearch ? (localStorageService.get($scope.name + "_search") || '') : '');
                             $scope.search = {
                                 Text: $scope.autoSearch,
                                 Operator: $scope.autoSearch == '' ? 'None' : 'Auto'
@@ -792,7 +805,6 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             $scope.dataService = tubularHttp.getDataService($scope.dataServiceName);
                             $scope.requireAuthentication = $scope.requireAuthentication || true;
                             tubularHttp.setRequireAuthentication($scope.requireAuthentication);
-                            $scope.name = $scope.name || 'tbgrid';
                             $scope.editorMode = $scope.editorMode || 'none';
                             $scope.canSaveState = false;
                             $scope.groupBy = '';
@@ -800,24 +812,37 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             $scope.autoRefresh = $scope.autoRefresh || true;
 
                             $scope.$watch('columns', function() {
-                                if ($scope.hasColumnsDefinitions === false || $scope.canSaveState === false)
+                                if ($scope.hasColumnsDefinitions === false || $scope.canSaveState === false) {
                                     return;
+                                }
 
                                 localStorageService.set($scope.name + "_columns", $scope.columns);
                             }, true);
 
                             $scope.$watch('serverUrl', function (newVal, prevVal) {
-                                if ($scope.hasColumnsDefinitions === false || $scope.currentRequest || newVal === prevVal)
+                                if ($scope.hasColumnsDefinitions === false || $scope.currentRequest || newVal === prevVal) {
                                     return;
-                                
+                                }
+
                                 $scope.retrieveData();
                             }, true);
+
+                            $scope.saveSearch = function() {
+                                if ($scope.saveSearch) {
+                                    if ($scope.search.Text === '') {
+                                        localStorageService.remove($scope.name + "_search");
+                                    } else {
+                                        localStorageService.set($scope.name + "_search", $scope.search.Text);
+                                    }
+                                }
+                            };
 
                             $scope.addColumn = function(item) {
                                 if (item.Name == null) return;
 
-                                if ($scope.hasColumnsDefinitions !== false)
+                                if ($scope.hasColumnsDefinitions !== false) {
                                     throw 'Cannot define more columns. Column definitions have been sealed';
+                                }
 
                                 $scope.columns.push(item);
                             };
@@ -870,12 +895,20 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                         var columnName = columns[index].Name;
                                         var filtered = $scope.columns.filter(function(el) { return el.Name == columnName; });
 
-                                        if (filtered.length == 0) continue;
+                                        if (filtered.length === 0) continue;
 
                                         var current = filtered[0];
                                         // Updates visibility by now
                                         current.Visible = columns[index].Visible;
-                                        // TODO: Restore filters
+
+                                        // Update Filters
+                                        if (current.Filter != null && current.Filter.Text != null) {
+                                            continue;
+                                        }
+
+                                        if (columns[index].Filter != null && columns[index].Filter.Text != null && columns[index].Filter.Operator != 'None') {
+                                            current.Filter = columns[index].Filter;
+                                        }
                                     }
                                 }
                             };
@@ -886,9 +919,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                                 $scope.canSaveState = true;
                                 $scope.verifyColumns();
-
-                                $scope.pageSize = $scope.pageSize || 20;
-                                var page = $scope.requestedPage == 0 ? 1 : $scope.requestedPage;
+                                $scope.pageSize = $scope.savePageSize ? (localStorageService.get($scope.name + "_pageSize") || 20) : 20;
 
                                 var request = {
                                     serverUrl: $scope.serverUrl,
@@ -898,7 +929,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     data: {
                                         Count: $scope.requestCounter,
                                         Columns: $scope.columns,
-                                        Skip: (page - 1) * $scope.pageSize,
+                                        Skip: ($scope.requestedPage - 1) * $scope.pageSize,
                                         Take: parseInt($scope.pageSize),
                                         Search: $scope.search,
                                         TimezoneOffset: new Date().getTimezoneOffset()
@@ -947,7 +978,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                         $scope.totalPages = data.TotalPages;
                                         $scope.totalRecordCount = data.TotalRecordCount;
                                         $scope.filteredRecordCount = data.FilteredRecordCount;
-                                        $scope.isEmpty = $scope.filteredRecordCount == 0;
+                                        $scope.isEmpty = $scope.filteredRecordCount === 0;
+
+                                        if ($scope.savePage) {
+                                            localStorageService.set($scope.name + "_page", $scope.currentPage);
+                                        }
                                     }, function(error) {
                                         $scope.requestedPage = $scope.currentPage;
                                         $scope.$emit('tbGrid_OnConnectionError', error);
@@ -988,11 +1023,14 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                             $scope.$watch('pageSize', function() {
                                 if ($scope.hasColumnsDefinitions && $scope.requestCounter > 0) {
+                                    if ($scope.savePageSize) {
+                                        localStorageService.set($scope.name + "_pageSize", $scope.pageSize);
+                                    }
                                     $scope.retrieveData();
                                 }
                             });
 
-                            $scope.$watch('requestedPage', function() {
+                            $scope.$watch('requestedPage', function () {
                                 // TODO: we still need to inter-lock failed, initial and paged requests
                                 if ($scope.hasColumnsDefinitions && $scope.requestCounter > 0) {
                                     $scope.retrieveData();
@@ -1192,7 +1230,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     ],
                     compile: function compile() {
                         return {
-                            post: function(scope, lElement, lAttrs, lController, lTransclude) {
+                            post: function(scope) {
                                 scope.$component.hasColumnsDefinitions = true;
                             }
                         };
@@ -1246,7 +1284,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     ],
                     compile: function compile() {
                         return {
-                            pre: function(scope, lElement, lAttrs, lController, lTransclude) {
+                            pre: function(scope, lElement, lAttrs) {
                                 lAttrs.label = lAttrs.label || (lAttrs.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
 
                                 var column = new ColumnModel(lAttrs);
@@ -1293,7 +1331,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     ],
                     compile: function compile() {
                         return {
-                            pre: function(scope, lElement, lAttrs, lController, lTransclude) {
+                            pre: function(scope, lElement) {
                                 var refreshIcon = function(icon) {
                                     $(icon).removeClass(tubularConst.upCssClass);
                                     $(icon).removeClass(tubularConst.downCssClass);
@@ -1319,7 +1357,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     refreshIcon(icon);
                                 }, 0);
                             },
-                            post: function(scope, lElement, lAttrs, lController, lTransclude) {
+                            post: function(scope, lElement) {
                                 scope.label = scope.$parent.label;
 
                                 if (scope.$parent.column.Sortable === false) {
@@ -1573,13 +1611,14 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     '$scope', function($scope) {
                         $scope.$component = $scope.$parent.$parent;
                         $scope.tubularDirective = 'tubular-grid-text-search';
-                        $scope.lastSearch = "";
+                        $scope.lastSearch = $scope.$component.search.Text;
 
                         $scope.$watch("$component.search.Text", function(val, prev) {
                             if (angular.isUndefined(val)) return;
                             if (val === prev) return;
 
                             if ($scope.lastSearch !== "" && val === "") {
+                                $scope.$component.saveSearch();
                                 $scope.$component.search.Operator = 'None';
                                 $scope.$component.retrieveData();
                                 return;
@@ -1589,6 +1628,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             if (val === $scope.lastSearch) return;
 
                             $scope.lastSearch = val;
+                            $scope.$component.saveSearch();
                             $scope.$component.search.Operator = 'Auto';
                             $scope.$component.retrieveData();
                         });
@@ -1786,7 +1826,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @param {string} caption Set the caption to use in the button, default "Page size:".
          * @param {string} css Add a CSS class to the `div` HTML element.
          * @param {string} selectorCss Add a CSS class to the `select` HTML element.
-         * @param {array} options Set the page options array, default ['10', '20', '50', '100'].
+         * @param {array} options Set the page options array, default [10, 20, 50, 100].
          */
         .directive('tbPageSizeSelector', [function() {
 
@@ -1811,7 +1851,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 },
                 controller: [
                     '$scope', function($scope) {
-                        $scope.options = angular.isDefined($scope.options) ? $scope.options : ['10', '20', '50', '100'];
+                        $scope.options = angular.isDefined($scope.options) ? $scope.options : [10, 20, 50, 100];
                     }
                 ]
             };
@@ -1966,7 +2006,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         '<div class="tubular-pager">' +
                             '<pagination ng-disabled="$component.isEmpty" direction-links="true" ' +
                             'boundary-links="true" total-items="$component.filteredRecordCount" ' +
-                            'items-per-page="$component.pageSize" max-size="5" ng-model="pagerPageNumber" ng-change="pagerPageChanged()">' +
+                            'items-per-page="$component.pageSize" max-size="5" ng-model="$component.currentPage" ng-change="pagerPageChanged()">' +
                             '</pagination>' +
                             '<div>',
                     restrict: 'E',
@@ -1979,12 +2019,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             $scope.$component = $scope.$parent.$parent;
                             $scope.tubularDirective = 'tubular-grid-pager';
 
-                            $scope.$component.$watch('currentPage', function (value) {
-                                $scope.pagerPageNumber = value;
-                            });
-
                             $scope.pagerPageChanged = function () {
-                                $scope.$component.requestedPage = $scope.pagerPageNumber;
+                                $scope.$component.requestedPage = $scope.$component.currentPage;
                                 var allLinks = $element.find('li a');
                                 $(allLinks).blur();
                             };
@@ -2540,15 +2576,17 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @param {object} options Set the options to display.
          * @param {string} optionsUrl Set the Http Url where to retrieve the values.
          * @param {string} optionsMethod Set the Http Method where to retrieve the values.
+         * @param {string} optionLabel Set the property to get the labels
          */
         .directive('tbTypeaheadEditor', [
-            'tubularEditorService', '$q', function(tubularEditorService, $q) {
+            'tubularEditorService', '$q', function (tubularEditorService, $q, $filter) {
 
                 return {
                     template: '<div ng-class="{ \'form-group\' : isEditing, \'has-error\' : !$valid }">' +
                         '<span ng-hide="isEditing">{{ value }}</span>' +
                         '<label ng-show="showLabel">{{ label }}</label>' +
-                        '<input ng-show="isEditing" ng-model="value" class="form-control" typeahead="o for o in getValues($viewValue)" ' +
+                        '<input ng-show="isEditing" ng-model="value" placeholder="{{placeholder}}" ' +
+                        'class="form-control" typeahead="{{ selectOptions }}" ' +
                         'ng-required="required" />' +
                         '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">' +
                         '{{error}}' +
@@ -2561,13 +2599,19 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     scope: angular.extend({
                         options: '=?',
                         optionsUrl: '@',
-                        optionsMethod: '@?'
+                        optionsMethod: '@?',
+                        optionLabel: '@?'
                     }, tubularEditorService.defaultScope),
                     controller: [
-                        '$scope', function($scope) {
+                        '$scope', function ($scope) {
                             tubularEditorService.setupScope($scope);
+                            $scope.selectOptions = "d for d in getValues($viewValue)";
 
-                            $scope.getValues = function(val) {
+                            if (angular.isDefined($scope.optionLabel)) {
+                                $scope.selectOptions = "d as d." + $scope.optionLabel + " for d in getValues($viewValue)";
+                            }
+
+                            $scope.getValues = function (val) {
                                 if (angular.isDefined($scope.optionsUrl)) {
                                     if (angular.isUndefined($scope.$component) || $scope.$component == null)
                                         throw 'You need to define a parent Form or Grid';
@@ -2578,7 +2622,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     }).promise;
                                 }
 
-                                return $q(function(resolve) {
+                                return $q(function (resolve) {
                                     resolve($scope.options);
                                 });
                             };
@@ -2764,7 +2808,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         '</div>',
                 restrict: 'E',
                 replace: true,
-                transclude: true,
+                transclude: true
             };
         }])
         /**
@@ -2780,7 +2824,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 template: '<div><hr /><h4>Columns Selector</h4><button class="btn btn-sm btn-default" ng-click="openColumnsSelector()">Select Columns</button></div>',
                 restrict: 'E',
                 replace: true,
-                transclude: true,
+                transclude: true
             };
         }])
         /**
@@ -2825,10 +2869,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     scope: false,
                     compile: function compile() {
                         return {
-                            pre: function(scope, lElement, lAttrs, lController, lTransclude) {
+                            pre: function(scope, lElement, lAttrs) {
                                 tubularGridFilterService.applyFilterFuncs(scope, lElement, lAttrs);
                             },
-                            post: function(scope, lElement, lAttrs, lController, lTransclude) {
+                            post: function(scope, lElement, lAttrs) {
                                 tubularGridFilterService.createFilterModel(scope, lAttrs);
                             }
                         };
@@ -2883,7 +2927,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     ],
                     compile: function compile() {
                         return {
-                            pre: function(scope, lElement, lAttrs, lController, lTransclude) {
+                            pre: function(scope, lElement, lAttrs) {
                                 tubularGridFilterService.applyFilterFuncs(scope, lElement, lAttrs, function() {
                                     var inp = $(lElement).find("input[type=date]")[0];
 
@@ -3204,6 +3248,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     'string': {
                         'None': 'None',
                         'Equals': 'Equals',
+                        'NotEquals': 'Not Equals',
                         'Contains': 'Contains',
                         'StartsWith': 'Starts With',
                         'EndsWith': 'Ends With'
@@ -3215,29 +3260,32 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         'Gte': '>=',
                         'Gt': '>',
                         'Lte': '<=',
-                        'Lt': '<',
+                        'Lt': '<'
                     },
                     'date': {
                         'None': 'None',
                         'Equals': 'Equals',
+                        'NotEquals': 'Not Equals',
                         'Between': 'Between',
                         'Gte': '>=',
                         'Gt': '>',
                         'Lte': '<=',
-                        'Lt': '<',
+                        'Lt': '<'
                     },
                     'datetime': {
                         'None': 'None',
                         'Equals': 'Equals',
+                        'NotEquals': 'Not Equals',
                         'Between': 'Between',
                         'Gte': '>=',
                         'Gt': '>',
                         'Lte': '<=',
-                        'Lt': '<',
+                        'Lt': '<'
                     },
                     'boolean': {
                         'None': 'None',
                         'Equals': 'Equals',
+                        'NotEquals': 'Not Equals'
                     }
                 };
             };
@@ -3390,7 +3438,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                         return dataService.saveDataAsync(obj, {
                             serverUrl: $scope.serverSaveUrl,
-                            requestMethod: obj.$isNew ? $scope.serverSaveMethod : 'PUT'
+                            requestMethod: obj.$isNew ? ($scope.serverSaveMethod || 'POST') : 'PUT'
                         }).promise;
                     };
 
@@ -3579,6 +3627,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         if (j > 0) {
                             finalVal += ',';
                         }
+
                         finalVal += result;
                     }
                     return finalVal + '\n';
@@ -3620,12 +3669,18 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                         scope.filter.Text = '';
                         scope.filter.Argument = [];
-
-                        scope.$component.retrieveData();
-                        scope.close();
+                        scope.applyFilter();
                     };
 
-                    scope.applyFilter = function() {
+                    scope.applyFilter = function () {
+                        var columns = scope.$component.columns.filter(function (el) {
+                            return el.Name === scope.filter.Name;
+                        });
+
+                        if (columns.length !== 0) {
+                            columns[0].Filter = scope.filter;
+                        }
+
                         scope.$component.retrieveData();
                         scope.close();
                     };
@@ -3692,12 +3747,21 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 me.createFilterModel = function(scope, lAttrs) {
                     scope.filter = new FilterModel(lAttrs);
                     scope.filter.Name = scope.$parent.column.Name;
-
                     var columns = scope.$component.columns.filter(function(el) {
                         return el.Name === scope.filter.Name;
                     });
 
                     if (columns.length === 0) return;
+
+                    scope.$watch('filter', function (n) {
+                        if (columns[0].Filter.Text != n.Text) {
+                            n.Text = columns[0].Filter.Text;
+
+                            if (columns[0].Filter.Operator != n.Operator) {
+                                n.Operator = columns[0].Filter.Operator;
+                            }
+                        }
+                    });
 
                     columns[0].Filter = scope.filter;
                     scope.dataType = columns[0].DataType;
@@ -3756,6 +3820,13 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     scope.readOnly = scope.readOnly || false;
                     scope.format = scope.format || defaultFormat;
                     scope.$valid = true;
+
+                    // HACK: I need to know why
+                    scope.$watch('label', function (n, o) {
+                        if (angular.isUndefined(n)) {
+                            scope.label = (scope.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
+                        }
+                    });
 
                     scope.$watch('value', function(newValue, oldValue) {
                         if (angular.isUndefined(oldValue) && angular.isUndefined(newValue)) return;
@@ -4220,6 +4291,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 me.operatorsMapping = {
                     'None': '',
                     'Equals': "{0} eq {1}",
+                    'NotEquals': "{0} ne {1}",
                     'Contains': "substringof({1}, {0}) eq true",
                     'StartsWith': "startswith({0}, {1}) eq true",
                     'EndsWith': "endswith({0}, {1}) eq true",
@@ -4392,12 +4464,14 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     }
 
                     // Get filters (only Contains)
+                    // TODO: Implement all operators
                     var filters = request.Columns
                         .filter(function(el) { return el.Filter && el.Filter.Text; })
                         .map(function(el) {
                             var obj = {};
-                            if (el.Filter.Operator == 'Contains')
+                            if (el.Filter.Operator == 'Contains') {
                                 obj[el.Name] = el.Filter.Text;
+                            }
 
                             return obj;
                         });

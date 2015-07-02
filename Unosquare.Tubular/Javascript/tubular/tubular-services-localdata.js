@@ -60,12 +60,14 @@
                     }
 
                     // Get filters (only Contains)
+                    // TODO: Implement all operators
                     var filters = request.Columns
                         .filter(function(el) { return el.Filter && el.Filter.Text; })
                         .map(function(el) {
                             var obj = {};
-                            if (el.Filter.Operator == 'Contains')
+                            if (el.Filter.Operator == 'Contains') {
                                 obj[el.Name] = el.Filter.Text;
+                            }
 
                             return obj;
                         });

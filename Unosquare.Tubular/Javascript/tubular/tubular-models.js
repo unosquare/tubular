@@ -55,6 +55,7 @@
                     'string': {
                         'None': 'None',
                         'Equals': 'Equals',
+                        'NotEquals': 'Not Equals',
                         'Contains': 'Contains',
                         'StartsWith': 'Starts With',
                         'EndsWith': 'Ends With'
@@ -66,29 +67,32 @@
                         'Gte': '>=',
                         'Gt': '>',
                         'Lte': '<=',
-                        'Lt': '<',
+                        'Lt': '<'
                     },
                     'date': {
                         'None': 'None',
                         'Equals': 'Equals',
+                        'NotEquals': 'Not Equals',
                         'Between': 'Between',
                         'Gte': '>=',
                         'Gt': '>',
                         'Lte': '<=',
-                        'Lt': '<',
+                        'Lt': '<'
                     },
                     'datetime': {
                         'None': 'None',
                         'Equals': 'Equals',
+                        'NotEquals': 'Not Equals',
                         'Between': 'Between',
                         'Gte': '>=',
                         'Gt': '>',
                         'Lte': '<=',
-                        'Lt': '<',
+                        'Lt': '<'
                     },
                     'boolean': {
                         'None': 'None',
                         'Equals': 'Equals',
+                        'NotEquals': 'Not Equals'
                     }
                 };
             };

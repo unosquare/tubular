@@ -2808,7 +2808,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         '</div>',
                 restrict: 'E',
                 replace: true,
-                transclude: true,
+                transclude: true
             };
         }])
         /**
@@ -2824,7 +2824,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 template: '<div><hr /><h4>Columns Selector</h4><button class="btn btn-sm btn-default" ng-click="openColumnsSelector()">Select Columns</button></div>',
                 restrict: 'E',
                 replace: true,
-                transclude: true,
+                transclude: true
             };
         }])
         /**
@@ -2869,10 +2869,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     scope: false,
                     compile: function compile() {
                         return {
-                            pre: function(scope, lElement, lAttrs, lController, lTransclude) {
+                            pre: function(scope, lElement, lAttrs) {
                                 tubularGridFilterService.applyFilterFuncs(scope, lElement, lAttrs);
                             },
-                            post: function(scope, lElement, lAttrs, lController, lTransclude) {
+                            post: function(scope, lElement, lAttrs) {
                                 tubularGridFilterService.createFilterModel(scope, lAttrs);
                             }
                         };
@@ -2927,7 +2927,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     ],
                     compile: function compile() {
                         return {
-                            pre: function(scope, lElement, lAttrs, lController, lTransclude) {
+                            pre: function(scope, lElement, lAttrs) {
                                 tubularGridFilterService.applyFilterFuncs(scope, lElement, lAttrs, function() {
                                     var inp = $(lElement).find("input[type=date]")[0];
 
@@ -3248,6 +3248,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     'string': {
                         'None': 'None',
                         'Equals': 'Equals',
+                        'NotEquals': 'Not Equals',
                         'Contains': 'Contains',
                         'StartsWith': 'Starts With',
                         'EndsWith': 'Ends With'
@@ -3259,29 +3260,32 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         'Gte': '>=',
                         'Gt': '>',
                         'Lte': '<=',
-                        'Lt': '<',
+                        'Lt': '<'
                     },
                     'date': {
                         'None': 'None',
                         'Equals': 'Equals',
+                        'NotEquals': 'Not Equals',
                         'Between': 'Between',
                         'Gte': '>=',
                         'Gt': '>',
                         'Lte': '<=',
-                        'Lt': '<',
+                        'Lt': '<'
                     },
                     'datetime': {
                         'None': 'None',
                         'Equals': 'Equals',
+                        'NotEquals': 'Not Equals',
                         'Between': 'Between',
                         'Gte': '>=',
                         'Gt': '>',
                         'Lte': '<=',
-                        'Lt': '<',
+                        'Lt': '<'
                     },
                     'boolean': {
                         'None': 'None',
                         'Equals': 'Equals',
+                        'NotEquals': 'Not Equals'
                     }
                 };
             };
@@ -3750,7 +3754,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     if (columns.length === 0) return;
 
                     scope.$watch('filter', function (n) {
-                        if (n.Text == null && columns[0].Filter.Text != n.Text) {
+                        if (columns[0].Filter.Text != n.Text) {
                             n.Text = columns[0].Filter.Text;
 
                             if (columns[0].Filter.Operator != n.Operator) {
@@ -4287,6 +4291,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 me.operatorsMapping = {
                     'None': '',
                     'Equals': "{0} eq {1}",
+                    'NotEquals': "{0} ne {1}",
                     'Contains': "substringof({1}, {0}) eq true",
                     'StartsWith': "startswith({0}, {1}) eq true",
                     'EndsWith': "endswith({0}, {1}) eq true",
@@ -4459,12 +4464,14 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     }
 
                     // Get filters (only Contains)
+                    // TODO: Implement all operators
                     var filters = request.Columns
                         .filter(function(el) { return el.Filter && el.Filter.Text; })
                         .map(function(el) {
                             var obj = {};
-                            if (el.Filter.Operator == 'Contains')
+                            if (el.Filter.Operator == 'Contains') {
                                 obj[el.Name] = el.Filter.Text;
+                            }
 
                             return obj;
                         });

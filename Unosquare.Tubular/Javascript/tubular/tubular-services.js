@@ -265,7 +265,7 @@
                     if (columns.length === 0) return;
 
                     scope.$watch('filter', function (n) {
-                        if (n.Text == null && columns[0].Filter.Text != n.Text) {
+                        if (columns[0].Filter.Text != n.Text) {
                             n.Text = columns[0].Filter.Text;
 
                             if (columns[0].Filter.Operator != n.Operator) {

@@ -165,6 +165,27 @@
         //    field.SetValue(null, predefinedTypes);
         //}
 
+        private static string GetSqlOperator(CompareOperators op)
+        {
+            switch (op)
+            {
+                case CompareOperators.Equals:
+                    return "==";
+                case CompareOperators.NotEquals:
+                    return "!=";
+                case CompareOperators.Gte:
+                    return ">=";
+                case CompareOperators.Gt:
+                    return ">";
+                case CompareOperators.Lte:
+                    return "<=";
+                case CompareOperators.Lt:
+                    return "<";
+                default:
+                    return null;
+            }
+        }
+
         private static IQueryable FilterResponse(GridDataRequest request, IQueryable subset, GridDataResponse response)
         {
             // Perform Searching
@@ -193,13 +214,14 @@
                 switch (column.Filter.Operator)
                 {
                     case CompareOperators.Equals:
+                    case CompareOperators.NotEquals:
                         if (String.IsNullOrWhiteSpace(column.Filter.Text)) continue;
 
                         // TODO: This code is for use with Dynamic LINQ, but It needs EF
                         //if (column.DataType == DataType.Date.ToString().ToLower())
                         //    searchLambda.AppendFormat("EntityFunctions.TruncateTime({0}) == @{1} &&", column.Name, searchParamArgs.Count);
                         //else
-                        searchLambda.AppendFormat("{0} == @{1} &&", column.Name, searchParamArgs.Count);
+                        searchLambda.AppendFormat("{0} {2} @{1} &&", column.Name, searchParamArgs.Count, GetSqlOperator(column.Filter.Operator));
 
                         if (String.Equals(column.DataType, DataType.Numeric.ToString(),
                             StringComparison.CurrentCultureIgnoreCase))
@@ -236,34 +258,10 @@
                         searchParamArgs.Add(column.Filter.Text);
                         break;
                     case CompareOperators.Gte:
-                        searchLambda.AppendFormat("{0} >= @{1} &&", column.Name, searchParamArgs.Count);
-
-                        if (String.Equals(column.DataType, DataType.Numeric.ToString(), StringComparison.CurrentCultureIgnoreCase))
-                            searchParamArgs.Add(decimal.Parse(column.Filter.Text));
-                        else
-                            searchParamArgs.Add(DateTime.Parse(column.Filter.Text));
-
-                        break;
                     case CompareOperators.Gt:
-                        searchLambda.AppendFormat("{0} > @{1} &&", column.Name, searchParamArgs.Count);
-
-                        if (String.Equals(column.DataType, DataType.Numeric.ToString(), StringComparison.CurrentCultureIgnoreCase))
-                            searchParamArgs.Add(decimal.Parse(column.Filter.Text));
-                        else
-                            searchParamArgs.Add(DateTime.Parse(column.Filter.Text));
-
-                        break;
                     case CompareOperators.Lte:
-                        searchLambda.AppendFormat("{0} <= @{1} &&", column.Name, searchParamArgs.Count);
-
-                        if (String.Equals(column.DataType, DataType.Numeric.ToString(), StringComparison.CurrentCultureIgnoreCase))
-                            searchParamArgs.Add(decimal.Parse(column.Filter.Text));
-                        else
-                            searchParamArgs.Add(DateTime.Parse(column.Filter.Text));
-
-                        break;
                     case CompareOperators.Lt:
-                        searchLambda.AppendFormat("{0} < @{1} &&", column.Name, searchParamArgs.Count);
+                        searchLambda.AppendFormat("{0} {2} @{1} &&", column.Name, searchParamArgs.Count, GetSqlOperator(column.Filter.Operator));
 
                         if (String.Equals(column.DataType, DataType.Numeric.ToString(), StringComparison.CurrentCultureIgnoreCase))
                             searchParamArgs.Add(decimal.Parse(column.Filter.Text));
@@ -314,6 +312,7 @@
 
                 response.FilteredRecordCount = subset.Count();
             }
+
             return subset;
         }
 

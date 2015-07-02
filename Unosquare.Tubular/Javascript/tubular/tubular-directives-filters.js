@@ -18,7 +18,7 @@
                         '</div>',
                 restrict: 'E',
                 replace: true,
-                transclude: true,
+                transclude: true
             };
         }])
         /**
@@ -34,7 +34,7 @@
                 template: '<div><hr /><h4>Columns Selector</h4><button class="btn btn-sm btn-default" ng-click="openColumnsSelector()">Select Columns</button></div>',
                 restrict: 'E',
                 replace: true,
-                transclude: true,
+                transclude: true
             };
         }])
         /**
@@ -79,10 +79,10 @@
                     scope: false,
                     compile: function compile() {
                         return {
-                            pre: function(scope, lElement, lAttrs, lController, lTransclude) {
+                            pre: function(scope, lElement, lAttrs) {
                                 tubularGridFilterService.applyFilterFuncs(scope, lElement, lAttrs);
                             },
-                            post: function(scope, lElement, lAttrs, lController, lTransclude) {
+                            post: function(scope, lElement, lAttrs) {
                                 tubularGridFilterService.createFilterModel(scope, lAttrs);
                             }
                         };
@@ -137,7 +137,7 @@
                     ],
                     compile: function compile() {
                         return {
-                            pre: function(scope, lElement, lAttrs, lController, lTransclude) {
+                            pre: function(scope, lElement, lAttrs) {
                                 tubularGridFilterService.applyFilterFuncs(scope, lElement, lAttrs, function() {
                                     var inp = $(lElement).find("input[type=date]")[0];
 
