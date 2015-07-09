@@ -2858,10 +2858,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         '<form class="tubular-column-filter-form" onsubmit="return false;">' +
                         '<select class="form-control" ng-model="filter.Operator" ng-hide="dataType == \'boolean\'"></select>' +
                         '<div  ng-class="{ \'checkbox\': dataType == \'boolean\' }">' +
-                        '<input class="form-control" type="{{ dataType == \'boolean\' ? \'checkbox\' : \'search\'}}" ng-model="filter.Text" placeholder="Value" ' +
+                        '<input class="form-control" type="{{ dataType == \'boolean\' ? \'checkbox\' : \'search\'}}" ng-model="filter.Text" autofocus ng-keypress="checkEvent($event)" ' +
+                        'placeholder="Value" ' +
                         'ng-disabled="filter.Operator == \'None\'" />'+
                         '<label ng-show="dataType == \'boolean\'">Check to filter</label></div>' +
-                        '<input type="search" class="form-control" ng-model="filter.Argument[0]" ng-show="filter.Operator == \'Between\'" />' +
+                        '<input type="search" class="form-control" ng-model="filter.Argument[0]" ng-keypress="checkEvent($event)" ng-show="filter.Operator == \'Between\'" />' +
                         '<hr />' +
                         '<tb-column-filter-buttons></tb-column-filter-buttons>' +
                         '<tb-column-filter-column-selector ng-show="columnSelector"></tb-column-filter-column-selector>' +
@@ -2911,8 +2912,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         '<h4>{{filterTitle}}</h4>' +
                         '<form class="tubular-column-filter-form" onsubmit="return false;">' +
                         '<select class="form-control" ng-model="filter.Operator"></select>' +
-                        '<input type="date" class="form-control" ng-model="filter.Text" />' +
-                        '<input type="date" class="form-control" ng-model="filter.Argument[0]" ng-show="filter.Operator == \'Between\'" />' +
+                        '<input type="date" class="form-control" ng-model="filter.Text" ng-keypress="checkEvent($event)" />' +
+                        '<input type="date" class="form-control" ng-model="filter.Argument[0]" ng-keypress="checkEvent($event)" ' +
+                        'ng-show="filter.Operator == \'Between\'" />' +
                         '<hr />' +
                         '<tb-column-filter-buttons></tb-column-filter-buttons>' +
                         '<tb-column-filter-column-selector ng-show="columnSelector"></tb-column-filter-column-selector>' +
@@ -3725,6 +3727,13 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         });
                     };
 
+                    scope.checkEvent = function (keyEvent) {
+                        if (keyEvent.which === 13) {
+                            scope.applyFilter();
+                            keyEvent.preventDefault();
+                        }
+                    };
+
                     $(el).find('[data-toggle="popover"]').popover({
                         html: true,
                         content: function() {
@@ -3734,7 +3743,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             });
 
                             return $compile($(this).next().html())(scope);
-                        },
+                        }
                     });
                     
                     $(el).find('[data-toggle="popover"]').on('show.bs.popover', function (e) {
@@ -3902,7 +3911,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 scope.$parent.Model = parent.model;
 
                                 if (angular.equals(scope.value, parent.model[scope.Name]) === false) {
-                                    scope.value = (scope.DataType == 'date') ? new Date(parent.model[scope.Name]) : parent.model[scope.Name];
+                                    scope.value = (scope.DataType === 'date') ? new Date(parent.model[scope.Name]) : parent.model[scope.Name];
 
                                     parent.$watch(function() {
                                         return scope.value;

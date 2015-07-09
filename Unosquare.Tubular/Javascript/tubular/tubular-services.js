@@ -232,6 +232,13 @@
                         });
                     };
 
+                    scope.checkEvent = function (keyEvent) {
+                        if (keyEvent.which === 13) {
+                            scope.applyFilter();
+                            keyEvent.preventDefault();
+                        }
+                    };
+
                     $(el).find('[data-toggle="popover"]').popover({
                         html: true,
                         content: function() {
@@ -241,7 +248,7 @@
                             });
 
                             return $compile($(this).next().html())(scope);
-                        },
+                        }
                     });
                     
                     $(el).find('[data-toggle="popover"]').on('show.bs.popover', function (e) {
@@ -409,7 +416,7 @@
                                 scope.$parent.Model = parent.model;
 
                                 if (angular.equals(scope.value, parent.model[scope.Name]) === false) {
-                                    scope.value = (scope.DataType == 'date') ? new Date(parent.model[scope.Name]) : parent.model[scope.Name];
+                                    scope.value = (scope.DataType === 'date') ? new Date(parent.model[scope.Name]) : parent.model[scope.Name];
 
                                     parent.$watch(function() {
                                         return scope.value;
