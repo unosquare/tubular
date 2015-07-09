@@ -2526,7 +2526,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     function(data) {
                                         $scope.options = data;
                                         $scope.dataIsLoaded = true;
-                                        $scope.value = value;
+                                        // TODO: Add an attribute to define if autoselect is OK
+                                        var possibleValue = $scope.options && $scope.options.length > 0 ?
+                                            angular.isDefined($scope.optionKey) ? $scope.options[0][$scope.optionKey] : $scope.options[0]
+                                            : '';
+                                        $scope.value = value || possibleValue;
                                     }, function(error) {
                                         $scope.$emit('tbGrid_OnConnectionError', error);
                                     });
