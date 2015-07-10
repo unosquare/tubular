@@ -787,7 +787,7 @@
 
                 return {
                     require: '^tbRowTemplate',
-                    template: '<td ng-transclude ng-show="column.Visible" data-label="{{column.Label}}"></td>',
+                    template: '<td ng-transclude ng-show="column.Visible" data-label="{{::column.Label}}"></td>',
                     restrict: 'E',
                     replace: true,
                     transclude: true,

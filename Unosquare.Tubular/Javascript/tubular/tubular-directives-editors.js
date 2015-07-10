@@ -167,7 +167,7 @@
          * @param {number} max Set the maximum value.
          */
         .directive('tbDateTimeEditor', [
-            'tubularEditorService', function(tubularEditorService) {
+            'tubularEditorService', '$filter', function(tubularEditorService, $filter) {
 
                 return {
                     template: '<div ng-class="{ \'form-group\' : isEditing }">' +
@@ -192,7 +192,7 @@
                                 if (angular.isDefined($scope.min)) {
                                     $scope.$valid = $scope.value >= $scope.min;
                                     if (!$scope.$valid) {
-                                        $scope.state.$errors = ["The minimum is " + $scope.min];
+                                        $scope.state.$errors = ["The minimum is " + $filter('date')($scope.min, $scope.format)];
                                     }
                                 }
 
@@ -203,7 +203,7 @@
                                 if (angular.isDefined($scope.max)) {
                                     $scope.$valid = $scope.value <= $scope.max;
                                     if (!$scope.$valid) {
-                                        $scope.state.$errors = ["The maximum is " + $scope.max];
+                                        $scope.state.$errors = ["The maximum is " + $filter('date')($scope.max, $scope.format)];
                                     }
                                 }
                             };
@@ -213,7 +213,7 @@
                     ],
                     compile: function compile() {
                         return {
-                            post: function(scope, lElement, lAttrs, lController, lTransclude) {
+                            post: function(scope, lElement) {
                                 var inp = $(lElement).find("input[type=datetime-local]")[0];
                                 if (inp.type !== 'datetime-local') {
                                     $(inp).datepicker({
@@ -257,7 +257,7 @@
          * @param {number} max Set the maximum value.
          */
         .directive('tbDateEditor', [
-            'tubularEditorService', function(tubularEditorService) {
+            'tubularEditorService', '$filter', function(tubularEditorService, $filter) {
 
                 return {
                     template: '<div ng-class="{ \'form-group\' : isEditing }">' +
@@ -284,7 +284,7 @@
                                         $scope.$valid = $scope.value >= $scope.min;
 
                                         if (!$scope.$valid) {
-                                            $scope.state.$errors = ["The minimum is " + $scope.min];
+                                            $scope.state.$errors = ["The minimum is " + $filter('date')($scope.min, $scope.format)];
                                         }
                                     }
 
@@ -296,7 +296,7 @@
                                         $scope.$valid = $scope.value <= $scope.max;
 
                                         if (!$scope.$valid) {
-                                            $scope.state.$errors = ["The maximum is " + $scope.max];
+                                            $scope.state.$errors = ["The maximum is " + $filter('date')($scope.max, $scope.format)];
                                         }
                                     }
                                 };

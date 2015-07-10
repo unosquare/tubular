@@ -1492,7 +1492,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                 return {
                     require: '^tbRowTemplate',
-                    template: '<td ng-transclude ng-show="column.Visible" data-label="{{column.Label}}"></td>',
+                    template: '<td ng-transclude ng-show="column.Visible" data-label="{{::column.Label}}"></td>',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
@@ -1656,8 +1656,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             return {
                 require: '^tbGrid',
                 template: '<button ng-click="confirmDelete()" class="btn" ng-hide="model.$isEditing">' +
-                    '<span ng-show="showIcon" class="{{icon}}"></span>' +
-                    '<span ng-show="showCaption">{{ caption || \'Remove\' }}</span>' +
+                    '<span ng-show="showIcon" class="{{::icon}}"></span>' +
+                    '<span ng-show="showCaption">{{:: caption || \'Remove\' }}</span>' +
                     '</button>',
                 restrict: 'E',
                 replace: true,
@@ -1716,12 +1716,12 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
             return {
                 require: '^tbGrid',
-                template: '<div ng-show="model.$isEditing"><button ng-click="save()" class="btn btn-default {{ saveCss || \'\' }}" ' +
+                template: '<div ng-show="model.$isEditing"><button ng-click="save()" class="btn btn-default {{:: saveCss || \'\' }}" ' +
                     'ng-disabled="!model.$valid()">' +
-                    '{{ saveCaption || \'Save\' }}' +
+                    '{{:: saveCaption || \'Save\' }}' +
                     '</button>' +
-                    '<button ng-click="cancel()" class="btn {{ cancelCss || \'btn-default\' }}">' +
-                    '{{ cancelCaption || \'Cancel\' }}' +
+                    '<button ng-click="cancel()" class="btn {{:: cancelCss || \'btn-default\' }}">' +
+                    '{{:: cancelCaption || \'Cancel\' }}' +
                     '</button></div>',
                 restrict: 'E',
                 replace: true,
@@ -1790,7 +1790,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             return {
                 require: '^tbGrid',
                 template: '<button ng-click="edit()" class="btn btn-default" ' +
-                    'ng-hide="model.$isEditing">{{ caption || \'Edit\' }}</button>',
+                    'ng-hide="model.$isEditing">{{:: caption || \'Edit\' }}</button>',
                 restrict: 'E',
                 replace: true,
                 transclude: true,
@@ -1832,10 +1832,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
             return {
                 require: '^tbGrid',
-                template: '<div class="{{css}}"><form class="form-inline">' +
+                template: '<div class="{{::css}}"><form class="form-inline">' +
                     '<div class="form-group">' +
-                    '<label class="small">{{ caption || \'Page size:\' }}</label>' +
-                    '<select ng-model="$parent.$parent.pageSize" class="form-control input-sm {{selectorCss}}" ' +
+                    '<label class="small">{{:: caption || \'Page size:\' }} </label>' +
+                    '<select ng-model="$parent.$parent.pageSize" class="form-control input-sm {{::selectorCss}}" ' +
                     'ng-options="item for item in options">' +
                     '</select>' +
                     '</div>' +
@@ -1869,14 +1869,15 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * 
          * @param {string} filename Set the export file name.
          * @param {string} css Add a CSS class to the `button` HTML element.
+         * @param {string} caption Set the caption.
          */
         .directive('tbExportButton', [function() {
 
             return {
                 require: '^tbGrid',
                 template: '<div class="btn-group">' +
-                    '<button class="btn btn-default dropdown-toggle {{css}}" data-toggle="dropdown" aria-expanded="false">' +
-                    '<span class="fa fa-download"></span>&nbsp;Export CSV&nbsp;<span class="caret"></span>' +
+                    '<button class="btn btn-default dropdown-toggle {{::css}}" data-toggle="dropdown" aria-expanded="false">' +
+                    '<span class="fa fa-download"></span>&nbsp;{{:: caption || \'Export CSV\'}}&nbsp;<span class="caret"></span>' +
                     '</button>' +
                     '<ul class="dropdown-menu" role="menu">' +
                     '<li><a href="javascript:void(0)" ng-click="downloadCsv($parent)">Current rows</a></li>' +
@@ -1888,7 +1889,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 transclude: true,
                 scope: {
                     filename: '@',
-                    css: '@'
+                    css: '@',
+                    caption: '@',
+                    captionMenuCurrent: '@', // TODO: Complete
+                    captionMenuAll: '@'
                 },
                 controller: [
                     '$scope', 'tubularGridExportService', function($scope, tubularGridExportService) {
@@ -1918,20 +1922,22 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * 
          * @param {string} title Set the document's title.
          * @param {string} printCss Set a stylesheet URL to attach to print mode.
+         * @param {string} caption Set the caption.
          */
         .directive('tbPrintButton', [function() {
 
             return {
                 require: '^tbGrid',
                 template: '<button class="btn btn-default" ng-click="printGrid()">' +
-                    '<span class="fa fa-print"></span>&nbsp;Print' +
+                    '<span class="fa fa-print"></span>&nbsp;{{:: caption || \'Print\'}}' +
                     '</button>',
                 restrict: 'E',
                 replace: true,
                 transclude: true,
                 scope: {
                     title: '@',
-                    printCss: '@'
+                    printCss: '@',
+                    caption: '@'
                 },
                 controller: [
                     '$scope', function($scope) {
@@ -2285,7 +2291,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @param {number} max Set the maximum value.
          */
         .directive('tbDateTimeEditor', [
-            'tubularEditorService', function(tubularEditorService) {
+            'tubularEditorService', '$filter', function(tubularEditorService, $filter) {
 
                 return {
                     template: '<div ng-class="{ \'form-group\' : isEditing }">' +
@@ -2310,7 +2316,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 if (angular.isDefined($scope.min)) {
                                     $scope.$valid = $scope.value >= $scope.min;
                                     if (!$scope.$valid) {
-                                        $scope.state.$errors = ["The minimum is " + $scope.min];
+                                        $scope.state.$errors = ["The minimum is " + $filter('date')($scope.min, $scope.format)];
                                     }
                                 }
 
@@ -2321,7 +2327,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 if (angular.isDefined($scope.max)) {
                                     $scope.$valid = $scope.value <= $scope.max;
                                     if (!$scope.$valid) {
-                                        $scope.state.$errors = ["The maximum is " + $scope.max];
+                                        $scope.state.$errors = ["The maximum is " + $filter('date')($scope.max, $scope.format)];
                                     }
                                 }
                             };
@@ -2331,7 +2337,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     ],
                     compile: function compile() {
                         return {
-                            post: function(scope, lElement, lAttrs, lController, lTransclude) {
+                            post: function(scope, lElement) {
                                 var inp = $(lElement).find("input[type=datetime-local]")[0];
                                 if (inp.type !== 'datetime-local') {
                                     $(inp).datepicker({
@@ -2375,7 +2381,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @param {number} max Set the maximum value.
          */
         .directive('tbDateEditor', [
-            'tubularEditorService', function(tubularEditorService) {
+            'tubularEditorService', '$filter', function(tubularEditorService, $filter) {
 
                 return {
                     template: '<div ng-class="{ \'form-group\' : isEditing }">' +
@@ -2402,7 +2408,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                         $scope.$valid = $scope.value >= $scope.min;
 
                                         if (!$scope.$valid) {
-                                            $scope.state.$errors = ["The minimum is " + $scope.min];
+                                            $scope.state.$errors = ["The minimum is " + $filter('date')($scope.min, $scope.format)];
                                         }
                                     }
 
@@ -2414,7 +2420,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                         $scope.$valid = $scope.value <= $scope.max;
 
                                         if (!$scope.$valid) {
-                                            $scope.state.$errors = ["The maximum is " + $scope.max];
+                                            $scope.state.$errors = ["The maximum is " + $filter('date')($scope.max, $scope.format)];
                                         }
                                     }
                                 };
@@ -2854,7 +2860,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         'ng-class="{ \'btn-success\': (filter.Operator !== \'None\' && filter.Text.length > 0) }">' +
                         '<i class="fa fa-filter"></i></button>' +
                         '<div style="display: none;">' +
-                        '<h4>{{filterTitle}}</h4>' +
+                        '<h4>{{::filterTitle}}</h4>' +
                         '<form class="tubular-column-filter-form" onsubmit="return false;">' +
                         '<select class="form-control" ng-model="filter.Operator" ng-hide="dataType == \'boolean\'"></select>' +
                         '<div  ng-class="{ \'checkbox\': dataType == \'boolean\' }">' +
@@ -2909,7 +2915,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         'ng-class="{ \'btn-success\': filter.Text != null }">' +
                         '<i class="fa fa-filter"></i></button>' +
                         '<div style="display: none;">' +
-                        '<h4>{{filterTitle}}</h4>' +
+                        '<h4>{{::filterTitle}}</h4>' +
                         '<form class="tubular-column-filter-form" onsubmit="return false;">' +
                         '<select class="form-control" ng-model="filter.Operator"></select>' +
                         '<input type="date" class="form-control" ng-model="filter.Text" ng-keypress="checkEvent($event)" />' +
@@ -2988,7 +2994,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         'ng-class="{ \'btn-success\': (filter.Argument.length > 0) }">' +
                         '<i class="fa fa-filter"></i></button>' +
                         '<div style="display: none;">' +
-                        '<h4>{{filterTitle}}</h4>' +
+                        '<h4>{{::filterTitle}}</h4>' +
                         '<form class="tubular-column-filter-form" onsubmit="return false;">' +
                         '<select class="form-control checkbox-list" ng-model="filter.Argument" ng-options="item for item in optionsItems" multiple ng-disabled="dataIsLoaded == false"></select>' +
                         '<hr />' + // Maybe we should add checkboxes or something like that

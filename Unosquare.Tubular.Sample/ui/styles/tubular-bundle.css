@@ -532,7 +532,7 @@ div.tubular-general-overlay {
 
 /* Tubular Grid Heading and Heading Filter Styles */
 div.panel > table.tubular-grid-table.table-bordered > thead > tr > th {
-    vertical-align: middle;
+    vertical-align: top;
     border-bottom: 2px solid #ddd;
     border-right: 1px solid #ddd;
     line-height: 22px;
@@ -649,7 +649,7 @@ table.tubular-grid-table thead tr th div.tubular-column-menu {
     position: relative;
     display: block;
     text-align: center;
-    vertical-align: middle;
+    vertical-align: top;
     float: right;
 }
 

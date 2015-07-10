@@ -80,8 +80,8 @@
             return {
                 require: '^tbGrid',
                 template: '<button ng-click="confirmDelete()" class="btn" ng-hide="model.$isEditing">' +
-                    '<span ng-show="showIcon" class="{{icon}}"></span>' +
-                    '<span ng-show="showCaption">{{ caption || \'Remove\' }}</span>' +
+                    '<span ng-show="showIcon" class="{{::icon}}"></span>' +
+                    '<span ng-show="showCaption">{{:: caption || \'Remove\' }}</span>' +
                     '</button>',
                 restrict: 'E',
                 replace: true,
@@ -140,12 +140,12 @@
 
             return {
                 require: '^tbGrid',
-                template: '<div ng-show="model.$isEditing"><button ng-click="save()" class="btn btn-default {{ saveCss || \'\' }}" ' +
+                template: '<div ng-show="model.$isEditing"><button ng-click="save()" class="btn btn-default {{:: saveCss || \'\' }}" ' +
                     'ng-disabled="!model.$valid()">' +
-                    '{{ saveCaption || \'Save\' }}' +
+                    '{{:: saveCaption || \'Save\' }}' +
                     '</button>' +
-                    '<button ng-click="cancel()" class="btn {{ cancelCss || \'btn-default\' }}">' +
-                    '{{ cancelCaption || \'Cancel\' }}' +
+                    '<button ng-click="cancel()" class="btn {{:: cancelCss || \'btn-default\' }}">' +
+                    '{{:: cancelCaption || \'Cancel\' }}' +
                     '</button></div>',
                 restrict: 'E',
                 replace: true,
@@ -214,7 +214,7 @@
             return {
                 require: '^tbGrid',
                 template: '<button ng-click="edit()" class="btn btn-default" ' +
-                    'ng-hide="model.$isEditing">{{ caption || \'Edit\' }}</button>',
+                    'ng-hide="model.$isEditing">{{:: caption || \'Edit\' }}</button>',
                 restrict: 'E',
                 replace: true,
                 transclude: true,
@@ -256,10 +256,10 @@
 
             return {
                 require: '^tbGrid',
-                template: '<div class="{{css}}"><form class="form-inline">' +
+                template: '<div class="{{::css}}"><form class="form-inline">' +
                     '<div class="form-group">' +
-                    '<label class="small">{{ caption || \'Page size:\' }}</label>' +
-                    '<select ng-model="$parent.$parent.pageSize" class="form-control input-sm {{selectorCss}}" ' +
+                    '<label class="small">{{:: caption || \'Page size:\' }} </label>' +
+                    '<select ng-model="$parent.$parent.pageSize" class="form-control input-sm {{::selectorCss}}" ' +
                     'ng-options="item for item in options">' +
                     '</select>' +
                     '</div>' +
@@ -293,14 +293,15 @@
          * 
          * @param {string} filename Set the export file name.
          * @param {string} css Add a CSS class to the `button` HTML element.
+         * @param {string} caption Set the caption.
          */
         .directive('tbExportButton', [function() {
 
             return {
                 require: '^tbGrid',
                 template: '<div class="btn-group">' +
-                    '<button class="btn btn-default dropdown-toggle {{css}}" data-toggle="dropdown" aria-expanded="false">' +
-                    '<span class="fa fa-download"></span>&nbsp;Export CSV&nbsp;<span class="caret"></span>' +
+                    '<button class="btn btn-default dropdown-toggle {{::css}}" data-toggle="dropdown" aria-expanded="false">' +
+                    '<span class="fa fa-download"></span>&nbsp;{{:: caption || \'Export CSV\'}}&nbsp;<span class="caret"></span>' +
                     '</button>' +
                     '<ul class="dropdown-menu" role="menu">' +
                     '<li><a href="javascript:void(0)" ng-click="downloadCsv($parent)">Current rows</a></li>' +
@@ -312,7 +313,10 @@
                 transclude: true,
                 scope: {
                     filename: '@',
-                    css: '@'
+                    css: '@',
+                    caption: '@',
+                    captionMenuCurrent: '@', // TODO: Complete
+                    captionMenuAll: '@'
                 },
                 controller: [
                     '$scope', 'tubularGridExportService', function($scope, tubularGridExportService) {
@@ -342,20 +346,22 @@
          * 
          * @param {string} title Set the document's title.
          * @param {string} printCss Set a stylesheet URL to attach to print mode.
+         * @param {string} caption Set the caption.
          */
         .directive('tbPrintButton', [function() {
 
             return {
                 require: '^tbGrid',
                 template: '<button class="btn btn-default" ng-click="printGrid()">' +
-                    '<span class="fa fa-print"></span>&nbsp;Print' +
+                    '<span class="fa fa-print"></span>&nbsp;{{:: caption || \'Print\'}}' +
                     '</button>',
                 restrict: 'E',
                 replace: true,
                 transclude: true,
                 scope: {
                     title: '@',
-                    printCss: '@'
+                    printCss: '@',
+                    caption: '@'
                 },
                 controller: [
                     '$scope', function($scope) {

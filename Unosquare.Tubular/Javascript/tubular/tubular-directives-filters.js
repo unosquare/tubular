@@ -60,7 +60,7 @@
                         'ng-class="{ \'btn-success\': (filter.Operator !== \'None\' && filter.Text.length > 0) }">' +
                         '<i class="fa fa-filter"></i></button>' +
                         '<div style="display: none;">' +
-                        '<h4>{{filterTitle}}</h4>' +
+                        '<h4>{{::filterTitle}}</h4>' +
                         '<form class="tubular-column-filter-form" onsubmit="return false;">' +
                         '<select class="form-control" ng-model="filter.Operator" ng-hide="dataType == \'boolean\'"></select>' +
                         '<div  ng-class="{ \'checkbox\': dataType == \'boolean\' }">' +
@@ -115,7 +115,7 @@
                         'ng-class="{ \'btn-success\': filter.Text != null }">' +
                         '<i class="fa fa-filter"></i></button>' +
                         '<div style="display: none;">' +
-                        '<h4>{{filterTitle}}</h4>' +
+                        '<h4>{{::filterTitle}}</h4>' +
                         '<form class="tubular-column-filter-form" onsubmit="return false;">' +
                         '<select class="form-control" ng-model="filter.Operator"></select>' +
                         '<input type="date" class="form-control" ng-model="filter.Text" ng-keypress="checkEvent($event)" />' +
@@ -194,7 +194,7 @@
                         'ng-class="{ \'btn-success\': (filter.Argument.length > 0) }">' +
                         '<i class="fa fa-filter"></i></button>' +
                         '<div style="display: none;">' +
-                        '<h4>{{filterTitle}}</h4>' +
+                        '<h4>{{::filterTitle}}</h4>' +
                         '<form class="tubular-column-filter-form" onsubmit="return false;">' +
                         '<select class="form-control checkbox-list" ng-model="filter.Argument" ng-options="item for item in optionsItems" multiple ng-disabled="dataIsLoaded == false"></select>' +
                         '<hr />' + // Maybe we should add checkboxes or something like that
