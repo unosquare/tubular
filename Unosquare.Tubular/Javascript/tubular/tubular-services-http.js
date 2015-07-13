@@ -113,7 +113,7 @@
                             me.userData.role = data.role;
 
                             if (typeof userDataCallback === 'function') {
-                                userDataCallback(me.userData);
+                                userDataCallback(data);
                             }
 
                             setHttpAuthHeader();
