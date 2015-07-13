@@ -68,7 +68,6 @@
                 me.useCache = true;
                 me.requireAuthentication = true;
                 me.tokenUrl = '/api/token';
-                
                 me.setTokenUrl = function(val) {
                     me.tokenUrl = val;
                 };
@@ -95,7 +94,7 @@
                     $http.defaults.headers.common.Authorization = null;
                 };
 
-                me.authenticate = function(username, password, successCallback, errorCallback, persistData) {
+                me.authenticate = function (username, password, successCallback, errorCallback, persistData, userDataCallback) {
                     this.removeAuthentication();
 
                     $http({
@@ -112,6 +111,10 @@
                             me.userData.expirationDate = new Date();
                             me.userData.expirationDate = new Date(me.userData.expirationDate.getTime() + data.expires_in * 1000);
                             me.userData.role = data.role;
+
+                            if (typeof userDataCallback === 'function') {
+                                userDataCallback(me.userData);
+                            }
 
                             setHttpAuthHeader();
 
@@ -326,7 +329,7 @@
                 };
 
                 me.getDataService = function(name) {
-                    if (angular.isUndefined(name) || name == null || name == 'tubularHttp') {
+                    if (angular.isUndefined(name) || name == null || name === 'tubularHttp') {
                         return me;
                     }
 

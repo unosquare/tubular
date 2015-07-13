@@ -1587,6 +1587,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * The `tbTextSearch` directive is visual component to enable free-text search in a grid.
          * 
          * @scope
+         * 
+         * @param {number} minChars How many chars before to search, default 3.
          */
         .directive('tbTextSearch', [function() {
             return {
@@ -1595,7 +1597,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     '<div class="tubular-grid-search">' +
                         '<div class="input-group input-group-sm">' +
                         '<span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>' +
-                        '<input type="search" class="form-control" placeholder="search . . ." maxlength="20" ' +
+                        '<input type="search" class="form-control" placeholder="{{:: placeholder || \'search . . .\' }}" maxlength="20" ' +
                         'ng-model="$component.search.Text" ng-model-options="{ debounce: 300 }">' +
                         '<span class="input-group-btn" ng-show="$component.search.Text.length > 0" ng-click="$component.search.Text = \'\'">' +
                         '<button class="btn btn-default"><i class="fa fa-times-circle"></i></button>' +
@@ -1605,11 +1607,15 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 restrict: 'E',
                 replace: true,
                 transclude: false,
-                scope: {},
+                scope: {
+                    minChars: '@?',
+                    placeholder: '@'
+                },
                 terminal: false,
                 controller: [
                     '$scope', function($scope) {
                         $scope.$component = $scope.$parent.$parent;
+                        $scope.minChars = $scope.minChars || 3;
                         $scope.tubularDirective = 'tubular-grid-text-search';
                         $scope.lastSearch = $scope.$component.search.Text;
 
@@ -1624,7 +1630,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 return;
                             }
 
-                            if (val === "" || val.length < 3) return;
+                            if (val === "" || val.length < $scope.minChars) return;
                             if (val === $scope.lastSearch) return;
 
                             $scope.lastSearch = val;
@@ -1649,6 +1655,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * 
          * @param {object} model The row to remove.
          * @param {string} caption Set the caption to use in the button, default Remove.
+         * @param {string} cancelCaption Set the caption to use in the Cancel button, default Cancel.
+         * @param {string} legend Set the legend to warn user, default 'Do you want to delete this row?'.
          * @param {string} icon Set the CSS icon's class, the button can have only icon.
          */
         .directive('tbRemoveButton', ['$compile', function($compile) {
@@ -1665,6 +1673,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 scope: {
                     model: '=',
                     caption: '@',
+                    cancelCaption: '@',
+                    legend: '@',
                     icon: '@'
                 },
                 controller: [
@@ -1674,12 +1684,13 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         $scope.confirmDelete = function() {
                             $element.popover({
                                 html: true,
-                                title: 'Do you want to delete this row?',
+                                title: legend || 'Do you want to delete this row?',
                                 content: function() {
                                     var html = '<div class="tubular-remove-popover">' +
-                                        '<button ng-click="model.delete()" class="btn btn-danger btn-xs">Remove</button>' +
-                                        '&nbsp;<button ng-click="cancelDelete()" class="btn btn-default btn-xs">Cancel</button>' +
+                                        '<button ng-click="model.delete()" class="btn btn-danger btn-xs">' + ($scope.caption || 'Remove') + '</button>' +
+                                        '&nbsp;<button ng-click="cancelDelete()" class="btn btn-default btn-xs">' + ($scope.cancelCaption || 'Cancel') + '</button>' +
                                         '</div>';
+
                                     return $compile(html)($scope);
                                 }
                             });
@@ -1716,7 +1727,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
             return {
                 require: '^tbGrid',
-                template: '<div ng-show="model.$isEditing"><button ng-click="save()" class="btn btn-default {{:: saveCss || \'\' }}" ' +
+                template: '<div ng-show="model.$isEditing">' +
+                    '<button ng-click="save()" class="btn btn-default {{:: saveCss || \'\' }}" ' +
                     'ng-disabled="!model.$valid()">' +
                     '{{:: saveCaption || \'Save\' }}' +
                     '</button>' +
@@ -1754,7 +1766,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 function(data) {
                                     $scope.model.$isEditing = false;
 
-                                    if (angular.isDefined($scope.model.$component) && angular.isDefined($scope.model.$component.autoRefresh) && $scope.model.$component.autoRefresh) {
+                                    if (angular.isDefined($scope.model.$component) &&
+                                        angular.isDefined($scope.model.$component.autoRefresh) &&
+                                        $scope.model.$component.autoRefresh) {
                                         $scope.model.$component.retrieveData();
                                     }
 
@@ -1870,6 +1884,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @param {string} filename Set the export file name.
          * @param {string} css Add a CSS class to the `button` HTML element.
          * @param {string} caption Set the caption.
+         * @param {string} captionMenuCurrent Set the caption.
+         * @param {string} captionMenuAll Set the caption.
          */
         .directive('tbExportButton', [function() {
 
@@ -1880,8 +1896,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     '<span class="fa fa-download"></span>&nbsp;{{:: caption || \'Export CSV\'}}&nbsp;<span class="caret"></span>' +
                     '</button>' +
                     '<ul class="dropdown-menu" role="menu">' +
-                    '<li><a href="javascript:void(0)" ng-click="downloadCsv($parent)">Current rows</a></li>' +
-                    '<li><a href="javascript:void(0)" ng-click="downloadAllCsv($parent)">All rows</a></li>' +
+                    '<li><a href="javascript:void(0)" ng-click="downloadCsv($parent)">{{:: captionMenuCurrent || \'Current rows\'}}</a></li>' +
+                    '<li><a href="javascript:void(0)" ng-click="downloadAllCsv($parent)">{{:: captionMenuAll || \'All rows\'}}</a></li>' +
                     '</ul>' +
                     '</div>',
                 restrict: 'E',
@@ -1891,7 +1907,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     filename: '@',
                     css: '@',
                     caption: '@',
-                    captionMenuCurrent: '@', // TODO: Complete
+                    captionMenuCurrent: '@',
                     captionMenuAll: '@'
                 },
                 controller: [
@@ -1973,8 +1989,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 var popup = window.open("about:blank", "Print", "menubar=0,location=0,height=500,width=800");
                                 popup.document.write('<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/css/bootstrap.min.css" />');
 
-                                if ($scope.printCss != '')
+                                if ($scope.printCss != '') {
                                     popup.document.write('<link rel="stylesheet" href="' + $scope.printCss + '" />');
+                                }
 
                                 popup.document.write('<body onload="window.print();">');
                                 popup.document.write('<h1>' + $scope.title + '</h1>');
@@ -4018,7 +4035,6 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 me.useCache = true;
                 me.requireAuthentication = true;
                 me.tokenUrl = '/api/token';
-                
                 me.setTokenUrl = function(val) {
                     me.tokenUrl = val;
                 };
@@ -4045,7 +4061,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     $http.defaults.headers.common.Authorization = null;
                 };
 
-                me.authenticate = function(username, password, successCallback, errorCallback, persistData) {
+                me.authenticate = function (username, password, successCallback, errorCallback, persistData, userDataCallback) {
                     this.removeAuthentication();
 
                     $http({
@@ -4062,6 +4078,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             me.userData.expirationDate = new Date();
                             me.userData.expirationDate = new Date(me.userData.expirationDate.getTime() + data.expires_in * 1000);
                             me.userData.role = data.role;
+
+                            if (typeof userDataCallback === 'function') {
+                                userDataCallback(me.userData);
+                            }
 
                             setHttpAuthHeader();
 
@@ -4276,7 +4296,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 };
 
                 me.getDataService = function(name) {
-                    if (angular.isUndefined(name) || name == null || name == 'tubularHttp') {
+                    if (angular.isUndefined(name) || name == null || name === 'tubularHttp') {
                         return me;
                     }
 
