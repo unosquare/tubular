@@ -63,11 +63,11 @@
                         '<h4>{{::filterTitle}}</h4>' +
                         '<form class="tubular-column-filter-form" onsubmit="return false;">' +
                         '<select class="form-control" ng-model="filter.Operator" ng-hide="dataType == \'boolean\'"></select>' +
-                        '<div  ng-class="{ \'checkbox\': dataType == \'boolean\' }">' +
-                        '<input class="form-control" type="{{ dataType == \'boolean\' ? \'checkbox\' : \'search\'}}" ng-model="filter.Text" autofocus ng-keypress="checkEvent($event)" ' +
-                        'placeholder="Value" ' +
-                        'ng-disabled="filter.Operator == \'None\'" />'+
-                        '<label ng-show="dataType == \'boolean\'">Check to filter</label></div>' +
+                        '<input class="form-control" type="search" ng-model="filter.Text" autofocus ng-keypress="checkEvent($event)" ng-hide="dataType == \'boolean\'"' +
+                        'placeholder="Value" ng-disabled="filter.Operator == \'None\'" />' +
+                        '<div class="btn-group text-center" ng-show="dataType == \'boolean\'">' +
+                        '<button type="button" class="btn btn-default" ng-disabled="filter.Text == true" ng-click="filter.Text = true"><i class="fa fa-check"></i></button>' +
+                        '<button type="button" class="btn btn-default" ng-disabled="filter.Text == false" ng-click="filter.Text = false"><i class="fa fa-ban"></i></button></div>' +
                         '<input type="search" class="form-control" ng-model="filter.Argument[0]" ng-keypress="checkEvent($event)" ng-show="filter.Operator == \'Between\'" />' +
                         '<hr />' +
                         '<tb-column-filter-buttons></tb-column-filter-buttons>' +

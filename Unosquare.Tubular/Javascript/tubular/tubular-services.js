@@ -175,8 +175,9 @@
                     scope.filterTitle = "Filter";
 
                     scope.clearFilter = function () {
-                        if (scope.filter.Operator != 'Multiple')
+                        if (scope.filter.Operator != 'Multiple') {
                             scope.filter.Operator = 'None';
+                        }
 
                         scope.filter.Text = '';
                         scope.filter.Argument = [];
@@ -190,6 +191,10 @@
 
                         if (columns.length !== 0) {
                             columns[0].Filter = scope.filter;
+                        }
+
+                        if (scope.filter.Operator == 'None') {
+                            scope.filter.Operator = 'Equals';
                         }
 
                         scope.$component.retrieveData();
@@ -256,7 +261,9 @@
                         $(".popover").remove();
                     });
 
-                    $(el).find('[data-toggle="popover"]').on('shown.bs.popover', openCallback);
+                    if (angular.isDefined(openCallback)) {
+                        $(el).find('[data-toggle="popover"]').on('shown.bs.popover', openCallback);
+                    }
                 };
 
                 /**

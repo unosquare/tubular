@@ -190,7 +190,9 @@
                                         var columnName = columns[index].Name;
                                         var filtered = $scope.columns.filter(function(el) { return el.Name == columnName; });
 
-                                        if (filtered.length === 0) continue;
+                                        if (filtered.length === 0) {
+                                            continue;
+                                        }
 
                                         var current = filtered[0];
                                         // Updates visibility by now
