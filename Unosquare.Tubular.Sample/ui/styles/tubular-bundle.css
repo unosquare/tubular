@@ -177,12 +177,16 @@
             height: 16px;
             left: 0;
             top: 0;
-            margin-left: -19px;
+            margin-left: -20px;
             padding-left: 3px;
             padding-top: 1px;
             font-size: 11px;
             color: #555555;
         }
+
+.text-center .tubular-checkbox label::after {
+    margin-left: -21px;
+}
 
     .tubular-checkbox input[type="checkbox"] {
         opacity: 0;

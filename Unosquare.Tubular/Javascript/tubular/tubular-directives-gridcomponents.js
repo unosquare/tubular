@@ -108,7 +108,7 @@
                         $scope.confirmDelete = function() {
                             $element.popover({
                                 html: true,
-                                title: legend || 'Do you want to delete this row?',
+                                title: $scope.legend || 'Do you want to delete this row?',
                                 content: function() {
                                     var html = '<div class="tubular-remove-popover">' +
                                         '<button ng-click="model.delete()" class="btn btn-danger btn-xs">' + ($scope.caption || 'Remove') + '</button>' +
