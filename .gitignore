@@ -198,3 +198,13 @@ FakesAssemblies/
 # Visual Studio 6 workspace options file
 *.opt
 /coverage
+/Unosquare.Tubular/Css/tubular-bundle.min.css
+/Unosquare.Tubular/Css/tubular-bundle.css
+/Unosquare.Tubular/Javascript/tubular-bundle.min.js.map
+/Unosquare.Tubular/Javascript/tubular-bundle.js
+/Unosquare.Tubular/Javascript/tubular-bundle.min.js
+/Unosquare.Tubular.Sample/ui/tubular/tubular-bundle.js
+/Unosquare.Tubular.Sample/ui/tubular/tubular-bundle.min.js
+/Unosquare.Tubular.Sample/ui/tubular/tubular-bundle.min.js.map
+/Unosquare.Tubular.Sample/ui/styles/tubular-bundle.css
+/Unosquare.Tubular.Sample/ui/styles/tubular-bundle.min.css
