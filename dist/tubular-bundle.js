@@ -2444,7 +2444,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     }
                                 };
 
-                                if ($scope.value === null) { // TODO: This is not working :P
+                                if ($scope.value == null) { // TODO: This is not working :P
                                     $scope.$valid = false;
                                     $scope.state.$errors = ["Invalid date"];
                                     return;
@@ -2652,7 +2652,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                             $scope.getValues = function (val) {
                                 if (angular.isDefined($scope.optionsUrl)) {
-                                    if (angular.isUndefined($scope.$component) || $scope.$component === null)
+                                    if (angular.isUndefined($scope.$component) || $scope.$component == null)
                                         throw 'You need to define a parent Form or Grid';
 
                                     return $scope.$component.dataService.retrieveDataAsync({
@@ -3151,19 +3151,15 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             };
 
                             $scope.retrieveData = function() {
-                                if (angular.isUndefined($scope.serverUrl)) {
+                                if (angular.isUndefined($scope.serverUrl) || (angular.isUndefined($scope.modelKey) ||
+                                    $scope.modelKey == null ||
+                                    $scope.modelKey === '')) {
                                     if (angular.isUndefined($scope.model)) {
                                         $scope.model = new TubularModel($scope, {}, $scope.dataService);
                                     }
 
                                     $scope.bindFields();
 
-                                    return;
-                                }
-
-                                if (angular.isUndefined($scope.modelKey) ||
-                                    $scope.modelKey == null ||
-                                    $scope.modelKey === '') {
                                     return;
                                 }
 
@@ -3185,7 +3181,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 }
 
                                 $scope.currentRequest.then(
-                                        function (data) {
+                                        function(data) {
                                             if (angular.isDefined($scope.model.$component) &&
                                                 angular.isDefined($scope.model.$component.autoRefresh) &&
                                                 $scope.model.$component.autoRefresh) {
@@ -3216,7 +3212,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             };
 
                             $scope.clear = function() {
-                                angular.forEach($scope.fields, function (field) {
+                                angular.forEach($scope.fields, function(field) {
                                     field.value = null;
                                 });
                             };

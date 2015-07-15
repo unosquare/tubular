@@ -70,19 +70,15 @@
                             };
 
                             $scope.retrieveData = function() {
-                                if (angular.isUndefined($scope.serverUrl)) {
+                                if (angular.isUndefined($scope.serverUrl) || (angular.isUndefined($scope.modelKey) ||
+                                    $scope.modelKey == null ||
+                                    $scope.modelKey === '')) {
                                     if (angular.isUndefined($scope.model)) {
                                         $scope.model = new TubularModel($scope, {}, $scope.dataService);
                                     }
 
                                     $scope.bindFields();
 
-                                    return;
-                                }
-
-                                if (angular.isUndefined($scope.modelKey) ||
-                                    $scope.modelKey == null ||
-                                    $scope.modelKey === '') {
                                     return;
                                 }
 
@@ -104,7 +100,7 @@
                                 }
 
                                 $scope.currentRequest.then(
-                                        function (data) {
+                                        function(data) {
                                             if (angular.isDefined($scope.model.$component) &&
                                                 angular.isDefined($scope.model.$component.autoRefresh) &&
                                                 $scope.model.$component.autoRefresh) {
@@ -135,7 +131,7 @@
                             };
 
                             $scope.clear = function() {
-                                angular.forEach($scope.fields, function (field) {
+                                angular.forEach($scope.fields, function(field) {
                                     field.value = null;
                                 });
                             };
