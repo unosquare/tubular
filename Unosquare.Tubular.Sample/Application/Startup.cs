@@ -1,16 +1,15 @@
-﻿using System.Web.Routing;
-using Microsoft.Owin;
+﻿using Microsoft.Owin;
 using Microsoft.Owin.Security.OAuth;
 using Owin;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
+using System.Web.Routing;
 using Unosquare.Tubular.Sample.Application;
 using Unosquare.Tubular.Sample.Models;
 
 [assembly: OwinStartup(typeof(Startup))]
-
 namespace Unosquare.Tubular.Sample.Application
 {
     public class Startup
@@ -34,23 +33,18 @@ namespace Unosquare.Tubular.Sample.Application
                     {
                         var task = new Task<Security.UserAuthenticationResult>(() =>
                         {
-
                             using (var context = new SampleDbContext())
                             {
                                 var user =
                                     context.SystemUsers.FirstOrDefault(
                                         u => u.Id == c.UserName && u.Password == c.Password);
 
-                                if (user != null)
-                                {
-                                    var roles = user.Roles.ToArray();
-                                    return Security.UserAuthenticationResult.CreateAuthorizedResult(user, roles);
-                                }
+                                if (user == null)
+                                    return Security.UserAuthenticationResult.CreateErrorResult("Invalid credentials");
 
-                                return Security.UserAuthenticationResult.CreateErrorResult("Invalid credentials");
+                                var roles = user.Roles.ToArray();
+                                return Security.UserAuthenticationResult.CreateAuthorizedResult(user, roles);
                             }
-
-
                         });
 
                         task.Start();
@@ -87,7 +81,7 @@ namespace Unosquare.Tubular.Sample.Application
             {
                 // Web API configuration and services
                 var json = config.Formatters.JsonFormatter;
-                json.SerializerSettings.PreserveReferencesHandling = Newtonsoft.Json.PreserveReferencesHandling.Objects;
+                json.SerializerSettings.PreserveReferencesHandling = Newtonsoft.Json.PreserveReferencesHandling.None;
                 config.Formatters.Remove(config.Formatters.XmlFormatter);
 
                 // Web API routes
@@ -99,6 +93,14 @@ namespace Unosquare.Tubular.Sample.Application
                     defaults: new {id = RouteParameter.Optional}
                     );
 
+                // Redirect anything else to Index.html, you need to include this in your Web.config:
+                //
+                //          <compilation debug="true" targetFramework="4.5.2">
+                //  <buildProviders>
+                //    <add extension=".html" type="System.Web.Compilation.PageBuildProvider" />
+                //    <!-- Allows for routing everything to ~/index.html -->
+                //  </buildProviders>
+                //</compilation>
                 RouteTable.Routes.MapPageRoute("Default", "{*anything}", "~/index.html");
             }
         }

@@ -1,11 +1,12 @@
-﻿<div class="container" ng-controller="tubularSampleCtrl as sample">
+﻿<div class="container" ng-controller="tubularSampleCtrl">
     <tb-form server-url="/api/orders/" require-authentication="false"
              server-save-url="/api/orders/save">
         <div class="row">
             <div class="col-md-10">
                 <h2>Edit Order <small>{{Model.OrderID}}</small></h2>
 
-                <tb-simple-editor min="3" show-label="true" name="CustomerName" help="Please a good name">
+                <tb-simple-editor min="3" show-label="true" 
+                                  name="CustomerName" help="Please a good name">
                 </tb-simple-editor>
 
                 <tb-dropdown-editor name="ShipperCity" name="ShipperCity"
@@ -13,7 +14,8 @@
                                     options-url="api/orders/cities">
                 </tb-dropdown-editor>
 
-                <tb-numeric-editor name="Amount" min="1" max="100" show-label="true" required="true" format="C">
+                <tb-numeric-editor name="Amount" min="1" max="100" show-label="true" 
+                                   required="true" format="C">
                 </tb-numeric-editor>
 
                 <tb-date-editor name="ShippedDate" required="true"

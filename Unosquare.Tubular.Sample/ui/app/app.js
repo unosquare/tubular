@@ -11,6 +11,9 @@
                     }).when('/form/:param', {
                         templateUrl: '/ui/app/common/form.html',
                         title: 'This is a form!'
+                    }).when('/login', {
+                        templateUrl: '/ui/app/common/login.html',
+                        title: 'Login'
                     }).when('/new/', {
                         templateUrl: '/ui/app/common/formnew.html',
                         title: 'Add a new ORDER NOW!'
@@ -31,7 +34,10 @@
                     me.content = $route.current.title;
                 });
             }
-        ])
+        ]).controller('loginCtrl', [
+            '$scope', '$location', function ($scope, $location) {
+                // TODO: Complete
+            }])
         .controller('tubularSampleCtrl', [
             '$scope', '$location', function($scope, $location) {
                 var me = this;

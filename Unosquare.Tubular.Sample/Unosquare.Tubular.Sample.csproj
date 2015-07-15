@@ -141,6 +141,7 @@
     <Content Include="ui\app\app.js" />
     <Content Include="ui\app\common\form.html" />
     <Content Include="ui\app\common\formnew.html" />
+    <Content Include="ui\app\common\login.html" />
     <Content Include="ui\app\common\popup.html" />
     <Content Include="ui\app\common\view.html" />
     <Content Include="ui\media\favicon.ico" />

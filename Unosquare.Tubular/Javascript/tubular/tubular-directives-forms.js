@@ -51,9 +51,6 @@
                             $scope.hasFieldsDefinitions = false;
                             $scope.dataService = tubularHttp.getDataService($scope.dataServiceName);
 
-                            // Try to load a key from markup or route
-                            $scope.modelKey = $scope.modelKey || $routeParams.param;
-
                             // Setup require authentication
                             $scope.requireAuthentication = angular.isUndefined($scope.requireAuthentication) ? true : $scope.requireAuthentication;
                             tubularHttp.setRequireAuthentication($scope.requireAuthentication);
@@ -69,26 +66,30 @@
                                 });
                             };
 
-                            $scope.retrieveData = function() {
-                                if (angular.isUndefined($scope.serverUrl) || (angular.isUndefined($scope.modelKey) ||
-                                    $scope.modelKey == null ||
-                                    $scope.modelKey === '')) {
-                                    if (angular.isUndefined($scope.model)) {
-                                        $scope.model = new TubularModel($scope, {}, $scope.dataService);
-                                    }
+                            $scope.retrieveData = function () {
+                                // Try to load a key from markup or route
+                                $scope.modelKey = $scope.modelKey || $routeParams.param;
 
-                                    $scope.bindFields();
+                                if (angular.isDefined($scope.serverUrl) &&
+                                    angular.isDefined($scope.modelKey) &&
+                                    $scope.modelKey != null &&
+                                    $scope.modelKey !== '') {
+                                    $scope.dataService.getByKey($scope.serverUrl, $scope.modelKey).promise.then(
+                                        function(data) {
+                                            $scope.model = new TubularModel($scope, data, $scope.dataService);
+                                            $scope.bindFields();
+                                        }, function(error) {
+                                            $scope.$emit('tbForm_OnConnectionError', error);
+                                        });
 
                                     return;
                                 }
 
-                                $scope.dataService.getByKey($scope.serverUrl, $scope.modelKey).promise.then(
-                                    function(data) {
-                                        $scope.model = new TubularModel($scope, data, $scope.dataService);
-                                        $scope.bindFields();
-                                    }, function(error) {
-                                        $scope.$emit('tbForm_OnConnectionError', error);
-                                    });
+                                if (angular.isUndefined($scope.model)) {
+                                    $scope.model = new TubularModel($scope, {}, $scope.dataService);
+                                }
+
+                                $scope.bindFields();
                             };
 
                             $scope.save = function() {

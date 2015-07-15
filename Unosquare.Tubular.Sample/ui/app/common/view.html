@@ -32,10 +32,6 @@
                                         <a class="btn btn-default hidden-xs hidden-sm" href="/new" ng-hide="$component.tempRow.$isEditing">
                                             <i class="fa fa-plus-circle"></i> Page
                                         </a>
-                                        <button class="btn btn-default" ng-click="$component.clearSelection()"
-                                                ng-disabled="$component.isEmptySelection()">
-                                            <i class="fa fa-square-o"></i> Clear
-                                        </button>
                                     </div>
                                 </tb-column>
                                 <tb-column name="OrderID" label="Order ID" sortable="true" sort-order="1" class="column-sm"
@@ -72,7 +68,7 @@
                                 <tb-empty-grid></tb-empty-grid>
                                 <!-- New record row -->
                                 <tb-row-template ng-show="$component.tempRow.$isEditing">
-                                    <tb-cell-template>
+                                    <tb-cell-template class="text-center">
                                         <div class="btn-group btn-group-xs">
                                             <tb-save-button model="$component.tempRow" save-css="hidden-xs hidden-sm"
                                                             cancel-css="btn-danger" is-new="true"
@@ -106,10 +102,8 @@
                                     </tb-cell-template>
                                 </tb-row-template>
                                 <!-- General rows -->
-                                <tb-row-template ng-repeat="row in $component.rows" row-model="row" selectable="true">
-                                    <tb-cell-template ng-class="{'danger': rowModel.$hasChanges}" class="cell-menu">
-                                        <input type="checkbox" ng-model="row.$selected" class="hidden-xs hidden-sm"
-                                               ng-click="$parent.changeSelection()" />
+                                <tb-row-template ng-repeat="row in $component.rows" row-model="row" selectable="false">
+                                    <tb-cell-template ng-class="{'danger': rowModel.$hasChanges}" class="cell-menu text-center">
                                         <div class="btn-group">
                                             <tb-save-button model="row" save-css="btn-xs hidden-xs hidden-sm"
                                                             cancel-css="btn-danger btn-xs">

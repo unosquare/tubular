@@ -272,7 +272,7 @@
                 require: '^tbGrid',
                 template: '<div class="{{::css}}"><form class="form-inline">' +
                     '<div class="form-group">' +
-                    '<label class="small">{{:: caption || \'Page size:\' }} </label>' +
+                    '<label class="small">{{:: caption || \'Page size:\' }} </label>&nbsp;' +
                     '<select ng-model="$parent.$parent.pageSize" class="form-control input-sm {{::selectorCss}}" ' +
                     'ng-options="item for item in options">' +
                     '</select>' +
@@ -411,7 +411,7 @@
                                     + "</table>";
 
                                 var popup = window.open("about:blank", "Print", "menubar=0,location=0,height=500,width=800");
-                                popup.document.write('<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/css/bootstrap.min.css" />');
+                                popup.document.write('<link rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap/latest/css/bootstrap.min.css" />');
 
                                 if ($scope.printCss != '') {
                                     popup.document.write('<link rel="stylesheet" href="' + $scope.printCss + '" />');
