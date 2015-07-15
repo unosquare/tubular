@@ -432,10 +432,16 @@
                                     });
                                 }
 
-                                // Ignores models without state
                                 if (angular.isUndefined(parent.model.$state)) {
-                                    return;
+                                    parent.model.$state = {};
                                 }
+
+                                parent.model.$state[scope.Name] = {
+                                    $valid: function () {
+                                        return this.$errors.length === 0;
+                                    },
+                                    $errors: []
+                                };
 
                                 if (angular.equals(scope.state, parent.model.$state[scope.Name]) == false) {
                                     scope.state = parent.model.$state[scope.Name];
