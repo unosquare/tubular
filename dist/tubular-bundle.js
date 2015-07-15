@@ -2173,7 +2173,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             'tubularEditorService', function(tubularEditorService) {
 
                 return {
-                    template: '<div ng-class="{ \'form-group\' : isEditing, \'has-error\' : !$valid }">' +
+                    template: '<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid }">' +
                         '<span ng-hide="isEditing">{{value}}</span>' +
                         '<label ng-show="showLabel">{{ label }}</label>' +
                         '<input type="{{editorType}}" placeholder="{{placeholder}}" ng-show="isEditing" ng-model="value" class="form-control" ' +
@@ -2241,7 +2241,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             'tubularEditorService', function(tubularEditorService) {
 
                 return {
-                    template: '<div ng-class="{ \'form-group\' : isEditing, \'has-error\' : !$valid }">' +
+                    template: '<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid }">' +
                         '<span ng-hide="isEditing">{{value | numberorcurrency: format }}</span>' +
                         '<label ng-show="showLabel">{{ label }}</label>' +
                         '<div class="input-group" ng-show="isEditing">' +
@@ -2313,7 +2313,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             'tubularEditorService', '$filter', function(tubularEditorService, $filter) {
 
                 return {
-                    template: '<div ng-class="{ \'form-group\' : isEditing }">' +
+                    template: '<div ng-class="{ \'form-group\' : showLabel && isEditing }">' +
                         '<span ng-hide="isEditing">{{ value | date: format }}</span>' +
                         '<label ng-show="showLabel">{{ label }}</label>' +
                         '<input type="datetime-local" ng-show="isEditing" ng-model="value" class="form-control" ' +
@@ -2403,7 +2403,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             'tubularEditorService', '$filter', function(tubularEditorService, $filter) {
 
                 return {
-                    template: '<div ng-class="{ \'form-group\' : isEditing }">' +
+                    template: '<div ng-class="{ \'form-group\' : showLabel && isEditing }">' +
                         '<span ng-hide="isEditing">{{ value | date: format }}</span>' +
                         '<label ng-show="showLabel">{{ label }}</label>' +
                         '<input type="date" ng-show="isEditing" ng-model="value" class="form-control" ' +
@@ -2444,7 +2444,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     }
                                 };
 
-                                if ($scope.value == null) { // TODO: This is not working :P
+                                if ($scope.value === null) { // TODO: This is not working :P
                                     $scope.$valid = false;
                                     $scope.state.$errors = ["Invalid date"];
                                     return;
@@ -2456,7 +2456,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     ],
                     compile: function compile() {
                         return {
-                            post: function(scope, lElement, lAttrs, lController, lTransclude) {
+                            post: function(scope, lElement) {
                                 var inp = $(lElement).find("input[type=date]")[0];
                                 if (inp.type != 'date') {
                                     $(inp).datepicker({
@@ -2502,7 +2502,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             'tubularEditorService', function(tubularEditorService) {
 
                 return {
-                    template: '<div ng-class="{ \'form-group\' : isEditing, \'has-error\' : !$valid }">' +
+                    template: '<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid }">' +
                         '<span ng-hide="isEditing">{{ value }}</span>' +
                         '<label ng-show="showLabel">{{ label }}</label>' +
                         '<select ng-options="{{ selectOptions }}" ng-show="isEditing" ng-model="value" class="form-control" ' +
@@ -2529,6 +2529,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     $scope.selectOptions = 'd.' + $scope.optionKey + ' as ' + $scope.selectOptions;
                                 }
                             }
+
+                            $scope.$watch('value', function (val) {
+                                $scope.$emit('tbForm_OnFieldChange', $scope.$component, $scope.name, val);
+                            });
 
                             $scope.loadData = function() {
                                 if ($scope.dataIsLoaded) {
@@ -2605,17 +2609,18 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @param {object} options Set the options to display.
          * @param {string} optionsUrl Set the Http Url where to retrieve the values.
          * @param {string} optionsMethod Set the Http Method where to retrieve the values.
-         * @param {string} optionLabel Set the property to get the labels
+         * @param {string} optionLabel Set the property to get the labels.
+         * @param {string} css Set the CSS classes for the input
          */
         .directive('tbTypeaheadEditor', [
-            'tubularEditorService', '$q', function (tubularEditorService, $q, $filter) {
+            'tubularEditorService', '$q', function (tubularEditorService, $q) {
 
                 return {
-                    template: '<div ng-class="{ \'form-group\' : isEditing, \'has-error\' : !$valid }">' +
+                    template: '<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid }">' +
                         '<span ng-hide="isEditing">{{ value }}</span>' +
                         '<label ng-show="showLabel">{{ label }}</label>' +
                         '<input ng-show="isEditing" ng-model="value" placeholder="{{placeholder}}" ' +
-                        'class="form-control" typeahead="{{ selectOptions }}" ' +
+                        'class="form-control {{css}}" typeahead="{{ selectOptions }}" ' +
                         'ng-required="required" />' +
                         '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">' +
                         '{{error}}' +
@@ -2629,7 +2634,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         options: '=?',
                         optionsUrl: '@',
                         optionsMethod: '@?',
-                        optionLabel: '@?'
+                        optionLabel: '@?',
+                        css: '@?'
                     }, tubularEditorService.defaultScope),
                     controller: [
                         '$scope', function ($scope) {
@@ -2640,9 +2646,13 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 $scope.selectOptions = "d as d." + $scope.optionLabel + " for d in getValues($viewValue)";
                             }
 
+                            $scope.$watch('value', function (val) {
+                                $scope.$emit('tbForm_OnFieldChange', $scope.$component, $scope.name, val);
+                            });
+
                             $scope.getValues = function (val) {
                                 if (angular.isDefined($scope.optionsUrl)) {
-                                    if (angular.isUndefined($scope.$component) || $scope.$component == null)
+                                    if (angular.isUndefined($scope.$component) || $scope.$component === null)
                                         throw 'You need to define a parent Form or Grid';
 
                                     return $scope.$component.dataService.retrieveDataAsync({
@@ -2775,7 +2785,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             'tubularEditorService', function(tubularEditorService) {
 
                 return {
-                    template: '<div ng-class="{ \'form-group\' : isEditing, \'has-error\' : !$valid }">' +
+                    template: '<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid }">' +
                         '<span ng-hide="isEditing">{{value}}</span>' +
                         '<label ng-show="showLabel">{{ label }}</label>' +
                         '<textarea ng-show="isEditing" placeholder="{{placeholder}}" ng-model="value" class="form-control" ' +
@@ -3091,6 +3101,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @param {object} model The object model to show in the form.
          * @param {boolean} isNew Set if the form is for create a new record.
          * @param {string} modelKey Defines the fields to use like Keys.
+         * @param {string} formName Defines the form name.
          * @param {string} serviceName Define Data service (name) to retrieve data, defaults `tubularHttp`.
          * @param {bool} requireAuthentication Set if authentication check must be executed, default true.
          */
@@ -3109,7 +3120,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         isNew: '@',
                         modelKey: '@?',
                         dataServiceName: '@?serviceName',
-                        requireAuthentication: '=?'
+                        requireAuthentication: '=?',
+                        name: '@?formName'
                     },
                     controller: [
                         '$scope', '$routeParams', 'tubularModel', 'tubularHttp',

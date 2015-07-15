@@ -20,6 +20,7 @@
          * @param {object} model The object model to show in the form.
          * @param {boolean} isNew Set if the form is for create a new record.
          * @param {string} modelKey Defines the fields to use like Keys.
+         * @param {string} formName Defines the form name.
          * @param {string} serviceName Define Data service (name) to retrieve data, defaults `tubularHttp`.
          * @param {bool} requireAuthentication Set if authentication check must be executed, default true.
          */
@@ -38,7 +39,8 @@
                         isNew: '@',
                         modelKey: '@?',
                         dataServiceName: '@?serviceName',
-                        requireAuthentication: '=?'
+                        requireAuthentication: '=?',
+                        name: '@?formName'
                     },
                     controller: [
                         '$scope', '$routeParams', 'tubularModel', 'tubularHttp',
