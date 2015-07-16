@@ -142,7 +142,7 @@
                                 $scope.columns.push(item);
                             };
 
-                            $scope.newRow = function(template, popup) {
+                            $scope.newRow = function(template, popup, size) {
                                 $scope.tempRow = new TubularModel($scope, {}, $scope.dataService);
                                 $scope.tempRow.$isNew = true;
                                 $scope.tempRow.$isEditing = true;
@@ -150,7 +150,7 @@
 
                                 if (angular.isDefined(template)) {
                                     if (angular.isDefined(popup) && popup) {
-                                        tubularPopupService.openDialog(template, $scope.tempRow, $scope);
+                                        tubularPopupService.openDialog(template, $scope.tempRow, $scope, size);
                                     }
                                 }
                             };
@@ -264,8 +264,8 @@
                                             var model = new TubularModel($scope, el, $scope.dataService);
                                             model.$component = $scope;
 
-                                            model.editPopup = function(template) {
-                                                tubularPopupService.openDialog(template, model, $scope);
+                                            model.editPopup = function(template, size) {
+                                                tubularPopupService.openDialog(template, model, $scope, size);
                                             };
                                             
                                             return model;

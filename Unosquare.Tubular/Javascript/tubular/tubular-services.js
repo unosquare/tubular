@@ -29,13 +29,14 @@
                     $rootScope.$on('tbForm_OnConnectionError', callback);
                 };
 
-                me.openDialog = function(template, model, gridScope) {
+                me.openDialog = function(template, model, gridScope, size) {
                     if (angular.isUndefined(template))
                         template = tubularTemplateService.generatePopup(model);
 
                     var dialog = $modal.open({
                         templateUrl: template,
                         backdropClass: 'fullHeight',
+                        size: size,
                         controller: [
                             '$scope', function($scope) {
                                 $scope.Model = model;

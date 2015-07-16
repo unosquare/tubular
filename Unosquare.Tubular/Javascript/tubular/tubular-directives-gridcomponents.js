@@ -239,6 +239,7 @@
                 controller: [
                     '$scope', function($scope) {
                         $scope.component = $scope.$parent.$parent.$component;
+
                         $scope.edit = function() {
                             if ($scope.component.editorMode === 'popup') {
                                 $scope.model.editPopup();

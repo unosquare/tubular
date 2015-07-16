@@ -847,7 +847,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 $scope.columns.push(item);
                             };
 
-                            $scope.newRow = function(template, popup) {
+                            $scope.newRow = function(template, popup, size) {
                                 $scope.tempRow = new TubularModel($scope, {}, $scope.dataService);
                                 $scope.tempRow.$isNew = true;
                                 $scope.tempRow.$isEditing = true;
@@ -855,7 +855,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                                 if (angular.isDefined(template)) {
                                     if (angular.isDefined(popup) && popup) {
-                                        tubularPopupService.openDialog(template, $scope.tempRow, $scope);
+                                        tubularPopupService.openDialog(template, $scope.tempRow, $scope, size);
                                     }
                                 }
                             };
@@ -969,8 +969,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                             var model = new TubularModel($scope, el, $scope.dataService);
                                             model.$component = $scope;
 
-                                            model.editPopup = function(template) {
-                                                tubularPopupService.openDialog(template, model, $scope);
+                                            model.editPopup = function(template, size) {
+                                                tubularPopupService.openDialog(template, model, $scope, size);
                                             };
                                             
                                             return model;
@@ -1817,6 +1817,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 controller: [
                     '$scope', function($scope) {
                         $scope.component = $scope.$parent.$parent.$component;
+
                         $scope.edit = function() {
                             if ($scope.component.editorMode === 'popup') {
                                 $scope.model.editPopup();
@@ -3558,13 +3559,14 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     $rootScope.$on('tbForm_OnConnectionError', callback);
                 };
 
-                me.openDialog = function(template, model, gridScope) {
+                me.openDialog = function(template, model, gridScope, size) {
                     if (angular.isUndefined(template))
                         template = tubularTemplateService.generatePopup(model);
 
                     var dialog = $modal.open({
                         templateUrl: template,
                         backdropClass: 'fullHeight',
+                        size: size,
                         controller: [
                             '$scope', function($scope) {
                                 $scope.Model = model;
