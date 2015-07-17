@@ -2332,6 +2332,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         '$scope', function($scope) {
                             $scope.DataType = "date";
 
+                            $scope.$watch('value', function (val) {
+                                if (typeof (val) === 'string')
+                                    $scope.value = new Date(val);
+                            });
+
                             $scope.validate = function() {
                                 if (angular.isDefined($scope.min)) {
                                     $scope.$valid = $scope.value >= $scope.min;
@@ -2421,6 +2426,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     controller: [
                         '$scope', function($scope) {
                             $scope.DataType = "date";
+
+                            $scope.$watch('value', function (val) {
+                                if (typeof (val) === 'string')
+                                    $scope.value = new Date(val);
+                            });
 
                             $scope.validate = function() {
                                 $scope.validate = function() {

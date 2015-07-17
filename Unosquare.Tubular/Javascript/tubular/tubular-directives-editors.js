@@ -188,6 +188,11 @@
                         '$scope', function($scope) {
                             $scope.DataType = "date";
 
+                            $scope.$watch('value', function (val) {
+                                if (typeof (val) === 'string')
+                                    $scope.value = new Date(val);
+                            });
+
                             $scope.validate = function() {
                                 if (angular.isDefined($scope.min)) {
                                     $scope.$valid = $scope.value >= $scope.min;
@@ -277,6 +282,11 @@
                     controller: [
                         '$scope', function($scope) {
                             $scope.DataType = "date";
+
+                            $scope.$watch('value', function (val) {
+                                if (typeof (val) === 'string')
+                                    $scope.value = new Date(val);
+                            });
 
                             $scope.validate = function() {
                                 $scope.validate = function() {
