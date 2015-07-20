@@ -61,8 +61,9 @@
                                 };
 
                                 $scope.closePopup = function() {
-                                    if (angular.isDefined($scope.Model.revertChanges))
+                                    if (angular.isDefined($scope.Model.revertChanges)) {
                                         $scope.Model.revertChanges();
+                                    }
 
                                     dialog.close();
                                 };
@@ -147,8 +148,9 @@
 
                 var csvFile = '';
 
-                if (header.length > 0)
+                if (header.length > 0) {
                     csvFile += processRow(header);
+                }
 
                 for (var i = 0; i < rows.length; i++) {
                     csvFile += processRow(rows[i]);
@@ -424,7 +426,9 @@
                                 scope.$parent.Model = parent.model;
 
                                 if (angular.equals(scope.value, parent.model[scope.Name]) === false) {
-                                    scope.value = (scope.DataType === 'date') ? new Date(parent.model[scope.Name]) : parent.model[scope.Name];
+                                    if (angular.isDefined(parent.model[scope.Name])) {
+                                        scope.value = (scope.DataType === 'date') ? new Date(parent.model[scope.Name]) : parent.model[scope.Name];
+                                    }
 
                                     parent.$watch(function() {
                                         return scope.value;
