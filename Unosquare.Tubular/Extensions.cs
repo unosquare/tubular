@@ -148,23 +148,6 @@
             return response;
         }
 
-        // TODO: This code is for use with Dynamic LINQ, but It needs EF
-        //private static bool isDynamicLinqReady = false;
-
-        //private static void FixDynamicLinq()
-        //{
-        //    var type = typeof(DynamicQueryable).Assembly.GetType("System.Linq.Dynamic.ExpressionParser");
-
-        //    FieldInfo field = type.GetField("predefinedTypes", BindingFlags.Static | BindingFlags.NonPublic);
-
-        //    Type[] predefinedTypes = (Type[])field.GetValue(null);
-
-        //    Array.Resize(ref predefinedTypes, predefinedTypes.Length + 1);
-        //    predefinedTypes[predefinedTypes.Length - 1] = typeof(EntityFunctions); // Your type
-
-        //    field.SetValue(null, predefinedTypes);
-        //}
-
         private static string GetSqlOperator(CompareOperators op)
         {
             switch (op)
@@ -217,11 +200,21 @@
                     case CompareOperators.NotEquals:
                         if (String.IsNullOrWhiteSpace(column.Filter.Text)) continue;
 
-                        // TODO: This code is for use with Dynamic LINQ, but It needs EF
-                        //if (column.DataType == DataType.Date.ToString().ToLower())
-                        //    searchLambda.AppendFormat("EntityFunctions.TruncateTime({0}) == @{1} &&", column.Name, searchParamArgs.Count);
-                        //else
-                        searchLambda.AppendFormat("{0} {2} @{1} &&", column.Name, searchParamArgs.Count, GetSqlOperator(column.Filter.Operator));
+                        if (column.DataType == DataType.Date.ToString().ToLower())
+                        {
+                            if (column.Filter.Operator == CompareOperators.Equals)
+                            {
+                                searchLambda.AppendFormat("({0} >= @{1} && {0} <= @{2}) &&", column.Name, searchParamArgs.Count, searchParamArgs.Count + 1);
+                            }
+                            else
+                            {
+                                searchLambda.AppendFormat("({0} < @{1} || {0} > @{2}) &&", column.Name, searchParamArgs.Count, searchParamArgs.Count + 1);
+                            }
+                        }
+                        else
+                        {
+                            searchLambda.AppendFormat("{0} {2} @{1} &&", column.Name, searchParamArgs.Count, GetSqlOperator(column.Filter.Operator));
+                        }
 
                         if (String.Equals(column.DataType, DataType.Numeric.ToString(),
                             StringComparison.CurrentCultureIgnoreCase))
@@ -230,12 +223,19 @@
                         }
                         else if (
                             String.Equals(column.DataType, DataType.DateTime.ToString(),
-                                StringComparison.CurrentCultureIgnoreCase) ||
-                            String.Equals(column.DataType, DataType.Date.ToString(), StringComparison.CurrentCultureIgnoreCase))
+                                StringComparison.CurrentCultureIgnoreCase))
                         {
                             searchParamArgs.Add(DateTime.Parse(column.Filter.Text));
                         }
-                        else if (String.Equals(column.DataType, DataType.Boolean.ToString(), StringComparison.CurrentCultureIgnoreCase))
+                        else if (
+                            String.Equals(column.DataType, DataType.Date.ToString(),
+                                StringComparison.CurrentCultureIgnoreCase))
+                        {
+                            searchParamArgs.Add(DateTime.Parse(column.Filter.Text).Date);
+                            searchParamArgs.Add(DateTime.Parse(column.Filter.Text).Date.AddDays(1).AddMinutes(-1));
+                        }
+                        else if (String.Equals(column.DataType, DataType.Boolean.ToString(),
+                            StringComparison.CurrentCultureIgnoreCase))
                         {
                             searchParamArgs.Add(Boolean.Parse(column.Filter.Text));
                         }
