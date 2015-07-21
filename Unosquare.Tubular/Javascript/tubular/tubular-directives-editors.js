@@ -359,6 +359,7 @@
          * @param {string} label Set the field's label otherwise the name is used.
          * @param {string} help Set the help text.
          * @param {boolean} required Set if the field is required.
+         * @param {boolean} readOnly Set if the field is read-only.
          * @param {object} options Set the options to display.
          * @param {string} optionsUrl Set the Http Url where to retrieve the values.
          * @param {string} optionsMethod Set the Http Method where to retrieve the values.
@@ -373,7 +374,7 @@
                         '<span ng-hide="isEditing">{{ value }}</span>' +
                         '<label ng-show="showLabel">{{ label }}</label>' +
                         '<select ng-options="{{ selectOptions }}" ng-show="isEditing" ng-model="value" class="form-control" ' +
-                        'ng-required="required" />' +
+                        'ng-required="required" ng-disabled="readOnly" />' +
                         '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">' +
                         '{{error}}' +
                         '</span>' +
