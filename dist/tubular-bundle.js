@@ -2737,7 +2737,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             'tubularEditorService', function(tubularEditorService) {
 
                 return {
-                    template: '<div ng-class="{ \'form-group\' : isEditing, \'has-error\' : !$valid }" class="tubular-checkbox">' +
+                    template: '<div ng-class="{ \'checkbox\' : isEditing, \'has-error\' : !$valid }" class="tubular-checkbox">' +
                         '<span ng-hide="isEditing">{{value ? checkedValue : uncheckedValue}}</span>' +
                         '<input ng-show="isEditing" type="checkbox" ng-model="value" ng-disabled="readOnly"' +
                         'class="tubular-checkbox" id="{{name}}" /> ' +
