@@ -350,7 +350,7 @@
                     scope.$valid = true;
 
                     scope.checkValid = function () {
-                        scope.$valid = false;
+                        scope.$valid = true;
                         scope.state.$errors = [];
 
                         if (angular.isUndefined(scope.value) && scope.required) {

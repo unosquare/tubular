@@ -32,7 +32,7 @@ $ bower install tubular --save
 
 ## npm Installation [![npm version](https://badge.fury.io/js/tubular.svg)](http://badge.fury.io/js/tubular)
 
-The npm package only contains the **Tubular Template Module**, if you want to use all of Tubular's features, please install the Bower package instead.
+The npm package only contains the **Tubular Template Generator Module**, if you want to use all of Tubular's features, please install the Bower package instead.
 
 <pre>
 # install Tubular package and add it to package.json
@@ -91,7 +91,7 @@ The following HTML represents a basic grid. You don't need to add anything else 
 
 ```html
  <div class="container">
-        <tb-grid server-url="/data/customers.json" page-size="20" class="row">
+        <tb-grid server-url="/data/customers.json" page-size="20" class="row" grid-name="mygrid">
             <div class="col-md-12">
                 <div class="panel panel-default panel-rounded">
                     <tb-grid-table class="table-bordered">
