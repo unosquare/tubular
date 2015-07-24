@@ -1,7 +1,7 @@
 ﻿(function() {
     'use strict';
 
-   /**                                           
+    /**                                           
     * @ngdoc module
     * @name tubular.models
     * 
@@ -11,7 +11,7 @@
     * It contains model's factories to be use in {@link tubular.directives} like `tubularModel` and `tubularGridColumnModel`.
     */
     angular.module('tubular.models', [])
-       /**
+        /**
         * @ngdoc factory
         * @name tubularGridColumnModel
         *
@@ -138,12 +138,6 @@
                             this.$original[key] = value;
 
                             if (angular.isUndefined(this.$state)) this.$state = {};
-                            this.$state[key] = {
-                                $valid: function() {
-                                    return this.$errors.length === 0;
-                                },
-                                $errors: []
-                            };
 
                             $scope.$watch(function() {
                                 return obj[key];
@@ -196,19 +190,6 @@
                     obj.$hasChanges = false;
                     obj.$selected = false;
                     obj.$isNew = false;
-
-                    for (var k in obj) {
-                        if (obj.hasOwnProperty(k)) {
-                            if (k[0] == '$') continue;
-
-                            obj.$state[k] = {
-                                $valid: function() {
-                                    return this.$errors.length == 0;
-                                },
-                                $errors: []
-                            };
-                        }
-                    }
 
                     obj.$valid = function() {
                         for (var k in obj.$state) {

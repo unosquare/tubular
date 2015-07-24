@@ -122,7 +122,9 @@
                                 $scope.save();
                             };
 
-                            $scope.create = function() {
+                            $scope.create = function () {
+                                if (!$scope.model.$valid()) return;
+
                                 $scope.model.$isNew = true;
                                 $scope.save();
                             };

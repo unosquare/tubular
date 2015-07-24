@@ -3215,7 +3215,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 $scope.save();
                             };
 
-                            $scope.create = function() {
+                            $scope.create = function () {
+                                if (!$scope.model.$valid()) return;
+
                                 $scope.model.$isNew = true;
                                 $scope.save();
                             };
@@ -3246,7 +3248,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 (function() {
     'use strict';
 
-   /**                                           
+    /**                                           
     * @ngdoc module
     * @name tubular.models
     * 
@@ -3256,7 +3258,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
     * It contains model's factories to be use in {@link tubular.directives} like `tubularModel` and `tubularGridColumnModel`.
     */
     angular.module('tubular.models', [])
-       /**
+        /**
         * @ngdoc factory
         * @name tubularGridColumnModel
         *
@@ -3383,12 +3385,6 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             this.$original[key] = value;
 
                             if (angular.isUndefined(this.$state)) this.$state = {};
-                            this.$state[key] = {
-                                $valid: function() {
-                                    return this.$errors.length === 0;
-                                },
-                                $errors: []
-                            };
 
                             $scope.$watch(function() {
                                 return obj[key];
@@ -3441,19 +3437,6 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     obj.$hasChanges = false;
                     obj.$selected = false;
                     obj.$isNew = false;
-
-                    for (var k in obj) {
-                        if (obj.hasOwnProperty(k)) {
-                            if (k[0] == '$') continue;
-
-                            obj.$state[k] = {
-                                $valid: function() {
-                                    return this.$errors.length == 0;
-                                },
-                                $errors: []
-                            };
-                        }
-                    }
 
                     obj.$valid = function() {
                         for (var k in obj.$state) {
@@ -3890,42 +3873,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     scope.format = scope.format || defaultFormat;
                     scope.$valid = true;
 
-                    // HACK: I need to know why
-                    scope.$watch('label', function (n, o) {
-                        if (angular.isUndefined(n)) {
-                            scope.label = (scope.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
-                        }
-                    });
-
-                    scope.$watch('value', function(newValue, oldValue) {
-                        if (angular.isUndefined(oldValue) && angular.isUndefined(newValue)) return;
-                        
-                        if (angular.isUndefined(scope.state)) {
-                            scope.state = {
-                                $valid: function() {
-                                    return this.$errors.length === 0;
-                                },
-                                $errors: []
-                            };
-                        }
-
-                        scope.$valid = true;
+                    scope.checkValid = function () {
+                        scope.$valid = false;
                         scope.state.$errors = [];
-                        
-                        // Try to match the model to the parent, if it exists
-                        if (angular.isDefined(scope.$parent.Model)) {
-                            if (angular.isDefined(scope.$parent.Model[scope.name])) {
-                                scope.$parent.Model[scope.name] = newValue;
-
-                                if (angular.isUndefined(scope.$parent.Model.$state)) {
-                                    scope.$parent.Model.$state = [];
-                                }
-
-                                scope.$parent.Model.$state[scope.Name] = scope.state;
-                            } else if (angular.isDefined(scope.$parent.Model.$addField)) {
-                                scope.$parent.Model.$addField(scope.name, newValue);
-                            }
-                        }
 
                         if (angular.isUndefined(scope.value) && scope.required) {
                             scope.$valid = false;
@@ -3944,6 +3894,44 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         }
 
                         scope.validate();
+                    };
+
+                    // HACK: I need to know why
+                    scope.$watch('label', function (n, o) {
+                        if (angular.isUndefined(n)) {
+                            scope.label = (scope.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
+                        }
+                    });
+
+                    scope.$watch('value', function(newValue, oldValue) {
+                        if (angular.isUndefined(oldValue) && angular.isUndefined(newValue)) return;
+                        
+                        scope.state = {
+                            $valid: function () {
+                                scope.checkValid();
+                                return this.$errors.length === 0;
+                            },
+                            $errors: []
+                        };
+
+                        scope.$valid = true;
+                        
+                        // Try to match the model to the parent, if it exists
+                        if (angular.isDefined(scope.$parent.Model)) {
+                            if (angular.isDefined(scope.$parent.Model[scope.name])) {
+                                scope.$parent.Model[scope.name] = newValue;
+
+                                if (angular.isUndefined(scope.$parent.Model.$state)) {
+                                    scope.$parent.Model.$state = [];
+                                }
+
+                                scope.$parent.Model.$state[scope.Name] = scope.state;
+                            } else if (angular.isDefined(scope.$parent.Model.$addField)) {
+                                scope.$parent.Model.$addField(scope.name, newValue);
+                            }
+                        }
+
+                        scope.checkValid();
                     });
 
                     var parent = scope.$parent;
@@ -3984,12 +3972,13 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                                 parent.model.$state[scope.Name] = {
                                     $valid: function () {
+                                        scope.checkValid();
                                         return this.$errors.length === 0;
                                     },
                                     $errors: []
                                 };
 
-                                if (angular.equals(scope.state, parent.model.$state[scope.Name]) == false) {
+                                if (angular.equals(scope.state, parent.model.$state[scope.Name]) === false) {
                                     scope.state = parent.model.$state[scope.Name];
                                 }
                             };
