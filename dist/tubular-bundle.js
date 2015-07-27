@@ -3554,8 +3554,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 };
 
                 me.openDialog = function(template, model, gridScope, size) {
-                    if (angular.isUndefined(template))
+                    if (angular.isUndefined(template)) {
                         template = tubularTemplateService.generatePopup(model);
+                    }
 
                     var dialog = $modal.open({
                         templateUrl: template,
@@ -3874,10 +3875,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     scope.$valid = true;
 
                     scope.checkValid = function () {
-                        scope.$valid = false;
+                        scope.$valid = true;
                         scope.state.$errors = [];
 
-                        if (angular.isUndefined(scope.value) && scope.required) {
+                        if ((angular.isUndefined(scope.value) && scope.required) ||
+                            (Object.prototype.toString.call(scope.value) === "[object Date]" && isNaN(scope.value.getTime()))) {
                             scope.$valid = false;
                             scope.state.$errors = ["Field is required"];
 
@@ -3942,7 +3944,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         if (angular.isDefined(parent.tubularDirective) &&
                             (parent.tubularDirective === 'tubular-form' ||
                             parent.tubularDirective === 'tubular-rowset')) {
-                            if (scope.name === null) return;
+
+                            if (scope.name === null) {
+                                return;
+                            }
 
                             if (parent.hasFieldsDefinitions !== false) {
                                 throw 'Cannot define more fields. Field definitions have been sealed';
