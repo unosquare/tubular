@@ -93,6 +93,7 @@
          * @param {boolean} readOnly Set if the field is read-only.
          * @param {number} min Set the minimum value.
          * @param {number} max Set the maximum value.
+         * @param {number} step Set the step setting, default 'any'.
          */
         .directive('tbNumericEditor', [
             'tubularEditorService', function(tubularEditorService) {
@@ -103,8 +104,8 @@
                         '<label ng-show="showLabel">{{ label }}</label>' +
                         '<div class="input-group" ng-show="isEditing">' +
                         '<div class="input-group-addon" ng-show="format == \'C\'">$</div>' +
-                        '<input type="number" step="any" placeholder="{{placeholder}}" ng-model="value" class="form-control" ' +
-                        'ng-required="required" ng-readonly="readOnly" />' +
+                        '<input type="number" placeholder="{{placeholder}}" ng-model="value" class="form-control" ' +
+                        'ng-required="required" ng-readonly="readOnly" step="{{step || \'any\'}}" />' +
                         '</div>' +
                         '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
                         '<span class="help-block" ng-show="isEditing && help">{{help}}</span>' +
@@ -112,7 +113,7 @@
                     restrict: 'E',
                     replace: true,
                     transclude: true,
-                    scope: tubularEditorService.defaultScope,
+                    scope: angular.extend({ step: '=?' }, tubularEditorService.defaultScope),
                     controller: [
                         '$scope', function($scope) {
                             $scope.validate = function() {
