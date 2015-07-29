@@ -190,8 +190,9 @@
                             $scope.DataType = "date";
 
                             $scope.$watch('value', function (val) {
-                                if (typeof (val) === 'string')
+                                if (typeof (val) === 'string') {
                                     $scope.value = new Date(val);
+                                }
                             });
 
                             $scope.validate = function() {
@@ -285,8 +286,9 @@
                             $scope.DataType = "date";
 
                             $scope.$watch('value', function (val) {
-                                if (typeof (val) === 'string')
+                                if (typeof (val) === 'string') {
                                     $scope.value = new Date(val);
+                                }
                             });
 
                             $scope.validate = function() {
@@ -326,7 +328,7 @@
                         return {
                             post: function(scope, lElement) {
                                 var inp = $(lElement).find("input[type=date]")[0];
-                                if (inp.type != 'date') {
+                                if (inp.type !== 'date') {
                                     $(inp).datepicker({
                                         dateFormat: scope.format.toLowerCase()
                                     }).on("dateChange", function(e) {
@@ -488,9 +490,15 @@
                     template: '<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid }">' +
                         '<span ng-hide="isEditing">{{ value }}</span>' +
                         '<label ng-show="showLabel">{{ label }}</label>' +
-                        '<input ng-show="isEditing" ng-model="value" placeholder="{{placeholder}}" ' +
-                        'class="form-control {{css}}" typeahead="{{ selectOptions }}" ' +
-                        'ng-required="required" />' +
+                        '<div class="input-group" ng-show="isEditing">' +
+                        '<input ng-model="value" placeholder="{{placeholder}}" ' +
+                        'class="form-control {{css}}" ng-readonly="lastSet.indexOf(value) !== -1" typeahead="{{ selectOptions }}" ' +
+                        'ng-required="required" /> ' +
+                        '<div class="input-group-addon" ng-hide="lastSet.indexOf(value) !== -1"><i class="fa fa-pencil"></i></div>' +
+                        '<span class="input-group-btn" ng-show="lastSet.indexOf(value) !== -1">' +
+                        '<button class="btn btn-default" type="button" ng-click="value = null"><i class="fa fa-times"></i>' +
+                        '</span>' +
+                        '</div>' +
                         '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">' +
                         '{{error}}' +
                         '</span>' +
@@ -510,6 +518,7 @@
                         '$scope', function ($scope) {
                             tubularEditorService.setupScope($scope);
                             $scope.selectOptions = "d for d in getValues($viewValue)";
+                            $scope.lastSet = [];
 
                             if (angular.isDefined($scope.optionLabel)) {
                                 $scope.selectOptions = "d as d." + $scope.optionLabel + " for d in getValues($viewValue)";
@@ -521,16 +530,25 @@
 
                             $scope.getValues = function (val) {
                                 if (angular.isDefined($scope.optionsUrl)) {
-                                    if (angular.isUndefined($scope.$component) || $scope.$component == null)
+                                    if (angular.isUndefined($scope.$component) || $scope.$component == null) {
                                         throw 'You need to define a parent Form or Grid';
+                                    }
 
-                                    return $scope.$component.dataService.retrieveDataAsync({
+                                    var p = $scope.$component.dataService.retrieveDataAsync({
                                         serverUrl: $scope.optionsUrl + '?search=' + val,
                                         requestMethod: $scope.optionsMethod || 'GET'
                                     }).promise;
+
+                                    p.then(function (data) {
+                                        $scope.lastSet = data;
+                                        return data;
+                                    });
+
+                                    return p;
                                 }
 
                                 return $q(function (resolve) {
+                                    $scope.lastSet = $scope.options;
                                     resolve($scope.options);
                                 });
                             };
