@@ -2635,7 +2635,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         '<span ng-hide="isEditing">{{ value }}</span>' +
                         '<label ng-show="showLabel">{{ label }}</label>' +
                         '<div class="input-group" ng-show="isEditing">' +
-                        '<input ng-show="isEditing" ng-model="value" placeholder="{{placeholder}}" ' +
+                        '<input ng-model="value" placeholder="{{placeholder}}" ' +
                         'class="form-control {{css}}" ng-readonly="lastSet.indexOf(value) !== -1" typeahead="{{ selectOptions }}" ' +
                         'ng-required="required" /> ' +
                         '<div class="input-group-addon" ng-hide="lastSet.indexOf(value) !== -1"><i class="fa fa-pencil"></i></div>' +
@@ -2916,7 +2916,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 return {
                     require: '^tbColumn',
                     template: '<div class="tubular-column-menu">' +
-                        '<button class="btn btn-xs btn-default" data-toggle="popover" data-placement="bottom" ' +
+                        '<button class="btn btn-xs btn-default btn-popover" ng-click="open()" ' +
                         'ng-class="{ \'btn-success\': (filter.Operator !== \'None\' && filter.Text.length > 0) }">' +
                         '<i class="fa fa-filter"></i></button>' +
                         '<div style="display: none;">' +
@@ -2971,7 +2971,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 return {
                     require: '^tbColumn',
                     template: '<div ngTransclude class="btn-group tubular-column-menu">' +
-                        '<button class="tubular-column-filter-button btn btn-xs btn-default" data-toggle="popover" data-placement="bottom" ' +
+                        '<button class="btn btn-xs btn-default btn-popover" ng-click="open()" ' +
                         'ng-class="{ \'btn-success\': filter.Text != null }">' +
                         '<i class="fa fa-filter"></i></button>' +
                         '<div style="display: none;">' +
@@ -3022,7 +3022,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     }
                                 });
                             },
-                            post: function(scope, lElement, lAttrs, lController, lTransclude) {
+                            post: function(scope, lElement, lAttrs) {
                                 tubularGridFilterService.createFilterModel(scope, lAttrs);
                             }
                         };
@@ -3050,7 +3050,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 return {
                     require: '^tbColumn',
                     template: '<div class="tubular-column-menu">' +
-                        '<button class="tubular-column-filter-button btn btn-xs btn-default" data-toggle="popover" data-placement="bottom" ' +
+                        '<button class="btn btn-xs btn-default btn-popover" ng-click="open()" ' +
                         'ng-class="{ \'btn-success\': (filter.Argument.length > 0) }">' +
                         '<i class="fa fa-filter"></i></button>' +
                         '<div style="display: none;">' +
@@ -3093,12 +3093,12 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     ],
                     compile: function compile() {
                         return {
-                            pre: function(scope, lElement, lAttrs, lController, lTransclude) {
-                                tubularGridFilterService.applyFilterFuncs(scope, lElement, lAttrs,function() {
+                            pre: function(scope, lElement, lAttrs) {
+                                tubularGridFilterService.applyFilterFuncs(scope, lElement, lAttrs, function() {
                                     scope.getOptionsFromUrl();
                                 });
                             },
-                            post: function(scope, lElement, lAttrs, lController, lTransclude) {
+                            post: function(scope, lElement, lAttrs) {
                                 tubularGridFilterService.createFilterModel(scope, lAttrs);
 
                                 scope.filter.Operator = 'Multiple';
@@ -3235,7 +3235,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             };
 
                             $scope.create = function () {
-                                if (!$scope.model.$valid()) return;
+                                if (!$scope.model.$valid()) {
+                                    return;
+                                }
 
                                 $scope.model.$isNew = true;
                                 $scope.save();
@@ -3250,11 +3252,13 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     field.value = null;
                                 });
                             };
+
+                            $scope.$emit('tbForm_OnGreetParentController', $scope);
                         }
                     ],
                     compile: function compile() {
                         return {
-                            post: function(scope, lElement, lAttrs, lController, lTransclude) {
+                            post: function(scope) {
                                 scope.hasFieldsDefinitions = true;
                             }
                         };
@@ -3749,7 +3753,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     };
 
                     scope.close = function() {
-                        $(el).find('[data-toggle="popover"]').popover('hide');
+                        $(el).find('.btn-popover').popover('hide');
+                    };
+
+                    scope.open = function () {
+                        $(el).find('.btn-popover').popover('toggle');
                     };
 
                     scope.openColumnsSelector = function() {
@@ -3791,8 +3799,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         }
                     };
 
-                    $(el).find('[data-toggle="popover"]').popover({
+                    $(el).find('.btn-popover').popover({
                         html: true,
+                        placement: 'bottom',
+                        trigger: 'manual',
                         content: function() {
                             var selectEl = $(this).next().find('select').find('option').remove().end();
                             angular.forEach(scope.filterOperators, function(val, key) {
@@ -3803,13 +3813,12 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         }
                     });
                     
-                    $(el).find('[data-toggle="popover"]').on('show.bs.popover', function (e) {
-                        $("[rel=popover]").not(e.target).popover("destroy");
-                        $(".popover").remove();
+                    $(el).find('.btn-popover').on('show.bs.popover', function (e) {
+                        $('.btn-popover').not(e.target).popover("hide");
                     });
 
                     if (angular.isDefined(openCallback)) {
-                        $(el).find('[data-toggle="popover"]').on('shown.bs.popover', openCallback);
+                        $(el).find('.btn-popover').on('shown.bs.popover', openCallback);
                     }
                 };
 

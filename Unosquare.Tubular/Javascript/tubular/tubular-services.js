@@ -206,7 +206,11 @@
                     };
 
                     scope.close = function() {
-                        $(el).find('[data-toggle="popover"]').popover('hide');
+                        $(el).find('.btn-popover').popover('hide');
+                    };
+
+                    scope.open = function () {
+                        $(el).find('.btn-popover').popover('toggle');
                     };
 
                     scope.openColumnsSelector = function() {
@@ -248,8 +252,10 @@
                         }
                     };
 
-                    $(el).find('[data-toggle="popover"]').popover({
+                    $(el).find('.btn-popover').popover({
                         html: true,
+                        placement: 'bottom',
+                        trigger: 'manual',
                         content: function() {
                             var selectEl = $(this).next().find('select').find('option').remove().end();
                             angular.forEach(scope.filterOperators, function(val, key) {
@@ -260,13 +266,12 @@
                         }
                     });
                     
-                    $(el).find('[data-toggle="popover"]').on('show.bs.popover', function (e) {
-                        $("[rel=popover]").not(e.target).popover("destroy");
-                        $(".popover").remove();
+                    $(el).find('.btn-popover').on('show.bs.popover', function (e) {
+                        $('.btn-popover').not(e.target).popover("hide");
                     });
 
                     if (angular.isDefined(openCallback)) {
-                        $(el).find('[data-toggle="popover"]').on('shown.bs.popover', openCallback);
+                        $(el).find('.btn-popover').on('shown.bs.popover', openCallback);
                     }
                 };
 

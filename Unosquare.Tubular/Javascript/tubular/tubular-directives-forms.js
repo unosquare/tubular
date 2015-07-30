@@ -123,7 +123,9 @@
                             };
 
                             $scope.create = function () {
-                                if (!$scope.model.$valid()) return;
+                                if (!$scope.model.$valid()) {
+                                    return;
+                                }
 
                                 $scope.model.$isNew = true;
                                 $scope.save();
@@ -138,11 +140,13 @@
                                     field.value = null;
                                 });
                             };
+
+                            $scope.$emit('tbForm_OnGreetParentController', $scope);
                         }
                     ],
                     compile: function compile() {
                         return {
-                            post: function(scope, lElement, lAttrs, lController, lTransclude) {
+                            post: function(scope) {
                                 scope.hasFieldsDefinitions = true;
                             }
                         };

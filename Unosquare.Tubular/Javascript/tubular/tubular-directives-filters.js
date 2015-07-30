@@ -56,7 +56,7 @@
                 return {
                     require: '^tbColumn',
                     template: '<div class="tubular-column-menu">' +
-                        '<button class="btn btn-xs btn-default" data-toggle="popover" data-placement="bottom" ' +
+                        '<button class="btn btn-xs btn-default btn-popover" ng-click="open()" ' +
                         'ng-class="{ \'btn-success\': (filter.Operator !== \'None\' && filter.Text.length > 0) }">' +
                         '<i class="fa fa-filter"></i></button>' +
                         '<div style="display: none;">' +
@@ -111,7 +111,7 @@
                 return {
                     require: '^tbColumn',
                     template: '<div ngTransclude class="btn-group tubular-column-menu">' +
-                        '<button class="tubular-column-filter-button btn btn-xs btn-default" data-toggle="popover" data-placement="bottom" ' +
+                        '<button class="btn btn-xs btn-default btn-popover" ng-click="open()" ' +
                         'ng-class="{ \'btn-success\': filter.Text != null }">' +
                         '<i class="fa fa-filter"></i></button>' +
                         '<div style="display: none;">' +
@@ -162,7 +162,7 @@
                                     }
                                 });
                             },
-                            post: function(scope, lElement, lAttrs, lController, lTransclude) {
+                            post: function(scope, lElement, lAttrs) {
                                 tubularGridFilterService.createFilterModel(scope, lAttrs);
                             }
                         };
@@ -190,7 +190,7 @@
                 return {
                     require: '^tbColumn',
                     template: '<div class="tubular-column-menu">' +
-                        '<button class="tubular-column-filter-button btn btn-xs btn-default" data-toggle="popover" data-placement="bottom" ' +
+                        '<button class="btn btn-xs btn-default btn-popover" ng-click="open()" ' +
                         'ng-class="{ \'btn-success\': (filter.Argument.length > 0) }">' +
                         '<i class="fa fa-filter"></i></button>' +
                         '<div style="display: none;">' +
@@ -233,12 +233,12 @@
                     ],
                     compile: function compile() {
                         return {
-                            pre: function(scope, lElement, lAttrs, lController, lTransclude) {
-                                tubularGridFilterService.applyFilterFuncs(scope, lElement, lAttrs,function() {
+                            pre: function(scope, lElement, lAttrs) {
+                                tubularGridFilterService.applyFilterFuncs(scope, lElement, lAttrs, function() {
                                     scope.getOptionsFromUrl();
                                 });
                             },
-                            post: function(scope, lElement, lAttrs, lController, lTransclude) {
+                            post: function(scope, lElement, lAttrs) {
                                 tubularGridFilterService.createFilterModel(scope, lAttrs);
 
                                 scope.filter.Operator = 'Multiple';
