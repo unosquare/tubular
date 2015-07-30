@@ -1138,7 +1138,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             $scope.getFullDataSource = function(callback) {
                                 $scope.dataService.retrieveDataAsync({
                                     serverUrl: $scope.serverUrl,
-                                    requestMethod: $scope.requestMethod,
+                                    requestMethod: $scope.requestMethod || 'POST',
                                     timeout: $scope.requestTimeout,
                                     requireAuthentication: $scope.requireAuthentication,
                                     data: {
