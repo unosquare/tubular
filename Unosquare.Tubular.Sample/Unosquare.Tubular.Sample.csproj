@@ -125,17 +125,11 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\Unosquare.Tubular\Css\tubular-bundle.css">
+    <Content Include="..\dist\tubular-bundle.css">
       <Link>ui\styles\tubular-bundle.css</Link>
     </Content>
-    <Content Include="..\Unosquare.Tubular\Css\tubular-bundle.min.css">
-      <Link>ui\styles\tubular-bundle.min.css</Link>
-    </Content>
-    <Content Include="..\Unosquare.Tubular\Javascript\tubular-bundle.js">
+    <Content Include="..\dist\tubular-bundle.js">
       <Link>ui\tubular\tubular-bundle.js</Link>
-    </Content>
-    <Content Include="..\Unosquare.Tubular\Javascript\tubular-bundle.min.js">
-      <Link>ui\tubular\tubular-bundle.min.js</Link>
     </Content>
     <Content Include="index.html" />
     <Content Include="ui\app\app.js" />
@@ -164,9 +158,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
-    <Content Include="..\Unosquare.Tubular\Javascript\tubular-bundle.min.js.map">
-      <Link>ui\tubular\tubular-bundle.min.js.map</Link>
-    </Content>
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
