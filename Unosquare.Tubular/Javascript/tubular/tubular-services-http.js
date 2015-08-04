@@ -309,6 +309,48 @@
                     });
                 };
 
+                /*
+                 * @function postBinary
+                 * 
+                 * @description
+                 * Allow to post a `FormData` object with `$http`. You need to append the files
+                 * in your own FormData.
+                 */
+                me.postBinary = function (url, formData) {
+                    var canceller = $q.defer();
+
+                    var cancel = function (reason) {
+                        console.error(reason);
+                        canceller.resolve(reason);
+                    };
+
+                    if (me.requireAuthentication && me.isAuthenticated() === false) {
+                        // Return empty dataset
+                        return {
+                            promise: $q(function (resolve, reject) {
+                                resolve(null);
+                            }),
+                            cancel: cancel
+                        };
+                    }
+
+                    var promise = $http({
+                        url: url,
+                        method: "POST",
+                        headers: { 'Content-Type': undefined },
+                        transformRequest: function (data) {
+                            // TODO: Remove?
+                            return data;
+                        },
+                        data: formData
+                    });
+
+                    return {
+                        promise: promise,
+                        cancel: cancel
+                    };
+                };
+
                 me.put = function(url, data) {
                     return me.retrieveDataAsync({
                         serverUrl: url,

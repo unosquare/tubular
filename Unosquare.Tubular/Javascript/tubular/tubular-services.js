@@ -42,10 +42,12 @@
                             '$scope', function($scope) {
                                 $scope.Model = model;
 
-                                $scope.savePopup = function() {
-                                    var result = $scope.Model.save();
+                                $scope.savePopup = function (model) {
+                                    var result = (model) ? model.save() : $scope.Model.save();
 
-                                    if (angular.isUndefined(result) || result === false) return;
+                                    if (angular.isUndefined(result) || result === false) {
+                                        return;
+                                    }
 
                                     result.then(
                                         function(data) {

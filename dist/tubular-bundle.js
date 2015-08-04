@@ -1533,10 +1533,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
         .directive('tbEmptyGrid', [
             function() {
 
+                // TODO: I don't know maybe remove this directive
                 return {
                     require: '^tbGrid',
                     template: '<tr ngTransclude ng-show="$parent.$component.isEmpty">' +
-                        '<td class="bg-warning" colspan="{{$parent.$component.columns.length + 1}}">' +
+                        '<td class="bg-warning" colspan="{{$parent.$component.visibleColumns()}}">' +
                         '<b>No records found</b>' +
                         '</td>' +
                         '</tr>',
@@ -1562,6 +1563,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
         .directive('tbRowGroupHeader', [
             function() {
 
+                // TODO: I don't know maybe remove this directive
                 return {
                     require: '^tbRowTemplate',
                     template: '<td class="row-group" colspan="{{$parent.$component.visibleColumns()}}">' +
@@ -3395,154 +3397,155 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
         * @description
         * The `tubularModel` factory is the base to generate a row model to use with `tbGrid` and `tbForm`.
         */
-        .factory('tubularModel', [
-            '$timeout', '$location', function($timeout, $location) {
-                return function($scope, data, dataService) {
-                    var obj = {
-                        $key: "",
-                        $addField: function(key, value) {
-                            this[key] = value;
-                            if (angular.isUndefined(this.$original)) {
-                                this.$original = {};
-                            }
-                            this.$original[key] = value;
-
-                            if (angular.isUndefined(this.$state)) this.$state = {};
-
-                            $scope.$watch(function() {
-                                return obj[key];
-                            }, function(newValue, oldValue) {
-                                if (newValue === oldValue) return;
-                                obj.$hasChanges = obj[key] !== obj.$original[key];
-                            });
+        .factory('tubularModel', function() {
+            return function($scope, data, dataService) {
+                var obj = {
+                    $key: "",
+                    $addField: function(key, value) {
+                        this[key] = value;
+                        if (angular.isUndefined(this.$original)) {
+                            this.$original = {};
                         }
-                    };
 
-                    if (angular.isArray(data) == false) {
-                        angular.forEach(Object.keys(data), function(name) {
-                            obj.$addField(name, data[name]);
+                        this.$original[key] = value;
+
+                        if (angular.isUndefined(this.$state)) {
+                            this.$state = {};
+                        }
+
+                        $scope.$watch(function() {
+                            return obj[key];
+                        }, function(newValue, oldValue) {
+                            if (newValue === oldValue) return;
+                            obj.$hasChanges = obj[key] !== obj.$original[key];
                         });
                     }
+                };
 
-                    if (angular.isDefined($scope.columns)) {
-                        angular.forEach($scope.columns, function(col, key) {
-                            var value = data[key] || data[col.Name];
+                if (angular.isArray(data) == false) {
+                    angular.forEach(Object.keys(data), function(name) {
+                        obj.$addField(name, data[name]);
+                    });
+                }
 
-                            if (angular.isUndefined(value) && data[key] === 0) {
-                                value = 0;
+                if (angular.isDefined($scope.columns)) {
+                    angular.forEach($scope.columns, function(col, key) {
+                        var value = data[key] || data[col.Name];
+
+                        if (angular.isUndefined(value) && data[key] === 0) {
+                            value = 0;
+                        }
+
+                        obj.$addField(col.Name, value);
+
+                        if (col.DataType == "date" || col.DataType == "datetime") {
+                            var timezone = new Date().toString().match(/([-\+][0-9]+)\s/)[1];
+                            timezone = timezone.substr(0, timezone.length - 2) + ':' + timezone.substr(timezone.length - 2, 2);
+                            var tempDate = new Date(Date.parse(obj[col.Name] + timezone));
+
+                            if (col.DataType == "date") {
+                                obj[col.Name] = new Date(1900 + tempDate.getYear(), tempDate.getMonth(), tempDate.getDate());
+                            } else {
+                                obj[col.Name] = new Date(1900 + tempDate.getYear(), tempDate.getMonth(), tempDate.getDate(), tempDate.getHours(), tempDate.getMinutes(), tempDate.getSeconds(), 0);
+                            }
+                        }
+
+                        if (col.IsKey) {
+                            obj.$key += obj[col.Name] + ",";
+                        }
+                    });
+                }
+
+                if (obj.$key.length > 1) {
+                    obj.$key = obj.$key.substring(0, obj.$key.length - 1);
+                }
+
+                obj.$isEditing = false;
+                obj.$hasChanges = false;
+                obj.$selected = false;
+                obj.$isNew = false;
+
+                obj.$valid = function() {
+                    for (var k in obj.$state) {
+                        if (obj.$state.hasOwnProperty(k)) {
+                            var key = k;
+                            if (angular.isUndefined(obj.$state[key]) ||
+                                obj.$state[key] == null ||
+                                angular.isUndefined(obj.$state[key].$valid)) {
+                                continue;
                             }
 
-                            obj.$addField(col.Name, value);
-
-                            if (col.DataType == "date" || col.DataType == "datetime") {
-                                var timezone = new Date().toString().match(/([-\+][0-9]+)\s/)[1];
-                                timezone = timezone.substr(0, timezone.length - 2) + ':' + timezone.substr(timezone.length - 2, 2);
-                                var tempDate = new Date(Date.parse(obj[col.Name] + timezone));
-
-                                if (col.DataType == "date") {
-                                    obj[col.Name] = new Date(1900 + tempDate.getYear(), tempDate.getMonth(), tempDate.getDate());
-                                } else {
-                                    obj[col.Name] = new Date(1900 + tempDate.getYear(), tempDate.getMonth(), tempDate.getDate(), tempDate.getHours(), tempDate.getMinutes(), tempDate.getSeconds(), 0);
-                                }
+                            if (obj.$state[key].$valid()) {
+                                continue;
                             }
 
-                            if (col.IsKey) {
-                                obj.$key += obj[col.Name] + ",";
-                            }
-                        });
+                            return false;
+                        }
                     }
 
-                    if (obj.$key.length > 1) {
-                        obj.$key = obj.$key.substring(0, obj.$key.length - 1);
+                    return true;
+                };
+
+                // Returns a save promise
+                obj.save = function() {
+                    if (angular.isUndefined(dataService) || dataService == null) {
+                        throw 'Define DataService to your model.';
+                    }
+
+                    if (angular.isUndefined($scope.serverSaveUrl) || $scope.serverSaveUrl == null) {
+                        throw 'Define a Save URL.';
+                    }
+
+                    if (!obj.$isNew && !obj.$hasChanges) {
+                        return false;
+                    }
+
+                    obj.$isLoading = true;
+
+                    return dataService.saveDataAsync(obj, {
+                        serverUrl: $scope.serverSaveUrl,
+                        requestMethod: obj.$isNew ? ($scope.serverSaveMethod || 'POST') : 'PUT'
+                    }).promise;
+                };
+
+                obj.edit = function() {
+                    if (obj.$isEditing && obj.$hasChanges) {
+                        obj.save();
+                    }
+
+                    obj.$isEditing = !obj.$isEditing;
+                };
+
+                obj.delete = function() {
+                    $scope.deleteRow(obj);
+                };
+
+                obj.resetOriginal = function() {
+                    for (var k in obj.$original) {
+                        if (obj.$original.hasOwnProperty(k)) {
+                            obj.$original[k] = obj[k];
+                        }
+                    }
+                };
+
+                obj.revertChanges = function() {
+                    for (var k in obj) {
+                        if (obj.hasOwnProperty(k)) {
+                            if (k[0] == '$' || angular.isUndefined(obj.$original[k])) {
+                                continue;
+                            }
+
+                            obj[k] = obj.$original[k];
+                        }
                     }
 
                     obj.$isEditing = false;
                     obj.$hasChanges = false;
-                    obj.$selected = false;
-                    obj.$isNew = false;
-
-                    obj.$valid = function() {
-                        for (var k in obj.$state) {
-                            if (obj.$state.hasOwnProperty(k)) {
-                                var key = k;
-                                if (angular.isUndefined(obj.$state[key]) ||
-                                    obj.$state[key] == null ||
-                                    angular.isUndefined(obj.$state[key].$valid)) continue;
-
-                                if (obj.$state[key].$valid()) continue;
-
-                                return false;
-                            }
-                        }
-
-                        return true;
-                    };
-
-                    // Returns a save promise
-                    obj.save = function() {
-                        if (angular.isUndefined(dataService) || dataService == null) {
-                            throw 'Define DataService to your model.';
-                        }
-
-                        if (angular.isUndefined($scope.serverSaveUrl) || $scope.serverSaveUrl == null) {
-                            throw 'Define a Save URL.';
-                        }
-
-                        if (obj.$isNew == false && obj.$hasChanges == false) {
-                            return false;
-                        }
-
-                        obj.$isLoading = true;
-
-                        return dataService.saveDataAsync(obj, {
-                            serverUrl: $scope.serverSaveUrl,
-                            requestMethod: obj.$isNew ? ($scope.serverSaveMethod || 'POST') : 'PUT'
-                        }).promise;
-                    };
-
-                    obj.edit = function() {
-                        if (obj.$isEditing && obj.$hasChanges) {
-                            obj.save();
-                        }
-
-                        obj.$isEditing = !obj.$isEditing;
-                    };
-
-                    obj.delete = function() {
-                        $scope.deleteRow(obj);
-                    };
-
-                    obj.resetOriginal = function() {
-                        for (var k in obj.$original) {
-                            if (obj.$original.hasOwnProperty(k)) {
-                                obj.$original[k] = obj[k];
-                            }
-                        }
-                    };
-
-                    obj.revertChanges = function() {
-                        for (var k in obj) {
-                            if (obj.hasOwnProperty(k)) {
-                                if (k[0] == '$' || angular.isUndefined(obj.$original[k])) {
-                                    continue;
-                                }
-
-                                obj[k] = obj.$original[k];
-                            }
-                        }
-
-                        obj.$isEditing = false;
-                        obj.$hasChanges = false;
-                    };
-
-                    obj.editForm = function(view) {
-                        $location.path(view + "/" + obj.$key);
-                    };
-
-                    return obj;
                 };
-            }
-        ]);
+
+                return obj;
+            };
+        });
 })();
 ///#source 1 1 tubular/tubular-services.js
 (function() {
@@ -3589,10 +3592,12 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             '$scope', function($scope) {
                                 $scope.Model = model;
 
-                                $scope.savePopup = function() {
-                                    var result = $scope.Model.save();
+                                $scope.savePopup = function (model) {
+                                    var result = (model) ? model.save() : $scope.Model.save();
 
-                                    if (angular.isUndefined(result) || result === false) return;
+                                    if (angular.isUndefined(result) || result === false) {
+                                        return;
+                                    }
 
                                     result.then(
                                         function(data) {
@@ -4337,6 +4342,48 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         requestMethod: 'POST',
                         data: data
                     });
+                };
+
+                /*
+                 * @function postBinary
+                 * 
+                 * @description
+                 * Allow to post a `FormData` object with `$http`. You need to append the files
+                 * in your own FormData.
+                 */
+                me.postBinary = function (url, formData) {
+                    var canceller = $q.defer();
+
+                    var cancel = function (reason) {
+                        console.error(reason);
+                        canceller.resolve(reason);
+                    };
+
+                    if (me.requireAuthentication && me.isAuthenticated() === false) {
+                        // Return empty dataset
+                        return {
+                            promise: $q(function (resolve, reject) {
+                                resolve(null);
+                            }),
+                            cancel: cancel
+                        };
+                    }
+
+                    var promise = $http({
+                        url: url,
+                        method: "POST",
+                        headers: { 'Content-Type': undefined },
+                        transformRequest: function (data) {
+                            // TODO: Remove?
+                            return data;
+                        },
+                        data: formData
+                    });
+
+                    return {
+                        promise: promise,
+                        cancel: cancel
+                    };
                 };
 
                 me.put = function(url, data) {

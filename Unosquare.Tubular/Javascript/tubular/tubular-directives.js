@@ -828,10 +828,11 @@
         .directive('tbEmptyGrid', [
             function() {
 
+                // TODO: I don't know maybe remove this directive
                 return {
                     require: '^tbGrid',
                     template: '<tr ngTransclude ng-show="$parent.$component.isEmpty">' +
-                        '<td class="bg-warning" colspan="{{$parent.$component.columns.length + 1}}">' +
+                        '<td class="bg-warning" colspan="{{$parent.$component.visibleColumns()}}">' +
                         '<b>No records found</b>' +
                         '</td>' +
                         '</tr>',
@@ -857,6 +858,7 @@
         .directive('tbRowGroupHeader', [
             function() {
 
+                // TODO: I don't know maybe remove this directive
                 return {
                     require: '^tbRowTemplate',
                     template: '<td class="row-group" colspan="{{$parent.$component.visibleColumns()}}">' +

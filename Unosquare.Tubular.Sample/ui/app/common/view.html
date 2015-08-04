@@ -84,7 +84,8 @@
                                         </tb-simple-editor>
                                     </tb-cell-template>
                                     <tb-cell-template>
-                                        <tb-typeahead-editor value="$component.tempRow.ShipperCity" name="ShipperCity" required="true"
+                                        <tb-typeahead-editor value="$component.tempRow.ShipperCity" name="ShipperCity" 
+                                                             required="true"
                                                              options-url="api/orders/cities">
                                         </tb-typeahead-editor>
                                     </tb-cell-template>
@@ -103,20 +104,18 @@
                                 </tb-row-template>
                                 <!-- General rows -->
                                 <tb-row-template ng-repeat="row in $component.rows" row-model="row" selectable="false">
-                                    <tb-cell-template ng-class="{'danger': rowModel.$hasChanges}" class="cell-menu text-center">
+                                    <tb-cell-template ng-class="{'danger': rowModel.$hasChanges}" 
+                                                      class="cell-menu text-center">
                                         <div class="btn-group">
                                             <tb-save-button model="row" save-css="btn-xs hidden-xs hidden-sm"
                                                             cancel-css="btn-danger btn-xs">
                                             </tb-save-button>
                                             <tb-edit-button model="row" class="btn-xs hidden-xs hidden-sm">
                                             </tb-edit-button>
-                                            <button ng-click="row.editPopup('/ui/app/common/popup.html')" class="btn btn-default btn-xs"
+                                            <button ng-click="row.editPopup('/ui/app/common/popup.html')" 
+                                                    class="btn btn-default btn-xs"
                                                     ng-hide="row.$isEditing">
                                                 Popup
-                                            </button>
-                                            <button ng-click="row.editForm('/form')" class="btn btn-default btn-xs hidden-xs hidden-sm"
-                                                    ng-hide="row.$isEditing">
-                                                Page
                                             </button>
                                             <tb-remove-button model="row" class="btn-danger btn-xs" caption="Delete">
                                             </tb-remove-button>
