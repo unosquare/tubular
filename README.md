@@ -91,7 +91,8 @@ The following HTML represents a basic grid. You don't need to add anything else 
 
 ```html
  <div class="container">
-        <tb-grid server-url="/data/customers.json" page-size="20" class="row" grid-name="mygrid">
+        <tb-grid server-url="/data/customers.json" page-size="20" 
+                 class="row" grid-name="mygrid">
             <div class="col-md-12">
                 <div class="panel panel-default panel-rounded">
                     <tb-grid-table class="table-bordered">
@@ -108,7 +109,8 @@ The following HTML represents a basic grid. You don't need to add anything else 
                             </tb-column>
                         </tb-column-definitions>
                         <tb-row-set>
-                            <tb-row-template ng-repeat="row in $component.rows" row-model="row" selectable="true">
+                            <tb-row-template ng-repeat="row in $component.rows" 
+                                             row-model="row" selectable="true">
                                 <tb-cell-template>
                                     {{row.CustomerName}}
                                 </tb-cell-template>
