@@ -70,17 +70,35 @@
                                 // Try to load a key from markup or route
                                 $scope.modelKey = $scope.modelKey || $routeParams.param;
 
-                                if (angular.isDefined($scope.serverUrl) &&
-                                    angular.isDefined($scope.modelKey) &&
-                                    $scope.modelKey != null &&
-                                    $scope.modelKey !== '') {
-                                    $scope.dataService.getByKey($scope.serverUrl, $scope.modelKey).promise.then(
-                                        function(data) {
-                                            $scope.model = new TubularModel($scope, data, $scope.dataService);
-                                            $scope.bindFields();
-                                        }, function(error) {
-                                            $scope.$emit('tbForm_OnConnectionError', error);
-                                        });
+                                if (angular.isDefined($scope.serverUrl)) {
+                                    if (angular.isDefined($scope.modelKey) &&
+                                        $scope.modelKey != null &&
+                                        $scope.modelKey !== '') {
+                                        $scope.dataService.getByKey($scope.serverUrl, $scope.modelKey).promise.then(
+                                            function (data) {
+                                                $scope.model = new TubularModel($scope, data, $scope.dataService);
+                                                $scope.bindFields();
+                                            }, function (error) {
+                                                $scope.$emit('tbForm_OnConnectionError', error);
+                                            });
+                                    } else {
+                                        $scope.dataService.get($scope.serverUrl).promise.then(
+                                            function (data) {
+                                                var innerScope = $scope;
+                                                var dataService = $scope.dataService;
+
+                                                if (angular.isDefined($scope.model) && angular.isDefined($scope.model.$component)) {
+                                                    innerScope = $scope.model.$component;
+                                                    dataService = $scope.model.$component.dataService;
+                                                }
+
+                                                $scope.model = new TubularModel(innerScope, data, dataService);
+                                                $scope.bindFields();
+                                                $scope.model.$isNew = true;
+                                            }, function (error) {
+                                                $scope.$emit('tbForm_OnConnectionError', error);
+                                            });
+                                    }
 
                                     return;
                                 }

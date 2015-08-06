@@ -131,6 +131,10 @@
     <Content Include="..\dist\tubular-bundle.js">
       <Link>ui\tubular\tubular-bundle.js</Link>
     </Content>
+    <Content Include="..\dist\tubular-bundle.min.js">
+      <Link>ui\tubular\tubular-bundle.min.js</Link>
+      <DependentUpon>tubular-bundle.js</DependentUpon>
+    </Content>
     <Content Include="index.html" />
     <Content Include="ui\app\app.js" />
     <Content Include="ui\app\common\form.html" />
@@ -158,6 +162,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
+    <Content Include="..\dist\tubular-bundle.min.js.map">
+      <Link>ui\tubular\tubular-bundle.min.js.map</Link>
+      <DependentUpon>tubular-bundle.min.js</DependentUpon>
+    </Content>
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

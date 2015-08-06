@@ -366,8 +366,9 @@
          * @param {object} options Set the options to display.
          * @param {string} optionsUrl Set the Http Url where to retrieve the values.
          * @param {string} optionsMethod Set the Http Method where to retrieve the values.
-         * @param {string} optionLabel Set the property to get the labels
-         * @param {string} optionKey Set the property to get the keys
+         * @param {string} optionLabel Set the property to get the labels.
+         * @param {string} optionKey Set the property to get the keys.
+         * @param {string} defaultValue Set the default value.
          */
         .directive('tbDropdownEditor', [
             'tubularEditorService', function(tubularEditorService) {
@@ -386,7 +387,7 @@
                     restrict: 'E',
                     replace: true,
                     transclude: true,
-                    scope: angular.extend({ options: '=?', optionsUrl: '@', optionsMethod: '@?', optionLabel: '@?', optionKey: '@?' }, tubularEditorService.defaultScope),
+                    scope: angular.extend({ options: '=?', optionsUrl: '@', optionsMethod: '@?', optionLabel: '@?', optionKey: '@?', defaultValue: '@?' }, tubularEditorService.defaultScope),
                     controller: [
                         '$scope', function($scope) {
                             tubularEditorService.setupScope($scope);
@@ -430,7 +431,7 @@
                                         var possibleValue = $scope.options && $scope.options.length > 0 ?
                                             angular.isDefined($scope.optionKey) ? $scope.options[0][$scope.optionKey] : $scope.options[0]
                                             : '';
-                                        $scope.value = value || possibleValue;
+                                        $scope.value = value || $scope.defaultValue || possibleValue;
                                     }, function(error) {
                                         $scope.$emit('tbGrid_OnConnectionError', error);
                                     });
@@ -481,7 +482,7 @@
          * @param {string} optionsUrl Set the Http Url where to retrieve the values.
          * @param {string} optionsMethod Set the Http Method where to retrieve the values.
          * @param {string} optionLabel Set the property to get the labels.
-         * @param {string} css Set the CSS classes for the input
+         * @param {string} css Set the CSS classes for the input.
          */
         .directive('tbTypeaheadEditor', [
             'tubularEditorService', '$q', function (tubularEditorService, $q) {

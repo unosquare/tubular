@@ -58,6 +58,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <Content Include="..\Unosquare.Tubular\Css\tubular-bundle.min.css">
+      <Link>html\vendor\tubular\tubular-bundle.min.css</Link>
+      <DependentUpon>tubular-bundle.css</DependentUpon>
+    </Content>
     <Content Include="html\data\database.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

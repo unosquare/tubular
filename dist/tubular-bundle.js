@@ -2512,8 +2512,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @param {object} options Set the options to display.
          * @param {string} optionsUrl Set the Http Url where to retrieve the values.
          * @param {string} optionsMethod Set the Http Method where to retrieve the values.
-         * @param {string} optionLabel Set the property to get the labels
-         * @param {string} optionKey Set the property to get the keys
+         * @param {string} optionLabel Set the property to get the labels.
+         * @param {string} optionKey Set the property to get the keys.
+         * @param {string} defaultValue Set the default value.
          */
         .directive('tbDropdownEditor', [
             'tubularEditorService', function(tubularEditorService) {
@@ -2532,7 +2533,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     restrict: 'E',
                     replace: true,
                     transclude: true,
-                    scope: angular.extend({ options: '=?', optionsUrl: '@', optionsMethod: '@?', optionLabel: '@?', optionKey: '@?' }, tubularEditorService.defaultScope),
+                    scope: angular.extend({ options: '=?', optionsUrl: '@', optionsMethod: '@?', optionLabel: '@?', optionKey: '@?', defaultValue: '@?' }, tubularEditorService.defaultScope),
                     controller: [
                         '$scope', function($scope) {
                             tubularEditorService.setupScope($scope);
@@ -2576,7 +2577,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                         var possibleValue = $scope.options && $scope.options.length > 0 ?
                                             angular.isDefined($scope.optionKey) ? $scope.options[0][$scope.optionKey] : $scope.options[0]
                                             : '';
-                                        $scope.value = value || possibleValue;
+                                        $scope.value = value || $scope.defaultValue || possibleValue;
                                     }, function(error) {
                                         $scope.$emit('tbGrid_OnConnectionError', error);
                                     });
@@ -2627,7 +2628,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @param {string} optionsUrl Set the Http Url where to retrieve the values.
          * @param {string} optionsMethod Set the Http Method where to retrieve the values.
          * @param {string} optionLabel Set the property to get the labels.
-         * @param {string} css Set the CSS classes for the input
+         * @param {string} css Set the CSS classes for the input.
          */
         .directive('tbTypeaheadEditor', [
             'tubularEditorService', '$q', function (tubularEditorService, $q) {
@@ -3184,17 +3185,35 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 // Try to load a key from markup or route
                                 $scope.modelKey = $scope.modelKey || $routeParams.param;
 
-                                if (angular.isDefined($scope.serverUrl) &&
-                                    angular.isDefined($scope.modelKey) &&
-                                    $scope.modelKey != null &&
-                                    $scope.modelKey !== '') {
-                                    $scope.dataService.getByKey($scope.serverUrl, $scope.modelKey).promise.then(
-                                        function(data) {
-                                            $scope.model = new TubularModel($scope, data, $scope.dataService);
-                                            $scope.bindFields();
-                                        }, function(error) {
-                                            $scope.$emit('tbForm_OnConnectionError', error);
-                                        });
+                                if (angular.isDefined($scope.serverUrl)) {
+                                    if (angular.isDefined($scope.modelKey) &&
+                                        $scope.modelKey != null &&
+                                        $scope.modelKey !== '') {
+                                        $scope.dataService.getByKey($scope.serverUrl, $scope.modelKey).promise.then(
+                                            function (data) {
+                                                $scope.model = new TubularModel($scope, data, $scope.dataService);
+                                                $scope.bindFields();
+                                            }, function (error) {
+                                                $scope.$emit('tbForm_OnConnectionError', error);
+                                            });
+                                    } else {
+                                        $scope.dataService.get($scope.serverUrl).promise.then(
+                                            function (data) {
+                                                var innerScope = $scope;
+                                                var dataService = $scope.dataService;
+
+                                                if (angular.isDefined($scope.model) && angular.isDefined($scope.model.$component)) {
+                                                    innerScope = $scope.model.$component;
+                                                    dataService = $scope.model.$component.dataService;
+                                                }
+
+                                                $scope.model = new TubularModel(innerScope, data, dataService);
+                                                $scope.bindFields();
+                                                $scope.model.$isNew = true;
+                                            }, function (error) {
+                                                $scope.$emit('tbForm_OnConnectionError', error);
+                                            });
+                                    }
 
                                     return;
                                 }
