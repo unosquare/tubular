@@ -45,7 +45,7 @@
                     controller: [
                         '$scope', function($scope) {
                             $scope.validate = function() {
-                                if (angular.isDefined($scope.min) && angular.isDefined($scope.value)) {
+                                if (angular.isDefined($scope.min) && angular.isDefined($scope.value) && $scope.value != null) {
                                     if ($scope.value.length < parseInt($scope.min)) {
                                         $scope.$valid = false;
                                         $scope.state.$errors = ["The fields needs to be minimum " + $scope.min + " chars"];
@@ -53,7 +53,7 @@
                                     }
                                 }
 
-                                if (angular.isDefined($scope.max) && angular.isDefined($scope.value)) {
+                                if (angular.isDefined($scope.max) && angular.isDefined($scope.value) && $scope.value != null) {
                                     if ($scope.value.length > parseInt($scope.max)) {
                                         $scope.$valid = false;
                                         $scope.state.$errors = ["The fields needs to be maximum " + $scope.min + " chars"];
@@ -117,7 +117,7 @@
                     controller: [
                         '$scope', function($scope) {
                             $scope.validate = function() {
-                                if (angular.isDefined($scope.min) && angular.isDefined($scope.value)) {
+                                if (angular.isDefined($scope.min) && angular.isDefined($scope.value) && $scope.value != null) {
                                     $scope.$valid = $scope.value >= $scope.min;
                                     if (!$scope.$valid) {
                                         $scope.state.$errors = ["The minimum is " + $scope.min];
@@ -128,7 +128,7 @@
                                     return;
                                 }
 
-                                if (angular.isDefined($scope.max) && angular.isDefined($scope.value)) {
+                                if (angular.isDefined($scope.max) && angular.isDefined($scope.value) && $scope.value != null) {
                                     $scope.$valid = $scope.value <= $scope.max;
                                     if (!$scope.$valid) {
                                         $scope.state.$errors = ["The maximum is " + $scope.max];
@@ -690,7 +690,7 @@
                     controller: [
                         '$scope', function($scope) {
                             $scope.validate = function() {
-                                if (angular.isDefined($scope.min) && angular.isDefined($scope.value)) {
+                                if (angular.isDefined($scope.min) && angular.isDefined($scope.value) && $scope.value != null) {
                                     if ($scope.value.length < parseInt($scope.min)) {
                                         $scope.$valid = false;
                                         $scope.state.$errors = ["The fields needs to be minimum " + $scope.min + " chars"];
@@ -698,7 +698,7 @@
                                     }
                                 }
 
-                                if (angular.isDefined($scope.max) && angular.isDefined($scope.value)) {
+                                if (angular.isDefined($scope.max) && angular.isDefined($scope.value) && $scope.value != null) {
                                     if ($scope.value.length > parseInt($scope.max)) {
                                         $scope.$valid = false;
                                         $scope.state.$errors = ["The fields needs to be maximum " + $scope.min + " chars"];

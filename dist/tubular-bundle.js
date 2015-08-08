@@ -2191,7 +2191,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     controller: [
                         '$scope', function($scope) {
                             $scope.validate = function() {
-                                if (angular.isDefined($scope.min) && angular.isDefined($scope.value)) {
+                                if (angular.isDefined($scope.min) && angular.isDefined($scope.value) && $scope.value != null) {
                                     if ($scope.value.length < parseInt($scope.min)) {
                                         $scope.$valid = false;
                                         $scope.state.$errors = ["The fields needs to be minimum " + $scope.min + " chars"];
@@ -2199,7 +2199,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     }
                                 }
 
-                                if (angular.isDefined($scope.max) && angular.isDefined($scope.value)) {
+                                if (angular.isDefined($scope.max) && angular.isDefined($scope.value) && $scope.value != null) {
                                     if ($scope.value.length > parseInt($scope.max)) {
                                         $scope.$valid = false;
                                         $scope.state.$errors = ["The fields needs to be maximum " + $scope.min + " chars"];
@@ -2263,7 +2263,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     controller: [
                         '$scope', function($scope) {
                             $scope.validate = function() {
-                                if (angular.isDefined($scope.min) && angular.isDefined($scope.value)) {
+                                if (angular.isDefined($scope.min) && angular.isDefined($scope.value) && $scope.value != null) {
                                     $scope.$valid = $scope.value >= $scope.min;
                                     if (!$scope.$valid) {
                                         $scope.state.$errors = ["The minimum is " + $scope.min];
@@ -2274,7 +2274,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     return;
                                 }
 
-                                if (angular.isDefined($scope.max) && angular.isDefined($scope.value)) {
+                                if (angular.isDefined($scope.max) && angular.isDefined($scope.value) && $scope.value != null) {
                                     $scope.$valid = $scope.value <= $scope.max;
                                     if (!$scope.$valid) {
                                         $scope.state.$errors = ["The maximum is " + $scope.max];
@@ -2836,7 +2836,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     controller: [
                         '$scope', function($scope) {
                             $scope.validate = function() {
-                                if (angular.isDefined($scope.min) && angular.isDefined($scope.value)) {
+                                if (angular.isDefined($scope.min) && angular.isDefined($scope.value) && $scope.value != null) {
                                     if ($scope.value.length < parseInt($scope.min)) {
                                         $scope.$valid = false;
                                         $scope.state.$errors = ["The fields needs to be minimum " + $scope.min + " chars"];
@@ -2844,7 +2844,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     }
                                 }
 
-                                if (angular.isDefined($scope.max) && angular.isDefined($scope.value)) {
+                                if (angular.isDefined($scope.max) && angular.isDefined($scope.value) && $scope.value != null) {
                                     if ($scope.value.length > parseInt($scope.max)) {
                                         $scope.$valid = false;
                                         $scope.state.$errors = ["The fields needs to be maximum " + $scope.min + " chars"];
