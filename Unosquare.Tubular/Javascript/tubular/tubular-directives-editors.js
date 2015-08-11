@@ -494,7 +494,7 @@
                         'class="form-control {{css}}" ng-readonly="lastSet.indexOf(value) !== -1" typeahead="{{ selectOptions }}" ' +
                         'ng-required="required" /> ' +
                         '<div class="input-group-addon" ng-hide="lastSet.indexOf(value) !== -1"><i class="fa fa-pencil"></i></div>' +
-                        '<span class="input-group-btn" ng-show="lastSet.indexOf(value) !== -1">' +
+                        '<span class="input-group-btn" ng-show="lastSet.indexOf(value) !== -1" tabindex="-1">' +
                         '<button class="btn btn-default" type="button" ng-click="value = null"><i class="fa fa-times"></i>' +
                         '</span>' +
                         '</div>' +
