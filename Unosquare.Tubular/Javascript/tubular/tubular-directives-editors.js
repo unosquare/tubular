@@ -490,7 +490,7 @@
                         '<span ng-hide="isEditing">{{ value }}</span>' +
                         '<label ng-show="showLabel">{{ label }}</label>' +
                         '<div class="input-group" ng-show="isEditing">' +
-                        '<input ng-model="value" placeholder="{{placeholder}}" ' +
+                        '<input ng-model="value" placeholder="{{placeholder}}" title="{{tooltip}}" ' +
                         'class="form-control {{css}}" ng-readonly="lastSet.indexOf(value) !== -1" typeahead="{{ selectOptions }}" ' +
                         'ng-required="required" /> ' +
                         '<div class="input-group-addon" ng-hide="lastSet.indexOf(value) !== -1"><i class="fa fa-pencil"></i></div>' +
@@ -525,6 +525,10 @@
 
                             $scope.$watch('value', function (val) {
                                 $scope.$emit('tbForm_OnFieldChange', $scope.$component, $scope.name, val);
+                                $scope.tooltip = val;
+                                if (angular.isDefined(val) && val != null && angular.isDefined($scope.optionLabel)) {
+                                    $scope.tooltip = val[$scope.optionLabel];
+                                }
                             });
 
                             $scope.getValues = function (val) {
