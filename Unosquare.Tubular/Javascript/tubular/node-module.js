@@ -24,7 +24,8 @@ var tubularTemplateServiceModule = {
             Mode: 'Read-Only',
             RequireAuthentication: false,
             ServiceName: '',
-            RequestMethod: 'GET'
+            RequestMethod: 'GET',
+            GridName: 'grid'
         },
         formOptions: {
             CancelButton: true,
@@ -119,12 +120,6 @@ var tubularTemplateServiceModule = {
         }
     },
 
-    isNumber: function(value) { return typeof value === 'number'; },
-
-    isDate: function(value) {
-        return toString.call(value) === '[object Date]';
-    },
-
     createColumns: function(model) {
         var jsonModel = (model instanceof Array && model.length > 0) ? model[0] : model;
         var columns = [];
@@ -142,9 +137,9 @@ var tubularTemplateServiceModule = {
                     continue;
                 }
 
-                if (this.isNumber(value) || parseFloat(value).toString() == value) {
+                if (typeof value === 'number' || parseFloat(value).toString() == value) {
                     columns.push({ Name: prop, DataType: 'numeric', Template: '{{row.' + prop + '}}' });
-                } else if (this.isDate(value) || isNaN((new Date(value)).getTime()) === false) {
+                } else if (toString.call(value) === '[object Date]' || isNaN((new Date(value)).getTime()) === false) {
                     columns.push({ Name: prop, DataType: 'date', Template: '{{row.' + prop + ' | date}}' });
                 } else if (value.toLowerCase() === 'true' || value.toLowerCase() === 'false') {
                     columns.push({ Name: prop, DataType: 'boolean', Template: '{{row.' + prop + ' ? "TRUE" : "FALSE" }}' });

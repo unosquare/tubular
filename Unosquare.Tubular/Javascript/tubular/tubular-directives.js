@@ -457,7 +457,7 @@
                             };
 
                             $scope.visibleColumns = function() {
-                                return $scope.columns.filter(function(el) { return el.Visible; }).length + 1;
+                                return $scope.columns.filter(function(el) { return el.Visible; }).length;
                             };
 
                             $scope.$emit('tbGrid_OnGreetParentController', $scope);
