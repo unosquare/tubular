@@ -226,8 +226,10 @@
                                     $(inp).datepicker({
                                         dateFormat: scope.format.toLowerCase()
                                     }).on("dateChange", function(e) {
-                                        scope.value = e.date;
-                                        scope.$parent.Model.$hasChanges = true;
+                                        scope.$apply(function () {
+                                            scope.value = e.date;
+                                            scope.$parent.Model.$hasChanges = true;
+                                        });
                                     });
                                 }
                             }
@@ -313,12 +315,6 @@
                                         }
                                     }
                                 };
-
-                                if ($scope.value == null) { // TODO: This is not working :P
-                                    $scope.$valid = false;
-                                    $scope.state.$errors = ["Invalid date"];
-                                    return;
-                                }
                             };
 
                             tubularEditorService.setupScope($scope, 'yyyy-MM-dd');
@@ -332,8 +328,10 @@
                                     $(inp).datepicker({
                                         dateFormat: scope.format.toLowerCase()
                                     }).on("dateChange", function(e) {
-                                        scope.value = e.date;
-                                        scope.$parent.Model.$hasChanges = true;
+                                        scope.$apply(function () {
+                                            scope.value = e.date;
+                                            scope.$parent.Model.$hasChanges = true;
+                                        });
                                     });
                                 }
                             }

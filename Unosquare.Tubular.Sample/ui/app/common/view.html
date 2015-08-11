@@ -65,7 +65,11 @@
                             <!-- Rowsets -->
                             <tb-row-set>
                                 <!-- Empty grid row -->
-                                <tb-empty-grid></tb-empty-grid>
+                                <tb-row-template ng-show="$parent.$component.isEmpty">
+                                    <tb-cell-template class="bg-warning" colspan="{{$parent.$component.visibleColumns()}}">
+                                        <b>No records found</b>
+                                    </tb-cell-template>
+                                </tb-row-template>
                                 <!-- New record row -->
                                 <tb-row-template ng-show="$component.tempRow.$isEditing">
                                     <tb-cell-template class="text-center">

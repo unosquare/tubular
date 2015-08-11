@@ -114,7 +114,7 @@
                                 localStorageService.set($scope.name + "_columns", $scope.columns);
                             }, true);
 
-                            $scope.$watch('serverUrl', function (newVal, prevVal) {
+                            $scope.$watch('serverUrl', function(newVal, prevVal) {
                                 if ($scope.hasColumnsDefinitions === false || $scope.currentRequest || newVal === prevVal) {
                                     return;
                                 }
@@ -210,7 +210,7 @@
                                 }
                             };
 
-                            $scope.retrieveData = function () {
+                            $scope.retrieveData = function() {
                                 // If the ServerUrl is empty skip data load
                                 if ($scope.serverUrl == '') return;
 
@@ -267,7 +267,7 @@
                                             model.editPopup = function(template, size) {
                                                 tubularPopupService.openDialog(template, model, $scope, size);
                                             };
-                                            
+
                                             return model;
                                         });
 
@@ -327,7 +327,7 @@
                                 }
                             });
 
-                            $scope.$watch('requestedPage', function () {
+                            $scope.$watch('requestedPage', function() {
                                 // TODO: we still need to inter-lock failed, initial and paged requests
                                 if ($scope.hasColumnsDefinitions && $scope.requestCounter > 0) {
                                     $scope.retrieveData();
@@ -457,7 +457,7 @@
                             };
 
                             $scope.visibleColumns = function() {
-                                return $scope.columns.filter(function(el) { return el.Visible; }).length;
+                                return $scope.columns.filter(function(el) { return el.Visible; }).length + 1;
                             };
 
                             $scope.$emit('tbGrid_OnGreetParentController', $scope);
@@ -729,7 +729,7 @@
                         selectable: '@'
                     },
                     controller: [
-                        '$scope', function ($scope) {
+                        '$scope', function($scope) {
                             // TODO: Rename this directive
                             $scope.tubularDirective = 'tubular-rowset';
                             $scope.fields = [];
@@ -737,7 +737,7 @@
                             $scope.selectableBool = $scope.selectable == "true";
                             $scope.$component = $scope.$parent.$parent.$parent.$component;
 
-                            $scope.$watch('hasFieldsDefinitions', function (newVal) {
+                            $scope.$watch('hasFieldsDefinitions', function(newVal) {
                                 if (newVal !== true || angular.isUndefined($scope.model)) return;
 
                                 $scope.bindFields();
@@ -761,7 +761,7 @@
                     ],
                     compile: function compile() {
                         return {
-                            post: function (scope) {
+                            post: function(scope) {
                                 scope.hasFieldsDefinitions = true;
                             }
                         };
@@ -812,62 +812,6 @@
                             }
                         }
                     ]
-                };
-            }
-        ])
-        /**
-         * @ngdoc directive
-         * @name tbEmptyGrid
-         * @restrict E
-         *
-         * @description
-         * The `tbEmptyGrid` directive is a helper to show a "No records found" message when the grid has not rows.
-         * 
-         * This class must be inside a `tbRowSet` directive.
-         */
-        .directive('tbEmptyGrid', [
-            function() {
-
-                // TODO: I don't know maybe remove this directive
-                return {
-                    require: '^tbGrid',
-                    template: '<tr ngTransclude ng-show="$parent.$component.isEmpty">' +
-                        '<td class="bg-warning" colspan="{{$parent.$component.visibleColumns()}}">' +
-                        '<b>No records found</b>' +
-                        '</td>' +
-                        '</tr>',
-                    restrict: 'E',
-                    replace: true,
-                    transclude: true,
-                    scope: false
-                };
-            }
-        ])
-        /**
-         * @ngdoc directive
-         * @name tbRowGroupHeader
-         * @restrict E
-         *
-         * @description
-         * The `tbRowGroupHeader` directive is a cell template to show grouping information.
-         * 
-         * This class must be inside a `tbRowSet` directive.
-         * 
-         * @scope
-         */
-        .directive('tbRowGroupHeader', [
-            function() {
-
-                // TODO: I don't know maybe remove this directive
-                return {
-                    require: '^tbRowTemplate',
-                    template: '<td class="row-group" colspan="{{$parent.$component.visibleColumns()}}">' +
-                        '<ng-transclude></ng-transclude>' +
-                        '</td>',
-                    restrict: 'E',
-                    replace: true,
-                    transclude: true,
-                    scope: {}
                 };
             }
         ]);
