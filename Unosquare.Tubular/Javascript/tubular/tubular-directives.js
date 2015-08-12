@@ -198,6 +198,12 @@
                                         // Updates visibility by now
                                         current.Visible = columns[index].Visible;
 
+                                        // Update sorting
+                                        if ($scope.requestCounter < 1) {
+                                            current.SortOrder = columns[index].SortOrder;
+                                            current.SortDirection = columns[index].SortDirection;
+                                        }
+
                                         // Update Filters
                                         if (current.Filter != null && current.Filter.Text != null) {
                                             continue;
