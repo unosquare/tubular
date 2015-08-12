@@ -178,11 +178,22 @@
             switch (request.Search.Operator)
             {
                 case CompareOperators.Auto:
+                    var filter = string.Empty;
+                    var values = new List<object>();
+
+                    if (request.Columns.Any(x => x.Searchable))
+                        filter = "(";
 
                     foreach (var column in request.Columns.Where(x => x.Searchable))
                     {
-                        searchLambda.AppendFormat("{0}.Contains(@{1}) ||", column.Name, searchParamArgs.Count);
-                        searchParamArgs.Add(request.Search.Text);
+                        filter += string.Format("{0}.Contains(@{1}) ||", column.Name, values.Count);
+                        values.Add(request.Search.Text);
+                    }
+
+                    if (string.IsNullOrEmpty(filter) == false)
+                    {
+                        searchLambda.Append(filter.Remove(filter.Length - 3, 3) + ") &&");
+                        searchParamArgs.AddRange(values);
                     }
 
                     break;
@@ -191,14 +202,14 @@
             // Perform Filtering
             foreach (var column in request.Columns.Where(x => x.Filter != null))
             {
-                if (String.IsNullOrWhiteSpace(column.Filter.Text) && column.Filter.Argument == null)
+                if (string.IsNullOrWhiteSpace(column.Filter.Text) && column.Filter.Argument == null)
                     continue; // TODO: Handle null?
 
                 switch (column.Filter.Operator)
                 {
                     case CompareOperators.Equals:
                     case CompareOperators.NotEquals:
-                        if (String.IsNullOrWhiteSpace(column.Filter.Text)) continue;
+                        if (string.IsNullOrWhiteSpace(column.Filter.Text)) continue;
 
                         if (column.DataType == DataType.Date.ToString().ToLower())
                         {
@@ -216,28 +227,28 @@
                             searchLambda.AppendFormat("{0} {2} @{1} &&", column.Name, searchParamArgs.Count, GetSqlOperator(column.Filter.Operator));
                         }
 
-                        if (String.Equals(column.DataType, DataType.Numeric.ToString(),
+                        if (string.Equals(column.DataType, DataType.Numeric.ToString(),
                             StringComparison.CurrentCultureIgnoreCase))
                         {
-                            searchParamArgs.Add(Decimal.Parse(column.Filter.Text));
+                            searchParamArgs.Add(decimal.Parse(column.Filter.Text));
                         }
                         else if (
-                            String.Equals(column.DataType, DataType.DateTime.ToString(),
+                            string.Equals(column.DataType, DataType.DateTime.ToString(),
                                 StringComparison.CurrentCultureIgnoreCase))
                         {
                             searchParamArgs.Add(DateTime.Parse(column.Filter.Text));
                         }
                         else if (
-                            String.Equals(column.DataType, DataType.Date.ToString(),
+                            string.Equals(column.DataType, DataType.Date.ToString(),
                                 StringComparison.CurrentCultureIgnoreCase))
                         {
                             searchParamArgs.Add(DateTime.Parse(column.Filter.Text).Date);
                             searchParamArgs.Add(DateTime.Parse(column.Filter.Text).Date.AddDays(1).AddMinutes(-1));
                         }
-                        else if (String.Equals(column.DataType, DataType.Boolean.ToString(),
+                        else if (string.Equals(column.DataType, DataType.Boolean.ToString(),
                             StringComparison.CurrentCultureIgnoreCase))
                         {
-                            searchParamArgs.Add(Boolean.Parse(column.Filter.Text));
+                            searchParamArgs.Add(bool.Parse(column.Filter.Text));
                         }
                         else
                         {
@@ -263,7 +274,7 @@
                     case CompareOperators.Lt:
                         searchLambda.AppendFormat("{0} {2} @{1} &&", column.Name, searchParamArgs.Count, GetSqlOperator(column.Filter.Operator));
 
-                        if (String.Equals(column.DataType, DataType.Numeric.ToString(), StringComparison.CurrentCultureIgnoreCase))
+                        if (string.Equals(column.DataType, DataType.Numeric.ToString(), StringComparison.CurrentCultureIgnoreCase))
                             searchParamArgs.Add(decimal.Parse(column.Filter.Text));
                         else
                             searchParamArgs.Add(DateTime.Parse(column.Filter.Text));
@@ -275,7 +286,7 @@
                         var filterString = "(";
                         foreach (var filter in column.Filter.Argument)
                         {
-                            filterString += String.Format("{0} == @{1} ||", column.Name, searchParamArgs.Count);
+                            filterString += string.Format("{0} == @{1} ||", column.Name, searchParamArgs.Count);
                             searchParamArgs.Add(filter);
                         }
 
@@ -290,7 +301,7 @@
                         searchLambda.AppendFormat("(({0} >= @{1}) &&  ({0} <= @{2})) &&", column.Name,
                             searchParamArgs.Count, searchParamArgs.Count + 1);
 
-                        if (String.Equals(column.DataType, DataType.Numeric.ToString(), StringComparison.CurrentCultureIgnoreCase))
+                        if (string.Equals(column.DataType, DataType.Numeric.ToString(), StringComparison.CurrentCultureIgnoreCase))
                         {
                             searchParamArgs.Add(decimal.Parse(column.Filter.Text));
                             searchParamArgs.Add(decimal.Parse(column.Filter.Argument[0]));
@@ -325,7 +336,7 @@
         /// <returns>The filtered IQueryable</returns>
         public static IQueryable CreateDynamicFilteredSet(this IQueryable dataSource, string fieldName, string filter)
         {
-            return dataSource.Where(String.Format("{0}.Contains(@0)", fieldName), new[] {filter});
+            return dataSource.Where(string.Format("{0}.Contains(@0)", fieldName), new[] {filter});
         }
 
         /// <summary>
