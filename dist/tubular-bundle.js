@@ -2822,9 +2822,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          */
         .directive('tbColumnFilterButtons', [function () {
             return {
-                template: '<div class="btn-group"><a class="btn btn-sm btn-success" ng-click="applyFilter()">Apply</a>' +
-                        '<button class="btn btn-sm btn-danger" ng-click="clearFilter()">Clear</button>' +
-                        '<button class="btn btn-sm btn-default" ng-click="close()">Close</button>' +
+                template: '<div class="text-right">' +
+                        '<a class="btn btn-sm btn-success" ng-click="applyFilter()" ng-disabled="filter.Operator == \'None\'">Apply</a>&nbsp;' +
+                        '<button class="btn btn-sm btn-danger" ng-click="clearFilter()" ng-disabled="filter.Operator == \'None\'">Clear</button>' +
                         '</div>',
                 restrict: 'E',
                 replace: true,
@@ -2833,18 +2833,55 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
         }])
         /**
          * @ngdoc directive
-         * @name tbColumnFilterColumnSelector
+         * @name tbColumnSelector
          * @restrict E
          *
          * @description
-         * The `tbColumnFilterColumnSelector` is an internal directive, and it is used to show columns selector popup.
+         * The `tbColumnSelector` is a button to show columns selector popup.
          */
-        .directive('tbColumnFilterColumnSelector', [function() {
+        .directive('tbColumnSelector', [function () {
             return {
-                template: '<div><hr /><h4>Columns Selector</h4><button class="btn btn-sm btn-default" ng-click="openColumnsSelector()">Select Columns</button></div>',
+                template: '<button class="btn btn-sm btn-default" ng-click="openColumnsSelector()">Select Columns</button></div>',
                 restrict: 'E',
                 replace: true,
-                transclude: true
+                transclude: true,
+                controller: function ($scope, $modal) {
+                    $scope.$component = $scope.$parent;
+
+                    $scope.openColumnsSelector = function () {
+                        var model = $scope.$component.columns;
+
+                        var dialog = $modal.open({
+                            template: '<div class="modal-header">' +
+                                '<h3 class="modal-title">Columns Selector</h3>' +
+                                '</div>' +
+                                '<div class="modal-body">' +
+                                '<table class="table table-bordered table-responsive table-striped table-hover table-condensed">' +
+                                '<thead><tr><th>Visible?</th><th>Name</th><th>Grouping?</th></tr></thead>' +
+                                '<tbody><tr ng-repeat="col in Model">' +
+                                '<td><input type="checkbox" ng-model="col.Visible" ng-disabled="col.Visible && isInvalid()" /></td>' +
+                                '<td>{{col.Label}}</td>' +
+                                '<td><input type="checkbox" ng-disabled="true" ng-model="col.IsGrouping" /></td>' +
+                                '</tr></tbody></table></div>' +
+                                '</div>' +
+                                '<div class="modal-footer"><button class="btn btn-warning" ng-click="closePopup()">Close</button></div>',
+                            backdropClass: 'fullHeight',
+                            controller: [
+                                '$scope', function ($innerScope) {
+                                    $innerScope.Model = model;
+                                    $innerScope.isInvalid = function () {
+                                        return $innerScope.Model.filter(function (el) { return el.Visible; }).length === 1;
+                                    }
+
+                                    $innerScope.closePopup = function () {
+                                        dialog.close();
+                                    };
+                                }
+                            ]
+                        });
+                    };
+
+                }
             };
         }])
         /**
@@ -2870,18 +2907,17 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         'ng-class="{ \'btn-success\': (filter.Operator !== \'None\' && filter.Text.length > 0) }">' +
                         '<i class="fa fa-filter"></i></button>' +
                         '<div style="display: none;">' +
-                        '<h4>{{::filterTitle}}</h4>' +
+                        '<button type="button" class="close" data-dismiss="modal" ng-click="close()"><span aria-hidden="true">×</span></button><h4>{{::filterTitle}}</h4>' +
                         '<form class="tubular-column-filter-form" onsubmit="return false;">' +
-                        '<select class="form-control" ng-model="filter.Operator" ng-hide="dataType == \'boolean\'"></select>' +
+                        '<select class="form-control" ng-model="filter.Operator" ng-hide="dataType == \'boolean\'"></select>&nbsp;' +
                         '<input class="form-control" type="search" ng-model="filter.Text" autofocus ng-keypress="checkEvent($event)" ng-hide="dataType == \'boolean\'"' +
                         'placeholder="Value" ng-disabled="filter.Operator == \'None\'" />' +
-                        '<div class="btn-group text-center" ng-show="dataType == \'boolean\'">' +
-                        '<button type="button" class="btn btn-default" ng-disabled="filter.Text == true" ng-click="filter.Text = true"><i class="fa fa-check"></i></button>' +
-                        '<button type="button" class="btn btn-default" ng-disabled="filter.Text == false" ng-click="filter.Text = false"><i class="fa fa-ban"></i></button></div>' +
+                        '<div class="text-center" ng-show="dataType == \'boolean\'">' +
+                        '<button type="button" class="btn btn-default btn-md" ng-disabled="filter.Text === true" ng-click="filter.Text = true"><i class="fa fa-check"></i></button>&nbsp;' +
+                        '<button type="button" class="btn btn-default btn-md" ng-disabled="filter.Text === false" ng-click="filter.Text = false"><i class="fa fa-times"></i></button></div>' +
                         '<input type="search" class="form-control" ng-model="filter.Argument[0]" ng-keypress="checkEvent($event)" ng-show="filter.Operator == \'Between\'" />' +
                         '<hr />' +
                         '<tb-column-filter-buttons></tb-column-filter-buttons>' +
-                        '<tb-column-filter-column-selector ng-show="columnSelector"></tb-column-filter-column-selector>' +
                         '</form></div>' +
                         '</div>',
                     restrict: 'E',
@@ -2925,7 +2961,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         'ng-class="{ \'btn-success\': filter.Text != null }">' +
                         '<i class="fa fa-filter"></i></button>' +
                         '<div style="display: none;">' +
-                        '<h4>{{::filterTitle}}</h4>' +
+                        '<button type="button" class="close" data-dismiss="modal" ng-click="close()"><span aria-hidden="true">×</span></button><h4>{{::filterTitle}}</h4>' +
                         '<form class="tubular-column-filter-form" onsubmit="return false;">' +
                         '<select class="form-control" ng-model="filter.Operator"></select>' +
                         '<input type="date" class="form-control" ng-model="filter.Text" ng-keypress="checkEvent($event)" />' +
@@ -2933,7 +2969,6 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         'ng-show="filter.Operator == \'Between\'" />' +
                         '<hr />' +
                         '<tb-column-filter-buttons></tb-column-filter-buttons>' +
-                        '<tb-column-filter-column-selector ng-show="columnSelector"></tb-column-filter-column-selector>' +
                         '</form></div>' +
                         '</div>',
                     restrict: 'E',
@@ -3004,12 +3039,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         'ng-class="{ \'btn-success\': (filter.Argument.length > 0) }">' +
                         '<i class="fa fa-filter"></i></button>' +
                         '<div style="display: none;">' +
-                        '<h4>{{::filterTitle}}</h4>' +
+                        '<button type="button" class="close" data-dismiss="modal" ng-click="close()"><span aria-hidden="true">×</span></button><h4>{{::filterTitle}}</h4>' +
                         '<form class="tubular-column-filter-form" onsubmit="return false;">' +
                         '<select class="form-control checkbox-list" ng-model="filter.Argument" ng-options="item for item in optionsItems" multiple ng-disabled="dataIsLoaded == false"></select>' +
                         '<hr />' + // Maybe we should add checkboxes or something like that
                         '<tb-column-filter-buttons></tb-column-filter-buttons>' +
-                        '<tb-column-filter-column-selector ng-show="columnSelector"></tb-column-filter-column-selector>' +
                         '</form></div>' +
                         '</div>',
                     restrict: 'E',
@@ -3688,13 +3722,16 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * The `tubularGridFilterService` service is a internal helper to setup any `FilterModel` with a UI.
          */
         .service('tubularGridFilterService', [
-            'tubulargGridFilterModel', '$compile', '$modal', function tubularGridFilterService(FilterModel, $compile, $modal) {
+            'tubulargGridFilterModel', '$compile', function tubularGridFilterService(FilterModel, $compile) {
                 var me = this;
 
                 me.applyFilterFuncs = function(scope, el, attributes, openCallback) {
-                    scope.columnSelector = attributes.columnSelector || false;
                     scope.$component = scope.$parent.$component;
                     scope.filterTitle = "Filter";
+
+                    scope.$watch('filter.Operator', function(val) {
+                        if (val === 'None') scope.filter.Text = '';
+                    });
 
                     scope.clearFilter = function () {
                         if (scope.filter.Operator != 'Multiple') {
@@ -3729,38 +3766,6 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                     scope.open = function () {
                         $(el).find('.btn-popover').popover('toggle');
-                    };
-
-                    scope.openColumnsSelector = function() {
-                        scope.close();
-
-                        var model = scope.$component.columns;
-
-                        var dialog = $modal.open({
-                            template: '<div class="modal-header">' +
-                                '<h3 class="modal-title">Columns Selector</h3>' +
-                                '</div>' +
-                                '<div class="modal-body">' +
-                                '<table class="table table-bordered table-responsive table-striped table-hover table-condensed">' +
-                                '<thead><tr><th>Visible?</th><th>Name</th><th>Is grouping?</th></tr></thead>' +
-                                '<tbody><tr ng-repeat="col in Model">' +
-                                '<td><input type="checkbox" ng-model="col.Visible" /></td>' +
-                                '<td>{{col.Label}}</td>' +
-                                '<td><input type="checkbox" ng-disabled="true" ng-model="col.IsGrouping" /></td>' +
-                                '</tr></tbody></table></div>' +
-                                '</div>' +
-                                '<div class="modal-footer"><button class="btn btn-warning" ng-click="closePopup()">Close</button></div>',
-                            backdropClass: 'fullHeight',
-                            controller: [
-                                '$scope', function($innerScope) {
-                                    $innerScope.Model = model;
-
-                                    $innerScope.closePopup = function() {
-                                        dialog.close();
-                                    };
-                                }
-                            ]
-                        });
                     };
 
                     scope.checkEvent = function (keyEvent) {

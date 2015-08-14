@@ -172,13 +172,16 @@
          * The `tubularGridFilterService` service is a internal helper to setup any `FilterModel` with a UI.
          */
         .service('tubularGridFilterService', [
-            'tubulargGridFilterModel', '$compile', '$modal', function tubularGridFilterService(FilterModel, $compile, $modal) {
+            'tubulargGridFilterModel', '$compile', function tubularGridFilterService(FilterModel, $compile) {
                 var me = this;
 
                 me.applyFilterFuncs = function(scope, el, attributes, openCallback) {
-                    scope.columnSelector = attributes.columnSelector || false;
                     scope.$component = scope.$parent.$component;
                     scope.filterTitle = "Filter";
+
+                    scope.$watch('filter.Operator', function(val) {
+                        if (val === 'None') scope.filter.Text = '';
+                    });
 
                     scope.clearFilter = function () {
                         if (scope.filter.Operator != 'Multiple') {
@@ -213,38 +216,6 @@
 
                     scope.open = function () {
                         $(el).find('.btn-popover').popover('toggle');
-                    };
-
-                    scope.openColumnsSelector = function() {
-                        scope.close();
-
-                        var model = scope.$component.columns;
-
-                        var dialog = $modal.open({
-                            template: '<div class="modal-header">' +
-                                '<h3 class="modal-title">Columns Selector</h3>' +
-                                '</div>' +
-                                '<div class="modal-body">' +
-                                '<table class="table table-bordered table-responsive table-striped table-hover table-condensed">' +
-                                '<thead><tr><th>Visible?</th><th>Name</th><th>Is grouping?</th></tr></thead>' +
-                                '<tbody><tr ng-repeat="col in Model">' +
-                                '<td><input type="checkbox" ng-model="col.Visible" /></td>' +
-                                '<td>{{col.Label}}</td>' +
-                                '<td><input type="checkbox" ng-disabled="true" ng-model="col.IsGrouping" /></td>' +
-                                '</tr></tbody></table></div>' +
-                                '</div>' +
-                                '<div class="modal-footer"><button class="btn btn-warning" ng-click="closePopup()">Close</button></div>',
-                            backdropClass: 'fullHeight',
-                            controller: [
-                                '$scope', function($innerScope) {
-                                    $innerScope.Model = model;
-
-                                    $innerScope.closePopup = function() {
-                                        dialog.close();
-                                    };
-                                }
-                            ]
-                        });
                     };
 
                     scope.checkEvent = function (keyEvent) {
