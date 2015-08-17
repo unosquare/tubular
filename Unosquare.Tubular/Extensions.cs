@@ -215,16 +215,19 @@
                         {
                             if (column.Filter.Operator == CompareOperators.Equals)
                             {
-                                searchLambda.AppendFormat("({0} >= @{1} && {0} <= @{2}) &&", column.Name, searchParamArgs.Count, searchParamArgs.Count + 1);
+                                searchLambda.AppendFormat("({0} >= @{1} && {0} <= @{2}) &&", column.Name,
+                                    searchParamArgs.Count, searchParamArgs.Count + 1);
                             }
                             else
                             {
-                                searchLambda.AppendFormat("({0} < @{1} || {0} > @{2}) &&", column.Name, searchParamArgs.Count, searchParamArgs.Count + 1);
+                                searchLambda.AppendFormat("({0} < @{1} || {0} > @{2}) &&", column.Name,
+                                    searchParamArgs.Count, searchParamArgs.Count + 1);
                             }
                         }
                         else
                         {
-                            searchLambda.AppendFormat("{0} {2} @{1} &&", column.Name, searchParamArgs.Count, GetSqlOperator(column.Filter.Operator));
+                            searchLambda.AppendFormat("{0} {2} @{1} &&", column.Name, searchParamArgs.Count,
+                                GetSqlOperator(column.Filter.Operator));
                         }
 
                         if (string.Equals(column.DataType, DataType.Numeric.ToString(),
@@ -268,13 +271,27 @@
                         searchLambda.AppendFormat("{0}.EndsWith(@{1}) &&", column.Name, searchParamArgs.Count);
                         searchParamArgs.Add(column.Filter.Text);
                         break;
+                    case CompareOperators.NotContains:
+                        searchLambda.AppendFormat("{0}.Contains(@{1}) == false &&", column.Name, searchParamArgs.Count);
+                        searchParamArgs.Add(column.Filter.Text);
+                        break;
+                    case CompareOperators.NotStartsWith:
+                        searchLambda.AppendFormat("{0}.StartsWith(@{1}) == false &&", column.Name, searchParamArgs.Count);
+                        searchParamArgs.Add(column.Filter.Text);
+                        break;
+                    case CompareOperators.NotEndsWith:
+                        searchLambda.AppendFormat("{0}.EndsWith(@{1}) == false &&", column.Name, searchParamArgs.Count);
+                        searchParamArgs.Add(column.Filter.Text);
+                        break;
                     case CompareOperators.Gte:
                     case CompareOperators.Gt:
                     case CompareOperators.Lte:
                     case CompareOperators.Lt:
-                        searchLambda.AppendFormat("{0} {2} @{1} &&", column.Name, searchParamArgs.Count, GetSqlOperator(column.Filter.Operator));
+                        searchLambda.AppendFormat("{0} {2} @{1} &&", column.Name, searchParamArgs.Count,
+                            GetSqlOperator(column.Filter.Operator));
 
-                        if (string.Equals(column.DataType, DataType.Numeric.ToString(), StringComparison.CurrentCultureIgnoreCase))
+                        if (string.Equals(column.DataType, DataType.Numeric.ToString(),
+                            StringComparison.CurrentCultureIgnoreCase))
                             searchParamArgs.Add(decimal.Parse(column.Filter.Text));
                         else
                             searchParamArgs.Add(DateTime.Parse(column.Filter.Text));
@@ -301,7 +318,8 @@
                         searchLambda.AppendFormat("(({0} >= @{1}) &&  ({0} <= @{2})) &&", column.Name,
                             searchParamArgs.Count, searchParamArgs.Count + 1);
 
-                        if (string.Equals(column.DataType, DataType.Numeric.ToString(), StringComparison.CurrentCultureIgnoreCase))
+                        if (string.Equals(column.DataType, DataType.Numeric.ToString(),
+                            StringComparison.CurrentCultureIgnoreCase))
                         {
                             searchParamArgs.Add(decimal.Parse(column.Filter.Text));
                             searchParamArgs.Add(decimal.Parse(column.Filter.Argument[0]));
@@ -347,7 +365,8 @@
         /// <param name="filter">The LINQ expression</param>
         /// <param name="records">How many records to retrieve, default 8</param>
         /// <returns>The filtered IQueryable</returns>
-        public static IQueryable<string> CreateTypeAheadList(this IQueryable dataSource, string fieldName, string filter, int records = 8)
+        public static IQueryable<string> CreateTypeAheadList(this IQueryable dataSource, string fieldName, string filter,
+            int records = 8)
         {
             // TODO: I need to connect this to a better platform
             return dataSource.CreateDynamicFilteredSet(fieldName, filter)
@@ -363,7 +382,8 @@
         /// <param name="fieldName">The field to filter</param>
         /// <param name="records">How many records, 0 to retrieve all</param>
         /// <returns>The filtered IQueryable</returns>
-        public static IQueryable<string> CreateTypeAheadList(this IQueryable dataSource, string fieldName, int records = 8)
+        public static IQueryable<string> CreateTypeAheadList(this IQueryable dataSource, string fieldName,
+            int records = 8)
         {
             dataSource = dataSource
                 .Select(fieldName + ".ToString()")

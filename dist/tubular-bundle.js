@@ -3335,8 +3335,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         'Equals': 'Equals',
                         'NotEquals': 'Not Equals',
                         'Contains': 'Contains',
+                        'NotContains': 'Not Contains',
                         'StartsWith': 'Starts With',
-                        'EndsWith': 'Ends With'
+                        'NotStartsWith': 'Not Starts With',
+                        'EndsWith': 'Ends With',
+                        'NotEndsWith': 'Not Ends With'
                     },
                     'numeric': {
                         'None': 'None',
@@ -4421,6 +4424,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     'Contains': "substringof({1}, {0}) eq true",
                     'StartsWith': "startswith({0}, {1}) eq true",
                     'EndsWith': "endswith({0}, {1}) eq true",
+                    'NotContains': "substringof({1}, {0}) eq false",
+                    'NotStartsWith': "startswith({0}, {1}) eq false",
+                    'NotEndsWith': "endswith({0}, {1}) eq false",
                     // TODO: 'Between': 'Between', 
                     'Gte': "{0} ge {1}",
                     'Gt': "{0} gt {1}",

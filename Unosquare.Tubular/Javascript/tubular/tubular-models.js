@@ -57,8 +57,11 @@
                         'Equals': 'Equals',
                         'NotEquals': 'Not Equals',
                         'Contains': 'Contains',
+                        'NotContains': 'Not Contains',
                         'StartsWith': 'Starts With',
-                        'EndsWith': 'Ends With'
+                        'NotStartsWith': 'Not Starts With',
+                        'EndsWith': 'Ends With',
+                        'NotEndsWith': 'Not Ends With'
                     },
                     'numeric': {
                         'None': 'None',

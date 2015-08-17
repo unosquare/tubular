@@ -77,7 +77,19 @@
         /// <summary>
         /// Between values filter
         /// </summary>
-        Between
+        Between,
+        /// <summary>
+        /// Not Contains filter
+        /// </summary>
+        NotContains,
+        /// <summary>
+        /// Not StartsWith filter
+        /// </summary>
+        NotStartsWith,
+        /// <summary>
+        /// Not EndsWith filter
+        /// </summary>
+        NotEndsWith
     }
 
     /// <summary>
