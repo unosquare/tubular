@@ -188,9 +188,11 @@
                             scope.filter.Operator = 'None';
                         }
 
+                        scope.filter.HasFilter = false;
                         scope.filter.Text = '';
                         scope.filter.Argument = [];
-                        scope.applyFilter();
+                        scope.$component.retrieveData();
+                        scope.close();
                     };
 
                     scope.applyFilter = function () {
@@ -202,10 +204,7 @@
                             columns[0].Filter = scope.filter;
                         }
 
-                        if (scope.filter.Operator == 'None') {
-                            scope.filter.Operator = 'Equals';
-                        }
-
+                        scope.filter.HasFilter = true;
                         scope.$component.retrieveData();
                         scope.close();
                     };

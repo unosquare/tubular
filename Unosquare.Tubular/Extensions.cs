@@ -205,6 +205,8 @@
                 if (string.IsNullOrWhiteSpace(column.Filter.Text) && column.Filter.Argument == null)
                     continue; // TODO: Handle null?
 
+                column.Filter.HasFilter = true;
+
                 switch (column.Filter.Operator)
                 {
                     case CompareOperators.Equals:
@@ -303,7 +305,7 @@
                         var filterString = "(";
                         foreach (var filter in column.Filter.Argument)
                         {
-                            filterString += string.Format("{0} == @{1} ||", column.Name, searchParamArgs.Count);
+                            filterString += string.Format(" {0} == @{1} ||", column.Name, searchParamArgs.Count);
                             searchParamArgs.Add(filter);
                         }
 

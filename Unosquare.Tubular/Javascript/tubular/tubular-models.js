@@ -119,6 +119,7 @@
                 }
                 this.Operator = attrs.operator || 'Contains';
                 this.OptionsUrl = attrs.optionsUrl || null;
+                this.HasFilter = false;
             };
         })
         /**

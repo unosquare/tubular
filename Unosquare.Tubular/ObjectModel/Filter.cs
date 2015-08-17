@@ -47,5 +47,10 @@
         /// The options URL.
         /// </value>
         public string OptionsUrl { get; set; }
+
+        /// <summary>
+        /// Flags if the Filter is applied.
+        /// </summary>
+        public bool HasFilter { get; set; }
     }
 }

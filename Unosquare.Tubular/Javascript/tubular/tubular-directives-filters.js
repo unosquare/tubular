@@ -14,7 +14,7 @@
             return {
                 template: '<div class="text-right">' +
                         '<a class="btn btn-sm btn-success" ng-click="applyFilter()" ng-disabled="filter.Operator == \'None\'">Apply</a>&nbsp;' +
-                        '<button class="btn btn-sm btn-danger" ng-click="clearFilter()" ng-disabled="filter.Operator == \'None\'">Clear</button>' +
+                        '<button class="btn btn-sm btn-danger" ng-click="clearFilter()">Clear</button>' +
                         '</div>',
                 restrict: 'E',
                 replace: true,
@@ -94,7 +94,7 @@
                     require: '^tbColumn',
                     template: '<div class="tubular-column-menu">' +
                         '<button class="btn btn-xs btn-default btn-popover" ng-click="open()" ' +
-                        'ng-class="{ \'btn-success\': (filter.Operator !== \'None\' && filter.Text.length > 0) }">' +
+                        'ng-class="{ \'btn-success\': filter.HasFilter }">' +
                         '<i class="fa fa-filter"></i></button>' +
                         '<div style="display: none;">' +
                         '<button type="button" class="close" data-dismiss="modal" ng-click="close()"><span aria-hidden="true">×</span></button><h4>{{::filterTitle}}</h4>' +
@@ -148,13 +148,13 @@
                     require: '^tbColumn',
                     template: '<div ngTransclude class="btn-group tubular-column-menu">' +
                         '<button class="btn btn-xs btn-default btn-popover" ng-click="open()" ' +
-                        'ng-class="{ \'btn-success\': filter.Text != null }">' +
+                        'ng-class="{ \'btn-success\': filter.HasFilter }">' +
                         '<i class="fa fa-filter"></i></button>' +
                         '<div style="display: none;">' +
                         '<button type="button" class="close" data-dismiss="modal" ng-click="close()"><span aria-hidden="true">×</span></button><h4>{{::filterTitle}}</h4>' +
                         '<form class="tubular-column-filter-form" onsubmit="return false;">' +
                         '<select class="form-control" ng-model="filter.Operator"></select>' +
-                        '<input type="date" class="form-control" ng-model="filter.Text" ng-keypress="checkEvent($event)" />' +
+                        '<input type="date" class="form-control" ng-model="filter.Text" ng-keypress="checkEvent($event)" />&nbsp;' +
                         '<input type="date" class="form-control" ng-model="filter.Argument[0]" ng-keypress="checkEvent($event)" ' +
                         'ng-show="filter.Operator == \'Between\'" />' +
                         '<hr />' +
@@ -226,12 +226,13 @@
                     require: '^tbColumn',
                     template: '<div class="tubular-column-menu">' +
                         '<button class="btn btn-xs btn-default btn-popover" ng-click="open()" ' +
-                        'ng-class="{ \'btn-success\': (filter.Argument.length > 0) }">' +
+                        'ng-class="{ \'btn-success\': filter.HasFilter }">' +
                         '<i class="fa fa-filter"></i></button>' +
                         '<div style="display: none;">' +
                         '<button type="button" class="close" data-dismiss="modal" ng-click="close()"><span aria-hidden="true">×</span></button><h4>{{::filterTitle}}</h4>' +
                         '<form class="tubular-column-filter-form" onsubmit="return false;">' +
-                        '<select class="form-control checkbox-list" ng-model="filter.Argument" ng-options="item for item in optionsItems" multiple ng-disabled="dataIsLoaded == false"></select>' +
+                        '<select class="form-control checkbox-list" ng-model="filter.Argument" ng-options="item for item in optionsItems" ' +
+                        ' multiple ng-disabled="dataIsLoaded == false"></select>' +
                         '<hr />' + // Maybe we should add checkboxes or something like that
                         '<tb-column-filter-buttons></tb-column-filter-buttons>' +
                         '</form></div>' +
