@@ -2913,8 +2913,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         '<input class="form-control" type="search" ng-model="filter.Text" autofocus ng-keypress="checkEvent($event)" ng-hide="dataType == \'boolean\'"' +
                         'placeholder="Value" ng-disabled="filter.Operator == \'None\'" />' +
                         '<div class="text-center" ng-show="dataType == \'boolean\'">' +
-                        '<button type="button" class="btn btn-default btn-md" ng-disabled="filter.Text === true" ng-click="filter.Text = true"><i class="fa fa-check"></i></button>&nbsp;' +
-                        '<button type="button" class="btn btn-default btn-md" ng-disabled="filter.Text === false" ng-click="filter.Text = false"><i class="fa fa-times"></i></button></div>' +
+                        '<button type="button" class="btn btn-default btn-md" ng-disabled="filter.Text === true" ng-click="filter.Text = true; filter.Operator = \'Equals\';">' +
+                        '<i class="fa fa-check"></i></button>&nbsp;' +
+                        '<button type="button" class="btn btn-default btn-md" ng-disabled="filter.Text === false" ng-click="filter.Text = false; filter.Operator = \'Equals\';">' +
+                        '<i class="fa fa-times"></i></button></div>' +
                         '<input type="search" class="form-control" ng-model="filter.Argument[0]" ng-keypress="checkEvent($event)" ng-show="filter.Operator == \'Between\'" />' +
                         '<hr />' +
                         '<tb-column-filter-buttons></tb-column-filter-buttons>' +
