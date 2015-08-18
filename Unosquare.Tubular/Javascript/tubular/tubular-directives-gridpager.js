@@ -33,6 +33,12 @@
                             $scope.$component = $scope.$parent.$parent;
                             $scope.tubularDirective = 'tubular-grid-pager';
 
+                            $scope.$watch('$component.currentPage', function () {
+                                if ($scope.$component.currentPage != $scope.$component.requestedPage) {
+                                    $scope.$component.requestedPage = $scope.$component.currentPage;
+                                }
+                            });
+
                             $scope.pagerPageChanged = function () {
                                 $scope.$component.requestedPage = $scope.$component.currentPage;
                                 var allLinks = $element.find('li a');

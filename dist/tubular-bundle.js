@@ -775,7 +775,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                             $scope.savePage = $scope.savePage || true;
                             $scope.currentPage = $scope.savePage ? (localStorageService.get($scope.name + "_page") || 1) : 1;
-
+                            
                             $scope.savePageSize = $scope.savePageSize || true;
                             $scope.pageSize = 20;
 
@@ -1991,6 +1991,12 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         '$scope', '$element', function ($scope, $element) {
                             $scope.$component = $scope.$parent.$parent;
                             $scope.tubularDirective = 'tubular-grid-pager';
+
+                            $scope.$watch('$component.currentPage', function () {
+                                if ($scope.$component.currentPage != $scope.$component.requestedPage) {
+                                    $scope.$component.requestedPage = $scope.$component.currentPage;
+                                }
+                            });
 
                             $scope.pagerPageChanged = function () {
                                 $scope.$component.requestedPage = $scope.$component.currentPage;
