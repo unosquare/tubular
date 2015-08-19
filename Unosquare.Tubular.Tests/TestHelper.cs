@@ -1,7 +1,8 @@
-﻿using NUnit.Framework;
+﻿using Effort;
+using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using System.Linq;
-using Effort;
 using Unosquare.Tubular.ObjectModel;
 using Unosquare.Tubular.Tests.Database;
 
@@ -107,8 +108,8 @@ namespace Unosquare.Tubular.Tests
         [Test]
         public void SimpleSearch()
         {
-            var dataSource = _context.Things.Where(x => x.Name.Contains(SearchText));
-            var data = dataSource.Take(PageSize).ToList();
+            var dataSource = _context.Things;
+            var data = dataSource.Where(x => x.Name.Contains(SearchText)).Take(PageSize).ToList();
 
             var request = new GridDataRequest()
             {
@@ -127,7 +128,7 @@ namespace Unosquare.Tubular.Tests
             Assert.AreEqual(data.Count, response.Payload.Count, "Same length");
             Assert.AreEqual(data.First().Id, response.Payload.First().First(), "Same first item");
 
-            Assert.AreEqual(dataSource.Count(), response.FilteredRecordCount, "Total filtered rows matching");
+            Assert.AreEqual(dataSource.Count(x => x.Name.Contains(SearchText)), response.FilteredRecordCount, "Total filtered rows matching");
         }
 
         [Test]
@@ -169,6 +170,126 @@ namespace Unosquare.Tubular.Tests
 
             Assert.AreEqual(dataFiltered.Count, tubularDataFiltered.Count(), "Same length");
             Assert.AreEqual(dataFiltered.First(), tubularDataFiltered.First(), "Same first item");
+        }
+
+        [Test]
+        public void TestListSimpleSearch()
+        {
+            var dataSource = new List<Thing>
+            {
+                new Thing { Name= SearchText + "1" },
+                new Thing { Name= SearchText.ToLower() + "2" },
+                new Thing { Name= SearchText.ToUpper() + "3" },
+                new Thing { Name= SearchText + "4" },
+                new Thing { Name= "ODOR" }
+            };
+
+            var data = dataSource.Where(x => x.Name.ToLowerInvariant().Contains(SearchText.ToLowerInvariant())).Take(PageSize).ToList();
+
+            var request = new GridDataRequest()
+            {
+                Take = PageSize,
+                Skip = 0,
+                Search = new Filter()
+                {
+                    Operator = CompareOperators.Auto,
+                    Text = SearchText
+                },
+                Columns = Thing.GetColumns()
+            };
+
+            var response = request.CreateGridDataResponse(dataSource.AsQueryable());
+
+            Assert.AreEqual(data.Count, response.Payload.Count, "Same length");
+            Assert.AreEqual(data.First().Id, response.Payload.First().First(), "Same first item");
+
+            Assert.AreEqual(dataSource.Count(x => x.Name.ToLowerInvariant().Contains(SearchText.ToLowerInvariant())), response.FilteredRecordCount, "Total filtered rows matching");
+        }
+
+        [Test]
+        public void TestArraySimpleSearch()
+        {
+            var dataSource = new[]
+            {
+                new Thing { Name= SearchText + "1" },
+                new Thing { Name= SearchText.ToLower() + "2" },
+                new Thing { Name= SearchText.ToUpper() + "3" },
+                new Thing { Name= SearchText + "4" },
+                new Thing { Name= "ODOR" }
+            };
+
+            var data = dataSource.Where(x => x.Name.ToLowerInvariant().Contains(SearchText.ToLowerInvariant())).Take(PageSize).ToList();
+
+            var request = new GridDataRequest()
+            {
+                Take = PageSize,
+                Skip = 0,
+                Search = new Filter()
+                {
+                    Operator = CompareOperators.Auto,
+                    Text = SearchText
+                },
+                Columns = Thing.GetColumns()
+            };
+
+            var response = request.CreateGridDataResponse(dataSource.AsQueryable());
+
+            Assert.AreEqual(data.Count, response.Payload.Count, "Same length");
+            Assert.AreEqual(data.First().Id, response.Payload.First().First(), "Same first item");
+
+            Assert.AreEqual(dataSource.Count(x => x.Name.ToLowerInvariant().Contains(SearchText.ToLowerInvariant())), response.FilteredRecordCount, "Total filtered rows matching");
+        }
+
+
+        [Test]
+        public void TestDataTableSimpleSearch()
+        {
+            // INFO:
+            // I was trying to test another IListSource source like DataTable,
+            // but somewhere between GetList() to AsQueryable this is failing
+            // and also the Filtering against DataRow is crashing
+
+            // I find useless to support DataTables, but I just want to let this sample
+
+            //var dataTable = new DataTable();
+            //dataTable.Columns.Add(new DataColumn("Name", typeof (string)));
+            
+            //var tempData = new[]
+            //{
+            //    new Thing { Name= SearchText + "1" },
+            //    new Thing { Name= SearchText.ToLower() + "2" },
+            //    new Thing { Name= SearchText.ToUpper() + "3" },
+            //    new Thing { Name= SearchText + "4" },
+            //    new Thing { Name= "ODOR" }
+            //};
+
+            //foreach (var tempItem in tempData)
+            //{
+            //    var dr = dataTable.NewRow();
+            //    dr["Name"] = tempItem.Name;
+            //    dataTable.Rows.Add(dr);
+            //}
+
+            //var request = new GridDataRequest()
+            //{
+            //    Take = PageSize,
+            //    Skip = 0,
+            //    Search = new Filter()
+            //    {
+            //        Operator = CompareOperators.Auto,
+            //        Text = SearchText
+            //    },
+            //    Columns = Thing.GetColumns()
+            //};
+
+            //var dataView = new DataView(dataTable) {RowFilter = "Name LIKE '%" + SearchText + "%'"};
+
+            //var response = request.CreateGridDataResponse(((IListSource) dataTable).GetList().AsQueryable());
+
+            //Assert.AreEqual(dataView.Count, response.Payload.Count, "Same length");
+            //Assert.AreEqual(dataView[0][0], response.Payload.First().First(), "Same first item");
+
+            //Assert.AreEqual(dataView.Count, response.FilteredRecordCount, "Total filtered rows matching");
         }
     }
 }
