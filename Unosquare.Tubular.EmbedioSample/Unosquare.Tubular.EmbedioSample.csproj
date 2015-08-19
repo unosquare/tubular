@@ -58,7 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <Content Include="..\Unosquare.Tubular\Css\tubular-bundle.min.css">
+    <Content Include="..\dist\tubular-bundle.min.css">
       <Link>html\vendor\tubular\tubular-bundle.min.css</Link>
       <DependentUpon>tubular-bundle.css</DependentUpon>
     </Content>
@@ -76,11 +76,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\Unosquare.Tubular\Css\tubular-bundle.css">
+    <Content Include="..\dist\tubular-bundle.css">
       <Link>html\vendor\tubular\tubular-bundle.css</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\Unosquare.Tubular\Javascript\tubular-bundle.js">
+    <Content Include="..\dist\tubular-bundle.js">
       <Link>html\vendor\tubular\tubular-bundle.js</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
