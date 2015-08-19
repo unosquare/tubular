@@ -1,6 +1,7 @@
 ﻿namespace Unosquare.Tubular
 {
     using System;
+    using System.ComponentModel;
     using System.Collections.Generic;
     using System.Linq;
     using System.Linq.Dynamic;
@@ -120,7 +121,6 @@
                 subset = subset.OrderBy(request.Columns.First().Name + " ASC");
             }
 
-            subset = subset.Skip(request.Skip);
             var pageSize = request.Take;
 
             // Take with value -1 represents entire set
@@ -129,18 +129,23 @@
                 response.TotalPages = 1;
                 response.CurrentPage = 1;
                 pageSize = subset.Count();
+                subset = subset.Skip(request.Skip);
             }
             else
             {
-                subset = subset.Take(request.Take);
                 response.TotalPages = (response.FilteredRecordCount + pageSize - 1)/pageSize;
 
                 if (response.TotalPages > 0)
                 {
+                    if (request.Skip < 20) request.Skip = 0;
+
                     response.CurrentPage = 1 +
                                            (int)
                                                ((request.Skip/(float) response.FilteredRecordCount)*response.TotalPages);
+                    subset = subset.Skip(request.Skip);
                 }
+
+                subset = subset.Take(request.Take);
             }
 
             response.Payload = CreateGridPayload(subset, columnMap, pageSize, request.TimezoneOffset);
@@ -171,9 +176,13 @@
 
         private static IQueryable FilterResponse(GridDataRequest request, IQueryable subset, GridDataResponse response)
         {
+            var isDbQuery = subset.GetType().IsGenericType &&
+                                  subset.GetType().GetInterfaces().Any(y => y == typeof(IListSource));
+
             // Perform Searching
             var searchLambda = new StringBuilder();
             var searchParamArgs = new List<object>();
+            var searchValue = isDbQuery ? request.Search.Text : request.Search.Text.ToLowerInvariant();
 
             switch (request.Search.Operator)
             {
@@ -186,8 +195,11 @@
 
                     foreach (var column in request.Columns.Where(x => x.Searchable))
                     {
-                        filter += string.Format("{0}.Contains(@{1}) ||", column.Name, values.Count);
-                        values.Add(request.Search.Text);
+                        filter += string.Format(isDbQuery
+                            ? "{0}.Contains(@{1}) ||"
+                            : "({0} != null && {0}.ToLowerInvariant().Contains(@{1})) ||", column.Name, values.Count);
+
+                        values.Add(searchValue);
                     }
 
                     if (string.IsNullOrEmpty(filter) == false)
@@ -215,16 +227,11 @@
 
                         if (column.DataType == DataType.Date.ToString().ToLower())
                         {
-                            if (column.Filter.Operator == CompareOperators.Equals)
-                            {
-                                searchLambda.AppendFormat("({0} >= @{1} && {0} <= @{2}) &&", column.Name,
-                                    searchParamArgs.Count, searchParamArgs.Count + 1);
-                            }
-                            else
-                            {
-                                searchLambda.AppendFormat("({0} < @{1} || {0} > @{2}) &&", column.Name,
-                                    searchParamArgs.Count, searchParamArgs.Count + 1);
-                            }
+                            searchLambda.AppendFormat(
+                                column.Filter.Operator == CompareOperators.Equals
+                                    ? "({0} >= @{1} && {0} <= @{2}) &&"
+                                    : "({0} < @{1} || {0} > @{2}) &&", column.Name,
+                                searchParamArgs.Count, searchParamArgs.Count + 1);
                         }
                         else
                         {
@@ -262,28 +269,58 @@
 
                         break;
                     case CompareOperators.Contains:
-                        searchLambda.AppendFormat("{0}.Contains(@{1}) &&", column.Name, searchParamArgs.Count);
-                        searchParamArgs.Add(column.Filter.Text);
+                        searchLambda.AppendFormat(
+                            isDbQuery
+                                ? "{0}.Contains(@{1}) &&"
+                                : "({0} != null && {0}.ToLowerInvariant().Contains(@{1})) &&", column.Name,
+                            searchParamArgs.Count);
+
+                        searchParamArgs.Add(column.Filter.Text.ToLowerInvariant());
                         break;
                     case CompareOperators.StartsWith:
-                        searchLambda.AppendFormat("{0}.StartsWith(@{1}) &&", column.Name, searchParamArgs.Count);
-                        searchParamArgs.Add(column.Filter.Text);
+                        searchLambda.AppendFormat(
+                            isDbQuery
+                                ? "{0}.StartsWith(@{1}) &&"
+                                : "({0} != null && {0}.ToLowerInvariant().StartsWith(@{1})) &&", column.Name,
+                            searchParamArgs.Count);
+
+                        searchParamArgs.Add(column.Filter.Text.ToLowerInvariant());
                         break;
                     case CompareOperators.EndsWith:
-                        searchLambda.AppendFormat("{0}.EndsWith(@{1}) &&", column.Name, searchParamArgs.Count);
-                        searchParamArgs.Add(column.Filter.Text);
+                        searchLambda.AppendFormat(
+                            isDbQuery
+                                ? "{0}.EndsWith(@{1}) &&"
+                                : "({0} != null && {0}.ToLowerInvariant().EndsWith(@{1})) &&", column.Name,
+                            searchParamArgs.Count);
+
+                        searchParamArgs.Add(column.Filter.Text.ToLowerInvariant());
                         break;
                     case CompareOperators.NotContains:
-                        searchLambda.AppendFormat("{0}.Contains(@{1}) == false &&", column.Name, searchParamArgs.Count);
-                        searchParamArgs.Add(column.Filter.Text);
+                        searchLambda.AppendFormat(
+                            isDbQuery
+                                ? "{0}.Contains(@{1}) == false &&"
+                                : "({0} != null && {0}.ToLowerInvariant().Contains(@{1}) == false) &&", column.Name,
+                            searchParamArgs.Count);
+
+                        searchParamArgs.Add(column.Filter.Text.ToLowerInvariant());
                         break;
                     case CompareOperators.NotStartsWith:
-                        searchLambda.AppendFormat("{0}.StartsWith(@{1}) == false &&", column.Name, searchParamArgs.Count);
-                        searchParamArgs.Add(column.Filter.Text);
+                        searchLambda.AppendFormat(
+                            isDbQuery
+                                ? "{0}.StartsWith(@{1}) == false &&"
+                                : "({0} != null && {0}.ToLowerInvariant().StartsWith(@{1}) == false) &&", column.Name,
+                            searchParamArgs.Count);
+
+                        searchParamArgs.Add(column.Filter.Text.ToLowerInvariant());
                         break;
                     case CompareOperators.NotEndsWith:
-                        searchLambda.AppendFormat("{0}.EndsWith(@{1}) == false &&", column.Name, searchParamArgs.Count);
-                        searchParamArgs.Add(column.Filter.Text);
+                        searchLambda.AppendFormat(
+                            isDbQuery
+                                ? "{0}.EndsWith(@{1}) == false &&"
+                                : "({0} != null && {0}.ToLowerInvariant().EndsWith(@{1}) == false) &&", column.Name,
+                            searchParamArgs.Count);
+
+                        searchParamArgs.Add(column.Filter.Text.ToLowerInvariant());
                         break;
                     case CompareOperators.Gte:
                     case CompareOperators.Gt:
@@ -341,7 +378,8 @@
                 subset = subset.Where(searchLambda.Remove(searchLambda.Length - 3, 3).ToString(),
                     searchParamArgs.ToArray());
 
-                response.FilteredRecordCount = subset.Count();
+                if (subset != null)
+                    response.FilteredRecordCount = subset.Count();
             }
 
             return subset;
