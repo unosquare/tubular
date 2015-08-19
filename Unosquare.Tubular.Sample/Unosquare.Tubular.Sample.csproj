@@ -162,10 +162,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
-    <Content Include="..\dist\tubular-bundle.min.js.map">
-      <Link>ui\tubular\tubular-bundle.min.js.map</Link>
-      <DependentUpon>tubular-bundle.min.js</DependentUpon>
-    </Content>
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
