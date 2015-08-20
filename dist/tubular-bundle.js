@@ -775,7 +775,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                             $scope.savePage = $scope.savePage || true;
                             $scope.currentPage = $scope.savePage ? (localStorageService.get($scope.name + "_page") || 1) : 1;
-                            
+
                             $scope.savePageSize = $scope.savePageSize || true;
                             $scope.pageSize = 20;
 
@@ -3752,19 +3752,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         if (val === 'None') scope.filter.Text = '';
                     });
 
-                    scope.clearFilter = function () {
-                        if (scope.filter.Operator != 'Multiple') {
-                            scope.filter.Operator = 'None';
-                        }
-
-                        scope.filter.HasFilter = false;
-                        scope.filter.Text = '';
-                        scope.filter.Argument = [];
-                        scope.$component.retrieveData();
-                        scope.close();
-                    };
-
-                    scope.applyFilter = function () {
+                    scope.retrieveData = function () {
                         var columns = scope.$component.columns.filter(function (el) {
                             return el.Name === scope.filter.Name;
                         });
@@ -3773,9 +3761,24 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             columns[0].Filter = scope.filter;
                         }
 
-                        scope.filter.HasFilter = true;
                         scope.$component.retrieveData();
                         scope.close();
+                    };
+
+                    scope.clearFilter = function () {
+                        if (scope.filter.Operator != 'Multiple') {
+                            scope.filter.Operator = 'None';
+                        }
+
+                        scope.filter.Text = '';
+                        scope.filter.Argument = [];
+                        scope.filter.HasFilter = false;
+                        scope.retrieveData();
+                    };
+
+                    scope.applyFilter = function () {
+                        scope.filter.HasFilter = true;
+                        scope.retrieveData();
                     };
 
                     scope.close = function() {
@@ -3836,6 +3839,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 n.Operator = columns[0].Filter.Operator;
                             }
                         }
+
+                        scope.filter.HasFilter = columns[0].Filter.HasFilter;
                     });
 
                     columns[0].Filter = scope.filter;
@@ -3901,7 +3906,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         scope.state.$errors = [];
 
                         if ((angular.isUndefined(scope.value) && scope.required) ||
-                            (Object.prototype.toString.call(scope.value) === "[object Date]" && isNaN(scope.value.getTime()))) {
+                            (Object.prototype.toString.call(scope.value) === "[object Date]" && isNaN(scope.value.getTime()) && scope.required)) {
                             scope.$valid = false;
                             scope.state.$errors = ["Field is required"];
 
@@ -3928,7 +3933,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     });
 
                     scope.$watch('value', function(newValue, oldValue) {
-                        if (angular.isUndefined(oldValue) && angular.isUndefined(newValue)) return;
+                        if (angular.isUndefined(oldValue) && angular.isUndefined(newValue)) {
+                            return;
+                        }
                         
                         scope.state = {
                             $valid: function () {

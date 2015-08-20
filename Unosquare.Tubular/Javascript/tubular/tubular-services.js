@@ -183,19 +183,7 @@
                         if (val === 'None') scope.filter.Text = '';
                     });
 
-                    scope.clearFilter = function () {
-                        if (scope.filter.Operator != 'Multiple') {
-                            scope.filter.Operator = 'None';
-                        }
-
-                        scope.filter.HasFilter = false;
-                        scope.filter.Text = '';
-                        scope.filter.Argument = [];
-                        scope.$component.retrieveData();
-                        scope.close();
-                    };
-
-                    scope.applyFilter = function () {
+                    scope.retrieveData = function () {
                         var columns = scope.$component.columns.filter(function (el) {
                             return el.Name === scope.filter.Name;
                         });
@@ -204,9 +192,24 @@
                             columns[0].Filter = scope.filter;
                         }
 
-                        scope.filter.HasFilter = true;
                         scope.$component.retrieveData();
                         scope.close();
+                    };
+
+                    scope.clearFilter = function () {
+                        if (scope.filter.Operator != 'Multiple') {
+                            scope.filter.Operator = 'None';
+                        }
+
+                        scope.filter.Text = '';
+                        scope.filter.Argument = [];
+                        scope.filter.HasFilter = false;
+                        scope.retrieveData();
+                    };
+
+                    scope.applyFilter = function () {
+                        scope.filter.HasFilter = true;
+                        scope.retrieveData();
                     };
 
                     scope.close = function() {
@@ -267,6 +270,8 @@
                                 n.Operator = columns[0].Filter.Operator;
                             }
                         }
+
+                        scope.filter.HasFilter = columns[0].Filter.HasFilter;
                     });
 
                     columns[0].Filter = scope.filter;
@@ -332,7 +337,7 @@
                         scope.state.$errors = [];
 
                         if ((angular.isUndefined(scope.value) && scope.required) ||
-                            (Object.prototype.toString.call(scope.value) === "[object Date]" && isNaN(scope.value.getTime()))) {
+                            (Object.prototype.toString.call(scope.value) === "[object Date]" && isNaN(scope.value.getTime()) && scope.required)) {
                             scope.$valid = false;
                             scope.state.$errors = ["Field is required"];
 
@@ -359,7 +364,9 @@
                     });
 
                     scope.$watch('value', function(newValue, oldValue) {
-                        if (angular.isUndefined(oldValue) && angular.isUndefined(newValue)) return;
+                        if (angular.isUndefined(oldValue) && angular.isUndefined(newValue)) {
+                            return;
+                        }
                         
                         scope.state = {
                             $valid: function () {
