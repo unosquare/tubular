@@ -33,5 +33,9 @@
         /// Set which page is sent
         /// </summary>
         public int CurrentPage { get; set; }
+        /// <summary>
+        /// A dictionary with the aggregation functions
+        /// </summary>
+        public Dictionary<string, object> AggregationPayload { get; set; }
     }
 }

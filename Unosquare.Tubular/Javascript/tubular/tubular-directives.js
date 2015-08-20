@@ -277,6 +277,7 @@
                                             return model;
                                         });
 
+                                        $scope.aggregationFunctions = data.AggregationPayload;
                                         $scope.currentPage = data.CurrentPage;
                                         $scope.totalPages = data.TotalPages;
                                         $scope.totalRecordCount = data.TotalRecordCount;

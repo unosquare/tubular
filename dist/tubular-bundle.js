@@ -977,6 +977,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                             return model;
                                         });
 
+                                        $scope.aggregationFunctions = data.AggregationPayload;
                                         $scope.currentPage = data.CurrentPage;
                                         $scope.totalPages = data.TotalPages;
                                         $scope.totalRecordCount = data.TotalRecordCount;
@@ -3337,6 +3338,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 this.Filter = null;
                 this.DataType = attrs.columnType || "string";
                 this.IsGrouping = attrs.isGrouping === "true";
+                this.Aggregate = attrs.aggregate || "none";
 
                 this.FilterOperators = {
                     'string': {

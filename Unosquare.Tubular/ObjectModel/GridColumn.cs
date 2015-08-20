@@ -40,5 +40,9 @@
         /// Column's data type
         /// </summary>
         public string DataType { get; set; }
+        /// <summary>
+        /// Column's Aggregation Function
+        /// </summary>
+        public AggregationFunction Aggregate { get; set; }
     }
 }

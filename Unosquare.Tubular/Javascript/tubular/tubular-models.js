@@ -50,6 +50,7 @@
                 this.Filter = null;
                 this.DataType = attrs.columnType || "string";
                 this.IsGrouping = attrs.isGrouping === "true";
+                this.Aggregate = attrs.aggregate || "none";
 
                 this.FilterOperators = {
                     'string': {

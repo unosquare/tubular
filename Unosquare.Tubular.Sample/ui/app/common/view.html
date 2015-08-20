@@ -38,17 +38,17 @@
                                            sort-direction="Ascending" is-key="true">
                                     <tb-column-header>ID</tb-column-header>
                                 </tb-column>
-                                <tb-column name="CustomerName" label="Customer" searchable="true" sortable="true">
+                                <tb-column name="CustomerName" label="Customer" searchable="true" sortable="true" aggregate="distinctcount">
                                     <tb-column-filter title="Filter Customer" column-selector="true"></tb-column-filter>
                                     <tb-column-header>
                                         <span>{{label}}</span>
                                     </tb-column-header>
                                 </tb-column>
-                                <tb-column name="ShipperCity" label="Shipping City" sortable="true" searchable="true">
+                                <tb-column name="ShipperCity" label="Shipping City" sortable="true" searchable="true" aggregate="count">
                                     <tb-column-header>{{label}}</tb-column-header>
                                     <tb-column-options-filter options-url="/api/orders/cities"></tb-column-options-filter>
                                 </tb-column>
-                                <tb-column name="Amount" label="Amount" column-type="numeric" sortable="true">
+                                <tb-column name="Amount" label="Amount" column-type="numeric" sortable="true" aggregate="sum">
                                     <tb-column-header>{{label}}</tb-column-header>
                                     <tb-column-filter></tb-column-filter>
                                 </tb-column>
@@ -88,7 +88,7 @@
                                         </tb-simple-editor>
                                     </tb-cell-template>
                                     <tb-cell-template>
-                                        <tb-typeahead-editor value="$component.tempRow.ShipperCity" name="ShipperCity" 
+                                        <tb-typeahead-editor value="$component.tempRow.ShipperCity" name="ShipperCity"
                                                              required="true"
                                                              options-url="api/orders/cities">
                                         </tb-typeahead-editor>
@@ -108,7 +108,7 @@
                                 </tb-row-template>
                                 <!-- General rows -->
                                 <tb-row-template ng-repeat="row in $component.rows" row-model="row" selectable="false">
-                                    <tb-cell-template ng-class="{'danger': rowModel.$hasChanges}" 
+                                    <tb-cell-template ng-class="{'danger': rowModel.$hasChanges}"
                                                       class="cell-menu text-center">
                                         <div class="btn-group">
                                             <tb-save-button model="row" save-css="btn-xs hidden-xs hidden-sm"
@@ -116,7 +116,7 @@
                                             </tb-save-button>
                                             <tb-edit-button model="row" class="btn-xs hidden-xs hidden-sm">
                                             </tb-edit-button>
-                                            <button ng-click="row.editPopup('/ui/app/common/popup.html')" 
+                                            <button ng-click="row.editPopup('/ui/app/common/popup.html')"
                                                     class="btn btn-default btn-xs"
                                                     ng-hide="row.$isEditing">
                                                 Popup
@@ -161,7 +161,10 @@
 
             <!-- Bottom toolbar nested row -->
             <div class="row">
-                <tb-grid-pager class="col-md-6 col-xs-12"></tb-grid-pager>
+                <div class="col-md-6 col-xs-12">
+                    <b>Distinct Customers:</b> {{$parent.aggregationFunctions.CustomerName}} <br/>
+                    <b>Sum Amount:</b> {{$parent.aggregationFunctions.Amount | currency}}
+                </div>
                 <tb-page-size-selector class="col-md-3 col-xs-6"></tb-page-size-selector>
                 <tb-grid-pager-info class="col-md-3 col-xs-6"></tb-grid-pager-info>
             </div>

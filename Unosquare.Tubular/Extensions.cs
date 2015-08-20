@@ -121,6 +121,76 @@
                 subset = subset.OrderBy(request.Columns.First().Name + " ASC");
             }
 
+            // Check aggregations before paging
+            // Should it aggregate before filtering too?
+            response.AggregationPayload = new Dictionary<string, object>();
+
+            foreach (var column in request.Columns.Where(x => x.Aggregate != AggregationFunction.None))
+            {
+                switch (column.Aggregate)
+                {
+                    case AggregationFunction.Sum:
+                        // we try to select the column as decimal? and sum it
+                        response.AggregationPayload.Add(column.Name, subset.Select(column.Name).Cast<decimal?>().Sum());
+                        break;
+                    case AggregationFunction.Average:
+                        response.AggregationPayload.Add(column.Name,
+                            subset.Select(column.Name).Cast<decimal?>().Average());
+                        break;
+                    case AggregationFunction.Count:
+                        if (string.Equals(column.DataType, DataType.Numeric.ToString(),
+                            StringComparison.CurrentCultureIgnoreCase))
+                        {
+                            response.AggregationPayload.Add(column.Name, subset.Select(column.Name).Cast<decimal?>().Count());
+                        }
+                        else if (
+                            string.Equals(column.DataType, DataType.DateTime.ToString(),
+                                StringComparison.CurrentCultureIgnoreCase) ||
+                            string.Equals(column.DataType, DataType.Date.ToString(),
+                                StringComparison.CurrentCultureIgnoreCase))
+                        {
+                            response.AggregationPayload.Add(column.Name, subset.Select(column.Name).Cast<DateTime?>().Count());
+                        }
+                        else if (string.Equals(column.DataType, DataType.Boolean.ToString(),
+                            StringComparison.CurrentCultureIgnoreCase))
+                        {
+                            response.AggregationPayload.Add(column.Name, subset.Select(column.Name).Cast<bool>().Count());
+                        }
+                        else
+                        {
+                            response.AggregationPayload.Add(column.Name, subset.Select(column.Name).Cast<string>().Count());
+                        }
+                        break;
+                    case AggregationFunction.DistinctCount:
+                        if (string.Equals(column.DataType, DataType.Numeric.ToString(),
+                            StringComparison.CurrentCultureIgnoreCase))
+                        {
+                            response.AggregationPayload.Add(column.Name, subset.Select(column.Name).Cast<decimal?>().Distinct().Count());
+                        }
+                        else if (
+                            string.Equals(column.DataType, DataType.DateTime.ToString(),
+                                StringComparison.CurrentCultureIgnoreCase) ||
+                            string.Equals(column.DataType, DataType.Date.ToString(),
+                                StringComparison.CurrentCultureIgnoreCase))
+                        {
+                            response.AggregationPayload.Add(column.Name, subset.Select(column.Name).Cast<DateTime?>().Distinct().Count());
+                        }
+                        else if (string.Equals(column.DataType, DataType.Boolean.ToString(),
+                            StringComparison.CurrentCultureIgnoreCase))
+                        {
+                            response.AggregationPayload.Add(column.Name, subset.Select(column.Name).Cast<bool>().Distinct().Count());
+                        }
+                        else
+                        {
+                            response.AggregationPayload.Add(column.Name, subset.Select(column.Name).Cast<string>().Distinct().Count());
+                        }
+                        break;
+                    default:
+                        response.AggregationPayload.Add(column.Name, 0);
+                        break;
+                }
+            }
+
             var pageSize = request.Take;
 
             // Take with value -1 represents entire set
