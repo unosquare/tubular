@@ -41,6 +41,7 @@
     <Reference Include="System.Linq.Dynamic">
       <HintPath>..\packages\System.Linq.Dynamic.1.0.4\lib\net40\System.Linq.Dynamic.dll</HintPath>
     </Reference>
+    <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common.cs" />
@@ -57,9 +58,6 @@
     <Content Include="Css\tadaaapickr\tadaaapickr.css" />
     <Content Include="Css\tubular-bundle.css">
       <DependentUpon>tubular-bundle.css.bundle</DependentUpon>
-    </Content>
-    <Content Include="Css\tubular-bundle.min.css">
-      <DependentUpon>tubular-bundle.css</DependentUpon>
     </Content>
     <Content Include="Css\tubular\tubular.css" />
     <Content Include="Javascript\angular-filter\group-by.js" />
@@ -85,7 +83,9 @@
     <Content Include="Javascript\tubular\tubular-services.js" />
     <Content Include="Javascript\tubular\tubular.js" />
     <None Include="app.config" />
-    <None Include="Css\tubular-bundle.css.bundle" />
+    <None Include="Css\tubular-bundle.css.bundle">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Javascript\tubular-bundle.js.bundle" />
     <None Include="Javascript\tubular-bundle.min.js.map">
       <DependentUpon>tubular-bundle.min.js</DependentUpon>

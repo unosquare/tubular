@@ -137,6 +137,11 @@
                         });
                 };
 
+                me.addTimeZoneToUrl = function (url) {
+                    var separator = url.indexOf('?') === -1 ? '?' : '&';
+                    return url + separator + 'timezoneOffset=' + new Date().getTimezoneOffset();
+                }
+
                 me.saveDataAsync = function(model, request) {
                     var component = model.$component;
                     model.$component = null;
@@ -156,7 +161,7 @@
                     delete clone.$isNew;
 
                     if (model.$isNew) {
-                        clone.$timezoneOffset = new Date().getTimezoneOffset();
+                        request.serverUrl = me.addTimeZoneToUrl(request.serverUrl);
                         request.data = clone;
                     } else {
                         request.data = {
@@ -362,7 +367,7 @@
                 };
 
                 me.getByKey = function (url, key) {
-                    var urlData = url.split('?');
+                    var urlData = me.addTimeZoneToUrl(url).split('?');
                     var getUrl = urlData[0] + key;
 
                     if (urlData.length > 1) getUrl += '?' + urlData[1];

@@ -3172,11 +3172,6 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 });
                             };
 
-                            var fixUrl = function(url) {
-                                var separator = url.indexOf('?') === -1 ? '?' : '&';
-                                return url + separator + 'timezoneOffset=' + new Date().getTimezoneOffset();
-                            }
-
                             $scope.retrieveData = function () {
                                 // Try to load a key from markup or route
                                 $scope.modelKey = $scope.modelKey || $routeParams.param;
@@ -3185,7 +3180,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     if (angular.isDefined($scope.modelKey) &&
                                         $scope.modelKey != null &&
                                         $scope.modelKey !== '') {
-                                        $scope.dataService.getByKey(fixUrl($scope.serverUrl), $scope.modelKey).promise.then(
+                                        $scope.dataService.getByKey($scope.serverUrl, $scope.modelKey).promise.then(
                                             function (data) {
                                                 $scope.model = new TubularModel($scope, data, $scope.dataService);
                                                 $scope.bindFields();
@@ -3193,7 +3188,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                                 $scope.$emit('tbForm_OnConnectionError', error);
                                             });
                                     } else {
-                                        $scope.dataService.get(fixUrl($scope.serverUrl)).promise.then(
+                                        $scope.dataService.get(tubularHttp.addTimeZoneToUrl($scope.serverUrl)).promise.then(
                                             function (data) {
                                                 var innerScope = $scope;
                                                 var dataService = $scope.dataService;
@@ -4175,6 +4170,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         });
                 };
 
+                me.addTimeZoneToUrl = function (url) {
+                    var separator = url.indexOf('?') === -1 ? '?' : '&';
+                    return url + separator + 'timezoneOffset=' + new Date().getTimezoneOffset();
+                }
+
                 me.saveDataAsync = function(model, request) {
                     var component = model.$component;
                     model.$component = null;
@@ -4194,7 +4194,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     delete clone.$isNew;
 
                     if (model.$isNew) {
-                        clone.$timezoneOffset = new Date().getTimezoneOffset();
+                        request.serverUrl = me.addTimeZoneToUrl(request.serverUrl);
                         request.data = clone;
                     } else {
                         request.data = {
@@ -4400,7 +4400,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 };
 
                 me.getByKey = function (url, key) {
-                    var urlData = url.split('?');
+                    var urlData = me.addTimeZoneToUrl(url).split('?');
                     var getUrl = urlData[0] + key;
 
                     if (urlData.length > 1) getUrl += '?' + urlData[1];

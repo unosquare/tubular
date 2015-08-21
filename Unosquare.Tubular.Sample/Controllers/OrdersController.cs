@@ -66,7 +66,8 @@
         {
             using (var context = new SampleDbContext(false))
             {
-                context.Orders.Add(order);
+                var fixedOrder = (Order) Request.AdjustObjectTimeZone(order);
+                context.Orders.Add(fixedOrder);
                 await context.SaveChangesAsync();
 
                 return Ok(new

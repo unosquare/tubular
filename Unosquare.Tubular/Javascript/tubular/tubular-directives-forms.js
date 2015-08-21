@@ -66,11 +66,6 @@
                                 });
                             };
 
-                            var fixUrl = function(url) {
-                                var separator = url.indexOf('?') === -1 ? '?' : '&';
-                                return url + separator + 'timezoneOffset=' + new Date().getTimezoneOffset();
-                            }
-
                             $scope.retrieveData = function () {
                                 // Try to load a key from markup or route
                                 $scope.modelKey = $scope.modelKey || $routeParams.param;
@@ -79,7 +74,7 @@
                                     if (angular.isDefined($scope.modelKey) &&
                                         $scope.modelKey != null &&
                                         $scope.modelKey !== '') {
-                                        $scope.dataService.getByKey(fixUrl($scope.serverUrl), $scope.modelKey).promise.then(
+                                        $scope.dataService.getByKey($scope.serverUrl, $scope.modelKey).promise.then(
                                             function (data) {
                                                 $scope.model = new TubularModel($scope, data, $scope.dataService);
                                                 $scope.bindFields();
@@ -87,7 +82,7 @@
                                                 $scope.$emit('tbForm_OnConnectionError', error);
                                             });
                                     } else {
-                                        $scope.dataService.get(fixUrl($scope.serverUrl)).promise.then(
+                                        $scope.dataService.get(tubularHttp.addTimeZoneToUrl($scope.serverUrl)).promise.then(
                                             function (data) {
                                                 var innerScope = $scope;
                                                 var dataService = $scope.dataService;

@@ -111,8 +111,9 @@
         /// </summary>
         /// <param name="request">The Http Request</param>
         /// <param name="data">The output object</param>
+        /// <param name="fromLocal"></param>
         /// <returns></returns>
-        public static object AdjustObjectTimeZone(this HttpRequestMessage request, object data)
+        public static object AdjustObjectTimeZone(this HttpRequestMessage request, object data, bool fromLocal = false)
         {
             var query = request.RequestUri.Query;
 
@@ -122,6 +123,7 @@
 
             if (!match.Success) return data;
             var timeDiff = int.Parse(match.Groups[1].Value);
+            if (fromLocal) timeDiff *= -1;
 
             return AdjustTimeZone(data, timeDiff);
         }
