@@ -21,7 +21,7 @@
                 if (order == null)
                     return NotFound();
 
-                return Ok(order);
+                return Ok(Request.AdjustObjectTimeZone(order));
             }
         }
 
@@ -43,6 +43,8 @@
 
                 if (order == null)
                     return NotFound();
+
+                request.AdjustTimezoneOffset();
 
                 order.Amount = request.New.Amount;
                 order.CustomerName = request.New.CustomerName;

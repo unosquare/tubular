@@ -156,11 +156,13 @@
                     delete clone.$isNew;
 
                     if (model.$isNew) {
+                        clone.$timezoneOffset = new Date().getTimezoneOffset();
                         request.data = clone;
                     } else {
                         request.data = {
                             Old: originalClone,
-                            New: clone
+                            New: clone,
+                            TimezoneOffset: new Date().getTimezoneOffset()
                         };
                     }
 
@@ -359,8 +361,13 @@
                     });
                 };
 
-                me.getByKey = function(url, key) {
-                    return me.get(url + key);
+                me.getByKey = function (url, key) {
+                    var urlData = url.split('?');
+                    var getUrl = urlData[0] + key;
+
+                    if (urlData.length > 1) getUrl += '?' + urlData[1];
+
+                    return me.get(getUrl);
                 };
 
                 // This is a kind of factory to retrieve a DataService

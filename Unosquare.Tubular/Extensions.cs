@@ -1,5 +1,7 @@
 ﻿namespace Unosquare.Tubular
 {
+    using System.Net.Http;
+    using System.Text.RegularExpressions;
     using System;
     using System.ComponentModel;
     using System.Collections.Generic;
@@ -83,6 +85,48 @@
         }
 
         /// <summary>
+        /// Adjust a timezone data in a object
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="timezoneOffset"></param>
+        /// <returns></returns>
+        public static object AdjustTimeZone(object data, int timezoneOffset)
+        {
+            var properties = data.GetType().GetProperties().Where(x => x.PropertyType == typeof(DateTime));
+
+            foreach (var prop in properties)
+            {
+                if (!(prop.GetValue(data) is DateTime)) continue;
+
+                var value = (DateTime)prop.GetValue(data);
+                value = value.AddMinutes(-timezoneOffset);
+                prop.SetValue(data, value);
+            }
+
+            return data;
+        }
+
+        /// <summary>
+        /// Checks the datetime properties in an object and adjust the timezone.
+        /// </summary>
+        /// <param name="request">The Http Request</param>
+        /// <param name="data">The output object</param>
+        /// <returns></returns>
+        public static object AdjustObjectTimeZone(this HttpRequestMessage request, object data)
+        {
+            var query = request.RequestUri.Query;
+
+            if (string.IsNullOrWhiteSpace(query)) return data;
+
+            var match = new Regex(@"timezoneOffset=(\d.*)").Match(query);
+
+            if (!match.Success) return data;
+            var timeDiff = int.Parse(match.Groups[1].Value);
+
+            return AdjustTimeZone(data, timeDiff);
+        }
+
+        /// <summary>
         /// Generates a GridDataReponse using the GridDataRequest and an IQueryable source,
         /// like a DataSet in Entity Framework.
         /// </summary>
@@ -131,7 +175,7 @@
                 {
                     case AggregationFunction.Sum:
                         // we try to select the column as decimal? and sum it
-                        if (subset.ElementType.GetProperty(column.Name).PropertyType == typeof(double))
+                        if (subset.ElementType.GetProperty(column.Name).PropertyType == typeof (double))
                         {
                             response.AggregationPayload.Add(column.Name,
                                 subset.Select(column.Name).Cast<double?>().Sum());
@@ -160,7 +204,8 @@
                         response.AggregationPayload.Add(column.Name, subset.Select(column.Name).Cast<string>().Count());
                         break;
                     case AggregationFunction.DistinctCount:
-                        response.AggregationPayload.Add(column.Name, subset.Select(column.Name).Cast<string>().Distinct().Count());
+                        response.AggregationPayload.Add(column.Name,
+                            subset.Select(column.Name).Cast<string>().Distinct().Count());
                         break;
                     default:
                         response.AggregationPayload.Add(column.Name, 0);
@@ -224,7 +269,7 @@
         private static IQueryable FilterResponse(GridDataRequest request, IQueryable subset, GridDataResponse response)
         {
             var isDbQuery = subset.GetType().IsGenericType &&
-                                  subset.GetType().GetInterfaces().Any(y => y == typeof(IListSource));
+                            subset.GetType().GetInterfaces().Any(y => y == typeof (IListSource));
 
             // Perform Searching
             var searchLambda = new StringBuilder();
