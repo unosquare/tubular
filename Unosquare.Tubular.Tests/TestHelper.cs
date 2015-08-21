@@ -31,7 +31,8 @@ namespace Unosquare.Tubular.Tests
                     Id = i,
                     Name = "Name - " + i,
                     Bool = (i % 2) == 0,
-                    Number = (new Random()).NextDouble() * i
+                    DecimalNumber = (i % 3 == 0) ? 10.100m : 20.2002m,
+                    Number = (new Random()).NextDouble() * 20
                 });
             }
 
@@ -159,13 +160,13 @@ namespace Unosquare.Tubular.Tests
             const int elementsCount = 8;
             var dataSource = _context.Things;
 
-            var data = dataSource.Select(x => x.Number.ToString()).Take(elementsCount).ToList();
+            var data = dataSource.Select(x => x.Number.ToString()).Distinct().Take(elementsCount).ToList();
             var tubularData = dataSource.CreateTypeAheadList("Number", elementsCount);
 
             Assert.AreEqual(data.Count, tubularData.Count(), "Same length");
             Assert.AreEqual(data.First(), tubularData.First(), "Same first item");
 
-            var dataFiltered = dataSource.Where(x => x.Name.Contains(SearchText)).Select(x => x.Name).Take(elementsCount).ToList();
+            var dataFiltered = dataSource.Where(x => x.Name.Contains(SearchText)).Select(x => x.Name).Distinct().Take(elementsCount).ToList();
             var tubularDataFiltered = dataSource.CreateTypeAheadList("Name", SearchText, elementsCount);
 
             Assert.AreEqual(dataFiltered.Count, tubularDataFiltered.Count(), "Same length");
@@ -290,6 +291,60 @@ namespace Unosquare.Tubular.Tests
             //Assert.AreEqual(dataView[0][0], response.Payload.First().First(), "Same first item");
 
             //Assert.AreEqual(dataView.Count, response.FilteredRecordCount, "Total filtered rows matching");
+        }
+
+        [Test]
+        public void TestSimpleAggregate()
+        {
+            var dataSource = _context.Things;
+            var data = dataSource.Take(PageSize).ToList();
+
+            Assert.AreEqual(PageSize, data.Count, "Set has 10 items");
+
+            var request = new GridDataRequest()
+            {
+                Take = PageSize,
+                Skip = 0,
+                Search = new Filter(),
+                Columns = Thing.GetColumnsWithAggregate()
+            };
+
+            var response = request.CreateGridDataResponse(dataSource);
+
+            Assert.AreEqual(data.Count, response.Payload.Count, "Same length");
+            Assert.AreEqual(data.First().Id, response.Payload.First().First(), "Same first item");
+
+            Assert.AreEqual(dataSource.Sum(x => x.Number), (double)response.AggregationPayload["Number"], "Same average number");
+            Assert.AreEqual(dataSource.Sum(x => x.DecimalNumber), (decimal)response.AggregationPayload["DecimalNumber"], "Same average decimal number");
+        }
+
+        [Test]
+        public void TestMultipleAggregate()
+        {
+            var dataSource = _context.Things;
+            var data = dataSource.Take(PageSize).ToList();
+
+            Assert.AreEqual(PageSize, data.Count, "Set has 10 items");
+
+            var request = new GridDataRequest()
+            {
+                Take = PageSize,
+                Skip = 0,
+                Search = new Filter(),
+                Columns = Thing.GetColumnsWithMultipleCounts()
+            };
+
+            var response = request.CreateGridDataResponse(dataSource);
+
+            Assert.AreEqual(data.Count, response.Payload.Count, "Same length");
+            Assert.AreEqual(data.First().Id, response.Payload.First().First(), "Same first item");
+
+            Assert.AreEqual(dataSource.Select(x => x.Id).Distinct().Count(), (int)response.AggregationPayload["Id"], "Id same distinct count");
+            Assert.AreEqual(dataSource.Select(x => x.Number).Distinct().Count(), (int)response.AggregationPayload["Number"], "Number same distinct count");
+            Assert.AreEqual(dataSource.Select(x => x.DecimalNumber).Distinct().Count(), (int)response.AggregationPayload["DecimalNumber"], "DecimalNumber same distinct count");
+            Assert.AreEqual(dataSource.Select(x => x.Name).Distinct().Count(), (int)response.AggregationPayload["Name"], "Name same distinct count");
+            Assert.AreEqual(dataSource.Select(x => x.Date).Distinct().Count(), (int)response.AggregationPayload["Date"], "Date same distinct count");
+            Assert.AreEqual(dataSource.Select(x => x.Bool).Distinct().Count(), (int)response.AggregationPayload["Bool"], "Bool same distinct count");
         }
     }
 }
