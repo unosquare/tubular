@@ -4,6 +4,7 @@
     using System.Linq;
     using System.Threading.Tasks;
     using System.Web.Http;
+    using Unosquare.Tubular.Sample.ApiModels;
     using Unosquare.Tubular.ObjectModel;
     using Unosquare.Tubular.Sample.Models;
 
@@ -31,6 +32,40 @@
             using (var context = new SampleDbContext(false))
             {
                 return Ok(await Task.Run(() => request.CreateGridDataResponse(context.Orders.AsNoTracking())));
+            }
+        }
+
+        private IQueryable FormatOutput(IQueryable q)
+        {
+            var subset = (q as IQueryable<OrderDto>).ToArray();
+
+            foreach (var item in subset)
+            {
+                if (item.CustomerName == "Super La Playa")
+                {
+                    item.ShippedDate = "Blocked";
+                    item.ShipperCity = "Blocked";
+                    item.Amount = "Blocked";
+                }
+            }
+
+            return subset.AsQueryable();
+        }
+
+        [HttpPost, Route("pagedwithformat")]
+        public async Task<IHttpActionResult> GridDataWithFormat([FromBody] GridDataRequest request)
+        {
+            using (var context = new SampleDbContext(false))
+            {
+                return Ok(await Task.Run(() => request.CreateGridDataResponse(context.Orders.AsNoTracking().Select(x => new OrderDto
+                {
+                    Amount = x.Amount.ToString(),
+                    CustomerName = x.CustomerName,
+                    IsShipped = x.IsShipped.ToString(),
+                    OrderID = x.OrderID,
+                    ShippedDate = x.ShippedDate.ToString(),
+                    ShipperCity = x.ShipperCity
+                }), FormatOutput)));
             }
         }
 

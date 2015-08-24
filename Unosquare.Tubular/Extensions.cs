@@ -129,6 +129,12 @@
         }
 
         /// <summary>
+        /// Delegates a process to format a subset response
+        /// </summary>
+        /// <param name="dataSource">The datasource</param>
+        public delegate IQueryable ProcessResponseSubset(IQueryable dataSource);
+
+        /// <summary>
         /// Generates a GridDataReponse using the GridDataRequest and an IQueryable source,
         /// like a DataSet in Entity Framework.
         /// </summary>
@@ -136,6 +142,19 @@
         /// <param name="dataSource">The IQueryable source</param>
         /// <returns></returns>
         public static GridDataResponse CreateGridDataResponse(this GridDataRequest request, IQueryable dataSource)
+        {
+            return CreateGridDataResponse(request, dataSource, null);
+        }
+
+        /// <summary>
+        /// Generates a GridDataReponse using the GridDataRequest and an IQueryable source,
+        /// like a DataSet in Entity Framework.
+        /// </summary>
+        /// <param name="request">The Tubular's grid request</param>
+        /// <param name="dataSource">The IQueryable source</param>
+        /// <param name="preProcessSubset">The subset's process delegate</param>
+        /// <returns></returns>
+        public static GridDataResponse CreateGridDataResponse(this GridDataRequest request, IQueryable dataSource, ProcessResponseSubset preProcessSubset)
         {
             var response = new GridDataResponse
             {
@@ -241,6 +260,10 @@
 
                 subset = subset.Take(request.Take);
             }
+
+            // Generate the response data in a suitable format
+            if (preProcessSubset != null)
+                subset = preProcessSubset(subset);
 
             response.Payload = CreateGridPayload(subset, columnMap, pageSize, request.TimezoneOffset);
 

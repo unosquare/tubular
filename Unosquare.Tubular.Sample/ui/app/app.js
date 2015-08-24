@@ -8,6 +8,9 @@
                     when('/', {
                         templateUrl: '/ui/app/common/view.html',
                         title: 'A Sample Data Grid!'
+                    }).when('/format', {
+                        templateUrl: '/ui/app/common/viewformat.html',
+                        title: 'Another Data Grid!'
                     }).when('/form/:param', {
                         templateUrl: '/ui/app/common/form.html',
                         title: 'This is a form!'

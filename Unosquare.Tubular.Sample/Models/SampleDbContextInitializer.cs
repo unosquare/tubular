@@ -52,7 +52,7 @@
                     CustomerName = companies[rand.Next(companies.Length - 1)],
                     IsShipped = rand.Next(10) > 5,
                     ShipperCity = shipperCities[rand.Next(companies.Length - 1)],
-                    Amount = rand.Next(int.MaxValue),
+                    Amount = rand.Next(100),
                     ShippedDate = DateTime.Now.AddDays(1 - rand.Next(10))
                 };
 

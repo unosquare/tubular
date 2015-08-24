@@ -142,6 +142,7 @@
     <Content Include="ui\app\common\login.html" />
     <Content Include="ui\app\common\popup.html" />
     <Content Include="ui\app\common\view.html" />
+    <Content Include="ui\app\common\viewformat.html" />
     <Content Include="ui\media\favicon.ico" />
     <Content Include="ui\media\tubular.png" />
     <Content Include="ui\styles\common.css" />
@@ -150,6 +151,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApiModels\OrderDto.cs" />
     <Compile Include="Application\Startup.cs" />
     <Compile Include="Controllers\OrdersController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
