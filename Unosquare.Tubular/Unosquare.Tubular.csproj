@@ -56,16 +56,15 @@
   <ItemGroup>
     <Content Include="Css\awesome-bootstrap-checkbox\awesome-bootstrap-checkbox.css" />
     <Content Include="Css\tadaaapickr\tadaaapickr.css" />
-    <Content Include="Css\tubular-bundle.css">
-      <DependentUpon>tubular-bundle.css.bundle</DependentUpon>
+    <Content Include="Css\tubular-bundle.css" />
+    <Content Include="Css\tubular-bundle.min.css">
+      <DependentUpon>tubular-bundle.css</DependentUpon>
     </Content>
     <Content Include="Css\tubular\tubular.css" />
     <Content Include="Javascript\angular-filter\group-by.js" />
     <Content Include="Javascript\angular-filter\watcher.js" />
     <Content Include="Javascript\tadaaapickr\tadaaapickr.pack.js" />
-    <Content Include="Javascript\tubular-bundle.js">
-      <DependentUpon>tubular-bundle.js.bundle</DependentUpon>
-    </Content>
+    <Content Include="Javascript\tubular-bundle.js" />
     <Content Include="Javascript\tubular-bundle.min.js">
       <DependentUpon>tubular-bundle.js</DependentUpon>
     </Content>
@@ -83,13 +82,7 @@
     <Content Include="Javascript\tubular\tubular-services.js" />
     <Content Include="Javascript\tubular\tubular.js" />
     <None Include="app.config" />
-    <None Include="Css\tubular-bundle.css.bundle">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Javascript\tubular-bundle.js.bundle" />
-    <None Include="Javascript\tubular-bundle.min.js.map">
-      <DependentUpon>tubular-bundle.min.js</DependentUpon>
-    </None>
+    <None Include="bundleconfig.json" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

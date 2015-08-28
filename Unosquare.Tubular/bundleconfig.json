@@ -1,0 +1,42 @@
+[
+  {
+    "outputFileName": "Javascript/tubular-bundle.js",
+    "inputFiles": [
+      "Javascript/tubular/node-module.js",
+      "Javascript/angular-filter/watcher.js",
+      "Javascript/angular-filter/group-by.js",
+      "Javascript/tubular/tubular.js",
+      "Javascript/tubular/tubular-directives.js",
+      "Javascript/tubular/tubular-directives-editors.js",
+      "Javascript/tubular/tubular-directives-filters.js",
+      "Javascript/tubular/tubular-directives-forms.js",
+      "Javascript/tubular/tubular-directives-gridcomponents.js",
+      "Javascript/tubular/tubular-directives-gridpager.js",
+      "Javascript/tubular/tubular-models.js",
+      "Javascript/tubular/tubular-services.js",
+      "Javascript/tubular/tubular-services-http.js",
+      "Javascript/tubular/tubular-services-localdata.js",
+      "Javascript/tubular/tubular-services-odata.js",
+      "Javascript/tubular/tubular-services-template.js",
+      "Javascript/tadaaapickr/tadaaapickr.pack.js"
+    ],
+    "minify": {
+      "enabled": true
+    },
+    "includeInProject": true,
+    "sourceMaps": false
+  },
+  {
+    "outputFileName": "Css/tubular-bundle.css",
+    "inputFiles": [
+      "Css/tadaaapickr/tadaaapickr.css",
+      "Css/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css",
+      "Css/tubular/tubular.css"
+    ],
+    "minify": {
+      "enabled": true
+    },
+    "includeInProject": true,
+    "sourceMaps": false
+  }
+]

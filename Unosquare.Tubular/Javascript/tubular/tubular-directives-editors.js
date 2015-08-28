@@ -189,7 +189,7 @@
                         '$scope', function($scope) {
                             $scope.DataType = "date";
 
-                            $scope.$watch('value', function (val) {
+                            $scope.$watch('value', function(val) {
                                 if (typeof (val) === 'string') {
                                     $scope.value = new Date(val);
                                 }
@@ -226,7 +226,7 @@
                                     $(inp).datepicker({
                                         dateFormat: scope.format.toLowerCase()
                                     }).on("dateChange", function(e) {
-                                        scope.$apply(function () {
+                                        scope.$apply(function() {
                                             scope.value = e.date;
                                             scope.$parent.Model.$hasChanges = true;
                                         });
@@ -287,7 +287,7 @@
                         '$scope', function($scope) {
                             $scope.DataType = "date";
 
-                            $scope.$watch('value', function (val) {
+                            $scope.$watch('value', function(val) {
                                 if (typeof (val) === 'string') {
                                     $scope.value = new Date(val);
                                 }
@@ -328,7 +328,7 @@
                                     $(inp).datepicker({
                                         dateFormat: scope.format.toLowerCase()
                                     }).on("dateChange", function(e) {
-                                        scope.$apply(function () {
+                                        scope.$apply(function() {
                                             scope.value = e.date;
                                             scope.$parent.Model.$hasChanges = true;
                                         });
@@ -400,7 +400,7 @@
                                 }
                             }
 
-                            $scope.$watch('value', function (val) {
+                            $scope.$watch('value', function(val) {
                                 $scope.$emit('tbForm_OnFieldChange', $scope.$component, $scope.name, val);
                             });
 
@@ -436,7 +436,7 @@
                             };
 
                             if (angular.isDefined($scope.optionsUrl)) {
-                                $scope.$watch('optionsUrl', function () {
+                                $scope.$watch('optionsUrl', function() {
                                     $scope.dataIsLoaded = false;
                                     $scope.loadData();
                                 });
@@ -483,7 +483,7 @@
          * @param {string} css Set the CSS classes for the input.
          */
         .directive('tbTypeaheadEditor', [
-            'tubularEditorService', '$q', function (tubularEditorService, $q) {
+            'tubularEditorService', '$q', function(tubularEditorService, $q) {
 
                 return {
                     template: '<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid }">' +
@@ -514,7 +514,7 @@
                         css: '@?'
                     }, tubularEditorService.defaultScope),
                     controller: [
-                        '$scope', function ($scope) {
+                        '$scope', function($scope) {
                             tubularEditorService.setupScope($scope);
                             $scope.selectOptions = "d for d in getValues($viewValue)";
                             $scope.lastSet = [];
@@ -523,7 +523,7 @@
                                 $scope.selectOptions = "d as d." + $scope.optionLabel + " for d in getValues($viewValue)";
                             }
 
-                            $scope.$watch('value', function (val) {
+                            $scope.$watch('value', function(val) {
                                 $scope.$emit('tbForm_OnFieldChange', $scope.$component, $scope.name, val);
                                 $scope.tooltip = val;
                                 if (angular.isDefined(val) && val != null && angular.isDefined($scope.optionLabel)) {
@@ -531,7 +531,7 @@
                                 }
                             });
 
-                            $scope.getValues = function (val) {
+                            $scope.getValues = function(val) {
                                 if (angular.isDefined($scope.optionsUrl)) {
                                     if (angular.isUndefined($scope.$component) || $scope.$component == null) {
                                         throw 'You need to define a parent Form or Grid';
@@ -542,7 +542,7 @@
                                         requestMethod: $scope.optionsMethod || 'GET'
                                     }).promise;
 
-                                    p.then(function (data) {
+                                    p.then(function(data) {
                                         $scope.lastSet = data;
                                         return data;
                                     });
@@ -550,7 +550,7 @@
                                     return p;
                                 }
 
-                                return $q(function (resolve) {
+                                return $q(function(resolve) {
                                     $scope.lastSet = $scope.options;
                                     resolve($scope.options);
                                 });
