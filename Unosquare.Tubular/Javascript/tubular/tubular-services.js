@@ -299,10 +299,13 @@
          * @description
          * The `tubularEditorService` service is a internal helper to setup any `TubularModel` with a UI.
          */
-        .service('tubularEditorService', [
-            function tubularEditorService() {
+        .service('tubularEditorService', ['$filter',
+            function tubularEditorService($filter) {
                 var me = this;
-
+                
+                /*
+                 * Returns the Default Scope parameters
+                 */
                 me.defaultScope = {
                     value: '=?',
                     isEditing: '=?',
@@ -318,6 +321,57 @@
                     readOnly: '=?',
                     help: '@?'
                 };
+
+                /**
+                 * Setups a basic Date Editor Controller
+                 * @param {string} format 
+                 * @returns {array}  The controller definition
+                 */
+                me.dateEditorController = function(format) {
+                    return [
+                        '$scope', function(innerScope) {
+                            innerScope.DataType = "date";
+
+                            innerScope.$watch('value', function(val) {
+                                if (typeof (val) === 'string') {
+                                    innerScope.value = new Date(val);
+                                }
+                            });
+
+                            innerScope.validate = function() {
+                                if (angular.isDefined(innerScope.min)) {
+                                    if (Object.prototype.toString.call(innerScope.min) !== "[object Date]") {
+                                        innerScope.min = new Date(innerScope.min);
+                                    }
+
+                                    innerScope.$valid = innerScope.value >= innerScope.min;
+
+                                    if (!innerScope.$valid) {
+                                        innerScope.state.$errors = ["The minimum is " + $filter('date')(innerScope.min, innerScope.format)];
+                                    }
+                                }
+
+                                if (!innerScope.$valid) {
+                                    return;
+                                }
+
+                                if (angular.isDefined(innerScope.max)) {
+                                    if (Object.prototype.toString.call(innerScope.max) !== "[object Date]") {
+                                        innerScope.max = new Date(innerScope.min);
+                                    }
+
+                                    innerScope.$valid = innerScope.value <= innerScope.max;
+
+                                    if (!innerScope.$valid) {
+                                        innerScope.state.$errors = ["The maximum is " + $filter('date')(innerScope.max, innerScope.format)];
+                                    }
+                                }
+                            };
+
+                            me.setupScope(innerScope, format);
+                        }
+                    ];
+                }
 
                 /**
                  * Setups a new Editor, this functions is like a common class constructor to be used

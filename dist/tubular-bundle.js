@@ -1688,7 +1688,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @param {number} max Set the maximum value.
          */
         .directive('tbDateTimeEditor', [
-            'tubularEditorService', '$filter', function(tubularEditorService, $filter) {
+            'tubularEditorService', function(tubularEditorService) {
 
                 return {
                     template: '<div ng-class="{ \'form-group\' : showLabel && isEditing }">' +
@@ -1705,39 +1705,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     replace: true,
                     transclude: true,
                     scope: tubularEditorService.defaultScope,
-                    controller: [
-                        '$scope', function($scope) {
-                            $scope.DataType = "date";
-
-                            $scope.$watch('value', function(val) {
-                                if (typeof (val) === 'string') {
-                                    $scope.value = new Date(val);
-                                }
-                            });
-
-                            $scope.validate = function() {
-                                if (angular.isDefined($scope.min)) {
-                                    $scope.$valid = $scope.value >= $scope.min;
-                                    if (!$scope.$valid) {
-                                        $scope.state.$errors = ["The minimum is " + $filter('date')($scope.min, $scope.format)];
-                                    }
-                                }
-
-                                if (!$scope.$valid) {
-                                    return;
-                                }
-
-                                if (angular.isDefined($scope.max)) {
-                                    $scope.$valid = $scope.value <= $scope.max;
-                                    if (!$scope.$valid) {
-                                        $scope.state.$errors = ["The maximum is " + $filter('date')($scope.max, $scope.format)];
-                                    }
-                                }
-                            };
-
-                            tubularEditorService.setupScope($scope, 'yyyy-MM-dd HH:mm');
-                        }
-                    ],
+                    controller: tubularEditorService.dateEditorController('yyyy-MM-dd HH:mm'),
                     compile: function compile() {
                         return {
                             post: function(scope, lElement) {
@@ -1786,7 +1754,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @param {number} max Set the maximum value.
          */
         .directive('tbDateEditor', [
-            'tubularEditorService', '$filter', function(tubularEditorService, $filter) {
+            'tubularEditorService', function(tubularEditorService) {
 
                 return {
                     template: '<div ng-class="{ \'form-group\' : showLabel && isEditing }">' +
@@ -1803,43 +1771,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     replace: true,
                     transclude: true,
                     scope: tubularEditorService.defaultScope,
-                    controller: [
-                        '$scope', function($scope) {
-                            $scope.DataType = "date";
-
-                            $scope.$watch('value', function(val) {
-                                if (typeof (val) === 'string') {
-                                    $scope.value = new Date(val);
-                                }
-                            });
-
-                            $scope.validate = function() {
-                                $scope.validate = function() {
-                                    if (angular.isDefined($scope.min)) {
-                                        $scope.$valid = $scope.value >= $scope.min;
-
-                                        if (!$scope.$valid) {
-                                            $scope.state.$errors = ["The minimum is " + $filter('date')($scope.min, $scope.format)];
-                                        }
-                                    }
-
-                                    if (!$scope.$valid) {
-                                        return;
-                                    }
-
-                                    if (angular.isDefined($scope.max)) {
-                                        $scope.$valid = $scope.value <= $scope.max;
-
-                                        if (!$scope.$valid) {
-                                            $scope.state.$errors = ["The maximum is " + $filter('date')($scope.max, $scope.format)];
-                                        }
-                                    }
-                                };
-                            };
-
-                            tubularEditorService.setupScope($scope, 'yyyy-MM-dd');
-                        }
-                    ],
+                    controller: tubularEditorService.dateEditorController('yyyy-MM-dd'),
                     compile: function compile() {
                         return {
                             post: function(scope, lElement) {
@@ -3858,10 +3790,13 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @description
          * The `tubularEditorService` service is a internal helper to setup any `TubularModel` with a UI.
          */
-        .service('tubularEditorService', [
-            function tubularEditorService() {
+        .service('tubularEditorService', ['$filter',
+            function tubularEditorService($filter) {
                 var me = this;
-
+                
+                /*
+                 * Returns the Default Scope parameters
+                 */
                 me.defaultScope = {
                     value: '=?',
                     isEditing: '=?',
@@ -3877,6 +3812,57 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     readOnly: '=?',
                     help: '@?'
                 };
+
+                /**
+                 * Setups a basic Date Editor Controller
+                 * @param {string} format 
+                 * @returns {array}  The controller definition
+                 */
+                me.dateEditorController = function(format) {
+                    return [
+                        '$scope', function(innerScope) {
+                            innerScope.DataType = "date";
+
+                            innerScope.$watch('value', function(val) {
+                                if (typeof (val) === 'string') {
+                                    innerScope.value = new Date(val);
+                                }
+                            });
+
+                            innerScope.validate = function() {
+                                if (angular.isDefined(innerScope.min)) {
+                                    if (Object.prototype.toString.call(innerScope.min) !== "[object Date]") {
+                                        innerScope.min = new Date(innerScope.min);
+                                    }
+
+                                    innerScope.$valid = innerScope.value >= innerScope.min;
+
+                                    if (!innerScope.$valid) {
+                                        innerScope.state.$errors = ["The minimum is " + $filter('date')(innerScope.min, innerScope.format)];
+                                    }
+                                }
+
+                                if (!innerScope.$valid) {
+                                    return;
+                                }
+
+                                if (angular.isDefined(innerScope.max)) {
+                                    if (Object.prototype.toString.call(innerScope.max) !== "[object Date]") {
+                                        innerScope.max = new Date(innerScope.min);
+                                    }
+
+                                    innerScope.$valid = innerScope.value <= innerScope.max;
+
+                                    if (!innerScope.$valid) {
+                                        innerScope.state.$errors = ["The maximum is " + $filter('date')(innerScope.max, innerScope.format)];
+                                    }
+                                }
+                            };
+
+                            me.setupScope(innerScope, format);
+                        }
+                    ];
+                }
 
                 /**
                  * Setups a new Editor, this functions is like a common class constructor to be used
