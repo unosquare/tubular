@@ -110,7 +110,7 @@
                                     $scope.currentTop = 0;
                                 }
 
-                                if ($scope.currentInitial < 0) {
+                                if ($scope.currentInitial < 0 || $scope.$component.totalRecordCount === 0) {
                                     $scope.currentInitial = 0;
                                 }
                             };

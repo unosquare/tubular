@@ -3182,7 +3182,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     $scope.currentTop = 0;
                                 }
 
-                                if ($scope.currentInitial < 0) {
+                                if ($scope.currentInitial < 0 || $scope.$component.totalRecordCount === 0) {
                                     $scope.currentInitial = 0;
                                 }
                             };
