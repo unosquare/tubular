@@ -2226,6 +2226,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 '</div>' +
                                 '<div class="modal-footer"><button class="btn btn-warning" ng-click="closePopup()">Close</button></div>',
                             backdropClass: 'fullHeight',
+                            animation: false,
                             controller: [
                                 '$scope', function ($innerScope) {
                                     $innerScope.Model = model;
@@ -3528,6 +3529,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     var dialog = $modal.open({
                         templateUrl: template,
                         backdropClass: 'fullHeight',
+                        animation: false,
                         size: size,
                         controller: [
                             '$scope', function($scope) {

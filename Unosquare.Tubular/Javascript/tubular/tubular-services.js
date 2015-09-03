@@ -37,6 +37,7 @@
                     var dialog = $modal.open({
                         templateUrl: template,
                         backdropClass: 'fullHeight',
+                        animation: false,
                         size: size,
                         controller: [
                             '$scope', function($scope) {

@@ -56,6 +56,7 @@
                                 '</div>' +
                                 '<div class="modal-footer"><button class="btn btn-warning" ng-click="closePopup()">Close</button></div>',
                             backdropClass: 'fullHeight',
+                            animation: false,
                             controller: [
                                 '$scope', function ($innerScope) {
                                     $innerScope.Model = model;
