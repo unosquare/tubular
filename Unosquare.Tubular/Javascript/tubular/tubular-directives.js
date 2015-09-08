@@ -155,9 +155,13 @@
                                 }
                             };
 
-                            $scope.deleteRow = function(row) {
+                            $scope.deleteRow = function (row) {
+                                var urlparts = $scope.serverSaveUrl.split('?');
+                                var url = urlparts[0] + "/" + row.$key;
+                                if (urlparts.length > 1) url += '?' + urlparts[1];
+
                                 var request = {
-                                    serverUrl: $scope.serverSaveUrl + "/" + row.$key,
+                                    serverUrl: url,
                                     requestMethod: 'DELETE',
                                     timeout: $scope.requestTimeout,
                                     requireAuthentication: $scope.requireAuthentication,
