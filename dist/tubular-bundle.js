@@ -4504,7 +4504,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     response.TotalPages = (response.FilteredRecordCount + request.Take - 1) / request.Take;
 
                     if (response.TotalPages > 0) {
-                        response.CurrentPage = Math.trunc(1 + ((request.Skip / response.FilteredRecordCount) * response.TotalPages));
+                        var shift = Math.pow(10, 0);
+                        var number = 1 + ((request.Skip / response.FilteredRecordCount) * response.TotalPages);
+
+                        response.CurrentPage = ((number * shift) | 0) / shift;
                     }
 
                     return response;
