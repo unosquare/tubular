@@ -192,13 +192,18 @@
                                 var inp = $(lElement).find("input[type=datetime-local]")[0];
                                 if (inp.type !== 'datetime-local') {
                                     $(inp).datepicker({
-                                        dateFormat: scope.format.toLowerCase()
-                                    }).on("dateChange", function(e) {
-                                        scope.$apply(function() {
-                                            scope.value = e.date;
-                                            scope.$parent.Model.$hasChanges = true;
+                                            dateFormat: scope.format.toLowerCase().split(' ')[0]
+                                        })
+                                        .datepicker("setDate", scope.value)
+                                        .on("dateChange", function(e) {
+                                            scope.$apply(function() {
+                                                scope.value = e.date;
+
+                                                if (angular.isDefined(scope.$parent.Model)) {
+                                                    scope.$parent.Model.$hasChanges = true;
+                                                }
+                                            });
                                         });
-                                    });
                                 }
                             }
                         };
@@ -258,13 +263,18 @@
                                 var inp = $(lElement).find("input[type=date]")[0];
                                 if (inp.type !== 'date') {
                                     $(inp).datepicker({
-                                        dateFormat: scope.format.toLowerCase()
-                                    }).on("dateChange", function(e) {
-                                        scope.$apply(function() {
-                                            scope.value = e.date;
-                                            scope.$parent.Model.$hasChanges = true;
+                                            dateFormat: scope.format.toLowerCase()
+                                        })
+                                        .datepicker("setDate", scope.value)
+                                        .on("dateChange", function(e) {
+                                            scope.$apply(function() {
+                                                scope.value = e.date;
+
+                                                if (angular.isDefined(scope.$parent.Model)) {
+                                                    scope.$parent.Model.$hasChanges = true;
+                                                }
+                                            });
                                         });
-                                    });
                                 }
                             }
                         };
