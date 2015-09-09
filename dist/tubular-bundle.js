@@ -1,6 +1,10 @@
 ﻿/*jslint node: true */
 'use strict';
 
+/*
+ * Tubular Template engine module
+ * @module TubularTemplateServiceModule
+ */
 var tubularTemplateServiceModule = {
     enums: {
         dataTypes: ['numeric', 'date', 'boolean', 'string'],
@@ -120,6 +124,12 @@ var tubularTemplateServiceModule = {
         }
     },
 
+    /*
+     * Create a columns array using a model.
+     * 
+     * @param {object} model
+     * @returns {array} The Columns
+     */
     createColumns: function(model) {
         var jsonModel = (model instanceof Array && model.length > 0) ? model[0] : model;
         var columns = [];
@@ -191,6 +201,12 @@ var tubularTemplateServiceModule = {
         return columns;
     },
 
+    /**
+     * Generates a array with a template for every column
+     * 
+     * @param {array} columns
+     * @returns {array}
+     */
     generateFieldsArray: function(columns) {
         return columns.map(function(el) {
             var editorTag = el.EditorType.replace(/([A-Z])/g, function($1) { return "-" + $1.toLowerCase(); });
@@ -208,6 +224,11 @@ var tubularTemplateServiceModule = {
         });
     },
 
+    /**
+     * Generates the Form's fields template using a column object
+     * @param {array} columns 
+     * @returns {string} 
+     */
     generateFields: function(columns) {
         return this.generateFieldsArray(columns).join('');
     },
@@ -2420,7 +2441,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         '<form class="tubular-column-filter-form" onsubmit="return false;">' +
                         '<select class="form-control checkbox-list" ng-model="filter.Argument" ng-options="item for item in optionsItems" ' +
                         ' multiple ng-disabled="dataIsLoaded == false"></select>' +
-                        '<hr />' + // Maybe we should add checkboxes or something like that
+                        '<hr />' + 
                         '<tb-column-filter-buttons></tb-column-filter-buttons>' +
                         '</form></div>' +
                         '</div>',

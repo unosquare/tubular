@@ -236,7 +236,7 @@
                         '<form class="tubular-column-filter-form" onsubmit="return false;">' +
                         '<select class="form-control checkbox-list" ng-model="filter.Argument" ng-options="item for item in optionsItems" ' +
                         ' multiple ng-disabled="dataIsLoaded == false"></select>' +
-                        '<hr />' + // Maybe we should add checkboxes or something like that
+                        '<hr />' + 
                         '<tb-column-filter-buttons></tb-column-filter-buttons>' +
                         '</form></div>' +
                         '</div>',
