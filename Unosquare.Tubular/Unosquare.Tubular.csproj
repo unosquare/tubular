@@ -44,6 +44,7 @@
     <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CodeGenerator.cs" />
     <Compile Include="Common.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="ObjectModel\Filter.cs" />
@@ -51,6 +52,8 @@
     <Compile Include="ObjectModel\GridDataRequest.cs" />
     <Compile Include="ObjectModel\GridDataResponse.cs" />
     <Compile Include="ObjectModel\GridDataUpdateRow.cs" />
+    <Compile Include="ObjectModel\GridOptions.cs" />
+    <Compile Include="ObjectModel\ModelColumn.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -1,7 +1,7 @@
 {
     "Name": "Id",
     "DataType": "numeric",
-    "Template": "{{row.Id}}",
+    "Template": "{{row.Id | number}}",
     "Label": "Id",
     "EditorType": "tbNumericEditor",
     "Searchable": false,

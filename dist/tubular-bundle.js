@@ -148,7 +148,7 @@ var tubularTemplateServiceModule = {
                 }
 
                 if (typeof value === 'number' || parseFloat(value).toString() == value) {
-                    columns.push({ Name: prop, DataType: 'numeric', Template: '{{row.' + prop + '}}' });
+                    columns.push({ Name: prop, DataType: 'numeric', Template: '{{row.' + prop + ' | number}}' });
                 } else if (toString.call(value) === '[object Date]' || isNaN((new Date(value)).getTime()) === false) {
                     columns.push({ Name: prop, DataType: 'date', Template: '{{row.' + prop + ' | date}}' });
                 } else if (value.toLowerCase() === 'true' || value.toLowerCase() === 'false') {
@@ -226,6 +226,7 @@ var tubularTemplateServiceModule = {
 
     /**
      * Generates the Form's fields template using a column object
+     * 
      * @param {array} columns 
      * @returns {string} 
      */
@@ -299,6 +300,12 @@ var tubularTemplateServiceModule = {
             '\r\n</tb-form>';
     },
 
+    /**
+     * Generates the grid's cells markup
+     * @param {array} columns 
+     * @param {string} mode 
+     * @returns {string} 
+     */
     generateCells: function(columns, mode) {
         return columns.map(function(el) {
             var editorTag = el.EditorType.replace(/([A-Z])/g, function($1) { return "-" + $1.toLowerCase(); });
@@ -313,6 +320,12 @@ var tubularTemplateServiceModule = {
         }).join('');
     },
 
+    /**
+     * Generates a grid markup using a columns model and grids options
+     * @param {} columns 
+     * @param {} options 
+     * @returns {} 
+     */
     generateGrid: function(columns, options) {
         var topToolbar = '';
         var bottomToolbar = '';
