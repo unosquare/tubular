@@ -45,5 +45,10 @@
         /// The Grid name
         /// </summary>
         public string GridName { get; set; }
+
+        /// <summary>
+        /// The Data Url
+        /// </summary>
+        public string DataUrl { get; set; }
     }
 }
