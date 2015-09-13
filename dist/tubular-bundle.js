@@ -973,7 +973,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 };
 
                                 if ($scope.currentRequest !== null) {
-                                    $scope.currentRequest.cancel('tubularGrid(' + $scope.$id + '): new request coming.');
+                                    // This message is annoying when you connect errors to toastr
+                                    //$scope.currentRequest.cancel('tubularGrid(' + $scope.$id + '): new request coming.');
+                                    return;
                                 }
 
                                 if (angular.isUndefined($scope.onBeforeGetData) === false) {
