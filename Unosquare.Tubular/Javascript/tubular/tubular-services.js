@@ -44,7 +44,7 @@
                             '$scope', function($scope) {
                                 $scope.Model = model;
 
-                                $scope.savePopup = function (innerModel) {
+                                $scope.savePopup = function(innerModel) {
                                     innerModel = innerModel || $scope.Model;
 
                                     // If we have nothing to save and it's not a new record, just close
@@ -126,7 +126,7 @@
                 gridScope.currentRequest = null;
             };
 
-            me.exportToCsv = function (filename, header, rows, visibility) {
+            me.exportToCsv = function(filename, header, rows, visibility) {
                 var processRow = function(row) {
                     if (typeof (row) === 'object') {
                         row = Object.keys(row).map(function(key) { return row[key]; });
@@ -135,7 +135,7 @@
                     var finalVal = '';
                     for (var j = 0; j < row.length; j++) {
                         if (!visibility[j]) {
-                             continue;
+                            continue;
                         }
 
                         var innerValue = row[j] == null ? '' : row[j].toString();
@@ -193,8 +193,8 @@
                         if (val === 'None') scope.filter.Text = '';
                     });
 
-                    scope.retrieveData = function () {
-                        var columns = scope.$component.columns.filter(function (el) {
+                    scope.retrieveData = function() {
+                        var columns = scope.$component.columns.filter(function(el) {
                             return el.Name === scope.filter.Name;
                         });
 
@@ -206,7 +206,7 @@
                         scope.close();
                     };
 
-                    scope.clearFilter = function () {
+                    scope.clearFilter = function() {
                         if (scope.filter.Operator != 'Multiple') {
                             scope.filter.Operator = 'None';
                         }
@@ -217,7 +217,7 @@
                         scope.retrieveData();
                     };
 
-                    scope.applyFilter = function () {
+                    scope.applyFilter = function() {
                         scope.filter.HasFilter = true;
                         scope.retrieveData();
                     };
@@ -226,11 +226,11 @@
                         $(el).find('.btn-popover').popover('hide');
                     };
 
-                    scope.open = function () {
+                    scope.open = function() {
                         $(el).find('.btn-popover').popover('toggle');
                     };
 
-                    scope.checkEvent = function (keyEvent) {
+                    scope.checkEvent = function(keyEvent) {
                         if (keyEvent.which === 13) {
                             scope.applyFilter();
                             keyEvent.preventDefault();
@@ -250,8 +250,8 @@
                             return $compile($(this).next().html())(scope);
                         }
                     });
-                    
-                    $(el).find('.btn-popover').on('show.bs.popover', function (e) {
+
+                    $(el).find('.btn-popover').on('show.bs.popover', function(e) {
                         $('.btn-popover').not(e.target).popover("hide");
                     });
 
@@ -272,7 +272,7 @@
 
                     if (columns.length === 0) return;
 
-                    scope.$watch('filter', function (n) {
+                    scope.$watch('filter', function(n) {
                         if (columns[0].Filter.Text != n.Text) {
                             n.Text = columns[0].Filter.Text;
 
@@ -309,10 +309,11 @@
          * @description
          * The `tubularEditorService` service is a internal helper to setup any `TubularModel` with a UI.
          */
-        .service('tubularEditorService', ['$filter',
+        .service('tubularEditorService', [
+            '$filter',
             function tubularEditorService($filter) {
                 var me = this;
-                
+
                 /*
                  * Returns the Default Scope parameters
                  */
@@ -396,12 +397,12 @@
                     scope.format = scope.format || defaultFormat;
                     scope.$valid = true;
 
-                    scope.checkValid = function () {
+                    scope.checkValid = function() {
                         scope.$valid = true;
                         scope.state.$errors = [];
 
                         if ((angular.isUndefined(scope.value) && scope.required) ||
-                            (Object.prototype.toString.call(scope.value) === "[object Date]" && isNaN(scope.value.getTime()) && scope.required)) {
+                        (Object.prototype.toString.call(scope.value) === "[object Date]" && isNaN(scope.value.getTime()) && scope.required)) {
                             scope.$valid = false;
                             scope.state.$errors = ["Field is required"];
 
@@ -421,7 +422,7 @@
                     };
 
                     // HACK: I need to know why
-                    scope.$watch('label', function (n, o) {
+                    scope.$watch('label', function(n, o) {
                         if (angular.isUndefined(n)) {
                             scope.label = (scope.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
                         }
@@ -431,9 +432,9 @@
                         if (angular.isUndefined(oldValue) && angular.isUndefined(newValue)) {
                             return;
                         }
-                        
+
                         scope.state = {
-                            $valid: function () {
+                            $valid: function() {
                                 scope.checkValid();
                                 return this.$errors.length === 0;
                             },
@@ -441,7 +442,7 @@
                         };
 
                         scope.$valid = true;
-                        
+
                         // Try to match the model to the parent, if it exists
                         if (angular.isDefined(scope.$parent.Model)) {
                             if (angular.isDefined(scope.$parent.Model[scope.name])) {
@@ -466,7 +467,7 @@
                     while (true) {
                         if (parent == null) break;
                         if (angular.isDefined(parent.tubularDirective) &&
-                            (parent.tubularDirective === 'tubular-form' ||
+                        (parent.tubularDirective === 'tubular-form' ||
                             parent.tubularDirective === 'tubular-rowset')) {
 
                             if (scope.name === null) {
@@ -480,12 +481,15 @@
                             scope.$component = parent.tubularDirective === 'tubular-form' ? parent : parent.$component;
 
                             scope.Name = scope.name;
+
                             scope.bindScope = function() {
                                 scope.$parent.Model = parent.model;
 
                                 if (angular.equals(scope.value, parent.model[scope.Name]) === false) {
                                     if (angular.isDefined(parent.model[scope.Name])) {
-                                        scope.value = (scope.DataType === 'date') ? new Date(parent.model[scope.Name]) : parent.model[scope.Name];
+                                        scope.value = (scope.DataType === 'date' && parent.model[scope.Name] != null) ?
+                                            new Date(parent.model[scope.Name]) :
+                                            parent.model[scope.Name];
                                     }
 
                                     parent.$watch(function() {
@@ -500,7 +504,7 @@
                                 }
 
                                 parent.model.$state[scope.Name] = {
-                                    $valid: function () {
+                                    $valid: function() {
                                         scope.checkValid();
                                         return this.$errors.length === 0;
                                     },
