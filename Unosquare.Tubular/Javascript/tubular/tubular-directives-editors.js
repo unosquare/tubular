@@ -115,7 +115,9 @@
                     transclude: true,
                     scope: angular.extend({ step: '=?' }, tubularEditorService.defaultScope),
                     controller: [
-                        '$scope', function($scope) {
+                        '$scope', function ($scope) {
+                            $scope.DataType = "numeric";
+
                             $scope.validate = function() {
                                 if (angular.isDefined($scope.min) && angular.isDefined($scope.value) && $scope.value != null) {
                                     $scope.$valid = $scope.value >= $scope.min;
@@ -327,7 +329,7 @@
                     restrict: 'E',
                     replace: true,
                     transclude: true,
-                    scope: angular.extend({ options: '=?', optionsUrl: '@', optionsMethod: '@?', optionLabel: '@?', optionKey: '@?', defaultValue: '@?' }, tubularEditorService.defaultScope),
+                    scope: angular.extend({ options: '=?', optionsUrl: '@', optionsMethod: '@?', optionLabel: '@?', optionKey: '@?' }, tubularEditorService.defaultScope),
                     controller: [
                         '$scope', function($scope) {
                             tubularEditorService.setupScope($scope);

@@ -1675,7 +1675,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     transclude: true,
                     scope: angular.extend({ step: '=?' }, tubularEditorService.defaultScope),
                     controller: [
-                        '$scope', function($scope) {
+                        '$scope', function ($scope) {
+                            $scope.DataType = "numeric";
+
                             $scope.validate = function() {
                                 if (angular.isDefined($scope.min) && angular.isDefined($scope.value) && $scope.value != null) {
                                     $scope.$valid = $scope.value >= $scope.min;
@@ -1887,7 +1889,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     restrict: 'E',
                     replace: true,
                     transclude: true,
-                    scope: angular.extend({ options: '=?', optionsUrl: '@', optionsMethod: '@?', optionLabel: '@?', optionKey: '@?', defaultValue: '@?' }, tubularEditorService.defaultScope),
+                    scope: angular.extend({ options: '=?', optionsUrl: '@', optionsMethod: '@?', optionLabel: '@?', optionKey: '@?' }, tubularEditorService.defaultScope),
                     controller: [
                         '$scope', function($scope) {
                             tubularEditorService.setupScope($scope);
@@ -2667,7 +2669,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     if (field.resetEditor) {
                                         field.resetEditor();
                                     } else {
-                                        field.value = null;
+                                        field.value = field.defaultValue;
                                     }
                                 });
                             };
@@ -3576,6 +3578,14 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     $rootScope.$on('tbForm_OnConnectionError', callback);
                 };
 
+                /**
+                 * Opens a new Popup
+                 * @param {string} template 
+                 * @param {object} model 
+                 * @param {object} gridScope 
+                 * @param {string} size 
+                 * @returns {object} The Popup instance
+                 */
                 me.openDialog = function(template, model, gridScope, size) {
                     if (angular.isUndefined(template)) {
                         template = tubularTemplateService.generatePopup(model);
@@ -3876,7 +3886,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     name: '@',
                     placeholder: '@?',
                     readOnly: '=?',
-                    help: '@?'
+                    help: '@?',
+                    defaultValue: '@?'
                 };
 
                 /**
@@ -4043,6 +4054,17 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     }, function(value) {
                                         parent.model[scope.Name] = value;
                                     });
+                                }
+
+                                if ((!scope.value || scope.value == null) && (scope.defaultValue && scope.defaultValue != null)) {
+                                    if (scope.DataType === 'date' && scope.defaultValue != null) {
+                                        scope.defaultValue = new Date(scope.defaultValue);
+                                    }
+                                    if (scope.DataType === 'numeric' && scope.defaultValue != null) {
+                                        scope.defaultValue = parseFloat(scope.defaultValue);
+                                    }
+
+                                    scope.value = scope.defaultValue;
                                 }
 
                                 if (angular.isUndefined(parent.model.$state)) {

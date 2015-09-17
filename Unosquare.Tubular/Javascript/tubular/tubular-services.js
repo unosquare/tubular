@@ -30,6 +30,14 @@
                     $rootScope.$on('tbForm_OnConnectionError', callback);
                 };
 
+                /**
+                 * Opens a new Popup
+                 * @param {string} template 
+                 * @param {object} model 
+                 * @param {object} gridScope 
+                 * @param {string} size 
+                 * @returns {object} The Popup instance
+                 */
                 me.openDialog = function(template, model, gridScope, size) {
                     if (angular.isUndefined(template)) {
                         template = tubularTemplateService.generatePopup(model);
@@ -330,7 +338,8 @@
                     name: '@',
                     placeholder: '@?',
                     readOnly: '=?',
-                    help: '@?'
+                    help: '@?',
+                    defaultValue: '@?'
                 };
 
                 /**
@@ -497,6 +506,17 @@
                                     }, function(value) {
                                         parent.model[scope.Name] = value;
                                     });
+                                }
+
+                                if ((!scope.value || scope.value == null) && (scope.defaultValue && scope.defaultValue != null)) {
+                                    if (scope.DataType === 'date' && scope.defaultValue != null) {
+                                        scope.defaultValue = new Date(scope.defaultValue);
+                                    }
+                                    if (scope.DataType === 'numeric' && scope.defaultValue != null) {
+                                        scope.defaultValue = parseFloat(scope.defaultValue);
+                                    }
+
+                                    scope.value = scope.defaultValue;
                                 }
 
                                 if (angular.isUndefined(parent.model.$state)) {

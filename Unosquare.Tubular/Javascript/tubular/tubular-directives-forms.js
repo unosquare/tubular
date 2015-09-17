@@ -158,7 +158,7 @@
                                     if (field.resetEditor) {
                                         field.resetEditor();
                                     } else {
-                                        field.value = null;
+                                        field.value = field.defaultValue;
                                     }
                                 });
                             };

@@ -20,6 +20,7 @@
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
     <TargetFrameworkProfile />
+    <UseGlobalApplicationHostFile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -143,6 +144,9 @@
     <Content Include="ui\app\common\popup.html" />
     <Content Include="ui\app\common\view.html" />
     <Content Include="ui\app\common\viewformat.html" />
+    <Content Include="ui\chosen\chosen.js" />
+    <Content Include="ui\chosen\ng-chosen.js" />
+    <Content Include="ui\chosen\tb-chosen.js" />
     <Content Include="ui\media\favicon.ico" />
     <Content Include="ui\media\tubular.png" />
     <Content Include="ui\styles\common.css" />

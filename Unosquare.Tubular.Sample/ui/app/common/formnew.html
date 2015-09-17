@@ -3,10 +3,9 @@
              require-authentication="false">
         <div class="row">
             <div class="col-md-9">
-                <h3>New Order</h3>
-
-                <tb-simple-editor min="3" show-label="true" name="CustomerName">
+                <tb-simple-editor min="3" show-label="true" name="CustomerName" default-value="Customer">
                 </tb-simple-editor>
+
                 <tb-dropdown-editor name="ShipperCity" value="Model.ShipperCity"
                                     show-label="true" required="true"
                                     options-url="api/orders/cities">
@@ -16,7 +15,7 @@
                 </tb-numeric-editor>
 
                 <tb-date-editor name="ShippedDate" required="true" format="'dd-MM-yyyy'" show-label="true"
-                                default-value="sample.defaultDate">
+                                default-value="{{sample.defaultDate | date}}">
                 </tb-date-editor>
 
                 <tb-hidden-field name="OrderID" is-key="true" value="Model.OrderID">
@@ -26,14 +25,22 @@
                 </tb-checkbox-field>
 
                 <hr />
-
-                <button class="btn btn-primary" ng-click="$parent.create()" ng-disabled="!$parent.model.$valid()">Save</button>
-                <button class="btn btn-danger" ng-click="$parent.cancel()">Cancel</button>
+                <div class="pull-right">
+                    <button class="btn btn-primary" ng-click="$parent.create()" ng-disabled="!$parent.model.$valid()">
+                        <i class="fa fa-floppy-o"></i>&nbsp;Save
+                    </button>
+                    <button class="btn btn-danger" ng-click="$parent.cancel()">
+                        <i class="fa fa-ban"></i>&nbsp;Cancel
+                    </button>
+                    <button class="btn btn-warning" ng-click="$parent.clear()">
+                        <i class="fa fa-times"></i>&nbsp;Reset
+                    </button>
+                </div>
             </div>
 
             <div class="col-md-3">
                 <div class="jumbotron">
-                    <h3>Please complete the form, we must have orders.</h3>
+                    <h3>Please complete the form, we must have orders.<small>Just one more.</small></h3>
                 </div>
             </div>
         </div>

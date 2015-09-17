@@ -72,6 +72,7 @@
 
                 $scope.$on('tbForm_OnSuccessfulSave', function (event, data, formScope) {
                     toastr.success("Record updated");
+                    formScope.clear();
                 });
 
                 $scope.$on('tbForm_OnSavingNoChanges', function (event, formScope) {
