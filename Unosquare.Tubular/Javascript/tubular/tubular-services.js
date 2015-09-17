@@ -18,7 +18,8 @@
          * Use `tubularPopupService` to show or generate popups with a `tbForm` inside.
          */
         .service('tubularPopupService', [
-            '$modal', '$rootScope', 'tubularTemplateService', function tubularPopupService($modal, $rootScope, tubularTemplateService) {
+            '$modal', '$rootScope', 'tubularTemplateService',
+            function tubularPopupService($modal, $rootScope, tubularTemplateService) {
                 var me = this;
 
                 me.onSuccessForm = function(callback) {
@@ -43,8 +44,16 @@
                             '$scope', function($scope) {
                                 $scope.Model = model;
 
-                                $scope.savePopup = function (model) {
-                                    var result = (model) ? model.save() : $scope.Model.save();
+                                $scope.savePopup = function (innerModel) {
+                                    innerModel = innerModel || $scope.Model;
+
+                                    // If we have nothing to save and it's not a new record, just close
+                                    if (!innerModel.$isNew && !innerModel.$hasChanges) {
+                                        $scope.closePopup();
+                                        return;
+                                    }
+
+                                    var result = innerModel.save();
 
                                     if (angular.isUndefined(result) || result === false) {
                                         return;
