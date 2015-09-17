@@ -46,7 +46,7 @@ You will need to reference the following JS libraries in order to use Tubular in
 
 * [jQuery](http://jquery.com/)
 * [Twitter Bootstrap](http://getbootstrap.com/)
-* [AngularJS (including Route, Cookies, and optionally, Animate)](https://angularjs.org/)
+* [AngularJS (optionally Animate and Route)](https://angularjs.org/)
 * [AngularJS UI Bootstrap](https://angular-ui.github.io/bootstrap/)
 * [AngularJS Local Storage](https://github.com/grevory/angular-local-storage)
 * [Font Awesome](http://fortawesome.github.io/Font-Awesome/)
@@ -62,7 +62,7 @@ You can get all the dependencies using the following links in your master HTML p
 <link rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap/3.3.4/css/bootstrap.min.css" />
 <link rel="stylesheet" href="//cdn.jsdelivr.net/fontawesome/4.3.0/css/font-awesome.min.css" />
 
-<script src="//cdn.jsdelivr.net/g/jquery,bootstrap,angularjs(angular.min.js+angular-animate.min.js+angular-cookies.min.js+angular-route.min.js),filesaver.js,angular.bootstrap(ui-bootstrap.min.js+ui-bootstrap-tpls.min.js),blob.js(Blob.js),filesaver.js"></script>
+<script src="//cdn.jsdelivr.net/g/jquery,bootstrap,angularjs(angular.min.js+angular-animate.min.js+angular-route.min.js),filesaver.js,angular.bootstrap(ui-bootstrap.min.js+ui-bootstrap-tpls.min.js),blob.js(Blob.js),filesaver.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/angular-local-storage/0.1.5/angular-local-storage.min.js"></script>
 ```
 
@@ -76,7 +76,7 @@ Then you will need to either grab your own copy of Tubular or you use jsDelivr t
 Finally update your modules to include Tubular, for example if your module is called <i>app</i>, then you will need to add Tubular as a dependency as follows:
 
 ```javascript
-angular.module('app', ['ngRoute','ngCookies','tubular']);
+angular.module('app', ['ngRoute','tubular']);
 ```
 
 ##Boilerplate

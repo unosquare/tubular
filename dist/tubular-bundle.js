@@ -3557,7 +3557,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
      * Tubular Services module. 
      * It contains common services like Http and OData clients, and filtering and printing services.
      */
-    angular.module('tubular.services', ['ui.bootstrap', 'ngCookies'])
+    angular.module('tubular.services', ['ui.bootstrap'])
         /**
          * @ngdoc service
          * @name tubularPopupService
@@ -4110,8 +4110,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * This service provides authentication using bearer-tokens. Based on https://bitbucket.org/david.antaramian/so-21662778-spa-authentication-example
          */
         .service('tubularHttp', [
-            '$http', '$timeout', '$q', '$cacheFactory', '$cookieStore',
-            function tubularHttp($http, $timeout, $q, $cacheFactory, $cookieStore) {
+            '$http', '$timeout', '$q', '$cacheFactory', 'localStorageService',
+            function tubularHttp($http, $timeout, $q, $cacheFactory, localStorageService) {
                 var me = this;
 
                 function isAuthenticationExpired(expirationDate) {
@@ -4122,12 +4122,12 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 }
 
                 function removeData() {
-                    $cookieStore.remove('auth_data');
+                    localStorageService.remove('auth_data');
                 }
 
                 function saveData() {
                     removeData();
-                    $cookieStore.put('auth_data', me.userData);
+                    localStorageService.set('auth_data', me.userData);
                 }
 
                 function setHttpAuthHeader() {
@@ -4135,7 +4135,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 }
 
                 function retrieveSavedData() {
-                    var savedData = $cookieStore.get('auth_data');
+                    var savedData = localStorageService.get('auth_data');
 
                     if (typeof savedData === 'undefined' || savedData == null) {
                         throw 'No authentication data exists';
