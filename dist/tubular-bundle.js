@@ -1995,7 +1995,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         '<label ng-show="showLabel">{{ label }}</label>' +
                         '<div class="input-group" ng-show="isEditing">' +
                         '<input ng-model="value" placeholder="{{placeholder}}" title="{{tooltip}}" ' +
-                        'class="form-control {{css}}" ng-readonly="lastSet.indexOf(value) !== -1" typeahead="{{ selectOptions }}" ' +
+                        'class="form-control {{css}}" ng-readonly="readOnly || lastSet.indexOf(value) !== -1" typeahead="{{ selectOptions }}" ' +
                         'ng-required="required" /> ' +
                         '<div class="input-group-addon" ng-hide="lastSet.indexOf(value) !== -1"><i class="fa fa-pencil"></i></div>' +
                         '<span class="input-group-btn" ng-show="lastSet.indexOf(value) !== -1" tabindex="-1">' +
@@ -2140,7 +2140,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         uncheckedValue: '=?'
                     }, tubularEditorService.defaultScope),
                     controller: [
-                        '$scope', '$element', function($scope) {
+                        '$scope', '$element', function ($scope) {
+                            $scope.required = false; // overwrite required to false always
                             $scope.checkedValue = angular.isDefined($scope.checkedValue) ? $scope.checkedValue : true;
                             $scope.uncheckedValue = angular.isDefined($scope.uncheckedValue) ? $scope.uncheckedValue : false;
 
