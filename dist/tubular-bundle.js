@@ -2662,9 +2662,13 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 $scope.$emit('tbForm_OnCancel', $scope.model);
                             };
 
-                            $scope.clear = function() {
-                                angular.forEach($scope.fields, function(field) {
-                                    field.value = null;
+                            $scope.clear = function () {
+                                angular.forEach($scope.fields, function (field) {
+                                    if (field.resetEditor) {
+                                        field.resetEditor();
+                                    } else {
+                                        field.value = null;
+                                    }
                                 });
                             };
 
