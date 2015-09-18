@@ -25,6 +25,8 @@
          * @param {boolean} readOnly Set if the field is read-only.
          * @param {number} min Set the minimum characters.
          * @param {number} max Set the maximum characters.
+         * @param {string} regex Set the regex validation text.
+         * @param {string} regexErrorMessage Set the regex validation error message.
          */
         .directive('tbSimpleEditor', [
             'tubularEditorService', function(tubularEditorService) {
@@ -41,14 +43,24 @@
                     restrict: 'E',
                     replace: true,
                     transclude: true,
-                    scope: tubularEditorService.defaultScope,
+                    scope: angular.extend({ regex: '@?', regexErrorMessage: '@?' }, tubularEditorService.defaultScope),
                     controller: [
                         '$scope', function($scope) {
-                            $scope.validate = function() {
+                            $scope.validate = function () {
+                                if (angular.isDefined($scope.regex) && $scope.regex != null && angular.isDefined($scope.value) && $scope.value != null) {
+                                    var patt = new RegExp($scope.regex);
+
+                                    if (patt.test($scope.value) === false) {
+                                        $scope.$valid = false;
+                                        $scope.state.$errors = [$scope.regexErrorMessage || "The field doesn't match the regular expression."];
+                                        return;
+                                    }
+                                }
+
                                 if (angular.isDefined($scope.min) && angular.isDefined($scope.value) && $scope.value != null) {
                                     if ($scope.value.length < parseInt($scope.min)) {
                                         $scope.$valid = false;
-                                        $scope.state.$errors = ["The fields needs to be minimum " + $scope.min + " chars"];
+                                        $scope.state.$errors = ["The field needs to be minimum " + $scope.min + " chars."];
                                         return;
                                     }
                                 }
@@ -56,7 +68,7 @@
                                 if (angular.isDefined($scope.max) && angular.isDefined($scope.value) && $scope.value != null) {
                                     if ($scope.value.length > parseInt($scope.max)) {
                                         $scope.$valid = false;
-                                        $scope.state.$errors = ["The fields needs to be maximum " + $scope.min + " chars"];
+                                        $scope.state.$errors = ["The field needs to be maximum " + $scope.min + " chars."];
                                         return;
                                     }
                                 }
