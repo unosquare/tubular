@@ -322,9 +322,9 @@ var tubularTemplateServiceModule = {
 
     /**
      * Generates a grid markup using a columns model and grids options
-     * @param {} columns 
-     * @param {} options 
-     * @returns {} 
+     * @param {array} columns 
+     * @param {object} options 
+     * @returns {string} 
      */
     generateGrid: function(columns, options) {
         var topToolbar = '';
