@@ -43,8 +43,8 @@
                         name: '@?formName'
                     },
                     controller: [
-                        '$scope', '$routeParams', 'tubularModel', 'tubularHttp', '$timeout',
-                        function ($scope, $routeParams, TubularModel, tubularHttp, $timeout) {
+                        '$scope', '$routeParams', 'tubularModel', 'tubularHttp', '$timeout', '$element',
+                        function ($scope, $routeParams, TubularModel, tubularHttp, $timeout, $element) {
                             $scope.tubularDirective = 'tubular-form';
                             $scope.serverSaveMethod = $scope.serverSaveMethod || 'POST';
                             $scope.fields = [];
@@ -163,12 +163,16 @@
                                 });
                             };
 
-                            $scope.$emit('tbForm_OnGreetParentController', $scope);
-
                             $scope.finishDefinition = function () {
                                 $timeout(function () {
                                     $scope.hasFieldsDefinitions = true;
+
+                                    if ($element.find('input').length) {
+                                        $element.find('input')[0].focus();
+                                    }
                                 }, 0);
+
+                                $scope.$emit('tbForm_OnGreetParentController', $scope);
                             };
                         }
                     ],
