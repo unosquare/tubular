@@ -59,8 +59,8 @@ Also, if you use the Visual Studio you will need the excellent <a href="http://v
 You can get all the dependencies using the following links in your master HTML page. <a href="http://www.jsdelivr.com/">jsDelivr</a> provides almost everything you need to import.
 
 ```html
-<link rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap/3.3.4/css/bootstrap.min.css" />
-<link rel="stylesheet" href="//cdn.jsdelivr.net/fontawesome/4.3.0/css/font-awesome.min.css" />
+<link rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap/latest/css/bootstrap.min.css" />
+<link rel="stylesheet" href="//cdn.jsdelivr.net/fontawesome/latest/css/font-awesome.min.css" />
 
 <script src="//cdn.jsdelivr.net/g/jquery,bootstrap,angularjs(angular.min.js+angular-animate.min.js+angular-route.min.js),filesaver.js,angular.bootstrap(ui-bootstrap.min.js+ui-bootstrap-tpls.min.js),blob.js(Blob.js),filesaver.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/angular-local-storage/0.1.5/angular-local-storage.min.js"></script>
