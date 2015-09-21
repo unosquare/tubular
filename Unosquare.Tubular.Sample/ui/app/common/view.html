@@ -27,10 +27,10 @@
                                     <div class="btn-group btn-group-xs">
                                         <button class="btn btn-default" ng-click="$component.newRow()"
                                                 ng-hide="$component.tempRow.$isEditing">
-                                            <i class="fa fa-plus-circle"></i> New
+                                            New inline
                                         </button>
                                         <a class="btn btn-default hidden-xs hidden-sm" href="/new" ng-hide="$component.tempRow.$isEditing">
-                                            <i class="fa fa-plus-circle"></i> Page
+                                            New form
                                         </a>
                                     </div>
                                 </tb-column>
@@ -73,9 +73,9 @@
                                 <!-- New record row -->
                                 <tb-row-template ng-show="$component.tempRow.$isEditing">
                                     <tb-cell-template class="text-center">
-                                        <div class="btn-group btn-group-xs">
-                                            <tb-save-button model="$component.tempRow" save-css="hidden-xs hidden-sm"
-                                                            cancel-css="btn-danger" is-new="true"
+                                        <div class="btn-group">
+                                            <tb-save-button model="$component.tempRow" save-css="btn-xs hidden-xs hidden-sm"
+                                                            cancel-css="btn-xs btn-danger" is-new="true"
                                                             component="$component">
                                             </tb-save-button>
                                         </div>
