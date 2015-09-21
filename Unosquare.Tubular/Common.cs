@@ -354,7 +354,10 @@
             }
         };
 
-        internal static GridOptions DefaultGridOptions = new GridOptions
+        /// <summary>
+        /// Defaults Grid Options
+        /// </summary>
+        public static GridOptions DefaultGridOptions = new GridOptions
         {
             Pager= true,
             FreeTextSearch= true,
