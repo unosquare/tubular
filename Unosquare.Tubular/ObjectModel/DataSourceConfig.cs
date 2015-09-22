@@ -45,7 +45,7 @@ namespace Unosquare.Tubular.ObjectModel
         /// <summary>
         /// The Datasource name
         /// </summary>
-        public string Name { get; }
+        public string Name { get; private set; }
 
         /// <summary>
         /// Defines the Joins

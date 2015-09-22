@@ -10,6 +10,18 @@ namespace Unosquare.Tubular
     /// </summary>
     public static class LinqExtensions
     {
+        /// <summary>
+        /// Jois a IQueryable source to another using string in keys definition and selector
+        /// </summary>
+        /// <param name="source1"></param>
+        /// <param name="alias1"></param>
+        /// <param name="source2"></param>
+        /// <param name="alias2"></param>
+        /// <param name="key1"></param>
+        /// <param name="key2"></param>
+        /// <param name="selector"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
         public static IQueryable Join(this IQueryable source1, string alias1, IQueryable source2, string alias2,
             string key1, string key2, string selector, params object[] args)
         {
