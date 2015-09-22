@@ -47,6 +47,8 @@
     <Compile Include="CodeGenerator.cs" />
     <Compile Include="Common.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="LinqExtensions.cs" />
+    <Compile Include="ObjectModel\DataSourceConfig.cs" />
     <Compile Include="ObjectModel\Filter.cs" />
     <Compile Include="ObjectModel\GridColumn.cs" />
     <Compile Include="ObjectModel\GridDataRequest.cs" />
