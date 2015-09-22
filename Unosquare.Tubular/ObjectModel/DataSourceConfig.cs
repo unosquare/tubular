@@ -87,6 +87,10 @@ namespace Unosquare.Tubular.ObjectModel
         /// The join selector (a valida Linq Dynamic string query)
         /// </summary>
         string Selector { get; }
+        /// <summary>
+        /// The partial Join selector
+        /// </summary>
+        string Selector2 { get; }
     }
 
 
@@ -147,6 +151,14 @@ namespace Unosquare.Tubular.ObjectModel
         public string Selector
         {
             get { return String.Format("new ({0} as {0}, {1} as {1})", Name1, Name2); }
+        }
+        
+        /// <summary>
+        /// The partial Join selector
+        /// </summary>
+        public string Selector2
+        {
+            get { return String.Format(", {0} as {0})", Name2); }
         }
     }
 
