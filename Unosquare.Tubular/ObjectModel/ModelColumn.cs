@@ -42,7 +42,7 @@
         /// </summary>
         public bool Sortable { get; set; }
         /// <summary>
-        /// Set if the Columns is key in the datasrouce
+        /// Set if the Columns is key in the datasource
         /// </summary>
         public bool IsKey { get; set; }
         /// <summary>
@@ -77,6 +77,14 @@
         /// Set if the field is read-only
         /// </summary>
         public bool ReadOnly { get; set; }
+        /// <summary>
+        /// The Aggregation Function
+        /// </summary>
+        public AggregationFunction Aggregate { get; set; }
+        /// <summary>
+        /// The Agregation Function to perform in the column
+        /// </summary>
+        public AggregationFunction MetaAggregate { get; set; }
     }
 
     internal class FieldSettings

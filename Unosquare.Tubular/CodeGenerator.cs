@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Unosquare.Tubular.ObjectModel;
 
 namespace Unosquare.Tubular
@@ -165,13 +163,12 @@ namespace Unosquare.Tubular
                 column.Required = true;
                 column.ReadOnly = false;
 
-                if (!firstSort)
-                {
-                    column.IsKey = true;
-                    column.SortOrder = 1;
-                    column.SortDirection = SortDirection.Ascending;
-                    firstSort = true;
-                }
+                if (firstSort) continue;
+
+                column.IsKey = true;
+                column.SortOrder = 1;
+                column.SortDirection = SortDirection.Ascending;
+                firstSort = true;
             }
 
             return columns;
@@ -282,21 +279,28 @@ namespace Unosquare.Tubular
                 columns.Select(
                     el =>
                         "\r\n\t\t<tb-column name=\"" + el.Name + "\" label=\"" + el.Label + "\" column-type=\"" +
-                        el.DataType.ToString().ToLowerInvariant() + "\" sortable=\"" + el.Sortable.ToString().ToLowerInvariant() + "\" " +
-                        "\r\n\t\t\tis-key=\"" + el.IsKey.ToString().ToLowerInvariant() + "\" searchable=\"" + el.Searchable.ToString().ToLowerInvariant() + "\" " +
+                        el.DataType.ToString().ToLowerInvariant() + "\" sortable=\"" +
+                        el.Sortable.ToString().ToLowerInvariant() + "\" " +
+                        "\r\n\t\t\tis-key=\"" + el.IsKey.ToString().ToLowerInvariant() + "\" searchable=\"" +
+                        el.Searchable.ToString().ToLowerInvariant() + "\" " +
                         (el.Sortable
-                            ? "\r\n\t\t\tsort-direction=\"" + (el.SortDirection == SortDirection.None ? "" : el.SortDirection.ToString()) + "\" sort-order=\"" + el.SortOrder +
+                            ? "\r\n\t\t\tsort-direction=\"" +
+                              (el.SortDirection == SortDirection.None ? "" : el.SortDirection.ToString()) +
+                              "\" sort-order=\"" + el.SortOrder +
                               "\" "
                             : " ") +
-                        "visible=\"" + el.Visible.ToString().ToLowerInvariant() + "\">" +
+                        "visible=\"" + el.Visible.ToString().ToLowerInvariant() + "\" aggregate=\"" + el.Aggregate +
+                        "\" meta-aggregate=\"" + el.MetaAggregate + "\">" +
                         (el.Filter ? "\r\n\t\t\t<tb-column-filter></tb-column-filter>" : "") +
                         "\r\n\t\t\t<tb-column-header>{{label}}</tb-column-header>" +
                         "\r\n\t\t</tb-column>"));
 
             return "<div class=\"container\">" +
                    "\r\n<tb-grid server-url=\"" + options.DataUrl + "\" request-method=\"" + options.RequestMethod +
+                   "\" grid-name=\"" + options.GridName +
                    "\" class=\"row\" " +
-                   "page-size=\"10\" require-authentication=\"" + options.RequireAuthentication.ToString().ToLowerInvariant() + "\" " +
+                   "page-size=\"10\" require-authentication=\"" +
+                   options.RequireAuthentication.ToString().ToLowerInvariant() + "\" " +
                    (options.ServiceName != "" ? " service-name=\"" + options.ServiceName + "\"" : "") +
                    (options.Mode != "Read-Only" ? " editor-mode=\"" + options.Mode.ToLower() + "\"" : "") + ">" +
                    (topToolbar == "" ? "" : "\r\n\t<div class=\"row\">" + topToolbar + "\r\n\t</div>") +

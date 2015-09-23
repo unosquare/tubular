@@ -76,7 +76,7 @@ namespace Unosquare.Tubular.ObjectModel
         {
             get
             {
-                return typeof(T).GetProperties()
+                return typeof(T).GetProperties().Where(x => x.CanRead)
                     .Select(
                         y =>
                             new GridColumn

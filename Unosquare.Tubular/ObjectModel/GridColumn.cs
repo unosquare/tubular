@@ -9,11 +9,11 @@
     public class GridColumn
     {
         /// <summary>
-        /// Column's Name
+        /// Column Name
         /// </summary>
         public string Name { get; set; }
         /// <summary>
-        /// Column's Label
+        /// Column Label
         /// </summary>
         public string Label { get; set; }
         /// <summary>
@@ -37,12 +37,16 @@
         /// </summary>
         public bool Searchable { get; set; }
         /// <summary>
-        /// Column's data type
+        /// Column data type
         /// </summary>
         public string DataType { get; set; }
         /// <summary>
-        /// Column's Aggregation Function
+        /// The Aggregation Function
         /// </summary>
         public AggregationFunction Aggregate { get; set; }
+        /// <summary>
+        /// The Agregation Function to perform in the column
+        /// </summary>
+        public AggregationFunction MetaAggregate { get; set; }
     }
 }

@@ -51,6 +51,7 @@
                 this.DataType = attrs.columnType || "string";
                 this.IsGrouping = attrs.isGrouping === "true";
                 this.Aggregate = attrs.aggregate || "none";
+                this.MetaAggregate = attrs.metaAggregate || "none";
 
                 this.FilterOperators = {
                     'string': {

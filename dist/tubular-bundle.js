@@ -3333,6 +3333,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 this.DataType = attrs.columnType || "string";
                 this.IsGrouping = attrs.isGrouping === "true";
                 this.Aggregate = attrs.aggregate || "none";
+                this.MetaAggregate = attrs.metaAggregate || "none";
 
                 this.FilterOperators = {
                     'string': {
