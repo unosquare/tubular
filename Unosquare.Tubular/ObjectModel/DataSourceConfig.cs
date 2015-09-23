@@ -30,15 +30,7 @@ namespace Unosquare.Tubular.ObjectModel
         /// </summary>
         List<GridColumn> Columns { get; }
     }
-
-    /// <summary>
-    /// Defines a datasource list
-    /// </summary>
-    public class DataSourceList : List<IDataSourceConfig>
-    {
-
-    }
-
+    
     /// <summary>
     /// Defines a generic datasource with a internal IQueryable source
     /// </summary>

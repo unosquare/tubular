@@ -17,7 +17,7 @@ namespace Unosquare.Tubular
         /// <param name="list">The DataSourceList where the DataSource will be add</param>
         /// <param name="source">The IQueryable to add</param>
         /// <returns></returns>
-        public static DataSourceConfig<T> AddSource<T>(this DataSourceList list, IQueryable<T> source) where T : class
+        public static DataSourceConfig<T> AddSource<T>(this DataSourceRepository list, IQueryable<T> source) where T : class
         {
             var config = new DataSourceConfig<T>(source);
             list.Add(config);
@@ -77,6 +77,22 @@ namespace Unosquare.Tubular
             config.Joins.Add(new DataSourceJoinConfig<T1, T2>(key1, key2));
 
             return config;
+        }
+
+        /// <summary>
+        /// Sets a Secure Url to Grid Options
+        /// </summary>
+        /// <param name="options"></param>
+        /// <param name="url"></param>
+        /// <param name="method"></param>
+        /// <returns></returns>
+        public static GridOptions WithSecureUrl(this GridOptions options, string url, string method = "POST")
+        {
+            options.RequireAuthentication = true;
+            options.DataUrl = url;
+            options.RequestMethod = method;
+
+            return options;
         }
     }
 }

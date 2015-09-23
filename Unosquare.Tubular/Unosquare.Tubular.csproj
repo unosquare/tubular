@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="CodeGenerator.cs" />
     <Compile Include="Common.cs" />
+    <Compile Include="DataSourceRepository.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="FluentExtension.cs" />
     <Compile Include="LinqExtensions.cs" />
