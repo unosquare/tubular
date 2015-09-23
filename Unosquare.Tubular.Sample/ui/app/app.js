@@ -20,6 +20,9 @@
                     }).when('/new/', {
                         templateUrl: '/ui/app/common/formnew.html',
                         title: 'Add a new ORDER NOW!'
+                    }).when('/reporting/', {
+                        templateUrl: '/ui/app/common/reporting.html',
+                        title: 'Create a custom Report'
                     }).otherwise({
                         redirectTo: '/'
                     });
@@ -29,7 +32,7 @@
         ]);
 
     angular.module('app.controllers', [])
-        .controller('TitleController', [
+        .controller('titleController', [
             '$scope', '$route', function($scope, $route) {
                 var me = this;
                 me.content = "Home";
@@ -38,11 +41,11 @@
                 });
             }
         ]).controller('loginCtrl', [
-            '$scope', '$location', function ($scope, $location) {
-                // TODO: Complete
-            }])
-        .controller('tubularSampleCtrl', [
             '$scope', '$location', function($scope, $location) {
+                // TODO: Complete
+            }
+        ])
+        .controller('tubularSampleCtrl', ['$scope', '$location', function($scope, $location) {
                 var me = this;
                 me.onTableController = function() {
                     console.log('On Before Get Data Event: fired.');
@@ -52,43 +55,77 @@
 
                 // Grid Events
                 $scope.$on('tbGrid_OnBeforeRequest', function(event, eventData) {
-                     console.log(eventData);
+                    console.log(eventData);
                 });
 
                 $scope.$on('tbGrid_OnRemove', function(data) {
-                     toastr.success("Record removed");
+                    toastr.success("Record removed");
                 });
 
                 $scope.$on('tbGrid_OnConnectionError', function(error) {
-                     toastr.error(error.statusText || "Connection error");
+                    toastr.error(error.statusText || "Connection error");
                 });
 
-                $scope.$on('tbGrid_OnSuccessfulSave', function (event, data, gridScope) {
+                $scope.$on('tbGrid_OnSuccessfulSave', function(event, data, gridScope) {
                     toastr.success("Record updated");
                 });
 
                 // Form Events
                 $scope.$on('tbForm_OnConnectionError', function(error) { toastr.error(error.statusText || "Connection error"); });
 
-                $scope.$on('tbForm_OnSuccessfulSave', function (event, data, formScope) {
+                $scope.$on('tbForm_OnSuccessfulSave', function(event, data, formScope) {
                     toastr.success("Record updated");
                     formScope.clear();
                 });
 
-                $scope.$on('tbForm_OnSavingNoChanges', function (event, formScope) {
+                $scope.$on('tbForm_OnSavingNoChanges', function(event, formScope) {
                     toastr.warning("Nothing to save");
                     $location.path('/');
                 });
 
-                $scope.$on('tbForm_OnCancel', function (model, error, formScope) {
+                $scope.$on('tbForm_OnCancel', function(model, error, formScope) {
                     $location.path('/');
                 });
             }
-        ]);
+        ]).controller("reportingCtrl",
+            function($scope, $routeParams, tubularHttp) {
+                $scope.items = [];
+                tubularHttp.setRequireAuthentication(false);
+
+                tubularHttp.get('api/reports/datasources').promise.then(function(data) {
+                    $scope.dataSources = data.DataSources;
+                    $scope.aggregationFunctions = data.AggregationFunctions;
+                });
+
+                $scope.addItem = function() {
+                    $scope.items.push({
+                        DataSource: $scope.Model.DataSource.Name,
+                        Column: $scope.Model.Column.Name,
+                        DataType: $scope.Model.DataType,
+                        Aggregation: $scope.Model.AggregationFunction
+                    });
+                };
+
+                $scope.removeItem = function(item) {
+                    var index = $scope.items.indexOf(item);
+                    if (index > -1) {
+                        $scope.items.splice(index, 1);
+                    }
+                };
+
+                $scope.generate = function () {
+                    tubularHttp.setRequireAuthentication(false);
+                    tubularHttp.post('api/reports/getmarkup', $scope.items).promise.then(function(data) {
+                        $scope.autoCode = window.URL.createObjectURL(new Blob([data], { type: "text/html" }));
+                    });
+                };
+            });
 
     angular.module('app', [
         'tubular',
         'app.routes',
         'app.controllers'
-    ]);
+    ]).config(['$sceDelegateProvider', function ($sceDelegateProvider) {
+        $sceDelegateProvider.resourceUrlWhitelist(['self', 'blob:**']);
+    }]);
 })();

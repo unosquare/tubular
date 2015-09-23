@@ -51,6 +51,7 @@
     <Compile Include="FluentExtension.cs" />
     <Compile Include="LinqExtensions.cs" />
     <Compile Include="ObjectModel\DataSourceConfig.cs" />
+    <Compile Include="ObjectModel\DataSourceJoinConfig.cs" />
     <Compile Include="ObjectModel\Filter.cs" />
     <Compile Include="ObjectModel\GridColumn.cs" />
     <Compile Include="ObjectModel\GridDataRequest.cs" />

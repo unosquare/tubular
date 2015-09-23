@@ -1,0 +1,59 @@
+﻿<div ng-controller="reportingCtrl" class="container">
+    <tb-form model="Model">
+        <div class="row">
+            <div class="col-md-8">
+                <p>Select your columns </p>
+            </div>
+            <div class="col-md-4 pull-right clearfix">
+                <button class="btn btn-success" ng-disabled="items.length == 0" ng-click="generate()">
+                    Generate
+                </button>
+            </div>
+        </div>
+        <br />
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Data Source</th>
+                    <th>Column</th>
+                    <th>Data Type</th>
+                    <th>Aggregation</th>
+                    <th>&nbsp;</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <tb-dropdown-editor name="DataSource" options="dataSources" option-label="Name"></tb-dropdown-editor>
+                    </td>
+                    <td>
+                        <tb-dropdown-editor name="Column" options="Model.DataSource.Columns"
+                                            option-label="Name" option-id="Name"></tb-dropdown-editor>
+                    </td>
+                    <td>
+                        <tb-simple-editor name="DataType" read-only="true" value="Model.Column.DataType"></tb-simple-editor>
+                    </td>
+                    <td>
+                        <tb-dropdown-editor name="AggregationFunction" options="aggregationFunctions">
+                        </tb-dropdown-editor>
+                    </td>
+                    <td class="text-center">
+                        <button class="btn btn-success btn-sm" ng-click="addItem()">Add</button>
+                    </td>
+                </tr>
+                <tr ng-repeat="item in items">
+                    <td>{{item.DataSource}}</td>
+                    <td>{{item.Column}}</td>
+                    <td>{{item.DataType}}</td>
+                    <td>{{item.Aggregation}}</td>
+                    <td class="text-center">
+                        <button class="btn btn-danger btn-sm" ng-click="removeItem(item)">Remove</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </tb-form>
+    <hr />
+
+    <div ng-include="autoCode"></div>
+</div>

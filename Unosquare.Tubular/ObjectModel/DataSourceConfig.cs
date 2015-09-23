@@ -30,7 +30,67 @@ namespace Unosquare.Tubular.ObjectModel
         /// </summary>
         List<GridColumn> Columns { get; }
     }
-    
+
+    /// <summary>
+    /// Defines a generic datasource with a IQueryable source
+    /// </summary>
+    public class DataSourceConfig : IDataSourceConfig
+    {
+        private readonly IQueryable _dataSource;
+        private readonly Type _type;
+
+        /// <summary>
+        /// Instances a new DataSourceConfig
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="type"></param>
+        public DataSourceConfig(IQueryable source, Type type)
+        {
+            _dataSource = source;
+            _type = type;
+
+            Name = _type.Name;
+            Joins = new List<IDataSourceJoinConfig>();
+        }
+
+        /// <summary>
+        /// The Datasource name
+        /// </summary>
+        public string Name { get; private set; }
+
+        /// <summary>
+        /// Defines the Joins
+        /// </summary>
+        public List<IDataSourceJoinConfig> Joins { get; set; }
+
+        /// <summary>
+        /// Gets the datasource
+        /// </summary>
+        /// <returns></returns>
+        public IQueryable GetSource()
+        {
+            return _dataSource;
+        }
+
+        /// <summary>
+        /// Get the columns
+        /// </summary>
+        public List<GridColumn> Columns
+        {
+            get
+            {
+                return _type.GetProperties().Where(x => x.CanRead)
+                    .Select(
+                        y =>
+                            new GridColumn
+                            {
+                                Name = y.Name,
+                                DataType = (Nullable.GetUnderlyingType(y.PropertyType) ?? y.PropertyType).Name
+                            }).ToList();
+            }
+        }
+    }
+
     /// <summary>
     /// Defines a generic datasource with a internal IQueryable source
     /// </summary>
@@ -87,105 +147,4 @@ namespace Unosquare.Tubular.ObjectModel
             }
         }
     }
-
-    /// <summary>
-    /// Defines a DataSource join configuration implementation
-    /// </summary>
-    public interface IDataSourceJoinConfig
-    {
-        /// <summary>
-        /// The Source name
-        /// </summary>
-        string Name1 { get; }
-        /// <summary>
-        /// The Destination name
-        /// </summary>
-        string Name2 { get; }
-        /// <summary>
-        /// The Source key
-        /// </summary>
-        string Key1 { get;  }
-        /// <summary>
-        /// The Destination key
-        /// </summary>
-        string Key2 { get; }
-        /// <summary>
-        /// The join selector (a valida Linq Dynamic string query)
-        /// </summary>
-        string Selector { get; }
-        /// <summary>
-        /// The partial Join selector
-        /// </summary>
-        string Selector2 { get; }
-    }
-
-
-    /// <summary>
-    /// Defines a DataSource join configuration scheme
-    /// </summary>
-    public class DataSourceJoinConfig<T1, T2> : IDataSourceJoinConfig
-    {
-        private readonly string _firstKey;
-        private readonly string _secondKey;
-
-        /// <summary>
-        /// Instances a new DataSource Join Config
-        /// </summary>
-        /// <param name="firstKey"></param>
-        /// <param name="secondKey"></param>
-        public DataSourceJoinConfig(string firstKey, string secondKey)
-        {
-            _firstKey = firstKey;
-            _secondKey = secondKey;
-        }
-
-        /// <summary>
-        /// The Source name
-        /// </summary>
-        public string Name1
-        {
-            get { return typeof(T1).Name; }
-        }
-
-        /// <summary>
-        /// The Destination name
-        /// </summary>
-        public string Name2
-        {
-            get { return typeof(T2).Name; }
-        }
-
-        /// <summary>
-        /// The Source key
-        /// </summary>
-        public string Key1
-        {
-            get { return Name1 + "." + _firstKey; }
-        }
-
-        /// <summary>
-        /// The destination key
-        /// </summary>
-        public string Key2
-        {
-            get { return Name2 + "." + _secondKey; }
-        }
-
-        /// <summary>
-        /// The join selector (a valida Linq Dynamic string query)
-        /// </summary>
-        public string Selector
-        {
-            get { return String.Format("new ({0} as {0}, {1} as {1})", Name1, Name2); }
-        }
-        
-        /// <summary>
-        /// The partial Join selector
-        /// </summary>
-        public string Selector2
-        {
-            get { return String.Format(", {0} as {0})", Name2); }
-        }
-    }
-
 }

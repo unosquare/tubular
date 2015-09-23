@@ -81,7 +81,9 @@ namespace Unosquare.Tubular
                                                                   x.Name))
                                                 + ")", "it");
 
-                var groupSelection = keyColumns.Select(x => "it.Key." + x.Name + " as " + x.Name).ToList();
+                var groupSelection =
+                    keyColumns.Select(x => "it.Key." + (singleTable ? x.Name.Split('_')[1] : x.Name) + " as " + x.Name)
+                        .ToList();
 
                 foreach (var column in model.Columns.Where(x => x.MetaAggregate != AggregationFunction.None))
                 {
@@ -104,7 +106,7 @@ namespace Unosquare.Tubular
 
             return datasource.Select(selection);
         }
-
+        
         /// <summary>
         /// Generates a GridDataResponse from a model
         /// </summary>

@@ -44,6 +44,10 @@
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="EntityFramework.MappingAPI, Version=6.1.0.9, Culture=neutral, PublicKeyToken=7ee2e825d201459e, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.MappingAPI.6.1.0.9\lib\net45\EntityFramework.MappingAPI.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
       <Private>True</Private>
@@ -142,6 +146,7 @@
     <Content Include="ui\app\common\formnew.html" />
     <Content Include="ui\app\common\login.html" />
     <Content Include="ui\app\common\popup.html" />
+    <Content Include="ui\app\common\reporting.html" />
     <Content Include="ui\app\common\view.html" />
     <Content Include="ui\app\common\viewformat.html" />
     <Content Include="ui\chosen\chosen.js" />
@@ -156,8 +161,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApiModels\OrderDto.cs" />
+    <Compile Include="Application\Extensions.cs" />
     <Compile Include="Application\Startup.cs" />
     <Compile Include="Controllers\OrdersController.cs" />
+    <Compile Include="Controllers\ReportController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Models\Order.cs" />
     <Compile Include="Models\SampleDbContext.cs" />

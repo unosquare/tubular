@@ -1,0 +1,51 @@
+﻿using System;
+using System.Data.Entity;
+using System.Linq;
+using EntityFramework.MappingAPI.Extensions;
+using Unosquare.Tubular.ObjectModel;
+
+namespace Unosquare.Tubular.Sample.Application
+{
+    public static class Extensions
+    {
+        public static DataSourceRepository GetDataSourceRepository(this DbContext context, Type[] ignoreTypes = null)
+        {
+            var repo = new DataSourceRepository();
+
+            var dbsets = context.GetType().GetProperties().Where(p => p.PropertyType.IsGenericType
+                                                                      &&
+                                                                      p.PropertyType.GetGenericTypeDefinition() ==
+                                                                      typeof (DbSet<>))
+                .Select(
+                    x =>
+                        new
+                        {
+                            DbSet = (x.GetValue(context) as IQueryable),
+                            PropertyType = x.PropertyType.GetGenericArguments().First()
+                        })
+                .ToList();
+
+            if (dbsets.Any() == false) return repo;
+            if (ignoreTypes == null) ignoreTypes = new Type[0];
+
+            foreach (var dbset in dbsets.Where(dbset => ignoreTypes.Any(x => x == dbset.PropertyType) == false))
+            {
+                var dataSourceConfig = repo.AddSource(dbset.DbSet, dbset.PropertyType);
+
+                var tableInfo = context.Db(dbset.PropertyType);
+
+                if (tableInfo == null || tableInfo.Fks.Any() == false) continue;
+
+                foreach (var fk in tableInfo.Fks)
+                {
+                    dataSourceConfig.Joins.Add(new DataSourceJoinConfig(dbset.PropertyType.Name, fk.PropertyName,
+                        fk.FkTargetColumn.EntityMap.Type.Name, fk.FkTargetColumn.PropertyName));
+                }
+            }
+
+            repo.VerifyJoins();
+
+            return repo;
+        }
+    }
+}

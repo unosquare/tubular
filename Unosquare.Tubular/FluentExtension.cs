@@ -1,23 +1,38 @@
-﻿using System;
-using System.Linq;
-using System.Linq.Expressions;
-using Unosquare.Tubular.ObjectModel;
-
-namespace Unosquare.Tubular
+﻿namespace Unosquare.Tubular
 {
+    using System;
+    using System.Linq;
+    using System.Linq.Expressions;
+    using Unosquare.Tubular.ObjectModel;
+
     /// <summary>
     /// Fluent Extension Methods
     /// </summary>
     public static class FluentExtension
     {
         /// <summary>
-        /// Adds a Source to a DataSourceList
+        /// Adds a Data Source to a DataSourceConfig
+        /// </summary>
+        /// <param name="list">The DataSourceList where the DataSource will be add</param>
+        /// <param name="source">The IQueryable to add</param>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public static DataSourceConfig AddSource(this DataSourceRepository list, IQueryable source, Type type)
+        {
+            var config = new DataSourceConfig(source, type);
+            list.Add(config);
+            return config;
+        }
+
+        /// <summary>
+        /// Adds a generic Data Source to a DataSourceConfig
         /// </summary>
         /// <typeparam name="T">The DataSource Type</typeparam>
         /// <param name="list">The DataSourceList where the DataSource will be add</param>
         /// <param name="source">The IQueryable to add</param>
         /// <returns></returns>
-        public static DataSourceConfig<T> AddSource<T>(this DataSourceRepository list, IQueryable<T> source) where T : class
+        public static DataSourceConfig<T> AddSource<T>(this DataSourceRepository list, IQueryable<T> source)
+            where T : class
         {
             var config = new DataSourceConfig<T>(source);
             list.Add(config);
@@ -93,6 +108,34 @@ namespace Unosquare.Tubular
             options.RequestMethod = method;
 
             return options;
+        }
+
+        /// <summary>
+        /// Verifies all the joins in the Repository
+        /// </summary>
+        /// <param name="repo"></param>
+        /// <returns></returns>
+        public static DataSourceRepository VerifyJoins(this DataSourceRepository repo)
+        {
+            foreach (var datasource in repo)
+            {
+                foreach (var join in datasource.Joins)
+                {
+                    var fk = repo.FirstOrDefault(x => x.Name == join.Name2);
+
+                    if (fk == null) continue;
+
+                    var validJoin = fk.Joins.Any(x => x.Name2 == datasource.Name);
+
+                    if (validJoin == false)
+                    {
+                        fk.Joins.Add(new DataSourceJoinConfig(join.Name2, join.Key2.Split('.')[1], join.Name1,
+                            join.Key1.Split('.')[1]));
+                    }
+                }
+            }
+
+            return repo;
         }
     }
 }

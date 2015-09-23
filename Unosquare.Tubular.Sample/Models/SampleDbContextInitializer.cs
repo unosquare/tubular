@@ -38,6 +38,7 @@
                 "Guadalajara, JAL, Mexico", "Los Angeles, CA, USA", "Portland, OR, USA", "Leon, GTO, Mexico",
                 "Boston, MA, USA"
             };
+
             var companies = new[]
             {"Unosquare LLC", "Advanced Technology Systems", "Super La Playa", "Vesta", "Microsoft", "Oxxo"};
 

@@ -1,9 +1,12 @@
-﻿namespace Unosquare.Tubular.Sample.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Unosquare.Tubular.Sample.Models
 {
     using System;
 
     public class Order
     {
+        [Key]
         public int OrderID { get; set; }
         public string CustomerName { get; set; }
         public string ShipperCity { get; set; }
