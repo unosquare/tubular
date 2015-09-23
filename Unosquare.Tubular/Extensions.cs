@@ -17,8 +17,6 @@
     /// </summary>
     public static class Extensions
     {
-        private static readonly Regex ReplaceJoin = new Regex(@"(\w+ as \w+)");
-
         private static readonly object SyncRoot = new object();
 
         private static readonly Dictionary<Type, Dictionary<string, PropertyInfo>> TypePropertyCache =

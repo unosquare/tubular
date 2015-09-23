@@ -1,4 +1,6 @@
-﻿namespace Unosquare.Tubular
+﻿using System.Text.RegularExpressions;
+
+namespace Unosquare.Tubular
 {
     using System;
     using System.Collections.Generic;
@@ -353,6 +355,11 @@
                 }
             }
         };
+
+        /// <summary>
+        /// Replace Join Regular Expresion
+        /// </summary>
+        public static readonly Regex ReplaceJoin = new Regex(@"(\w+ as \w+)");
 
         /// <summary>
         /// Defaults Grid Options

@@ -14,14 +14,29 @@ namespace Unosquare.Tubular.ObjectModel
         /// </summary>
         /// <returns></returns>
         IQueryable GetSource();
+
         /// <summary>
         /// Defines the Joins
         /// </summary>
         List<IDataSourceJoinConfig> Joins { get; set; }
+
         /// <summary>
         /// The Datasource name
         /// </summary>
         string Name { get; }
+
+        /// <summary>
+        /// Get the Columns
+        /// </summary>
+        List<GridColumn> Columns { get; }
+    }
+
+    /// <summary>
+    /// Defines a datasource list
+    /// </summary>
+    public class DataSourceList : List<IDataSourceConfig>
+    {
+
     }
 
     /// <summary>
@@ -40,8 +55,9 @@ namespace Unosquare.Tubular.ObjectModel
         {
             _dataSource = source;
             Name = typeof(T).Name;
+            Joins = new List<IDataSourceJoinConfig>();
         }
-
+        
         /// <summary>
         /// The Datasource name
         /// </summary>
@@ -59,6 +75,24 @@ namespace Unosquare.Tubular.ObjectModel
         public IQueryable GetSource()
         {
             return _dataSource;
+        }
+
+        /// <summary>
+        /// Get the columns
+        /// </summary>
+        public List<GridColumn> Columns
+        {
+            get
+            {
+                return typeof(T).GetProperties()
+                    .Select(
+                        y =>
+                            new GridColumn
+                            {
+                                Name = y.Name,
+                                DataType = (Nullable.GetUnderlyingType(y.PropertyType) ?? y.PropertyType).Name
+                            }).ToList();
+            }
         }
     }
 
