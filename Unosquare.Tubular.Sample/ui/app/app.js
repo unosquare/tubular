@@ -139,8 +139,9 @@
             $sceDelegateProvider.resourceUrlWhitelist(['self', 'blob:**']);
         }
     ]).run([
-        'tubularTranslate', function(tubularTranslate) {
-            tubularTranslate.setLanguage('es');
+        'tubularTranslate', function (tubularTranslate) {
+            // Uncomment if you want to start with Spanish
+            //tubularTranslate.setLanguage('es');
         }
     ]);
 })();
