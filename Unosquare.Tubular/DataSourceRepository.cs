@@ -69,7 +69,7 @@ namespace Unosquare.Tubular
 
             if (model.Columns.Any(x => x.MetaAggregate != AggregationFunction.None))
             {
-                var keyColumns = model.Columns.Where(x => x.MetaAggregate == AggregationFunction.None);
+                var keyColumns = model.Columns.Where(x => x.MetaAggregate == AggregationFunction.None).ToList();
 
                 datasource = datasource.GroupBy("new (" +
                                                 string.Join(",",
@@ -87,8 +87,16 @@ namespace Unosquare.Tubular
 
                 foreach (var column in model.Columns.Where(x => x.MetaAggregate != AggregationFunction.None))
                 {
-                    groupSelection.Add(string.Format("{0}(it.{1}) as {2}", column.MetaAggregate.ToString().ToUpper(),
-                        (singleTable ? column.Name.Split('_')[1] : column.Name.Replace("_", ".")), column.Name));
+                    if (column.MetaAggregate == AggregationFunction.Count || column.MetaAggregate == AggregationFunction.DistinctCount)
+                    {
+                        // TODO: DISTINCT is tricky and Ricky is a friend of mine
+                        groupSelection.Add(string.Format("COUNT() as {0}", column.Name));
+                    }
+                    else
+                    {
+                        groupSelection.Add(string.Format("{0}(it.{1}) as {2}", column.MetaAggregate.ToString().ToUpper(),
+                            (singleTable ? column.Name.Split('_')[1] : column.Name.Replace("_", ".")), column.Name));
+                    }
                 }
 
                 var groupSelector = "new (" + string.Join(",", groupSelection) + ")";
@@ -106,7 +114,7 @@ namespace Unosquare.Tubular
 
             return datasource.Select(selection);
         }
-        
+
         /// <summary>
         /// Generates a GridDataResponse from a model
         /// </summary>
@@ -115,6 +123,68 @@ namespace Unosquare.Tubular
         public GridDataResponse CreateGridDataResponseFromDataSource(GridDataRequest model)
         {
             return model.CreateGridDataResponse(GetDataSource(model));
+        }
+
+        /// <summary>
+        /// Generates a ModelColumn list
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public List<ModelColumn> GenerateModels(DataSourceItemModel[] data)
+        {
+            var columns = new List<ModelColumn>();
+
+            foreach (var model in data)
+            {
+                var column = new ModelColumn
+                {
+                    DataType = model.DataType,
+                    Name = model.DataSource + "_" + model.Column,
+                    Label = model.Column.Humanize(),
+                    Visible = true,
+                    Sortable = true,
+                    MetaAggregate = model.Aggregation,
+                    HasFilter = true
+                };
+
+                column.Template = CodeGenerator.GetTemplateByDataType(column.Name, column.DataType);
+                column.EditorType = CodeGenerator.GetEditorTypeByDataType(column.DataType);
+                column.Searchable = column.DataType == DataType.String;
+
+                if (string.IsNullOrWhiteSpace(model.Filter) == false)
+                {
+                    column.Filter = new Filter();
+
+                    if (model.Filter.StartsWith("="))
+                    {
+                        column.Filter.Text = model.Filter.Substring(1);
+                        column.Filter.Operator = CompareOperators.Contains;
+                    }
+                    else if (model.Filter.StartsWith("!="))
+                    {
+                        column.Filter.Text = model.Filter.Substring(2);
+                        column.Filter.Operator = CompareOperators.NotContains;
+                    }
+                }
+
+                columns.Add(column);
+            }
+
+            return columns;
+        }
+
+        /// <summary>
+        /// Gets the DataSource metadata
+        /// </summary>
+        /// <returns></returns>
+        public object GetMetadata()
+        {
+            return new
+            {
+                DataSources = this,
+                AggregationFunctions = Enum.GetNames(typeof(AggregationFunction)),
+                Types = Enum.GetNames(typeof(DataType))
+            };
         }
     }
 }

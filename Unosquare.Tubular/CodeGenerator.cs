@@ -39,7 +39,6 @@ namespace Unosquare.Tubular
         /// <returns></returns>
         public static DataType GetDataTypeFromString(string dataType)
         {
-            // TODO: Improve
             switch (dataType)
             {
                 case "DateTime":
@@ -48,6 +47,10 @@ namespace Unosquare.Tubular
                     return DataType.Boolean;
                 case "Int64":
                 case "Int32":
+                case "Single":
+                case "Decimal":
+                case "Float":
+                case "Double":
                     return DataType.Numeric;
                 default:
                     return DataType.String;
@@ -72,6 +75,28 @@ namespace Unosquare.Tubular
                     return "tbCheckboxField";
                 default:
                     return "tbSimpleEditor";
+            }
+        }
+
+        /// <summary>
+        /// Gets the default Editor by Data Type
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="dataType"></param>
+        /// <returns></returns>
+        public static string GetTemplateByDataType(string name, DataType dataType)
+        {
+            switch (dataType)
+            {
+                case DataType.Date:
+                case DataType.DateTime:
+                    return "{{row." + name + " | date}}";
+                case DataType.Numeric:
+                    return "{{row." + name + " | number}}";
+                case DataType.Boolean:
+                    return "{{row." + name + " ? \"TRUE\" : \"FALSE\" }}";
+                default:
+                    return "{{row." + name + "}}";
             }
         }
 
@@ -107,8 +132,7 @@ namespace Unosquare.Tubular
                     columns.Add(new ModelColumn
                     {
                         DataType = DataType.Numeric,
-                        Name = prop.Name,
-                        Template = "{{row." + prop.Name + " | number}}"
+                        Name = prop.Name
                     });
                 }
                 else if (prop.PropertyType == typeof (DateTime) || prop.PropertyType == typeof (DateTime?))
@@ -116,8 +140,7 @@ namespace Unosquare.Tubular
                     columns.Add(new ModelColumn
                     {
                         DataType = DataType.Date,
-                        Name = prop.Name,
-                        Template = "{{row." + prop.Name + " | date}}"
+                        Name = prop.Name
                     });
                 }
                 else if (prop.PropertyType == typeof (bool) || prop.PropertyType == typeof (bool?))
@@ -125,8 +148,7 @@ namespace Unosquare.Tubular
                     columns.Add(new ModelColumn
                     {
                         DataType = DataType.Boolean,
-                        Name = prop.Name,
-                        Template = "{{row." + prop.Name + " ? \"TRUE\" : \"FALSE\" }}"
+                        Name = prop.Name
                     });
                 }
                 else
@@ -134,8 +156,7 @@ namespace Unosquare.Tubular
                     columns.Add(new ModelColumn
                     {
                         DataType = DataType.String,
-                        Name = prop.Name,
-                        Template = "{{row." + prop.Name + "}}"
+                        Name = prop.Name
                     });
                 }
             }
@@ -146,10 +167,11 @@ namespace Unosquare.Tubular
             {
                 column.Label = column.Name.Humanize();
                 column.EditorType = GetEditorTypeByDataType(column.DataType);
+                column.Template = GetTemplateByDataType(column.Name, column.DataType);
 
                 // Grid attributes
                 column.Searchable = column.DataType == DataType.String;
-                column.Filter = true;
+                column.HasFilter = true;
                 column.Visible = true;
                 column.Sortable = true;
                 column.IsKey = false;
@@ -291,7 +313,10 @@ namespace Unosquare.Tubular
                             : " ") +
                         "visible=\"" + el.Visible.ToString().ToLowerInvariant() + "\" aggregate=\"" + el.Aggregate +
                         "\" meta-aggregate=\"" + el.MetaAggregate + "\">" +
-                        (el.Filter ? "\r\n\t\t\t<tb-column-filter></tb-column-filter>" : "") +
+                        (el.HasFilter ? "\r\n\t\t\t<tb-column-filter"+  
+                        (el.Filter != null ? " operator=\"" + el.Filter.Operator.ToString() + "\"": "") + 
+                        (el.Filter != null && string.IsNullOrWhiteSpace(el.Filter.Text) == false ? " text=\"" + el.Filter.Text + "\"" : "")
+                        + "></tb-column-filter>" : "") +
                         "\r\n\t\t\t<tb-column-header>{{label}}</tb-column-header>" +
                         "\r\n\t\t</tb-column>"));
 

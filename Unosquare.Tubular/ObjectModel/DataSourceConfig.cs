@@ -85,7 +85,9 @@ namespace Unosquare.Tubular.ObjectModel
                             new GridColumn
                             {
                                 Name = y.Name,
-                                DataType = (Nullable.GetUnderlyingType(y.PropertyType) ?? y.PropertyType).Name
+                                DataType =
+                                    CodeGenerator.GetDataTypeFromString(
+                                        (Nullable.GetUnderlyingType(y.PropertyType) ?? y.PropertyType).Name)
                             }).OrderBy(x => x.Name).ToList();
             }
         }
@@ -142,7 +144,9 @@ namespace Unosquare.Tubular.ObjectModel
                             new GridColumn
                             {
                                 Name = y.Name,
-                                DataType = (Nullable.GetUnderlyingType(y.PropertyType) ?? y.PropertyType).Name
+                                DataType =
+                                    CodeGenerator.GetDataTypeFromString(
+                                        (Nullable.GetUnderlyingType(y.PropertyType) ?? y.PropertyType).Name)
                             }).OrderBy(x => x.Name).ToList();
             }
         }

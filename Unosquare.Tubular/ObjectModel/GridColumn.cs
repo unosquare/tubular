@@ -39,7 +39,7 @@
         /// <summary>
         /// Column data type
         /// </summary>
-        public string DataType { get; set; }
+        public DataType DataType { get; set; }
         /// <summary>
         /// The Aggregation Function
         /// </summary>

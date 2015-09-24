@@ -71,7 +71,7 @@
                 {
                     Name = "Id",
                     Filter = new Filter() {Text = "95", Operator = CompareOperators.Gt},
-                    DataType = Tubular.DataType.Numeric.ToString()
+                    DataType = Tubular.DataType.Numeric
                 },
                 new GridColumn {Name = "Name"},
                 new GridColumn {Name = "Date"},

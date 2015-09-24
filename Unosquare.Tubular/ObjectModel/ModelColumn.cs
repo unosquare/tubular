@@ -3,56 +3,28 @@
     /// <summary>
     /// Represents a Column model from Tubular javascript
     /// </summary>
-    public class ModelColumn
+    public class ModelColumn : GridColumn
     {
-        /// <summary>
-        /// The Column name
-        /// </summary>
-        public string Name { get; set; }
-        /// <summary>
-        /// The Data type
-        /// </summary>
-        public DataType DataType { get; set; }
         /// <summary>
         /// The template to use with tbGrid
         /// </summary>
         public string Template { get; set; }
         /// <summary>
-        /// The column label to display
-        /// </summary>
-        public string Label { get; set; }
-        /// <summary>
         /// The Editor Type
         /// </summary>
         public string EditorType { get; set; }
         /// <summary>
-        /// Set if the Column is searchable
-        /// </summary>
-        public bool Searchable { get; set; }
-        /// <summary>
         /// Set if the Column has filter
         /// </summary>
-        public bool Filter { get; set; }
+        public bool HasFilter { get; set; }
         /// <summary>
         /// Set if the Column is visible
         /// </summary>
         public bool Visible { get; set; }
         /// <summary>
-        /// Set if the Column is sortable
-        /// </summary>
-        public bool Sortable { get; set; }
-        /// <summary>
         /// Set if the Columns is key in the datasource
         /// </summary>
         public bool IsKey { get; set; }
-        /// <summary>
-        /// Set the Column sort order
-        /// </summary>
-        public int SortOrder { get; set; }
-        /// <summary>
-        /// The Sort Direction
-        /// </summary>
-        public SortDirection SortDirection { get; set; }
         /// <summary>
         /// Defines if the label is shown
         /// </summary>
@@ -77,14 +49,6 @@
         /// Set if the field is read-only
         /// </summary>
         public bool ReadOnly { get; set; }
-        /// <summary>
-        /// The Aggregation Function
-        /// </summary>
-        public AggregationFunction Aggregate { get; set; }
-        /// <summary>
-        /// The Agregation Function to perform in the column
-        /// </summary>
-        public AggregationFunction MetaAggregate { get; set; }
     }
 
     internal class FieldSettings

@@ -92,13 +92,13 @@
         /// <returns></returns>
         public static object AdjustTimeZone(object data, int timezoneOffset)
         {
-            var properties = data.GetType().GetProperties().Where(x => x.PropertyType == typeof(DateTime));
+            var properties = data.GetType().GetProperties().Where(x => x.PropertyType == typeof (DateTime));
 
             foreach (var prop in properties)
             {
                 if (!(prop.GetValue(data) is DateTime)) continue;
 
-                var value = (DateTime)prop.GetValue(data);
+                var value = (DateTime) prop.GetValue(data);
                 value = value.AddMinutes(-timezoneOffset);
                 prop.SetValue(data, value);
             }
@@ -154,7 +154,8 @@
         /// <param name="dataSource">The IQueryable source</param>
         /// <param name="preProcessSubset">The subset's process delegate</param>
         /// <returns></returns>
-        public static GridDataResponse CreateGridDataResponse(this GridDataRequest request, IQueryable dataSource, ProcessResponseSubset preProcessSubset)
+        public static GridDataResponse CreateGridDataResponse(this GridDataRequest request, IQueryable dataSource,
+            ProcessResponseSubset preProcessSubset)
         {
             var response = new GridDataResponse
             {
@@ -218,6 +219,32 @@
                         {
                             response.AggregationPayload.Add(column.Name,
                                 subset.Select(column.Name).Cast<decimal?>().Average());
+                        }
+
+                        break;
+                    case AggregationFunction.Max:
+                        if (subset.ElementType.GetProperty(column.Name).PropertyType == typeof (double))
+                        {
+                            response.AggregationPayload.Add(column.Name,
+                                subset.Select(column.Name).Cast<double?>().Max());
+                        }
+                        else
+                        {
+                            response.AggregationPayload.Add(column.Name,
+                                subset.Select(column.Name).Cast<decimal?>().Max());
+                        }
+
+                        break;
+                    case AggregationFunction.Min:
+                        if (subset.ElementType.GetProperty(column.Name).PropertyType == typeof (double))
+                        {
+                            response.AggregationPayload.Add(column.Name,
+                                subset.Select(column.Name).Cast<double?>().Min());
+                        }
+                        else
+                        {
+                            response.AggregationPayload.Add(column.Name,
+                                subset.Select(column.Name).Cast<decimal?>().Min());
                         }
 
                         break;
@@ -342,7 +369,7 @@
                     case CompareOperators.NotEquals:
                         if (string.IsNullOrWhiteSpace(column.Filter.Text)) continue;
 
-                        if (column.DataType == DataType.Date.ToString().ToLower())
+                        if (column.DataType == DataType.Date)
                         {
                             searchLambda.AppendFormat(
                                 column.Filter.Operator == CompareOperators.Equals
@@ -356,26 +383,20 @@
                                 GetSqlOperator(column.Filter.Operator));
                         }
 
-                        if (string.Equals(column.DataType, DataType.Numeric.ToString(),
-                            StringComparison.CurrentCultureIgnoreCase))
+                        if (column.DataType == DataType.Numeric)
                         {
                             searchParamArgs.Add(decimal.Parse(column.Filter.Text));
                         }
-                        else if (
-                            string.Equals(column.DataType, DataType.DateTime.ToString(),
-                                StringComparison.CurrentCultureIgnoreCase))
+                        else if (column.DataType == DataType.DateTime)
                         {
                             searchParamArgs.Add(DateTime.Parse(column.Filter.Text));
                         }
-                        else if (
-                            string.Equals(column.DataType, DataType.Date.ToString(),
-                                StringComparison.CurrentCultureIgnoreCase))
+                        else if (column.DataType == DataType.Date)
                         {
                             searchParamArgs.Add(DateTime.Parse(column.Filter.Text).Date);
                             searchParamArgs.Add(DateTime.Parse(column.Filter.Text).Date.AddDays(1).AddMinutes(-1));
                         }
-                        else if (string.Equals(column.DataType, DataType.Boolean.ToString(),
-                            StringComparison.CurrentCultureIgnoreCase))
+                        else if (column.DataType == DataType.Boolean)
                         {
                             searchParamArgs.Add(bool.Parse(column.Filter.Text));
                         }
@@ -446,8 +467,7 @@
                         searchLambda.AppendFormat("{0} {2} @{1} &&", column.Name, searchParamArgs.Count,
                             GetSqlOperator(column.Filter.Operator));
 
-                        if (string.Equals(column.DataType, DataType.Numeric.ToString(),
-                            StringComparison.CurrentCultureIgnoreCase))
+                        if (column.DataType == DataType.Numeric)
                             searchParamArgs.Add(decimal.Parse(column.Filter.Text));
                         else
                             searchParamArgs.Add(DateTime.Parse(column.Filter.Text));
@@ -474,8 +494,7 @@
                         searchLambda.AppendFormat("(({0} >= @{1}) &&  ({0} <= @{2})) &&", column.Name,
                             searchParamArgs.Count, searchParamArgs.Count + 1);
 
-                        if (string.Equals(column.DataType, DataType.Numeric.ToString(),
-                            StringComparison.CurrentCultureIgnoreCase))
+                        if (column.DataType == DataType.Numeric)
                         {
                             searchParamArgs.Add(decimal.Parse(column.Filter.Text));
                             searchParamArgs.Add(decimal.Parse(column.Filter.Argument[0]));

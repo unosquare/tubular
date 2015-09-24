@@ -172,7 +172,17 @@ namespace Unosquare.Tubular
         /// <summary>
         /// Distinct Count function
         /// </summary>
-        DistinctCount
+        DistinctCount,
+
+        /// <summary>
+        /// Max function
+        /// </summary>
+        Max,
+
+        /// <summary>
+        /// Min function
+        /// </summary>
+        Min
     }
 
     /// <summary>
@@ -366,16 +376,16 @@ namespace Unosquare.Tubular
         /// </summary>
         public static GridOptions DefaultGridOptions = new GridOptions
         {
-            Pager= true,
-            FreeTextSearch= true,
-            PageSizeSelector= true,
-            PagerInfo= true,
-            ExportCsv= true,
-            Mode= "Read-Only",
-            RequireAuthentication= false,
-            ServiceName= "",
-            RequestMethod= "GET",
-            GridName= "grid"
+            Pager = true,
+            FreeTextSearch = true,
+            PageSizeSelector = true,
+            PagerInfo = true,
+            ExportCsv = true,
+            Mode = "Read-Only",
+            RequireAuthentication = false,
+            ServiceName = "",
+            RequestMethod = "GET",
+            GridName = "grid"
         };
     }
 }
