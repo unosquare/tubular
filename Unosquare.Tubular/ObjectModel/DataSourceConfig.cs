@@ -86,7 +86,7 @@ namespace Unosquare.Tubular.ObjectModel
                             {
                                 Name = y.Name,
                                 DataType = (Nullable.GetUnderlyingType(y.PropertyType) ?? y.PropertyType).Name
-                            }).ToList();
+                            }).OrderBy(x => x.Name).ToList();
             }
         }
     }
@@ -106,10 +106,10 @@ namespace Unosquare.Tubular.ObjectModel
         public DataSourceConfig(IQueryable<T> source)
         {
             _dataSource = source;
-            Name = typeof(T).Name;
+            Name = typeof (T).Name;
             Joins = new List<IDataSourceJoinConfig>();
         }
-        
+
         /// <summary>
         /// The Datasource name
         /// </summary>
@@ -136,14 +136,14 @@ namespace Unosquare.Tubular.ObjectModel
         {
             get
             {
-                return typeof(T).GetProperties().Where(x => x.CanRead)
+                return typeof (T).GetProperties().Where(x => x.CanRead)
                     .Select(
                         y =>
                             new GridColumn
                             {
                                 Name = y.Name,
                                 DataType = (Nullable.GetUnderlyingType(y.PropertyType) ?? y.PropertyType).Name
-                            }).ToList();
+                            }).OrderBy(x => x.Name).ToList();
             }
         }
     }

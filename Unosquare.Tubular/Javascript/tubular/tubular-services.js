@@ -190,13 +190,12 @@
          * The `tubularGridFilterService` service is a internal helper to setup any `FilterModel` with a UI.
          */
         .service('tubularGridFilterService', [
-            'tubulargGridFilterModel', '$compile', function tubularGridFilterService(FilterModel, $compile) {
+            'tubulargGridFilterModel', '$compile', '$filter', function tubularGridFilterService(FilterModel, $compile, $filter) {
                 var me = this;
 
                 me.applyFilterFuncs = function(scope, el, attributes, openCallback) {
                     scope.$component = scope.$parent.$component;
-                    scope.filterTitle = "Filter";
-
+                    
                     scope.$watch('filter.Operator', function(val) {
                         if (val === 'None') scope.filter.Text = '';
                     });
@@ -306,7 +305,7 @@
                         scope.filter.Operator = 'Equals';
                     }
 
-                    scope.filterTitle = lAttrs.title || "Filter";
+                    scope.filterTitle = lAttrs.title || $filter('translate')('CAPTION_FILTER');
                 };
             }
         ])
@@ -318,8 +317,7 @@
          * The `tubularEditorService` service is a internal helper to setup any `TubularModel` with a UI.
          */
         .service('tubularEditorService', [
-            '$filter',
-            function tubularEditorService($filter) {
+            '$filter', function tubularEditorService($filter) {
                 var me = this;
 
                 /*
@@ -367,7 +365,7 @@
                                     innerScope.$valid = innerScope.value >= innerScope.min;
 
                                     if (!innerScope.$valid) {
-                                        innerScope.state.$errors = ["The minimum is " + $filter('date')(innerScope.min, innerScope.format)];
+                                        innerScope.state.$errors = [$filter('translate')('EDITOR_MIN_NUMBER', $filter('date')(innerScope.min, innerScope.format))];
                                     }
                                 }
 
@@ -383,7 +381,7 @@
                                     innerScope.$valid = innerScope.value <= innerScope.max;
 
                                     if (!innerScope.$valid) {
-                                        innerScope.state.$errors = ["The maximum is " + $filter('date')(innerScope.max, innerScope.format)];
+                                        innerScope.state.$errors = [$filter('translate')('EDITOR_MIN_NUMBER', $filter('date')(innerScope.min, innerScope.format))];
                                     }
                                 }
                             };
@@ -413,7 +411,7 @@
                         if ((angular.isUndefined(scope.value) && scope.required) ||
                         (Object.prototype.toString.call(scope.value) === "[object Date]" && isNaN(scope.value.getTime()) && scope.required)) {
                             scope.$valid = false;
-                            scope.state.$errors = ["Field is required"];
+                            scope.state.$errors = [$filter('translate')('EDITOR_REQUIRED')];
 
                             if (angular.isDefined(scope.$parent.Model)) {
                                 scope.$parent.Model.$state[scope.Name] = scope.state;

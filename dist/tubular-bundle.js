@@ -815,7 +815,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             $scope.requestCounter = 0;
                             $scope.requestMethod = $scope.requestMethod || 'POST';
                             $scope.serverSaveMethod = $scope.serverSaveMethod || 'POST';
-                            $scope.requestTimeout = 10000;
+                            $scope.requestTimeout = 15000;
                             $scope.currentRequest = null;
                             $scope.autoSearch = $routeParams.param || ($scope.saveSearch ? (localStorageService.get($scope.name + "_search") || '') : '');
                             $scope.search = {
@@ -1587,7 +1587,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @param {string} regexErrorMessage Set the regex validation error message.
          */
         .directive('tbSimpleEditor', [
-            'tubularEditorService', function(tubularEditorService) {
+            'tubularEditorService', '$filter', function(tubularEditorService, $filter) {
 
                 return {
                     template: '<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid }">' +
@@ -1610,7 +1610,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                                     if (patt.test($scope.value) === false) {
                                         $scope.$valid = false;
-                                        $scope.state.$errors = [$scope.regexErrorMessage || "The field doesn't match the regular expression."];
+                                        $scope.state.$errors = [$scope.regexErrorMessage || $filter('translate')('EDITOR_REGEX_DOESNT_MATCH')];
                                         return;
                                     }
                                 }
@@ -1618,7 +1618,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 if (angular.isDefined($scope.min) && angular.isDefined($scope.value) && $scope.value != null) {
                                     if ($scope.value.length < parseInt($scope.min)) {
                                         $scope.$valid = false;
-                                        $scope.state.$errors = ["The field needs to be minimum " + $scope.min + " chars."];
+                                        $scope.state.$errors = [$filter('translate')('EDITOR_MIN_CHARS', + $scope.min)];
                                         return;
                                     }
                                 }
@@ -1626,7 +1626,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 if (angular.isDefined($scope.max) && angular.isDefined($scope.value) && $scope.value != null) {
                                     if ($scope.value.length > parseInt($scope.max)) {
                                         $scope.$valid = false;
-                                        $scope.state.$errors = ["The field needs to be maximum " + $scope.min + " chars."];
+                                        $scope.state.$errors = [$filter('translate')('EDITOR_MAX_CHARS', +$scope.max)];
                                         return;
                                     }
                                 }
@@ -1666,7 +1666,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @param {number} step Set the step setting, default 'any'.
          */
         .directive('tbNumericEditor', [
-            'tubularEditorService', function(tubularEditorService) {
+            'tubularEditorService', '$filter', function (tubularEditorService, $filter) {
 
                 return {
                     template: '<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid }">' +
@@ -1693,7 +1693,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 if (angular.isDefined($scope.min) && angular.isDefined($scope.value) && $scope.value != null) {
                                     $scope.$valid = $scope.value >= $scope.min;
                                     if (!$scope.$valid) {
-                                        $scope.state.$errors = ["The minimum is " + $scope.min];
+                                        $scope.state.$errors = [$filter('translate')('EDITOR_MIN_NUMBER', +$scope.min)];
                                     }
                                 }
 
@@ -1704,7 +1704,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 if (angular.isDefined($scope.max) && angular.isDefined($scope.value) && $scope.value != null) {
                                     $scope.$valid = $scope.value <= $scope.max;
                                     if (!$scope.$valid) {
-                                        $scope.state.$errors = ["The maximum is " + $scope.max];
+                                        $scope.state.$errors = [$filter('translate')('EDITOR_MAX_NUMBER', +$scope.max)];
                                     }
                                 }
                             };
@@ -2188,7 +2188,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @param {number} max Set the maximum characters.
          */
         .directive('tbTextArea', [
-            'tubularEditorService', function(tubularEditorService) {
+            'tubularEditorService', '$filter', function (tubularEditorService, $filter) {
 
                 return {
                     template: '<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid }">' +
@@ -2211,7 +2211,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 if (angular.isDefined($scope.min) && angular.isDefined($scope.value) && $scope.value != null) {
                                     if ($scope.value.length < parseInt($scope.min)) {
                                         $scope.$valid = false;
-                                        $scope.state.$errors = ["The fields needs to be minimum " + $scope.min + " chars"];
+                                        $scope.state.$errors = [$filter('translate')('EDITOR_MIN_CHARS', +$scope.min)];
                                         return;
                                     }
                                 }
@@ -2219,7 +2219,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 if (angular.isDefined($scope.max) && angular.isDefined($scope.value) && $scope.value != null) {
                                     if ($scope.value.length > parseInt($scope.max)) {
                                         $scope.$valid = false;
-                                        $scope.state.$errors = ["The fields needs to be maximum " + $scope.min + " chars"];
+                                        $scope.state.$errors = [$filter('translate')('EDITOR_MAX_CHARS', +$scope.max)];
                                         return;
                                     }
                                 }
@@ -2247,8 +2247,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
         .directive('tbColumnFilterButtons', [function () {
             return {
                 template: '<div class="text-right">' +
-                        '<a class="btn btn-sm btn-success" ng-click="applyFilter()" ng-disabled="filter.Operator == \'None\'">Apply</a>&nbsp;' +
-                        '<button class="btn btn-sm btn-danger" ng-click="clearFilter()">Clear</button>' +
+                        '<a class="btn btn-sm btn-success" ng-click="applyFilter()" ng-disabled="filter.Operator == \'None\'">{{\'CAPTION_APPLY\' | translate}}</a>&nbsp;' +
+                        '<button class="btn btn-sm btn-danger" ng-click="clearFilter()">{{\'CAPTION_CLEAR\' | translate}}</button>' +
                         '</div>',
                 restrict: 'E',
                 replace: true,
@@ -2265,7 +2265,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          */
         .directive('tbColumnSelector', [function () {
             return {
-                template: '<button class="btn btn-sm btn-default" ng-click="openColumnsSelector()">Select Columns</button></div>',
+                template: '<button class="btn btn-sm btn-default" ng-click="openColumnsSelector()">{{\'CAPTION_SELECTCOLUMNS\' | translate}}</button></div>',
                 restrict: 'E',
                 replace: true,
                 transclude: true,
@@ -2277,7 +2277,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                         var dialog = $modal.open({
                             template: '<div class="modal-header">' +
-                                '<h3 class="modal-title">Columns Selector</h3>' +
+                                '<h3 class="modal-title">{{\'CAPTION_SELECTCOLUMNS\' | translate}}</h3>' +
                                 '</div>' +
                                 '<div class="modal-body">' +
                                 '<table class="table table-bordered table-responsive table-striped table-hover table-condensed">' +
@@ -2288,7 +2288,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 '<td><input type="checkbox" ng-disabled="true" ng-model="col.IsGrouping" /></td>' +
                                 '</tr></tbody></table></div>' +
                                 '</div>' +
-                                '<div class="modal-footer"><button class="btn btn-warning" ng-click="closePopup()">Close</button></div>',
+                                '<div class="modal-footer"><button class="btn btn-warning" ng-click="closePopup()">{{\'CAPTION_CLOSE\' | translate}}</button></div>',
                             backdropClass: 'fullHeight',
                             animation: false,
                             controller: [
@@ -2332,11 +2332,12 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         'ng-class="{ \'btn-success\': filter.HasFilter }">' +
                         '<i class="fa fa-filter"></i></button>' +
                         '<div style="display: none;">' +
-                        '<button type="button" class="close" data-dismiss="modal" ng-click="close()"><span aria-hidden="true">×</span></button><h4>{{::filterTitle}}</h4>' +
+                        '<button type="button" class="close" data-dismiss="modal" ng-click="close()"><span aria-hidden="true">×</span></button>' +
+                        '<h4>{{filterTitle}}</h4>' +
                         '<form class="tubular-column-filter-form" onsubmit="return false;">' +
                         '<select class="form-control" ng-model="filter.Operator" ng-hide="dataType == \'boolean\'"></select>&nbsp;' +
                         '<input class="form-control" type="search" ng-model="filter.Text" autofocus ng-keypress="checkEvent($event)" ng-hide="dataType == \'boolean\'"' +
-                        'placeholder="Value" ng-disabled="filter.Operator == \'None\'" />' +
+                        'placeholder="{{\'CAPTION_VALUE\' | translate}}" ng-disabled="filter.Operator == \'None\'" />' +
                         '<div class="text-center" ng-show="dataType == \'boolean\'">' +
                         '<button type="button" class="btn btn-default btn-md" ng-disabled="filter.Text === true" ng-click="filter.Text = true; filter.Operator = \'Equals\';">' +
                         '<i class="fa fa-check"></i></button>&nbsp;' +
@@ -2388,7 +2389,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         'ng-class="{ \'btn-success\': filter.HasFilter }">' +
                         '<i class="fa fa-filter"></i></button>' +
                         '<div style="display: none;">' +
-                        '<button type="button" class="close" data-dismiss="modal" ng-click="close()"><span aria-hidden="true">×</span></button><h4>{{::filterTitle}}</h4>' +
+                        '<button type="button" class="close" data-dismiss="modal" ng-click="close()"><span aria-hidden="true">×</span></button>' +
+                        '<h4>{{filterTitle}}</h4>' +
                         '<form class="tubular-column-filter-form" onsubmit="return false;">' +
                         '<select class="form-control" ng-model="filter.Operator"></select>' +
                         '<input type="date" class="form-control" ng-model="filter.Text" ng-keypress="checkEvent($event)" />&nbsp;' +
@@ -2466,7 +2468,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         'ng-class="{ \'btn-success\': filter.HasFilter }">' +
                         '<i class="fa fa-filter"></i></button>' +
                         '<div style="display: none;">' +
-                        '<button type="button" class="close" data-dismiss="modal" ng-click="close()"><span aria-hidden="true">×</span></button><h4>{{::filterTitle}}</h4>' +
+                        '<button type="button" class="close" data-dismiss="modal" ng-click="close()"><span aria-hidden="true">×</span></button>' +
+                        '<h4>{{::filterTitle}}</h4>' +
                         '<form class="tubular-column-filter-form" onsubmit="return false;">' +
                         '<select class="form-control checkbox-list" ng-model="filter.Argument" ng-options="item for item in optionsItems" ' +
                         ' multiple ng-disabled="dataIsLoaded == false"></select>' +
@@ -2733,7 +2736,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     '<div class="tubular-grid-search">' +
                         '<div class="input-group input-group-sm">' +
                         '<span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>' +
-                        '<input type="search" class="form-control" placeholder="{{:: placeholder || \'search . . .\' }}" maxlength="20" ' +
+                        '<input type="search" class="form-control" placeholder="{{:: placeholder || (\'UI_SEARCH\' | translate) }}" maxlength="20" ' +
                         'ng-model="$component.search.Text" ng-model-options="{ debounce: 300 }">' +
                         '<span class="input-group-btn" ng-show="$component.search.Text.length > 0" ng-click="$component.search.Text = \'\'">' +
                         '<button class="btn btn-default"><i class="fa fa-times-circle"></i></button>' +
@@ -2801,7 +2804,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 require: '^tbGrid',
                 template: '<button ng-click="confirmDelete()" class="btn" ng-hide="model.$isEditing">' +
                     '<span ng-show="showIcon" class="{{::icon}}"></span>' +
-                    '<span ng-show="showCaption">{{:: caption || \'Remove\' }}</span>' +
+                    '<span ng-show="showCaption">{{:: caption || (\'CAPTION_REMOVE\' | translate) }}</span>' +
                     '</button>',
                 restrict: 'E',
                 replace: true,
@@ -2814,17 +2817,17 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     icon: '@'
                 },
                 controller: [
-                    '$scope', '$element', function($scope, $element) {
+                    '$scope', '$element', '$filter', function($scope, $element, $filter) {
                         $scope.showIcon = angular.isDefined($scope.icon);
                         $scope.showCaption = !($scope.showIcon && angular.isUndefined($scope.caption));
                         $scope.confirmDelete = function() {
                             $element.popover({
                                 html: true,
-                                title: $scope.legend || 'Do you want to delete this row?',
+                                title: $scope.legend || $filter('translate')('UI_REMOVEROW'),
                                 content: function() {
                                     var html = '<div class="tubular-remove-popover">' +
-                                        '<button ng-click="model.delete()" class="btn btn-danger btn-xs">' + ($scope.caption || 'Remove') + '</button>' +
-                                        '&nbsp;<button ng-click="cancelDelete()" class="btn btn-default btn-xs">' + ($scope.cancelCaption || 'Cancel') + '</button>' +
+                                        '<button ng-click="model.delete()" class="btn btn-danger btn-xs">' + ($scope.caption || $filter('translate')('CAPTION_REMOVE')) + '</button>' +
+                                        '&nbsp;<button ng-click="cancelDelete()" class="btn btn-default btn-xs">' + ($scope.cancelCaption || $filter('translate')('CAPTION_CANCEL')) + '</button>' +
                                         '</div>';
 
                                     return $compile(html)($scope);
@@ -2866,10 +2869,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 template: '<div ng-show="model.$isEditing">' +
                     '<button ng-click="save()" class="btn btn-default {{:: saveCss || \'\' }}" ' +
                     'ng-disabled="!model.$valid()">' +
-                    '{{:: saveCaption || \'Save\' }}' +
+                    '{{:: saveCaption || (\'CAPTION_SAVE\' | translate) }}' +
                     '</button>' +
                     '<button ng-click="cancel()" class="btn {{:: cancelCss || \'btn-default\' }}">' +
-                    '{{:: cancelCaption || \'Cancel\' }}' +
+                    '{{:: cancelCaption || (\'CAPTION_CANCEL\' | translate) }}' +
                     '</button></div>',
                 restrict: 'E',
                 replace: true,
@@ -2940,7 +2943,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             return {
                 require: '^tbGrid',
                 template: '<button ng-click="edit()" class="btn btn-default" ' +
-                    'ng-hide="model.$isEditing">{{:: caption || \'Edit\' }}</button>',
+                    'ng-hide="model.$isEditing">{{:: caption || (\'CAPTION_EDIT\' | translate) }}</button>',
                 restrict: 'E',
                 replace: true,
                 transclude: true,
@@ -2985,7 +2988,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 require: '^tbGrid',
                 template: '<div class="{{::css}}"><form class="form-inline">' +
                     '<div class="form-group">' +
-                    '<label class="small">{{:: caption || \'Page size:\' }} </label>&nbsp;' +
+                    '<label class="small">{{:: caption || (\'UI_PAGESIZE\' | translate) }} </label>&nbsp;' +
                     '<select ng-model="$parent.$parent.pageSize" class="form-control input-sm {{::selectorCss}}" ' +
                     'ng-options="item for item in options">' +
                     '</select>' +
@@ -3030,11 +3033,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 require: '^tbGrid',
                 template: '<div class="btn-group">' +
                     '<button class="btn btn-default dropdown-toggle {{::css}}" data-toggle="dropdown" aria-expanded="false">' +
-                    '<span class="fa fa-download"></span>&nbsp;{{:: caption || \'Export CSV\'}}&nbsp;<span class="caret"></span>' +
+                    '<span class="fa fa-download"></span>&nbsp;{{:: caption || (\'UI_EXPORTCSV\' | translate)}}&nbsp;<span class="caret"></span>' +
                     '</button>' +
                     '<ul class="dropdown-menu" role="menu">' +
-                    '<li><a href="javascript:void(0)" ng-click="downloadCsv($parent)">{{:: captionMenuCurrent || \'Current rows\'}}</a></li>' +
-                    '<li><a href="javascript:void(0)" ng-click="downloadAllCsv($parent)">{{:: captionMenuAll || \'All rows\'}}</a></li>' +
+                    '<li><a href="javascript:void(0)" ng-click="downloadCsv($parent)">{{:: captionMenuCurrent || (\'UI_CURRENTROWS\' | translate)}}</a></li>' +
+                    '<li><a href="javascript:void(0)" ng-click="downloadAllCsv($parent)">{{:: captionMenuAll || (\'UI_ALLROWS\' | translate)}}</a></li>' +
                     '</ul>' +
                     '</div>',
                 restrict: 'E',
@@ -3082,7 +3085,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             return {
                 require: '^tbGrid',
                 template: '<button class="btn btn-default" ng-click="printGrid()">' +
-                    '<span class="fa fa-print"></span>&nbsp;{{:: caption || \'Print\'}}' +
+                    '<span class="fa fa-print"></span>&nbsp;{{caption || (\'CAPTION_PRINT\' | translate)}}' +
                     '</button>',
                 restrict: 'E',
                 replace: true,
@@ -3095,7 +3098,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 controller: [
                     '$scope', function($scope) {
                         $scope.$component = $scope.$parent.$parent;
-
+                        
                         $scope.printGrid = function() {
                             $scope.$component.getFullDataSource(function(data) {
                                 var tableHtml = "<table class='table table-bordered table-striped'><thead><tr>"
@@ -3230,11 +3233,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             function () {
                 return {
                     require: '^tbGrid',
-                    template: '<div class="pager-info small">Showing {{currentInitial}} ' +
-                        'to {{currentTop}} ' +
-                        'of {{$component.filteredRecordCount}} records ' +
+                    template: '<div class="pager-info small">{{\'UI_SHOWINGRECORDS\' | translate: currentInitial:currentTop:$component.filteredRecordCount}} ' +
                         '<span ng-show="filtered">' +
-                        '(Filtered from {{$component.totalRecordCount}} total records)</span>' +
+                        '{{\'UI_FILTEREDRECORDS\' | translate: $component.totalRecordCount}}</span>' +
                         '</div>',
                     restrict: 'E',
                     replace: true,
@@ -3755,13 +3756,12 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * The `tubularGridFilterService` service is a internal helper to setup any `FilterModel` with a UI.
          */
         .service('tubularGridFilterService', [
-            'tubulargGridFilterModel', '$compile', function tubularGridFilterService(FilterModel, $compile) {
+            'tubulargGridFilterModel', '$compile', '$filter', function tubularGridFilterService(FilterModel, $compile, $filter) {
                 var me = this;
 
                 me.applyFilterFuncs = function(scope, el, attributes, openCallback) {
                     scope.$component = scope.$parent.$component;
-                    scope.filterTitle = "Filter";
-
+                    
                     scope.$watch('filter.Operator', function(val) {
                         if (val === 'None') scope.filter.Text = '';
                     });
@@ -3871,7 +3871,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         scope.filter.Operator = 'Equals';
                     }
 
-                    scope.filterTitle = lAttrs.title || "Filter";
+                    scope.filterTitle = lAttrs.title || $filter('translate')('CAPTION_FILTER');
                 };
             }
         ])
@@ -3883,8 +3883,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * The `tubularEditorService` service is a internal helper to setup any `TubularModel` with a UI.
          */
         .service('tubularEditorService', [
-            '$filter',
-            function tubularEditorService($filter) {
+            '$filter', function tubularEditorService($filter) {
                 var me = this;
 
                 /*
@@ -3932,7 +3931,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     innerScope.$valid = innerScope.value >= innerScope.min;
 
                                     if (!innerScope.$valid) {
-                                        innerScope.state.$errors = ["The minimum is " + $filter('date')(innerScope.min, innerScope.format)];
+                                        innerScope.state.$errors = [$filter('translate')('EDITOR_MIN_NUMBER', $filter('date')(innerScope.min, innerScope.format))];
                                     }
                                 }
 
@@ -3948,7 +3947,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     innerScope.$valid = innerScope.value <= innerScope.max;
 
                                     if (!innerScope.$valid) {
-                                        innerScope.state.$errors = ["The maximum is " + $filter('date')(innerScope.max, innerScope.format)];
+                                        innerScope.state.$errors = [$filter('translate')('EDITOR_MIN_NUMBER', $filter('date')(innerScope.min, innerScope.format))];
                                     }
                                 }
                             };
@@ -3978,7 +3977,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         if ((angular.isUndefined(scope.value) && scope.required) ||
                         (Object.prototype.toString.call(scope.value) === "[object Date]" && isNaN(scope.value.getTime()) && scope.required)) {
                             scope.$valid = false;
-                            scope.state.$errors = ["Field is required"];
+                            scope.state.$errors = [$filter('translate')('EDITOR_REQUIRED')];
 
                             if (angular.isDefined(scope.$parent.Model)) {
                                 scope.$parent.Model.$state[scope.Name] = scope.state;
@@ -4823,6 +4822,132 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 };
             }
         ]);
+})();
+(function() {
+    'use strict';
+
+    angular.module('tubular.services')
+        /**
+         * @ngdoc service
+         * @name tubularTranslate
+         *
+         * @description
+         * Use `tubularTranslate` to translate strings.
+         */
+        .service('tubularTranslate', [
+            function tubularTranslate() {
+                var me = this;
+
+                me.currentLanguage = 'en';
+                me.defaultLanguage = 'en';
+
+                me.translationTable = {
+                    'en': {
+                        'EDITOR_REGEX_DOESNT_MATCH': "The field doesn't match the regular expression.",
+                        'EDITOR_REQUIRED': "The field is required.",
+                        'EDITOR_MIN_CHARS': "The field needs to be minimum {0} chars.",
+                        'EDITOR_MAX_CHARS': "The field needs to be maximum {0} chars.",
+                        'EDITOR_MIN_NUMBER': "The minimum number is {0}.",
+                        'EDITOR_MAX_NUMBER': "The maximum number is {0}.",
+                        'EDITOR_MIN_DATE': "The minimum date is {0}.",
+                        'EDITOR_MAX_DATE': "The maximum date is {0}.",
+                        'CAPTION_APPLY': 'Apply',
+                        'CAPTION_CLEAR': 'Clear',
+                        'CAPTION_CLOSE': 'Close',
+                        'CAPTION_SELECTCOLUMNS': 'Select Columns',
+                        'CAPTION_FILTER': 'Filter',
+                        'CAPTION_VALUE': 'Value',
+                        'CAPTION_REMOVE': 'Remove',
+                        'CAPTION_CANCEL': 'Cancel',
+                        'CAPTION_EDIT': 'Edit',
+                        'CAPTION_SAVE': 'Save',
+                        'CAPTION_PRINT': 'Print',
+                        'UI_SEARCH': 'search . . .',
+                        'UI_PAGESIZE': 'Page size:',
+                        'UI_EXPORTCSV': 'Export CSV',
+                        'UI_CURRENTROWS': 'Current rows',
+                        'UI_ALLROWS': 'All rows',
+                        'UI_REMOVEROW': 'Do you want to delete this row?',
+                        'UI_SHOWINGRECORDS': 'Showing {0} to {1} of {2} records',
+                        'UI_FILTEREDRECORDS': '(Filtered from {0} total records)'
+                    },
+                    'es': {
+                        'EDITOR_REGEX_DOESNT_MATCH': "El campo no es válido contra la expresión regular.",
+                        'EDITOR_REQUIRED': "El campo es requerido.",
+                        'EDITOR_MIN_CHARS': "El campo requiere mínimo {0} caracteres.",
+                        'EDITOR_MAX_CHARS': "El campo requiere máximo {0} caracteres.",
+                        'EDITOR_MIN_NUMBER': "El número mínimo es {0}.",
+                        'EDITOR_MAX_NUMBER': "El número maximo es {0}.",
+                        'EDITOR_MIN_DATE': "La fecha mínima es {0}.",
+                        'EDITOR_MAX_DATE': "La fecha maxima es {0}.",
+                        'CAPTION_APPLY': 'Aplicar',
+                        'CAPTION_CLEAR': 'Limpiar',
+                        'CAPTION_CLOSE': 'Cerrar',
+                        'CAPTION_SELECTCOLUMNS': 'Seleccionar Columnas',
+                        'CAPTION_FILTER': 'Filtro',
+                        'CAPTION_VALUE': 'Valor',
+                        'CAPTION_REMOVE': 'Remover',
+                        'CAPTION_CANCEL': 'Cancelar',
+                        'CAPTION_EDIT': 'Editar',
+                        'CAPTION_SAVE': 'Guardar',
+                        'CAPTION_PRINT': 'Imprimir',
+                        'UI_SEARCH': 'buscar . . .',
+                        'UI_PAGESIZE': '# Registros:',
+                        'UI_EXPORTCSV': 'Exportar CSV',
+                        'UI_CURRENTROWS': 'Esta página',
+                        'UI_ALLROWS': 'Todo',
+                        'UI_REMOVEROW': '¿Desea eliminar el registro?',
+                        'UI_SHOWINGRECORDS': 'Mostrando registros {0} al {1} de {2}',
+                        'UI_FILTEREDRECORDS': '(De un total de {0} registros)'
+                    }
+                };
+
+                me.setLanguage = function(language) {
+                    // TODO: Check translationTable first
+                    me.currentLanguage = language;
+                };
+
+                me.addTranslation = function(language, key, value) {
+                    var languageTable = me.translationTable[language] || me.translationTable[me.currentLanguage] || me.translationTable[me.defaultLanguage];
+
+                    languageTable[key] = value;
+                }
+
+                me.translate = function(key) {
+                    var languageTable = me.translationTable[me.currentLanguage] || me.translationTable[me.defaultLanguage];
+
+                    return languageTable[key] || key;
+                };
+
+                me.reverseTranslate = function(value) {
+                    // TODO: Find value
+                };
+            }
+        ])
+        /**
+         * @ngdoc filter
+         * @name translate
+         *
+         * @description
+         * Translate a key to the current language
+         */
+        .filter('translate', function (tubularTranslate) {
+            return function (input, param1, param2, param3, param4) {
+                // Probably send an optional param to define language
+                if (angular.isDefined(input)) {
+                    var translation = tubularTranslate.translate(input);
+
+                    translation = translation.replace("{0}", param1 || '');
+                    translation = translation.replace("{1}", param2 || '');
+                    translation = translation.replace("{2}", param3 || '');
+                    translation = translation.replace("{3}", param4 || '');
+
+                    return translation;
+                }
+
+                return input;
+            };
+        });
 })();
 /**
  * Usage example

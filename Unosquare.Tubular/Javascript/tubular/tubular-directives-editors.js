@@ -29,7 +29,7 @@
          * @param {string} regexErrorMessage Set the regex validation error message.
          */
         .directive('tbSimpleEditor', [
-            'tubularEditorService', function(tubularEditorService) {
+            'tubularEditorService', '$filter', function(tubularEditorService, $filter) {
 
                 return {
                     template: '<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid }">' +
@@ -52,7 +52,7 @@
 
                                     if (patt.test($scope.value) === false) {
                                         $scope.$valid = false;
-                                        $scope.state.$errors = [$scope.regexErrorMessage || "The field doesn't match the regular expression."];
+                                        $scope.state.$errors = [$scope.regexErrorMessage || $filter('translate')('EDITOR_REGEX_DOESNT_MATCH')];
                                         return;
                                     }
                                 }
@@ -60,7 +60,7 @@
                                 if (angular.isDefined($scope.min) && angular.isDefined($scope.value) && $scope.value != null) {
                                     if ($scope.value.length < parseInt($scope.min)) {
                                         $scope.$valid = false;
-                                        $scope.state.$errors = ["The field needs to be minimum " + $scope.min + " chars."];
+                                        $scope.state.$errors = [$filter('translate')('EDITOR_MIN_CHARS', + $scope.min)];
                                         return;
                                     }
                                 }
@@ -68,7 +68,7 @@
                                 if (angular.isDefined($scope.max) && angular.isDefined($scope.value) && $scope.value != null) {
                                     if ($scope.value.length > parseInt($scope.max)) {
                                         $scope.$valid = false;
-                                        $scope.state.$errors = ["The field needs to be maximum " + $scope.min + " chars."];
+                                        $scope.state.$errors = [$filter('translate')('EDITOR_MAX_CHARS', +$scope.max)];
                                         return;
                                     }
                                 }
@@ -108,7 +108,7 @@
          * @param {number} step Set the step setting, default 'any'.
          */
         .directive('tbNumericEditor', [
-            'tubularEditorService', function(tubularEditorService) {
+            'tubularEditorService', '$filter', function (tubularEditorService, $filter) {
 
                 return {
                     template: '<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid }">' +
@@ -135,7 +135,7 @@
                                 if (angular.isDefined($scope.min) && angular.isDefined($scope.value) && $scope.value != null) {
                                     $scope.$valid = $scope.value >= $scope.min;
                                     if (!$scope.$valid) {
-                                        $scope.state.$errors = ["The minimum is " + $scope.min];
+                                        $scope.state.$errors = [$filter('translate')('EDITOR_MIN_NUMBER', +$scope.min)];
                                     }
                                 }
 
@@ -146,7 +146,7 @@
                                 if (angular.isDefined($scope.max) && angular.isDefined($scope.value) && $scope.value != null) {
                                     $scope.$valid = $scope.value <= $scope.max;
                                     if (!$scope.$valid) {
-                                        $scope.state.$errors = ["The maximum is " + $scope.max];
+                                        $scope.state.$errors = [$filter('translate')('EDITOR_MAX_NUMBER', +$scope.max)];
                                     }
                                 }
                             };
@@ -630,7 +630,7 @@
          * @param {number} max Set the maximum characters.
          */
         .directive('tbTextArea', [
-            'tubularEditorService', function(tubularEditorService) {
+            'tubularEditorService', '$filter', function (tubularEditorService, $filter) {
 
                 return {
                     template: '<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid }">' +
@@ -653,7 +653,7 @@
                                 if (angular.isDefined($scope.min) && angular.isDefined($scope.value) && $scope.value != null) {
                                     if ($scope.value.length < parseInt($scope.min)) {
                                         $scope.$valid = false;
-                                        $scope.state.$errors = ["The fields needs to be minimum " + $scope.min + " chars"];
+                                        $scope.state.$errors = [$filter('translate')('EDITOR_MIN_CHARS', +$scope.min)];
                                         return;
                                     }
                                 }
@@ -661,7 +661,7 @@
                                 if (angular.isDefined($scope.max) && angular.isDefined($scope.value) && $scope.value != null) {
                                     if ($scope.value.length > parseInt($scope.max)) {
                                         $scope.$valid = false;
-                                        $scope.state.$errors = ["The fields needs to be maximum " + $scope.min + " chars"];
+                                        $scope.state.$errors = [$filter('translate')('EDITOR_MAX_CHARS', +$scope.max)];
                                         return;
                                     }
                                 }

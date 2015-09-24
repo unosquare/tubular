@@ -88,7 +88,7 @@
                             $scope.requestCounter = 0;
                             $scope.requestMethod = $scope.requestMethod || 'POST';
                             $scope.serverSaveMethod = $scope.serverSaveMethod || 'POST';
-                            $scope.requestTimeout = 10000;
+                            $scope.requestTimeout = 15000;
                             $scope.currentRequest = null;
                             $scope.autoSearch = $routeParams.param || ($scope.saveSearch ? (localStorageService.get($scope.name + "_search") || '') : '');
                             $scope.search = {

@@ -1,4 +1,5 @@
 ﻿<div class="container" ng-controller="tubularSampleCtrl as sample">
+    
     <tb-grid server-url="/api/orders/paged" server-save-url="/api/orders/save" require-authentication="false"
              name="samplegrid" page-size="20" class="row" on-before-get-data="sample.onTableController">
 
@@ -6,11 +7,12 @@
         <div class="col-md-12">
             <!-- Top toolbar nested row -->
             <div class="row">
-                <tb-grid-pager class="col-md-6 col-xs-12"></tb-grid-pager>
-                <div class="col-md-3 col-xs-6">
-                    <div class="btn-group">
-                        <tb-export-button filename="data.csv"></tb-export-button>
+                <tb-grid-pager class="col-md-5 col-xs-12"></tb-grid-pager>
+                <div class="col-md-4 col-xs-6">
+                    <div class="btn-group btn-group-sm">
+                        <tb-export-button filename="data.csv" css="btn-info btn-sm"></tb-export-button>
                         <tb-print-button title="Sample"></tb-print-button>
+                        <tb-column-selector></tb-column-selector>
                     </div>
                 </div>
                 <tb-text-search class="col-md-3 col-xs-6"></tb-text-search>
@@ -121,7 +123,7 @@
                                                     ng-hide="row.$isEditing">
                                                 Popup
                                             </button>
-                                            <tb-remove-button model="row" class="btn-danger btn-xs" caption="Delete">
+                                            <tb-remove-button model="row" class="btn-danger btn-xs">
                                             </tb-remove-button>
                                         </div>
                                     </tb-cell-template>
@@ -131,7 +133,7 @@
                                     <tb-cell-template column-name="CustomerName">
                                         <span ng-hide="row.$isEditing">{{row.CustomerName}}</span>
                                         <div ng-show="row.$isEditing">
-                                            <input type="text" ng-model="row.CustomerName" class="form-control" />
+                                            <input type="text" ng-model="row.CustomerName" class="form-control"/>
                                         </div>
                                     </tb-cell-template>
                                     <tb-cell-template column-name="ShipperCity">

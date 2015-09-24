@@ -85,11 +85,9 @@
             function () {
                 return {
                     require: '^tbGrid',
-                    template: '<div class="pager-info small">Showing {{currentInitial}} ' +
-                        'to {{currentTop}} ' +
-                        'of {{$component.filteredRecordCount}} records ' +
+                    template: '<div class="pager-info small">{{\'UI_SHOWINGRECORDS\' | translate: currentInitial:currentTop:$component.filteredRecordCount}} ' +
                         '<span ng-show="filtered">' +
-                        '(Filtered from {{$component.totalRecordCount}} total records)</span>' +
+                        '{{\'UI_FILTEREDRECORDS\' | translate: $component.totalRecordCount}}</span>' +
                         '</div>',
                     restrict: 'E',
                     replace: true,

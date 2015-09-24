@@ -21,7 +21,7 @@
                     '<div class="tubular-grid-search">' +
                         '<div class="input-group input-group-sm">' +
                         '<span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>' +
-                        '<input type="search" class="form-control" placeholder="{{:: placeholder || \'search . . .\' }}" maxlength="20" ' +
+                        '<input type="search" class="form-control" placeholder="{{:: placeholder || (\'UI_SEARCH\' | translate) }}" maxlength="20" ' +
                         'ng-model="$component.search.Text" ng-model-options="{ debounce: 300 }">' +
                         '<span class="input-group-btn" ng-show="$component.search.Text.length > 0" ng-click="$component.search.Text = \'\'">' +
                         '<button class="btn btn-default"><i class="fa fa-times-circle"></i></button>' +
@@ -89,7 +89,7 @@
                 require: '^tbGrid',
                 template: '<button ng-click="confirmDelete()" class="btn" ng-hide="model.$isEditing">' +
                     '<span ng-show="showIcon" class="{{::icon}}"></span>' +
-                    '<span ng-show="showCaption">{{:: caption || \'Remove\' }}</span>' +
+                    '<span ng-show="showCaption">{{:: caption || (\'CAPTION_REMOVE\' | translate) }}</span>' +
                     '</button>',
                 restrict: 'E',
                 replace: true,
@@ -102,17 +102,17 @@
                     icon: '@'
                 },
                 controller: [
-                    '$scope', '$element', function($scope, $element) {
+                    '$scope', '$element', '$filter', function($scope, $element, $filter) {
                         $scope.showIcon = angular.isDefined($scope.icon);
                         $scope.showCaption = !($scope.showIcon && angular.isUndefined($scope.caption));
                         $scope.confirmDelete = function() {
                             $element.popover({
                                 html: true,
-                                title: $scope.legend || 'Do you want to delete this row?',
+                                title: $scope.legend || $filter('translate')('UI_REMOVEROW'),
                                 content: function() {
                                     var html = '<div class="tubular-remove-popover">' +
-                                        '<button ng-click="model.delete()" class="btn btn-danger btn-xs">' + ($scope.caption || 'Remove') + '</button>' +
-                                        '&nbsp;<button ng-click="cancelDelete()" class="btn btn-default btn-xs">' + ($scope.cancelCaption || 'Cancel') + '</button>' +
+                                        '<button ng-click="model.delete()" class="btn btn-danger btn-xs">' + ($scope.caption || $filter('translate')('CAPTION_REMOVE')) + '</button>' +
+                                        '&nbsp;<button ng-click="cancelDelete()" class="btn btn-default btn-xs">' + ($scope.cancelCaption || $filter('translate')('CAPTION_CANCEL')) + '</button>' +
                                         '</div>';
 
                                     return $compile(html)($scope);
@@ -154,10 +154,10 @@
                 template: '<div ng-show="model.$isEditing">' +
                     '<button ng-click="save()" class="btn btn-default {{:: saveCss || \'\' }}" ' +
                     'ng-disabled="!model.$valid()">' +
-                    '{{:: saveCaption || \'Save\' }}' +
+                    '{{:: saveCaption || (\'CAPTION_SAVE\' | translate) }}' +
                     '</button>' +
                     '<button ng-click="cancel()" class="btn {{:: cancelCss || \'btn-default\' }}">' +
-                    '{{:: cancelCaption || \'Cancel\' }}' +
+                    '{{:: cancelCaption || (\'CAPTION_CANCEL\' | translate) }}' +
                     '</button></div>',
                 restrict: 'E',
                 replace: true,
@@ -228,7 +228,7 @@
             return {
                 require: '^tbGrid',
                 template: '<button ng-click="edit()" class="btn btn-default" ' +
-                    'ng-hide="model.$isEditing">{{:: caption || \'Edit\' }}</button>',
+                    'ng-hide="model.$isEditing">{{:: caption || (\'CAPTION_EDIT\' | translate) }}</button>',
                 restrict: 'E',
                 replace: true,
                 transclude: true,
@@ -273,7 +273,7 @@
                 require: '^tbGrid',
                 template: '<div class="{{::css}}"><form class="form-inline">' +
                     '<div class="form-group">' +
-                    '<label class="small">{{:: caption || \'Page size:\' }} </label>&nbsp;' +
+                    '<label class="small">{{:: caption || (\'UI_PAGESIZE\' | translate) }} </label>&nbsp;' +
                     '<select ng-model="$parent.$parent.pageSize" class="form-control input-sm {{::selectorCss}}" ' +
                     'ng-options="item for item in options">' +
                     '</select>' +
@@ -318,11 +318,11 @@
                 require: '^tbGrid',
                 template: '<div class="btn-group">' +
                     '<button class="btn btn-default dropdown-toggle {{::css}}" data-toggle="dropdown" aria-expanded="false">' +
-                    '<span class="fa fa-download"></span>&nbsp;{{:: caption || \'Export CSV\'}}&nbsp;<span class="caret"></span>' +
+                    '<span class="fa fa-download"></span>&nbsp;{{:: caption || (\'UI_EXPORTCSV\' | translate)}}&nbsp;<span class="caret"></span>' +
                     '</button>' +
                     '<ul class="dropdown-menu" role="menu">' +
-                    '<li><a href="javascript:void(0)" ng-click="downloadCsv($parent)">{{:: captionMenuCurrent || \'Current rows\'}}</a></li>' +
-                    '<li><a href="javascript:void(0)" ng-click="downloadAllCsv($parent)">{{:: captionMenuAll || \'All rows\'}}</a></li>' +
+                    '<li><a href="javascript:void(0)" ng-click="downloadCsv($parent)">{{:: captionMenuCurrent || (\'UI_CURRENTROWS\' | translate)}}</a></li>' +
+                    '<li><a href="javascript:void(0)" ng-click="downloadAllCsv($parent)">{{:: captionMenuAll || (\'UI_ALLROWS\' | translate)}}</a></li>' +
                     '</ul>' +
                     '</div>',
                 restrict: 'E',
@@ -370,7 +370,7 @@
             return {
                 require: '^tbGrid',
                 template: '<button class="btn btn-default" ng-click="printGrid()">' +
-                    '<span class="fa fa-print"></span>&nbsp;{{:: caption || \'Print\'}}' +
+                    '<span class="fa fa-print"></span>&nbsp;{{caption || (\'CAPTION_PRINT\' | translate)}}' +
                     '</button>',
                 restrict: 'E',
                 replace: true,
@@ -383,7 +383,7 @@
                 controller: [
                     '$scope', function($scope) {
                         $scope.$component = $scope.$parent.$parent;
-
+                        
                         $scope.printGrid = function() {
                             $scope.$component.getFullDataSource(function(data) {
                                 var tableHtml = "<table class='table table-bordered table-striped'><thead><tr>"

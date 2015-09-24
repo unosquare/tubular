@@ -18,6 +18,7 @@
       "Javascript/tubular/tubular-services-localdata.js",
       "Javascript/tubular/tubular-services-odata.js",
       "Javascript/tubular/tubular-services-template.js",
+      "Javascript/tubular/tubular-services-i18n.js",
       "Javascript/tadaaapickr/tadaaapickr.pack.js"
     ],
     "minify": {

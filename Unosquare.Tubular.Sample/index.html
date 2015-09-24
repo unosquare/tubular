@@ -40,7 +40,8 @@
         <script src="/ui/app/app.js"></script>
     </head>
 
-    <body ng-cloak>
+<body ng-cloak>
+    <div id="wrapper">
         <header class="navbar navbar-static-top" id="top" role="banner">
             <div class="container">
                 <div class="navbar-header">
@@ -48,7 +49,7 @@
                         <i class="fa fa-bars"></i>
                     </button>
                     <a href="http://unosquare.github.io/tubular/" class="navbar-brand">
-                        <img src="/ui/media/tubular.png" alt="tubular" style="height: 80px; margin-top: -30px;"/>
+                        <img src="/ui/media/tubular.png" alt="tubular" style="height: 80px; margin-top: -30px;" />
                     </a>
                 </div>
                 <nav class="collapse navbar-collapse bs-navbar-collapse">
@@ -62,34 +63,69 @@
                         <li>
                             <a href="/reporting">Reporting</a>
                         </li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right" ng-controller="i18nCtrl">
                         <li>
-                            <a href="http://unosquare.github.io/">unosquare labs</a>
-                        </li>
-                        <li>
-                            <a href="http://unosquare.github.io/embedio/">EmbedIO</a>
-                        </li>
-                        <li>
-                            <a href="https://unopasscore.codeplex.com/">PassCore</a>
+                            <a href="#" ng-click="toggle()">Toggle i18n</a>
                         </li>
                     </ul>
                 </nav>
             </div>
         </header>
 
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="page-header"
-                         ng-controller="titleController as title">
-                        <h1>
-                            {{title.content}}
-                            <small>Tubular Samples</small>
-                        </h1>
+        <div class="content-body">
+
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="page-header"
+                             ng-controller="titleController as title">
+                            <h1>
+                                {{title.content}}
+                                <small>Tubular Samples</small>
+                            </h1>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+            
+            <ng-view></ng-view>
+            </div>
+        <footer>
+            <div class="row">
+                <div class="col-xs-4">
+                    <div class="text-center">
+                        <a href="http://www.unosquare.com" target="_blank">
+                            <img alt="unosquare" src="http://unosquare.github.io/assets/logo_178.png" />
+                        </a>
+                    </div>
+                </div>
+                <div class="col-xs-4">
+                    &copy; 2015 unosquare |
+                    <a href="https://www.nuget.org/profiles/Unosquare" target="_blank">
+                        Unosquare's Nugets
+                    </a>
+                </div>
+                <div class="col-xs-4">
+                    <h4>connect with us</h4>
+                    <ul class="list-inline sociallist">
+                        <li>
+                            <a href="https://twitter.com/unosquare" target="_blank"><i class="fa fa-twitter"></i></a>
+                        </li>
+                        <li>
+                            <a href="http://www.linkedin.com/company/unosquare" target="_blank"><i class="fa fa-linkedin"></i></a>
+                        </li>
+                        <li>
+                            <a href="http://www.youtube.com/user/unosquare" target="_blank"><i class="fa fa-youtube"></i></a>
+                        </li>
+                        <li>
+                            <a href="https://github.com/unosquare" target="_blank"><i class="fa fa-github"></i></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </footer>
 
-        <ng-view></ng-view>
-    </body>
+        </div>
+</body>
 </html>

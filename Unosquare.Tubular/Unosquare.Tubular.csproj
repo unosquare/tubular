@@ -84,6 +84,7 @@
     <Content Include="Javascript\tubular\tubular-directives.js" />
     <Content Include="Javascript\tubular\tubular-models.js" />
     <Content Include="Javascript\tubular\tubular-services-http.js" />
+    <Content Include="Javascript\tubular\tubular-services-i18n.js" />
     <Content Include="Javascript\tubular\tubular-services-localdata.js" />
     <Content Include="Javascript\tubular\tubular-services-odata.js" />
     <Content Include="Javascript\tubular\tubular-services-template.js" />

@@ -13,8 +13,8 @@
         .directive('tbColumnFilterButtons', [function () {
             return {
                 template: '<div class="text-right">' +
-                        '<a class="btn btn-sm btn-success" ng-click="applyFilter()" ng-disabled="filter.Operator == \'None\'">Apply</a>&nbsp;' +
-                        '<button class="btn btn-sm btn-danger" ng-click="clearFilter()">Clear</button>' +
+                        '<a class="btn btn-sm btn-success" ng-click="applyFilter()" ng-disabled="filter.Operator == \'None\'">{{\'CAPTION_APPLY\' | translate}}</a>&nbsp;' +
+                        '<button class="btn btn-sm btn-danger" ng-click="clearFilter()">{{\'CAPTION_CLEAR\' | translate}}</button>' +
                         '</div>',
                 restrict: 'E',
                 replace: true,
@@ -31,7 +31,7 @@
          */
         .directive('tbColumnSelector', [function () {
             return {
-                template: '<button class="btn btn-sm btn-default" ng-click="openColumnsSelector()">Select Columns</button></div>',
+                template: '<button class="btn btn-sm btn-default" ng-click="openColumnsSelector()">{{\'CAPTION_SELECTCOLUMNS\' | translate}}</button></div>',
                 restrict: 'E',
                 replace: true,
                 transclude: true,
@@ -43,7 +43,7 @@
 
                         var dialog = $modal.open({
                             template: '<div class="modal-header">' +
-                                '<h3 class="modal-title">Columns Selector</h3>' +
+                                '<h3 class="modal-title">{{\'CAPTION_SELECTCOLUMNS\' | translate}}</h3>' +
                                 '</div>' +
                                 '<div class="modal-body">' +
                                 '<table class="table table-bordered table-responsive table-striped table-hover table-condensed">' +
@@ -54,7 +54,7 @@
                                 '<td><input type="checkbox" ng-disabled="true" ng-model="col.IsGrouping" /></td>' +
                                 '</tr></tbody></table></div>' +
                                 '</div>' +
-                                '<div class="modal-footer"><button class="btn btn-warning" ng-click="closePopup()">Close</button></div>',
+                                '<div class="modal-footer"><button class="btn btn-warning" ng-click="closePopup()">{{\'CAPTION_CLOSE\' | translate}}</button></div>',
                             backdropClass: 'fullHeight',
                             animation: false,
                             controller: [
@@ -98,11 +98,12 @@
                         'ng-class="{ \'btn-success\': filter.HasFilter }">' +
                         '<i class="fa fa-filter"></i></button>' +
                         '<div style="display: none;">' +
-                        '<button type="button" class="close" data-dismiss="modal" ng-click="close()"><span aria-hidden="true">×</span></button><h4>{{::filterTitle}}</h4>' +
+                        '<button type="button" class="close" data-dismiss="modal" ng-click="close()"><span aria-hidden="true">×</span></button>' +
+                        '<h4>{{filterTitle}}</h4>' +
                         '<form class="tubular-column-filter-form" onsubmit="return false;">' +
                         '<select class="form-control" ng-model="filter.Operator" ng-hide="dataType == \'boolean\'"></select>&nbsp;' +
                         '<input class="form-control" type="search" ng-model="filter.Text" autofocus ng-keypress="checkEvent($event)" ng-hide="dataType == \'boolean\'"' +
-                        'placeholder="Value" ng-disabled="filter.Operator == \'None\'" />' +
+                        'placeholder="{{\'CAPTION_VALUE\' | translate}}" ng-disabled="filter.Operator == \'None\'" />' +
                         '<div class="text-center" ng-show="dataType == \'boolean\'">' +
                         '<button type="button" class="btn btn-default btn-md" ng-disabled="filter.Text === true" ng-click="filter.Text = true; filter.Operator = \'Equals\';">' +
                         '<i class="fa fa-check"></i></button>&nbsp;' +
@@ -154,7 +155,8 @@
                         'ng-class="{ \'btn-success\': filter.HasFilter }">' +
                         '<i class="fa fa-filter"></i></button>' +
                         '<div style="display: none;">' +
-                        '<button type="button" class="close" data-dismiss="modal" ng-click="close()"><span aria-hidden="true">×</span></button><h4>{{::filterTitle}}</h4>' +
+                        '<button type="button" class="close" data-dismiss="modal" ng-click="close()"><span aria-hidden="true">×</span></button>' +
+                        '<h4>{{filterTitle}}</h4>' +
                         '<form class="tubular-column-filter-form" onsubmit="return false;">' +
                         '<select class="form-control" ng-model="filter.Operator"></select>' +
                         '<input type="date" class="form-control" ng-model="filter.Text" ng-keypress="checkEvent($event)" />&nbsp;' +
@@ -232,7 +234,8 @@
                         'ng-class="{ \'btn-success\': filter.HasFilter }">' +
                         '<i class="fa fa-filter"></i></button>' +
                         '<div style="display: none;">' +
-                        '<button type="button" class="close" data-dismiss="modal" ng-click="close()"><span aria-hidden="true">×</span></button><h4>{{::filterTitle}}</h4>' +
+                        '<button type="button" class="close" data-dismiss="modal" ng-click="close()"><span aria-hidden="true">×</span></button>' +
+                        '<h4>{{::filterTitle}}</h4>' +
                         '<form class="tubular-column-filter-form" onsubmit="return false;">' +
                         '<select class="form-control checkbox-list" ng-model="filter.Argument" ng-options="item for item in optionsItems" ' +
                         ' multiple ng-disabled="dataIsLoaded == false"></select>' +

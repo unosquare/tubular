@@ -31,11 +31,12 @@
             }
         ]);
 
-    angular.module('app.controllers', [])
+    angular.module('app.controllers', ['tubular.services'])
         .controller('titleController', [
             '$scope', '$route', function($scope, $route) {
                 var me = this;
                 me.content = "Home";
+
                 $scope.$on('$routeChangeSuccess', function(currentRoute, previousRoute) {
                     me.content = $route.current.title;
                 });
@@ -44,8 +45,16 @@
             '$scope', '$location', function($scope, $location) {
                 // TODO: Complete
             }
+        ]).controller('i18nCtrl', [
+            '$scope', 'tubularTranslate', function($scope, tubularTranslate) {
+                $scope.toggle = function() {
+                    tubularTranslate.setLanguage(tubularTranslate.currentLanguage === 'en' ? 'es' : 'en');
+                    toastr.info('New language: ' + tubularTranslate.currentLanguage);
+                };
+            }
         ])
-        .controller('tubularSampleCtrl', ['$scope', '$location', function($scope, $location) {
+        .controller('tubularSampleCtrl', [
+            '$scope', '$location', function($scope, $location) {
                 var me = this;
                 me.onTableController = function() {
                     console.log('On Before Get Data Event: fired.');
@@ -113,7 +122,7 @@
                     }
                 };
 
-                $scope.generate = function () {
+                $scope.generate = function() {
                     tubularHttp.setRequireAuthentication(false);
                     tubularHttp.post('api/reports/getmarkup', $scope.items).promise.then(function(data) {
                         $scope.autoCode = window.URL.createObjectURL(new Blob([data], { type: "text/html" }));
@@ -125,7 +134,13 @@
         'tubular',
         'app.routes',
         'app.controllers'
-    ]).config(['$sceDelegateProvider', function ($sceDelegateProvider) {
-        $sceDelegateProvider.resourceUrlWhitelist(['self', 'blob:**']);
-    }]);
+    ]).config([
+        '$sceDelegateProvider', function($sceDelegateProvider) {
+            $sceDelegateProvider.resourceUrlWhitelist(['self', 'blob:**']);
+        }
+    ]).run([
+        'tubularTranslate', function(tubularTranslate) {
+            tubularTranslate.setLanguage('es');
+        }
+    ]);
 })();
