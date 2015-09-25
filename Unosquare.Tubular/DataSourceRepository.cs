@@ -12,7 +12,7 @@ namespace Unosquare.Tubular
     public class DataSourceRepository : List<IDataSourceConfig>
     {
         /// <summary>
-        /// Generates a Dynamic datasource from a model using the Data Sources in the Repository
+        /// Generates a Dynamic data source from a model using the Data Sources in the Repository
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
@@ -36,7 +36,7 @@ namespace Unosquare.Tubular
                 singleTable = false;
 
                 if (mainSource.Joins.Any(x => x.Name2 == secondSource) == false)
-                    throw new Exception(string.Format("Unknown join betweeb {0} and {1} sources", secondSource,
+                    throw new Exception(string.Format("Unknown join between {0} and {1} sources", secondSource,
                         sources.First()));
 
                 var join = mainSource.Joins.First(x => x.Name2 == secondSource);

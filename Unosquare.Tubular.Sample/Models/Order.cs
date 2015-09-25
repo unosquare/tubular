@@ -1,13 +1,20 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
 
 namespace Unosquare.Tubular.Sample.Models
 {
     using System;
+    using System.ComponentModel.DataAnnotations;
 
     public class Order
     {
+        public Order()
+        {
+            Details = new HashSet<OrderDetail>();
+        }
+
         [Key]
         public int OrderID { get; set; }
+
         public string CustomerName { get; set; }
         public string ShipperCity { get; set; }
         public bool IsShipped { get; set; }
@@ -18,5 +25,7 @@ namespace Unosquare.Tubular.Sample.Models
         public string CreatedUserId { get; set; }
 
         public virtual SystemUser CreatedUser { get; set; }
+
+        public ICollection<OrderDetail> Details { get; set; }
     }
 }
