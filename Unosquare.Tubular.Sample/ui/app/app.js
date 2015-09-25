@@ -200,6 +200,9 @@
         'tubularTranslate', function (tubularTranslate) {
             // Uncomment if you want to start with Spanish
             //tubularTranslate.setLanguage('es');
+            // I need to check this
+            tubularTranslate.addTranslation('es', 'UI_LANG', 'English').addTranslation('en', 'UI_LANG', 'Español');
+            console.log(tubularTranslate.translationTable);
         }
     ]);
 })();

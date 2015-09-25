@@ -23,8 +23,10 @@
                         '<span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>' +
                         '<input type="search" class="form-control" placeholder="{{:: placeholder || (\'UI_SEARCH\' | translate) }}" maxlength="20" ' +
                         'ng-model="$component.search.Text" ng-model-options="{ debounce: 300 }">' +
-                        '<span class="input-group-btn" ng-show="$component.search.Text.length > 0" ng-click="$component.search.Text = \'\'">' +
-                        '<button class="btn btn-default"><i class="fa fa-times-circle"></i></button>' +
+                        '<span class="input-group-btn" ng-show="$component.search.Text.length > 0">' +
+                        '<button class="btn btn-default" tooltip="{{\'CAPTION_CLEAR\' | translate}}" ng-click="$component.search.Text = \'\'">' +
+                        '<i class="fa fa-times-circle"></i>' +
+                        '</button>' +
                         '</span>' +
                         '<div>' +
                         '<div>',

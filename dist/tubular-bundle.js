@@ -2738,8 +2738,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         '<span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>' +
                         '<input type="search" class="form-control" placeholder="{{:: placeholder || (\'UI_SEARCH\' | translate) }}" maxlength="20" ' +
                         'ng-model="$component.search.Text" ng-model-options="{ debounce: 300 }">' +
-                        '<span class="input-group-btn" ng-show="$component.search.Text.length > 0" ng-click="$component.search.Text = \'\'">' +
-                        '<button class="btn btn-default"><i class="fa fa-times-circle"></i></button>' +
+                        '<span class="input-group-btn" ng-show="$component.search.Text.length > 0">' +
+                        '<button class="btn btn-default" tooltip="{{\'CAPTION_CLEAR\' | translate}}" ng-click="$component.search.Text = \'\'">' +
+                        '<i class="fa fa-times-circle"></i>' +
+                        '</button>' +
                         '</span>' +
                         '<div>' +
                         '<div>',
@@ -3310,11 +3312,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     return 'None';
                 }
 
-                if (value.indexOf('Asc') === 0 || value.indexOf('asc') === 0) {
+                if (value.toLowerCase().indexOf('asc') === 0) {
                     return 'Ascending';
                 }
 
-                if (value.indexOf('Desc') === 0 || value.indexOf('desc') === 0) {
+                if (value.toLowerCase().indexOf('desc') === 0) {
                     return 'Descending';
                 }
 
@@ -3399,9 +3401,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             return function(attrs) {
                 this.Text = attrs.text || null;
                 this.Argument = null;
+
                 if (attrs.argument) {
                     this.Argument = [attrs.argument];
                 }
+
                 this.Operator = attrs.operator || 'Contains';
                 this.OptionsUrl = attrs.optionsUrl || null;
                 this.HasFilter = false;
@@ -3439,7 +3443,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     }
                 };
 
-                if (angular.isArray(data) == false) {
+                if (angular.isArray(data) === false) {
                     angular.forEach(Object.keys(data), function(name) {
                         obj.$addField(name, data[name]);
                     });
@@ -3550,7 +3554,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 obj.revertChanges = function() {
                     for (var k in obj) {
                         if (obj.hasOwnProperty(k)) {
-                            if (k[0] == '$' || angular.isUndefined(obj.$original[k])) {
+                            if (k[0] === '$' || angular.isUndefined(obj.$original[k])) {
                                 continue;
                             }
 
@@ -4931,12 +4935,15 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 me.setLanguage = function(language) {
                     // TODO: Check translationTable first
                     me.currentLanguage = language;
+
+                    return me;
                 };
 
                 me.addTranslation = function(language, key, value) {
                     var languageTable = me.translationTable[language] || me.translationTable[me.currentLanguage] || me.translationTable[me.defaultLanguage];
-
                     languageTable[key] = value;
+
+                    return me;
                 }
 
                 me.translate = function(key) {
