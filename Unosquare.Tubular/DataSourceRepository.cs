@@ -177,9 +177,9 @@ namespace Unosquare.Tubular
         /// Gets the DataSource metadata
         /// </summary>
         /// <returns></returns>
-        public object GetMetadata()
+        public DataSourceMetadata GetMetadata()
         {
-            return new
+            return new DataSourceMetadata
             {
                 DataSources = this,
                 AggregationFunctions = Enum.GetNames(typeof(AggregationFunction)),
