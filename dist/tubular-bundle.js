@@ -3303,7 +3303,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
         * 
         * This model doesn't need to be created in your controller, the `tbGrid` generate it from any `tbColumn`.
         */
-        .factory('tubularGridColumnModel', function() {
+        .factory('tubularGridColumnModel', function($filter) {
 
             var parseSortDirection = function(value) {
                 if (angular.isUndefined(value)) {
@@ -3338,49 +3338,49 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                 this.FilterOperators = {
                     'string': {
-                        'None': 'None',
-                        'Equals': 'Equals',
-                        'NotEquals': 'Not Equals',
-                        'Contains': 'Contains',
-                        'NotContains': 'Not Contains',
-                        'StartsWith': 'Starts With',
-                        'NotStartsWith': 'Not Starts With',
-                        'EndsWith': 'Ends With',
-                        'NotEndsWith': 'Not Ends With'
+                        'None': $filter('translate')('OP_NONE'),
+                        'Equals': $filter('translate')('OP_EQUALS'),
+                        'NotEquals': $filter('translate')('OP_NOTEQUALS'),
+                        'Contains': $filter('translate')('OP_CONTAINS'),
+                        'NotContains': $filter('translate')('OP_NOTCONTAINS'),
+                        'StartsWith': $filter('translate')('OP_STARTSWITH'),
+                        'NotStartsWith': $filter('translate')('OP_NOTSTARTSWITH'),
+                        'EndsWith': $filter('translate')('OP_ENDSWITH'),
+                        'NotEndsWith': $filter('translate')('OP_NOTENDSWITH')
                     },
                     'numeric': {
-                        'None': 'None',
-                        'Equals': 'Equals',
-                        'Between': 'Between',
+                        'None': $filter('translate')('OP_NONE'),
+                        'Equals': $filter('translate')('OP_EQUALS'),
+                        'Between': $filter('translate')('OP_BETWEEN'),
                         'Gte': '>=',
                         'Gt': '>',
                         'Lte': '<=',
                         'Lt': '<'
                     },
                     'date': {
-                        'None': 'None',
-                        'Equals': 'Equals',
-                        'NotEquals': 'Not Equals',
-                        'Between': 'Between',
+                        'None': $filter('translate')('OP_NONE'),
+                        'Equals': $filter('translate')('OP_EQUALS'),
+                        'NotEquals': $filter('translate')('OP_NOTEQUALS'),
+                        'Between': $filter('translate')('OP_BETWEEN'),
                         'Gte': '>=',
                         'Gt': '>',
                         'Lte': '<=',
                         'Lt': '<'
                     },
                     'datetime': {
-                        'None': 'None',
-                        'Equals': 'Equals',
-                        'NotEquals': 'Not Equals',
-                        'Between': 'Between',
+                        'None': $filter('translate')('OP_NONE'),
+                        'Equals': $filter('translate')('OP_EQUALS'),
+                        'NotEquals': $filter('translate')('OP_NOTEQUALS'),
+                        'Between': $filter('translate')('OP_BETWEEN'),
                         'Gte': '>=',
                         'Gt': '>',
                         'Lte': '<=',
                         'Lt': '<'
                     },
                     'boolean': {
-                        'None': 'None',
-                        'Equals': 'Equals',
-                        'NotEquals': 'Not Equals'
+                        'None': $filter('translate')('OP_NONE'),
+                        'Equals': $filter('translate')('OP_EQUALS'),
+                        'NotEquals': $filter('translate')('OP_NOTEQUALS')
                     }
                 };
             };
@@ -3455,15 +3455,17 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                         obj.$addField(col.Name, value);
 
-                        if (col.DataType == "date" || col.DataType == "datetime") {
+                        if (col.DataType === "date" || col.DataType === "datetime") {
                             var timezone = new Date().toString().match(/([-\+][0-9]+)\s/)[1];
                             timezone = timezone.substr(0, timezone.length - 2) + ':' + timezone.substr(timezone.length - 2, 2);
                             var tempDate = new Date(Date.parse(obj[col.Name] + timezone));
 
-                            if (col.DataType == "date") {
+                            if (col.DataType === "date") {
                                 obj[col.Name] = new Date(1900 + tempDate.getYear(), tempDate.getMonth(), tempDate.getDate());
                             } else {
-                                obj[col.Name] = new Date(1900 + tempDate.getYear(), tempDate.getMonth(), tempDate.getDate(), tempDate.getHours(), tempDate.getMinutes(), tempDate.getSeconds(), 0);
+                                obj[col.Name] = new Date(1900 + tempDate.getYear(),
+                                    tempDate.getMonth(), tempDate.getDate(), tempDate.getHours(),
+                                    tempDate.getMinutes(), tempDate.getSeconds(), 0);
                             }
                         }
 
@@ -4116,7 +4118,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
     angular.module('tubular.services')
         /**
-         * @ngdoc servicetubularHttp
+         * @ngdoc service
          * @name tubularHttp
          *
          * @description
@@ -4126,8 +4128,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * This service provides authentication using bearer-tokens. Based on https://bitbucket.org/david.antaramian/so-21662778-spa-authentication-example
          */
         .service('tubularHttp', [
-            '$http', '$timeout', '$q', '$cacheFactory', 'localStorageService',
-            function tubularHttp($http, $timeout, $q, $cacheFactory, localStorageService) {
+            '$http', '$timeout', '$q', '$cacheFactory', 'localStorageService', '$filter',
+            function tubularHttp($http, $timeout, $q, $cacheFactory, localStorageService, $filter) {
                 var me = this;
 
                 function isAuthenticationExpired(expirationDate) {
@@ -4244,7 +4246,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 if (data.error_description) {
                                     errorCallback(data.error_description);
                                 } else {
-                                    errorCallback('Unable to contact server; please, try again later.');
+                                    errorCallback($filter('translate')('UI_HTTPERROR'));
                                 }
                             }
                         });
@@ -4305,11 +4307,13 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 me.checksum = function(obj) {
                     var keys = Object.keys(obj).sort();
                     var output = [], prop;
+
                     for (var i = 0; i < keys.length; i++) {
                         prop = keys[i];
                         output.push(prop);
                         output.push(obj[prop]);
                     }
+
                     return JSON.stringify(output);
                 };
 
@@ -4332,7 +4336,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     if (request.requireAuthentication && me.isAuthenticated() === false) {
                         // Return empty dataset
                         return {
-                            promise: $q(function(resolve, reject) {
+                            promise: $q(function(resolve) {
                                 resolve(null);
                             }),
                             cancel: cancel
@@ -4346,7 +4350,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                         if (angular.isDefined(data) && data.Expiration.getTime() > new Date().getTime()) {
                             return {
-                                promise: $q(function(resolve, reject) {
+                                promise: $q(function(resolve) {
                                     resolve(data.Set);
                                 }),
                                 cancel: cancel
@@ -4869,7 +4873,18 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         'UI_ALLROWS': 'All rows',
                         'UI_REMOVEROW': 'Do you want to delete this row?',
                         'UI_SHOWINGRECORDS': 'Showing {0} to {1} of {2} records',
-                        'UI_FILTEREDRECORDS': '(Filtered from {0} total records)'
+                        'UI_FILTEREDRECORDS': '(Filtered from {0} total records)',
+                        'UI_HTTPERROR': 'Unable to contact server; please, try again later.',
+                        'OP_NONE': 'None',
+                        'OP_EQUALS': 'Equals',
+                        'OP_NOTEQUALS': 'Not Equals',
+                        'OP_CONTAINS': 'Contains',
+                        'OP_NOTCONTAINS': 'Not Contains',
+                        'OP_STARTSWITH': 'Starts With',
+                        'OP_NOTSTARTSWITH': 'Not Starts With',
+                        'OP_ENDSWITH': 'Ends With',
+                        'OP_NOTENDSWITH': 'Not Ends With',
+                        'OP_BETWEEN': 'Between'
                     },
                     'es': {
                         'EDITOR_REGEX_DOESNT_MATCH': "El campo no es válido contra la expresión regular.",
@@ -4883,7 +4898,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         'CAPTION_APPLY': 'Aplicar',
                         'CAPTION_CLEAR': 'Limpiar',
                         'CAPTION_CLOSE': 'Cerrar',
-                        'CAPTION_SELECTCOLUMNS': 'Seleccionar Columnas',
+                        'CAPTION_SELECTCOLUMNS': 'Seleccionar columnas',
                         'CAPTION_FILTER': 'Filtro',
                         'CAPTION_VALUE': 'Valor',
                         'CAPTION_REMOVE': 'Remover',
@@ -4898,7 +4913,18 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         'UI_ALLROWS': 'Todo',
                         'UI_REMOVEROW': '¿Desea eliminar el registro?',
                         'UI_SHOWINGRECORDS': 'Mostrando registros {0} al {1} de {2}',
-                        'UI_FILTEREDRECORDS': '(De un total de {0} registros)'
+                        'UI_FILTEREDRECORDS': '(De un total de {0} registros)',
+                        'UI_HTTPERROR': 'No se logro contactar el servidor, intente más tarde.',
+                        'OP_NONE': 'Ninguno',
+                        'OP_EQUALS': 'Igual',
+                        'OP_NOTEQUALS': 'No Igual',
+                        'OP_CONTAINS': 'Contiene',
+                        'OP_NOTCONTAINS': 'No Contiene',
+                        'OP_STARTSWITH': 'Comienza Con',
+                        'OP_NOTSTARTSWITH': 'No Comienza Con',
+                        'OP_ENDSWITH': 'Termina Con',
+                        'OP_NOTENDSWITH': 'No Termina Con',
+                        'OP_BETWEEN': 'Entre'
                     }
                 };
 

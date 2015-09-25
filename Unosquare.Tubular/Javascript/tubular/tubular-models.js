@@ -20,18 +20,18 @@
         * 
         * This model doesn't need to be created in your controller, the `tbGrid` generate it from any `tbColumn`.
         */
-        .factory('tubularGridColumnModel', function() {
+        .factory('tubularGridColumnModel', function($filter) {
 
             var parseSortDirection = function(value) {
                 if (angular.isUndefined(value)) {
                     return 'None';
                 }
 
-                if (value.indexOf('Asc') === 0 || value.indexOf('asc') === 0) {
+                if (value.toLowerCase().indexOf('asc') === 0) {
                     return 'Ascending';
                 }
 
-                if (value.indexOf('Desc') === 0 || value.indexOf('desc') === 0) {
+                if (value.toLowerCase().indexOf('desc') === 0) {
                     return 'Descending';
                 }
 
@@ -55,49 +55,49 @@
 
                 this.FilterOperators = {
                     'string': {
-                        'None': 'None',
-                        'Equals': 'Equals',
-                        'NotEquals': 'Not Equals',
-                        'Contains': 'Contains',
-                        'NotContains': 'Not Contains',
-                        'StartsWith': 'Starts With',
-                        'NotStartsWith': 'Not Starts With',
-                        'EndsWith': 'Ends With',
-                        'NotEndsWith': 'Not Ends With'
+                        'None': $filter('translate')('OP_NONE'),
+                        'Equals': $filter('translate')('OP_EQUALS'),
+                        'NotEquals': $filter('translate')('OP_NOTEQUALS'),
+                        'Contains': $filter('translate')('OP_CONTAINS'),
+                        'NotContains': $filter('translate')('OP_NOTCONTAINS'),
+                        'StartsWith': $filter('translate')('OP_STARTSWITH'),
+                        'NotStartsWith': $filter('translate')('OP_NOTSTARTSWITH'),
+                        'EndsWith': $filter('translate')('OP_ENDSWITH'),
+                        'NotEndsWith': $filter('translate')('OP_NOTENDSWITH')
                     },
                     'numeric': {
-                        'None': 'None',
-                        'Equals': 'Equals',
-                        'Between': 'Between',
+                        'None': $filter('translate')('OP_NONE'),
+                        'Equals': $filter('translate')('OP_EQUALS'),
+                        'Between': $filter('translate')('OP_BETWEEN'),
                         'Gte': '>=',
                         'Gt': '>',
                         'Lte': '<=',
                         'Lt': '<'
                     },
                     'date': {
-                        'None': 'None',
-                        'Equals': 'Equals',
-                        'NotEquals': 'Not Equals',
-                        'Between': 'Between',
+                        'None': $filter('translate')('OP_NONE'),
+                        'Equals': $filter('translate')('OP_EQUALS'),
+                        'NotEquals': $filter('translate')('OP_NOTEQUALS'),
+                        'Between': $filter('translate')('OP_BETWEEN'),
                         'Gte': '>=',
                         'Gt': '>',
                         'Lte': '<=',
                         'Lt': '<'
                     },
                     'datetime': {
-                        'None': 'None',
-                        'Equals': 'Equals',
-                        'NotEquals': 'Not Equals',
-                        'Between': 'Between',
+                        'None': $filter('translate')('OP_NONE'),
+                        'Equals': $filter('translate')('OP_EQUALS'),
+                        'NotEquals': $filter('translate')('OP_NOTEQUALS'),
+                        'Between': $filter('translate')('OP_BETWEEN'),
                         'Gte': '>=',
                         'Gt': '>',
                         'Lte': '<=',
                         'Lt': '<'
                     },
                     'boolean': {
-                        'None': 'None',
-                        'Equals': 'Equals',
-                        'NotEquals': 'Not Equals'
+                        'None': $filter('translate')('OP_NONE'),
+                        'Equals': $filter('translate')('OP_EQUALS'),
+                        'NotEquals': $filter('translate')('OP_NOTEQUALS')
                     }
                 };
             };
@@ -116,9 +116,11 @@
             return function(attrs) {
                 this.Text = attrs.text || null;
                 this.Argument = null;
+
                 if (attrs.argument) {
                     this.Argument = [attrs.argument];
                 }
+
                 this.Operator = attrs.operator || 'Contains';
                 this.OptionsUrl = attrs.optionsUrl || null;
                 this.HasFilter = false;
@@ -156,7 +158,7 @@
                     }
                 };
 
-                if (angular.isArray(data) == false) {
+                if (angular.isArray(data) === false) {
                     angular.forEach(Object.keys(data), function(name) {
                         obj.$addField(name, data[name]);
                     });
@@ -172,15 +174,17 @@
 
                         obj.$addField(col.Name, value);
 
-                        if (col.DataType == "date" || col.DataType == "datetime") {
+                        if (col.DataType === "date" || col.DataType === "datetime") {
                             var timezone = new Date().toString().match(/([-\+][0-9]+)\s/)[1];
                             timezone = timezone.substr(0, timezone.length - 2) + ':' + timezone.substr(timezone.length - 2, 2);
                             var tempDate = new Date(Date.parse(obj[col.Name] + timezone));
 
-                            if (col.DataType == "date") {
+                            if (col.DataType === "date") {
                                 obj[col.Name] = new Date(1900 + tempDate.getYear(), tempDate.getMonth(), tempDate.getDate());
                             } else {
-                                obj[col.Name] = new Date(1900 + tempDate.getYear(), tempDate.getMonth(), tempDate.getDate(), tempDate.getHours(), tempDate.getMinutes(), tempDate.getSeconds(), 0);
+                                obj[col.Name] = new Date(1900 + tempDate.getYear(),
+                                    tempDate.getMonth(), tempDate.getDate(), tempDate.getHours(),
+                                    tempDate.getMinutes(), tempDate.getSeconds(), 0);
                             }
                         }
 
@@ -265,7 +269,7 @@
                 obj.revertChanges = function() {
                     for (var k in obj) {
                         if (obj.hasOwnProperty(k)) {
-                            if (k[0] == '$' || angular.isUndefined(obj.$original[k])) {
+                            if (k[0] === '$' || angular.isUndefined(obj.$original[k])) {
                                 continue;
                             }
 

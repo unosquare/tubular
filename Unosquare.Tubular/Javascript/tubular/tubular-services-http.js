@@ -3,7 +3,7 @@
 
     angular.module('tubular.services')
         /**
-         * @ngdoc servicetubularHttp
+         * @ngdoc service
          * @name tubularHttp
          *
          * @description
@@ -13,8 +13,8 @@
          * This service provides authentication using bearer-tokens. Based on https://bitbucket.org/david.antaramian/so-21662778-spa-authentication-example
          */
         .service('tubularHttp', [
-            '$http', '$timeout', '$q', '$cacheFactory', 'localStorageService',
-            function tubularHttp($http, $timeout, $q, $cacheFactory, localStorageService) {
+            '$http', '$timeout', '$q', '$cacheFactory', 'localStorageService', '$filter',
+            function tubularHttp($http, $timeout, $q, $cacheFactory, localStorageService, $filter) {
                 var me = this;
 
                 function isAuthenticationExpired(expirationDate) {
@@ -131,7 +131,7 @@
                                 if (data.error_description) {
                                     errorCallback(data.error_description);
                                 } else {
-                                    errorCallback('Unable to contact server; please, try again later.');
+                                    errorCallback($filter('translate')('UI_HTTPERROR'));
                                 }
                             }
                         });
@@ -192,11 +192,13 @@
                 me.checksum = function(obj) {
                     var keys = Object.keys(obj).sort();
                     var output = [], prop;
+
                     for (var i = 0; i < keys.length; i++) {
                         prop = keys[i];
                         output.push(prop);
                         output.push(obj[prop]);
                     }
+
                     return JSON.stringify(output);
                 };
 
@@ -219,7 +221,7 @@
                     if (request.requireAuthentication && me.isAuthenticated() === false) {
                         // Return empty dataset
                         return {
-                            promise: $q(function(resolve, reject) {
+                            promise: $q(function(resolve) {
                                 resolve(null);
                             }),
                             cancel: cancel
@@ -233,7 +235,7 @@
 
                         if (angular.isDefined(data) && data.Expiration.getTime() > new Date().getTime()) {
                             return {
-                                promise: $q(function(resolve, reject) {
+                                promise: $q(function(resolve) {
                                     resolve(data.Set);
                                 }),
                                 cancel: cancel

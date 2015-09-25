@@ -44,7 +44,18 @@
                         'UI_ALLROWS': 'All rows',
                         'UI_REMOVEROW': 'Do you want to delete this row?',
                         'UI_SHOWINGRECORDS': 'Showing {0} to {1} of {2} records',
-                        'UI_FILTEREDRECORDS': '(Filtered from {0} total records)'
+                        'UI_FILTEREDRECORDS': '(Filtered from {0} total records)',
+                        'UI_HTTPERROR': 'Unable to contact server; please, try again later.',
+                        'OP_NONE': 'None',
+                        'OP_EQUALS': 'Equals',
+                        'OP_NOTEQUALS': 'Not Equals',
+                        'OP_CONTAINS': 'Contains',
+                        'OP_NOTCONTAINS': 'Not Contains',
+                        'OP_STARTSWITH': 'Starts With',
+                        'OP_NOTSTARTSWITH': 'Not Starts With',
+                        'OP_ENDSWITH': 'Ends With',
+                        'OP_NOTENDSWITH': 'Not Ends With',
+                        'OP_BETWEEN': 'Between'
                     },
                     'es': {
                         'EDITOR_REGEX_DOESNT_MATCH': "El campo no es válido contra la expresión regular.",
@@ -58,7 +69,7 @@
                         'CAPTION_APPLY': 'Aplicar',
                         'CAPTION_CLEAR': 'Limpiar',
                         'CAPTION_CLOSE': 'Cerrar',
-                        'CAPTION_SELECTCOLUMNS': 'Seleccionar Columnas',
+                        'CAPTION_SELECTCOLUMNS': 'Seleccionar columnas',
                         'CAPTION_FILTER': 'Filtro',
                         'CAPTION_VALUE': 'Valor',
                         'CAPTION_REMOVE': 'Remover',
@@ -73,7 +84,18 @@
                         'UI_ALLROWS': 'Todo',
                         'UI_REMOVEROW': '¿Desea eliminar el registro?',
                         'UI_SHOWINGRECORDS': 'Mostrando registros {0} al {1} de {2}',
-                        'UI_FILTEREDRECORDS': '(De un total de {0} registros)'
+                        'UI_FILTEREDRECORDS': '(De un total de {0} registros)',
+                        'UI_HTTPERROR': 'No se logro contactar el servidor, intente más tarde.',
+                        'OP_NONE': 'Ninguno',
+                        'OP_EQUALS': 'Igual',
+                        'OP_NOTEQUALS': 'No Igual',
+                        'OP_CONTAINS': 'Contiene',
+                        'OP_NOTCONTAINS': 'No Contiene',
+                        'OP_STARTSWITH': 'Comienza Con',
+                        'OP_NOTSTARTSWITH': 'No Comienza Con',
+                        'OP_ENDSWITH': 'Termina Con',
+                        'OP_NOTENDSWITH': 'No Termina Con',
+                        'OP_BETWEEN': 'Entre'
                     }
                 };
 
