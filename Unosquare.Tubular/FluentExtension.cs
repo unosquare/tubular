@@ -50,7 +50,7 @@
         /// <param name="key2"></param>
         /// <returns></returns>
         public static DataSourceConfig<T1> WithJoin<T1, T2, T3>(this DataSourceConfig<T1> config,
-            Expression<Func<T1, T3>> key1, Expression<Func<T1, T3>> key2)
+            Expression<Func<T1, T3>> key1, Expression<Func<T2, T3>> key2)
             where T1 : class
         {
             var expression1 = (MemberExpression) key1.Body;
