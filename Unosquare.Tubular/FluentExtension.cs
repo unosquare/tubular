@@ -95,7 +95,7 @@
         }
 
         /// <summary>
-        /// Sets a Secure Url to Grid Options
+        /// Sets a Secure URL to Grid Options
         /// </summary>
         /// <param name="options"></param>
         /// <param name="url"></param>

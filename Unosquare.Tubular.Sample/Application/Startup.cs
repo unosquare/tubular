@@ -10,6 +10,7 @@ using Unosquare.Tubular.Sample.Application;
 using Unosquare.Tubular.Sample.Models;
 
 [assembly: OwinStartup(typeof(Startup))]
+
 namespace Unosquare.Tubular.Sample.Application
 {
     public class Startup
@@ -93,7 +94,7 @@ namespace Unosquare.Tubular.Sample.Application
                     defaults: new {id = RouteParameter.Optional}
                     );
 
-                // Redirect anything else to Index.html, you need to include this in your Web.config:
+                // Redirecting anything else to Index.html, you need to include this in your Web.config:
                 //
                 //          <compilation debug="true" targetFramework="4.5.2">
                 //  <buildProviders>
@@ -104,6 +105,5 @@ namespace Unosquare.Tubular.Sample.Application
                 RouteTable.Routes.MapPageRoute("Default", "{*anything}", "~/index.html");
             }
         }
-
     }
 }

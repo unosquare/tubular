@@ -1,13 +1,19 @@
-﻿using System;
-using System.Data.Entity;
-using System.Linq;
-using EntityFramework.MappingAPI.Extensions;
-using Unosquare.Tubular.ObjectModel;
-
-namespace Unosquare.Tubular.Sample.Application
+﻿namespace Unosquare.Tubular.Sample.Application
 {
+    using System;
+    using System.Data.Entity;
+    using System.Linq;
+    using EntityFramework.MappingAPI.Extensions;
+    using Unosquare.Tubular.ObjectModel;
+
     public static class Extensions
     {
+        /// <summary>
+        /// Sample method to extract DataSourceRepository from a EF DbContext
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="ignoreTypes"></param>
+        /// <returns></returns>
         public static DataSourceRepository GetDataSourceRepository(this DbContext context, Type[] ignoreTypes = null)
         {
             var repo = new DataSourceRepository();

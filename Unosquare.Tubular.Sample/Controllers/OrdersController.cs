@@ -35,7 +35,7 @@
             }
         }
 
-        private IQueryable FormatOutput(IQueryable q)
+        private static IQueryable FormatOutput(IQueryable q)
         {
             var subset = (q as IQueryable<OrderDto>).ToArray();
 
