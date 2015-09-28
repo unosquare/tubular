@@ -33,6 +33,22 @@
                     };
                 };
 
+                var reduceFilterArray = function (filters) {
+                    var filtersPattern = {};
+
+                    for (var i in filters) {
+                        if (filters.hasOwnProperty(i)) {
+                            for (var k in filters[i]) {
+                                if (filters[i].hasOwnProperty(k)) {
+                                    filtersPattern[k] = filters[i][k];
+                                }
+                            }
+                        }
+                    }
+
+                    return filtersPattern;
+                };
+
                 me.pageRequest = function(request, database) {
                     var response = {
                         Counter: 0,
@@ -51,7 +67,7 @@
                     // TODO: Check SortOrder 
                     var sorts = request.Columns
                         .filter(function(el) { return el.SortOrder > 0; })
-                        .map(function(el) { return (el.SortDirection == 'Descending' ? '-' : '') + el.Name; });
+                        .map(function(el) { return (el.SortDirection === 'Descending' ? '-' : '') + el.Name; });
 
                     for (var sort in sorts) {
                         if (sorts.hasOwnProperty(sort)) {
@@ -65,7 +81,7 @@
                         .filter(function(el) { return el.Filter && el.Filter.Text; })
                         .map(function(el) {
                             var obj = {};
-                            if (el.Filter.Operator == 'Contains') {
+                            if (el.Filter.Operator === 'Contains') {
                                 obj[el.Name] = el.Filter.Text;
                             }
 
@@ -73,22 +89,22 @@
                         });
 
                     if (filters.length > 0) {
-                        var filtersPattern = {};
-
-                        for (var i in filters) {
-                            if (filters.hasOwnProperty(i)) {
-                                for (var k in filters[i]) {
-                                    if (filters[i].hasOwnProperty(k)) {
-                                        filtersPattern[k] = filters[i][k];
-                                    }
-                                }
-                            }
-                        }
-
-                        set = $filter('filter')(set, filtersPattern);
+                        set = $filter('filter')(set, reduceFilterArray(filters));
                     }
 
-                    // TODO: Free text search
+                    if (request.Search && request.Search.Operator === 'Auto' && request.Search.Text) {
+                        var searchables = request.Columns
+                            .filter(function(el) { return el.Searchable; })
+                            .map(function(el) {
+                                var obj = {};
+                                obj[el.Name] = request.Search.Text;
+                                return obj;
+                            });
+
+                        if (searchables.length > 0) {
+                            set = $filter('filter')(set, reduceFilterArray(searchables));
+                        }
+                    }
 
                     response.FilteredRecordCount = set.length;
                     response.TotalRecordCount = set.length;

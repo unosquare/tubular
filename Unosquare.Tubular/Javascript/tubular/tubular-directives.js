@@ -789,13 +789,13 @@
          *
          * @description
          * The `tbCellTemplate` directive represents the final table element, a cell, where it can 
-         * hold an inline editor or a plain AngularJS expression related to the current element in the `ngRepeat`.
+         * hold an in-line editor or a plain AngularJS expression related to the current element in the `ngRepeat`.
          * 
          * This directive is replace by an `td` HTML element.
          * 
          * @scope
          * 
-         * @param {string} columnName Setting the related column, by passing the name, the cell can share attributes (like visibiility) with the column.
+         * @param {string} columnName Setting the related column, by passing the name, the cell can share attributes (like visibility) with the column.
          */
         .directive('tbCellTemplate', [
             function() {

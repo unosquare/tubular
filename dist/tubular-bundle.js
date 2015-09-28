@@ -1516,13 +1516,13 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          *
          * @description
          * The `tbCellTemplate` directive represents the final table element, a cell, where it can 
-         * hold an inline editor or a plain AngularJS expression related to the current element in the `ngRepeat`.
+         * hold an in-line editor or a plain AngularJS expression related to the current element in the `ngRepeat`.
          * 
          * This directive is replace by an `td` HTML element.
          * 
          * @scope
          * 
-         * @param {string} columnName Setting the related column, by passing the name, the cell can share attributes (like visibiility) with the column.
+         * @param {string} columnName Setting the related column, by passing the name, the cell can share attributes (like visibility) with the column.
          */
         .directive('tbCellTemplate', [
             function() {
@@ -1618,7 +1618,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 if (angular.isDefined($scope.min) && angular.isDefined($scope.value) && $scope.value != null) {
                                     if ($scope.value.length < parseInt($scope.min)) {
                                         $scope.$valid = false;
-                                        $scope.state.$errors = [$filter('translate')('EDITOR_MIN_CHARS', + $scope.min)];
+                                        $scope.state.$errors = [$filter('translate')('EDITOR_MIN_CHARS', $scope.min)];
                                         return;
                                     }
                                 }
@@ -1626,7 +1626,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 if (angular.isDefined($scope.max) && angular.isDefined($scope.value) && $scope.value != null) {
                                     if ($scope.value.length > parseInt($scope.max)) {
                                         $scope.$valid = false;
-                                        $scope.state.$errors = [$filter('translate')('EDITOR_MAX_CHARS', +$scope.max)];
+                                        $scope.state.$errors = [$filter('translate')('EDITOR_MAX_CHARS', $scope.max)];
                                         return;
                                     }
                                 }
@@ -1693,7 +1693,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 if (angular.isDefined($scope.min) && angular.isDefined($scope.value) && $scope.value != null) {
                                     $scope.$valid = $scope.value >= $scope.min;
                                     if (!$scope.$valid) {
-                                        $scope.state.$errors = [$filter('translate')('EDITOR_MIN_NUMBER', +$scope.min)];
+                                        $scope.state.$errors = [$filter('translate')('EDITOR_MIN_NUMBER', $scope.min)];
                                     }
                                 }
 
@@ -1704,7 +1704,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 if (angular.isDefined($scope.max) && angular.isDefined($scope.value) && $scope.value != null) {
                                     $scope.$valid = $scope.value <= $scope.max;
                                     if (!$scope.$valid) {
-                                        $scope.state.$errors = [$filter('translate')('EDITOR_MAX_NUMBER', +$scope.max)];
+                                        $scope.state.$errors = [$filter('translate')('EDITOR_MAX_NUMBER', $scope.max)];
                                     }
                                 }
                             };
@@ -3235,7 +3235,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             function () {
                 return {
                     require: '^tbGrid',
-                    template: '<div class="pager-info small">{{\'UI_SHOWINGRECORDS\' | translate: currentInitial:currentTop:$component.filteredRecordCount}} ' +
+                    template: '<div class="pager-info small" ng-hide="$component.isEmpty">' +
+                        '{{\'UI_SHOWINGRECORDS\' | translate: currentInitial:currentTop:$component.filteredRecordCount}} ' +
                         '<span ng-show="filtered">' +
                         '{{\'UI_FILTEREDRECORDS\' | translate: $component.totalRecordCount}}</span>' +
                         '</div>',
@@ -4550,6 +4551,22 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     };
                 };
 
+                var reduceFilterArray = function (filters) {
+                    var filtersPattern = {};
+
+                    for (var i in filters) {
+                        if (filters.hasOwnProperty(i)) {
+                            for (var k in filters[i]) {
+                                if (filters[i].hasOwnProperty(k)) {
+                                    filtersPattern[k] = filters[i][k];
+                                }
+                            }
+                        }
+                    }
+
+                    return filtersPattern;
+                };
+
                 me.pageRequest = function(request, database) {
                     var response = {
                         Counter: 0,
@@ -4568,7 +4585,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     // TODO: Check SortOrder 
                     var sorts = request.Columns
                         .filter(function(el) { return el.SortOrder > 0; })
-                        .map(function(el) { return (el.SortDirection == 'Descending' ? '-' : '') + el.Name; });
+                        .map(function(el) { return (el.SortDirection === 'Descending' ? '-' : '') + el.Name; });
 
                     for (var sort in sorts) {
                         if (sorts.hasOwnProperty(sort)) {
@@ -4582,7 +4599,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         .filter(function(el) { return el.Filter && el.Filter.Text; })
                         .map(function(el) {
                             var obj = {};
-                            if (el.Filter.Operator == 'Contains') {
+                            if (el.Filter.Operator === 'Contains') {
                                 obj[el.Name] = el.Filter.Text;
                             }
 
@@ -4590,22 +4607,22 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         });
 
                     if (filters.length > 0) {
-                        var filtersPattern = {};
-
-                        for (var i in filters) {
-                            if (filters.hasOwnProperty(i)) {
-                                for (var k in filters[i]) {
-                                    if (filters[i].hasOwnProperty(k)) {
-                                        filtersPattern[k] = filters[i][k];
-                                    }
-                                }
-                            }
-                        }
-
-                        set = $filter('filter')(set, filtersPattern);
+                        set = $filter('filter')(set, reduceFilterArray(filters));
                     }
 
-                    // TODO: Free text search
+                    if (request.Search && request.Search.Operator === 'Auto' && request.Search.Text) {
+                        var searchables = request.Columns
+                            .filter(function(el) { return el.Searchable; })
+                            .map(function(el) {
+                                var obj = {};
+                                obj[el.Name] = request.Search.Text;
+                                return obj;
+                            });
+
+                        if (searchables.length > 0) {
+                            set = $filter('filter')(set, reduceFilterArray(searchables));
+                        }
+                    }
 
                     response.FilteredRecordCount = set.length;
                     response.TotalRecordCount = set.length;
