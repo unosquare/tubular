@@ -188,6 +188,26 @@ namespace Unosquare.Tubular
                         column.Filter.Text = model.Filter.Substring(2);
                         column.Filter.Operator = CompareOperators.NotContains;
                     }
+                    else if (model.Filter.StartsWith(">="))
+                    {
+                        column.Filter.Text = model.Filter.Substring(2);
+                        column.Filter.Operator = CompareOperators.Gte;
+                    }
+                    else if (model.Filter.StartsWith("<="))
+                    {
+                        column.Filter.Text = model.Filter.Substring(2);
+                        column.Filter.Operator = CompareOperators.Lte;
+                    }
+                    else if (model.Filter.StartsWith(">"))
+                    {
+                        column.Filter.Text = model.Filter.Substring(1);
+                        column.Filter.Operator = CompareOperators.Gt;
+                    }
+                    else if (model.Filter.StartsWith("<"))
+                    {
+                        column.Filter.Text = model.Filter.Substring(1);
+                        column.Filter.Operator = CompareOperators.Gt;
+                    }
                 }
 
                 columns.Add(column);

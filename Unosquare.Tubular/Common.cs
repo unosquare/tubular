@@ -1,13 +1,11 @@
-﻿using System.Text.RegularExpressions;
-
-namespace Unosquare.Tubular
+﻿namespace Unosquare.Tubular
 {
     using System;
     using System.Collections.Generic;
     using Unosquare.Tubular.ObjectModel;
 
     /// <summary>
-    /// Enums Sort directions
+    /// Enumeration Sort directions
     /// </summary>
     public enum SortDirection
     {
@@ -28,7 +26,7 @@ namespace Unosquare.Tubular
     }
 
     /// <summary>
-    /// Enum filtering operators
+    /// Enumeration filtering operators
     /// </summary>
     public enum CompareOperators
     {
@@ -38,7 +36,7 @@ namespace Unosquare.Tubular
         None,
 
         /// <summary>
-        /// Autofiltering
+        /// Auto-filtering
         /// </summary>
         Auto,
 
@@ -68,12 +66,12 @@ namespace Unosquare.Tubular
         EndsWith,
 
         /// <summary>
-        /// Greather than or equal filter
+        /// Greater than or equal filter
         /// </summary>
         Gte,
 
         /// <summary>
-        /// Greather than filter
+        /// Greater than filter
         /// </summary>
         Gt,
 
@@ -365,12 +363,7 @@ namespace Unosquare.Tubular
                 }
             }
         };
-
-        /// <summary>
-        /// Replace Join Regular Expresion
-        /// </summary>
-        public static readonly Regex ReplaceJoin = new Regex(@"(\w+ as \w+)");
-
+        
         /// <summary>
         /// Defaults Grid Options
         /// </summary>

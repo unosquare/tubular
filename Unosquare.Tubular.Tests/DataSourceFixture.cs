@@ -27,8 +27,7 @@ namespace Unosquare.Tubular.Tests
             _repo = new DataSourceRepository();
             _repo.AddSource(_context.Things);
         }
-
-
+        
         [Test]
         public void GetMetadata()
         {
