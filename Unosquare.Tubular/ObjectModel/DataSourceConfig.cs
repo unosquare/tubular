@@ -5,12 +5,12 @@ using System.Linq;
 namespace Unosquare.Tubular.ObjectModel
 {
     /// <summary>
-    /// Defines a datasource config implementation
+    /// Defines a DataSource config implementation
     /// </summary>
     public interface IDataSourceConfig
     {
         /// <summary>
-        /// Gets the datasource
+        /// Gets the DataSource
         /// </summary>
         /// <returns></returns>
         IQueryable GetSource();
@@ -21,7 +21,7 @@ namespace Unosquare.Tubular.ObjectModel
         List<IDataSourceJoinConfig> Joins { get; set; }
 
         /// <summary>
-        /// The Datasource name
+        /// The DataSource name
         /// </summary>
         string Name { get; }
 
@@ -32,7 +32,7 @@ namespace Unosquare.Tubular.ObjectModel
     }
 
     /// <summary>
-    /// Defines a generic datasource with a IQueryable source
+    /// Defines a generic DataSource with a IQueryable source
     /// </summary>
     public class DataSourceConfig : IDataSourceConfig
     {
@@ -54,7 +54,7 @@ namespace Unosquare.Tubular.ObjectModel
         }
 
         /// <summary>
-        /// The Datasource name
+        /// The DataSource name
         /// </summary>
         public string Name { get; private set; }
 
@@ -64,7 +64,7 @@ namespace Unosquare.Tubular.ObjectModel
         public List<IDataSourceJoinConfig> Joins { get; set; }
 
         /// <summary>
-        /// Gets the datasource
+        /// Gets the DataSource
         /// </summary>
         /// <returns></returns>
         public IQueryable GetSource()
@@ -72,29 +72,31 @@ namespace Unosquare.Tubular.ObjectModel
             return _dataSource;
         }
 
+        internal static List<GridColumn> GetColumnsFromType(Type type)
+        {
+            return type.GetProperties().Where(x => x.CanRead && Common.PrimitiveTypes.Contains(x.PropertyType))
+                .Select(
+                    y =>
+                        new GridColumn
+                        {
+                            Name = y.Name,
+                            DataType =
+                                CodeGenerator.GetDataTypeFromString(
+                                    (Nullable.GetUnderlyingType(y.PropertyType) ?? y.PropertyType).Name)
+                        }).OrderBy(x => x.Name).ToList();
+        }
+
         /// <summary>
         /// Get the columns
         /// </summary>
         public List<GridColumn> Columns
         {
-            get
-            {
-                return _type.GetProperties().Where(x => x.CanRead)
-                    .Select(
-                        y =>
-                            new GridColumn
-                            {
-                                Name = y.Name,
-                                DataType =
-                                    CodeGenerator.GetDataTypeFromString(
-                                        (Nullable.GetUnderlyingType(y.PropertyType) ?? y.PropertyType).Name)
-                            }).OrderBy(x => x.Name).ToList();
-            }
+            get { return GetColumnsFromType(_type); }
         }
     }
 
     /// <summary>
-    /// Defines a generic datasource with a internal IQueryable source
+    /// Defines a generic DataSource with a internal IQueryable source
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public class DataSourceConfig<T> : IDataSourceConfig where T : class
@@ -113,7 +115,7 @@ namespace Unosquare.Tubular.ObjectModel
         }
 
         /// <summary>
-        /// The Datasource name
+        /// The DataSource name
         /// </summary>
         public string Name { get; private set; }
 
@@ -123,7 +125,7 @@ namespace Unosquare.Tubular.ObjectModel
         public List<IDataSourceJoinConfig> Joins { get; set; }
 
         /// <summary>
-        /// Gets the datasource
+        /// Gets the DataSource
         /// </summary>
         /// <returns></returns>
         public IQueryable GetSource()
@@ -136,19 +138,7 @@ namespace Unosquare.Tubular.ObjectModel
         /// </summary>
         public List<GridColumn> Columns
         {
-            get
-            {
-                return typeof (T).GetProperties().Where(x => x.CanRead)
-                    .Select(
-                        y =>
-                            new GridColumn
-                            {
-                                Name = y.Name,
-                                DataType =
-                                    CodeGenerator.GetDataTypeFromString(
-                                        (Nullable.GetUnderlyingType(y.PropertyType) ?? y.PropertyType).Name)
-                            }).OrderBy(x => x.Name).ToList();
-            }
+            get { return DataSourceConfig.GetColumnsFromType(typeof (T)); }
         }
     }
 }
