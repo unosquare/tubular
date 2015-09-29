@@ -16,7 +16,12 @@
         public string Column { get; set; }
 
         /// <summary>
-        /// Datasource Name
+        /// The Label
+        /// </summary>
+        public string Label { get; set; }
+
+        /// <summary>
+        /// DataSource Name
         /// </summary>
         public string DataSource { get; set; }
 

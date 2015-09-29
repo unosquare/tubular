@@ -117,7 +117,6 @@
                         Filter: $scope.Model.Filter
                     });
 
-                    $scope.Model.AggregationFunction = '';
                     $scope.Model.Filter = '';
                 };
 

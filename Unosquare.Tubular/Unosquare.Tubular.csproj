@@ -33,13 +33,18 @@
     <DocumentationFile>bin\Release\Unosquare.Tubular.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FluentValidationNA, Version=1.2.16.24816, Culture=neutral, PublicKeyToken=0950390b87309e14, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentValidationNA.1.2.16\lib\net40\FluentValidationNA.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Linq.Dynamic">
-      <HintPath>..\packages\System.Linq.Dynamic.1.0.4\lib\net40\System.Linq.Dynamic.dll</HintPath>
+    <Reference Include="System.Linq.Dynamic, Version=1.1.14.15853, Culture=neutral, PublicKeyToken=b72be0322d1b32a8, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Linq.Dynamic.Library.1.1.14\lib\net40\System.Linq.Dynamic.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System.Net.Http" />
   </ItemGroup>
@@ -49,7 +54,6 @@
     <Compile Include="DataSourceRepository.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="FluentExtension.cs" />
-    <Compile Include="LinqExtensions.cs" />
     <Compile Include="ObjectModel\DataSourceConfig.cs" />
     <Compile Include="ObjectModel\DataSourceItemModel.cs" />
     <Compile Include="ObjectModel\DataSourceJoinConfig.cs" />

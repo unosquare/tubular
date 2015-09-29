@@ -43,7 +43,19 @@
             var companies = new[]
             {"Unosquare LLC", "Advanced Technology Systems", "Super La Playa", "Vesta", "Microsoft", "Oxxo", "Simian"};
 
+
+            context.Products.AddRange(new[]
+            {
+                new Product { Name="CocaCola" },
+                new Product { Name="Pepsi" },
+                new Product { Name="Starbucks" },
+                new Product { Name="Donut" }
+            });
+
+            context.SaveChanges();
+
             var rand = new Random();
+            var products = context.Products.ToArray();
 
             for (var i = 0; i < 500; i ++)
             {
@@ -63,7 +75,8 @@
                     {
                         Price = rand.Next(10),
                         Description = "Product ID" + rand.Next(1000),
-                        Quantity = rand.Next(10)
+                        Quantity = rand.Next(10),
+                        ProductID = products[rand.Next(products.Length - 1)].ProductID
                     });
                 }
 

@@ -129,8 +129,8 @@
 
                     if (validJoin == false)
                     {
-                        fk.Joins.Add(new DataSourceJoinConfig(join.Name2, join.Key2.Split('.')[1], join.Name1,
-                            join.Key1.Split('.')[1]));
+                        fk.Joins.Add(new DataSourceJoinConfig(join.Name2, join.Key2, join.Name1,
+                            join.Key1));
                     }
                 }
             }

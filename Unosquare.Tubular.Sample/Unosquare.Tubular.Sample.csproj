@@ -168,6 +168,7 @@
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Models\Order.cs" />
     <Compile Include="Models\OrderDetail.cs" />
+    <Compile Include="Models\Product.cs" />
     <Compile Include="Models\SampleDbContext.cs" />
     <Compile Include="Models\SampleDbContextInitializer.cs" />
     <Compile Include="Models\SystemRole.cs" />

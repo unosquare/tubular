@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Unosquare.Tubular.ObjectModel
+﻿namespace Unosquare.Tubular.ObjectModel
 {
     /// <summary>
     /// Defines a DataSource join configuration implementation
@@ -26,16 +24,6 @@ namespace Unosquare.Tubular.ObjectModel
         /// The Destination key
         /// </summary>
         string Key2 { get; }
-
-        /// <summary>
-        /// The join selector (a valida Linq Dynamic string query)
-        /// </summary>
-        string Selector { get; }
-
-        /// <summary>
-        /// The partial Join selector
-        /// </summary>
-        string Selector2 { get; }
     }
 
     /// <summary>
@@ -76,7 +64,7 @@ namespace Unosquare.Tubular.ObjectModel
         /// </summary>
         public string Key1
         {
-            get { return Name1 + "." + _firstKey; }
+            get { return _firstKey; }
         }
 
         /// <summary>
@@ -84,24 +72,7 @@ namespace Unosquare.Tubular.ObjectModel
         /// </summary>
         public string Key2
         {
-            get { return Name2 + "." + _secondKey; }
-        }
-
-
-        /// <summary>
-        /// The join selector (a valida Linq Dynamic string query)
-        /// </summary>
-        public string Selector
-        {
-            get { return String.Format("new ({0} as {0}, {1} as {1})", Name1, Name2); }
-        }
-
-        /// <summary>
-        /// The partial Join selector
-        /// </summary>
-        public string Selector2
-        {
-            get { return String.Format(", {0} as {0})", Name2); }
+            get { return _secondKey; }
         }
     }
 
@@ -145,7 +116,7 @@ namespace Unosquare.Tubular.ObjectModel
         /// </summary>
         public string Key1
         {
-            get { return Name1 + "." + _firstKey; }
+            get { return _firstKey; }
         }
 
         /// <summary>
@@ -153,23 +124,7 @@ namespace Unosquare.Tubular.ObjectModel
         /// </summary>
         public string Key2
         {
-            get { return Name2 + "." + _secondKey; }
-        }
-
-        /// <summary>
-        /// The join selector (a valida Linq Dynamic string query)
-        /// </summary>
-        public string Selector
-        {
-            get { return String.Format("new ({0} as {0}, {1} as {1})", Name1, Name2); }
-        }
-
-        /// <summary>
-        /// The partial Join selector
-        /// </summary>
-        public string Selector2
-        {
-            get { return String.Format(", {0} as {0})", Name2); }
+            get { return _secondKey; }
         }
     }
 }

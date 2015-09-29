@@ -545,10 +545,10 @@
             int records = 8)
         {
             // TODO: I need to connect this to a better platform
-            return dataSource.CreateDynamicFilteredSet(fieldName, filter)
-                .Select(fieldName + ".ToString()")
+            return (dataSource.CreateDynamicFilteredSet(fieldName, filter)
+                .Select(fieldName + ".ToString()") as IQueryable<string>)
                 .Distinct()
-                .Take(records) as IQueryable<string>;
+                .Take(records);
         }
 
         /// <summary>
@@ -561,11 +561,11 @@
         public static IQueryable<string> CreateTypeAheadList(this IQueryable dataSource, string fieldName,
             int records = 8)
         {
-            dataSource = dataSource
-                .Select(fieldName + ".ToString()")
+            var stringDatasource = (dataSource
+                .Select(fieldName + ".ToString()") as IQueryable<string>)
                 .Distinct();
 
-            return (records > 0 ? dataSource.Take(records) : dataSource) as IQueryable<string>;
+            return (records > 0 ? stringDatasource.Take(records) : stringDatasource);
         }
     }
 }
