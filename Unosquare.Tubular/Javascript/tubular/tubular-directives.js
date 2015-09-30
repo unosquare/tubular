@@ -713,6 +713,37 @@
         ])
         /**
          * @ngdoc directive
+         * @name tbFootSet
+         * @restrict E
+         *
+         * @description
+         * The `tbFootSet` directive is to handle footer.
+         * 
+         * This directive is replace by an `tfoot` HTML element.
+         * 
+         * @scope
+         */
+        .directive('tbFootSet', [
+            function () {
+
+                return {
+                    require: '^tbGrid',
+                    template: '<tfoot ng-transclude></tfoot>',
+                    restrict: 'E',
+                    replace: true,
+                    transclude: true,
+                    scope: false,
+                    controller: [
+                        '$scope', function ($scope) {
+                            $scope.$component = $scope.$parent.$component || $scope.$parent.$parent.$component;
+                            $scope.tubularDirective = 'tubular-foot-set';
+                        }
+                    ]
+                };
+            }
+        ])
+        /**
+         * @ngdoc directive
          * @name tbRowTemplate
          * @restrict E
          *
@@ -730,7 +761,7 @@
             function() {
 
                 return {
-                    require: '^tbRowSet',
+                    // TODO: I can't choose one require: ['^tbRowSet', '^tbFootSet'],
                     template: '<tr ng-transclude' +
                         ' ng-class="{\'info\': selectableBool && model.$selected}"' +
                         ' ng-click="changeSelection(model)"></tr>',

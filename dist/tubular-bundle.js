@@ -1440,6 +1440,37 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
         ])
         /**
          * @ngdoc directive
+         * @name tbFootSet
+         * @restrict E
+         *
+         * @description
+         * The `tbFootSet` directive is to handle footer.
+         * 
+         * This directive is replace by an `tfoot` HTML element.
+         * 
+         * @scope
+         */
+        .directive('tbFootSet', [
+            function () {
+
+                return {
+                    require: '^tbGrid',
+                    template: '<tfoot ng-transclude></tfoot>',
+                    restrict: 'E',
+                    replace: true,
+                    transclude: true,
+                    scope: false,
+                    controller: [
+                        '$scope', function ($scope) {
+                            $scope.$component = $scope.$parent.$component || $scope.$parent.$parent.$component;
+                            $scope.tubularDirective = 'tubular-foot-set';
+                        }
+                    ]
+                };
+            }
+        ])
+        /**
+         * @ngdoc directive
          * @name tbRowTemplate
          * @restrict E
          *
@@ -1457,7 +1488,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             function() {
 
                 return {
-                    require: '^tbRowSet',
+                    // TODO: I can't choose one require: ['^tbRowSet', '^tbFootSet'],
                     template: '<tr ng-transclude' +
                         ' ng-class="{\'info\': selectableBool && model.$selected}"' +
                         ' ng-click="changeSelection(model)"></tr>',
@@ -3938,7 +3969,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     innerScope.$valid = innerScope.value >= innerScope.min;
 
                                     if (!innerScope.$valid) {
-                                        innerScope.state.$errors = [$filter('translate')('EDITOR_MIN_NUMBER', $filter('date')(innerScope.min, innerScope.format))];
+                                        innerScope.state.$errors = [$filter('translate')('EDITOR_MIN_DATE', $filter('date')(innerScope.min, innerScope.format))];
                                     }
                                 }
 
@@ -3948,13 +3979,13 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                                 if (angular.isDefined(innerScope.max)) {
                                     if (Object.prototype.toString.call(innerScope.max) !== "[object Date]") {
-                                        innerScope.max = new Date(innerScope.min);
+                                        innerScope.max = new Date(innerScope.max);
                                     }
 
                                     innerScope.$valid = innerScope.value <= innerScope.max;
 
                                     if (!innerScope.$valid) {
-                                        innerScope.state.$errors = [$filter('translate')('EDITOR_MIN_NUMBER', $filter('date')(innerScope.min, innerScope.format))];
+                                        innerScope.state.$errors = [$filter('translate')('EDITOR_MAX_DATE', $filter('date')(innerScope.max, innerScope.format))];
                                     }
                                 }
                             };

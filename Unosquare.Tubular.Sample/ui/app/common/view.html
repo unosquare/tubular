@@ -156,6 +156,21 @@
                                     </tb-cell-template>
                                 </tb-row-template>
                             </tb-row-set>
+                            <tb-foot-set>
+                                <tb-row-template class="bg-info">
+                                    <tb-cell-template></tb-cell-template>
+                                    <tb-cell-template></tb-cell-template>
+                                    <tb-cell-template>
+                                        <b>DISTINCT {{$component.aggregationFunctions.CustomerName}}</b>
+                                    </tb-cell-template>
+                                    <tb-cell-template></tb-cell-template>
+                                    <tb-cell-template class="text-right">
+                                        <b>{{$component.aggregationFunctions.Amount | currency}}</b>
+                                    </tb-cell-template>
+                                    <tb-cell-template></tb-cell-template>
+                                    <tb-cell-template></tb-cell-template>
+                                </tb-row-template>
+                            </tb-foot-set>
                         </tb-grid-table>
                     </div>
                 </div>
@@ -163,12 +178,8 @@
 
             <!-- Bottom toolbar nested row -->
             <div class="row">
-                <div class="col-md-6 col-xs-12">
-                    <b>Distinct Customers:</b> {{$parent.aggregationFunctions.CustomerName}} <br/>
-                    <b>Sum Amount:</b> {{$parent.aggregationFunctions.Amount | currency}}
-                </div>
-                <tb-page-size-selector class="col-md-3 col-xs-6"></tb-page-size-selector>
-                <tb-grid-pager-info class="col-md-3 col-xs-6"></tb-grid-pager-info>
+                <tb-page-size-selector class="col-xs-6"></tb-page-size-selector>
+                <tb-grid-pager-info class="col-xs-6"></tb-grid-pager-info>
             </div>
         </div>
     </tb-grid>
