@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Dynamic;
-using Unosquare.Tubular.ObjectModel;
-
-namespace Unosquare.Tubular
+﻿namespace Unosquare.Tubular
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Linq.Dynamic;
+    using Unosquare.Tubular.ObjectModel;
+
     /// <summary>
     /// Repository to save data sources
     /// </summary>

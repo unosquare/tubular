@@ -365,7 +365,7 @@
                                     innerScope.$valid = innerScope.value >= innerScope.min;
 
                                     if (!innerScope.$valid) {
-                                        innerScope.state.$errors = [$filter('translate')('EDITOR_MIN_NUMBER', $filter('date')(innerScope.min, innerScope.format))];
+                                        innerScope.state.$errors = [$filter('translate')('EDITOR_MIN_DATE', $filter('date')(innerScope.min, innerScope.format))];
                                     }
                                 }
 
@@ -375,13 +375,13 @@
 
                                 if (angular.isDefined(innerScope.max)) {
                                     if (Object.prototype.toString.call(innerScope.max) !== "[object Date]") {
-                                        innerScope.max = new Date(innerScope.min);
+                                        innerScope.max = new Date(innerScope.max);
                                     }
 
                                     innerScope.$valid = innerScope.value <= innerScope.max;
 
                                     if (!innerScope.$valid) {
-                                        innerScope.state.$errors = [$filter('translate')('EDITOR_MIN_NUMBER', $filter('date')(innerScope.min, innerScope.format))];
+                                        innerScope.state.$errors = [$filter('translate')('EDITOR_MAX_DATE', $filter('date')(innerScope.max, innerScope.format))];
                                     }
                                 }
                             };

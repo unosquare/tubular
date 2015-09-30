@@ -1,15 +1,15 @@
 ﻿namespace Unosquare.Tubular
 {
-    using System.Net.Http;
-    using System.Text.RegularExpressions;
     using System;
-    using System.ComponentModel;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.Linq;
     using System.Linq.Dynamic;
+    using System.Net.Http;
     using System.Reflection;
     using System.Runtime.CompilerServices;
     using System.Text;
+    using System.Text.RegularExpressions;
     using Unosquare.Tubular.ObjectModel;
 
     /// <summary>

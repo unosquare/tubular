@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Unosquare.Tubular.ObjectModel
+﻿namespace Unosquare.Tubular.ObjectModel
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
     /// <summary>
     /// Defines a DataSource config implementation
     /// </summary>
