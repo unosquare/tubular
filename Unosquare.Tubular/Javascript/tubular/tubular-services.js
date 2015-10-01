@@ -297,12 +297,18 @@
 
                     if (scope.dataType === 'datetime' || scope.dataType === 'date') {
                         scope.filter.Argument = [new Date()];
-                        scope.filter.Operator = 'Equals';
+
+                        if (scope.filter.Operator === 'Contains') {
+                            scope.filter.Operator = 'Equals';
+                        }
                     }
 
                     if (scope.dataType === 'numeric' || scope.dataType === 'boolean') {
                         scope.filter.Argument = [1];
-                        scope.filter.Operator = 'Equals';
+
+                        if (scope.filter.Operator === 'Contains') {
+                            scope.filter.Operator = 'Equals';
+                        }
                     }
 
                     scope.filterTitle = lAttrs.title || $filter('translate')('CAPTION_FILTER');

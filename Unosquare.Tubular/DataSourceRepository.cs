@@ -180,32 +180,32 @@
 
                     if (model.Filter.StartsWith("="))
                     {
-                        column.Filter.Text = model.Filter.Substring(1);
+                        column.Filter.Text = model.Filter.Substring(1).Trim();
                         column.Filter.Operator = CompareOperators.Contains;
                     }
                     else if (model.Filter.StartsWith("!="))
                     {
-                        column.Filter.Text = model.Filter.Substring(2);
+                        column.Filter.Text = model.Filter.Substring(2).Trim();
                         column.Filter.Operator = CompareOperators.NotContains;
                     }
                     else if (model.Filter.StartsWith(">="))
                     {
-                        column.Filter.Text = model.Filter.Substring(2);
+                        column.Filter.Text = model.Filter.Substring(2).Trim();
                         column.Filter.Operator = CompareOperators.Gte;
                     }
                     else if (model.Filter.StartsWith("<="))
                     {
-                        column.Filter.Text = model.Filter.Substring(2);
+                        column.Filter.Text = model.Filter.Substring(2).Trim();
                         column.Filter.Operator = CompareOperators.Lte;
                     }
                     else if (model.Filter.StartsWith(">"))
                     {
-                        column.Filter.Text = model.Filter.Substring(1);
+                        column.Filter.Text = model.Filter.Substring(1).Trim();
                         column.Filter.Operator = CompareOperators.Gt;
                     }
                     else if (model.Filter.StartsWith("<"))
                     {
-                        column.Filter.Text = model.Filter.Substring(1);
+                        column.Filter.Text = model.Filter.Substring(1).Trim();
                         column.Filter.Operator = CompareOperators.Gt;
                     }
                 }

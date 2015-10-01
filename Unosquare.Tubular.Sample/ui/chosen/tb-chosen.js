@@ -151,5 +151,72 @@
                 controller: chosenCtrl
             };
         }
+    ]).directive('tbColumnChosenFilter', [
+            'tubularGridFilterService', function (tubularGridFilterService) {
+
+                return {
+                    require: '^tbColumn',
+                    template: '<div class="tubular-column-menu">' +
+                        '<button class="btn btn-xs btn-default btn-popover" ng-click="open()" ' +
+                        'ng-class="{ \'btn-success\': filter.HasFilter }">' +
+                        '<i class="fa fa-filter"></i></button>' +
+                        '<div style="display: none;">' +
+                        '<button type="button" class="close" data-dismiss="modal" ng-click="close()"><span aria-hidden="true">×</span></button>' +
+                        '<h4>{{::filterTitle}}</h4>' +
+                        '<form class="tubular-column-filter-form" onsubmit="return false;">' +
+                        '<select class="form-control" ng-model="filter.Text" ng-options="item for item in optionsItems" ' +
+                        ' ng-disabled="dataIsLoaded == false"></select>' +
+                        '<hr />' +
+                        '<tb-column-filter-buttons></tb-column-filter-buttons>' +
+                        '</form></div>' +
+                        '</div>',
+                    restrict: 'E',
+                    replace: true,
+                    transclude: true,
+                    scope: false,
+                    controller: [
+                        '$scope', '$timeout', function ($scope, $timeout) {
+                            $scope.getOptionsFromUrl = function () {
+                                $scope.$component.dataService.retrieveDataAsync({
+                                    serverUrl: $scope.filter.OptionsUrl,
+                                    requestMethod: 'GET'
+                                }).promise.then(function (data) {
+                                    $scope.optionsItems = data;
+                                    $scope.filter.Operator = 'Contains';
+
+                                    if (angular.isDefined($scope.optionLabel)) {
+                                        $scope.optionsItems = data.map(function (x) { return x[$scope.optionLabel]; });
+                                    }
+                                }, function (error) {
+                                    $scope.$emit('tbGrid_OnConnectionError', error);
+                                });
+                            };
+
+                            $scope.loadChosen = function (lElement) {
+                                $(lElement).find('.btn-popover').on('show.bs.popover', function (e) {
+                                    $timeout(function () {
+                                        $(lElement).find('div.popover').find('select').chosen();
+                                    }, 100);
+                                });
+                            };
+                        }
+                    ],
+                    compile: function compile() {
+                        return {
+                            pre: function (scope, lElement, lAttrs) {
+                                scope.optionLabel = lAttrs.optionLabel;
+                                scope.optionKey = lAttrs.optionKey;
+
+                                tubularGridFilterService.applyFilterFuncs(scope, lElement, lAttrs);
+                                tubularGridFilterService.createFilterModel(scope, lAttrs);
+                                scope.getOptionsFromUrl();
+                            },
+                            post: function (scope, lElement, lAttrs) {
+                                scope.loadChosen(lElement);
+                            }
+                        };
+                    }
+                };
+            }
     ]);
 })();
