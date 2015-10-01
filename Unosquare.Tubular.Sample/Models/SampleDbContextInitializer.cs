@@ -43,19 +43,25 @@
             var companies = new[]
             {"Unosquare LLC", "Advanced Technology Systems", "Super La Playa", "Vesta", "Microsoft", "Oxxo", "Simian"};
 
+            context.Warehouses.AddRange(new[]
+            {
+                new Warehouse {Location = shipperCities[0]},
+                new Warehouse {Location = shipperCities[2]}
+            });
 
             context.Products.AddRange(new[]
             {
-                new Product { Name="CocaCola" },
-                new Product { Name="Pepsi" },
-                new Product { Name="Starbucks" },
-                new Product { Name="Donut" }
+                new Product {Name = "CocaCola"},
+                new Product {Name = "Pepsi"},
+                new Product {Name = "Starbucks"},
+                new Product {Name = "Donut"}
             });
 
             context.SaveChanges();
 
             var rand = new Random();
             var products = context.Products.ToArray();
+            var warehouses = context.Warehouses.ToArray();
 
             for (var i = 0; i < 500; i ++)
             {
@@ -68,6 +74,11 @@
                     ShipperCity = shipperCities[rand.Next(shipperCities.Length - 1)],
                     ShippedDate = DateTime.Now.AddDays(1 - rand.Next(10))
                 };
+
+                if (rand.Next(3) == 1)
+                {
+                    order.WarehouseID = warehouses[rand.Next(warehouses.Length - 1)].WarehouseID;
+                }
 
                 for (var k = 0; k < rand.Next(10); i++)
                 {

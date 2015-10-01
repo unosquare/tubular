@@ -49,13 +49,49 @@
         /// <param name="key1"></param>
         /// <param name="key2"></param>
         /// <returns></returns>
+        public static IDataSourceConfig WithJoin<T1, T2, T3>(this IDataSourceConfig config,
+            Expression<Func<T1, T3>> key1, Expression<Func<T2, T3>> key2)
+            where T1 : class
+        {
+            if (config == null) throw new ArgumentNullException("config");
+
+            var expression1 = key1.Body is MemberExpression
+                ? (MemberExpression)key1.Body
+                : ((MemberExpression)((UnaryExpression)key1.Body).Operand);
+
+            var expression2 = key2.Body is MemberExpression
+                ? (MemberExpression)key2.Body
+                : ((MemberExpression)((UnaryExpression)key2.Body).Operand);
+
+            config.Joins.Add(new DataSourceJoinConfig<T1, T2>(expression1.Member.Name, expression2.Member.Name));
+
+            return config;
+        }
+
+        /// <summary>
+        /// Add a Join to DataSource
+        /// </summary>
+        /// <typeparam name="T1"></typeparam>
+        /// <typeparam name="T2"></typeparam>
+        /// <typeparam name="T3"></typeparam>
+        /// <param name="config"></param>
+        /// <param name="key1"></param>
+        /// <param name="key2"></param>
+        /// <returns></returns>
         public static DataSourceConfig<T1> WithJoin<T1, T2, T3>(this DataSourceConfig<T1> config,
             Expression<Func<T1, T3>> key1, Expression<Func<T2, T3>> key2)
             where T1 : class
         {
-            var expression1 = (MemberExpression) key1.Body;
-            var expression2 = (MemberExpression) key2.Body;
+            if (config == null) throw new ArgumentNullException("config");
 
+            var expression1 = key1.Body is MemberExpression
+                ? (MemberExpression) key1.Body
+                : ((MemberExpression) ((UnaryExpression) key1.Body).Operand);
+
+            var expression2 = key2.Body is MemberExpression
+                ? (MemberExpression) key2.Body
+                : ((MemberExpression) ((UnaryExpression) key2.Body).Operand);
+            
             config.Joins.Add(new DataSourceJoinConfig<T1, T2>(expression1.Member.Name, expression2.Member.Name));
 
             return config;
@@ -72,6 +108,8 @@
         public static DataSourceConfig<T1> WithJoin<T1, T2>(this DataSourceConfig<T1> config, string key)
             where T1 : class
         {
+            if (config == null) throw new ArgumentNullException("config");
+
             config.Joins.Add(new DataSourceJoinConfig<T1, T2>(key, key));
 
             return config;

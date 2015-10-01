@@ -24,6 +24,8 @@ namespace Unosquare.Tubular.Sample.Models
 
         public string CreatedUserId { get; set; }
 
+        public int? WarehouseID { get; set; }
+
         public virtual SystemUser CreatedUser { get; set; }
 
         public ICollection<OrderDetail> Details { get; set; }

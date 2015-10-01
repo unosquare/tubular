@@ -1,5 +1,6 @@
 ﻿namespace Unosquare.Tubular.Sample.Controllers
 {
+    using System.Linq;
     using System.Web.Http;
     using Unosquare.Tubular.ObjectModel;
     using Unosquare.Tubular.Sample.Application;
@@ -14,6 +15,10 @@
         public ReportController()
         {
             _dataSources = _database.GetDataSourceRepository();
+            // Adding additional relation
+            //_dataSources.First(x => x.Name == typeof (Order).Name)
+                //.Joins.Add(new DataSourceJoinConfig("Order", "WarehouseID", "Warehouse", "WarehouseID"));
+                //.WithJoin<Order, Warehouse, int>(x => x.WarehouseID.Value, x => x.WarehouseID);
         }
 
         [HttpGet, Route("datasources")]
