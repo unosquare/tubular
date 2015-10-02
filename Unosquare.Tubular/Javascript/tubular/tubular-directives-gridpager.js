@@ -48,14 +48,14 @@
                     ],
                     compile: function compile() {
                         return {
-                            post: function (scope, lElement, lAttrs, lController, lTransclude) {
+                            post: function (scope, lElement, lAttrs) {
                                 scope.firstButtonClass = lAttrs.firstButtonClass || 'fa fa-fast-backward';
                                 scope.prevButtonClass = lAttrs.prevButtonClass || 'fa fa-backward';
 
                                 scope.nextButtonClass = lAttrs.nextButtonClass || 'fa fa-forward';
                                 scope.lastButtonClass = lAttrs.lastButtonClass || 'fa fa-fast-forward';
 
-                                $timeout(function () {
+                                var timer = $timeout(function () {
                                     var allLinks = lElement.find('li a');
 
                                     $(allLinks[0]).html('<i class="' + scope.firstButtonClass + '"></i>');
@@ -65,6 +65,7 @@
                                     $(allLinks[allLinks.length - 1]).html('<i class="' + scope.lastButtonClass + '"></i>');
                                 }, 0);
 
+                                scope.$on('$destroy', function () { $timeout.cancel(timer); });
                             }
                         };
                     }

@@ -9,7 +9,7 @@
          *
          * @description
          * The `tbForm` directive is the base to create any form. You can define a `dataService` and a
-         * `modelKey` to autoload a record. The `serverSaveUrl` can be used to create a new or update
+         * `modelKey` to auto-load a record. The `serverSaveUrl` can be used to create a new or update
          * an existing record.
          * 
          * @scope
@@ -44,7 +44,7 @@
                     },
                     controller: [
                         '$scope', '$routeParams', 'tubularModel', 'tubularHttp', '$timeout', '$element',
-                        function ($scope, $routeParams, TubularModel, tubularHttp, $timeout, $element) {
+                        function($scope, $routeParams, TubularModel, tubularHttp, $timeout, $element) {
                             $scope.tubularDirective = 'tubular-form';
                             $scope.serverSaveMethod = $scope.serverSaveMethod || 'POST';
                             $scope.fields = [];
@@ -66,7 +66,7 @@
                                 });
                             };
 
-                            $scope.retrieveData = function () {
+                            $scope.retrieveData = function() {
                                 // Try to load a key from markup or route
                                 $scope.modelKey = $scope.modelKey || $routeParams.param;
 
@@ -75,15 +75,15 @@
                                         $scope.modelKey != null &&
                                         $scope.modelKey !== '') {
                                         $scope.dataService.getByKey($scope.serverUrl, $scope.modelKey).promise.then(
-                                            function (data) {
+                                            function(data) {
                                                 $scope.model = new TubularModel($scope, data, $scope.dataService);
                                                 $scope.bindFields();
-                                            }, function (error) {
+                                            }, function(error) {
                                                 $scope.$emit('tbForm_OnConnectionError', error);
                                             });
                                     } else {
                                         $scope.dataService.get(tubularHttp.addTimeZoneToUrl($scope.serverUrl)).promise.then(
-                                            function (data) {
+                                            function(data) {
                                                 var innerScope = $scope;
                                                 var dataService = $scope.dataService;
 
@@ -95,7 +95,7 @@
                                                 $scope.model = new TubularModel(innerScope, data, dataService);
                                                 $scope.bindFields();
                                                 $scope.model.$isNew = true;
-                                            }, function (error) {
+                                            }, function(error) {
                                                 $scope.$emit('tbForm_OnConnectionError', error);
                                             });
                                     }
@@ -140,7 +140,7 @@
                                 $scope.save();
                             };
 
-                            $scope.create = function () {
+                            $scope.create = function() {
                                 if (!$scope.model.$valid()) {
                                     return;
                                 }
@@ -153,8 +153,8 @@
                                 $scope.$emit('tbForm_OnCancel', $scope.model);
                             };
 
-                            $scope.clear = function () {
-                                angular.forEach($scope.fields, function (field) {
+                            $scope.clear = function() {
+                                angular.forEach($scope.fields, function(field) {
                                     if (field.resetEditor) {
                                         field.resetEditor();
                                     } else {
@@ -163,8 +163,8 @@
                                 });
                             };
 
-                            $scope.finishDefinition = function () {
-                                $timeout(function () {
+                            $scope.finishDefinition = function() {
+                                var timer = $timeout(function() {
                                     $scope.hasFieldsDefinitions = true;
 
                                     if ($element.find('input').length) {
@@ -173,6 +173,7 @@
                                 }, 0);
 
                                 $scope.$emit('tbForm_OnGreetParentController', $scope);
+                                $scope.$on('$destroy', function() { $timeout.cancel(timer); });
                             };
                         }
                     ],

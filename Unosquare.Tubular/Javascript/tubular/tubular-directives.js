@@ -647,11 +647,14 @@
                                     $(icon).removeClass(tubularConst.downCssClass);
 
                                     var cssClass = "";
-                                    if (scope.$parent.column.SortDirection === 'Ascending')
-                                        cssClass = tubularConst.upCssClass;
 
-                                    if (scope.$parent.column.SortDirection === 'Descending')
+                                    if (scope.$parent.column.SortDirection === 'Ascending') {
+                                        cssClass = tubularConst.upCssClass;
+                                    }
+
+                                    if (scope.$parent.column.SortDirection === 'Descending') {
                                         cssClass = tubularConst.downCssClass;
+                                    }
 
                                     $(icon).addClass(cssClass);
                                 };
@@ -660,12 +663,14 @@
                                     refreshIcon($('i.sort-icon.fa', lElement.parent()));
                                 });
 
-                                $timeout(function() {
+                                var timer = $timeout(function() {
                                     $(lElement).after('&nbsp;<i class="sort-icon fa"></i>');
 
                                     var icon = $('i.sort-icon.fa', lElement.parent());
                                     refreshIcon(icon);
                                 }, 0);
+
+                                scope.$on('$destroy', function () { $timeout.cancel(timer); });
                             },
                             post: function(scope, lElement) {
                                 scope.label = scope.$parent.label;

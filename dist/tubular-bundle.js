@@ -1374,11 +1374,14 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     $(icon).removeClass(tubularConst.downCssClass);
 
                                     var cssClass = "";
-                                    if (scope.$parent.column.SortDirection === 'Ascending')
-                                        cssClass = tubularConst.upCssClass;
 
-                                    if (scope.$parent.column.SortDirection === 'Descending')
+                                    if (scope.$parent.column.SortDirection === 'Ascending') {
+                                        cssClass = tubularConst.upCssClass;
+                                    }
+
+                                    if (scope.$parent.column.SortDirection === 'Descending') {
                                         cssClass = tubularConst.downCssClass;
+                                    }
 
                                     $(icon).addClass(cssClass);
                                 };
@@ -1387,12 +1390,14 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     refreshIcon($('i.sort-icon.fa', lElement.parent()));
                                 });
 
-                                $timeout(function() {
+                                var timer = $timeout(function() {
                                     $(lElement).after('&nbsp;<i class="sort-icon fa"></i>');
 
                                     var icon = $('i.sort-icon.fa', lElement.parent());
                                     refreshIcon(icon);
                                 }, 0);
+
+                                scope.$on('$destroy', function () { $timeout.cancel(timer); });
                             },
                             post: function(scope, lElement) {
                                 scope.label = scope.$parent.label;
@@ -2566,7 +2571,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          *
          * @description
          * The `tbForm` directive is the base to create any form. You can define a `dataService` and a
-         * `modelKey` to autoload a record. The `serverSaveUrl` can be used to create a new or update
+         * `modelKey` to auto-load a record. The `serverSaveUrl` can be used to create a new or update
          * an existing record.
          * 
          * @scope
@@ -2601,7 +2606,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     },
                     controller: [
                         '$scope', '$routeParams', 'tubularModel', 'tubularHttp', '$timeout', '$element',
-                        function ($scope, $routeParams, TubularModel, tubularHttp, $timeout, $element) {
+                        function($scope, $routeParams, TubularModel, tubularHttp, $timeout, $element) {
                             $scope.tubularDirective = 'tubular-form';
                             $scope.serverSaveMethod = $scope.serverSaveMethod || 'POST';
                             $scope.fields = [];
@@ -2623,7 +2628,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 });
                             };
 
-                            $scope.retrieveData = function () {
+                            $scope.retrieveData = function() {
                                 // Try to load a key from markup or route
                                 $scope.modelKey = $scope.modelKey || $routeParams.param;
 
@@ -2632,15 +2637,15 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                         $scope.modelKey != null &&
                                         $scope.modelKey !== '') {
                                         $scope.dataService.getByKey($scope.serverUrl, $scope.modelKey).promise.then(
-                                            function (data) {
+                                            function(data) {
                                                 $scope.model = new TubularModel($scope, data, $scope.dataService);
                                                 $scope.bindFields();
-                                            }, function (error) {
+                                            }, function(error) {
                                                 $scope.$emit('tbForm_OnConnectionError', error);
                                             });
                                     } else {
                                         $scope.dataService.get(tubularHttp.addTimeZoneToUrl($scope.serverUrl)).promise.then(
-                                            function (data) {
+                                            function(data) {
                                                 var innerScope = $scope;
                                                 var dataService = $scope.dataService;
 
@@ -2652,7 +2657,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                                 $scope.model = new TubularModel(innerScope, data, dataService);
                                                 $scope.bindFields();
                                                 $scope.model.$isNew = true;
-                                            }, function (error) {
+                                            }, function(error) {
                                                 $scope.$emit('tbForm_OnConnectionError', error);
                                             });
                                     }
@@ -2697,7 +2702,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 $scope.save();
                             };
 
-                            $scope.create = function () {
+                            $scope.create = function() {
                                 if (!$scope.model.$valid()) {
                                     return;
                                 }
@@ -2710,8 +2715,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 $scope.$emit('tbForm_OnCancel', $scope.model);
                             };
 
-                            $scope.clear = function () {
-                                angular.forEach($scope.fields, function (field) {
+                            $scope.clear = function() {
+                                angular.forEach($scope.fields, function(field) {
                                     if (field.resetEditor) {
                                         field.resetEditor();
                                     } else {
@@ -2720,8 +2725,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 });
                             };
 
-                            $scope.finishDefinition = function () {
-                                $timeout(function () {
+                            $scope.finishDefinition = function() {
+                                var timer = $timeout(function() {
                                     $scope.hasFieldsDefinitions = true;
 
                                     if ($element.find('input').length) {
@@ -2730,6 +2735,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 }, 0);
 
                                 $scope.$emit('tbForm_OnGreetParentController', $scope);
+                                $scope.$on('$destroy', function() { $timeout.cancel(timer); });
                             };
                         }
                     ],
@@ -3229,14 +3235,14 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     ],
                     compile: function compile() {
                         return {
-                            post: function (scope, lElement, lAttrs, lController, lTransclude) {
+                            post: function (scope, lElement, lAttrs) {
                                 scope.firstButtonClass = lAttrs.firstButtonClass || 'fa fa-fast-backward';
                                 scope.prevButtonClass = lAttrs.prevButtonClass || 'fa fa-backward';
 
                                 scope.nextButtonClass = lAttrs.nextButtonClass || 'fa fa-forward';
                                 scope.lastButtonClass = lAttrs.lastButtonClass || 'fa fa-fast-forward';
 
-                                $timeout(function () {
+                                var timer = $timeout(function () {
                                     var allLinks = lElement.find('li a');
 
                                     $(allLinks[0]).html('<i class="' + scope.firstButtonClass + '"></i>');
@@ -3246,6 +3252,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     $(allLinks[allLinks.length - 1]).html('<i class="' + scope.lastButtonClass + '"></i>');
                                 }, 0);
 
+                                scope.$on('$destroy', function () { $timeout.cancel(timer); });
                             }
                         };
                     }
