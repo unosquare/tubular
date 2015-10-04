@@ -283,6 +283,8 @@
                                             return model;
                                         });
 
+                                        $scope.$emit('tbGrid_OnDataLoaded', $scope);
+
                                         $scope.aggregationFunctions = data.AggregationPayload;
                                         $scope.currentPage = data.CurrentPage;
                                         $scope.totalPages = data.TotalPages;

@@ -46,9 +46,10 @@
                         $scope.lastSearch = $scope.$component.search.Text;
 
                         $scope.$watch("$component.search.Text", function(val, prev) {
-                            if (angular.isUndefined(val)) return;
-                            if (val === prev) return;
-
+                            if (angular.isUndefined(val) || val === prev) {
+                                return;
+                            }
+                            
                             if ($scope.lastSearch !== "" && val === "") {
                                 $scope.$component.saveSearch();
                                 $scope.$component.search.Operator = 'None';
@@ -56,8 +57,13 @@
                                 return;
                             }
 
-                            if (val === "" || val.length < $scope.minChars) return;
-                            if (val === $scope.lastSearch) return;
+                            if (val === "" || val.length < $scope.minChars) {
+                                return;
+                            }
+
+                            if (val === $scope.lastSearch) {
+                                return;
+                            }
 
                             $scope.lastSearch = val;
                             $scope.$component.saveSearch();
