@@ -50,7 +50,7 @@
                                     <tb-column-header>{{label}}</tb-column-header>
                                     <tb-column-options-filter options-url="/api/orders/cities"></tb-column-options-filter>
                                 </tb-column>
-                                <tb-column name="Amount" label="Amount" column-type="numeric" sortable="true" aggregate="sum">
+                                <tb-column name="Amount" column-type="numeric" sortable="true" aggregate="sum">
                                     <tb-column-header>{{label}}</tb-column-header>
                                     <tb-column-filter></tb-column-filter>
                                 </tb-column>
@@ -60,6 +60,10 @@
                                 </tb-column>
                                 <tb-column name="IsShipped" column-type="boolean" class="column-md" visible="toggleVisible">
                                     <tb-column-header>Shipped?</tb-column-header>
+                                    <tb-column-filter></tb-column-filter>
+                                </tb-column>
+                                <tb-column name="OrderType" column-type="numeric" sortable="true" aggregate="count">
+                                    <tb-column-header>{{label}}</tb-column-header>
                                     <tb-column-filter></tb-column-filter>
                                 </tb-column>
                             </tb-column-definitions>
@@ -106,6 +110,9 @@
                                     </tb-cell-template>
                                     <tb-cell-template class="text-center">
                                         <span class="small">You can't tag this order yet.</span>
+                                    </tb-cell-template>
+                                    <tb-cell-template class="text-center">
+                                        <span>&nbsp;</span>
                                     </tb-cell-template>
                                 </tb-row-template>
                                 <!-- General rows -->
@@ -154,6 +161,10 @@
                                         <tb-checkbox-field is-editing="row.$isEditing" name="IsShipped">
                                         </tb-checkbox-field>
                                     </tb-cell-template>
+                                    <tb-cell-template class="text-center" column-name="OrderType">
+                                        <tb-simple-editor is-editing="row.$isEditing" name="OrderType">
+                                        </tb-simple-editor>
+                                    </tb-cell-template>
                                 </tb-row-template>
                             </tb-row-set>
                             <tb-foot-set>
@@ -169,6 +180,9 @@
                                     </tb-cell-template>
                                     <tb-cell-template column-name="ShippedDate"></tb-cell-template>
                                     <tb-cell-template column-name="IsShipped"></tb-cell-template>
+                                    <tb-cell-template column-name="OrderType">
+                                        <b>COUNT {{$component.aggregationFunctions.OrderType}}</b>
+                                    </tb-cell-template>
                                 </tb-row-template>
                             </tb-foot-set>
                         </tb-grid-table>
