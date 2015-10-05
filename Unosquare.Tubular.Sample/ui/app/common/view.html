@@ -1,4 +1,4 @@
-﻿<div class="container" ng-controller="tubularSampleCtrl as sample">
+﻿<div class="container" ng-controller="tubularSampleCtrl as sample" ng-init="toggleVisible = true">
     
     <tb-grid server-url="/api/orders/paged" server-save-url="/api/orders/save" require-authentication="false"
              name="samplegrid" page-size="20" class="row" on-before-get-data="sample.onTableController">
@@ -58,7 +58,7 @@
                                     <tb-column-header>{{label}}</tb-column-header>
                                     <tb-column-date-time-filter></tb-column-date-time-filter>
                                 </tb-column>
-                                <tb-column name="IsShipped" column-type="boolean" class="column-md">
+                                <tb-column name="IsShipped" column-type="boolean" class="column-md" visible="toggleVisible">
                                     <tb-column-header>Shipped?</tb-column-header>
                                     <tb-column-filter></tb-column-filter>
                                 </tb-column>
@@ -167,8 +167,8 @@
                                     <tb-cell-template class="text-right">
                                         <b>{{$component.aggregationFunctions.Amount | currency}}</b>
                                     </tb-cell-template>
-                                    <tb-cell-template></tb-cell-template>
-                                    <tb-cell-template></tb-cell-template>
+                                    <tb-cell-template column-name="ShippedDate"></tb-cell-template>
+                                    <tb-cell-template column-name="IsShipped"></tb-cell-template>
                                 </tb-row-template>
                             </tb-foot-set>
                         </tb-grid-table>
@@ -183,4 +183,7 @@
             </div>
         </div>
     </tb-grid>
+    <div class="alert alert-default">
+        <input type="checkbox" ng-model="toggleVisible" /> Toggle Is Shipped column
+    </div>
 </div>

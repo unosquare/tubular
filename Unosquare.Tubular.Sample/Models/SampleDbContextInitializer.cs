@@ -72,7 +72,8 @@
                     CustomerName = companies[rand.Next(companies.Length - 1)],
                     IsShipped = rand.Next(10) > 5,
                     ShipperCity = shipperCities[rand.Next(shipperCities.Length - 1)],
-                    ShippedDate = DateTime.Now.AddDays(1 - rand.Next(10))
+                    ShippedDate = DateTime.Now.AddDays(1 - rand.Next(10)),
+                    OrderType = rand.Next(30)
                 };
 
                 if (rand.Next(3) == 1)

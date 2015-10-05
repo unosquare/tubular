@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
-
-namespace Unosquare.Tubular.Sample.Models
+﻿namespace Unosquare.Tubular.Sample.Models
 {
     using System;
+    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
 
     public class Order
@@ -25,6 +24,8 @@ namespace Unosquare.Tubular.Sample.Models
         public string CreatedUserId { get; set; }
 
         public int? WarehouseID { get; set; }
+
+        public int OrderType { get; set; }
 
         public virtual SystemUser CreatedUser { get; set; }
 

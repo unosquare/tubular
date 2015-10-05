@@ -1309,7 +1309,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     restrict: 'E',
                     replace: true,
                     transclude: true,
-                    scope: true,
+                    scope: {
+                        visible: '='
+                    },
                     controller: [
                         '$scope', function($scope) {
                             $scope.column = { Label: '' };
@@ -1319,6 +1321,12 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             $scope.sortColumn = function(multiple) {
                                 $scope.$component.sortColumn($scope.column.Name, multiple);
                             };
+
+                            $scope.$watch("visible", function (val) {
+                                if (angular.isDefined(val)) {
+                                    $scope.column.Visible = val;
+                                }
+                            });
                         }
                     ],
                     compile: function compile() {
