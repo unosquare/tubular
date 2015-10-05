@@ -20,12 +20,7 @@
       "Javascript/tubular/tubular-services-template.js",
       "Javascript/tubular/tubular-services-i18n.js",
       "Javascript/tadaaapickr/tadaaapickr.pack.js"
-    ],
-    "minify": {
-      "enabled": true
-    },
-    "includeInProject": true,
-    "sourceMaps": false
+    ]
   },
   {
     "outputFileName": "Css/tubular-bundle.css",
@@ -33,11 +28,13 @@
       "Css/tadaaapickr/tadaaapickr.css",
       "Css/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css",
       "Css/tubular/tubular.css"
-    ],
-    "minify": {
-      "enabled": true
-    },
-    "includeInProject": true,
-    "sourceMaps": false
+    ]
+  },
+  {
+    "outputFileName": "Javascript/tubular-chartjs-bundle.js",
+    "inputFiles": [
+      "Javascript/tubular-chart/tubular-directives-chartjs.js",
+      "Javascript/angular-chartjs/angular-chart.js"
+    ]
   }
 ]

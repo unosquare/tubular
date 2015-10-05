@@ -212,3 +212,6 @@ FakesAssemblies/
 /Unosquare.Tubular.EmbedioSample/html/vendor/tubular/tubular-bundle.js
 /dist/tubular-bundle.min.js.map
 /Unosquare.Tubular.EmbedioSample/html/vendor/tubular/tubular-bundle.min.css
+/Unosquare.Tubular/Javascript/tubular-chartjs-bundle.js
+/Unosquare.Tubular/Javascript/tubular-chartjs-bundle.min.js
+/Unosquare.Tubular.Sample/ui/tubular/tubular-chartjs-bundle.js

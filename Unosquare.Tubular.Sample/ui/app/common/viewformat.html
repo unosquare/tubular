@@ -1,4 +1,7 @@
 ﻿<div class="container" ng-controller="tubularSampleCtrl as sample">
+    <tb-chartjs server-url="/api/orders/chart" require-authentication="false">
+    </tb-chartjs>
+    
     <tb-grid server-url="/api/orders/pagedwithformat" require-authentication="false"
              name="samplegrid" page-size="20" class="row" on-before-get-data="sample.onTableController">
 

@@ -189,6 +189,7 @@
 
     angular.module('app', [
         'tubular',
+        'tubular-chart.directives',
         'app.routes',
         'app.controllers'
     ]).config([

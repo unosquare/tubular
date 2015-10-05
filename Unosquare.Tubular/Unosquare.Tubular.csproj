@@ -75,6 +75,8 @@
       <DependentUpon>tubular-bundle.css</DependentUpon>
     </Content>
     <Content Include="Css\tubular\tubular.css" />
+    <Content Include="Javascript\angular-chartjs\angular-chart.css" />
+    <Content Include="Javascript\angular-chartjs\angular-chart.js" />
     <Content Include="Javascript\angular-filter\group-by.js" />
     <Content Include="Javascript\angular-filter\watcher.js" />
     <Content Include="Javascript\tadaaapickr\tadaaapickr.pack.js" />
@@ -82,6 +84,11 @@
     <Content Include="Javascript\tubular-bundle.min.js">
       <DependentUpon>tubular-bundle.js</DependentUpon>
     </Content>
+    <Content Include="Javascript\tubular-chartjs-bundle.js" />
+    <Content Include="Javascript\tubular-chartjs-bundle.min.js">
+      <DependentUpon>tubular-chartjs-bundle.js</DependentUpon>
+    </Content>
+    <Content Include="Javascript\tubular-chart\tubular-directives-chartjs.js" />
     <Content Include="Javascript\tubular\node-module.js" />
     <Content Include="Javascript\tubular\tubular-directives-filters.js" />
     <Content Include="Javascript\tubular\tubular-directives-forms.js" />

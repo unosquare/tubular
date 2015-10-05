@@ -140,6 +140,9 @@
       <Link>ui\tubular\tubular-bundle.min.js</Link>
       <DependentUpon>tubular-bundle.js</DependentUpon>
     </Content>
+    <Content Include="..\dist\tubular-chartjs-bundle.js">
+      <Link>ui\tubular\tubular-chartjs-bundle.js</Link>
+    </Content>
     <Content Include="index.html" />
     <Content Include="ui\app\app.js" />
     <Content Include="ui\app\common\form.html" />
