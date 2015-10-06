@@ -1,21 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Unosquare.Tubular.ObjectModel
+﻿namespace Unosquare.Tubular.ObjectModel
 {
     /// <summary>
     /// Represents a multiple serie chart response
     /// </summary>
-    /// <typeparam name="L"></typeparam>
-    public class MultipleSerieChartResponse<L>
+    /// <typeparam name="T"></typeparam>
+    public class MultipleSerieChartResponse<T>
     {
         /// <summary>
         /// The chart response data
         /// </summary>
-        public L[][] Data;
+        public T[][] Data;
         /// <summary>
         /// The chart labels
         /// </summary>

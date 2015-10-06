@@ -190,6 +190,7 @@
     angular.module('app', [
         'tubular',
         'tubular-chart.directives',
+        'tubular-hchart.directives',
         'app.routes',
         'app.controllers'
     ]).config([

@@ -162,8 +162,10 @@
             using (var context = new SampleDbContext(false))
             {
                 return
-                    Ok(context.Orders.ProvideMultipleSerieChartResponse(x => x.ShipperCity, x => x.CustomerName,
-                        x => x.Amount));
+                    Ok(context.Orders.ProvideMultipleSerieChartResponse(
+                        label: x => x.ShipperCity,
+                        serie: x => x.CustomerName,
+                        value: x => x.Amount));
             }
         }
 
@@ -172,7 +174,11 @@
         {
             using (var context = new SampleDbContext(false))
             {
-                return Ok(context.Orders.ProvideSingleSerieChartResponse(x => x.CustomerName, x => x.Amount));
+                return
+                    Ok(context.Orders.ProvideSingleSerieChartResponse(
+                        label: x => x.CustomerName,
+                        value: x => x.Amount,
+                        serieName: "Customers"));
             }
         }
     }

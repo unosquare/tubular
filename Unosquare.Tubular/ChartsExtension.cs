@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Dynamic;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
-using Unosquare.Tubular.ObjectModel;
-
-namespace Unosquare.Tubular
+﻿namespace Unosquare.Tubular
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Linq.Dynamic;
+    using System.Linq.Expressions;
+    using Unosquare.Tubular.ObjectModel;
+
     /// <summary>
     /// Extension methods to create chart responses
     /// </summary>
@@ -22,10 +20,11 @@ namespace Unosquare.Tubular
         /// <param name="datasource"></param>
         /// <param name="label"></param>
         /// <param name="value"></param>
+        /// <param name="serieName"></param>
         /// <param name="aggregation"></param>
         /// <returns></returns>
         public static SingleSerieChartResponse<R> ProvideSingleSerieChartResponse<T, R>(this IQueryable<T> datasource,
-            Expression<Func<T, string>> label, Expression<Func<T, R>> value,
+            Expression<Func<T, string>> label, Expression<Func<T, R>> value, string serieName = null,
             AggregationFunction aggregation = AggregationFunction.Sum)
         {
             var labelExpression = label.Body is MemberExpression
@@ -45,6 +44,7 @@ namespace Unosquare.Tubular
             return new SingleSerieChartResponse<R>
             {
                 Data = data.Select("Data").Cast<R>().ToArray(),
+                SerieName = serieName,
                 Labels = data.Select("Label").Cast<string>().ToArray(),
             };
         }

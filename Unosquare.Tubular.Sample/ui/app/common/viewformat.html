@@ -1,4 +1,5 @@
 ﻿<div class="container" ng-controller="tubularSampleCtrl as sample" ng-init="modelType = 'Line'; modelPieType = 'Pie'">
+    <h2>Chart JS</h2>
     <div class="row">
         <div class="col-md-5">
             <tb-chartjs server-url="/api/orders/chart" chart-type="{{modelType}}" require-authentication="false" show-legend="true">
@@ -17,19 +18,31 @@
                 <div class="btn btn-sm btn-default" ng-click="modelType = 'Bar'">
                     Bar
                 </div>
-                </div>
+            </div>
             <h3>Second chart</h3>
-                <div class="btn-group">
-                    <div class="btn btn-sm btn-default" ng-click="modelPieType = 'Pie'">
-                        Pie
-                    </div>
-                    <div class="btn btn-sm btn-default" ng-click="modelPieType = 'Doughnut'">
-                        Doughnut
-                    </div>
+            <div class="btn-group">
+                <div class="btn btn-sm btn-default" ng-click="modelPieType = 'Pie'">
+                    Pie
                 </div>
+                <div class="btn btn-sm btn-default" ng-click="modelPieType = 'Doughnut'">
+                    Doughnut
+                </div>
+            </div>
         </div>
     </div>
-    
+
+    <h2>Highcharts</h2>
+    <div class="row">
+        <div class="col-md-6">
+            <tb-highcharts server-url="/api/orders/chart" chart-type="{{modelType | lowercase}}" require-authentication="false" title="Order Sales">
+            </tb-highcharts>
+        </div>
+        <div class="col-md-6">
+            <tb-highcharts server-url="/api/orders/chartpie" chart-type="{{modelPieType | lowercase}}" require-authentication="false" title="Pie chart">
+            </tb-highcharts>
+        </div>
+    </div>
+
     <tb-grid server-url="/api/orders/pagedwithformat" require-authentication="false"
              name="samplegrid" page-size="20" class="row" on-before-get-data="sample.onTableController">
 
@@ -91,7 +104,7 @@
                                     </tb-cell-template>
                                 </tb-row-template>
                                 <!-- General rows -->
-                                <tb-row-template ng-repeat="row in $component.rows" row-model="row" selectable="false"  >
+                                <tb-row-template ng-repeat="row in $component.rows" row-model="row" selectable="false">
                                     <tb-cell-template class="text-center" column-name="OrderID">
                                         <a href="/form/{{row.OrderID}}">{{row.OrderID}}</a>
                                     </tb-cell-template>

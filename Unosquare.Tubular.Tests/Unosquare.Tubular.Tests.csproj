@@ -61,6 +61,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChartFixture.cs" />
     <Compile Include="CodeGeneratorFixture.cs" />
     <Compile Include="Database\SampleEntities.cs" />
     <Compile Include="DataSourceFixture.cs" />

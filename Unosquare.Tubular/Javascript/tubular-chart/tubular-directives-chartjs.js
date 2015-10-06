@@ -14,7 +14,6 @@
          * 
          * @param {string} serverUrl Set the HTTP URL where the data comes.
          * @param {string} chartName Defines the chart name.
-         * @param {string} serviceName Define Data service (name) to retrieve data, defaults `tubularHttp`.
          * @param {bool} requireAuthentication Set if authentication check must be executed, default true.
          */
         .directive('tbChartjs', [
@@ -27,7 +26,6 @@
                     replace: true,
                     scope: {
                         serverUrl: '@',
-                        dataServiceName: '@?serviceName',
                         requireAuthentication: '=?',
                         showLegend: '@?',
                         name: '@?chartName',

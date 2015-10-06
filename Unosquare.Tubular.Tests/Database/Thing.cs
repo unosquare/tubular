@@ -14,6 +14,10 @@
 
         public decimal DecimalNumber { get; set; }
 
+        public string Category { get; set; }
+
+        public string Color { get; set; }
+
         public System.DateTime Date { get; set; }
 
         public bool Bool { get; set; }
