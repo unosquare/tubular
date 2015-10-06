@@ -57,15 +57,21 @@
         {
             using (var context = new SampleDbContext(false))
             {
-                return Ok(await Task.Run(() => request.CreateGridDataResponse(context.Orders.AsNoTracking().Select(x => new OrderDto
-                {
-                    Amount = x.Amount.ToString(),
-                    CustomerName = x.CustomerName,
-                    IsShipped = x.IsShipped.ToString(),
-                    OrderID = x.OrderID,
-                    ShippedDate = x.ShippedDate.ToString(),
-                    ShipperCity = x.ShipperCity
-                }), FormatOutput)));
+                return
+                    Ok(
+                        await
+                            Task.Run(
+                                () =>
+                                    request.CreateGridDataResponse(
+                                        context.Orders.AsNoTracking().Select(x => new OrderDto
+                                        {
+                                            Amount = x.Amount.ToString(),
+                                            CustomerName = x.CustomerName,
+                                            IsShipped = x.IsShipped.ToString(),
+                                            OrderID = x.OrderID,
+                                            ShippedDate = x.ShippedDate.ToString(),
+                                            ShipperCity = x.ShipperCity
+                                        }), FormatOutput)));
             }
         }
 
@@ -101,7 +107,7 @@
         {
             using (var context = new SampleDbContext(false))
             {
-                var fixedOrder = (Order)Request.AdjustObjectTimeZone(order);
+                var fixedOrder = (Order) Request.AdjustObjectTimeZone(order);
                 context.Orders.Add(fixedOrder);
                 await context.SaveChangesAsync();
 
@@ -153,15 +159,12 @@
         [HttpGet, Route("chart")]
         public IHttpActionResult GetChart()
         {
-            return Ok(new
+            using (var context = new SampleDbContext(false))
             {
-                Data = new int[][] {
-                    new int[] { 65, 59, 80, 81, 56, 55, 40 },
-                    new int[] { 28, 48, 40, 19, 86, 27, 90}
-                },
-                Series = new[] { "Series A", "Series B" },
-                Labels = new[] { "January", "February", "March", "April", "May", "June", "July" }
-            });
+                return
+                    Ok(context.Orders.ProvideMultipleSerieChartResponse(x => x.ShipperCity, x => x.CustomerName,
+                        x => x.Amount));
+            }
         }
 
         [HttpGet, Route("chartpie")]
@@ -169,7 +172,7 @@
         {
             using (var context = new SampleDbContext(false))
             {
-                return Ok(context.Orders.GetSingleSerieChartResponse(x => x.CustomerName, x => x.Amount));
+                return Ok(context.Orders.ProvideSingleSerieChartResponse(x => x.CustomerName, x => x.Amount));
             }
         }
     }
