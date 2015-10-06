@@ -303,11 +303,11 @@
                     $scope.items.push({ name: '$timeout', url: 'https://docs.angularjs.org/api/ng/service/$timeout', docType: 'external' });
                     $scope.items.push({ name: '$templateCache', url: 'https://docs.angularjs.org/api/ng/service/$templateCache', docType: 'external' });
                     $scope.items.push({ name: '$cacheFactory', url: 'https://docs.angularjs.org/api/ng/service/$cacheFactory', docType: 'external' });
-                    $scope.items.push({ name: '$cookieStore', url: 'https://docs.angularjs.org/api/ngCookies/service/$cookieStore', docType: 'external' });
                     $scope.items.push({ name: '$rootScope', url: 'https://docs.angularjs.org/api/ng/service/$rootScope', docType: 'external' });
                     $scope.items.push({ name: '$modal', url: 'https://angular-ui.github.io/bootstrap/#/modal', docType: 'external' });
                     $scope.items.push({ name: '$location', url: 'https://docs.angularjs.org/api/ng/service/$location', docType: 'external' });
                     $scope.items.push({ name: '$filter', url: 'https://docs.angularjs.org/api/ng/service/$filter', docType: 'external' });
+                    $scope.items.push({ name: 'localStorageService', url: 'https://github.com/grevory/angular-local-storage', docType: 'external' });
 
                     if (angular.isDefined($routeParams.param)) {
                         $scope.open($routeParams.param);

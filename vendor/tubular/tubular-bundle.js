@@ -1010,6 +1010,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                             return model;
                                         });
 
+                                        $scope.$emit('tbGrid_OnDataLoaded', $scope);
+
                                         $scope.aggregationFunctions = data.AggregationPayload;
                                         $scope.currentPage = data.CurrentPage;
                                         $scope.totalPages = data.TotalPages;
@@ -1307,7 +1309,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     restrict: 'E',
                     replace: true,
                     transclude: true,
-                    scope: true,
+                    scope: {
+                        visible: '='
+                    },
                     controller: [
                         '$scope', function($scope) {
                             $scope.column = { Label: '' };
@@ -1317,6 +1321,12 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             $scope.sortColumn = function(multiple) {
                                 $scope.$component.sortColumn($scope.column.Name, multiple);
                             };
+
+                            $scope.$watch("visible", function (val) {
+                                if (angular.isDefined(val)) {
+                                    $scope.column.Visible = val;
+                                }
+                            });
                         }
                     ],
                     compile: function compile() {
@@ -2798,9 +2808,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         $scope.lastSearch = $scope.$component.search.Text;
 
                         $scope.$watch("$component.search.Text", function(val, prev) {
-                            if (angular.isUndefined(val)) return;
-                            if (val === prev) return;
-
+                            if (angular.isUndefined(val) || val === prev) {
+                                return;
+                            }
+                            
                             if ($scope.lastSearch !== "" && val === "") {
                                 $scope.$component.saveSearch();
                                 $scope.$component.search.Operator = 'None';
@@ -2808,8 +2819,13 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 return;
                             }
 
-                            if (val === "" || val.length < $scope.minChars) return;
-                            if (val === $scope.lastSearch) return;
+                            if (val === "" || val.length < $scope.minChars) {
+                                return;
+                            }
+
+                            if (val === $scope.lastSearch) {
+                                return;
+                            }
 
                             $scope.lastSearch = val;
                             $scope.$component.saveSearch();

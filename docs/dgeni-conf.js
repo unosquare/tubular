@@ -12,7 +12,9 @@ module.exports = new Package('tubular', [
 
     readFilesProcessor.basePath = path.resolve(__dirname, '..');
     readFilesProcessor.sourceFiles = [
-      { include: 'vendor/tubular/tubular-bundle.js', basePath: 'vendor/tubular' }
+      { include: 'vendor/tubular/tubular-bundle.js', basePath: 'vendor/tubular' },
+      { include: 'vendor/tubular/tubular-chartjs-bundle.js', basePath: 'vendor/tubular' },
+      { include: 'vendor/tubular/tubular-highcharts-bundle.js', basePath: 'vendor/tubular' }
     ];
 
     writeFilesProcessor.outputFolder = 'docs/build';
