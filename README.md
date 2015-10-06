@@ -52,7 +52,11 @@ You will need to reference the following JS libraries in order to use Tubular in
 * [Font Awesome](http://fortawesome.github.io/Font-Awesome/)
 * [FileSaver.js and Blob.js](https://github.com/eligrey/FileSaver.js)
 
-Also, if you use the Visual Studio you will need the excellent <a href="http://vswebessentials.com/download" target="_blank">Web Essentials</a> plug-in in order to generate the Tubular bundles.
+Also, if you use the Visual Studio you will need the excellent <a href="http://vswebessentials.com/download" target="_blank">Web Essentials</a> if you are running VS2013 or [Bundler & Minifier](https://visualstudiogallery.msdn.microsoft.com/9ec27da7-e24b-4d56-8064-fd7e88ac1c40) plug-in for VS2015 in order to generate the Tubular bundles.
+
+### Charts
+
+An experimental support to chart is running with Tubular and you can choose between [ChartJS](http://www.chartjs.org/) or [Highcharts](http://www.highcharts.com/). If you want to use any of them, be sure to load the library before Tubular and check [Tubular Sample](https://github.com/unosquare/tubular/tree/master/Unosquare.Tubular.Sample) with easy to understand code on how to start using charts.
 
 ## Using a CDN
 
@@ -81,7 +85,9 @@ angular.module('app', ['ngRoute','tubular']);
 
 ##Boilerplate
 
-We have a basic <a href="https://github.com/unosquare/tubular-boilerplate" target="_blank">Boilerplate</a> with everything that you need to start your own tubular project. We are already working on a <a href="http://yeoman.io/" taget="_blank">Yeoman Generator</a>. Check out the <a href="https://github.com/unosquare/generator-tubular" target="_blank">generator-tubular</a> repository to check out our progress.
+We have a basic <a href="https://github.com/unosquare/tubular-boilerplate" target="_blank">Boilerplate</a> with everything that you need to start your own tubular project. If you are working with .NET WebAPI you can check our [C# Boilerplate](https://github.com/unosquare/tubular-boilerplate-csharp) too.
+
+We are already working on a <a href="http://yeoman.io/" taget="_blank">Yeoman Generator</a>. Check out the <a href="https://github.com/unosquare/generator-tubular" target="_blank">generator-tubular</a> repository to check out our progress.
 
 ## Samples
 
