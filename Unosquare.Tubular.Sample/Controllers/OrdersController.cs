@@ -7,7 +7,6 @@
     using Unosquare.Tubular.Sample.ApiModels;
     using Unosquare.Tubular.ObjectModel;
     using Unosquare.Tubular.Sample.Models;
-    using System.Collections.Generic;
 
     [RoutePrefix("api/orders")]
     public class OrdersController : ApiController
@@ -152,7 +151,7 @@
         }
 
         [HttpGet, Route("chart")]
-        public async Task<IHttpActionResult> GetChart()
+        public IHttpActionResult GetChart()
         {
             return Ok(new
             {
@@ -163,6 +162,15 @@
                 Series = new[] { "Series A", "Series B" },
                 Labels = new[] { "January", "February", "March", "April", "May", "June", "July" }
             });
+        }
+
+        [HttpGet, Route("chartpie")]
+        public IHttpActionResult GetChartPie()
+        {
+            using (var context = new SampleDbContext(false))
+            {
+                return Ok(context.Orders.GetSingleSerieChartResponse(x => x.CustomerName, x => x.Amount));
+            }
         }
     }
 }

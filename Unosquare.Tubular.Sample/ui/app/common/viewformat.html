@@ -1,6 +1,34 @@
-﻿<div class="container" ng-controller="tubularSampleCtrl as sample">
-    <tb-chartjs server-url="/api/orders/chart" require-authentication="false">
-    </tb-chartjs>
+﻿<div class="container" ng-controller="tubularSampleCtrl as sample" ng-init="modelType = 'Line'; modelPieType = 'Pie'">
+    <div class="row">
+        <div class="col-md-5">
+            <tb-chartjs server-url="/api/orders/chart" chart-type="{{modelType}}" require-authentication="false" show-legend="true">
+            </tb-chartjs>
+        </div>
+        <div class="col-md-5">
+            <tb-chartjs server-url="/api/orders/chartpie" chart-type="{{modelPieType}}" require-authentication="false" show-legend="true">
+            </tb-chartjs>
+        </div>
+        <div class="col-md-2">
+            <h3>First chart</h3>
+            <div class="btn-group">
+                <div class="btn btn-sm btn-default" ng-click="modelType = 'Line'">
+                    Line
+                </div>
+                <div class="btn btn-sm btn-default" ng-click="modelType = 'Bar'">
+                    Bar
+                </div>
+                </div>
+            <h3>Second chart</h3>
+                <div class="btn-group">
+                    <div class="btn btn-sm btn-default" ng-click="modelPieType = 'Pie'">
+                        Pie
+                    </div>
+                    <div class="btn btn-sm btn-default" ng-click="modelPieType = 'Doughnut'">
+                        Doughnut
+                    </div>
+                </div>
+        </div>
+    </div>
     
     <tb-grid server-url="/api/orders/pagedwithformat" require-authentication="false"
              name="samplegrid" page-size="20" class="row" on-before-get-data="sample.onTableController">

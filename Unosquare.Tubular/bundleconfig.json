@@ -27,6 +27,7 @@
     "inputFiles": [
       "Css/tadaaapickr/tadaaapickr.css",
       "Css/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css",
+      "Css/angular-chartjs/angular-chart.css",
       "Css/tubular/tubular.css"
     ]
   },

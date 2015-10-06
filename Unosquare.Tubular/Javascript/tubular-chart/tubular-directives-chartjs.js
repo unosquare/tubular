@@ -20,8 +20,8 @@
         .directive('tbChartjs', [
             function () {
                 return {
-                    template: '<div class="tubular-chart"><canvas class="chart {{chartType}}" data="data" labels="labels" ' +
-                        ' legend="showLegend" series="series">' +
+                    template: '<div class="tubular-chart"><canvas class="chart chart-base" chart-type="chartType" chart-data="data" chart-labels="labels" ' +
+                        ' chart-legend="{{showLegend}}" chart-series="series">' +
                         '</canvas></div>',
                     restrict: 'E',
                     replace: true,
@@ -29,8 +29,8 @@
                         serverUrl: '@',
                         dataServiceName: '@?serviceName',
                         requireAuthentication: '=?',
-                        showLegend: '=?',
-                        name: '@?charName',
+                        showLegend: '@?',
+                        name: '@?chartName',
                         chartType: '@?'
                     },
                     controller: [
@@ -39,7 +39,7 @@
                             $scope.tubularDirective = 'tubular-chart';
                             $scope.dataService = tubularHttp.getDataService($scope.dataServiceName);
                             $scope.showLegend = $scope.showLegend || true;
-                            $scope.chartType = $scope.chartType || 'chart-line';
+                            $scope.chartType = $scope.chartType || 'Line';
 
                             // Setup require authentication
                             $scope.requireAuthentication = angular.isUndefined($scope.requireAuthentication) ? true : $scope.requireAuthentication;
