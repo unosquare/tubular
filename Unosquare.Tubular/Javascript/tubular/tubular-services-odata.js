@@ -31,7 +31,7 @@
                     'Gte': "{0} ge {1}",
                     'Gt': "{0} gt {1}",
                     'Lte': "{0} le {1}",
-                    'Lt': "{0} lt {1}",
+                    'Lt': "{0} lt {1}"
                 };
 
                 me.retrieveDataAsync = function(request) {
@@ -93,9 +93,9 @@
                             FilteredRecordCount: 1
                         };
 
-                        result.TotalRecordCount = data["odata.count"];
+                        result.TotalRecordCount = parseInt(data["odata.count"]);
                         result.FilteredRecordCount = result.TotalRecordCount; // TODO: Calculate filtered items
-                        result.TotalPages = parseInt(result.TotalRecordCount / params.Take);
+                        result.TotalPages = parseInt((result.FilteredRecordCount + params.Take - 1) / params.Take);
                         result.CurrentPage = parseInt(1 + ((params.Skip / result.FilteredRecordCount) * result.TotalPages));
 
                         return result;

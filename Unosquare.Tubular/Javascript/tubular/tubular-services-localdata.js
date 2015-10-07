@@ -11,7 +11,7 @@
          * JSON database.
          */
         .service('tubularLocalData', [
-            'tubularHttp', '$q', '$filter', function tubularOData(tubularHttp, $q, $filter) {
+            'tubularHttp', '$q', '$filter', function tubularLocalData(tubularHttp, $q, $filter) {
                 var me = this;
 
                 me.retrieveDataAsync = function(request) {
@@ -33,7 +33,7 @@
                     };
                 };
 
-                var reduceFilterArray = function (filters) {
+                var reduceFilterArray = function(filters) {
                     var filtersPattern = {};
 
                     for (var i in filters) {
