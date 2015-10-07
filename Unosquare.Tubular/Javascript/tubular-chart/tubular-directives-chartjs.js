@@ -1,7 +1,7 @@
-﻿(function () {
+﻿(function() {
     'use strict';
 
-    angular.module('tubular-chart.directives', ['tubular.services','chart.js'])
+    angular.module('tubular-chart.directives', ['tubular.services', 'chart.js'])
         /**
          * @ngdoc directive
          * @name tbChartjs
@@ -14,14 +14,19 @@
          * 
          * @param {string} serverUrl Set the HTTP URL where the data comes.
          * @param {string} chartName Defines the chart name.
+         * @param {string} chartType Defines the chart type.
          * @param {bool} requireAuthentication Set if authentication check must be executed, default true.
          */
         .directive('tbChartjs', [
-            function () {
+            function() {
                 return {
-                    template: '<div class="tubular-chart"><canvas class="chart chart-base" chart-type="chartType" chart-data="data" chart-labels="labels" ' +
+                    template: '<div class="tubular-chart">' +
+                        '<canvas class="chart chart-base" chart-type="chartType" chart-data="data" chart-labels="labels" ' +
                         ' chart-legend="{{showLegend}}" chart-series="series">' +
-                        '</canvas></div>',
+                        '</canvas>' +
+                        '<div class="alert alert-info" ng-show="isEmpty">{{emptyMessage}}</div>' +
+                        '<div class="alert alert-warning" ng-show="hasError">{{errorMessage}}</div>' +
+                        '</div>',
                     restrict: 'E',
                     replace: true,
                     scope: {
@@ -29,11 +34,14 @@
                         requireAuthentication: '=?',
                         showLegend: '@?',
                         name: '@?chartName',
-                        chartType: '@?'
+                        chartType: '@?',
+                        emptyMessage: '@?',
+                        errorMessage: '@?',
+                        onLoad: '=?',
                     },
                     controller: [
                         '$scope', 'tubularHttp',
-                        function ($scope, tubularHttp) {
+                        function($scope, tubularHttp) {
                             $scope.tubularDirective = 'tubular-chart';
                             $scope.dataService = tubularHttp.getDataService($scope.dataServiceName);
                             $scope.showLegend = $scope.showLegend || true;
@@ -41,20 +49,22 @@
 
                             // Setup require authentication
                             $scope.requireAuthentication = angular.isUndefined($scope.requireAuthentication) ? true : $scope.requireAuthentication;
-                            
-                            $scope.loadData = function () {
+
+                            $scope.loadData = function() {
                                 tubularHttp.setRequireAuthentication($scope.requireAuthentication);
 
-                                tubularHttp.get($scope.serverUrl).promise.then(function (data) {
+                                tubularHttp.get($scope.serverUrl).promise.then(function(data) {
                                     $scope.data = data.Data;
                                     $scope.series = data.Series;
                                     $scope.labels = data.Labels;
-                                }, function (error) {
+
+                                    if ($scope.onLoad) $scope.onLoad($scope.options, data);
+                                }, function(error) {
                                     $scope.$emit('tbChart_OnConnectionError', error);
                                 });
                             };
 
-                            $scope.$watch('serverUrl', function (val) {
+                            $scope.$watch('serverUrl', function(val) {
                                 if (angular.isDefined(val) && val != null) {
                                     $scope.loadData();
                                 }
