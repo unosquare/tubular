@@ -6,17 +6,19 @@
             '$routeProvider', function($routeProvider) {
                 $routeProvider.
                     when('/', {
-                        templateUrl: 'assets/intro.html',
+                        templateUrl: 'assets/intro.html'
                     }).when('/Basic', {
-                        templateUrl: 'assets/home.html',
+                        templateUrl: 'assets/home.html'
+                    }).when('/Charts', {
+                        templateUrl: 'assets/charts.html'
                     }).when('/WebApi', {
-                        templateUrl: 'assets/webapi.html',
+                        templateUrl: 'assets/webapi.html'
                     }).when('/Generator', {
-                        templateUrl: 'assets/generator.html',
+                        templateUrl: 'assets/generator.html'
                     }).when('/FormGenerator', {
-                        templateUrl: 'assets/formgenerator.html',
+                        templateUrl: 'assets/formgenerator.html'
                     }).when('/Documentation/:param?', {
-                        templateUrl: 'assets/documentation.html',
+                        templateUrl: 'assets/documentation.html'
                     })
                     .otherwise({
                         redirectTo: '/'
@@ -29,18 +31,19 @@
             '$scope', '$location', '$anchorScroll', '$templateCache', '$http', 'tubularGenerator',
             function($scope, $location, $anchorScroll, $templateCache, $http, tubularGenerator) {
                 $scope.source = [];
+
                 $scope.tutorial = [
                     {
-                        title: 'Basic Layout with JSON datasource',
+                        title: 'Basic Layout with JSON data source',
                         body: 'First grid shows a basic layout, without any additional feature or special column. ' +
-                            'Just a plain grid using a JSON datasource.',
+                            'Just a plain grid using a JSON data source.',
                         key: 'sample',
                         next: 'sample2'
                     },
                     {
                         title: 'Grid with Paginations using OData',
                         body: 'Adding a new feature: the pagination. ' +
-                            'This demo is using an OData datasource and you can move across the pages and change the size.',
+                            'This demo is using an OData data source and you can move across the pages and change the size.',
                         key: 'sample2',
                         next: 'sample3'
                     },
@@ -77,6 +80,19 @@
                         next: null
                     }
                 ];
+
+                $scope.chartTutorial = [
+                {
+                    title: 'Basic line chart with ChartJS',
+                    body: 'Easily add a chart using a REST Service with the Tubular C# connector. In this sample we are using a JSON file, because there is not support to server side in this documentation',
+                    key: 'samplechart1',
+                    next: 'samplechart2'
+                }, {
+                    title: 'Basic line chart with Highcharts',
+                    body: 'Easily add a chart using a REST Service with the Tubular C# connector. In this sample we are using a JSON file, because there is not support to server side in this documentation',
+                    key: 'samplechart2',
+                    next: null
+                }];
 
                 $scope.$on('tbGrid_OnSuccessfulUpdate', function(data) { toastr.success("Record updated"); });
                 $scope.$on('tbGrid_OnRemove', function(data) { toastr.success("Record removed"); });
@@ -324,6 +340,8 @@
     angular.module('app', [
         'hljs',
         'tubular',
+        'tubular-chart.directives',
+        'tubular-hchart.directives',
         'app.routes',
         'app.controllers'
     ]);

@@ -31,12 +31,15 @@
         <![endif]-->
 
         <!-- JS (from CDN) -->
-        <script src="//cdn.jsdelivr.net/g/jquery,bootstrap,angularjs(angular.min.js+angular-animate.min.js+angular-cookies.min.js+angular-route.min.js),filesaver.js,angular.bootstrap(ui-bootstrap.min.js+ui-bootstrap-tpls.min.js),toastr,highlight.js,zeroclipboard"></script>
+        <script src="//cdn.jsdelivr.net/g/jquery,bootstrap,angularjs(angular.min.js+angular-animate.min.js+angular-cookies.min.js+angular-route.min.js),filesaver.js,angular.bootstrap(ui-bootstrap.min.js+ui-bootstrap-tpls.min.js),toastr,highlight.js,zeroclipboard,chart.js@1.0.1,highcharts"></script>
         <script src="//cdnjs.cloudflare.com/ajax/libs/angular-local-storage/0.1.5/angular-local-storage.min.js"></script>
 	    <script src="//pc035860.github.io/angular-highlightjs/angular-highlightjs.min.js"></script>
 
         <!-- Angular Application files -->
         <script src="vendor/tubular/tubular-bundle.js"></script>
+        <script src="vendor/tubular/tubular-chartjs-bundle.js"></script>
+        <script src="vendor/tubular/tubular-highcharts-bundle.js"></script>
+
         <script src="scripts/generator.js"></script>
         <script src="scripts/app.js"></script>
     </head>
@@ -65,7 +68,10 @@
                     <nav class="collapse navbar-collapse bs-navbar-collapse">
                         <ul class="nav navbar-nav">
                             <li>
-                                <a href="/tubular/#Basic">Basic Sample</a>
+                                <a href="/tubular/#Basic">Samples</a>
+                            </li>
+                            <li>
+                                <a href="/tubular/#Charts">Charts</a>
                             </li>
                             <li>
                                 <a href="/tubular/#WebApi">ASP.NET Web API</a>
