@@ -4589,7 +4589,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * JSON database.
          */
         .service('tubularLocalData', [
-            'tubularHttp', '$q', '$filter', function tubularOData(tubularHttp, $q, $filter) {
+            'tubularHttp', '$q', '$filter', function tubularLocalData(tubularHttp, $q, $filter) {
                 var me = this;
 
                 me.retrieveDataAsync = function(request) {
@@ -4611,7 +4611,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     };
                 };
 
-                var reduceFilterArray = function (filters) {
+                var reduceFilterArray = function(filters) {
                     var filtersPattern = {};
 
                     for (var i in filters) {
@@ -4763,7 +4763,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     'Gte': "{0} ge {1}",
                     'Gt': "{0} gt {1}",
                     'Lte': "{0} le {1}",
-                    'Lt': "{0} lt {1}",
+                    'Lt': "{0} lt {1}"
                 };
 
                 me.retrieveDataAsync = function(request) {
@@ -4825,9 +4825,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             FilteredRecordCount: 1
                         };
 
-                        result.TotalRecordCount = data["odata.count"];
+                        result.TotalRecordCount = parseInt(data["odata.count"]);
                         result.FilteredRecordCount = result.TotalRecordCount; // TODO: Calculate filtered items
-                        result.TotalPages = parseInt(result.TotalRecordCount / params.Take);
+                        result.TotalPages = parseInt((result.FilteredRecordCount + params.Take - 1) / params.Take);
                         result.CurrentPage = parseInt(1 + ((params.Skip / result.FilteredRecordCount) * result.TotalPages));
 
                         return result;
