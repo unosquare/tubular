@@ -4747,7 +4747,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
         .service('tubularOData', [
             'tubularHttp', function tubularOData(tubularHttp) {
                 var me = this;
-                
+
                 // {0} represents column name and {1} represents filter value
                 me.operatorsMapping = {
                     'None': '',
@@ -4766,8 +4766,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     'Lt': "{0} lt {1}"
                 };
 
-                me.retrieveDataAsync = function(request) {
+                me.generateUrl = function(request) {
                     var params = request.data;
+
                     var url = request.serverUrl;
                     url += url.indexOf('?') > 0 ? '&' : '?';
                     url += '$format=json&$inlinecount=allpages';
@@ -4784,8 +4785,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         .sort(function(a, b) { return a.SortOrder - b.SortOrder; })
                         .map(function(el) { return el.Name + " " + (el.SortDirection == "Descending" ? "desc" : ""); });
 
-                    if (order.length > 0)
+                    if (order.length > 0) {
                         url += "&$orderby=" + order.join(',');
+                    }
 
                     var filter = params.Columns
                         .filter(function(el) { return el.Filter && el.Filter.Text; })
@@ -4804,15 +4806,23 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 return "startswith({0}, '{1}') eq true".replace('{0}', el.Name).replace('{1}', params.Search.Text);
                             });
 
-                        if (freetext.length > 0)
+                        if (freetext.length > 0) {
                             filter.push("(" + freetext.join(' or ') + ")");
+                        }
                     }
 
-                    if (filter.length > 0)
+                    if (filter.length > 0) {
                         url += "&$filter=" + filter.join(' and ');
+                    }
+
+                    return url;
+                };
+
+                me.retrieveDataAsync = function(request) {
+                    var params = request.data;
 
                     request.data = null;
-                    request.serverUrl = url;
+                    request.serverUrl = me.generateUrl(request);
 
                     var response = tubularHttp.retrieveDataAsync(request);
 
@@ -4829,6 +4839,16 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         result.FilteredRecordCount = result.TotalRecordCount; // TODO: Calculate filtered items
                         result.TotalPages = parseInt((result.FilteredRecordCount + params.Take - 1) / params.Take);
                         result.CurrentPage = parseInt(1 + ((params.Skip / result.FilteredRecordCount) * result.TotalPages));
+
+                        if (result.CurrentPage > result.TotalPages) {
+                            result.CurrentPage = 1;
+                            request.data = params;
+                            request.data.Skip = 0;
+
+                            me.retrieveDataAsync(request).promise.then(function(newData) {
+                                result.Payload = newData.value;
+                            });
+                        }
 
                         return result;
                     });
