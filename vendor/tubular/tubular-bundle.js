@@ -4820,9 +4820,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                 me.retrieveDataAsync = function(request) {
                     var params = request.data;
-
-                    request.data = null;
+                    var originalUrl = request.serverUrl;
                     request.serverUrl = me.generateUrl(request);
+                    request.data = null;
 
                     var response = tubularHttp.retrieveDataAsync(request);
 
@@ -4844,6 +4844,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             result.CurrentPage = 1;
                             request.data = params;
                             request.data.Skip = 0;
+
+                            request.serverUrl = originalUrl;
 
                             me.retrieveDataAsync(request).promise.then(function(newData) {
                                 result.Payload = newData.value;
