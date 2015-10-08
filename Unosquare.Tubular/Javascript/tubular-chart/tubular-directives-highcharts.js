@@ -71,8 +71,14 @@
                                 $scope.hasError = false;
 
                                 tubularHttp.get($scope.serverUrl).promise.then(function (data) {
-                                    if (!data || !data.Data || data.Data.length == 0) {
+                                    if (!data || !data.Data || data.Data.length === 0) {
                                         $scope.isEmpty = true;
+                                        $scope.options.series = [{ data: [] }];
+
+                                        if ($scope.onLoad) {
+                                            $scope.onLoad($scope.options, {});
+                                        }
+
                                         return;
                                     }
 
@@ -97,7 +103,9 @@
                                         $scope.options.series = [{ name: data.SerieName || '', data: uniqueSerie, showInLegend: (data.SerieName || '') != '' }];
                                     }
 
-                                    if ($scope.onLoad) $scope.onLoad($scope.options, data);
+                                    if ($scope.onLoad) {
+                                        $scope.onLoad($scope.options, data);
+                                    }
                                 }, function (error) {
                                     $scope.$emit('tbChart_OnConnectionError', error);
                                     $scope.hasError = true;

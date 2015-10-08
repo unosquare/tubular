@@ -53,12 +53,27 @@
                             $scope.loadData = function() {
                                 tubularHttp.setRequireAuthentication($scope.requireAuthentication);
 
-                                tubularHttp.get($scope.serverUrl).promise.then(function(data) {
+                                tubularHttp.get($scope.serverUrl).promise.then(function (data) {
+                                    if (!data || !data.Data || data.Data.length === 0) {
+                                        $scope.isEmpty = true;
+                                        $scope.options.series = [{ data: [] }];
+
+                                        if ($scope.onLoad) {
+                                            $scope.onLoad($scope.options, {});
+                                        }
+
+                                        return;
+                                    }
+
+                                    $scope.isEmpty = false;
+
                                     $scope.data = data.Data;
                                     $scope.series = data.Series;
                                     $scope.labels = data.Labels;
 
-                                    if ($scope.onLoad) $scope.onLoad($scope.options, data);
+                                    if ($scope.onLoad) {
+                                        $scope.onLoad($scope.options, data);
+                                    }
                                 }, function(error) {
                                     $scope.$emit('tbChart_OnConnectionError', error);
                                 });
