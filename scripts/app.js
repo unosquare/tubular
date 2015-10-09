@@ -4,27 +4,27 @@
     angular.module('app.routes', ['ngRoute'])
         .config([
             '$routeProvider', function($routeProvider) {
-                $routeProvider.
-                    when('/', {
-                        templateUrl: 'assets/intro.html'
-                    }).when('/Basic', {
-                        templateUrl: 'assets/home.html'
-                    }).when('/Charts', {
-                        templateUrl: 'assets/charts.html'
-                    }).when('/WebApi', {
-                        templateUrl: 'assets/webapi.html'
-                    }).when('/Generator', {
-                        templateUrl: 'assets/generator.html'
-                    }).when('/FormGenerator', {
-                        templateUrl: 'assets/formgenerator.html'
-                    }).when('/Documentation/:param?', {
-                        templateUrl: 'assets/documentation.html'
-                    })
-                    .otherwise({
-                        redirectTo: '/'
-                    });
-            }
-        ]);
+            $routeProvider.
+                when('/', {
+                    templateUrl: 'assets/intro.html'
+                }).when('/Basic', {
+                    templateUrl: 'assets/home.html'
+                }).when('/Charts', {
+                    templateUrl: 'assets/charts.html'
+                }).when('/WebApi', {
+                    templateUrl: 'assets/webapi.html'
+                }).when('/Generator', {
+                    templateUrl: 'assets/generator.html'
+                }).when('/FormGenerator', {
+                    templateUrl: 'assets/formgenerator.html'
+                }).when('/Documentation/:param?', {
+                    templateUrl: 'assets/documentation.html'
+                })
+                .otherwise({
+                    redirectTo: '/'
+                });
+        }
+    ]);
 
     angular.module('app.controllers', ['tubular.services', 'LocalStorageModule', 'app.generator'])
         .controller('tubularSampleCtrl', [
@@ -292,11 +292,12 @@
             '$scope', '$http', '$anchorScroll', '$location', '$routeParams',
             function($scope, $http, $anchorScroll, $location, $routeParams) {
                 $scope.internalLink = function(url) {
-                    var find = $scope.items.filter(function(el) { return el.name == url; });
+                    var find = $scope.items.filter(function(el) { return el.name === url; });
 
-                    if (find.length > 0)
+                    if (find.length > 0) {
                         $scope.open(find[0].url);
-                }
+                    }
+                };
 
                 $scope.open = function(url) {
                     if (url.indexOf('http') == 0) {
@@ -307,7 +308,7 @@
                     $scope.doc = 'docs/build/' + url;
                     $location.hash('top');
                     $anchorScroll();
-                }
+                };
 
                 $http.get('data/documentation.json').then(function(data) {
                     $scope.items = data.data;
