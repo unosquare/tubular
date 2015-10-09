@@ -10,7 +10,7 @@
         <div class="col-md-3">
             <div class="input-group">
                 <span class="input-group-addon"><i class="fa fa-search"></i></span>
-                <input type="search" placeholder="search..." ng-model="search" class="form-control" />
+                <input type="search" placeholder="search..." ng-model="search" class="form-control"/>
                 <span class="input-group-btn" ng-show="search">
                     <button class="btn btn-default" type="button" ng-click="search=''">
                         <i class="fa fa-times"></i>
@@ -43,7 +43,7 @@
                 </p>
 
                 <a class="thumbnail">
-                    <img src="/tubular/assets/samplecode1.png" alt="tbGrid" />
+                    <img src="/tubular/assets/samplecode1.png" alt="tbGrid"/>
                 </a>
 
                 <p>
@@ -58,13 +58,13 @@
                     <img src="/tubular/assets/samplecode2.png" alt="tbGrid Layout"/>
                 </a>
 
-                    <div class="alert alert-warning">
-                        <i class="fa fa-bell"></i>
-                        Remember, the layout is <strong>fully customizable</strong>. You don't need to setup your grid with the same components, you can mix them as you wish as longer you keep them
-                        inside the <strong>tbGrid</strong> node.
-                    </div>
+                <div class="alert alert-warning">
+                    <i class="fa fa-bell"></i>
+                    Remember, the layout is <strong>fully customizable</strong>. You don't need to setup your grid with the same components, you can mix them as you wish as longer you keep them
+                    inside the <strong>tbGrid</strong> node.
+                </div>
 
-                    <h3>Grid Table</h3>
+                <h3>Grid Table</h3>
 
                 <p>
                     When you design your layout, the next step is setup the columns that you will display and how those columns should behave. The table is define as a columns set and one or more rows sets. The columns set should start
@@ -74,38 +74,38 @@
 
 
                 <a class="thumbnail">
-                    <img src="/tubular/assets/samplecode3.png" alt="tbGridTable" />
+                    <img src="/tubular/assets/samplecode3.png" alt="tbGridTable"/>
                 </a>
 
                 <p>
-                        With all the columns ready, you need to define how your data will be displayed, you need to add to the <code>tbGridTable</code> a row set directive (<a ng-click="internalLink('tbRowSet')">tbRowSet</a>).
-                        This directive is a container to display <a ng-click="internalLink('tbRowTemplate')">tbRowTemplate</a>, the template should be used with a <code>ngRepeat</code> directive in order to loop the data set and display all the rows.
-                        Inside a <code>tbRowTemplate</code> you finally can setup how the table cells are going to look.
-                    </p>
+                    With all the columns ready, you need to define how your data will be displayed, you need to add to the <code>tbGridTable</code> a row set directive (<a ng-click="internalLink('tbRowSet')">tbRowSet</a>).
+                    This directive is a container to display <a ng-click="internalLink('tbRowTemplate')">tbRowTemplate</a>, the template should be used with a <code>ngRepeat</code> directive in order to loop the data set and display all the rows.
+                    Inside a <code>tbRowTemplate</code> you finally can setup how the table cells are going to look.
+                </p>
 
                 <a class="thumbnail">
-                    <img src="/tubular/assets/samplecode4.png" alt="tbRowSet" />
+                    <img src="/tubular/assets/samplecode4.png" alt="tbRowSet"/>
                 </a>
 
-                    <p>
-                        The cells are attached to a template in the directive <a ng-click="internalLink('tbCellTemplate')">tbCellTemplate</a>. The cell template is important to bind the column using the
-                        <code>columnName</code> property, because if you are controlling the columns visibility the cells required to know it. You can use any filter or HTML element inside the cell template, as long they are valid in regular <code>td</code> tags, or
-                        you can also use in-line editor from Tubular and connect your grid to a form.
-                    </p>
+                <p>
+                    The cells are attached to a template in the directive <a ng-click="internalLink('tbCellTemplate')">tbCellTemplate</a>. The cell template is important to bind the column using the
+                    <code>columnName</code> property, because if you are controlling the columns visibility the cells required to know it. You can use any filter or HTML element inside the cell template, as long they are valid in regular <code>td</code> tags, or
+                    you can also use in-line editor from Tubular and connect your grid to a form.
+                </p>
 
-                    <div class="alert alert-warning">
-                        <i class="fa fa-bell"></i>
-                        Almost all the options are available with the Tubular Grid Generator.
-                    </div>
+                <div class="alert alert-warning">
+                    <i class="fa fa-bell"></i>
+                    Almost all the options are available with the Tubular Grid Generator.
+                </div>
+                <hr/>
+                <h2>Forms</h2>
 
-                    <h2>Forms</h2>
-
-                    <p>
-                        You can create forms with Tubular and take advantage of helpful controls.
-                    </p>
-
-                    <h2>Charts</h2>
-</div>
+                <p>
+                    You can create forms with Tubular and take advantage of helpful controls.
+                </p>
+                <hr />
+                <h2>Charts</h2>
+            </div>
             <div ng-include="doc">t</div>
         </div>
     </div>

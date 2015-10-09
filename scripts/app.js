@@ -4,27 +4,29 @@
     angular.module('app.routes', ['ngRoute'])
         .config([
             '$routeProvider', function($routeProvider) {
-            $routeProvider.
-                when('/', {
-                    templateUrl: 'assets/intro.html'
-                }).when('/Basic', {
-                    templateUrl: 'assets/home.html'
-                }).when('/Charts', {
-                    templateUrl: 'assets/charts.html'
-                }).when('/WebApi', {
-                    templateUrl: 'assets/webapi.html'
-                }).when('/Generator', {
-                    templateUrl: 'assets/generator.html'
-                }).when('/FormGenerator', {
-                    templateUrl: 'assets/formgenerator.html'
-                }).when('/Documentation/:param?', {
-                    templateUrl: 'assets/documentation.html'
-                })
-                .otherwise({
-                    redirectTo: '/'
-                });
-        }
-    ]);
+                $routeProvider.
+                    when('/', {
+                        templateUrl: 'assets/intro.html'
+                    }).when('/Basic', {
+                        templateUrl: 'assets/home.html'
+                    }).when('/Csharp', {
+                        templateUrl: 'assets/csharp.html'
+                    }).when('/Charts', {
+                        templateUrl: 'assets/charts.html'
+                    }).when('/WebApi', {
+                        templateUrl: 'assets/webapi.html'
+                    }).when('/Generator', {
+                        templateUrl: 'assets/generator.html'
+                    }).when('/FormGenerator', {
+                        templateUrl: 'assets/formgenerator.html'
+                    }).when('/Documentation/:param?', {
+                        templateUrl: 'assets/documentation.html'
+                    })
+                    .otherwise({
+                        redirectTo: '/'
+                    });
+            }
+        ]);
 
     angular.module('app.controllers', ['tubular.services', 'LocalStorageModule', 'app.generator'])
         .controller('tubularSampleCtrl', [
@@ -82,17 +84,27 @@
                 ];
 
                 $scope.chartTutorial = [
-                {
-                    title: 'Basic line chart with ChartJS',
-                    body: 'Easily add a chart using a REST Service with the Tubular C# connector. In this sample we are using a JSON file, because there is not support to server side in this documentation',
-                    key: 'samplechart1',
-                    next: 'samplechart2'
-                }, {
-                    title: 'Basic line chart with Highcharts',
-                    body: 'Easily add a chart using a REST Service with the Tubular C# connector. In this sample we are using a JSON file, because there is not support to server side in this documentation',
-                    key: 'samplechart2',
-                    next: null
-                }];
+                    {
+                        title: 'Basic line chart with ChartJS',
+                        body: 'Easily add a chart using a REST Service with the Tubular C# connector. In this sample we are using a JSON file, because there is not support to server side in this documentation',
+                        key: 'samplechart1',
+                        next: 'samplechart2'
+                    }, {
+                        title: 'Basic line chart with Highcharts',
+                        body: 'Easily add a chart using a REST Service with the Tubular C# connector. In this sample we are using a JSON file, because there is not support to server side in this documentation',
+                        key: 'samplechart2',
+                        next: null
+                    }
+                ];
+
+                $scope.tutorialSharp = [
+                    {
+                        title: 'Grid with Paginations',
+                        body: 'Adding a new feature: the pagination.',
+                        key: 'samplesharp1',
+                        next: null
+                    }
+                ];
 
                 $scope.$on('tbGrid_OnSuccessfulUpdate', function(data) { toastr.success("Record updated"); });
                 $scope.$on('tbGrid_OnRemove', function(data) { toastr.success("Record removed"); });
