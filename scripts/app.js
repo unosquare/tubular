@@ -102,6 +102,12 @@
                         title: 'Grid with Paginations',
                         body: 'Adding a new feature: the pagination.',
                         key: 'samplesharp1',
+                        next: 'sample8'
+                    },
+                    {
+                        title: 'Grid with Aggregation results',
+                        body: 'This sample has more controls in the grid and also two columns has aggregation methods. Customer count and Amount sum. The tbFootSet directive is helpful to show them.',
+                        key: 'sample8',
                         next: null
                     }
                 ];
