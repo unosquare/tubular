@@ -2315,7 +2315,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 restrict: 'E',
                 replace: true,
                 transclude: true,
-                controller: function ($scope, $modal) {
+                controller: ['$scope', '$modal', function ($scope, $modal) {
                     $scope.$component = $scope.$parent;
 
                     $scope.openColumnsSelector = function () {
@@ -2351,8 +2351,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             ]
                         });
                     };
-
-                }
+                }]
             };
         }])
         /**
@@ -2463,7 +2462,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 tubularGridFilterService.applyFilterFuncs(scope, lElement, lAttrs, function() {
                                     var inp = $(lElement).find("input[type=date]")[0];
 
-                                    if (inp.type != 'date') {
+                                    if (inp.type !== 'date') {
                                         $(inp).datepicker({
                                             dateFormat: scope.format.toLowerCase()
                                         }).on("dateChange", function(e) {
@@ -2473,7 +2472,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                                     var inpLev = $(lElement).find("input[type=date]")[1];
 
-                                    if (inpLev.type != 'date') {
+                                    if (inpLev.type !== 'date') {
                                         $(inpLev).datepicker({
                                             dateFormat: scope.format.toLowerCase()
                                         }).on("dateChange", function(e) {
@@ -3360,7 +3359,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
         * 
         * This model doesn't need to be created in your controller, the `tbGrid` generate it from any `tbColumn`.
         */
-        .factory('tubularGridColumnModel', function($filter) {
+        .factory('tubularGridColumnModel', ["$filter", function($filter) {
 
             var parseSortDirection = function(value) {
                 if (angular.isUndefined(value)) {
@@ -3441,7 +3440,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     }
                 };
             };
-        })
+        }])
         /**
         * @ngdoc factory
         * @name tubulargGridFilterModel
@@ -4742,7 +4741,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * Use `tubularOData` to connect a grid or a form to an OData Resource. Most filters are working
          * and sorting and pagination too.
          * 
-         * This service provides authentication using bearer-tokens.
+         * This service provides authentication using bearer-tokens, if you require any other you need to provide it.
          */
         .service('tubularOData', [
             'tubularHttp', function tubularOData(tubularHttp) {
@@ -4766,14 +4765,14 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     'Lt': "{0} lt {1}"
                 };
 
-                me.generateUrl = function(request) {
+                me.generateUrl = function (request) {
                     var params = request.data;
 
                     var url = request.serverUrl;
                     url += url.indexOf('?') > 0 ? '&' : '?';
                     url += '$format=json&$inlinecount=allpages';
 
-                    url += "&$select=" + params.Columns.map(function(el) { return el.Name; }).join(',');
+                    url += "&$select=" + params.Columns.map(function (el) { return el.Name; }).join(',');
 
                     if (params.Take != -1) {
                         url += "&$skip=" + params.Skip;
@@ -4781,28 +4780,28 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     }
 
                     var order = params.Columns
-                        .filter(function(el) { return el.SortOrder > 0; })
-                        .sort(function(a, b) { return a.SortOrder - b.SortOrder; })
-                        .map(function(el) { return el.Name + " " + (el.SortDirection == "Descending" ? "desc" : ""); });
+                        .filter(function (el) { return el.SortOrder > 0; })
+                        .sort(function (a, b) { return a.SortOrder - b.SortOrder; })
+                        .map(function (el) { return el.Name + " " + (el.SortDirection == "Descending" ? "desc" : ""); });
 
                     if (order.length > 0) {
                         url += "&$orderby=" + order.join(',');
                     }
 
                     var filter = params.Columns
-                        .filter(function(el) { return el.Filter && el.Filter.Text; })
-                        .map(function(el) {
+                        .filter(function (el) { return el.Filter && el.Filter.Text; })
+                        .map(function (el) {
                             return me.operatorsMapping[el.Filter.Operator]
                                 .replace('{0}', el.Name)
                                 .replace('{1}', el.DataType == "string" ? "'" + el.Filter.Text + "'" : el.Filter.Text);
                         })
-                        .filter(function(el) { return el.length > 1; });
+                        .filter(function (el) { return el.length > 1; });
 
 
                     if (params.Search && params.Search.Operator === 'Auto') {
                         var freetext = params.Columns
-                            .filter(function(el) { return el.Searchable; })
-                            .map(function(el) {
+                            .filter(function (el) { return el.Searchable; })
+                            .map(function (el) {
                                 return "startswith({0}, '{1}') eq true".replace('{0}', el.Name).replace('{1}', params.Search.Text);
                             });
 
@@ -4818,15 +4817,15 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     return url;
                 };
 
-                me.retrieveDataAsync = function(request) {
+                me.retrieveDataAsync = function (request) {
                     var params = request.data;
-
-                    request.data = null;
+                    var originalUrl = request.serverUrl;
                     request.serverUrl = me.generateUrl(request);
+                    request.data = null;
 
                     var response = tubularHttp.retrieveDataAsync(request);
 
-                    var promise = response.promise.then(function(data) {
+                    var promise = response.promise.then(function (data) {
                         var result = {
                             Payload: data.value,
                             CurrentPage: 1,
@@ -4845,7 +4844,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             request.data = params;
                             request.data.Skip = 0;
 
-                            me.retrieveDataAsync(request).promise.then(function(newData) {
+                            request.serverUrl = originalUrl;
+
+                            me.retrieveDataAsync(request).promise.then(function (newData) {
                                 result.Payload = newData.value;
                             });
                         }
@@ -4859,27 +4860,27 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     };
                 };
 
-                me.saveDataAsync = function(model, request) {
+                me.saveDataAsync = function (model, request) {
                     return tubularHttp.saveDataAsync(model, request); //TODO: Check how to handle
                 };
 
-                me.get = function(url) {
+                me.get = function (url) {
                     return tubularHttp.get(url);
                 };
 
-                me.delete = function(url) {
+                me.delete = function (url) {
                     return tubularHttp.delete(url);
                 };
 
-                me.post = function(url, data) {
+                me.post = function (url, data) {
                     return tubularHttp.post(url, data);
                 };
 
-                me.put = function(url, data) {
+                me.put = function (url, data) {
                     return tubularHttp.put(url, data);
                 };
 
-                me.getByKey = function(url, key) {
+                me.getByKey = function (url, key) {
                     return tubularHttp.get(url + "(" + key + ")");
                 };
             }
@@ -5061,23 +5062,25 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @description
          * Translate a key to the current language
          */
-        .filter('translate', function (tubularTranslate) {
-            return function (input, param1, param2, param3, param4) {
-                // Probably send an optional param to define language
-                if (angular.isDefined(input)) {
-                    var translation = tubularTranslate.translate(input);
+        .filter('translate', [
+            'tubularTranslate', function(tubularTranslate) {
+                return function(input, param1, param2, param3, param4) {
+                    // TODO: Probably send an optional param to define language
+                    if (angular.isDefined(input)) {
+                        var translation = tubularTranslate.translate(input);
 
-                    translation = translation.replace("{0}", param1 || '');
-                    translation = translation.replace("{1}", param2 || '');
-                    translation = translation.replace("{2}", param3 || '');
-                    translation = translation.replace("{3}", param4 || '');
+                        translation = translation.replace("{0}", param1 || '');
+                        translation = translation.replace("{1}", param2 || '');
+                        translation = translation.replace("{2}", param3 || '');
+                        translation = translation.replace("{3}", param4 || '');
 
-                    return translation;
-                }
+                        return translation;
+                    }
 
-                return input;
-            };
-        });
+                    return input;
+                };
+            }
+        ]);
 })();
 /**
  * Usage example

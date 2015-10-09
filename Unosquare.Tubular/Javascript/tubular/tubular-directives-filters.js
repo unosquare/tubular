@@ -35,7 +35,7 @@
                 restrict: 'E',
                 replace: true,
                 transclude: true,
-                controller: function ($scope, $modal) {
+                controller: ['$scope', '$modal', function ($scope, $modal) {
                     $scope.$component = $scope.$parent;
 
                     $scope.openColumnsSelector = function () {
@@ -71,8 +71,7 @@
                             ]
                         });
                     };
-
-                }
+                }]
             };
         }])
         /**
@@ -183,7 +182,7 @@
                                 tubularGridFilterService.applyFilterFuncs(scope, lElement, lAttrs, function() {
                                     var inp = $(lElement).find("input[type=date]")[0];
 
-                                    if (inp.type != 'date') {
+                                    if (inp.type !== 'date') {
                                         $(inp).datepicker({
                                             dateFormat: scope.format.toLowerCase()
                                         }).on("dateChange", function(e) {
@@ -193,7 +192,7 @@
 
                                     var inpLev = $(lElement).find("input[type=date]")[1];
 
-                                    if (inpLev.type != 'date') {
+                                    if (inpLev.type !== 'date') {
                                         $(inpLev).datepicker({
                                             dateFormat: scope.format.toLowerCase()
                                         }).on("dateChange", function(e) {

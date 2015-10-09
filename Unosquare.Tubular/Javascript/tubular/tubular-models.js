@@ -20,7 +20,7 @@
         * 
         * This model doesn't need to be created in your controller, the `tbGrid` generate it from any `tbColumn`.
         */
-        .factory('tubularGridColumnModel', function($filter) {
+        .factory('tubularGridColumnModel', ["$filter", function($filter) {
 
             var parseSortDirection = function(value) {
                 if (angular.isUndefined(value)) {
@@ -101,7 +101,7 @@
                     }
                 };
             };
-        })
+        }])
         /**
         * @ngdoc factory
         * @name tubulargGridFilterModel
