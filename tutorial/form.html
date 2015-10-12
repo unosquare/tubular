@@ -1,5 +1,88 @@
 ﻿<h1>Getting Started - Forms</h1>
 
 <p>
-    The <a href="#/Documentation/tbForm">tbForm</a> is a central piece in Tubular
+    The <a href="#/Documentation/tbForm">tbForm</a> is a central piece in Tubular. You can design your forms with several controls,
+    and also you can create your own, and put your form in a page, modal or inside a <a href="#/Documentation/tbGrid">tbGrid</a>. Let's start
+    how to create a basic form, you can use or not a <code>ngController</code> wrapping your form but you should start
+    with a <code>tbForm</code>.
 </p>
+
+<a class="thumbnail">
+    <img src="/tubular/assets/samplecodeform1.png" alt="tbForm" />
+</a>
+
+<p>
+    Now you can start adding any control that you need. Tubular provides the next control, but as we told before you can create your own.
+</p>
+<ul>
+    <li><a href="#/Documentation/tbSimpleEditor">tbSimpleEditor</a> - A default editor with some options, it's like a <code>input type=text</code>.</li>
+    <li><a href="#/Documentation/tbNumericEditor">tbNumericEditor</a> - A numeric editor with support to format to number or currency, the control is wrapping an <code>input type=number</code>, if you target browser doesn't support this HTML5 tag you need to add a <a href="https://github.com/jonstipe/number-polyfill" target="_blank">polyfill</a>.</li>
+    <li><a href="#/Documentation/tbDateTimeEditor">tbDateTimeEditor</a> and <a href="#/Documentation/tbDateEditor">tbDateEditor</a> - A datetime and date editors using <code>input type=date</code> elements and when they are not available fallbacks to a jQuery date picker.</li>
+    <li><a href="#/Documentation/tbDropdownEditor">tbDropdownEditor</a> - Using a <code>select</code> but with extra options like load the options from a Url using the internal <a href="#/Documentation/tubularHttp">tubularHttp</a>.</li>
+    <li><a href="#/Documentation/tbTypeaheadEditor">tbTypeaheadEditor</a> - This is a wrapper around the <a href="https://angular-ui.github.io/bootstrap/#/typeahead">Angular UI Typeahead</a> with easy to setup REST service using <code>tubularHttp</code>.</li>
+    <li><a href="#/Documentation/tbHiddenField">tbHiddenField</a> - A <code>input type=hidden</code>.</li>
+    <li><a href="#/Documentation/tbCheckboxField">tbCheckboxField</a> - Represents a common checkbox but connected to a data model.</li>
+    <li><a href="#/Documentation/tbTextArea">tbTextArea</a> - Similar to <code>textarea</code> element but with validations and binding.</li>
+</ul>
+
+<p>
+    Tubular has a common service <a href="#/Documentation/tubularEditorService">tubularEditorService</a> with some common logic and directive attributes if you want to start
+    your own control. For example you can check <a href="https://github.com/unosquare/tubular/blob/master/Unosquare.Tubular.Sample/ui/chosen/tb-chosen.js">tbChosen</a>, a
+    wrapper around a popular dropdown control in <b>Bootstrap</b>.
+</p>
+
+<p>
+    All your controls must be inside the tbForm and they must have a name (via the name attribute) otherwise they won't be able to bind in the
+    data model. Check the next source code and see how easy is to declare a new form. If you wish you can use the <a href="#/FormGenerator">Form Generator</a> to create
+    your own form.
+</p>
+
+<div class="alert alert-warning">
+    <i class="fa fa-bell"></i>
+    Almost all the options are available with the Tubular Form Generator.
+</div>
+
+<a class="thumbnail">
+    <img src="/tubular/assets/samplecodeform3.png" alt="tbForm controls" />
+</a>
+
+<p>
+    The last step is to setup the buttons to submit the form. The tbForm directive exposes two methods to save data, <code>create</code> to post a new item or <code>save</code>
+    to update an existing record. Normally you can access these methods using the <code>$parent</code> property in the button scope. You can add
+    validation to the button to disable when the model is no valid using the property <code>model</code> and the inner method <code>$valid</code>.
+</p>
+
+<a class="thumbnail">
+    <img src="/tubular/assets/samplecodeform4.png" alt="tbForm button" />
+</a>
+
+<p>
+    Try to submit your form, if you follow all the instructions right you should be able to connect to your REST service and create/update records. You can
+    move your form to a modal or a <code>tbGrid</code>. Please check the next tutorials to understand how to use <strong>tbGrid and tbForm</strong> to deliver
+    a great UX. Continue with <a href="#/Documenation/ModalGrid">Modals and Grid</a> and <a href="#/Documentation/InlineEditor">Grid with in-line editor</a>.
+</p>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <b>Sample Form</b>
+    </div>
+    <div class="panel-body row">
+        <div class="col-xs-2">
+            <p>
+                You can see in the next sample how the tbForm is rendered.
+            </p>
+            <button class="btn btn-primary btn-block" ng-click="codeOn = !codeOn" ng-hide="codeOn">
+                <i class="fa fa-code"></i>&nbsp;Show Code
+            </button>
+            <button class="btn btn-primary btn-block" ng-click="codeOn = !codeOn" ng-show="codeOn">
+                <i class="fa fa-table"></i>&nbsp;Show Sample
+            </button>
+        </div>
+        <div class="col-xs-10">
+            <div ng-include src="'assets/sampleform.html'" ng-hide="codeOn"></div>
+            <div ng-show="codeOn">
+                <div hljs source="getHtml('assets/sampleform.html')"></div>
+            </div>
+        </div>
+    </div>
+</div>

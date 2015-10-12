@@ -307,14 +307,20 @@
         ])
         .controller('tubularDocCtrl',
         [
-            '$scope', '$http', '$anchorScroll', '$location', '$routeParams',
-            function($scope, $http, $anchorScroll, $location, $routeParams) {
+            '$scope', '$http', '$anchorScroll', '$location', '$routeParams', '$templateCache',
+            function ($scope, $http, $anchorScroll, $location, $routeParams, $templateCache) {
                 $scope.internalLink = function(url) {
                     var find = $scope.items.filter(function(el) { return el.name === url; });
 
                     if (find.length > 0) {
                         $scope.open(find[0].url);
                     }
+                };
+
+                $scope.getHtml = function (url) {
+                    var data = $templateCache.get(url);
+                    console.log(data);
+                    return data;
                 };
 
                 $scope.open = function(url) {
@@ -350,6 +356,8 @@
                     $scope.items.push({ name: 'StartForm', url: 'tutorial/form.html', docType: 'external' });
                     $scope.items.push({ name: 'StartChart', url: 'tutorial/chart.html', docType: 'external' });
                     $scope.items.push({ name: 'StartReporting', url: 'tutorial/reporting.html', docType: 'external' });
+                    $scope.items.push({ name: 'ModalGrid', url: 'tutorial/modal.html', docType: 'external' });
+                    $scope.items.push({ name: 'InlineEditor', url: 'tutorial/inline.html', docType: 'external' });
 
                     if (angular.isDefined($routeParams.param)) {
                         $scope.internalLink($routeParams.param);

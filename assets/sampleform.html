@@ -1,0 +1,27 @@
+﻿<div ng-init="countries=['Mexico','USA']">
+    <tb-form server-save-url="/api/register"
+             require-authentication="false">
+        <tb-simple-editor name="Username" required="true"
+                          show-label="true">
+        </tb-simple-editor>
+        <tb-numeric-editor name="Age"
+                           show-label="true">
+        </tb-numeric-editor>
+        <tb-date-time-editor name="StartDate"
+                             show-label="true">
+        </tb-date-time-editor>
+        <tb-dropdown-editor name="Country"
+                            show-label="true"
+                            options="countries">
+        </tb-dropdown-editor>
+        <tb-check-box name="IsReady" show-label="true">
+        </tb-check-box>
+        <div class="pull-right">
+            <button class="btn btn-default" 
+                    ng-click="$parent.create()" 
+                    ng-disabled="!$parent.model.$valid()">
+                Create User
+            </button>
+        </div>
+    </tb-form>
+</div>
