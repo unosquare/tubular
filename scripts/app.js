@@ -345,7 +345,7 @@
                     $scope.items.push({ name: 'localStorageService', url: 'https://github.com/grevory/angular-local-storage', docType: 'external' });
 
                     if (angular.isDefined($routeParams.param)) {
-                        $scope.open($routeParams.param);
+                        $scope.internalLink($routeParams.param);
                     }
                 });
             }

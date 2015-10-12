@@ -19,12 +19,13 @@
             </div>
             <h3>Introduction</h3>
             <div class="list-group">
-                <a class="list-group-item" ng-click="doc =''">General Information</a>
+                <a class="list-group-item" href="#/Documentation">General Information</a>
             </div>
             <div ng-repeat="(key, group) in items | filter: { docType: '!external', name: search } | groupBy: 'docType'">
                 <h3>{{key}}</h3>
                 <div class="list-group">
-                    <a class="list-group-item" ng-repeat="item in group | orderBy: 'name'" ng-click="open(item.url)">{{item.name}}</a>
+                    <a class="list-group-item" ng-repeat="item in group | orderBy: 'name'" 
+                       href="#/Documentation/{{item.name}}">{{item.name}}</a>
                 </div>
             </div>
         </div>
@@ -38,7 +39,7 @@
                 <h2>Grids</h2>
 
                 <p>
-                    You should start any Tubular Grid with the base directive <a ng-click="internalLink('tbGrid')">tbGrid</a>, this directive will generate a container where
+                    You should start any Tubular Grid with the base directive <a href="#/Documentation/tbGrid">tbGrid</a>, this directive will generate a container where
                     a scope with all the properties (like data source and columns definition) can be used. Inside the <code>tbGrid</code> you can define any layout that you wish.
                 </p>
 
@@ -47,11 +48,11 @@
                 </a>
 
                 <p>
-                    The Tubular generator delivers a layout with 3 Bootstrap rows. The first one contains the pager (using the directive <a ng-click="internalLink('tbGridPager')">tbGridPager</a>),
-                    a button group with Print Button (<a ng-click="internalLink('tbPrintButton')">tbPrintButton</a>) and Export CSV Button (<a ng-click="internalLink('tbExportButton')">tbExportButton</a>),
-                    and finally a text-search input (<a ng-click="internalLink('tbTextSearch')">tbTextSearch</a>). The layout continues with the grid table
-                    (<a ng-click="internalLink('tbGridTable')">tbGridTable</a>) and the third row shows the pager again (yeah, if you only want one pager, it's fine to remove the directive) and a pager information and page size selector
-                    (<a ng-click="internalLink('tbPageSizeSelector')">tbPageSizeSelector</a> and <a ng-click="internalLink('tbGridPagerInfo')">tbGridPagerInfo</a>)
+                    The Tubular generator delivers a layout with 3 Bootstrap rows. The first one contains the pager (using the directive <a href="#/Documentation/tbGridPager">tbGridPager</a>),
+                    a button group with Print Button (<a href="#/Documentation/tbPrintButton">tbPrintButton</a>) and Export CSV Button (<a href="#/Documentation/tbExportButton">tbExportButton</a>),
+                    and finally a text-search input (<a href="#/Documentation/tbTextSearch">tbTextSearch</a>). The layout continues with the grid table
+                    (<a href="#/Documentation/tbGridTable">tbGridTable</a>) and the third row shows the pager again (yeah, if you only want one pager, it's fine to remove the directive) and a pager information and page size selector
+                    (<a href="#/Documentation/tbPageSizeSelector">tbPageSizeSelector</a> and <a href="#/Documentation/tbGridPagerInfo">tbGridPagerInfo</a>)
                 </p>
 
                 <a class="thumbnail">
@@ -68,7 +69,7 @@
 
                 <p>
                     When you design your layout, the next step is setup the columns that you will display and how those columns should behave. The table is define as a columns set and one or more rows sets. The columns set should start
-                    with the directive <a ng-click="internalLink('tbColumnDefinitions')">tbColumnDefinitions</a>. You must provide at least one column definition using <a ng-click="internalLink('tbColumn')">tbColumn</a> with a name to bind
+                    with the directive <a href="#/Documentation/tbColumnDefinitions">tbColumnDefinitions</a>. You must provide at least one column definition using <a href="#/Documentation/tbColumn">tbColumn</a> with a name to bind
                     the data source. You can setup details like sorting, column data type and filtering inside the <code>tbColumn</code>, please refer to the directive documentation.
                 </p>
 
@@ -78,8 +79,8 @@
                 </a>
 
                 <p>
-                    With all the columns ready, you need to define how your data will be displayed, you need to add to the <code>tbGridTable</code> a row set directive (<a ng-click="internalLink('tbRowSet')">tbRowSet</a>).
-                    This directive is a container to display <a ng-click="internalLink('tbRowTemplate')">tbRowTemplate</a>, the template should be used with a <code>ngRepeat</code> directive in order to loop the data set and display all the rows.
+                    With all the columns ready, you need to define how your data will be displayed, you need to add to the <code>tbGridTable</code> a row set directive (<a href="#/Documentation/tbRowSet">tbRowSet</a>).
+                    This directive is a container to display <a href="#/Documentation/tbRowTemplate">tbRowTemplate</a>, the template should be used with a <code>ngRepeat</code> directive in order to loop the data set and display all the rows.
                     Inside a <code>tbRowTemplate</code> you finally can setup how the table cells are going to look.
                 </p>
 
@@ -88,7 +89,7 @@
                 </a>
 
                 <p>
-                    The cells are attached to a template in the directive <a ng-click="internalLink('tbCellTemplate')">tbCellTemplate</a>. The cell template is important to bind the column using the
+                    The cells are attached to a template in the directive <a href="#/Documentation/tbCellTemplate">tbCellTemplate</a>. The cell template is important to bind the column using the
                     <code>columnName</code> property, because if you are controlling the columns visibility the cells required to know it. You can use any filter or HTML element inside the cell template, as long they are valid in regular <code>td</code> tags, or
                     you can also use in-line editor from Tubular and connect your grid to a form.
                 </p>
