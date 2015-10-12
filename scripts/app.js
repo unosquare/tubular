@@ -13,6 +13,8 @@
                         templateUrl: 'assets/csharp.html'
                     }).when('/Charts', {
                         templateUrl: 'assets/charts.html'
+                    }).when('/Reporting', {
+                        templateUrl: 'assets/reporting.html'
                     }).when('/WebApi', {
                         templateUrl: 'assets/webapi.html'
                     }).when('/Generator', {
@@ -319,7 +321,6 @@
 
                 $scope.getHtml = function (url) {
                     var data = $templateCache.get(url);
-                    console.log(data);
                     return data;
                 };
 
@@ -367,7 +368,7 @@
         ])
         .config([
             '$sceDelegateProvider', function($sceDelegateProvider) {
-                $sceDelegateProvider.resourceUrlWhitelist(['self', 'http://services.odata.org/**']);
+                $sceDelegateProvider.resourceUrlWhitelist(['self', 'blob:**', 'http://services.odata.org/**']);
             }
         ]);
 
@@ -377,7 +378,8 @@
         'tubular-chart.directives',
         'tubular-hchart.directives',
         'app.routes',
-        'app.controllers'
+        'app.controllers',
+        'app.reporting'
     ]);
 
     ZeroClipboard.config({ swfPath: "//cdn.jsdelivr.net/zeroclipboard/2.2.0/ZeroClipboard.swf" });
