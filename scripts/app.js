@@ -323,9 +323,10 @@
                         return;
                     }
 
-                    $scope.doc = 'docs/build/' + url;
-                    $location.hash('top');
-                    $anchorScroll();
+                    $scope.doc = url.indexOf('tutorial') == 0 ? url : 'docs/build/' + url;
+                    // TODO Test
+                    //$location.hash('top');
+                    //$anchorScroll();
                 };
 
                 $http.get('data/documentation.json').then(function(data) {
@@ -343,6 +344,12 @@
                     $scope.items.push({ name: '$location', url: 'https://docs.angularjs.org/api/ng/service/$location', docType: 'external' });
                     $scope.items.push({ name: '$filter', url: 'https://docs.angularjs.org/api/ng/service/$filter', docType: 'external' });
                     $scope.items.push({ name: 'localStorageService', url: 'https://github.com/grevory/angular-local-storage', docType: 'external' });
+                    
+                    // Load internal doc
+                    $scope.items.push({ name: 'StartGrid', url: 'tutorial/grid.html', docType: 'external' });
+                    $scope.items.push({ name: 'StartForm', url: 'tutorial/form.html', docType: 'external' });
+                    $scope.items.push({ name: 'StartChart', url: 'tutorial/chart.html', docType: 'external' });
+                    $scope.items.push({ name: 'StartReporting', url: 'tutorial/reporting.html', docType: 'external' });
 
                     if (angular.isDefined($routeParams.param)) {
                         $scope.internalLink($routeParams.param);
