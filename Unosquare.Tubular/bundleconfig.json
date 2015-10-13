@@ -44,5 +44,11 @@
       "Javascript/tubular-chart/tubular-directives-highcharts.js",
       "Javascript/highchartjs-ng/highcharts-ng.min.js"
     ]
+  },
+  {
+    "outputFileName": "Javascript/tubular-reporting-bundle.js",
+    "inputFiles": [
+      "Javascript/tubular-reporting/tubular-directives-reporting.js"
+    ]
   }
 ]
