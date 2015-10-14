@@ -68,11 +68,12 @@
                 me.useCache = true;
                 me.requireAuthentication = true;
                 me.tokenUrl = '/api/token';
-                me.setTokenUrl = function(val) {
+                me.refreshTokenUrl = '/api/token';
+                me.setTokenUrl = function (val) {
                     me.tokenUrl = val;
                 };
 
-                me.isAuthenticated = function() {
+                me.isAuthenticated = function () {
                     if (!me.userData.isAuthenticated || isAuthenticationExpired(me.userData.expirationDate)) {
                         try {
                             retrieveSavedData();
@@ -84,11 +85,11 @@
                     return true;
                 };
 
-                me.setRequireAuthentication = function(val) {
+                me.setRequireAuthentication = function (val) {
                     me.requireAuthentication = val;
                 };
 
-                me.removeAuthentication = function() {
+                me.removeAuthentication = function () {
                     removeData();
                     clearUserData();
                     $http.defaults.headers.common.Authorization = null;
@@ -98,43 +99,51 @@
                     this.removeAuthentication();
 
                     $http({
-                            method: 'POST',
-                            url: me.tokenUrl,
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded'
-                            },
-                            data: 'grant_type=password&username=' + username + '&password=' + password
-                        }).success(function(data) {
-                            me.userData.isAuthenticated = true;
-                            me.userData.username = data.userName || username;
-                            me.userData.bearerToken = data.access_token;
-                            me.userData.expirationDate = new Date();
-                            me.userData.expirationDate = new Date(me.userData.expirationDate.getTime() + data.expires_in * 1000);
-                            me.userData.role = data.role;
-
-                            if (typeof userDataCallback === 'function') {
-                                userDataCallback(data);
-                            }
-
-                            setHttpAuthHeader();
-
-                            if (persistData) {
-                                saveData();
-                            }
-
-                            if (typeof successCallback === 'function') {
-                                successCallback();
-                            }
-                        })
-                        .error(function(data) {
-                            if (typeof errorCallback === 'function') {
-                                if (data.error_description) {
-                                    errorCallback(data.error_description);
-                                } else {
-                                    errorCallback($filter('translate')('UI_HTTPERROR'));
-                                }
-                            }
+                        method: 'POST',
+                        url: me.tokenUrl,
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        data: 'grant_type=password&username=' + username + '&password=' + password
+                    }).success(function (data) {
+                        me.handleSuccessCallback(userDataCallback, successCallback, persistData, data);
+                    }).error(function (data) {
+                            me.handleErrorCallback(errorCallback, data);
                         });
+                };
+
+                me.handleSuccessCallback = function(userDataCallback, successCallback, persistData, data) {
+                    me.userData.isAuthenticated = true;
+                    me.userData.username = data.userName || username;
+                    me.userData.bearerToken = data.access_token;
+                    me.userData.expirationDate = new Date();
+                    me.userData.expirationDate = new Date(me.userData.expirationDate.getTime() + data.expires_in * 1000);
+                    me.userData.role = data.role;
+                    me.userData.refreshToken = data.refresh_token;
+
+                    if (typeof userDataCallback === 'function') {
+                        userDataCallback(data);
+                    }
+
+                    setHttpAuthHeader();
+
+                    if (persistData) {
+                        saveData();
+                    }
+
+                    if (typeof successCallback === 'function') {
+                        successCallback();
+                    }
+                };
+
+                me.handleErrorCallback = function(errorCallback, data) {
+                    if (typeof errorCallback === 'function') {
+                        if (data.error_description) {
+                            errorCallback(data.error_description);
+                        } else {
+                            errorCallback($filter('translate')('UI_HTTPERROR'));
+                        }
+                    }
                 };
 
                 me.addTimeZoneToUrl = function (url) {
@@ -142,7 +151,7 @@
                     return url + separator + 'timezoneOffset=' + new Date().getTimezoneOffset();
                 }
 
-                me.saveDataAsync = function(model, request) {
+                me.saveDataAsync = function (model, request) {
                     var component = model.$component;
                     model.$component = null;
                     var clone = angular.copy(model);
@@ -173,7 +182,7 @@
 
                     var dataRequest = me.retrieveDataAsync(request);
 
-                    dataRequest.promise.then(function(data) {
+                    dataRequest.promise.then(function (data) {
                         model.$hasChanges = false;
                         model.resetOriginal();
 
@@ -183,13 +192,28 @@
                     return dataRequest;
                 };
 
-                me.getExpirationDate = function() {
+                me.getExpirationDate = function () {
                     var date = new Date();
                     var minutes = 5;
                     return new Date(date.getTime() + minutes * 60000);
                 };
 
-                me.checksum = function(obj) {
+                me.refreshSession = function(persistData, errorCallback) {
+                    $http({
+                        method: 'POST',
+                        url: me.refreshTokenUrl,
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        data: 'grant_type=refresh_token&refresh_token=' + me.userData.refreshToken
+                    }).success(function(data) {
+                        me.handleSuccessCallback(null, null, persistData, data);
+                    }).error(function(data) {
+                        me.handleErrorCallback(errorCallback, data);
+                    });
+                };
+
+                me.checksum = function (obj) {
                     var keys = Object.keys(obj).sort();
                     var output = [], prop;
 
@@ -202,10 +226,10 @@
                     return JSON.stringify(output);
                 };
 
-                me.retrieveDataAsync = function(request) {
+                me.retrieveDataAsync = function (request) {
                     var canceller = $q.defer();
 
-                    var cancel = function(reason) {
+                    var cancel = function (reason) {
                         console.error(reason);
                         canceller.resolve(reason);
                     };
@@ -219,13 +243,16 @@
                     }
 
                     if (request.requireAuthentication && me.isAuthenticated() === false) {
-                        // Return empty dataset
-                        return {
-                            promise: $q(function(resolve) {
-                                resolve(null);
-                            }),
-                            cancel: cancel
-                        };
+                        if (me.userData.refreshToken) {
+                            me.refreshSession(true);
+                        } else {
+                            return {
+                                promise: $q(function (resolve) {
+                                    resolve(null);
+                                }),
+                                cancel: cancel
+                            };
+                        }
                     }
 
                     var checksum = me.checksum(request);
@@ -235,7 +262,7 @@
 
                         if (angular.isDefined(data) && data.Expiration.getTime() > new Date().getTime()) {
                             return {
-                                promise: $q(function(resolve) {
+                                promise: $q(function (resolve) {
                                     resolve(data.Set);
                                 }),
                                 cancel: cancel
@@ -248,7 +275,7 @@
                         method: request.requestMethod,
                         data: request.data,
                         timeout: canceller.promise
-                    }).then(function(response) {
+                    }).then(function (response) {
                         $timeout.cancel(timeoutHanlder);
 
                         if (me.useCache) {
@@ -256,12 +283,18 @@
                         }
 
                         return response.data;
-                    }, function(error) {
+                    }, function (error) {
                         if (angular.isDefined(error) && angular.isDefined(error.status) && error.status == 401) {
                             if (me.isAuthenticated()) {
-                                me.removeAuthentication();
-                                // Let's trigger a refresh
-                                document.location = document.location;
+                                if (me.userData.refreshToken) {
+                                    me.refreshSession(true);
+
+                                    return me.retrieveDataAsync(request);
+                                } else {
+                                    me.removeAuthentication();
+                                    // Let's trigger a refresh
+                                    document.location = document.location;
+                                }
                             }
                         }
 
@@ -270,7 +303,7 @@
 
                     request.timeout = request.timeout || 15000;
 
-                    var timeoutHanlder = $timeout(function() {
+                    var timeoutHanlder = $timeout(function () {
                         cancel('Timed out');
                     }, request.timeout);
 
@@ -303,14 +336,14 @@
                     return me.get(url, { responseType: 'arraybuffer' });
                 };
 
-                me.delete = function(url) {
+                me.delete = function (url) {
                     return me.retrieveDataAsync({
                         serverUrl: url,
                         requestMethod: 'DELETE'
                     });
                 };
 
-                me.post = function(url, data) {
+                me.post = function (url, data) {
                     return me.retrieveDataAsync({
                         serverUrl: url,
                         requestMethod: 'POST',
@@ -360,7 +393,7 @@
                     };
                 };
 
-                me.put = function(url, data) {
+                me.put = function (url, data) {
                     return me.retrieveDataAsync({
                         serverUrl: url,
                         requestMethod: 'PUT',
@@ -380,11 +413,11 @@
                 // This is a kind of factory to retrieve a DataService
                 me.instances = [];
 
-                me.registerService = function(name, instance) {
+                me.registerService = function (name, instance) {
                     me.instances[name] = instance;
                 };
 
-                me.getDataService = function(name) {
+                me.getDataService = function (name) {
                     if (angular.isUndefined(name) || name == null || name === 'tubularHttp') {
                         return me;
                     }
