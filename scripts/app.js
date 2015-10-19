@@ -377,6 +377,7 @@
         'tubular',
         'tubular-chart.directives',
         'tubular-hchart.directives',
+        'tubular-reporting.directives',
         'app.routes',
         'app.controllers',
         'app.reporting'

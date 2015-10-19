@@ -1,5 +1,94 @@
 ﻿<h1>Getting Started - Reporting</h1>
 
 <p>
-    <i>Coming soon</i>
+    Reporting is an experimental module in Tubular and you need .NET as back-end since all the data manipulation
+    is provided by Dynamic LINQ queries. You need to provide three methods, the first one to download the data source
+    metadata, one to generate the AngularJS markup and one proxy endpoint to deliver a Tubular Grid Response. Both methods are pretty easy to implement using the extensions methods
+    in Angular .NET library.
+</p>
+
+<div class="alert alert-warning">
+    <i class="fa fa-bell"></i>
+    Reporting works better with a well-defined Entity Framework DbContext, but it should be not a problem to use any similar
+    repository as long the data can be fetched as an IQueryable.
+</div>
+
+<p>
+    You can use Reporting to allow to your users to design any grid with aggregation methods and all the power and flexibility
+    provided by Tubular Grid. Needless to say, you can sort, search, page, print and export your data. The Reporting UI is straightforward
+    (you can check a sample connected to an Azure database <a href="http://unosquare.github.io/tubular/#/Reporting">here</a>)
+    you get a table with in-line editors to add columns to your grid model, and a "Generate" button will send this model to
+    your AngularJS code generation service and inject it to your DOM. The injected grid will call to the proxy service to
+    fetch data. Like a plus you can load and save the "report models" in your local storage.
+</p>
+
+<p>
+    Before to setup your REST methods you need to generate a <code>DataSourceRepository</code> instance. This class
+    allows you to define all your possible data sources (using IQueryables) and how they can join together. They are
+    extension methods to easy this process or you can use a helper extension method, from <a href="https://github.com/unosquare/tubular/blob/master/Unosquare.Tubular.Sample/Application/Extensions.cs" target="_blank">Tubular Sample</a>,
+    to get all your DbSet mapped. The extension method will check all the Foreign Keys in your model and try to resolve them
+    in the <strong>Entity Framework</strong> DbContext. In the next code block, you can see how to start a Reporting controller.
+</p>
+
+<div hljs no-escape>
+using System.Linq;
+using System.Web.Http;
+using Unosquare.Tubular.ObjectModel;
+[RoutePrefix("api/reports")]
+public class ReportController : ApiController
+{
+    private readonly SampleDbContext _database = new SampleDbContext(false);
+    private readonly DataSourceRepository _dataSources;
+    public ReportController()
+    {
+        _dataSources = new DataSourceRepository();
+        _dataSources.AddSource(Database.Computers)
+            .WithJoin<Computer, SoftwareItem, string>(x => x.SenderKey, x => x.SenderKey)
+            .WithJoin<Computer, UserActivity, string>(x => x.SenderKey, x => x.SenderKey)
+            .WithJoin<Computer, ComputerItem, string>(x => x.SenderKey, x => x.SenderKey)
+            .WithJoin<Computer, NetworkSample, string>(x => x.SenderKey, x => x.SenderKey)
+            .WithJoin<Computer, PerformanceSample, string>(x => x.SenderKey, x => x.SenderKey);
+        _dataSources.AddSource(Database.SoftwareItems);
+        _dataSources.AddSource(Database.UserActivities);
+        _dataSources.AddSource(Database.ComputerItems);
+        _dataSources.AddSource(Database.NetworkSamples);
+        _dataSources.AddSource(Database.PerformanceSamples);
+        _dataSources.AddSource(Database.Peripherals);
+        _dataSources.AddSource(Database.Persons);
+        _dataSources.VerifyJoins();
+    }
+}
+</div>
+
+<div class="alert alert-warning">
+    <i class="fa fa-bell"></i>
+    If your data should apply any ACL or similar filtering, you can apply them directly in the AddSource method.
+</div>
+
+<p>
+    Check in the previous code, the joins are only declared in one data source, the method VerifyJoins will match
+    the missing joins, so you don't need to add them manually. You can continue with the three endpoints. Check the next
+    illustration:
+</p>
+
+<a class="thumbnail">
+    <img src="/tubular/assets/reporting.png" alt="Reporting Methods .NET" />
+</a>
+
+<p>
+    You can create your own Reporting UI, as long you setup a container for the grid and a controller to call both REST services.
+    Using the directive is easy, you just need the following code:
+</p>
+
+<div hljs>
+    <tb-reporting require-authentication="false"
+                  server-data-source-url="http://tubular.azurewebsites.net/api/reports/datasources"
+                  server-markup-url="http://tubular.azurewebsites.net/api/reports/getmarkup">
+    </tb-reporting>
+</div>
+
+<p>
+    You must change the Url to your endpoints and your are done. You can focus to setup your data service and allow
+    Tubular to provide the UI. You don't need to specified the proxy url because the Markup generator endpoint should add it to the
+    grid output. <strong>You are ready to start using Reporting</strong>.
 </p>

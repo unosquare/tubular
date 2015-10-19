@@ -1,10 +1,14 @@
 ﻿<tb-grid server-url="data/customers.json" request-method="GET" service-name="local" grid-name="sample1"
          class="row" require-authentication="false">
+    <div class="row">
+        <tb-grid-pager class="col-md-8 col-xs-12"></tb-grid-pager>
+        <tb-text-search class="col-md-4 col-xs-12"></tb-text-search>
+    </div>
     <div class="col-md-12">
         <div class="panel panel-default panel-rounded">
             <tb-grid-table class="table-bordered">
                 <tb-column-definitions>
-                    <tb-column name="CustomerName">
+                    <tb-column name="CustomerName" searchable="true">
                         <tb-column-header>
                             <span>{{label}}</span>
                         </tb-column-header>

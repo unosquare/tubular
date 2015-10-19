@@ -1719,10 +1719,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         '<span ng-hide="isEditing">{{value | numberorcurrency: format }}</span>' +
                         '<label ng-show="showLabel">{{ label }}</label>' +
                         '<div class="input-group" ng-show="isEditing">' +
-                        '<div class="input-group-addon" ng-show="format == \'C\'">$</div>' +
+                        '<div class="input-group-addon">{{format == \'C\' ? \'$\' : \'.\'}}</div>' +
                         '<input type="number" placeholder="{{placeholder}}" ng-model="value" class="form-control" ' +
                         'ng-required="required" ng-hide="readOnly" step="{{step || \'any\'}}" />' +
-                        '<p class="form-control form-control-static text-right" ng-show="readOnly">{{format == \'C\' ? (value | number: 2) : value}}</p>' +
+                        '<p class="form-control form-control-static text-right" ng-show="readOnly">{{value | number: 2}}</p>' +
                         '</div>' +
                         '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
                         '<span class="help-block" ng-show="isEditing && help">{{help}}</span>' +
@@ -2315,7 +2315,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 restrict: 'E',
                 replace: true,
                 transclude: true,
-                controller: function ($scope, $modal) {
+                controller: ['$scope', '$modal', function ($scope, $modal) {
                     $scope.$component = $scope.$parent;
 
                     $scope.openColumnsSelector = function () {
@@ -2351,8 +2351,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             ]
                         });
                     };
-
-                }
+                }]
             };
         }])
         /**
@@ -2463,7 +2462,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 tubularGridFilterService.applyFilterFuncs(scope, lElement, lAttrs, function() {
                                     var inp = $(lElement).find("input[type=date]")[0];
 
-                                    if (inp.type != 'date') {
+                                    if (inp.type !== 'date') {
                                         $(inp).datepicker({
                                             dateFormat: scope.format.toLowerCase()
                                         }).on("dateChange", function(e) {
@@ -2473,7 +2472,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                                     var inpLev = $(lElement).find("input[type=date]")[1];
 
-                                    if (inpLev.type != 'date') {
+                                    if (inpLev.type !== 'date') {
                                         $(inpLev).datepicker({
                                             dateFormat: scope.format.toLowerCase()
                                         }).on("dateChange", function(e) {
@@ -3360,7 +3359,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
         * 
         * This model doesn't need to be created in your controller, the `tbGrid` generate it from any `tbColumn`.
         */
-        .factory('tubularGridColumnModel', function($filter) {
+        .factory('tubularGridColumnModel', ["$filter", function($filter) {
 
             var parseSortDirection = function(value) {
                 if (angular.isUndefined(value)) {
@@ -3441,7 +3440,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     }
                 };
             };
-        })
+        }])
         /**
         * @ngdoc factory
         * @name tubulargGridFilterModel
@@ -4248,11 +4247,12 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 me.useCache = true;
                 me.requireAuthentication = true;
                 me.tokenUrl = '/api/token';
-                me.setTokenUrl = function(val) {
+                me.refreshTokenUrl = '/api/token';
+                me.setTokenUrl = function (val) {
                     me.tokenUrl = val;
                 };
 
-                me.isAuthenticated = function() {
+                me.isAuthenticated = function () {
                     if (!me.userData.isAuthenticated || isAuthenticationExpired(me.userData.expirationDate)) {
                         try {
                             retrieveSavedData();
@@ -4264,11 +4264,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     return true;
                 };
 
-                me.setRequireAuthentication = function(val) {
+                me.setRequireAuthentication = function (val) {
                     me.requireAuthentication = val;
                 };
 
-                me.removeAuthentication = function() {
+                me.removeAuthentication = function () {
                     removeData();
                     clearUserData();
                     $http.defaults.headers.common.Authorization = null;
@@ -4278,43 +4278,51 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     this.removeAuthentication();
 
                     $http({
-                            method: 'POST',
-                            url: me.tokenUrl,
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded'
-                            },
-                            data: 'grant_type=password&username=' + username + '&password=' + password
-                        }).success(function(data) {
-                            me.userData.isAuthenticated = true;
-                            me.userData.username = data.userName || username;
-                            me.userData.bearerToken = data.access_token;
-                            me.userData.expirationDate = new Date();
-                            me.userData.expirationDate = new Date(me.userData.expirationDate.getTime() + data.expires_in * 1000);
-                            me.userData.role = data.role;
-
-                            if (typeof userDataCallback === 'function') {
-                                userDataCallback(data);
-                            }
-
-                            setHttpAuthHeader();
-
-                            if (persistData) {
-                                saveData();
-                            }
-
-                            if (typeof successCallback === 'function') {
-                                successCallback();
-                            }
-                        })
-                        .error(function(data) {
-                            if (typeof errorCallback === 'function') {
-                                if (data.error_description) {
-                                    errorCallback(data.error_description);
-                                } else {
-                                    errorCallback($filter('translate')('UI_HTTPERROR'));
-                                }
-                            }
+                        method: 'POST',
+                        url: me.tokenUrl,
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        data: 'grant_type=password&username=' + username + '&password=' + password
+                    }).success(function (data) {
+                        me.handleSuccessCallback(userDataCallback, successCallback, persistData, data);
+                    }).error(function (data) {
+                            me.handleErrorCallback(errorCallback, data);
                         });
+                };
+
+                me.handleSuccessCallback = function(userDataCallback, successCallback, persistData, data) {
+                    me.userData.isAuthenticated = true;
+                    me.userData.username = data.userName || username;
+                    me.userData.bearerToken = data.access_token;
+                    me.userData.expirationDate = new Date();
+                    me.userData.expirationDate = new Date(me.userData.expirationDate.getTime() + data.expires_in * 1000);
+                    me.userData.role = data.role;
+                    me.userData.refreshToken = data.refresh_token;
+
+                    if (typeof userDataCallback === 'function') {
+                        userDataCallback(data);
+                    }
+
+                    setHttpAuthHeader();
+
+                    if (persistData) {
+                        saveData();
+                    }
+
+                    if (typeof successCallback === 'function') {
+                        successCallback();
+                    }
+                };
+
+                me.handleErrorCallback = function(errorCallback, data) {
+                    if (typeof errorCallback === 'function') {
+                        if (data.error_description) {
+                            errorCallback(data.error_description);
+                        } else {
+                            errorCallback($filter('translate')('UI_HTTPERROR'));
+                        }
+                    }
                 };
 
                 me.addTimeZoneToUrl = function (url) {
@@ -4322,7 +4330,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     return url + separator + 'timezoneOffset=' + new Date().getTimezoneOffset();
                 }
 
-                me.saveDataAsync = function(model, request) {
+                me.saveDataAsync = function (model, request) {
                     var component = model.$component;
                     model.$component = null;
                     var clone = angular.copy(model);
@@ -4353,7 +4361,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                     var dataRequest = me.retrieveDataAsync(request);
 
-                    dataRequest.promise.then(function(data) {
+                    dataRequest.promise.then(function (data) {
                         model.$hasChanges = false;
                         model.resetOriginal();
 
@@ -4363,13 +4371,28 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     return dataRequest;
                 };
 
-                me.getExpirationDate = function() {
+                me.getExpirationDate = function () {
                     var date = new Date();
                     var minutes = 5;
                     return new Date(date.getTime() + minutes * 60000);
                 };
 
-                me.checksum = function(obj) {
+                me.refreshSession = function(persistData, errorCallback) {
+                    $http({
+                        method: 'POST',
+                        url: me.refreshTokenUrl,
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        data: 'grant_type=refresh_token&refresh_token=' + me.userData.refreshToken
+                    }).success(function(data) {
+                        me.handleSuccessCallback(null, null, persistData, data);
+                    }).error(function(data) {
+                        me.handleErrorCallback(errorCallback, data);
+                    });
+                };
+
+                me.checksum = function (obj) {
                     var keys = Object.keys(obj).sort();
                     var output = [], prop;
 
@@ -4382,10 +4405,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     return JSON.stringify(output);
                 };
 
-                me.retrieveDataAsync = function(request) {
+                me.retrieveDataAsync = function (request) {
                     var canceller = $q.defer();
 
-                    var cancel = function(reason) {
+                    var cancel = function (reason) {
                         console.error(reason);
                         canceller.resolve(reason);
                     };
@@ -4399,13 +4422,16 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     }
 
                     if (request.requireAuthentication && me.isAuthenticated() === false) {
-                        // Return empty dataset
-                        return {
-                            promise: $q(function(resolve) {
-                                resolve(null);
-                            }),
-                            cancel: cancel
-                        };
+                        if (me.userData.refreshToken) {
+                            me.refreshSession(true);
+                        } else {
+                            return {
+                                promise: $q(function (resolve) {
+                                    resolve(null);
+                                }),
+                                cancel: cancel
+                            };
+                        }
                     }
 
                     var checksum = me.checksum(request);
@@ -4415,7 +4441,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                         if (angular.isDefined(data) && data.Expiration.getTime() > new Date().getTime()) {
                             return {
-                                promise: $q(function(resolve) {
+                                promise: $q(function (resolve) {
                                     resolve(data.Set);
                                 }),
                                 cancel: cancel
@@ -4428,7 +4454,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         method: request.requestMethod,
                         data: request.data,
                         timeout: canceller.promise
-                    }).then(function(response) {
+                    }).then(function (response) {
                         $timeout.cancel(timeoutHanlder);
 
                         if (me.useCache) {
@@ -4436,12 +4462,18 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         }
 
                         return response.data;
-                    }, function(error) {
+                    }, function (error) {
                         if (angular.isDefined(error) && angular.isDefined(error.status) && error.status == 401) {
                             if (me.isAuthenticated()) {
-                                me.removeAuthentication();
-                                // Let's trigger a refresh
-                                document.location = document.location;
+                                if (me.userData.refreshToken) {
+                                    me.refreshSession(true);
+
+                                    return me.retrieveDataAsync(request);
+                                } else {
+                                    me.removeAuthentication();
+                                    // Let's trigger a refresh
+                                    document.location = document.location;
+                                }
                             }
                         }
 
@@ -4450,7 +4482,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                     request.timeout = request.timeout || 15000;
 
-                    var timeoutHanlder = $timeout(function() {
+                    var timeoutHanlder = $timeout(function () {
                         cancel('Timed out');
                     }, request.timeout);
 
@@ -4483,14 +4515,14 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     return me.get(url, { responseType: 'arraybuffer' });
                 };
 
-                me.delete = function(url) {
+                me.delete = function (url) {
                     return me.retrieveDataAsync({
                         serverUrl: url,
                         requestMethod: 'DELETE'
                     });
                 };
 
-                me.post = function(url, data) {
+                me.post = function (url, data) {
                     return me.retrieveDataAsync({
                         serverUrl: url,
                         requestMethod: 'POST',
@@ -4540,7 +4572,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     };
                 };
 
-                me.put = function(url, data) {
+                me.put = function (url, data) {
                     return me.retrieveDataAsync({
                         serverUrl: url,
                         requestMethod: 'PUT',
@@ -4560,11 +4592,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 // This is a kind of factory to retrieve a DataService
                 me.instances = [];
 
-                me.registerService = function(name, instance) {
+                me.registerService = function (name, instance) {
                     me.instances[name] = instance;
                 };
 
-                me.getDataService = function(name) {
+                me.getDataService = function (name) {
                     if (angular.isUndefined(name) || name == null || name === 'tubularHttp') {
                         return me;
                     }
@@ -4742,7 +4774,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * Use `tubularOData` to connect a grid or a form to an OData Resource. Most filters are working
          * and sorting and pagination too.
          * 
-         * This service provides authentication using bearer-tokens.
+         * This service provides authentication using bearer-tokens, if you require any other you need to provide it.
          */
         .service('tubularOData', [
             'tubularHttp', function tubularOData(tubularHttp) {
@@ -4766,14 +4798,14 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     'Lt': "{0} lt {1}"
                 };
 
-                me.generateUrl = function(request) {
+                me.generateUrl = function (request) {
                     var params = request.data;
 
                     var url = request.serverUrl;
                     url += url.indexOf('?') > 0 ? '&' : '?';
                     url += '$format=json&$inlinecount=allpages';
 
-                    url += "&$select=" + params.Columns.map(function(el) { return el.Name; }).join(',');
+                    url += "&$select=" + params.Columns.map(function (el) { return el.Name; }).join(',');
 
                     if (params.Take != -1) {
                         url += "&$skip=" + params.Skip;
@@ -4781,28 +4813,28 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     }
 
                     var order = params.Columns
-                        .filter(function(el) { return el.SortOrder > 0; })
-                        .sort(function(a, b) { return a.SortOrder - b.SortOrder; })
-                        .map(function(el) { return el.Name + " " + (el.SortDirection == "Descending" ? "desc" : ""); });
+                        .filter(function (el) { return el.SortOrder > 0; })
+                        .sort(function (a, b) { return a.SortOrder - b.SortOrder; })
+                        .map(function (el) { return el.Name + " " + (el.SortDirection == "Descending" ? "desc" : ""); });
 
                     if (order.length > 0) {
                         url += "&$orderby=" + order.join(',');
                     }
 
                     var filter = params.Columns
-                        .filter(function(el) { return el.Filter && el.Filter.Text; })
-                        .map(function(el) {
+                        .filter(function (el) { return el.Filter && el.Filter.Text; })
+                        .map(function (el) {
                             return me.operatorsMapping[el.Filter.Operator]
                                 .replace('{0}', el.Name)
                                 .replace('{1}', el.DataType == "string" ? "'" + el.Filter.Text + "'" : el.Filter.Text);
                         })
-                        .filter(function(el) { return el.length > 1; });
+                        .filter(function (el) { return el.length > 1; });
 
 
                     if (params.Search && params.Search.Operator === 'Auto') {
                         var freetext = params.Columns
-                            .filter(function(el) { return el.Searchable; })
-                            .map(function(el) {
+                            .filter(function (el) { return el.Searchable; })
+                            .map(function (el) {
                                 return "startswith({0}, '{1}') eq true".replace('{0}', el.Name).replace('{1}', params.Search.Text);
                             });
 
@@ -4818,7 +4850,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     return url;
                 };
 
-                me.retrieveDataAsync = function(request) {
+                me.retrieveDataAsync = function (request) {
                     var params = request.data;
                     var originalUrl = request.serverUrl;
                     request.serverUrl = me.generateUrl(request);
@@ -4826,7 +4858,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                     var response = tubularHttp.retrieveDataAsync(request);
 
-                    var promise = response.promise.then(function(data) {
+                    var promise = response.promise.then(function (data) {
                         var result = {
                             Payload: data.value,
                             CurrentPage: 1,
@@ -4847,7 +4879,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                             request.serverUrl = originalUrl;
 
-                            me.retrieveDataAsync(request).promise.then(function(newData) {
+                            me.retrieveDataAsync(request).promise.then(function (newData) {
                                 result.Payload = newData.value;
                             });
                         }
@@ -4861,27 +4893,27 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     };
                 };
 
-                me.saveDataAsync = function(model, request) {
+                me.saveDataAsync = function (model, request) {
                     return tubularHttp.saveDataAsync(model, request); //TODO: Check how to handle
                 };
 
-                me.get = function(url) {
+                me.get = function (url) {
                     return tubularHttp.get(url);
                 };
 
-                me.delete = function(url) {
+                me.delete = function (url) {
                     return tubularHttp.delete(url);
                 };
 
-                me.post = function(url, data) {
+                me.post = function (url, data) {
                     return tubularHttp.post(url, data);
                 };
 
-                me.put = function(url, data) {
+                me.put = function (url, data) {
                     return tubularHttp.put(url, data);
                 };
 
-                me.getByKey = function(url, key) {
+                me.getByKey = function (url, key) {
                     return tubularHttp.get(url + "(" + key + ")");
                 };
             }
@@ -4969,6 +5001,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         'CAPTION_EDIT': 'Edit',
                         'CAPTION_SAVE': 'Save',
                         'CAPTION_PRINT': 'Print',
+                        'CAPTION_LOAD': 'Load',
+                        'CAPTION_ADD': 'Add',
                         'UI_SEARCH': 'search . . .',
                         'UI_PAGESIZE': 'Page size:',
                         'UI_EXPORTCSV': 'Export CSV',
@@ -4978,6 +5012,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         'UI_SHOWINGRECORDS': 'Showing {0} to {1} of {2} records',
                         'UI_FILTEREDRECORDS': '(Filtered from {0} total records)',
                         'UI_HTTPERROR': 'Unable to contact server; please, try again later.',
+                        'UI_GENERATEREPORT': 'Generate Report',
                         'OP_NONE': 'None',
                         'OP_EQUALS': 'Equals',
                         'OP_NOTEQUALS': 'Not Equals',
@@ -5009,6 +5044,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         'CAPTION_EDIT': 'Editar',
                         'CAPTION_SAVE': 'Guardar',
                         'CAPTION_PRINT': 'Imprimir',
+                        'CAPTION_LOAD': 'Cargar',
+                        'CAPTION_ADD': 'Agregar',
                         'UI_SEARCH': 'buscar . . .',
                         'UI_PAGESIZE': '# Registros:',
                         'UI_EXPORTCSV': 'Exportar CSV',
@@ -5018,6 +5055,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         'UI_SHOWINGRECORDS': 'Mostrando registros {0} al {1} de {2}',
                         'UI_FILTEREDRECORDS': '(De un total de {0} registros)',
                         'UI_HTTPERROR': 'No se logro contactar el servidor, intente más tarde.',
+                        'UI_GENERATEREPORT': 'Generar Reporte',
                         'OP_NONE': 'Ninguno',
                         'OP_EQUALS': 'Igual',
                         'OP_NOTEQUALS': 'No Igual',
@@ -5063,23 +5101,25 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @description
          * Translate a key to the current language
          */
-        .filter('translate', function (tubularTranslate) {
-            return function (input, param1, param2, param3, param4) {
-                // Probably send an optional param to define language
-                if (angular.isDefined(input)) {
-                    var translation = tubularTranslate.translate(input);
+        .filter('translate', [
+            'tubularTranslate', function(tubularTranslate) {
+                return function(input, param1, param2, param3, param4) {
+                    // TODO: Probably send an optional param to define language
+                    if (angular.isDefined(input)) {
+                        var translation = tubularTranslate.translate(input);
 
-                    translation = translation.replace("{0}", param1 || '');
-                    translation = translation.replace("{1}", param2 || '');
-                    translation = translation.replace("{2}", param3 || '');
-                    translation = translation.replace("{3}", param4 || '');
+                        translation = translation.replace("{0}", param1 || '');
+                        translation = translation.replace("{1}", param2 || '');
+                        translation = translation.replace("{2}", param3 || '');
+                        translation = translation.replace("{3}", param4 || '');
 
-                    return translation;
-                }
+                        return translation;
+                    }
 
-                return input;
-            };
-        });
+                    return input;
+                };
+            }
+        ]);
 })();
 /**
  * Usage example

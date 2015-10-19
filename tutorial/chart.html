@@ -1,5 +1,68 @@
 ﻿<h1>Getting Started - Charts</h1>
 
 <p>
-    <i>Coming soon</i>
+    Tubular Charts are two components, the .NET Helpers to transform your <code>IQueryable</code> data source
+    into a model that you can use later in the Tubular directives to populate <a href="http://www.chartjs.org/" target="_blank">ChartJS</a> or
+    <a href="http://www.highcharts.com/" target="_blank">Highcharts</a>.
+</p>
+
+<p>
+    You should start creating your WebApi method (or using EmbedIO as well). Using the <code>ProvideMultipleSerieChartResponse</code>
+    or <code>ProvideSingleSerieChartResponse</code> extension methods. If you need to create a single serie chart (like pie)
+    with <code>ProvideSingleSerieChartResponse</code> you get a single array with a single serie as model. Otherwise the
+    <code>ProvideMultipleSerieChartResponse</code> method will group your series and send multiples arrays, for example if you want
+    to send sales information in City as series across the months as axis X.
+</p>
+
+<p>
+    In the following code, you can see how to call the extension methods directly in a <code>DbSet<></code> property from a
+    <code>DbContext</code>. By the way this code is from <a href="https://github.com/unosquare/tubular/tree/master/Unosquare.Tubular.Sample" target="_blank">Tubular Sample</a>.
+</p>
+
+<div hljs no-escape>
+    // Sample method using multiple series
+    [HttpGet, Route("chart")]
+    public IHttpActionResult GetChart()
+    {
+        using (var context = new SampleDbContext(false))
+        {
+            return Ok(context.Orders.ProvideMultipleSerieChartResponse(
+                label: x => x.ShipperCity,
+                serie: x => x.CustomerName,
+                value: x => x.Amount));
+        }
+    }
+
+    // Sample method using single serie
+    [HttpGet, Route("chartpie")]
+    public IHttpActionResult GetChartPie()
+    {
+        using (var context = new SampleDbContext(false))
+        {
+            return Ok(context.Orders.ProvideSingleSerieChartResponse(
+                label: x => x.CustomerName,
+                value: x => x.Amount,
+                serieName: "Customers"));
+        }
+    }
+</div>
+
+<p>
+    Moving to the UI, you should choose between Highcharts or ChartJS and load the library using CDN or by any other
+    approach. Also you should load the correct module in your AngularJS application. Depending the chart library you have
+    two directives: <code>tb-chartjs</code> or <code>tb-highcharts</code>. Both directives has similar attributes
+    like <code>server-url</code> to specified the REST endpoint and <code>chart-type</code> to choose how the chart
+    will look. The types are equals to the chart original library.
+</p>
+
+<div hljs>
+<tb-chartjs server-url="/api/chart" chart-type="Line" require-authentication="false" show-legend="true">
+</tb-chartjs>
+
+<tb-highcharts server-url="/api/chart" chart-type="line" require-authentication="false" show-legend="true">
+</tb-highcharts>
+</div>
+
+<p>
+    That's all. You can check the documentation to see the attributes and configurations.
 </p>
