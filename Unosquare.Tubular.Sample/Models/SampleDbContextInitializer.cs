@@ -81,7 +81,7 @@
                     order.WarehouseID = warehouses[rand.Next(warehouses.Length - 1)].WarehouseID;
                 }
 
-                for (var k = 0; k < rand.Next(10); i++)
+                for (var k = 0; k < rand.Next(10); k++)
                 {
                     order.Details.Add(new OrderDetail
                     {
