@@ -1,4 +1,4 @@
-﻿(function () {
+﻿(function() {
     'use strict';
 
     angular.module('tubular-hchart.directives', ['tubular.services', 'highcharts-ng'])
@@ -23,7 +23,7 @@
          * @param {object} options The Highcharts options method.
          */
         .directive('tbHighcharts', [
-            function () {
+            function() {
                 return {
                     template: '<div class="tubular-chart">' +
                         '<highchart config="options" ng-hide="isEmpty || hasError">' +
@@ -45,8 +45,8 @@
                         options: '=?'
                     },
                     controller: [
-                        '$scope', 'tubularHttp',
-                        function ($scope, tubularHttp) {
+                        '$scope', 'tubularHttp', '$timeout',
+                        function($scope, tubularHttp, $timeout) {
                             $scope.tubularDirective = 'tubular-chart';
                             $scope.dataService = tubularHttp.getDataService($scope.dataServiceName);
                             $scope.showLegend = $scope.showLegend || true;
@@ -66,11 +66,11 @@
                             // Setup require authentication
                             $scope.requireAuthentication = angular.isUndefined($scope.requireAuthentication) ? true : $scope.requireAuthentication;
 
-                            $scope.loadData = function () {
+                            $scope.loadData = function() {
                                 tubularHttp.setRequireAuthentication($scope.requireAuthentication);
                                 $scope.hasError = false;
 
-                                tubularHttp.get($scope.serverUrl).promise.then(function (data) {
+                                tubularHttp.get($scope.serverUrl).promise.then(function(data) {
                                     if (!data || !data.Data || data.Data.length === 0) {
                                         $scope.isEmpty = true;
                                         $scope.options.series = [{ data: [] }];
@@ -86,14 +86,14 @@
 
                                     if (data.Series) {
                                         $scope.options.xAxis.categories = data.Labels;
-                                        $scope.options.series = data.Series.map(function (el, ix) {
+                                        $scope.options.series = data.Series.map(function(el, ix) {
                                             return {
                                                 name: el,
                                                 data: data.Data[ix]
                                             };
                                         });
                                     } else {
-                                        var uniqueSerie = data.Labels.map(function (el, ix) {
+                                        var uniqueSerie = data.Labels.map(function(el, ix) {
                                             return {
                                                 name: el,
                                                 y: data.Data[ix]
@@ -104,21 +104,25 @@
                                     }
 
                                     if ($scope.onLoad) {
-                                        $scope.onLoad($scope.options, data);
+                                        $timeout(function() {
+                                            $scope.onLoad($scope.options, {}, $scope.options.getHighcharts().series);
+                                        }, 100);
+
+                                        $scope.onLoad($scope.options, {}, null);
                                     }
-                                }, function (error) {
+                                }, function(error) {
                                     $scope.$emit('tbChart_OnConnectionError', error);
                                     $scope.hasError = true;
                                 });
                             };
 
-                            $scope.$watch('serverUrl', function (val) {
+                            $scope.$watch('serverUrl', function(val) {
                                 if (angular.isDefined(val) && val != null && val != '') {
                                     $scope.loadData();
                                 }
                             });
 
-                            $scope.$watch('chartType', function (val) {
+                            $scope.$watch('chartType', function(val) {
                                 if (angular.isDefined(val) && val != null) {
                                     $scope.options.options.chart.type = val;
                                 }

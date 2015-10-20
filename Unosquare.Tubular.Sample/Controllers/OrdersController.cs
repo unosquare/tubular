@@ -14,7 +14,7 @@
         [HttpGet, Route("{id}")]
         public async Task<IHttpActionResult> Get(string id)
         {
-            using (var context = new SampleDbContext(false))
+            using (var context = new SampleDbContext())
             {
                 var orderId = int.Parse(id);
                 var order = await context.Orders.AsNoTracking().Where(o => o.OrderID == orderId).FirstOrDefaultAsync();
@@ -29,7 +29,7 @@
         [HttpPost, Route("paged")]
         public async Task<IHttpActionResult> GridData([FromBody] GridDataRequest request)
         {
-            using (var context = new SampleDbContext(false))
+            using (var context = new SampleDbContext())
             {
                 return Ok(await Task.Run(() => request.CreateGridDataResponse(context.Orders.AsNoTracking())));
             }
@@ -55,7 +55,7 @@
         [HttpPost, Route("pagedwithformat")]
         public async Task<IHttpActionResult> GridDataWithFormat([FromBody] GridDataRequest request)
         {
-            using (var context = new SampleDbContext(false))
+            using (var context = new SampleDbContext())
             {
                 return
                     Ok(
@@ -78,7 +78,7 @@
         [HttpPut, Route("save")]
         public async Task<IHttpActionResult> UpdateOrder([FromBody] GridDataUpdateRow<Order> request)
         {
-            using (var context = new SampleDbContext(false))
+            using (var context = new SampleDbContext())
             {
                 var order = await context.Orders.Where(o => o.OrderID == request.Old.OrderID).FirstOrDefaultAsync();
 
@@ -105,7 +105,7 @@
         [HttpPost, Route("save")]
         public async Task<IHttpActionResult> CreateOrder([FromBody] Order order)
         {
-            using (var context = new SampleDbContext(false))
+            using (var context = new SampleDbContext())
             {
                 var fixedOrder = (Order) Request.AdjustObjectTimeZone(order);
                 context.Orders.Add(fixedOrder);
@@ -121,7 +121,7 @@
         [HttpDelete, Route("save/{id}")]
         public async Task<IHttpActionResult> DeleteOrder(string id)
         {
-            using (var context = new SampleDbContext(false))
+            using (var context = new SampleDbContext())
             {
                 var orderId = int.Parse(id);
                 var orderDb = await context.Orders.Where(o => o.OrderID == orderId).FirstOrDefaultAsync();
@@ -143,7 +143,7 @@
         [HttpGet, Route("cities")]
         public async Task<IHttpActionResult> GetCities()
         {
-            using (var context = new SampleDbContext(false))
+            using (var context = new SampleDbContext())
             {
                 return
                     Ok(
@@ -159,7 +159,7 @@
         [HttpGet, Route("chart")]
         public IHttpActionResult GetChart()
         {
-            using (var context = new SampleDbContext(false))
+            using (var context = new SampleDbContext())
             {
                 return
                     Ok(context.Orders.ProvideMultipleSerieChartResponse(
@@ -172,7 +172,7 @@
         [HttpGet, Route("chartpie")]
         public IHttpActionResult GetChartPie()
         {
-            using (var context = new SampleDbContext(false))
+            using (var context = new SampleDbContext())
             {
                 return
                     Ok(context.Orders.ProvideSingleSerieChartResponse(

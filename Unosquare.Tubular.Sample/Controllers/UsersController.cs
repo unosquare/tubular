@@ -10,7 +10,7 @@
         [HttpPost, Route("paged")]
         public IHttpActionResult GridData([FromBody] GridDataRequest request)
         {
-            using (var context = new SampleDbContext(false))
+            using (var context = new SampleDbContext())
             {
                 return Ok(request.CreateGridDataResponse(context.SystemUsers.AsNoTracking()));
             }
