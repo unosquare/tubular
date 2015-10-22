@@ -277,7 +277,7 @@
 
                 if (response.TotalPages > 0)
                 {
-                    if (request.Skip < 20) request.Skip = 0;
+                    if (request.Skip < 10) request.Skip = 0;
 
                     response.CurrentPage = 1 +
                                            (int)
