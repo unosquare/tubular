@@ -19,8 +19,7 @@
                 var orderId = int.Parse(id);
                 var order = await context.Orders.AsNoTracking().Where(o => o.OrderID == orderId).FirstOrDefaultAsync();
 
-                if (order == null)
-                    return NotFound();
+                if (order == null) return NotFound();
 
                 return Ok(Request.AdjustObjectTimeZone(order));
             }

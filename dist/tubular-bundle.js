@@ -38,7 +38,8 @@ var tubularTemplateServiceModule = {
             Layout: 'Simple',
             ModelKey: '',
             RequireAuthentication: false,
-            ServiceName: ''
+            ServiceName: '',
+            dataUrl: ''
         },
         fieldsSettings: {
             'tbSimpleEditor': {
@@ -262,6 +263,13 @@ var tubularTemplateServiceModule = {
         }
     },
 
+    /**
+     * Generates a new form using the fields model and options
+     * 
+     * @param {array} fields 
+     * @param {object} options 
+     * @returns {string} 
+     */
     generateForm: function(fields, options) {
         var layout = options.Layout === 'Simple' ? '' : options.Layout.toLowerCase();
         var fieldsArray = this.generateFieldsArray(fields);

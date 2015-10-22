@@ -184,6 +184,25 @@
     }
 
     /// <summary>
+    /// Enums the TbForm Layout in code generator
+    /// </summary>
+    public enum FormLayout
+    {
+        /// <summary>
+        /// Basic layout (single column)
+        /// </summary>
+        Simple,
+        /// <summary>
+        /// Two columns layout
+        /// </summary>
+        TwoColumns,
+        /// <summary>
+        /// Three columns layout
+        /// </summary>
+        ThreeColumns
+    }
+
+    /// <summary>
     /// Common properties
     /// </summary>
     public class Common
@@ -379,6 +398,21 @@
             ServiceName = "",
             RequestMethod = "GET",
             GridName = "grid"
+        };
+
+        /// <summary>
+        /// Defaults Form Options
+        /// </summary>
+        public static FormOptions DefaultFormOptions = new FormOptions
+        {
+            CancelButton = true,
+            Layout = FormLayout.Simple,
+            ModelKey = "",
+            RequireAuthentication = false,
+            SaveMethod = "POST",
+            SaveUrl = "",
+            ServiceName = "",
+            DataUrl = ""
         };
     }
 }

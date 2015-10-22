@@ -60,6 +60,7 @@
     <Compile Include="ObjectModel\DataSourceJoinConfig.cs" />
     <Compile Include="ObjectModel\DataSourceMetadata.cs" />
     <Compile Include="ObjectModel\Filter.cs" />
+    <Compile Include="ObjectModel\FormOptions.cs" />
     <Compile Include="ObjectModel\GridColumn.cs" />
     <Compile Include="ObjectModel\GridDataRequest.cs" />
     <Compile Include="ObjectModel\GridDataResponse.cs" />

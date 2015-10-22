@@ -211,13 +211,13 @@ namespace Unosquare.Tubular
                 var defaults = Common.FieldSettings[column.EditorType];
 
                 list.Add("\r\n\t<" + editorTag + " name=\"" + column.Name + "\"" +
-                         (defaults.EditorType ? "\r\n\t\teditor-type=\"" + column.DataType + "\" " : "") +
+                         (defaults.EditorType ? "\r\n\t\teditor-type=\"" + column.DataType.ToString().ToLowerInvariant() + "\" " : "") +
                          (defaults.ShowLabel
-                             ? "\r\n\t\tlabel=\"" + column.Label + "\" show-label=\"" + column.ShowLabel + "\""
+                             ? "\r\n\t\tlabel=\"" + column.Label + "\" show-label=\"" + column.ShowLabel.ToString().ToLowerInvariant() + "\""
                              : "") +
                          (defaults.Placeholder ? "\r\n\t\tplaceholder=\"" + column.Placeholder + "\"" : "") +
-                         (defaults.Required ? "\r\n\t\trequired=\"" + column.Required + "\"" : "") +
-                         (defaults.ReadOnly ? "\r\n\t\tread-only=\"" + column.ReadOnly + "\"" : "") +
+                         (defaults.Required ? "\r\n\t\trequired=\"" + column.Required.ToString().ToLowerInvariant() + "\"" : "") +
+                         (defaults.ReadOnly ? "\r\n\t\tread-only=\"" + column.ReadOnly.ToString().ToLowerInvariant() + "\"" : "") +
                          (defaults.Format ? "\r\n\t\tformat=\"" + column.Format + "\"" : "") +
                          (defaults.Help ? "\r\n\t\thelp=\"" + column.Help + "\"" : "") +
                          ">\r\n\t</" + editorTag + ">");
@@ -313,10 +313,14 @@ namespace Unosquare.Tubular
                             : " ") +
                         "visible=\"" + el.Visible.ToString().ToLowerInvariant() + "\" aggregate=\"" + el.Aggregate +
                         "\" meta-aggregate=\"" + el.MetaAggregate + "\">" +
-                        (el.HasFilter ? "\r\n\t\t\t<tb-column-filter"+  
-                        (el.Filter != null ? " operator=\"" + el.Filter.Operator.ToString() + "\"": "") + 
-                        (el.Filter != null && string.IsNullOrWhiteSpace(el.Filter.Text) == false ? " text=\"" + el.Filter.Text + "\"" : "")
-                        + "></tb-column-filter>" : "") +
+                        (el.HasFilter
+                            ? "\r\n\t\t\t<tb-column-filter" +
+                              (el.Filter != null ? " operator=\"" + el.Filter.Operator.ToString() + "\"" : "") +
+                              (el.Filter != null && string.IsNullOrWhiteSpace(el.Filter.Text) == false
+                                  ? " text=\"" + el.Filter.Text + "\""
+                                  : "")
+                              + "></tb-column-filter>"
+                            : "") +
                         "\r\n\t\t\t<tb-column-header>{{label}}</tb-column-header>" +
                         "\r\n\t\t</tb-column>"));
 
@@ -357,6 +361,58 @@ namespace Unosquare.Tubular
                    (bottomToolbar == "" ? "" : "\r\n\t<div class=\"row\">" + bottomToolbar + "\r\n\t</div>") +
                    "\r\n</tb-grid>" +
                    "\r\n</div>";
+        }
+
+        /// <summary>
+        /// Generates a new Tubular Form code
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="options"></param>
+        /// <returns></returns>
+        public static string GenerateForm(List<ModelColumn> model, FormOptions options = null)
+        {
+            if (options == null) options = Common.DefaultFormOptions;
+
+            var fields = GenerateFieldsArray(model);
+            var fieldsMarkup = "";
+
+            if (options.Layout == FormLayout.Simple)
+            {
+                fieldsMarkup = string.Join("", fields);
+            }
+            else
+            {
+                fieldsMarkup = "\r\n\t<div class='row'>" +
+                               (options.Layout == FormLayout.TwoColumns
+                                   ? "\r\n\t<div class='col-md-6'>" +
+                                     string.Join("", fields.Where(x => fields.IndexOf(x)%2 == 0)) +
+                                     "\r\n\t</div>\r\n\t<div class='col-md-6'>" +
+                                     string.Join("", fields.Where(x => fields.IndexOf(x)%2 == 1)) +
+                                     "</div>"
+                                   : "\r\n\t<div class='col-md-4'>" +
+                                     string.Join("", fields.Where(x => fields.IndexOf(x)%3 == 0)) +
+                                     "\r\n\t</div>\r\n\t<div class='col-md-4'>" +
+                                     string.Join("", fields.Where(x => fields.IndexOf(x)%3 == 1)) +
+                                     "\r\n\t</div>\r\n\t<div class='col-md-4'>" +
+                                     string.Join("", fields.Where(x => fields.IndexOf(x)%3 == 2)) +
+                                     "\r\n\t</div>") +
+                               "\r\n\t</div>";
+            }
+
+
+            return "<tb-form server-save-method=\"" + options.SaveMethod + "\" " +
+                   "model-key=\"" + options.ModelKey + "\" require-authentication=\"" + 
+                   options.RequireAuthentication.ToString().ToLowerInvariant() + "\" " +
+                   "server-url=\"" + options.DataUrl + "\" server-save-url=\"" + options.SaveUrl + "\"" +
+                   (options.ServiceName != "" ? " service-name=\"" + options.ServiceName + "\"" : "") + ">" +
+                   "\r\n\t" + fieldsMarkup +
+                   "\r\n\t<div>" +
+                   "\r\n\t\t<button class=\"btn btn-primary\" ng-click=\"$parent.save()\" ng-disabled=\"!$parent.model.$valid()\">Save</button>" +
+                   (options.CancelButton
+                       ? "\r\n\t\t<button class=\"btn btn-danger\" ng-click=\"$parent.cancel()\" formnovalidate>Cancel</button>"
+                       : "") +
+                   "\r\n\t</div>" +
+                   "\r\n</tb-form>";
         }
     }
 }
