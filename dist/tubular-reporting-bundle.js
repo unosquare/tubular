@@ -20,60 +20,10 @@
             function() {
                 return {
                     template: '<div class="container"><tb-form model="Model">' +
-                        '<div class="row" ng-show="isShowing">' +
-                        '<div class="col-md-3">' +
-                        '<div class="pull-right clearfix">' +
-                        '<tb-typeahead-editor name="CurrentReport" options="reports" option-label="Name" placeholder="Report name"></tb-typeahead-editor>' +
-                        '</div>' +
-                        '</div>' +
-                        '<div class="col-md-6">' +
-                        '<div class="pull-right clearfix">' +
-                        '<button class="btn btn-default" ng-click="loadReport()" ng-disabled="!Model.CurrentReport">' +
-                        '<i class="fa fa-cloud-download"></i>&nbsp;{{\'CAPTION_LOAD\' | translate}}' +
-                        '</button>' +
-                        '<button class="btn btn-default" ng-click="saveReport()" ng-disabled="!Model.CurrentReport">' +
-                        '<i class="fa fa-cloud-upload"></i>&nbsp;{{\'CAPTION_SAVE\' | translate}}' +
-                        '</button>' +
-                        '<button class="btn btn-default" ng-click="removeReport()" ng-disabled="!Model.CurrentReport.Name">' +
-                        '<i class="fa fa-trash-o"></i>&nbsp;{{\'CAPTION_REMOVE\' | translate}}' +
-                        '</button>' +
-                        '</div></div>' +
-                        '<div class="col-md-3">' +
-                        '<div class="pull-right clearfix">' +
-                        '<button class="btn btn-success" ng-disabled="items.length == 0" ng-click="generate()">' +
-                        '<i class="fa fa-cogs"></i>&nbsp;{{\'UI_GENERATEREPORT\' | translate}}' +
-                        '</button>' +
-                        '</div></div></div>' +
+                        '<div class="tubular-overlay" ng-show="showLoading"></div>' +
+                        '<tb-reporting-toolbar></tb-reporting-toolbar>' +
                         '<br />' +
-                        '<table class="table table-bordered" ng-show="isShowing">' +
-                        '<thead><tr>' +
-                        '<th>Data Source</th>' +
-                        '<th>Column</th>' +
-                        '<th>Data Type</th>' +
-                        '<th>Aggregation</th>' +
-                        '<th>Filter Expression</th>' +
-                        '<th>&nbsp;</th>' +
-                        '</tr></thead>' +
-                        '<tbody><tr>' +
-                        '<td><tb-dropdown-editor name="DataSource" options="dataSources" option-label="Name"></tb-dropdown-editor></td>' +
-                        '<td><tb-dropdown-editor name="Column" options="Model.DataSource.Columns" option-label="Name" option-id="Name"></tb-dropdown-editor></td>' +
-                        '<td><tb-simple-editor name="DataType" read-only="true" value="types[Model.Column.DataType]"></tb-simple-editor></td>' +
-                        '<td><tb-dropdown-editor name="AggregationFunction" options="aggregationFunctions"></tb-dropdown-editor></td>' +
-                        '<td><tb-simple-editor name="Filter"></tb-simple-editor></td>' +
-                        '<td class="text-center"><button class="btn btn-success btn-sm" ng-click="addItem()">{{\'CAPTION_ADD\' | translate}}</button></td>' +
-                        '</tr><tr ng-repeat="item in items">' +
-                        '<td>{{item.DataSource}}</td>' +
-                        '<td>{{item.Column}}</td>' +
-                        '<td>{{item.DataType}}</td>' +
-                        '<td><select class="form-control" ng-model="item.Aggregation" ng-options="a for a in aggregationFunctions"></select></td>' +
-                        '<td><input type="text" class="form-control" ng-model="item.Filter" /></td>' +
-                        '<td class="text-center">' +
-                        '<div class="btn-group">' +
-                        '<button class="btn btn-sm" ng-click="up(item)" ng-disabled="$first"><i class="fa fa-chevron-up"></i></button>' +
-                        '<button class="btn btn-sm" ng-click="down(item)" ng-disabled="$last"><i class="fa fa-chevron-down"></i></button>' +
-                        '<button class="btn btn-danger btn-sm" ng-click="removeItem(item)"><i class="fa fa-trash"></i></button>' +
-                        '</div>' +
-                        '</td></tr></tbody></table>' +
+                        '<tb-reporting-columns-selector></tb-reporting-columns-selector>' +
                         '</tb-form>' +
                         '<button class="btn btn-xs btn-block" tooltip="Click to toggle" ng-click="isShowing = !isShowing"><i class="fa" ng-class="{\'fa-caret-down\' : !isShowing, \'fa-caret-up\' : isShowing, }"></i></button>' +
                         '<hr />' +
@@ -90,6 +40,7 @@
                         function($scope, tubularHttp, localStorageService) {
                             $scope.tubularDirective = 'tubular-reporting';
                             $scope.isShowing = true;
+                            $scope.showLoading = true;
 
                             // Setup require authentication
                             $scope.requireAuthentication = angular.isUndefined($scope.requireAuthentication) ? true : $scope.requireAuthentication;
@@ -101,9 +52,11 @@
                             tubularHttp.get($scope.serverDataSourceUrl || 'api/reports/datasources').promise.then(function(data) {
                                 $scope.dataSources = data.DataSources;
                                 $scope.aggregationFunctions = data.AggregationFunctions;
-                                $scope.types = data.Types;
+                                $scope.types = data.Types;    
                             }, function (error) {
                                 $scope.$emit('tbReporting_OnConnectionError', error);
+                            }).then(function() {
+                                $scope.showLoading = false;
                             });
 
                             $scope.addItem = function() {
@@ -185,10 +138,101 @@
                                     $scope.autoCode = window.URL.createObjectURL(new Blob([data], { type: "text/html" }));
                                 }, function(error) {
                                     $scope.$emit('tbReporting_OnConnectionError', error);
+                                }).then(function () {
+                                    $scope.showLoading = false;
                                 });
                             };
                         }
                     ]
+                };
+            }
+        ])
+        /**
+         * @ngdoc directive
+         * @name tbReportingToolbar
+         * @restrict E
+         *
+         * @description
+         * Use `tbReportingToolbar` directive to show a common toolbar to load/save reports and generate them.
+         * You can use your own UI if you prefer using the available methods in the parent controller.
+         */
+        .directive('tbReportingToolbar', [
+            function() {
+                return {
+                    template: '<div class="row" ng-show="isShowing">' +
+                        '<div class="col-md-3">' +
+                        '<div class="pull-right clearfix">' +
+                        '<tb-typeahead-editor name="CurrentReport" options="reports" option-label="Name" placeholder="Report name"></tb-typeahead-editor>' +
+                        '</div>' +
+                        '</div>' +
+                        '<div class="col-md-6">' +
+                        '<div class="pull-right clearfix">' +
+                        '<button class="btn btn-default" ng-click="loadReport()" ng-disabled="!Model.CurrentReport">' +
+                        '<i class="fa fa-cloud-download"></i>&nbsp;{{\'CAPTION_LOAD\' | translate}}' +
+                        '</button>' +
+                        '<button class="btn btn-default" ng-click="saveReport()" ng-disabled="!Model.CurrentReport">' +
+                        '<i class="fa fa-cloud-upload"></i>&nbsp;{{\'CAPTION_SAVE\' | translate}}' +
+                        '</button>' +
+                        '<button class="btn btn-default" ng-click="removeReport()" ng-disabled="!Model.CurrentReport.Name">' +
+                        '<i class="fa fa-trash-o"></i>&nbsp;{{\'CAPTION_REMOVE\' | translate}}' +
+                        '</button>' +
+                        '</div></div>' +
+                        '<div class="col-md-3">' +
+                        '<div class="pull-right clearfix">' +
+                        '<button class="btn btn-success" ng-disabled="items.length == 0" ng-click="generate()">' +
+                        '<i class="fa fa-cogs"></i>&nbsp;{{\'UI_GENERATEREPORT\' | translate}}' +
+                        '</button>' +
+                        '</div></div></div>',
+                    restrict: 'E',
+                    replace: true,
+                    scope: false
+                };
+            }
+        ])
+        /**
+         * @ngdoc directive
+         * @name tbReportingColumnsSelector
+         * @restrict E
+         *
+         * @description
+         * Use `tbReportingColumnsSelector` directive to display a table to allow the user to add and remove
+         * columns and generate a Report Model.
+         */
+        .directive('tbReportingColumnsSelector', [
+            function () {
+                return {
+                    template: '<table class="table table-bordered" ng-show="isShowing">' +
+                        '<thead><tr>' +
+                        '<th>Data Source</th>' +
+                        '<th>Column</th>' +
+                        '<th>Data Type</th>' +
+                        '<th>Aggregation</th>' +
+                        '<th>Filter Expression</th>' +
+                        '<th>&nbsp;</th>' +
+                        '</tr></thead>' +
+                        '<tbody><tr>' +
+                        '<td><tb-dropdown-editor name="DataSource" options="dataSources" option-label="Name"></tb-dropdown-editor></td>' +
+                        '<td><tb-dropdown-editor name="Column" options="Model.DataSource.Columns" option-label="Name" option-id="Name"></tb-dropdown-editor></td>' +
+                        '<td><tb-simple-editor name="DataType" read-only="true" value="types[Model.Column.DataType]"></tb-simple-editor></td>' +
+                        '<td><tb-dropdown-editor name="AggregationFunction" options="aggregationFunctions"></tb-dropdown-editor></td>' +
+                        '<td><tb-simple-editor name="Filter"></tb-simple-editor></td>' +
+                        '<td class="text-center"><button class="btn btn-success btn-sm" ng-click="addItem()">{{\'CAPTION_ADD\' | translate}}</button></td>' +
+                        '</tr><tr ng-repeat="item in items">' +
+                        '<td>{{item.DataSource}}</td>' +
+                        '<td>{{item.Column}}</td>' +
+                        '<td>{{item.DataType}}</td>' +
+                        '<td><select class="form-control" ng-model="item.Aggregation" ng-options="a for a in aggregationFunctions"></select></td>' +
+                        '<td><input type="text" class="form-control" ng-model="item.Filter" /></td>' +
+                        '<td class="text-center">' +
+                        '<div class="btn-group">' +
+                        '<button class="btn btn-sm" ng-click="up(item)" ng-disabled="$first"><i class="fa fa-chevron-up"></i></button>' +
+                        '<button class="btn btn-sm" ng-click="down(item)" ng-disabled="$last"><i class="fa fa-chevron-down"></i></button>' +
+                        '<button class="btn btn-danger btn-sm" ng-click="removeItem(item)"><i class="fa fa-trash"></i></button>' +
+                        '</div>' +
+                        '</td></tr></tbody></table>',
+                    restrict: 'E',
+                    replace: true,
+                    scope: false
                 };
             }
         ]).config([

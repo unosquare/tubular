@@ -4887,7 +4887,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                             request.serverUrl = originalUrl;
 
-                            me.retrieveDataAsync(request).promise.then(function (newData) {
+                            me.retrieveDataAsync(request).promise.then(function(newData) {
                                 result.Payload = newData.value;
                             });
                         }
