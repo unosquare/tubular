@@ -103,3 +103,7 @@ a.navbar-brand:hover, a.navbar-brand:focus  {
     font-weight: bold;
     cursor: pointer;
 }
+.alert-warning a {
+    color: white;
+    text-decoration: underline;
+}

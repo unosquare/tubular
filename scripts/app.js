@@ -15,8 +15,6 @@
                         templateUrl: 'assets/charts.html'
                     }).when('/Reporting', {
                         templateUrl: 'assets/reporting.html'
-                    }).when('/WebApi', {
-                        templateUrl: 'assets/webapi.html'
                     }).when('/Generator', {
                         templateUrl: 'assets/generator.html'
                     }).when('/FormGenerator', {
@@ -356,6 +354,7 @@
                     $scope.items.push({ name: 'StartGrid', url: 'tutorial/grid.html', docType: 'external' });
                     $scope.items.push({ name: 'StartForm', url: 'tutorial/form.html', docType: 'external' });
                     $scope.items.push({ name: 'StartChart', url: 'tutorial/chart.html', docType: 'external' });
+                    $scope.items.push({ name: 'WebApi', url: 'tutorial/webapi.html', docType: 'external' });
                     $scope.items.push({ name: 'StartReporting', url: 'tutorial/reporting.html', docType: 'external' });
                     $scope.items.push({ name: 'ModalGrid', url: 'tutorial/modal.html', docType: 'external' });
                     $scope.items.push({ name: 'InlineEditor', url: 'tutorial/inline.html', docType: 'external' });
