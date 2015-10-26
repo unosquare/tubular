@@ -4658,7 +4658,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         if (filters.hasOwnProperty(i)) {
                             for (var k in filters[i]) {
                                 if (filters[i].hasOwnProperty(k)) {
-                                    filtersPattern[k] = filters[i][k];
+                                    filtersPattern[k] = filters[i][k].toLocaleLowerCase();
                                 }
                             }
                         }
@@ -4720,7 +4720,17 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             });
 
                         if (searchables.length > 0) {
-                            set = $filter('filter')(set, reduceFilterArray(searchables));
+                            set = $filter('filter')(set, function(value, index, array) {
+                                var filters = reduceFilterArray(searchables);
+                                var result = false;
+                                angular.forEach(filters, function (filter, column) {
+                                    if (value[column] && value[column].toLocaleLowerCase().indexOf(filter) >= 0) {
+                                        result = true;
+                                    }
+                                });
+
+                                return result;
+                            });
                         }
                     }
 
@@ -4734,6 +4744,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         var number = 1 + ((request.Skip / response.FilteredRecordCount) * response.TotalPages);
 
                         response.CurrentPage = ((number * shift) | 0) / shift;
+                        if (response.CurrentPage < 1) response.CurrentPage = 1;
                     }
 
                     return response;
