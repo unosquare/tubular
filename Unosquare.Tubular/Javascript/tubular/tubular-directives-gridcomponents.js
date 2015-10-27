@@ -187,6 +187,10 @@
                                 $scope.model.$isNew = true;
                             }
 
+                            if (!$scope.model.$valid()) {
+                                return;
+                            }
+
                             $scope.currentRequest = $scope.model.save();
 
                             if ($scope.currentRequest === false) {

@@ -110,7 +110,11 @@
                                 $scope.bindFields();
                             };
 
-                            $scope.save = function() {
+                            $scope.save = function () {
+                                if (!$scope.model.$valid()) {
+                                    return;
+                                }
+
                                 $scope.currentRequest = $scope.model.save();
 
                                 if ($scope.currentRequest === false) {
@@ -141,10 +145,6 @@
                             };
 
                             $scope.create = function() {
-                                if (!$scope.model.$valid()) {
-                                    return;
-                                }
-
                                 $scope.model.$isNew = true;
                                 $scope.save();
                             };
