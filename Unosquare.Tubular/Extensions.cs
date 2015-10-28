@@ -282,6 +282,13 @@
                     response.CurrentPage = 1 +
                                            (int)
                                                ((request.Skip/(float) response.FilteredRecordCount)*response.TotalPages);
+
+                    if (response.CurrentPage > response.TotalPages)
+                    {
+                        response.CurrentPage = response.TotalPages;
+                        request.Skip = (response.CurrentPage - 1)*request.Take;
+                    }
+
                     subset = subset.Skip(request.Skip);
                 }
 
