@@ -12,6 +12,7 @@
          * 
          * @scope
          * 
+         * @param {string} container-name The container name
          */
         .directive('tbWidgetContainer', [
             function() {
@@ -20,12 +21,17 @@
                     restrict: 'E',
                     replace: true,
                     transclude: true,
-                    scope: false,
+                    scope: {
+                        name: '@?containerName'
+                    },
                     controller: [
-                        '$scope', function($scope) {
+                        '$scope', 'localStorageService', function ($scope, localStorageService) {
+                            $scope.name = $scope.name || 'tbcontainer';
                             $scope.widgets = [];
+                            $scope.settings = localStorageService.get($scope.name + "_data");
 
-                            $scope.redraw = function() {
+                            $scope.redraw = function () {
+                                var newSettings = {};
                                 angular.forEach($scope.widgets, function(widget) {
                                     var parent = widget.content.parent();
 
@@ -35,16 +41,47 @@
                                         }
                                     } else {
                                         if (parent.find('div.widget-panel').length === 1) {
-                                            if (parent.next().hasClass('row') && parent.next().find('div.widget-panel').length === 1) {
+                                            if (parent.next().hasClass('row')) {
                                                 parent.append(parent.next().find('div.widget-panel'));
-                                                parent.next().remove();
+
+                                                if (parent.next().find('div.widget-panel').length === 0) {
+                                                    parent.next().remove();
+                                                }
                                             }
                                         }
+
+                                        if (parent.find('div.widget-panel').length > 2) {
+                                            $('<div class="row"></div>').insertAfter(parent).append(parent.find('div.widget-panel').last());
+                                        }
                                     }
+
+                                    newSettings[widget.name] = {
+                                        position: widget.pos,
+                                        oneColumn: widget.oneColumn
+                                    };
                                 });
+
+                                localStorageService.set($scope.name + "_data", newSettings);
                             };
                         }
-                    ]
+                    ],
+                    compile: function compile() {
+                        return {
+                            post: function (scope, lElement) {
+                                if (scope.settings) {
+                                    angular.forEach(scope.widgets, function(widget) {
+                                        var setting = scope.settings[widget.name];
+                                        if (!setting) return;
+
+                                        widget.oneColumn = setting.oneColumn;
+                                        if (widget.pos !== setting.pos) {
+                                            widget.moveAt(setting.pos);
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    }
                 }
             }
         ])
@@ -59,6 +96,7 @@
          * @scope
          * 
          * @param {string} title Set the widget title.
+         * @param {string} widgetName Set the widget name.
          */
         .directive('tbWidget', [
             function() {
@@ -72,14 +110,14 @@
                         '<span class="caret"></span>' +
                         '</button>' +
                         '<ul class="dropdown-menu dropdown-menu-right">' +
-                        '<li ng-hide="!oneColumn"><a href="#" ng-click="oneColumn = false">Two columns</a></li>' +
-                        '<li ng-hide="oneColumn"><a href="#" ng-click="oneColumn = true">One column</a></li>' +
+                        '<li ng-hide="!oneColumn || maximize"><a href="#" ng-click="oneColumn = false">Two columns</a></li>' +
+                        '<li ng-hide="oneColumn || maximize"><a href="#" ng-click="oneColumn = true">One column</a></li>' +
                         '<li ng-hide="maximize"><a href="#" ng-click="maximize = true">Maximize</a></li>' +
                         '<li ng-hide="!maximize"><a href="#" ng-click="maximize = false">Restore</a></li>' +
-                        '<li ng-hide="top"><a href="#" ng-click="move(-2)">Move up</a></li>' +
-                        '<li ng-hide="bottom"><a href="#" ng-click="move(2)">Move down</a></li>' +
-                        '<li ng-hide="!oneColumn || !even"><a href="#" ng-click="move(1)">Move right</a></li>' +
-                        '<li ng-hide="!oneColumn || even"><a href="#" ng-click="move(-1)">Move left</a></li>' +
+                        '<li ng-hide="top || maximize"><a href="#" ng-click="move(-2)">Move up</a></li>' +
+                        '<li ng-hide="bottom || maximize"><a href="#" ng-click="move(2)">Move down</a></li>' +
+                        '<li ng-hide="!oneColumn || !even || maximize"><a href="#" ng-click="move(1)">Move right</a></li>' +
+                        '<li ng-hide="!oneColumn || even || maximize"><a href="#" ng-click="move(-1)">Move left</a></li>' +
                         '</ul></div></div></div>' +
                         '<div class="panel-body">' +
                         '<ng-transclude></ng-transclude>' +
@@ -88,9 +126,11 @@
                     replace: true,
                     transclude: true,
                     scope: {
-                        title: '@'
+                        title: '@',
+                        name: '@?widgetName'
                     },
-                    controller: function($scope, $element) {
+                    controller: function ($scope, $element) {
+                        $scope.name = $scope.name || 'tbwidget';
                         $scope.oneColumn = true;
                         $scope.maximize = false;
                         $scope.pos = 0;
@@ -123,17 +163,22 @@
                         }
 
                         $scope.move = function(factor) {
-                            var tmp = $scope.container.widgets[$scope.pos + factor];
+                            $scope.moveAt($scope.pos + factor);
+                        };
 
-                            $scope.container.widgets[$scope.pos + factor] = $scope;
+                        $scope.moveAt = function (pos) {
+                            var tmp = $scope.container.widgets[pos];
+                            if (!tmp) return;
+
+                            $scope.container.widgets[pos] = $scope;
                             $scope.container.widgets[$scope.pos] = tmp;
 
                             tmp.calculatePositions($scope.pos);
-                            $scope.calculatePositions($scope.pos + factor);
+                            $scope.calculatePositions(pos);
                             swapNodes(tmp.content[0], $element[0]);
 
                             $scope.container.redraw();
-                        };
+                        }
                     }
                 }
             }
