@@ -2689,7 +2689,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 $scope.bindFields();
                             };
 
-                            $scope.save = function() {
+                            $scope.save = function () {
+                                if (!$scope.model.$valid()) {
+                                    return;
+                                }
+
                                 $scope.currentRequest = $scope.model.save();
 
                                 if ($scope.currentRequest === false) {
@@ -2720,10 +2724,6 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             };
 
                             $scope.create = function() {
-                                if (!$scope.model.$valid()) {
-                                    return;
-                                }
-
                                 $scope.model.$isNew = true;
                                 $scope.save();
                             };
@@ -2954,6 +2954,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         $scope.save = function() {
                             if ($scope.isNew) {
                                 $scope.model.$isNew = true;
+                            }
+
+                            if (!$scope.model.$valid()) {
+                                return;
                             }
 
                             $scope.currentRequest = $scope.model.save();
@@ -4723,7 +4727,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             set = $filter('filter')(set, function(value, index, array) {
                                 var filters = reduceFilterArray(searchables);
                                 var result = false;
-                                angular.forEach(filters, function (filter, column) {
+                                angular.forEach(filters, function(filter, column) {
                                     if (value[column] && value[column].toLocaleLowerCase().indexOf(filter) >= 0) {
                                         result = true;
                                     }
@@ -4898,7 +4902,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                             request.serverUrl = originalUrl;
 
-                            me.retrieveDataAsync(request).promise.then(function(newData) {
+                            me.retrieveDataAsync(request).promise.then(function (newData) {
                                 result.Payload = newData.value;
                             });
                         }
