@@ -104,6 +104,11 @@
       <DependentUpon>tubular-reporting-bundle.js</DependentUpon>
     </Content>
     <Content Include="Javascript\tubular-reporting\tubular-directives-reporting.js" />
+    <Content Include="Javascript\tubular-widget-bundle.js" />
+    <Content Include="Javascript\tubular-widget-bundle.min.js">
+      <DependentUpon>tubular-widget-bundle.js</DependentUpon>
+    </Content>
+    <Content Include="Javascript\tubular-widget\tubular-directives-widget.js" />
     <Content Include="Javascript\tubular\node-module.js" />
     <Content Include="Javascript\tubular\tubular-directives-filters.js" />
     <Content Include="Javascript\tubular\tubular-directives-forms.js" />

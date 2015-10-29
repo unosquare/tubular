@@ -50,5 +50,11 @@
     "inputFiles": [
       "Javascript/tubular-reporting/tubular-directives-reporting.js"
     ]
+  },
+  {
+    "outputFileName": "Javascript/tubular-widget-bundle.js",
+    "inputFiles": [
+      "Javascript/tubular-widget/tubular-directives-widget.js"
+    ]
   }
 ]
