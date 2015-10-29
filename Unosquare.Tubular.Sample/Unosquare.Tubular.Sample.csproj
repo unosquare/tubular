@@ -158,6 +158,7 @@
     <Content Include="ui\app\common\reporting.html" />
     <Content Include="ui\app\common\view.html" />
     <Content Include="ui\app\common\viewformat.html" />
+    <Content Include="ui\app\common\widget.html" />
     <Content Include="ui\chosen\chosen.js" />
     <Content Include="ui\chosen\ng-chosen.js" />
     <Content Include="ui\chosen\tb-chosen.js" />

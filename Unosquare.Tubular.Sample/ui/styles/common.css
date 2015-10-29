@@ -75,3 +75,14 @@ footer img {
         font-size: 22px;
     }
 }
+
+/* Widget */
+.maximize {
+    position: absolute;
+    z-index: 5001;
+    width: 100%;
+    top: 0;
+    left: 0;
+    padding: 20px;
+    height: 100%;
+}
