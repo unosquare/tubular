@@ -10,7 +10,7 @@
                         title: 'A Sample Data Grid!'
                     }).when('/format', {
                         templateUrl: '/ui/app/common/viewformat.html',
-                        title: 'Another Data Grid!'
+                        title: 'Charts and grid'
                     }).when('/form/:param', {
                         templateUrl: '/ui/app/common/form.html',
                         title: 'This is a form!'
@@ -98,6 +98,26 @@
                 $scope.$on('tbForm_OnCancel', function(model, error, formScope) {
                     $location.path('/');
                 });
+
+                $scope.chartClick = function (points, evt) {
+                    angular.forEach(points, function(point) {
+                        toastr.success(point.datasetLabel + ': ' + point.y);
+                    });
+                };
+
+                $scope.pieClick = function (points, evt) {
+                    angular.forEach(points, function (point) {
+                        toastr.success(point.label + ': ' + point.y);
+                    });
+                };
+
+                $scope.highchartClick = function(event) {
+                    toastr.success(event.point.category + '-' + event.point.series.name + ': ' + event.point.y);
+                };
+
+                $scope.highpieClick = function(event) {
+                    toastr.success(event.point.name + ': ' + event.point.y);
+                };
             }
         ]).controller("reportingCtrl",
             function ($scope) {

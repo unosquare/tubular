@@ -2,11 +2,15 @@
     <h2>Chart JS</h2>
     <div class="row">
         <div class="col-md-5">
-            <tb-chartjs server-url="/api/orders/chart" chart-type="{{modelType}}" require-authentication="false" show-legend="true">
+            <tb-chartjs server-url="/api/orders/chart" chart-type="{{modelType}}"
+                        on-click="chartClick"
+                        require-authentication="false" show-legend="true">
             </tb-chartjs>
         </div>
         <div class="col-md-5">
-            <tb-chartjs server-url="/api/orders/chartpie" chart-type="{{modelPieType}}" require-authentication="false" show-legend="true">
+            <tb-chartjs server-url="/api/orders/chartpie" chart-type="{{modelPieType}}"
+                        on-click="pieClick"
+                        require-authentication="false" show-legend="true">
             </tb-chartjs>
         </div>
         <div class="col-md-2">
@@ -34,17 +38,21 @@
     <h2>Highcharts</h2>
     <div class="row">
         <div class="col-md-6">
-            <tb-highcharts server-url="/api/orders/chart" chart-type="{{modelType | lowercase}}" require-authentication="false" title="Order Sales">
+            <tb-highcharts server-url="/api/orders/chart" chart-type="{{modelType | lowercase}}"
+                           on-click="highchartClick"
+                           require-authentication="false" title="Order Sales">
             </tb-highcharts>
         </div>
         <div class="col-md-6">
-            <tb-highcharts server-url="/api/orders/chartpie" chart-type="{{modelPieType | lowercase}}" require-authentication="false" title="Pie chart">
+            <tb-highcharts server-url="/api/orders/chartpie" chart-type="{{modelPieType | lowercase}}"
+                           on-click="highpieClick"
+                           require-authentication="false" title="Pie chart">
             </tb-highcharts>
         </div>
     </div>
 
     <tb-grid server-url="/api/orders/pagedwithformat" require-authentication="false"
-             name="samplegrid" page-size="20" class="row" on-before-get-data="sample.onTableController">
+             name="samplegrid" page-size="20" class="row">
 
         <!-- Main full-width container -->
         <div class="col-md-12">

@@ -22,7 +22,7 @@
                 return {
                     template: '<div class="tubular-chart">' +
                         '<canvas class="chart chart-base" chart-type="chartType" chart-data="data" chart-labels="labels" ' +
-                        ' chart-legend="{{showLegend}}" chart-series="series">' +
+                        ' chart-legend="{{showLegend}}" chart-series="series" chart-click="onClick">' +
                         '</canvas>' +
                         '<div class="alert alert-info" ng-show="isEmpty">{{emptyMessage}}</div>' +
                         '<div class="alert alert-warning" ng-show="hasError">{{errorMessage}}</div>' +
@@ -38,6 +38,7 @@
                         emptyMessage: '@?',
                         errorMessage: '@?',
                         onLoad: '=?',
+                        onClick: '=?'
                     },
                     controller: [
                         '$scope', 'tubularHttp',
