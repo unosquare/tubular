@@ -67,7 +67,7 @@
                     ],
                     compile: function compile() {
                         return {
-                            post: function (scope, lElement) {
+                            post: function (scope) {
                                 if (scope.settings) {
                                     angular.forEach(scope.widgets, function(widget) {
                                         var setting = scope.settings[widget.name];

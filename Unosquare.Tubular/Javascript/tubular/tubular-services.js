@@ -200,6 +200,22 @@
                         if (val === 'None') scope.filter.Text = '';
                     });
 
+                    scope.$watch(function () {
+                        var columns = scope.$component.columns.filter(function (el) {
+                            return el.Name === scope.filter.Name;
+                        });
+
+                        return columns.length !== 0 ? columns[0] : null;
+                    }, function (val) {
+                        if (val && val != null) {
+                            if (scope.filter.HasFilter != val.Filter.HasFilter) {
+                                scope.filter.HasFilter = val.Filter.HasFilter;
+                                scope.filter.Text = val.Filter.Text;
+                                scope.retrieveData();
+                            }
+                        }
+                    }, true);
+
                     scope.retrieveData = function() {
                         var columns = scope.$component.columns.filter(function(el) {
                             return el.Name === scope.filter.Name;
