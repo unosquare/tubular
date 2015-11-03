@@ -110,14 +110,14 @@
                         '<span class="caret"></span>' +
                         '</button>' +
                         '<ul class="dropdown-menu dropdown-menu-right">' +
-                        '<li ng-hide="!oneColumn || maximize"><a href="#" ng-click="oneColumn = false">Two columns</a></li>' +
-                        '<li ng-hide="oneColumn || maximize"><a href="#" ng-click="oneColumn = true">One column</a></li>' +
-                        '<li ng-hide="maximize"><a href="#" ng-click="maximize = true">Maximize</a></li>' +
-                        '<li ng-hide="!maximize"><a href="#" ng-click="maximize = false">Restore</a></li>' +
-                        '<li ng-hide="top || maximize"><a href="#" ng-click="move(-2)">Move up</a></li>' +
-                        '<li ng-hide="bottom || maximize"><a href="#" ng-click="move(2)">Move down</a></li>' +
-                        '<li ng-hide="!oneColumn || !even || maximize"><a href="#" ng-click="move(1)">Move right</a></li>' +
-                        '<li ng-hide="!oneColumn || even || maximize"><a href="#" ng-click="move(-1)">Move left</a></li>' +
+                        '<li ng-hide="!oneColumn || maximize"><a href="#" ng-click="oneColumn = false">{{\'UI_TWOCOLS\'| translate}}</a></li>' +
+                        '<li ng-hide="oneColumn || maximize"><a href="#" ng-click="oneColumn = true">{{\'UI_ONECOL\'| translate}}</a></li>' +
+                        '<li ng-hide="maximize"><a href="#" ng-click="maximize = true">{{\'UI_MAXIMIZE\'| translate}}</a></li>' +
+                        '<li ng-hide="!maximize"><a href="#" ng-click="maximize = false">{{\'UI_RESTORE\'| translate}}</a></li>' +
+                        '<li ng-hide="top || maximize"><a href="#" ng-click="move(-2)">{{\'UI_MOVEUP\'| translate}}</a></li>' +
+                        '<li ng-hide="bottom || maximize"><a href="#" ng-click="move(2)">{{\'UI_MOVEDOWN\'| translate}}</a></li>' +
+                        '<li ng-hide="!oneColumn || !even || maximize"><a href="#" ng-click="move(1)">{{\'UI_MOVERIGHT\'| translate}}</a></li>' +
+                        '<li ng-hide="!oneColumn || even || maximize"><a href="#" ng-click="move(-1)">{{\'UI_MOVELEFT\'| translate}}</a></li>' +
                         '</ul></div></div></div>' +
                         '<div class="panel-body">' +
                         '<ng-transclude></ng-transclude>' +

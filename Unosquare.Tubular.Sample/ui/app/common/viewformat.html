@@ -1,5 +1,6 @@
 ﻿<div class="container" ng-controller="tubularSampleCtrl as sample" ng-init="modelType = 'Line'; modelPieType = 'Pie'">
     <h2>Chart JS</h2>
+    <p>Click a node or pie slice to get a notification.</p>
     <div class="row">
         <div class="col-md-5">
             <tb-chartjs server-url="/api/orders/chart" chart-type="{{modelType}}"
