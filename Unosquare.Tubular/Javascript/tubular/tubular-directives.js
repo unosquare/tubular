@@ -133,7 +133,9 @@
                             };
 
                             $scope.addColumn = function(item) {
-                                if (item.Name == null) return;
+                                if (item.Name == null) {
+                                    return;
+                                }
 
                                 if ($scope.hasColumnsDefinitions !== false) {
                                     throw 'Cannot define more columns. Column definitions have been sealed';
@@ -158,7 +160,10 @@
                             $scope.deleteRow = function (row) {
                                 var urlparts = $scope.serverSaveUrl.split('?');
                                 var url = urlparts[0] + "/" + row.$key;
-                                if (urlparts.length > 1) url += '?' + urlparts[1];
+
+                                if (urlparts.length > 1) {
+                                    url += '?' + urlparts[1];
+                                }
 
                                 var request = {
                                     serverUrl: url,
@@ -222,7 +227,9 @@
 
                             $scope.retrieveData = function() {
                                 // If the ServerUrl is empty skip data load
-                                if ($scope.serverUrl == '') return;
+                                if ($scope.serverUrl == '') {
+                                    return;
+                                }
 
                                 $scope.canSaveState = true;
                                 $scope.verifyColumns();
@@ -797,7 +804,9 @@
                             $scope.$component = $scope.$parent.$parent.$parent.$component;
 
                             $scope.$watch('hasFieldsDefinitions', function(newVal) {
-                                if (newVal !== true || angular.isUndefined($scope.model)) return;
+                                if (newVal !== true || angular.isUndefined($scope.model)) {
+                                    return;
+                                }
 
                                 $scope.bindFields();
                             });
@@ -813,7 +822,10 @@
                             }
 
                             $scope.changeSelection = function(rowModel) {
-                                if (!$scope.selectableBool) return;
+                                if (!$scope.selectableBool) {
+                                    return;
+                                }
+
                                 $scope.$component.changeSelection(rowModel);
                             };
                         }

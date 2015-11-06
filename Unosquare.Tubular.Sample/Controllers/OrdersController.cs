@@ -16,6 +16,8 @@
         {
             using (var context = new SampleDbContext())
             {
+                context.Configuration.LazyLoadingEnabled = false;
+
                 var orderId = int.Parse(id);
                 var order = await context.Orders.AsNoTracking().Where(o => o.OrderID == orderId).FirstOrDefaultAsync();
 

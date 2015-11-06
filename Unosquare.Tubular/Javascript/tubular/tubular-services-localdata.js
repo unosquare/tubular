@@ -16,10 +16,23 @@
 
                 me.retrieveDataAsync = function(request) {
                     request.requireAuthentication = false;
+
                     var cancelFunc = function(reason) {
                         console.error(reason);
                         $q.defer().resolve(reason);
                     };
+
+                    if (request.serverUrl.indexOf('data:') === 0) {
+                        return {
+                            promise: $q(function (resolve, reject) {
+                                var urlData = request.serverUrl.substr('data:application/json;base64,'.length);
+                                urlData = atob(urlData);
+                                var data = angular.fromJson(urlData);
+                                resolve(me.pageRequest(request.data, data));
+                            }),
+                            cancel: cancelFunc
+                        };
+                    }
 
                     // If database is null, retrieve it
                     return {

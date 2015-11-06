@@ -868,7 +868,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             };
 
                             $scope.addColumn = function(item) {
-                                if (item.Name == null) return;
+                                if (item.Name == null) {
+                                    return;
+                                }
 
                                 if ($scope.hasColumnsDefinitions !== false) {
                                     throw 'Cannot define more columns. Column definitions have been sealed';
@@ -893,7 +895,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             $scope.deleteRow = function (row) {
                                 var urlparts = $scope.serverSaveUrl.split('?');
                                 var url = urlparts[0] + "/" + row.$key;
-                                if (urlparts.length > 1) url += '?' + urlparts[1];
+
+                                if (urlparts.length > 1) {
+                                    url += '?' + urlparts[1];
+                                }
 
                                 var request = {
                                     serverUrl: url,
@@ -957,7 +962,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                             $scope.retrieveData = function() {
                                 // If the ServerUrl is empty skip data load
-                                if ($scope.serverUrl == '') return;
+                                if ($scope.serverUrl == '') {
+                                    return;
+                                }
 
                                 $scope.canSaveState = true;
                                 $scope.verifyColumns();
@@ -1532,7 +1539,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             $scope.$component = $scope.$parent.$parent.$parent.$component;
 
                             $scope.$watch('hasFieldsDefinitions', function(newVal) {
-                                if (newVal !== true || angular.isUndefined($scope.model)) return;
+                                if (newVal !== true || angular.isUndefined($scope.model)) {
+                                    return;
+                                }
 
                                 $scope.bindFields();
                             });
@@ -1548,7 +1557,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             }
 
                             $scope.changeSelection = function(rowModel) {
-                                if (!$scope.selectableBool) return;
+                                if (!$scope.selectableBool) {
+                                    return;
+                                }
+
                                 $scope.$component.changeSelection(rowModel);
                             };
                         }
@@ -1798,7 +1810,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             'tubularEditorService', function(tubularEditorService) {
 
                 return {
-                    template: '<div ng-class="{ \'form-group\' : showLabel && isEditing }">' +
+                    template: '<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid }">' +
                         '<span ng-hide="isEditing">{{ value | date: format }}</span>' +
                         '<label ng-show="showLabel">{{ label }}</label>' +
                         '<input type="datetime-local" ng-show="isEditing" ng-model="value" class="form-control" ' +
@@ -1869,7 +1881,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             'tubularEditorService', function(tubularEditorService) {
 
                 return {
-                    template: '<div ng-class="{ \'form-group\' : showLabel && isEditing }">' +
+                    template: '<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid }">' +
                         '<span ng-hide="isEditing">{{ value | date: format }}</span>' +
                         '<label ng-show="showLabel">{{ label }}</label>' +
                         '<input type="date" ng-show="isEditing" ng-model="value" class="form-control" ' +
@@ -4654,10 +4666,23 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                 me.retrieveDataAsync = function(request) {
                     request.requireAuthentication = false;
+
                     var cancelFunc = function(reason) {
                         console.error(reason);
                         $q.defer().resolve(reason);
                     };
+
+                    if (request.serverUrl.indexOf('data:') === 0) {
+                        return {
+                            promise: $q(function (resolve, reject) {
+                                var urlData = request.serverUrl.substr('data:application/json;base64,'.length);
+                                urlData = atob(urlData);
+                                var data = angular.fromJson(urlData);
+                                resolve(me.pageRequest(request.data, data));
+                            }),
+                            cancel: cancelFunc
+                        };
+                    }
 
                     // If database is null, retrieve it
                     return {

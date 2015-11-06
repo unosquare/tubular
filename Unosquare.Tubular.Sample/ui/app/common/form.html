@@ -1,5 +1,5 @@
-﻿<div class="container" ng-controller="tubularSampleCtrl">
-    <tb-form server-url="/api/orders/" require-authentication="false"
+﻿<div class="container" ng-controller="tubularSampleCtrl as ctrl">
+    <tb-form server-url="/api/orders/" require-authentication="false" model-key="{{Model.OrderID}}"
              server-save-url="/api/orders/save">
         <div class="row">
             <div class="col-md-10">
@@ -18,7 +18,7 @@
                                    required="true" format="C">
                 </tb-numeric-editor>
 
-                <tb-date-editor name="ShippedDate" required="true"
+                <tb-date-editor name="ShippedDate" required="true" max="ctrl.defaultDate"
                                 format="'dd-MM-yyyy'" show-label="true" label="Shipped Date please">
                 </tb-date-editor>
 
