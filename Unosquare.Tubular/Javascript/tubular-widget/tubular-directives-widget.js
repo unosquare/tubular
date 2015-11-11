@@ -104,34 +104,39 @@
                     template: '<div class="widget-panel">' +
                         '<div class="tubular-overlay maximize" ng-show="maximize"></div>' +
                         '<div ng-class="{ \'col-md-6\': oneColumn, \'col-md-12\': !oneColumn, \'maximize\': maximize}">' +
-                        '<div class="panel panel-default">' +
-                        '<div class="panel-heading">{{title}}<div class="pull-right">' +
-                        '<div class="dropdown"><button class="btn btn-xs btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">' +
-                        '<span class="caret"></span>' +
-                        '</button>' +
-                        '<ul class="dropdown-menu dropdown-menu-right">' +
-                        '<li ng-hide="!oneColumn || maximize"><a href="#" ng-click="oneColumn = false">{{\'UI_TWOCOLS\'| translate}}</a></li>' +
-                        '<li ng-hide="oneColumn || maximize"><a href="#" ng-click="oneColumn = true">{{\'UI_ONECOL\'| translate}}</a></li>' +
-                        '<li ng-hide="maximize"><a href="#" ng-click="maximize = true">{{\'UI_MAXIMIZE\'| translate}}</a></li>' +
-                        '<li ng-hide="!maximize"><a href="#" ng-click="maximize = false">{{\'UI_RESTORE\'| translate}}</a></li>' +
-                        '<li ng-hide="top || maximize"><a href="#" ng-click="move(-2)">{{\'UI_MOVEUP\'| translate}}</a></li>' +
-                        '<li ng-hide="bottom || maximize"><a href="#" ng-click="move(2)">{{\'UI_MOVEDOWN\'| translate}}</a></li>' +
-                        '<li ng-hide="!oneColumn || !even || maximize"><a href="#" ng-click="move(1)">{{\'UI_MOVERIGHT\'| translate}}</a></li>' +
-                        '<li ng-hide="!oneColumn || even || maximize"><a href="#" ng-click="move(-1)">{{\'UI_MOVELEFT\'| translate}}</a></li>' +
-                        '</ul></div></div></div>' +
-                        '<div class="panel-body">' +
-                        '<ng-transclude></ng-transclude>' +
-                        '</div></div>',
+                            '<div class="panel panel-default">' +
+                            '<div class="panel-heading">' +
+                                '<span><strong>{{title}}</strong></span> ' +
+                                '<span ng-show="collapsed">{{summary}}</span>' +
+                                '<div class="pull-right">' +
+                                    '<button ng-disabled="top || maximize" ng-click="move(-2)" class="btn btn-default btn-xs"  title="{{\'UI_MOVEUP\'| translate}}"><span><i class="glyphicon glyphicon-arrow-up"></i></span></button>' +
+                                    '<button ng-disabled="bottom || maximize" ng-click="move(2)" class="btn btn-default btn-xs"  title="{{\'UI_MOVEDOWN\'| translate}}"><span><i class="glyphicon glyphicon-arrow-down"></i></span></button>' +
+                                    '<button ng-disabled="!oneColumn || !even || maximize" ng-click="move(1)" class="btn btn-default btn-xs"  title="{{\'UI_MOVERIGHT\'| translate}}"><span><i class="glyphicon glyphicon-arrow-right"></i></span></button>' +
+                                    '<button ng-disabled="!oneColumn || even || maximize" ng-click="move(-1)" class="btn btn-default btn-xs"  title="{{\'UI_MOVELEFT\'| translate}}"><span><i class="glyphicon glyphicon-arrow-left"></i></span></button>' +
+                                    '<button ng-hide="!oneColumn || maximize" ng-click="oneColumn = false" class="btn btn-default btn-xs" title="{{\'UI_TWOCOLS\'| translate}}"><span><i class="glyphicon glyphicon-resize-horizontal"></i></span></button>' +
+                                    '<button ng-hide="oneColumn || maximize" ng-click="oneColumn = true" class="btn btn-default btn-xs"  title="{{\'UI_ONECOL\'| translate}}"><span><i class="glyphicon glyphicon-resize-horizontal"></i></span></button>' +
+                                    '<button ng-hide="collapsed" ng-click="collapsed = true" class="btn btn-default btn-xs"  title="{{\'UI_COLLAPSE\'| translate}}"><span><i class="glyphicon glyphicon-triangle-top"></i></span></button>' +
+                                    '<button ng-hide="!collapsed" ng-click="collapsed = false" class="btn btn-default btn-xs"  title="{{\'UI_EXPAND\'| translate}}"><span><i class="glyphicon glyphicon-triangle-bottom"></i></span></button>' +
+                                    '<button ng-hide="maximize" ng-click="maximize = true" class="btn btn-default btn-xs"  title="{{\'UI_MAXIMIZE\'| translate}}"><span><i class="glyphicon glyphicon-resize-full"></i></span></button>' +
+                                    '<button ng-hide="!maximize" ng-click="maximize = false" class="btn btn-default btn-xs"  title="{{\'UI_RESTORE\'| translate}}"><span><i class="glyphicon glyphicon-resize-small"></i></span></button>' +
+                                '</div>'+
+                            '</div>'+
+                            '<div class="panel-body">' +
+                                '<ng-transclude></ng-transclude>' +
+                            '</div>' +
+                        '</div>',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
                     scope: {
                         title: '@',
-                        name: '@?widgetName'
+                        name: '@?widgetName',
+                        summary: '=?widgetSummary'
                     },
                     controller: function ($scope, $element) {
                         $scope.name = $scope.name || 'tbwidget';
                         $scope.oneColumn = true;
+                        $scope.collapsed = false;
                         $scope.maximize = false;
                         $scope.pos = 0;
                         $scope.content = $element;
@@ -146,13 +151,18 @@
                             $scope.pos = pos;
                         };
 
-                        $scope.$watch('$parent.widgets', function(val) {
+                        $scope.$watch('$parent.widgets', function (val) {
                             var pos = $scope.container.widgets.indexOf($scope);
                             $scope.calculatePositions(pos);
                         });
 
                         $scope.$watch('oneColumn', function() {
                             $scope.container.redraw();
+                        });
+
+                        $scope.$watch('collapsed', function (v) {
+                            var el = $scope.content.find('.panel-body');
+                            $scope.collapsed ? el.hide() : el.show();
                         });
 
                         function swapNodes(a, b) {

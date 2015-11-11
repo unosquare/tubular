@@ -1,6 +1,6 @@
 ﻿<tb-widget-container container-name="sample">
     <div class="row">
-        <tb-widget title="Grid #1" widget-name="widget1">
+        <tb-widget title="Grid #1" widget-name="widget1" widget-summary="summaryGrid1">
             <tb-grid server-url="/api/orders/paged" require-authentication="false"
                      name="widgetgrid1" page-size="10">
                 <tb-grid-table class="table tubular-grid-table table-bordered table-responsive table-striped table-hover responsive-mobile">
@@ -46,20 +46,20 @@
                 </tb-grid-table>
             </tb-grid>
         </tb-widget>
-        <tb-widget title="Form #1" widget-name="widget2">
+        <tb-widget title="Form #1" widget-name="widget2" widget-summary="summaryForm1">
             <tb-form>
                 <tb-simple-editor name="Order" show-label="true"></tb-simple-editor>
             </tb-form>
         </tb-widget>
     </div>
     <div class="row">
-        <tb-widget title="Form #2" widget-name="widget3">
+        <tb-widget title="Form #2" widget-name="widget3" widget-summary="summaryForm2">
             <tb-form>
                 <tb-simple-editor name="Order" show-label="true"></tb-simple-editor>
                 <tb-simple-editor name="Customer" show-label="true"></tb-simple-editor>
             </tb-form>
         </tb-widget>
-        <tb-widget title="Grid #2" widget-name="widget4">
+        <tb-widget title="Grid #2" widget-name="widget4" widget-summary="summaryGrid2">
             <tb-grid server-url="/api/orders/paged" require-authentication="false"
                      name="widgetgrid2" page-size="10">
                 <tb-grid-table class="table tubular-grid-table table-bordered table-responsive table-striped table-hover responsive-mobile">
