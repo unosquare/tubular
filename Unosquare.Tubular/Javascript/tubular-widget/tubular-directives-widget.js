@@ -93,7 +93,7 @@
                                 switch (direction) {
                                     case 'up':
                                     case 'down':
-                                        if (widgetRow.length == 1 || targetRow.length == 1) {
+                                        if (!widgetRow[0].oneColumn || !targetRow[0].oneColumn) {
                                             var tmp                               = $scope.widgetsAsRows[rowNumber];
                                             $scope.widgetsAsRows[rowNumber]       = $scope.widgetsAsRows[targetRowNumber];
                                             $scope.widgetsAsRows[targetRowNumber] = tmp;
