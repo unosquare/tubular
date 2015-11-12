@@ -25,39 +25,120 @@
                         name: '@?containerName'
                     },
                     controller: [
-                        '$scope', 'localStorageService', function ($scope, localStorageService) {
+                        '$scope', '$element', 'localStorageService', function ($scope, $element, localStorageService) {
                             $scope.name = $scope.name || 'tbcontainer';
                             $scope.widgets = [];
                             $scope.settings = localStorageService.get($scope.name + "_data");
 
                             $scope.redraw = function () {
-                                var newSettings = {};
-                                angular.forEach($scope.widgets, function(widget) {
-                                    var parent = widget.content.parent();
+                                var currentRows = $element.children('div.row');
+                                
+                                angular.forEach($scope.widgetsAsRows, function (row) {
+                                    var newRow = $('<div class="row"></div>');
+                                    $element.append(newRow);
+                                    angular.forEach(row, function (widget) {
+                                        newRow.append(widget.content);
+                                    })
+                                });
 
-                                    if (!widget.oneColumn) {
-                                        if (parent.find('div.widget-panel').length > 1) {
-                                            $('<div class="row"></div>').insertBefore(parent).append(widget.content);
-                                        }
+                                currentRows.remove();
+                            };
+
+                            $scope.divideIntoRows = function () {
+                                var widgets = $scope.widgets.slice(0);
+                                var rows = [];
+                                while (widgets.length) {
+                                    if (widgets[0].oneColumn == false) {
+                                        widgets[0].row = rows.length;
+                                        rows.push(widgets.splice(0, 1));
+                                    } else if (widgets[1] && widgets[1].oneColumn == false) {
+                                        widgets[1].row = rows.length;
+                                        rows.push(widgets.splice(1, 1));
                                     } else {
-                                        if (parent.find('div.widget-panel').length === 1) {
-                                            if (parent.next().hasClass('row')) {
-                                                parent.append(parent.next().find('div.widget-panel'));
+                                        widgets[0].row = rows.length;
+                                        widgets[1] && (widgets[1].row = rows.length);
+                                        rows.push(widgets.splice(0, 2));
+                                    }
+                                }
 
-                                                if (parent.next().find('div.widget-panel').length === 0) {
-                                                    parent.next().remove();
-                                                }
+                                return $scope.widgetsAsRows = rows;
+                            };
+
+                            $scope.setWidgetsCapabilities = function () {
+                                angular.forEach($scope.widgets, function (widget) { widget.canUp = widget.canDown = widget.canLeft = widget.canRight = true; });
+                                angular.forEach($scope.widgetsAsRows[0], function (widget) {
+                                    widget.canUp = false;
+                                });
+                                angular.forEach($scope.widgetsAsRows[$scope.widgetsAsRows.length - 1], function (widget) {
+                                    widget.canDown = false;
+                                });
+                                angular.forEach($scope.widgetsAsRows, function (row) {
+                                    if (row.length == 1) {
+                                        row[0].canRight = false;
+                                        row[0].canLeft = false;
+                                    } else {
+                                        row[0].canRight = true;
+                                        row[0].canLeft = false;
+                                        row[1].canRight = false;
+                                        row[1].canLeft = true;
+                                    }
+                                });
+                            };
+
+                            $scope.move = function (widget, direction) {
+                                var rowNumber = widget.row;
+                                var targetRowNumber = direction == 'up' ? rowNumber - 1 : direction == 'down' ? rowNumber + 1 : rowNumber;
+                                var widgetRow = $scope.widgetsAsRows[rowNumber];
+                                var targetRow = $scope.widgetsAsRows[targetRowNumber];
+                                switch (direction) {
+                                    case 'up':
+                                    case 'down':
+                                        if (!widgetRow[0].oneColumn || !targetRow[0].oneColumn) {
+                                            var tmp                               = $scope.widgetsAsRows[rowNumber];
+                                            $scope.widgetsAsRows[rowNumber]       = $scope.widgetsAsRows[targetRowNumber];
+                                            $scope.widgetsAsRows[targetRowNumber] = tmp;
+                                        } else {
+                                            if (widget.canLeft) {
+                                                var swapWithIndex                                    = $scope.widgetsAsRows[targetRowNumber].length == 2 ? 1 : 0;
+                                                var tmp                                              = $scope.widgetsAsRows[rowNumber][1];
+                                                $scope.widgetsAsRows[rowNumber][1]                   = $scope.widgetsAsRows[targetRowNumber][swapWithIndex];
+                                                $scope.widgetsAsRows[targetRowNumber][swapWithIndex] = tmp;
+                                            } else {
+                                                var tmp                                  = $scope.widgetsAsRows[rowNumber][0];
+                                                $scope.widgetsAsRows[rowNumber][0]       = $scope.widgetsAsRows[targetRowNumber][0];
+                                                $scope.widgetsAsRows[targetRowNumber][0] = tmp;
                                             }
                                         }
+                                        break;
+                                    case 'left':
+                                    case 'right':
+                                        var tmp = widgetRow[0];
+                                        widgetRow[0] = widgetRow[1];
+                                        widgetRow[1] = tmp;
+                                        break;
+                                }
 
-                                        if (parent.find('div.widget-panel').length > 2) {
-                                            $('<div class="row"></div>').insertAfter(parent).append(parent.find('div.widget-panel').last());
-                                        }
-                                    }
+                                $scope.widgets = [].concat.apply([], $scope.widgetsAsRows);
+                                angular.forEach($scope.widgets, function (widget, index) {
+                                    widget.position = index;
+                                });
 
+                                $scope.recalculate();
+                            };
+
+                            $scope.recalculate = function () {
+                                $scope.divideIntoRows();
+                                $scope.setWidgetsCapabilities();
+                                $scope.saveSettings();
+                            };
+
+                            $scope.saveSettings = function () {
+                                var newSettings = {};
+                                angular.forEach($scope.widgets, function(widget) {
                                     newSettings[widget.name] = {
-                                        position: widget.pos,
-                                        oneColumn: widget.oneColumn
+                                        position: widget.position,
+                                        oneColumn: widget.oneColumn,
+                                        collapsed: widget.collapsed
                                     };
                                 });
 
@@ -69,16 +150,22 @@
                         return {
                             post: function (scope) {
                                 if (scope.settings) {
-                                    angular.forEach(scope.widgets, function(widget) {
+                                    angular.forEach(scope.widgets, function(widget, index) {
                                         var setting = scope.settings[widget.name];
+                                        widget.position = index;
+
                                         if (!setting) return;
 
                                         widget.oneColumn = setting.oneColumn;
-                                        if (widget.pos !== setting.pos) {
-                                            widget.moveAt(setting.pos);
-                                        }
+                                        widget.collapsed = setting.collapsed;
+                                        widget.position = setting.position;
                                     });
+
+                                    scope.widgets.sort(function (a, b) { return a.position > b.position; });
                                 }
+
+                                scope.recalculate();
+                                scope.redraw();
                             }
                         }
                     }
@@ -102,83 +189,69 @@
             function() {
                 return {
                     template: '<div class="widget-panel">' +
-                        '<div class="tubular-overlay maximize" ng-show="maximize"></div>' +
-                        '<div ng-class="{ \'col-md-6\': oneColumn, \'col-md-12\': !oneColumn, \'maximize\': maximize}">' +
-                        '<div class="panel panel-default">' +
-                        '<div class="panel-heading">{{title}}<div class="pull-right">' +
-                        '<div class="dropdown"><button class="btn btn-xs btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">' +
-                        '<span class="caret"></span>' +
-                        '</button>' +
-                        '<ul class="dropdown-menu dropdown-menu-right">' +
-                        '<li ng-hide="!oneColumn || maximize"><a href="#" ng-click="oneColumn = false">{{\'UI_TWOCOLS\'| translate}}</a></li>' +
-                        '<li ng-hide="oneColumn || maximize"><a href="#" ng-click="oneColumn = true">{{\'UI_ONECOL\'| translate}}</a></li>' +
-                        '<li ng-hide="maximize"><a href="#" ng-click="maximize = true">{{\'UI_MAXIMIZE\'| translate}}</a></li>' +
-                        '<li ng-hide="!maximize"><a href="#" ng-click="maximize = false">{{\'UI_RESTORE\'| translate}}</a></li>' +
-                        '<li ng-hide="top || maximize"><a href="#" ng-click="move(-2)">{{\'UI_MOVEUP\'| translate}}</a></li>' +
-                        '<li ng-hide="bottom || maximize"><a href="#" ng-click="move(2)">{{\'UI_MOVEDOWN\'| translate}}</a></li>' +
-                        '<li ng-hide="!oneColumn || !even || maximize"><a href="#" ng-click="move(1)">{{\'UI_MOVERIGHT\'| translate}}</a></li>' +
-                        '<li ng-hide="!oneColumn || even || maximize"><a href="#" ng-click="move(-1)">{{\'UI_MOVELEFT\'| translate}}</a></li>' +
-                        '</ul></div></div></div>' +
-                        '<div class="panel-body">' +
-                        '<ng-transclude></ng-transclude>' +
-                        '</div></div>',
+                        '<div class="tubular-overlay maximized" ng-show="maximized"></div>' +
+                        '<div ng-class="{ \'col-md-6\': oneColumn, \'col-md-12\': !oneColumn, \'maximized\': maximized}">' +
+                            '<div class="panel panel-default">' +
+                            '<div class="panel-heading">' +
+                                '<span>{{title}}</span> ' +
+                                '<div class="pull-right">' +
+                                    '<button ng-hide="maximized" ng-disabled="!canUp" ng-click="move(\'up\')" class="btn btn-default btn-xs"  title="{{\'UI_MOVEUP\'| translate}}"><span><i class="glyphicon glyphicon-arrow-up"></i></span></button>' +
+                                    '<button ng-hide="maximized" ng-disabled="!canDown" ng-click="move(\'down\')" class="btn btn-default btn-xs"  title="{{\'UI_MOVEDOWN\'| translate}}"><span><i class="glyphicon glyphicon-arrow-down"></i></span></button>' +
+                                    '<button ng-hide="maximized" ng-disabled="!canRight" ng-click="move(\'left\')" class="btn btn-default btn-xs"  title="{{\'UI_MOVERIGHT\'| translate}}"><span><i class="glyphicon glyphicon-arrow-right"></i></span></button>' +
+                                    '<button ng-hide="maximized" ng-disabled="!canLeft" ng-click="move(\'right\')" class="btn btn-default btn-xs"  title="{{\'UI_MOVELEFT\'| translate}}"><span><i class="glyphicon glyphicon-arrow-left"></i></span></button>' +
+                                    '<button ng-hide="!oneColumn || maximized" ng-click="setWidth(2)" class="btn btn-default btn-xs" title="{{\'UI_TWOCOLS\'| translate}}"><span><i class="glyphicon glyphicon-resize-horizontal"></i></span></button>' +
+                                    '<button ng-hide="oneColumn || maximized" ng-click="setWidth(1)" class="btn btn-default btn-xs"  title="{{\'UI_ONECOL\'| translate}}"><span><i class="glyphicon glyphicon-resize-horizontal"></i></span></button>' +
+                                    '<button ng-hide="collapsed || maximized" ng-click="collapsed = true" class="btn btn-default btn-xs"  title="{{\'UI_COLLAPSE\'| translate}}"><span><i class="glyphicon glyphicon-menu-up"></i></span></button>' +
+                                    '<button ng-hide="!collapsed || maximized" ng-click="collapsed = false" class="btn btn-default btn-xs"  title="{{\'UI_EXPAND\'| translate}}"><span><i class="glyphicon glyphicon-menu-down"></i></span></button>' +
+                                    '<button ng-hide="maximized" ng-click="maximized = true;" class="btn btn-default btn-xs"  title="{{\'UI_MAXIMIZE\'| translate}}"><span><i class="glyphicon glyphicon-resize-full"></i></span></button>' +
+                                    '<button ng-hide="!maximized" ng-click="maximized = false" class="btn btn-default btn-xs"  title="{{\'UI_RESTORE\'| translate}}"><span><i class="glyphicon glyphicon-resize-small"></i></span></button>' +
+                                '</div>'+
+                            '</div>'+
+                            '<div class="panel-body" ng-hide="collapsed && !maximized">' +
+                                '<ng-transclude></ng-transclude>' +
+                            '</div>' +
+                            '<div class="panel-body" ng-show="collapsed && !maximized">' +
+                                '{{summary}}' +
+                            '</div>' +
+                        '</div>',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
                     scope: {
                         title: '@',
-                        name: '@?widgetName'
+                        name: '@?widgetName',
+                        summary: '=?widgetSummary'
                     },
                     controller: function ($scope, $element) {
                         $scope.name = $scope.name || 'tbwidget';
                         $scope.oneColumn = true;
-                        $scope.maximize = false;
-                        $scope.pos = 0;
+                        $scope.collapsed = false;
+                        $scope.maximized = false;
+                        $scope.position = 0;
                         $scope.content = $element;
                         $scope.container = $scope.$parent.$parent;
 
+                        $scope.canUp = false;
+                        $scope.canDown = false;
+                        $scope.canLeft = false;
+                        $scope.canRight = false;
+
                         $scope.container.widgets.push($scope);
 
-                        $scope.calculatePositions = function(pos) {
-                            $scope.top = pos === 0 || pos === 1;
-                            $scope.bottom = pos === $scope.container.widgets.length - 1 || pos === $scope.container.widgets.length - 2;
-                            $scope.even = pos % 2 === 0;
-                            $scope.pos = pos;
+                        $scope.setWidth = function (width) {
+                            $scope.oneColumn = width == 1;
+                            $scope.container.recalculate();
+                            $scope.container.redraw();
                         };
 
-                        $scope.$watch('$parent.widgets', function(val) {
-                            var pos = $scope.container.widgets.indexOf($scope);
-                            $scope.calculatePositions(pos);
+                        $scope.$watch('collapsed', function (v) {
+                            $scope.container.saveSettings();
                         });
 
-                        $scope.$watch('oneColumn', function() {
+                        $scope.move = function (direction) {
+                            $scope.container.move(this, direction);
                             $scope.container.redraw();
-                        });
-
-                        function swapNodes(a, b) {
-                            var aparent = a.parentNode;
-                            var asibling = a.nextSibling === b ? a : a.nextSibling;
-                            b.parentNode.insertBefore(a, b);
-                            aparent.insertBefore(b, asibling);
-                        }
-
-                        $scope.move = function(factor) {
-                            $scope.moveAt($scope.pos + factor);
                         };
-
-                        $scope.moveAt = function (pos) {
-                            var tmp = $scope.container.widgets[pos];
-                            if (!tmp) return;
-
-                            $scope.container.widgets[pos] = $scope;
-                            $scope.container.widgets[$scope.pos] = tmp;
-
-                            tmp.calculatePositions($scope.pos);
-                            $scope.calculatePositions(pos);
-                            swapNodes(tmp.content[0], $element[0]);
-
-                            $scope.container.redraw();
-                        }
                     }
                 }
             }

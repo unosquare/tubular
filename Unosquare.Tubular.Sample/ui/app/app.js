@@ -25,7 +25,8 @@
                         title: 'Create a custom Report'
                     }).when('/widget/', {
                         templateUrl: '/ui/app/common/widget.html',
-                        title: 'Widgets'
+                        title: 'Widgets',
+                        controller: 'widgetCtrl'
                     }).otherwise({
                         redirectTo: '/'
                     });
@@ -36,71 +37,71 @@
 
     angular.module('app.controllers', ['tubular.services'])
         .controller('titleController', [
-            '$scope', '$route', function($scope, $route) {
+            '$scope', '$route', function ($scope, $route) {
                 var me = this;
                 me.content = "Home";
 
-                $scope.$on('$routeChangeSuccess', function(currentRoute, previousRoute) {
+                $scope.$on('$routeChangeSuccess', function (currentRoute, previousRoute) {
                     me.content = $route.current.title;
                 });
             }
         ]).controller('loginCtrl', [
-            '$scope', '$location', function($scope, $location) {
+            '$scope', '$location', function ($scope, $location) {
                 // TODO: Complete
             }
         ]).controller('i18nCtrl', [
-            '$scope', 'tubularTranslate', function($scope, tubularTranslate) {
-                $scope.toggle = function() {
+            '$scope', 'tubularTranslate', function ($scope, tubularTranslate) {
+                $scope.toggle = function () {
                     tubularTranslate.setLanguage(tubularTranslate.currentLanguage === 'en' ? 'es' : 'en');
                     toastr.info('New language: ' + tubularTranslate.currentLanguage);
                 };
             }
         ])
         .controller('tubularSampleCtrl', [
-            '$scope', '$location', function($scope, $location) {
+            '$scope', '$location', function ($scope, $location) {
                 var me = this;
-                me.onTableController = function() {
+                me.onTableController = function () {
                     console.log('On Before Get Data Event: fired.');
                 };
 
                 me.defaultDate = new Date();
 
                 // Grid Events
-                $scope.$on('tbGrid_OnBeforeRequest', function(event, eventData) {
+                $scope.$on('tbGrid_OnBeforeRequest', function (event, eventData) {
                     console.log(eventData);
                 });
 
-                $scope.$on('tbGrid_OnRemove', function(data) {
+                $scope.$on('tbGrid_OnRemove', function (data) {
                     toastr.success("Record removed");
                 });
 
-                $scope.$on('tbGrid_OnConnectionError', function(error) {
+                $scope.$on('tbGrid_OnConnectionError', function (error) {
                     toastr.error(error.statusText || "Connection error");
                 });
 
-                $scope.$on('tbGrid_OnSuccessfulSave', function(event, data, gridScope) {
+                $scope.$on('tbGrid_OnSuccessfulSave', function (event, data, gridScope) {
                     toastr.success("Record updated");
                 });
 
                 // Form Events
-                $scope.$on('tbForm_OnConnectionError', function(error) { toastr.error(error.statusText || "Connection error"); });
+                $scope.$on('tbForm_OnConnectionError', function (error) { toastr.error(error.statusText || "Connection error"); });
 
-                $scope.$on('tbForm_OnSuccessfulSave', function(event, data, formScope) {
+                $scope.$on('tbForm_OnSuccessfulSave', function (event, data, formScope) {
                     toastr.success("Record updated");
-                    if(formScope) formScope.clear();
+                    if (formScope) formScope.clear();
                 });
 
-                $scope.$on('tbForm_OnSavingNoChanges', function(event, formScope) {
+                $scope.$on('tbForm_OnSavingNoChanges', function (event, formScope) {
                     toastr.warning("Nothing to save");
                     $location.path('/');
                 });
 
-                $scope.$on('tbForm_OnCancel', function(model, error, formScope) {
+                $scope.$on('tbForm_OnCancel', function (model, error, formScope) {
                     $location.path('/');
                 });
 
                 $scope.chartClick = function (points, evt) {
-                    angular.forEach(points, function(point) {
+                    angular.forEach(points, function (point) {
                         toastr.success(point.datasetLabel + ': ' + point.y);
                     });
                 };
@@ -111,20 +112,28 @@
                     });
                 };
 
-                $scope.highchartClick = function(event) {
+                $scope.highchartClick = function (event) {
                     toastr.success(event.point.category + '-' + event.point.series.name + ': ' + event.point.y);
                 };
 
-                $scope.highpieClick = function(event) {
+                $scope.highpieClick = function (event) {
                     toastr.success(event.point.name + ': ' + event.point.y);
                 };
             }
-        ]).controller("reportingCtrl",
-            function ($scope) {
+        ]).controller("reportingCtrl", [
+            '$scope', function ($scope) {
                 $scope.$on('tbReporting_OnConnectionError', function (event, error) { toastr.error(error); });
                 $scope.$on('tbReporting_OnSuccessfulSave', function (event, message) { toastr.success(message); });
                 $scope.$on('tbReporting_OnRemoved', function (event, message) { toastr.success(message); });
-            });
+            }
+        ]).controller("widgetCtrl", [
+            '$scope', function ($scope) {
+                $scope.summaryGrid1 = "Summary for grid 1";
+                $scope.summaryGrid2 = "Summary for grid 2";
+                $scope.summaryForm1 = "Summary for form 1";
+                $scope.summaryForm2 = "Summary for form 2";
+            }
+        ]);
 
     angular.module('app', [
         'tubular',
@@ -140,7 +149,7 @@
             //tubularTranslate.setLanguage('es');
             // I need to check this
             tubularTranslate.addTranslation('es', 'UI_LANG', 'English').addTranslation('en', 'UI_LANG', 'Español');
-            console.log(tubularTranslate.translationTable);
+            // console.log(tubularTranslate.translationTable);
         }
     ]);
 })();
