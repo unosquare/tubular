@@ -86,6 +86,11 @@
                         return $filter('currency')(input, symbol, fractionSize);
                     }
 
+                    if (format === 'I') {
+                        return parseInt(input);
+                    }
+
+                    // default to decimal
                     return $filter('number')(input, fractionSize);
                 };
             }

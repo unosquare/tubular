@@ -692,6 +692,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         return $filter('currency')(input, symbol, fractionSize);
                     }
 
+                    if (format === 'I') {
+                        return parseInt(input);
+                    }
+
+                    // default to decimal
                     return $filter('number')(input, fractionSize);
                 };
             }
@@ -1742,10 +1747,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         '<div class="input-group-addon" ng-hide="format == \'I\'">{{format == \'C\' ? \'$\' : \'.\'}}</div>' +
                         '<input type="number" placeholder="{{placeholder}}" ng-model="value" class="form-control" ' +
                         'ng-required="required" ng-hide="readOnly" step="{{step || \'any\'}}" />' +
-                        '<p class="form-control form-control-static text-right" ng-show="readOnly">' +
-                        '<span ng-show="format != \'I\'">{{value | number: 2}}</span>' +
-                        '<span ng-show="format == \'I\'">{{value}}</span>' +
-                        '</p>' +
+                        '<p class="form-control form-control-static text-right" ng-show="readOnly">{{value | numberorcurrency: format}}</span></p>' +
                         '</div>' +
                         '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
                         '<span class="help-block" ng-show="isEditing && help">{{help}}</span>' +
@@ -5088,6 +5090,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         'UI_MOVEDOWN': 'Move Down',
                         'UI_MOVELEFT': 'Move Left',
                         'UI_MOVERIGHT': 'Move Right',
+                        'UI_COLLAPSE': 'Collapse',
+                        'UI_EXPAND': 'Expand',
                         'OP_NONE': 'None',
                         'OP_EQUALS': 'Equals',
                         'OP_NOTEQUALS': 'Not Equals',
@@ -5139,6 +5143,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         'UI_MOVEDOWN': 'Mover Abajo',
                         'UI_MOVELEFT': 'Mover Izquierda',
                         'UI_MOVERIGHT': 'Mover Derecha',
+                        'UI_COLLAPSE': 'Colapsar',
+                        'UI_EXPAND': 'Expandir',
                         'OP_NONE': 'Ninguno',
                         'OP_EQUALS': 'Igual',
                         'OP_NOTEQUALS': 'No Igual',
