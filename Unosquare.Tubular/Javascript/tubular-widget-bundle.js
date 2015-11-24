@@ -22,11 +22,13 @@
                     replace: true,
                     transclude: true,
                     scope: {
-                        name: '@?containerName'
+                        name: '@?containerName',
+                        fixedWidgets: '=?fixedWidgets'
                     },
                     controller: [
                         '$scope', '$element', 'localStorageService', function ($scope, $element, localStorageService) {
                             $scope.name = $scope.name || 'tbcontainer';
+                            $scope.fixedWidgets = $scope.fixedWidgets || false;
                             $scope.widgets = [];
                             $scope.settings = localStorageService.get($scope.name + "_data");
 
@@ -34,6 +36,7 @@
                                 var currentRows = $element.children('div.row');
                                 
                                 angular.forEach($scope.widgetsAsRows, function (row) {
+                                    if (row[0].isHidden) return;
                                     var newRow = $('<div class="row"></div>');
                                     $element.append(newRow);
                                     angular.forEach(row, function (widget) {
@@ -46,12 +49,13 @@
 
                             $scope.divideIntoRows = function () {
                                 var widgets = $scope.widgets.slice(0);
+                                var hiddenWidgets = [];
                                 var rows = [];
                                 while (widgets.length) {
-                                    if (widgets[0].oneColumn == false) {
+                                    if (widgets[0].fullWidth || widgets[0].isHidden) {
                                         widgets[0].row = rows.length;
                                         rows.push(widgets.splice(0, 1));
-                                    } else if (widgets[1] && widgets[1].oneColumn == false) {
+                                    } else if (widgets[1] && widgets[1].fullWidth) {
                                         widgets[1].row = rows.length;
                                         rows.push(widgets.splice(1, 1));
                                     } else {
@@ -93,7 +97,7 @@
                                 switch (direction) {
                                     case 'up':
                                     case 'down':
-                                        if (!widgetRow[0].oneColumn || !targetRow[0].oneColumn) {
+                                        if (widgetRow[0].fullWidth || targetRow[0].fullWidth) {
                                             var tmp                               = $scope.widgetsAsRows[rowNumber];
                                             $scope.widgetsAsRows[rowNumber]       = $scope.widgetsAsRows[targetRowNumber];
                                             $scope.widgetsAsRows[targetRowNumber] = tmp;
@@ -137,7 +141,7 @@
                                 angular.forEach($scope.widgets, function(widget) {
                                     newSettings[widget.name] = {
                                         position: widget.position,
-                                        oneColumn: widget.oneColumn,
+                                        fullWidth: widget.fullWidth,
                                         collapsed: widget.collapsed
                                     };
                                 });
@@ -156,7 +160,7 @@
 
                                         if (!setting) return;
 
-                                        widget.oneColumn = setting.oneColumn;
+                                        widget.fullWidth = setting.fullWidth;
                                         widget.collapsed = setting.collapsed;
                                         widget.position = setting.position;
                                     });
@@ -188,23 +192,23 @@
         .directive('tbWidget', [
             function() {
                 return {
-                    template: '<div class="widget-panel">' +
+                    template: '<div class="widget-panel" ng-hide="isHidden">' +
                         '<div class="tubular-overlay maximized" ng-show="maximized"></div>' +
-                        '<div ng-class="{ \'col-md-6\': oneColumn, \'col-md-12\': !oneColumn, \'maximized\': maximized}">' +
+                        '<div ng-class="{ \'col-md-6\': !fullWidth, \'col-md-12\': fullWidth, \'maximized\': maximized}">' +
                             '<div class="panel panel-default">' +
                             '<div class="panel-heading">' +
                                 '<span>{{title}}</span> ' +
                                 '<div class="pull-right">' +
-                                    '<button ng-hide="maximized" ng-disabled="!canUp" ng-click="move(\'up\')" class="btn btn-default btn-xs"  title="{{\'UI_MOVEUP\'| translate}}"><span><i class="glyphicon glyphicon-arrow-up"></i></span></button>' +
-                                    '<button ng-hide="maximized" ng-disabled="!canDown" ng-click="move(\'down\')" class="btn btn-default btn-xs"  title="{{\'UI_MOVEDOWN\'| translate}}"><span><i class="glyphicon glyphicon-arrow-down"></i></span></button>' +
-                                    '<button ng-hide="maximized" ng-disabled="!canRight" ng-click="move(\'left\')" class="btn btn-default btn-xs"  title="{{\'UI_MOVERIGHT\'| translate}}"><span><i class="glyphicon glyphicon-arrow-right"></i></span></button>' +
-                                    '<button ng-hide="maximized" ng-disabled="!canLeft" ng-click="move(\'right\')" class="btn btn-default btn-xs"  title="{{\'UI_MOVELEFT\'| translate}}"><span><i class="glyphicon glyphicon-arrow-left"></i></span></button>' +
-                                    '<button ng-hide="!oneColumn || maximized" ng-click="setWidth(2)" class="btn btn-default btn-xs" title="{{\'UI_TWOCOLS\'| translate}}"><span><i class="glyphicon glyphicon-resize-horizontal"></i></span></button>' +
-                                    '<button ng-hide="oneColumn || maximized" ng-click="setWidth(1)" class="btn btn-default btn-xs"  title="{{\'UI_ONECOL\'| translate}}"><span><i class="glyphicon glyphicon-resize-horizontal"></i></span></button>' +
-                                    '<button ng-hide="collapsed || maximized" ng-click="collapsed = true" class="btn btn-default btn-xs"  title="{{\'UI_COLLAPSE\'| translate}}"><span><i class="glyphicon glyphicon-menu-up"></i></span></button>' +
-                                    '<button ng-hide="!collapsed || maximized" ng-click="collapsed = false" class="btn btn-default btn-xs"  title="{{\'UI_EXPAND\'| translate}}"><span><i class="glyphicon glyphicon-menu-down"></i></span></button>' +
-                                    '<button ng-hide="maximized" ng-click="maximized = true;" class="btn btn-default btn-xs"  title="{{\'UI_MAXIMIZE\'| translate}}"><span><i class="glyphicon glyphicon-resize-full"></i></span></button>' +
-                                    '<button ng-hide="!maximized" ng-click="maximized = false" class="btn btn-default btn-xs"  title="{{\'UI_RESTORE\'| translate}}"><span><i class="glyphicon glyphicon-resize-small"></i></span></button>' +
+                                    '<button ng-hide="container.fixedWidgets || maximized" ng-disabled="!canUp" ng-click="move(\'up\')" class="btn btn-default btn-xs"  title="{{\'UI_MOVEUP\'| translate}}"><span><i class="glyphicon glyphicon-arrow-up"></i></span></button>' +
+                                    '<button ng-hide="container.fixedWidgets || maximized" ng-disabled="!canDown" ng-click="move(\'down\')" class="btn btn-default btn-xs"  title="{{\'UI_MOVEDOWN\'| translate}}"><span><i class="glyphicon glyphicon-arrow-down"></i></span></button>' +
+                                    '<button ng-hide="container.fixedWidgets || maximized" ng-disabled="!canRight" ng-click="move(\'left\')" class="btn btn-default btn-xs"  title="{{\'UI_MOVERIGHT\'| translate}}"><span><i class="glyphicon glyphicon-arrow-right"></i></span></button>' +
+                                    '<button ng-hide="container.fixedWidgets || maximized" ng-disabled="!canLeft" ng-click="move(\'right\')" class="btn btn-default btn-xs"  title="{{\'UI_MOVELEFT\'| translate}}"><span><i class="glyphicon glyphicon-arrow-left"></i></span></button>' +
+                                    '<button ng-hide="container.fixedWidgets || fullWidth || maximized" ng-click="setWidth(2)" class="btn btn-default btn-xs" title="{{\'UI_TWOCOLS\'| translate}}"><span><i class="glyphicon glyphicon-resize-horizontal"></i></span></button>' +
+                                    '<button ng-hide="container.fixedWidgets || !fullWidth || maximized" ng-click="setWidth(1)" class="btn btn-default btn-xs" title="{{\'UI_ONECOL\'| translate}}"><span><i class="glyphicon glyphicon-resize-horizontal"></i></span></button>' +
+                                    '<button ng-hide="collapsed || maximized" ng-click="collapsed = true" class="btn btn-default btn-xs" title="{{\'UI_COLLAPSE\'| translate}}"><span><i class="glyphicon glyphicon-menu-up"></i></span></button>' +
+                                    '<button ng-hide="!collapsed || maximized" ng-click="collapsed = false" class="btn btn-default btn-xs" title="{{\'UI_EXPAND\'| translate}}"><span><i class="glyphicon glyphicon-menu-down"></i></span></button>' +
+                                    '<button ng-hide="container.fixedWidgets || maximized" ng-click="maximized = true;" class="btn btn-default btn-xs" title="{{\'UI_MAXIMIZE\'| translate}}"><span><i class="glyphicon glyphicon-resize-full"></i></span></button>' +
+                                    '<button ng-hide="container.fixedWidgets || !maximized" ng-click="maximized = false" class="btn btn-default btn-xs" title="{{\'UI_RESTORE\'| translate}}"><span><i class="glyphicon glyphicon-resize-small"></i></span></button>' +
                                 '</div>'+
                             '</div>'+
                             '<div class="panel-body" ng-hide="collapsed && !maximized">' +
@@ -220,11 +224,14 @@
                     scope: {
                         title: '@',
                         name: '@?widgetName',
-                        summary: '=?widgetSummary'
+                        summary: '=?widgetSummary',
+                        isHidden: '=?isHidden',
+                        fullWidth: '=?fullWidth'
                     },
                     controller: function ($scope, $element) {
                         $scope.name = $scope.name || 'tbwidget';
-                        $scope.oneColumn = true;
+                        $scope.fullWidth = $scope.fullWidth || false;
+                        $scope.isHidden = $scope.isHidden || false;
                         $scope.collapsed = false;
                         $scope.maximized = false;
                         $scope.position = 0;
@@ -239,7 +246,7 @@
                         $scope.container.widgets.push($scope);
 
                         $scope.setWidth = function (width) {
-                            $scope.oneColumn = width == 1;
+                            $scope.fullWidth = width == 2;
                             $scope.container.recalculate();
                             $scope.container.redraw();
                         };
