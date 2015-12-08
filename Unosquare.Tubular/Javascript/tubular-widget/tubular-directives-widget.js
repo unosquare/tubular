@@ -17,7 +17,7 @@
         .directive('tbWidgetContainer', [
             function() {
                 return {
-                    template: '<div class="container"><ng-transclude></ng-transclude></div>',
+                    template: '<div class="container-fluid"><ng-transclude></ng-transclude></div>',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
