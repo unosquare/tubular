@@ -30,7 +30,7 @@
                     template: function (element, attrs) {
                         // Angular Form requires a name for the form
                         // use the provided one or create a unique id for it
-                        var name = attrs.name || me.getUniqueTbFormName();
+                        var name = attrs.name || tubularEditorService.getUniqueTbFormName();
                         return '<form ng-transclude name="' + name + '"></form>';
                     },
                     restrict: 'E',

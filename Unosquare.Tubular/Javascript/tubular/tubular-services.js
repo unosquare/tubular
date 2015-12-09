@@ -417,6 +417,7 @@
                 * Simple helper to generate a unique name for Tubular Forms
                 */ 
                 me.getUniqueTbFormName = function () {
+                    // TODO: Maybe move this to another service
                     window.tbFormCounter = window.tbFormCounter || (window.tbFormCounter = -1);
                     window.tbFormCounter++;
                     return "tbForm" + window.tbFormCounter;
@@ -437,12 +438,16 @@
 
                     // Get the field reference using the Angular way
                     scope.getFormField = function () {
-                        return scope.$parent.$parent.getFormScope()[scope.Name];
+                        var formScope = scope.$parent.$parent.getFormScope();
+
+                        return formScope == null ? null : formScope[scope.Name];
                     };
 
                     scope.$dirty = function () {
                         // Just forward the property
-                        return scope.getFormField().$dirty;
+                        var formField = scope.getFormField();
+
+                        return formField == null ? true : formField.$dirty;
                     };
 
                     scope.checkValid = function () {
@@ -454,8 +459,8 @@
                             scope.$valid = false;
 
                             // Although this property is invalid, if it is not $dirty
-                            // then there should'n be any errors for it
-                            if (scope.getFormField().$dirty) {
+                            // then there should not be any errors for it
+                            if (scope.$dirty()) {
                                 scope.state.$errors = [$filter('translate')('EDITOR_REQUIRED')];
                             }
 
@@ -524,7 +529,7 @@
                     while (true) {
                         if (parent == null) break;
                         if (angular.isDefined(parent.tubularDirective) &&
-                        (parent.tubularDirective === 'tubular-form' ||
+                            (parent.tubularDirective === 'tubular-form' ||
                             parent.tubularDirective === 'tubular-rowset')) {
 
                             if (scope.name === null) {
