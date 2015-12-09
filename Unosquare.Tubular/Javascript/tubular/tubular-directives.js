@@ -873,6 +873,11 @@
                             $scope.columnName = $scope.columnName || null;
                             $scope.$component = $scope.$parent.$parent.$component;
 
+                            $scope.getFormScope = function () {
+                                // TODO: Implement a form in inline editors
+                                return null;
+                            };
+
                             if ($scope.columnName != null) {
                                 var columnModel = $scope.$component.columns
                                     .filter(function(el) { return el.Name === $scope.columnName; });
