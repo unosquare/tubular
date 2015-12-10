@@ -2672,6 +2672,19 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 $scope.retrieveData();
                             });
 
+                            $scope.cloneModel = function (model) {
+                                var data = {};
+
+                                angular.forEach(model, function (value, key) {
+                                    if (key[0] === '$') return;
+
+                                    data[key] = value;
+                                });
+
+                                $scope.model = new TubularModel($scope, data, $scope.dataService);
+                                $scope.bindFields();
+                            }
+
                             $scope.bindFields = function () {
                                 angular.forEach($scope.fields, function (field) {
                                     field.bindScope();
@@ -3528,6 +3541,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         }
 
                         this.$original[key] = ignoreOriginal ? undefined : value;
+
+                        if (ignoreOriginal) this.$hasChanges = true;
 
                         if (angular.isUndefined(this.$state)) {
                             this.$state = {};
