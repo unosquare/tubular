@@ -137,13 +137,13 @@
             return function($scope, data, dataService) {
                 var obj = {
                     $key: "",
-                    $addField: function(key, value) {
+                    $addField: function(key, value, ignoreOriginal) {
                         this[key] = value;
                         if (angular.isUndefined(this.$original)) {
                             this.$original = {};
                         }
 
-                        this.$original[key] = value;
+                        this.$original[key] = ignoreOriginal ? undefined : value;
 
                         if (angular.isUndefined(this.$state)) {
                             this.$state = {};

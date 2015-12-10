@@ -516,7 +516,7 @@
 
                                 scope.$parent.Model.$state[scope.Name] = scope.state;
                             } else if (angular.isDefined(scope.$parent.Model.$addField)) {
-                                scope.$parent.Model.$addField(scope.name, newValue);
+                                scope.$parent.Model.$addField(scope.name, newValue, true);
                             }
                         }
 

@@ -3521,13 +3521,13 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             return function($scope, data, dataService) {
                 var obj = {
                     $key: "",
-                    $addField: function(key, value) {
+                    $addField: function(key, value, ignoreOriginal) {
                         this[key] = value;
                         if (angular.isUndefined(this.$original)) {
                             this.$original = {};
                         }
 
-                        this.$original[key] = value;
+                        this.$original[key] = ignoreOriginal ? undefined : value;
 
                         if (angular.isUndefined(this.$state)) {
                             this.$state = {};
@@ -4187,7 +4187,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                                 scope.$parent.Model.$state[scope.Name] = scope.state;
                             } else if (angular.isDefined(scope.$parent.Model.$addField)) {
-                                scope.$parent.Model.$addField(scope.name, newValue);
+                                scope.$parent.Model.$addField(scope.name, newValue, true);
                             }
                         }
 
