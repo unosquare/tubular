@@ -262,5 +262,32 @@
                     }
                 }
             }
-        ]);
+        ])
+        /**
+         * @ngdoc directive
+         * @name tbWidgetActions
+         * @restrict E
+         *
+         * @description
+         * The `tbWidgetActios` directive to transclude your content in a header panel with several options.
+         * 
+         * Actions will need to be sent to the $parent scope
+         *
+         * @scope
+         */
+        .directive('tbWidgetActions', ['$compile', function ($compile) {
+            return {
+                template: '<div class="pull-right"><ng-transclude></ng-transclude></div>',
+                restrict: 'E',
+                replace: true,
+                transclude: true,
+                require: '^tbWidget',
+                controller: function ($scope, $element) {
+                },
+                link: function (scope, iElement, iAttrs) {
+                    var header = iElement.parents('.panel').find('.panel-heading');
+                    header.append(iElement);
+                }
+            }
+        }]);
 })();
