@@ -128,10 +128,20 @@
             }
         ]).controller("widgetCtrl", [
             '$scope', function ($scope) {
+                var grids = {};
                 $scope.summaryGrid1 = "Summary for grid 1";
                 $scope.summaryGrid2 = "Summary for grid 2";
                 $scope.summaryForm1 = "Summary for form 1";
                 $scope.summaryForm2 = "Summary for form 2";
+                
+                $scope.$on('tbGrid_OnGreetParentController', function(event, grid) {
+                    grids[grid.name] = grid;
+                });
+
+                $scope.refreshGrid1 = function () {
+                    grids['widgetgrid1'].retrieveData();
+                }
+                
             }
         ]);
 

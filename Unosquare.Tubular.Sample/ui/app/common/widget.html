@@ -1,7 +1,10 @@
 ﻿<tb-widget-container container-name="sample">
     <tb-widget title="Grid #1" widget-name="widget1" widget-summary="summaryGrid1">
+        <tb-widget-actions style="margin-right: 5px;">
+            <button ng-click="$parent.refreshGrid1()" class="btn btn-default btn-xs">Refresh</button>
+        </tb-widget-actions>
         <tb-grid server-url="/api/orders/paged" require-authentication="false"
-                    name="widgetgrid1" page-size="10">
+                    grid-name="widgetgrid1" page-size="10">
             <tb-grid-table class="table tubular-grid-table table-bordered table-responsive table-striped table-hover responsive-mobile">
                 <!-- Columns Definition -->
                 <tb-column-definitions>
@@ -58,7 +61,7 @@
     </tb-widget>
     <tb-widget title="Grid #2" widget-name="widget4" widget-summary="summaryGrid2">
         <tb-grid server-url="/api/orders/paged" require-authentication="false"
-                    name="widgetgrid2" page-size="10">
+                    grid-name="widgetgrid2" page-size="10">
             <tb-grid-table class="table tubular-grid-table table-bordered table-responsive table-striped table-hover responsive-mobile">
                 <!-- Columns Definition -->
                 <tb-column-definitions>
