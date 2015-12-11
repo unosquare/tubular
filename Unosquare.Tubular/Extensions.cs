@@ -280,8 +280,7 @@
                     if (request.Skip < 10) request.Skip = 0;
 
                     response.CurrentPage = 1 +
-                                           (int)
-                                               ((request.Skip/(float) response.FilteredRecordCount)*response.TotalPages);
+                                           (int) Math.Round((request.Skip/(float) response.FilteredRecordCount)*response.TotalPages);
 
                     if (response.CurrentPage > response.TotalPages)
                     {
@@ -302,7 +301,7 @@
             response.Payload = CreateGridPayload(subset, columnMap, pageSize, request.TimezoneOffset);
 
             return response;
-        }
+}
 
         private static string GetSqlOperator(CompareOperators op)
         {
