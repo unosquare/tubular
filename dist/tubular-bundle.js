@@ -692,11 +692,6 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         return $filter('currency')(input, symbol, fractionSize);
                     }
 
-                    if (format === 'I') {
-                        return parseInt(input);
-                    }
-
-                    // default to decimal
                     return $filter('number')(input, fractionSize);
                 };
             }
@@ -1613,11 +1608,6 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             $scope.columnName = $scope.columnName || null;
                             $scope.$component = $scope.$parent.$parent.$component;
 
-                            $scope.getFormScope = function () {
-                                // TODO: Implement a form in inline editors
-                                return null;
-                            };
-
                             if ($scope.columnName != null) {
                                 var columnModel = $scope.$component.columns
                                     .filter(function(el) { return el.Name === $scope.columnName; });
@@ -1666,11 +1656,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             'tubularEditorService', '$filter', function(tubularEditorService, $filter) {
 
                 return {
-                    template: '<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid && $dirty() }">' +
+                    template: '<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid }">' +
                         '<span ng-hide="isEditing">{{value}}</span>' +
                         '<label ng-show="showLabel">{{ label }}</label>' +
                         '<input type="{{editorType}}" placeholder="{{placeholder}}" ng-show="isEditing" ng-model="value" class="form-control" ' +
-                        ' ng-required="required" ng-readonly="readOnly" name="{{name}}" />' +
+                        ' ng-required="required" ng-readonly="readOnly" />' +
                         '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
                         '<span class="help-block" ng-show="isEditing && help">{{help}}</span>' +
                         '</div>',
@@ -1745,14 +1735,14 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             'tubularEditorService', '$filter', function (tubularEditorService, $filter) {
 
                 return {
-                    template: '<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid && $dirty() }">' +
+                    template: '<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid }">' +
                         '<span ng-hide="isEditing">{{value | numberorcurrency: format }}</span>' +
                         '<label ng-show="showLabel">{{ label }}</label>' +
                         '<div class="input-group" ng-show="isEditing">' +
-                        '<div class="input-group-addon" ng-hide="format == \'I\'">{{format == \'C\' ? \'$\' : \'.\'}}</div>' +
+                        '<div class="input-group-addon">{{format == \'C\' ? \'$\' : \'.\'}}</div>' +
                         '<input type="number" placeholder="{{placeholder}}" ng-model="value" class="form-control" ' +
-                        'ng-required="required" ng-hide="readOnly" step="{{step || \'any\'}}"  name="{{name}}" />' +
-                        '<p class="form-control form-control-static text-right" ng-show="readOnly">{{value | numberorcurrency: format}}</span></p>' +
+                        'ng-required="required" ng-hide="readOnly" step="{{step || \'any\'}}" />' +
+                        '<p class="form-control form-control-static text-right" ng-show="readOnly">{{value | number: 2}}</p>' +
                         '</div>' +
                         '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
                         '<span class="help-block" ng-show="isEditing && help">{{help}}</span>' +
@@ -1820,11 +1810,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             'tubularEditorService', function(tubularEditorService) {
 
                 return {
-                    template: '<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid && $dirty() }">' +
+                    template: '<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid }">' +
                         '<span ng-hide="isEditing">{{ value | date: format }}</span>' +
                         '<label ng-show="showLabel">{{ label }}</label>' +
                         '<input type="datetime-local" ng-show="isEditing" ng-model="value" class="form-control" ' +
-                        'ng-required="required" ng-readonly="readOnly" name="{{name}}" />' +
+                        'ng-required="required" ng-readonly="readOnly" />' +
                         '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">' +
                         '{{error}}' +
                         '</span>' +
@@ -1891,11 +1881,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             'tubularEditorService', function(tubularEditorService) {
 
                 return {
-                    template: '<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid && $dirty() }">' +
+                    template: '<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid }">' +
                         '<span ng-hide="isEditing">{{ value | date: format }}</span>' +
                         '<label ng-show="showLabel">{{ label }}</label>' +
                         '<input type="date" ng-show="isEditing" ng-model="value" class="form-control" ' +
-                        'ng-required="required" ng-readonly="readOnly" name="{{name}}"/>' +
+                        'ng-required="required" ng-readonly="readOnly" />' +
                         '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">' +
                         '{{error}}' +
                         '</span>' +
@@ -1963,11 +1953,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             'tubularEditorService', function(tubularEditorService) {
 
                 return {
-                    template: '<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid && $dirty() }">' +
+                    template: '<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid }">' +
                         '<span ng-hide="isEditing">{{ value }}</span>' +
                         '<label ng-show="showLabel">{{ label }}</label>' +
                         '<select ng-options="{{ selectOptions }}" ng-show="isEditing" ng-model="value" class="form-control" ' +
-                        'ng-required="required" ng-disabled="readOnly" name="{{name}}" />' +
+                        'ng-required="required" ng-disabled="readOnly" />' +
                         '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">' +
                         '{{error}}' +
                         '</span>' +
@@ -2077,13 +2067,13 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             'tubularEditorService', '$q', function(tubularEditorService, $q) {
 
                 return {
-                    template: '<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid && $dirty() }">' +
+                    template: '<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid }">' +
                         '<span ng-hide="isEditing">{{ value }}</span>' +
                         '<label ng-show="showLabel">{{ label }}</label>' +
                         '<div class="input-group" ng-show="isEditing">' +
                         '<input ng-model="value" placeholder="{{placeholder}}" title="{{tooltip}}" ' +
                         'class="form-control {{css}}" ng-readonly="readOnly || lastSet.indexOf(value) !== -1" typeahead="{{ selectOptions }}" ' +
-                        'ng-required="required" name="{{name}}" /> ' +
+                        'ng-required="required" /> ' +
                         '<div class="input-group-addon" ng-hide="lastSet.indexOf(value) !== -1"><i class="fa fa-pencil"></i></div>' +
                         '<span class="input-group-btn" ng-show="lastSet.indexOf(value) !== -1" tabindex="-1">' +
                         '<button class="btn btn-default" type="button" ng-click="value = null"><i class="fa fa-times"></i>' +
@@ -2169,7 +2159,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             'tubularEditorService', function(tubularEditorService) {
 
                 return {
-                    template: '<input type="hidden" ng-model="value" class="form-control" name="{{name}}"  />',
+                    template: '<input type="hidden" ng-model="value" class="form-control"  />',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
@@ -2206,10 +2196,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             'tubularEditorService', function(tubularEditorService) {
 
                 return {
-                    template: '<div ng-class="{ \'checkbox\' : isEditing, \'has-error\' : !$valid && $dirty() }" class="tubular-checkbox">' +
+                    template: '<div ng-class="{ \'checkbox\' : isEditing, \'has-error\' : !$valid }" class="tubular-checkbox">' +
                         '<span ng-hide="isEditing">{{value ? checkedValue : uncheckedValue}}</span>' +
                         '<input ng-show="isEditing" type="checkbox" ng-model="value" ng-disabled="readOnly"' +
-                        'class="tubular-checkbox" id="{{name}}" name="{{name}}" /> ' +
+                        'class="tubular-checkbox" id="{{name}}" /> ' +
                         '<label ng-show="isEditing" for="{{name}}">' +
                         '{{label}}' +
                         '</label>' +
@@ -2267,11 +2257,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             'tubularEditorService', '$filter', function (tubularEditorService, $filter) {
 
                 return {
-                    template: '<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid && $dirty() }">' +
+                    template: '<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid }">' +
                         '<span ng-hide="isEditing">{{value}}</span>' +
                         '<label ng-show="showLabel">{{ label }}</label>' +
                         '<textarea ng-show="isEditing" placeholder="{{placeholder}}" ng-model="value" class="form-control" ' +
-                        ' ng-required="required" ng-readonly="readOnly" name="{{name}}"></textarea>' +
+                        ' ng-required="required" ng-readonly="readOnly"></textarea>' +
                         '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">' +
                         '{{error}}' +
                         '</span>' +
@@ -2599,7 +2589,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             }
         ]);
 })();
-(function () {
+(function() {
     'use strict';
 
     angular.module('tubular.directives')
@@ -2625,15 +2615,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @param {string} serviceName Define Data service (name) to retrieve data, defaults `tubularHttp`.
          * @param {bool} requireAuthentication Set if authentication check must be executed, default true.
          */
-        .directive('tbForm', ['tubularEditorService',
-            function (tubularEditorService) {
+        .directive('tbForm', [
+            function() {
                 return {
-                    template: function (element, attrs) {
-                        // Angular Form requires a name for the form
-                        // use the provided one or create a unique id for it
-                        var name = attrs.name || tubularEditorService.getUniqueTbFormName();
-                        return '<form ng-transclude name="' + name + '"></form>';
-                    },
+                    template: '<form ng-transclude></form>',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
@@ -2650,48 +2635,29 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     },
                     controller: [
                         '$scope', '$routeParams', 'tubularModel', 'tubularHttp', '$timeout', '$element',
-                        function ($scope, $routeParams, TubularModel, tubularHttp, $timeout, $element) {
+                        function($scope, $routeParams, TubularModel, tubularHttp, $timeout, $element) {
                             $scope.tubularDirective = 'tubular-form';
                             $scope.serverSaveMethod = $scope.serverSaveMethod || 'POST';
                             $scope.fields = [];
                             $scope.hasFieldsDefinitions = false;
                             $scope.dataService = tubularHttp.getDataService($scope.dataServiceName);
 
-                            // This method is meant to provide a reference to the Angular Form
-                            // so we can get information about: $pristine, $dirty, $submitted, etc.
-                            $scope.getFormScope = function () {
-                                return $scope[$element.attr('name')];
-                            };
-
                             // Setup require authentication
                             $scope.requireAuthentication = angular.isUndefined($scope.requireAuthentication) ? true : $scope.requireAuthentication;
                             tubularHttp.setRequireAuthentication($scope.requireAuthentication);
 
-                            $scope.$watch('hasFieldsDefinitions', function (newVal) {
+                            $scope.$watch('hasFieldsDefinitions', function(newVal) {
                                 if (newVal !== true) return;
                                 $scope.retrieveData();
                             });
 
-                            $scope.cloneModel = function (model) {
-                                var data = {};
-
-                                angular.forEach(model, function (value, key) {
-                                    if (key[0] === '$') return;
-
-                                    data[key] = value;
-                                });
-
-                                $scope.model = new TubularModel($scope, data, $scope.dataService);
-                                $scope.bindFields();
-                            }
-
-                            $scope.bindFields = function () {
-                                angular.forEach($scope.fields, function (field) {
+                            $scope.bindFields = function() {
+                                angular.forEach($scope.fields, function(field) {
                                     field.bindScope();
                                 });
                             };
 
-                            $scope.retrieveData = function () {
+                            $scope.retrieveData = function() {
                                 // Try to load a key from markup or route
                                 $scope.modelKey = $scope.modelKey || $routeParams.param;
 
@@ -2700,15 +2666,15 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                         $scope.modelKey != null &&
                                         $scope.modelKey !== '') {
                                         $scope.dataService.getByKey($scope.serverUrl, $scope.modelKey).promise.then(
-                                            function (data) {
+                                            function(data) {
                                                 $scope.model = new TubularModel($scope, data, $scope.dataService);
                                                 $scope.bindFields();
-                                            }, function (error) {
+                                            }, function(error) {
                                                 $scope.$emit('tbForm_OnConnectionError', error);
                                             });
                                     } else {
                                         $scope.dataService.get(tubularHttp.addTimeZoneToUrl($scope.serverUrl)).promise.then(
-                                            function (data) {
+                                            function(data) {
                                                 var innerScope = $scope;
                                                 var dataService = $scope.dataService;
 
@@ -2720,7 +2686,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                                 $scope.model = new TubularModel(innerScope, data, dataService);
                                                 $scope.bindFields();
                                                 $scope.model.$isNew = true;
-                                            }, function (error) {
+                                            }, function(error) {
                                                 $scope.$emit('tbForm_OnConnectionError', error);
                                             });
                                     }
@@ -2748,7 +2714,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 }
 
                                 $scope.currentRequest.then(
-                                        function (data) {
+                                        function(data) {
                                             if (angular.isDefined($scope.model.$component) &&
                                                 angular.isDefined($scope.model.$component.autoRefresh) &&
                                                 $scope.model.$component.autoRefresh) {
@@ -2756,30 +2722,30 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                             }
 
                                             $scope.$emit('tbForm_OnSuccessfulSave', data, $scope);
-                                        }, function (error) {
+                                        }, function(error) {
                                             $scope.$emit('tbForm_OnConnectionError', error, $scope);
                                         })
-                                    .then(function () {
+                                    .then(function() {
                                         $scope.model.$isLoading = false;
                                         $scope.currentRequest = null;
                                     });
                             };
 
-                            $scope.update = function () {
+                            $scope.update = function() {
                                 $scope.save();
                             };
 
-                            $scope.create = function () {
+                            $scope.create = function() {
                                 $scope.model.$isNew = true;
                                 $scope.save();
                             };
 
-                            $scope.cancel = function () {
+                            $scope.cancel = function() {
                                 $scope.$emit('tbForm_OnCancel', $scope.model);
                             };
 
-                            $scope.clear = function () {
-                                angular.forEach($scope.fields, function (field) {
+                            $scope.clear = function() {
+                                angular.forEach($scope.fields, function(field) {
                                     if (field.resetEditor) {
                                         field.resetEditor();
                                     } else {
@@ -2788,8 +2754,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 });
                             };
 
-                            $scope.finishDefinition = function () {
-                                var timer = $timeout(function () {
+                            $scope.finishDefinition = function() {
+                                var timer = $timeout(function() {
                                     $scope.hasFieldsDefinitions = true;
 
                                     if ($element.find('input').length) {
@@ -2798,13 +2764,13 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 }, 0);
 
                                 $scope.$emit('tbForm_OnGreetParentController', $scope);
-                                $scope.$on('$destroy', function () { $timeout.cancel(timer); });
+                                $scope.$on('$destroy', function() { $timeout.cancel(timer); });
                             };
                         }
                     ],
                     compile: function compile() {
                         return {
-                            post: function (scope) {
+                            post: function(scope) {
                                 scope.finishDefinition();
                             }
                         };
@@ -3534,15 +3500,13 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             return function($scope, data, dataService) {
                 var obj = {
                     $key: "",
-                    $addField: function(key, value, ignoreOriginal) {
+                    $addField: function(key, value) {
                         this[key] = value;
                         if (angular.isUndefined(this.$original)) {
                             this.$original = {};
                         }
 
-                        this.$original[key] = ignoreOriginal ? undefined : value;
-
-                        if (ignoreOriginal) this.$hasChanges = true;
+                        this.$original[key] = value;
 
                         if (angular.isUndefined(this.$state)) {
                             this.$state = {};
@@ -3612,7 +3576,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 continue;
                             }
 
-                            if (obj.$state[key].$valid() && obj.$state[key].$dirty) {
+                            if (obj.$state[key].$valid()) {
                                 continue;
                             }
 
@@ -3684,7 +3648,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             };
         });
 })();
-(function () {
+(function() {
     'use strict';
 
     /**
@@ -3708,11 +3672,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             function tubularPopupService($modal, $rootScope, tubularTemplateService) {
                 var me = this;
 
-                me.onSuccessForm = function (callback) {
+                me.onSuccessForm = function(callback) {
                     $rootScope.$on('tbForm_OnSuccessfulSave', callback);
                 };
 
-                me.onConnectionError = function (callback) {
+                me.onConnectionError = function(callback) {
                     $rootScope.$on('tbForm_OnConnectionError', callback);
                 };
 
@@ -3724,7 +3688,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                  * @param {string} size 
                  * @returns {object} The Popup instance
                  */
-                me.openDialog = function (template, model, gridScope, size) {
+                me.openDialog = function(template, model, gridScope, size) {
                     if (angular.isUndefined(template)) {
                         template = tubularTemplateService.generatePopup(model);
                     }
@@ -3735,10 +3699,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         animation: false,
                         size: size,
                         controller: [
-                            '$scope', function ($scope) {
+                            '$scope', function($scope) {
                                 $scope.Model = model;
 
-                                $scope.savePopup = function (innerModel) {
+                                $scope.savePopup = function(innerModel) {
                                     innerModel = innerModel || $scope.Model;
 
                                     // If we have nothing to save and it's not a new record, just close
@@ -3754,20 +3718,20 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     }
 
                                     result.then(
-                                        function (data) {
+                                        function(data) {
                                             $scope.$emit('tbForm_OnSuccessfulSave', data);
                                             $rootScope.$broadcast('tbForm_OnSuccessfulSave', data);
                                             $scope.Model.$isLoading = false;
                                             if (gridScope.autoRefresh) gridScope.retrieveData();
                                             dialog.close();
-                                        }, function (error) {
+                                        }, function(error) {
                                             $scope.$emit('tbForm_OnConnectionError', error);
                                             $rootScope.$broadcast('tbForm_OnConnectionError', error);
                                             $scope.Model.$isLoading = false;
                                         });
                                 };
 
-                                $scope.closePopup = function () {
+                                $scope.closePopup = function() {
                                     if (angular.isDefined($scope.Model.revertChanges)) {
                                         $scope.Model.revertChanges();
                                     }
@@ -3792,26 +3756,26 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
         .service('tubularGridExportService', function tubularGridExportService() {
             var me = this;
 
-            me.getColumns = function (gridScope) {
+            me.getColumns = function(gridScope) {
                 return gridScope.columns
-                    .map(function (c) { return c.Name.replace(/([a-z])([A-Z])/g, '$1 $2'); });
+                    .map(function(c) { return c.Name.replace(/([a-z])([A-Z])/g, '$1 $2'); });
             };
 
-            me.getColumnsVisibility = function (gridScope) {
+            me.getColumnsVisibility = function(gridScope) {
                 return gridScope.columns
-                    .map(function (c) { return c.Visible; });
+                    .map(function(c) { return c.Visible; });
             };
 
-            me.exportAllGridToCsv = function (filename, gridScope) {
+            me.exportAllGridToCsv = function(filename, gridScope) {
                 var columns = me.getColumns(gridScope);
                 var visibility = me.getColumnsVisibility(gridScope);
 
-                gridScope.getFullDataSource(function (data) {
+                gridScope.getFullDataSource(function(data) {
                     me.exportToCsv(filename, columns, data, visibility);
                 });
             };
 
-            me.exportGridToCsv = function (filename, gridScope) {
+            me.exportGridToCsv = function(filename, gridScope) {
                 var columns = me.getColumns(gridScope);
                 var visibility = me.getColumnsVisibility(gridScope);
 
@@ -3820,10 +3784,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 gridScope.currentRequest = null;
             };
 
-            me.exportToCsv = function (filename, header, rows, visibility) {
-                var processRow = function (row) {
+            me.exportToCsv = function(filename, header, rows, visibility) {
+                var processRow = function(row) {
                     if (typeof (row) === 'object') {
-                        row = Object.keys(row).map(function (key) { return row[key]; });
+                        row = Object.keys(row).map(function(key) { return row[key]; });
                     }
 
                     var finalVal = '';
@@ -3879,10 +3843,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             'tubulargGridFilterModel', '$compile', '$filter', function tubularGridFilterService(FilterModel, $compile, $filter) {
                 var me = this;
 
-                me.applyFilterFuncs = function (scope, el, attributes, openCallback) {
+                me.applyFilterFuncs = function(scope, el, attributes, openCallback) {
                     scope.$component = scope.$parent.$component;
-
-                    scope.$watch('filter.Operator', function (val) {
+                    
+                    scope.$watch('filter.Operator', function(val) {
                         if (val === 'None') scope.filter.Text = '';
                     });
 
@@ -3902,8 +3866,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         }
                     }, true);
 
-                    scope.retrieveData = function () {
-                        var columns = scope.$component.columns.filter(function (el) {
+                    scope.retrieveData = function() {
+                        var columns = scope.$component.columns.filter(function(el) {
                             return el.Name === scope.filter.Name;
                         });
 
@@ -3915,7 +3879,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         scope.close();
                     };
 
-                    scope.clearFilter = function () {
+                    scope.clearFilter = function() {
                         if (scope.filter.Operator != 'Multiple') {
                             scope.filter.Operator = 'None';
                         }
@@ -3926,20 +3890,20 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         scope.retrieveData();
                     };
 
-                    scope.applyFilter = function () {
+                    scope.applyFilter = function() {
                         scope.filter.HasFilter = true;
                         scope.retrieveData();
                     };
 
-                    scope.close = function () {
+                    scope.close = function() {
                         $(el).find('.btn-popover').popover('hide');
                     };
 
-                    scope.open = function () {
+                    scope.open = function() {
                         $(el).find('.btn-popover').popover('toggle');
                     };
 
-                    scope.checkEvent = function (keyEvent) {
+                    scope.checkEvent = function(keyEvent) {
                         if (keyEvent.which === 13) {
                             scope.applyFilter();
                             keyEvent.preventDefault();
@@ -3950,9 +3914,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         html: true,
                         placement: 'bottom',
                         trigger: 'manual',
-                        content: function () {
+                        content: function() {
                             var selectEl = $(this).next().find('select').find('option').remove().end();
-                            angular.forEach(scope.filterOperators, function (val, key) {
+                            angular.forEach(scope.filterOperators, function(val, key) {
                                 $(selectEl).append('<option value="' + key + '">' + val + '</option>');
                             });
 
@@ -3960,7 +3924,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         }
                     });
 
-                    $(el).find('.btn-popover').on('show.bs.popover', function (e) {
+                    $(el).find('.btn-popover').on('show.bs.popover', function(e) {
                         $('.btn-popover').not(e.target).popover("hide");
                     });
 
@@ -3972,16 +3936,16 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 /**
                  * Creates a `FilterModel` using a scope and an Attributes array
                  */
-                me.createFilterModel = function (scope, lAttrs) {
+                me.createFilterModel = function(scope, lAttrs) {
                     scope.filter = new FilterModel(lAttrs);
                     scope.filter.Name = scope.$parent.column.Name;
-                    var columns = scope.$component.columns.filter(function (el) {
+                    var columns = scope.$component.columns.filter(function(el) {
                         return el.Name === scope.filter.Name;
                     });
 
                     if (columns.length === 0) return;
 
-                    scope.$watch('filter', function (n) {
+                    scope.$watch('filter', function(n) {
                         if (columns[0].Filter.Text != n.Text) {
                             n.Text = columns[0].Filter.Text;
 
@@ -4053,18 +4017,18 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                  * @param {string} format 
                  * @returns {array}  The controller definition
                  */
-                me.dateEditorController = function (format) {
+                me.dateEditorController = function(format) {
                     return [
-                        '$scope', function (innerScope) {
+                        '$scope', function(innerScope) {
                             innerScope.DataType = "date";
 
-                            innerScope.$watch('value', function (val) {
+                            innerScope.$watch('value', function(val) {
                                 if (typeof (val) === 'string') {
                                     innerScope.value = new Date(val);
                                 }
                             });
 
-                            innerScope.validate = function () {
+                            innerScope.validate = function() {
                                 if (angular.isDefined(innerScope.min)) {
                                     if (Object.prototype.toString.call(innerScope.min) !== "[object Date]") {
                                         innerScope.min = new Date(innerScope.min);
@@ -4097,23 +4061,13 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             me.setupScope(innerScope, format);
                         }
                     ];
-                };
-
-                /**
-                * Simple helper to generate a unique name for Tubular Forms
-                */ 
-                me.getUniqueTbFormName = function () {
-                    // TODO: Maybe move this to another service
-                    window.tbFormCounter = window.tbFormCounter || (window.tbFormCounter = -1);
-                    window.tbFormCounter++;
-                    return "tbForm" + window.tbFormCounter;
-                };
+                }
 
                 /**
                  * Setups a new Editor, this functions is like a common class constructor to be used
                  * with all the tubularEditors.
                  */
-                me.setupScope = function (scope, defaultFormat) {
+                me.setupScope = function(scope, defaultFormat) {
                     scope.isEditing = angular.isUndefined(scope.isEditing) ? true : scope.isEditing;
                     scope.showLabel = scope.showLabel || false;
                     scope.label = scope.label || (scope.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
@@ -4122,33 +4076,14 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     scope.format = scope.format || defaultFormat;
                     scope.$valid = true;
 
-                    // Get the field reference using the Angular way
-                    scope.getFormField = function () {
-                        var formScope = scope.$parent.$parent.getFormScope();
-
-                        return formScope == null ? null : formScope[scope.Name];
-                    };
-
-                    scope.$dirty = function () {
-                        // Just forward the property
-                        var formField = scope.getFormField();
-
-                        return formField == null ? true : formField.$dirty;
-                    };
-
-                    scope.checkValid = function () {
+                    scope.checkValid = function() {
                         scope.$valid = true;
                         scope.state.$errors = [];
 
                         if ((angular.isUndefined(scope.value) && scope.required) ||
                         (Object.prototype.toString.call(scope.value) === "[object Date]" && isNaN(scope.value.getTime()) && scope.required)) {
                             scope.$valid = false;
-
-                            // Although this property is invalid, if it is not $dirty
-                            // then there should not be any errors for it
-                            if (scope.$dirty()) {
-                                scope.state.$errors = [$filter('translate')('EDITOR_REQUIRED')];
-                            }
+                            scope.state.$errors = [$filter('translate')('EDITOR_REQUIRED')];
 
                             if (angular.isDefined(scope.$parent.Model)) {
                                 scope.$parent.Model.$state[scope.Name] = scope.state;
@@ -4166,25 +4101,21 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     };
 
                     // HACK: I need to know why
-                    scope.$watch('label', function (n, o) {
+                    scope.$watch('label', function(n, o) {
                         if (angular.isUndefined(n)) {
                             scope.label = (scope.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
                         }
                     });
 
-                    scope.$watch('value', function (newValue, oldValue) {
+                    scope.$watch('value', function(newValue, oldValue) {
                         if (angular.isUndefined(oldValue) && angular.isUndefined(newValue)) {
                             return;
                         }
 
-                        // This is the state API for every property in the Model
                         scope.state = {
-                            $valid: function () {
+                            $valid: function() {
                                 scope.checkValid();
                                 return this.$errors.length === 0;
-                            },
-                            $dirty: function () {
-                                return scope.$dirty;
                             },
                             $errors: []
                         };
@@ -4202,7 +4133,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                                 scope.$parent.Model.$state[scope.Name] = scope.state;
                             } else if (angular.isDefined(scope.$parent.Model.$addField)) {
-                                scope.$parent.Model.$addField(scope.name, newValue, true);
+                                scope.$parent.Model.$addField(scope.name, newValue);
                             }
                         }
 
@@ -4215,7 +4146,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     while (true) {
                         if (parent == null) break;
                         if (angular.isDefined(parent.tubularDirective) &&
-                            (parent.tubularDirective === 'tubular-form' ||
+                        (parent.tubularDirective === 'tubular-form' ||
                             parent.tubularDirective === 'tubular-rowset')) {
 
                             if (scope.name === null) {
@@ -4230,7 +4161,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                             scope.Name = scope.name;
 
-                            scope.bindScope = function () {
+                            scope.bindScope = function() {
                                 scope.$parent.Model = parent.model;
 
                                 if (angular.equals(scope.value, parent.model[scope.Name]) === false) {
@@ -4240,9 +4171,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                             parent.model[scope.Name];
                                     }
 
-                                    parent.$watch(function () {
+                                    parent.$watch(function() {
                                         return scope.value;
-                                    }, function (value) {
+                                    }, function(value) {
                                         parent.model[scope.Name] = value;
                                     });
                                 }
@@ -4262,14 +4193,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     parent.model.$state = {};
                                 }
 
-                                // This is the state API for every property in the Model
                                 parent.model.$state[scope.Name] = {
-                                    $valid: function () {
+                                    $valid: function() {
                                         scope.checkValid();
                                         return this.$errors.length === 0;
-                                    },
-                                    $dirty: function () {
-                                        return scope.$dirty;
                                     },
                                     $errors: []
                                 };
