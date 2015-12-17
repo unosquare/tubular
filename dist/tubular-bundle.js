@@ -3529,7 +3529,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
         *
         * @description
         * The `tubularModel` factory is the base to generate a row model to use with `tbGrid` and `tbForm`.
-        */tubu
+        */
         .factory('tubularModel', function() {
             return function($scope, data, dataService) {
                 var obj = {
@@ -3542,7 +3542,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                         this.$original[key] = ignoreOriginal ? undefined : value;
 
-                        if (ignoreOriginal) this.$hasChanges = true;
+                        if (ignoreOriginal) {
+                            this.$hasChanges = true;
+                        }
 
                         if (angular.isUndefined(this.$state)) {
                             this.$state = {};

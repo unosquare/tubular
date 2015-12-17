@@ -145,7 +145,9 @@
 
                         this.$original[key] = ignoreOriginal ? undefined : value;
 
-                        if (ignoreOriginal) this.$hasChanges = true;
+                        if (ignoreOriginal) {
+                            this.$hasChanges = true;
+                        }
 
                         if (angular.isUndefined(this.$state)) {
                             this.$state = {};
