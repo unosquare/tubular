@@ -839,17 +839,12 @@ select.checkbox-list:hover option:checked, select.checkbox-list:focus option:che
                 font-weight: bold;
             }
 }
-
-.maximized {
+.maximize {
     position: absolute;
     z-index: 5001;
     width: 100%;
     top: 0;
     left: 0;
     padding: 20px;
-    height: 100%;
-}
-
-.widget-panel .panel.panel-default {
     height: 100%;
 }
