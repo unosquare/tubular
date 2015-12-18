@@ -24,6 +24,7 @@
          * 
          * @param {string} serverUrl Set the HTTP URL where the data comes.
          * @param {string} serverSaveUrl Set the HTTP URL where the data will be saved.
+         * @param {string} serverDeleteUrl Set the HTTP URL where the data will be saved.
          * @param {string} serverSaveMethod Set HTTP Method to save data.
          * @param {int} pageSize Define how many records to show in a page, default 20.
          * @param {function} onBeforeGetData Callback to execute before to get data from service.
@@ -51,6 +52,7 @@
                     scope: {
                         serverUrl: '@',
                         serverSaveUrl: '@',
+                        serverDeleteUrl: '@',
                         serverSaveMethod: '@',
                         pageSize: '@?',
                         onBeforeGetData: '=?',
@@ -95,6 +97,7 @@
                                 Text: $scope.autoSearch,
                                 Operator: $scope.autoSearch == '' ? 'None' : 'Auto'
                             };
+
                             $scope.isEmpty = false;
                             $scope.tempRow = new TubularModel($scope, {});
                             $scope.dataService = tubularHttp.getDataService($scope.dataServiceName);
@@ -105,6 +108,7 @@
                             $scope.groupBy = '';
                             $scope.showLoading = $scope.showLoading || true;
                             $scope.autoRefresh = $scope.autoRefresh || true;
+                            $scope.serverDeleteUrl = $scope.serverDeleteUrl || $scope.serverSaveUrl;
 
                             $scope.$watch('columns', function() {
                                 if ($scope.hasColumnsDefinitions === false || $scope.canSaveState === false) {
@@ -158,7 +162,7 @@
                             };
 
                             $scope.deleteRow = function (row) {
-                                var urlparts = $scope.serverSaveUrl.split('?');
+                                var urlparts = $scope.serverDeleteUrl.split('?');
                                 var url = urlparts[0] + "/" + row.$key;
 
                                 if (urlparts.length > 1) {
