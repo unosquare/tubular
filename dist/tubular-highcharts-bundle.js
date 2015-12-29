@@ -50,7 +50,7 @@
                         function($scope, tubularHttp, $timeout) {
                             $scope.tubularDirective = 'tubular-chart';
                             $scope.dataService = tubularHttp.getDataService($scope.dataServiceName);
-                            $scope.showLegend = $scope.showLegend || true;
+                            $scope.showLegend = angular.isUndefined($scope.showLegend) ? true : $scope.showLegend;
                             $scope.chartType = $scope.chartType || 'line';
 
                             $scope.options = angular.extend({}, $scope.options, {

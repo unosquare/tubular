@@ -53,7 +53,7 @@
     </div>
 
     <tb-grid server-url="/api/orders/pagedwithformat" require-authentication="false"
-             name="samplegrid" page-size="20" class="row">
+             name="samplegrid" page-size="7" class="row" save-page-size="false">
 
         <!-- Main full-width container -->
         <div class="col-md-12">
@@ -144,7 +144,6 @@
                 <div class="col-md-6 col-xs-12">
                     <b>Distinct Customers:</b> {{$parent.aggregationFunctions.CustomerName}}
                 </div>
-                <tb-page-size-selector class="col-md-3 col-xs-6"></tb-page-size-selector>
                 <tb-grid-pager-info class="col-md-3 col-xs-6"></tb-grid-pager-info>
             </div>
         </div>

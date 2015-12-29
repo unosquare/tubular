@@ -75,13 +75,12 @@
                             $scope.columns = [];
                             $scope.rows = [];
 
-                            $scope.savePage = $scope.savePage || true;
+                            $scope.savePage = angular.isUndefined($scope.savePage) ? true : $scope.savePage;
                             $scope.currentPage = $scope.savePage ? (localStorageService.get($scope.name + "_page") || 1) : 1;
 
-                            $scope.savePageSize = $scope.savePageSize || true;
-                            $scope.pageSize = 20;
-
-                            $scope.saveSearch = $scope.saveSearch || true;
+                            $scope.savePageSize = angular.isUndefined($scope.savePageSize) ? true : $scope.savePageSize;
+                            $scope.pageSize = angular.isUndefined($scope.pageSize) ? 20 : $scope.pageSize;
+                            $scope.saveSearch = angular.isUndefined($scope.saveSearch) ? true : $scope.saveSearch;
                             $scope.totalPages = 0;
                             $scope.totalRecordCount = 0;
                             $scope.filteredRecordCount = 0;
@@ -106,8 +105,8 @@
                             $scope.editorMode = $scope.editorMode || 'none';
                             $scope.canSaveState = false;
                             $scope.groupBy = '';
-                            $scope.showLoading = $scope.showLoading || true;
-                            $scope.autoRefresh = $scope.autoRefresh || true;
+                            $scope.showLoading = angular.isUndefined($scope.showLoading) ? true : $scope.showLoading;
+                            $scope.autoRefresh = angular.isUndefined($scope.autoRefresh) ? true : $scope.autoRefresh;
                             $scope.serverDeleteUrl = $scope.serverDeleteUrl || $scope.serverSaveUrl;
 
                             $scope.$watch('columns', function() {
@@ -237,7 +236,10 @@
 
                                 $scope.canSaveState = true;
                                 $scope.verifyColumns();
-                                $scope.pageSize = $scope.savePageSize ? (localStorageService.get($scope.name + "_pageSize") || 20) : 20;
+
+                                if ($scope.savePageSize) {
+                                    $scope.pageSize = (localStorageService.get($scope.name + "_pageSize") || $scope.pageSize);
+                                }
 
                                 var request = {
                                     serverUrl: $scope.serverUrl,

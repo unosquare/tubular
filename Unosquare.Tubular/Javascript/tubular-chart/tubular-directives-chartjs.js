@@ -45,7 +45,7 @@
                         function($scope, tubularHttp) {
                             $scope.tubularDirective = 'tubular-chart';
                             $scope.dataService = tubularHttp.getDataService($scope.dataServiceName);
-                            $scope.showLegend = $scope.showLegend || true;
+                            $scope.showLegend = angular.isUndefined($scope.showLegend) ? true : $scope.showLegend;
                             $scope.chartType = $scope.chartType || 'Line';
 
                             // Setup require authentication

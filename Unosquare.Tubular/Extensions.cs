@@ -157,6 +157,8 @@
         public static GridDataResponse CreateGridDataResponse(this GridDataRequest request, IQueryable dataSource,
             ProcessResponseSubset preProcessSubset)
         {
+            if (request == null) throw new InvalidOperationException("The GridDataRequest is null");
+
             var response = new GridDataResponse
             {
                 Counter = request.Counter,
@@ -277,8 +279,6 @@
 
                 if (response.TotalPages > 0)
                 {
-                    if (request.Skip < 10) request.Skip = 0;
-
                     response.CurrentPage = 1 +
                                            (int) Math.Round((request.Skip/(float) response.FilteredRecordCount)*response.TotalPages);
 
