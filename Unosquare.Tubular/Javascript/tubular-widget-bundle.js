@@ -196,6 +196,7 @@
                         '<div class="tubular-overlay maximized" ng-show="maximized"></div>' +
                         '<div ng-class="{ \'col-md-6\': !fullWidth, \'col-md-12\': fullWidth, \'maximized\': maximized}">' +
                             '<div class="panel panel-default">' +
+                            '<div class="tubular-overlay row" ng-show="showOverlay"><div><div class="fa fa-refresh fa-2x fa-spin"></div></div></div>' +
                             '<div class="panel-heading">' +
                                 '<span>{{title}}</span> ' +
                                 '<div class="pull-right">' +
@@ -226,7 +227,8 @@
                         name: '@?widgetName',
                         summary: '=?widgetSummary',
                         isHidden: '=?isHidden',
-                        fullWidth: '=?fullWidth'
+                        fullWidth: '=?fullWidth',
+                        showOverlay: '=?showOverlay'
                     },
                     controller: function ($scope, $element) {
                         $scope.name = $scope.name || 'tbwidget';
