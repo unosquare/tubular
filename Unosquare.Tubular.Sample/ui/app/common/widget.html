@@ -1,5 +1,5 @@
-﻿<tb-widget-container container-name="sample">
-    <tb-widget title="Grid #1" widget-name="widget1" widget-summary="summaryGrid1">
+﻿<tb-widget-container container-name="sample" fixed-widgets="true">
+    <tb-widget title="Grid #1" widget-name="widget1" widget-summary="{{ summaryGrid1 }}">
         <tb-widget-actions style="margin-right: 5px;">
             <button ng-click="$parent.refreshGrid1()" class="btn btn-default btn-xs">Refresh</button>
         </tb-widget-actions>
@@ -48,18 +48,18 @@
             </tb-grid-table>
         </tb-grid>
     </tb-widget>
-    <tb-widget title="Form #1" widget-name="widget2" widget-summary="summaryForm1">
+    <tb-widget title="Form #1" widget-name="widget2" widget-summary="{{ summaryForm1 }}">
         <tb-form>
             <tb-simple-editor name="Order" show-label="true"></tb-simple-editor>
         </tb-form>
     </tb-widget>
-    <tb-widget title="Form #2" widget-name="widget3" widget-summary="summaryForm2">
+    <tb-widget title="Form #2" widget-name="widget3" widget-summary="{{ summaryForm2 }}" full-width="true">
         <tb-form>
             <tb-simple-editor name="Order" show-label="true"></tb-simple-editor>
             <tb-simple-editor name="Customer" show-label="true"></tb-simple-editor>
         </tb-form>
     </tb-widget>
-    <tb-widget title="Grid #2" widget-name="widget4" widget-summary="summaryGrid2">
+    <tb-widget title="Grid #2" widget-name="widget4" widget-summary="{{ summaryGrid2 }}">
         <tb-grid server-url="/api/orders/paged" require-authentication="false"
                     grid-name="widgetgrid2" page-size="10">
             <tb-grid-table class="table tubular-grid-table table-bordered table-responsive table-striped table-hover responsive-mobile">
