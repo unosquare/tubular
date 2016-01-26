@@ -23,7 +23,7 @@
                     transclude: true,
                     scope: {
                         name: '@?containerName',
-                        fixedWidgets: '=?fixedWidgets'
+                        fixedWidgets: '@?fixedWidgets'
                     },
                     controller: [
                         '$scope', '$element', 'localStorageService', function ($scope, $element, localStorageService) {
@@ -196,6 +196,7 @@
                         '<div class="tubular-overlay maximized" ng-show="maximized"></div>' +
                         '<div ng-class="{ \'col-md-6\': !fullWidth, \'col-md-12\': fullWidth, \'maximized\': maximized}">' +
                             '<div class="panel panel-default">' +
+                            '<div class="tubular-overlay row" ng-show="showOverlay"><div><div class="fa fa-refresh fa-2x fa-spin"></div></div></div>' +
                             '<div class="panel-heading">' +
                                 '<span>{{title}}</span> ' +
                                 '<div class="pull-right">' +
@@ -205,8 +206,8 @@
                                     '<button ng-hide="container.fixedWidgets || maximized" ng-disabled="!canLeft" ng-click="move(\'right\')" class="btn btn-default btn-xs"  title="{{\'UI_MOVELEFT\'| translate}}"><span><i class="glyphicon glyphicon-arrow-left"></i></span></button>' +
                                     '<button ng-hide="container.fixedWidgets || fullWidth || maximized" ng-click="setWidth(2)" class="btn btn-default btn-xs" title="{{\'UI_TWOCOLS\'| translate}}"><span><i class="glyphicon glyphicon-resize-horizontal"></i></span></button>' +
                                     '<button ng-hide="container.fixedWidgets || !fullWidth || maximized" ng-click="setWidth(1)" class="btn btn-default btn-xs" title="{{\'UI_ONECOL\'| translate}}"><span><i class="glyphicon glyphicon-resize-horizontal"></i></span></button>' +
-                                    '<button ng-hide="collapsed || maximized" ng-click="collapsed = true" class="btn btn-default btn-xs" title="{{\'UI_COLLAPSE\'| translate}}"><span><i class="glyphicon glyphicon-menu-up"></i></span></button>' +
-                                    '<button ng-hide="!collapsed || maximized" ng-click="collapsed = false" class="btn btn-default btn-xs" title="{{\'UI_EXPAND\'| translate}}"><span><i class="glyphicon glyphicon-menu-down"></i></span></button>' +
+                                    '<button ng-hide="container.fixedWidgets || collapsed || maximized" ng-click="collapsed = true" class="btn btn-default btn-xs" title="{{\'UI_COLLAPSE\'| translate}}"><span><i class="glyphicon glyphicon-menu-up"></i></span></button>' +
+                                    '<button ng-hide="container.fixedWidgets || !collapsed || maximized" ng-click="collapsed = false" class="btn btn-default btn-xs" title="{{\'UI_EXPAND\'| translate}}"><span><i class="glyphicon glyphicon-menu-down"></i></span></button>' +
                                     '<button ng-hide="container.fixedWidgets || maximized" ng-click="maximized = true;" class="btn btn-default btn-xs" title="{{\'UI_MAXIMIZE\'| translate}}"><span><i class="glyphicon glyphicon-resize-full"></i></span></button>' +
                                     '<button ng-hide="container.fixedWidgets || !maximized" ng-click="maximized = false" class="btn btn-default btn-xs" title="{{\'UI_RESTORE\'| translate}}"><span><i class="glyphicon glyphicon-resize-small"></i></span></button>' +
                                 '</div>'+
@@ -224,9 +225,10 @@
                     scope: {
                         title: '@',
                         name: '@?widgetName',
-                        summary: '=?widgetSummary',
-                        isHidden: '=?isHidden',
-                        fullWidth: '=?fullWidth'
+                        summary: '@?widgetSummary',
+                        isHidden: '@?isHidden',
+                        fullWidth: '@?fullWidth',
+                        showOverlay: '=?showOverlay'
                     },
                     controller: function ($scope, $element) {
                         $scope.name = $scope.name || 'tbwidget';
