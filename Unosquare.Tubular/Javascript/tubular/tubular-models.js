@@ -94,6 +94,16 @@
                         'Lte': '<=',
                         'Lt': '<'
                     },
+                    'datetimeutc': {
+                        'None': $filter('translate')('OP_NONE'),
+                        'Equals': $filter('translate')('OP_EQUALS'),
+                        'NotEquals': $filter('translate')('OP_NOTEQUALS'),
+                        'Between': $filter('translate')('OP_BETWEEN'),
+                        'Gte': '>=',
+                        'Gt': '>',
+                        'Lte': '<=',
+                        'Lt': '<'
+                    },
                     'boolean': {
                         'None': $filter('translate')('OP_NONE'),
                         'Equals': $filter('translate')('OP_EQUALS'),
@@ -178,7 +188,7 @@
 
                         obj.$addField(col.Name, value);
 
-                        if (col.DataType === "date" || col.DataType === "datetime") {
+                        if (col.DataType === "date" || col.DataType === "datetime" || col.DataType === "datetimeutc") {
                             var timezone = new Date().toString().match(/([-\+][0-9]+)\s/)[1];
                             timezone = timezone.substr(0, timezone.length - 2) + ':' + timezone.substr(timezone.length - 2, 2);
                             var tempDate = new Date(Date.parse(obj[col.Name] + timezone));

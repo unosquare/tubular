@@ -311,7 +311,7 @@
                     scope.dataType = columns[0].DataType;
                     scope.filterOperators = columns[0].FilterOperators[scope.dataType];
 
-                    if (scope.dataType === 'datetime' || scope.dataType === 'date') {
+                    if (scope.dataType === 'date' || scope.dataType === 'datetime' || scope.dataType === 'datetimeutc') {
                         scope.filter.Argument = [new Date()];
 
                         if (scope.filter.Operator === 'Contains') {

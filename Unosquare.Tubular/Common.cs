@@ -139,7 +139,12 @@
         /// <summary>
         /// Boolean type
         /// </summary>
-        Boolean
+        Boolean,
+
+        /// <summary>
+        /// DataTime UTC type
+        /// </summary>
+        DateTimeUtc
     }
 
     /// <summary>

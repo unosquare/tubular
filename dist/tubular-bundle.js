@@ -3497,6 +3497,16 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         'Lte': '<=',
                         'Lt': '<'
                     },
+                    'datetimeutc': {
+                        'None': $filter('translate')('OP_NONE'),
+                        'Equals': $filter('translate')('OP_EQUALS'),
+                        'NotEquals': $filter('translate')('OP_NOTEQUALS'),
+                        'Between': $filter('translate')('OP_BETWEEN'),
+                        'Gte': '>=',
+                        'Gt': '>',
+                        'Lte': '<=',
+                        'Lt': '<'
+                    },
                     'boolean': {
                         'None': $filter('translate')('OP_NONE'),
                         'Equals': $filter('translate')('OP_EQUALS'),
@@ -3581,7 +3591,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                         obj.$addField(col.Name, value);
 
-                        if (col.DataType === "date" || col.DataType === "datetime") {
+                        if (col.DataType === "date" || col.DataType === "datetime" || col.DataType === "datetimeutc") {
                             var timezone = new Date().toString().match(/([-\+][0-9]+)\s/)[1];
                             timezone = timezone.substr(0, timezone.length - 2) + ':' + timezone.substr(timezone.length - 2, 2);
                             var tempDate = new Date(Date.parse(obj[col.Name] + timezone));
@@ -4005,7 +4015,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     scope.dataType = columns[0].DataType;
                     scope.filterOperators = columns[0].FilterOperators[scope.dataType];
 
-                    if (scope.dataType === 'datetime' || scope.dataType === 'date') {
+                    if (scope.dataType === 'date' || scope.dataType === 'datetime' || scope.dataType === 'datetimeutc') {
                         scope.filter.Argument = [new Date()];
 
                         if (scope.filter.Operator === 'Contains') {
