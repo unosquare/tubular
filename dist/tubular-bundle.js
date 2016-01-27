@@ -798,7 +798,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         onBeforeGetData: '=?',
                         requestMethod: '@',
                         dataServiceName: '@?serviceName',
-                        requireAuthentication: '@?',
+                        requireAuthentication: '=?',
                         name: '@?gridName',
                         editorMode: '@?',
                         showLoading: '=?',
@@ -840,7 +840,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             $scope.isEmpty = false;
                             $scope.tempRow = new TubularModel($scope, {});
                             $scope.dataService = tubularHttp.getDataService($scope.dataServiceName);
-                            $scope.requireAuthentication = $scope.requireAuthentication || true;
+                            $scope.requireAuthentication = angular.isUndefined($scope.requireAuthentication) ? true : $scope.requireAuthentication;
                             tubularHttp.setRequireAuthentication($scope.requireAuthentication);
                             $scope.editorMode = $scope.editorMode || 'none';
                             $scope.canSaveState = false;
@@ -1029,8 +1029,17 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                             var model = new TubularModel($scope, el, $scope.dataService);
                                             model.$component = $scope;
 
-                                            model.editPopup = function(template, size) {
-                                                tubularPopupService.openDialog(template, model, $scope, size);
+                                            model.editPopup = function (template, size) {
+                                                var data = {};
+
+                                                angular.forEach(model, function (value, key) {
+                                                    if (key[0] === '$') return;
+
+                                                    data[key] = value;
+                                                });
+
+                                                var clone = new TubularModel($scope, data, $scope.dataService);
+                                                tubularPopupService.openDialog(template, clone, $scope, size);
                                             };
 
                                             return model;
