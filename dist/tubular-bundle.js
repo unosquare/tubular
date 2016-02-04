@@ -900,7 +900,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 }
                             };
 
-                            $scope.deleteRow = function (row) {
+                            $scope.deleteRow = function(row) {
                                 var urlparts = $scope.serverDeleteUrl.split('?');
                                 var url = urlparts[0] + "/" + row.$key;
 
@@ -1032,10 +1032,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                             var model = new TubularModel($scope, el, $scope.dataService);
                                             model.$component = $scope;
 
-                                            model.editPopup = function (template, size) {
+                                            model.editPopup = function(template, size) {
                                                 var data = {};
 
-                                                angular.forEach(model, function (value, key) {
+                                                angular.forEach(model, function(value, key) {
                                                     if (key[0] === '$') return;
 
                                                     data[key] = value;
@@ -1360,7 +1360,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 $scope.$component.sortColumn($scope.column.Name, multiple);
                             };
 
-                            $scope.$watch("visible", function (val) {
+                            $scope.$watch("visible", function(val) {
                                 if (angular.isDefined(val)) {
                                     $scope.column.Visible = val;
                                 }
@@ -1400,9 +1400,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                 return {
                     require: '^tbColumn',
-                    template: '<a title="Click to sort. Press Ctrl to sort by multiple columns" ' +
+                    template: '<span><a title="Click to sort. Press Ctrl to sort by multiple columns" ' +
                         'class="column-header" ng-transclude href="javascript:void(0)" ' +
-                        'ng-click="sortColumn($event)"></a>',
+                        'ng-if="sortable"' +
+                        'ng-click="sortColumn($event)"></a>' +
+                        '<span ng-transclude ng-if="!sortable"></span></span>',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
@@ -1445,15 +1447,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     refreshIcon(icon);
                                 }, 0);
 
-                                scope.$on('$destroy', function () { $timeout.cancel(timer); });
+                                scope.$on('$destroy', function() { $timeout.cancel(timer); });
                             },
                             post: function(scope, lElement) {
                                 scope.label = scope.$parent.label;
-
-                                if (scope.$parent.column.Sortable === false) {
-                                    var text = scope.label || lElement.text();
-                                    lElement.replaceWith('<span>' + text + '</span>');
-                                }
+                                scope.sortable = scope.$parent.column.Sortable;
                             }
                         };
                     }
@@ -1504,7 +1502,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @scope
          */
         .directive('tbFootSet', [
-            function () {
+            function() {
 
                 return {
                     require: '^tbGrid',
@@ -1514,7 +1512,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     transclude: true,
                     scope: false,
                     controller: [
-                        '$scope', function ($scope) {
+                        '$scope', function($scope) {
                             $scope.$component = $scope.$parent.$component || $scope.$parent.$parent.$component;
                             $scope.tubularDirective = 'tubular-foot-set';
                         }
@@ -1631,7 +1629,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             $scope.columnName = $scope.columnName || null;
                             $scope.$component = $scope.$parent.$parent.$component;
 
-                            $scope.getFormScope = function () {
+                            $scope.getFormScope = function() {
                                 // TODO: Implement a form in inline editors
                                 return null;
                             };

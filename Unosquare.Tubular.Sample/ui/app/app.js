@@ -66,6 +66,8 @@
 
                 me.defaultDate = new Date();
 
+                me.ColumnName = "Date";
+
                 // Grid Events
                 $scope.$on('tbGrid_OnBeforeRequest', function (event, eventData) {
                     console.log(eventData);

@@ -1,5 +1,4 @@
 ﻿<div class="container" ng-controller="tubularSampleCtrl as sample" ng-init="toggleVisible = true">
-    
     <tb-grid server-url="/api/orders/paged" server-save-url="/api/orders/save" require-authentication="false"
              name="samplegrid" page-size="20" class="row" on-before-get-data="sample.onTableController">
 
@@ -55,7 +54,7 @@
                                     <tb-column-filter></tb-column-filter>
                                 </tb-column>
                                 <tb-column name="ShippedDate" label="Date" column-type="datetimeutc" class="column-md">
-                                    <tb-column-header>{{label}}</tb-column-header>
+                                    <tb-column-header>{{sample.ColumnName}}</tb-column-header>
                                     <tb-column-date-time-filter></tb-column-date-time-filter>
                                 </tb-column>
                                 <tb-column name="IsShipped" column-type="boolean" class="column-md" visible="toggleVisible">
