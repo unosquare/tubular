@@ -190,7 +190,7 @@
          * The `tubularGridFilterService` service is a internal helper to setup any `FilterModel` with a UI.
          */
         .service('tubularGridFilterService', [
-            'tubulargGridFilterModel', '$compile', '$filter', function tubularGridFilterService(FilterModel, $compile, $filter) {
+            'tubularGridFilterModel', '$compile', '$filter', function tubularGridFilterService(FilterModel, $compile, $filter) {
                 var me = this;
 
                 me.applyFilterFuncs = function (scope, el, attributes, openCallback) {

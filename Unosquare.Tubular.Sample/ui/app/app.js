@@ -67,6 +67,7 @@
                 me.defaultDate = new Date();
 
                 me.ColumnName = "Date";
+                me.Filter = "Oxxo";
 
                 // Grid Events
                 $scope.$on('tbGrid_OnBeforeRequest', function (event, eventData) {

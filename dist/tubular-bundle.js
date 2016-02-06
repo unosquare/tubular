@@ -3527,14 +3527,14 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
         }])
         /**
         * @ngdoc factory
-        * @name tubulargGridFilterModel
+        * @name tubularGridFilterModel
         *
         * @description
-        * The `tubulargGridFilterModel` factory is the base to generate a filter model to use with `tbGrid`.
+        * The `tubularGridFilterModel` factory is the base to generate a filter model to use with `tbGrid`.
         * 
         * This model doesn't need to be created in your controller, the `tubularGridFilterService` generate it.
         */
-        .factory('tubulargGridFilterModel', function() {
+        .factory('tubularGridFilterModel', function() {
 
             return function(attrs) {
                 this.Text = attrs.text || null;
@@ -3546,7 +3546,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                 this.Operator = attrs.operator || 'Contains';
                 this.OptionsUrl = attrs.optionsUrl || null;
-                this.HasFilter = false;
+                this.HasFilter = !(this.Text == null);
             };
         })
         /**
@@ -3904,7 +3904,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * The `tubularGridFilterService` service is a internal helper to setup any `FilterModel` with a UI.
          */
         .service('tubularGridFilterService', [
-            'tubulargGridFilterModel', '$compile', '$filter', function tubularGridFilterService(FilterModel, $compile, $filter) {
+            'tubularGridFilterModel', '$compile', '$filter', function tubularGridFilterService(FilterModel, $compile, $filter) {
                 var me = this;
 
                 me.applyFilterFuncs = function (scope, el, attributes, openCallback) {
