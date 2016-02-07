@@ -42,18 +42,37 @@
                         emptyMessage: '@?',
                         errorMessage: '@?',
                         onLoad: '=?',
-                        options: '=?'
+                        options: '=?',
+                        onClick: '=?'
                     },
                     controller: [
                         '$scope', 'tubularHttp', '$timeout',
                         function($scope, tubularHttp, $timeout) {
                             $scope.tubularDirective = 'tubular-chart';
                             $scope.dataService = tubularHttp.getDataService($scope.dataServiceName);
-                            $scope.showLegend = $scope.showLegend || true;
+                            $scope.showLegend = angular.isUndefined($scope.showLegend) ? true : $scope.showLegend;
                             $scope.chartType = $scope.chartType || 'line';
 
                             $scope.options = angular.extend({}, $scope.options, {
-                                options: { chart: { type: $scope.chartType } },
+                                options: {
+                                    chart: { type: $scope.chartType },
+                                    plotOptions: {
+                                        pie: {
+                                            point: {
+                                                events: {
+                                                    click: ($scope.onClick || angular.noop)
+                                                }
+                                            }
+                                        },
+                                        series: {
+                                            point: {
+                                                events: {
+                                                    click: ($scope.onClick || angular.noop)
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
                                 title: { text: $scope.title || '' },
                                 xAxis: {
                                     categories: []
@@ -61,7 +80,6 @@
                                 yAxis: {},
                                 series: []
                             });
-
 
                             // Setup require authentication
                             $scope.requireAuthentication = angular.isUndefined($scope.requireAuthentication) ? true : $scope.requireAuthentication;
