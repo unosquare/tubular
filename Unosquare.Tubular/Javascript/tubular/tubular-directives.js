@@ -625,7 +625,7 @@
                     compile: function compile() {
                         return {
                             pre: function (scope, lElement, lAttrs) {
-                                lAttrs.label = lAttrs.label || (lAttrs.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
+                                lAttrs.label = angular.isDefined(lAttrs.label) ? lAttrs.label : (lAttrs.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
 
                                 var column = new ColumnModel(lAttrs);
                                 scope.$component.addColumn(column);
