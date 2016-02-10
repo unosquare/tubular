@@ -70,12 +70,19 @@
             {
                 var payloadItem = new List<object>(columnMap.Keys.Count);
 
-                foreach (var value in columnMap.Select(m => m.Value.GetValue(item)))
+                foreach (var column in columnMap.Select(m => new {Value = m.Value.GetValue(item), m.Key}))
                 {
-                    if (value is DateTime)
-                        payloadItem.Add(((DateTime) value).AddMinutes(-timezoneOffset));
+                    if (column.Value is DateTime)
+                    {
+                        if (column.Key.DataType == DataType.DateTimeUtc)
+                            payloadItem.Add(((DateTime) column.Value));
+                        else
+                            payloadItem.Add(((DateTime) column.Value).AddMinutes(-timezoneOffset));
+                    }
                     else
-                        payloadItem.Add(value);
+                    {
+                        payloadItem.Add(column.Value);
+                    }
                 }
 
                 payload.Add(payloadItem);
@@ -288,6 +295,8 @@
                         request.Skip = (response.CurrentPage - 1)*request.Take;
                     }
 
+                    if (request.Skip < 0) request.Skip = 0;
+
                     subset = subset.Skip(request.Skip);
                 }
 
@@ -393,7 +402,7 @@
                         {
                             searchParamArgs.Add(decimal.Parse(column.Filter.Text));
                         }
-                        else if (column.DataType == DataType.DateTime)
+                        else if (column.DataType == DataType.DateTime || column.DataType == DataType.DateTimeUtc)
                         {
                             searchParamArgs.Add(DateTime.Parse(column.Filter.Text));
                         }

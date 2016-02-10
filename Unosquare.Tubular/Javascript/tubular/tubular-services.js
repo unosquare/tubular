@@ -190,7 +190,7 @@
          * The `tubularGridFilterService` service is a internal helper to setup any `FilterModel` with a UI.
          */
         .service('tubularGridFilterService', [
-            'tubulargGridFilterModel', '$compile', '$filter', function tubularGridFilterService(FilterModel, $compile, $filter) {
+            'tubularGridFilterModel', '$compile', '$filter', function tubularGridFilterService(FilterModel, $compile, $filter) {
                 var me = this;
 
                 me.applyFilterFuncs = function (scope, el, attributes, openCallback) {
@@ -311,7 +311,7 @@
                     scope.dataType = columns[0].DataType;
                     scope.filterOperators = columns[0].FilterOperators[scope.dataType];
 
-                    if (scope.dataType === 'datetime' || scope.dataType === 'date') {
+                    if (scope.dataType === 'date' || scope.dataType === 'datetime' || scope.dataType === 'datetimeutc') {
                         scope.filter.Argument = [new Date()];
 
                         if (scope.filter.Operator === 'Contains') {
