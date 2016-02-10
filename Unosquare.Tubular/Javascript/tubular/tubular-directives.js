@@ -58,7 +58,7 @@
                         onBeforeGetData: '=?',
                         requestMethod: '@',
                         dataServiceName: '@?serviceName',
-                        requireAuthentication: '=?',
+                        requireAuthentication: '@?',
                         name: '@?gridName',
                         editorMode: '@?',
                         showLoading: '=?',
@@ -100,7 +100,7 @@
                             $scope.isEmpty = false;
                             $scope.tempRow = new TubularModel($scope, {});
                             $scope.dataService = tubularHttp.getDataService($scope.dataServiceName);
-                            $scope.requireAuthentication = angular.isUndefined($scope.requireAuthentication) ? true : $scope.requireAuthentication;
+                            $scope.requireAuthentication = $scope.requireAuthentication || true;
                             tubularHttp.setRequireAuthentication($scope.requireAuthentication);
                             $scope.editorMode = $scope.editorMode || 'none';
                             $scope.canSaveState = false;
@@ -160,7 +160,7 @@
                                 }
                             };
 
-                            $scope.deleteRow = function(row) {
+                            $scope.deleteRow = function (row) {
                                 var urlparts = $scope.serverDeleteUrl.split('?');
                                 var url = urlparts[0] + "/" + row.$key;
 
@@ -241,9 +241,6 @@
                                     $scope.pageSize = (localStorageService.get($scope.name + "_pageSize") || $scope.pageSize);
                                 }
 
-                                var skipPage = ($scope.requestedPage - 1);
-                                if (skipPage < 0) skipPage = 0;
-
                                 var request = {
                                     serverUrl: $scope.serverUrl,
                                     requestMethod: $scope.requestMethod || 'POST',
@@ -252,7 +249,7 @@
                                     data: {
                                         Count: $scope.requestCounter,
                                         Columns: $scope.columns,
-                                        Skip: skipPage * $scope.pageSize,
+                                        Skip: ($scope.requestedPage - 1) * $scope.pageSize,
                                         Take: parseInt($scope.pageSize),
                                         Search: $scope.search,
                                         TimezoneOffset: new Date().getTimezoneOffset()
@@ -293,16 +290,7 @@
                                             model.$component = $scope;
 
                                             model.editPopup = function(template, size) {
-                                                var data = {};
-
-                                                angular.forEach(model, function(value, key) {
-                                                    if (key[0] === '$') return;
-
-                                                    data[key] = value;
-                                                });
-
-                                                var clone = new TubularModel($scope, data, $scope.dataService);
-                                                tubularPopupService.openDialog(template, clone, $scope, size);
+                                                tubularPopupService.openDialog(template, model, $scope, size);
                                             };
 
                                             return model;
@@ -600,7 +588,7 @@
          * @param {boolean} isGrouping Define a group key.
          */
         .directive('tbColumn', [
-            'tubularGridColumnModel', function(ColumnModel) {
+            'tubularGridColumnModel', function (ColumnModel) {
                 return {
                     require: '^tbColumnDefinitions',
                     template: '<th ng-transclude ng-class="{sortable: column.Sortable}" ng-show="column.Visible"></th>',
@@ -608,29 +596,36 @@
                     replace: true,
                     transclude: true,
                     scope: {
-                        visible: '='
+                        visible: '=',
+                        label: '@?'
                     },
                     controller: [
-                        '$scope', function($scope) {
+                        '$scope', function ($scope) {
                             $scope.column = { Label: '' };
                             $scope.$component = $scope.$parent.$parent.$component;
                             $scope.tubularDirective = 'tubular-column';
 
-                            $scope.sortColumn = function(multiple) {
+                            $scope.sortColumn = function (multiple) {
                                 $scope.$component.sortColumn($scope.column.Name, multiple);
                             };
 
-                            $scope.$watch("visible", function(val) {
+                            $scope.$watch("visible", function (val) {
                                 if (angular.isDefined(val)) {
                                     $scope.column.Visible = val;
                                 }
                             });
+
+                            $scope.$watch('label', function () {
+                                $scope.column.Label = $scope.label;
+                                // this broadcast here is used for backwards compatibility with tbColumnHeader requiring a scope.label value on its own
+                                $scope.$broadcast('tbColumn_LabelChanged', $scope.label);
+                            })
                         }
                     ],
                     compile: function compile() {
                         return {
-                            pre: function(scope, lElement, lAttrs) {
-                                lAttrs.label = lAttrs.label || (lAttrs.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
+                            pre: function (scope, lElement, lAttrs) {
+                                lAttrs.label = angular.isDefined(lAttrs.label) ? lAttrs.label : (lAttrs.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
 
                                 var column = new ColumnModel(lAttrs);
                                 scope.$component.addColumn(column);
@@ -656,66 +651,40 @@
          * @scope
          */
         .directive('tbColumnHeader', [
-            '$timeout', 'tubularConst', function($timeout, tubularConst) {
+            '$compile', function ($compile) {
 
                 return {
                     require: '^tbColumn',
-                    template: '<span><a title="Click to sort. Press Ctrl to sort by multiple columns" ' +
-                        'class="column-header" ng-transclude href="javascript:void(0)" ' +
-                        'ng-if="sortable"' +
-                        'ng-click="sortColumn($event)"></a>' +
-                        '<span ng-transclude ng-if="!sortable"></span></span>',
+                    template: '<span><a title="Click to sort. Press Ctrl to sort by multiple columns" class="column-header" href ng-click="sortColumn($event)">' +
+                                '<span class="column-header-default">{{ $parent.column.Label }}</span>' +
+                                '<span ng-transclude></span></a> ' +
+                                '<i class="fa sort-icon" ng-class="' + "{'fa-long-arrow-up': $parent.column.SortDirection == 'Ascending', 'fa-long-arrow-down': $parent.column.SortDirection == 'Descending'}" + '">&nbsp;</i>' +
+                                '</span>',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
                     scope: false,
                     controller: [
-                        '$scope', function($scope) {
-                            $scope.sortColumn = function($event) {
+                        '$scope', function ($scope) {
+                            $scope.sortColumn = function ($event) {
                                 $scope.$parent.sortColumn($event.ctrlKey);
                             };
+                            // this listener here is used for backwards compatibility with tbColumnHeader requiring a scope.label value on its own
+                            $scope.$on('tbColumn_LabelChanged', function ($event, value) {
+                                $scope.label = value;
+                            })
                         }
                     ],
-                    compile: function compile() {
-                        return {
-                            pre: function(scope, lElement) {
-                                var refreshIcon = function(icon) {
-                                    $(icon).removeClass(tubularConst.upCssClass);
-                                    $(icon).removeClass(tubularConst.downCssClass);
+                    link: function ($scope, $element, $attrs, controller) {
+                        if ($element.find('[ng-transclude] *').length > 0) {
+                            $element.find('span.column-header-default').remove();
+                        }
 
-                                    var cssClass = "";
-
-                                    if (scope.$parent.column.SortDirection === 'Ascending') {
-                                        cssClass = tubularConst.upCssClass;
-                                    }
-
-                                    if (scope.$parent.column.SortDirection === 'Descending') {
-                                        cssClass = tubularConst.downCssClass;
-                                    }
-
-                                    $(icon).addClass(cssClass);
-                                };
-
-                                scope.$on('tbGrid_OnColumnSorted', function() {
-                                    refreshIcon($('i.sort-icon.fa', lElement.parent()));
-                                });
-
-                                var timer = $timeout(function() {
-                                    $(lElement).after('&nbsp;<i class="sort-icon fa"></i>');
-
-                                    var icon = $('i.sort-icon.fa', lElement.parent());
-                                    refreshIcon(icon);
-                                }, 0);
-
-                                scope.$on('$destroy', function() { $timeout.cancel(timer); });
-                            },
-                            post: function(scope, lElement) {
-                                scope.label = scope.$parent.label;
-                                scope.sortable = scope.$parent.column.Sortable;
-                            }
-                        };
+                        if (!$scope.$parent.column.Sortable) {
+                            $element.find('a').replaceWith($element.find('a').children());
+                        }
                     }
-                };
+                }
             }
         ])
         /**
@@ -762,7 +731,7 @@
          * @scope
          */
         .directive('tbFootSet', [
-            function() {
+            function () {
 
                 return {
                     require: '^tbGrid',
@@ -772,7 +741,7 @@
                     transclude: true,
                     scope: false,
                     controller: [
-                        '$scope', function($scope) {
+                        '$scope', function ($scope) {
                             $scope.$component = $scope.$parent.$component || $scope.$parent.$parent.$component;
                             $scope.tubularDirective = 'tubular-foot-set';
                         }
@@ -889,7 +858,7 @@
                             $scope.columnName = $scope.columnName || null;
                             $scope.$component = $scope.$parent.$parent.$component;
 
-                            $scope.getFormScope = function() {
+                            $scope.getFormScope = function () {
                                 // TODO: Implement a form in inline editors
                                 return null;
                             };
