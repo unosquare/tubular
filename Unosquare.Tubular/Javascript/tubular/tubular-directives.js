@@ -241,6 +241,12 @@
                                     $scope.pageSize = (localStorageService.get($scope.name + "_pageSize") || $scope.pageSize);
                                 }
 
+                                if ($scope.pageSize < 10) $scope.pageSize = 20; // default
+
+                                var skip = ($scope.requestedPage - 1) * $scope.pageSize;
+
+                                if (skip < 0) skip = 0;
+
                                 var request = {
                                     serverUrl: $scope.serverUrl,
                                     requestMethod: $scope.requestMethod || 'POST',
@@ -249,7 +255,7 @@
                                     data: {
                                         Count: $scope.requestCounter,
                                         Columns: $scope.columns,
-                                        Skip: ($scope.requestedPage - 1) * $scope.pageSize,
+                                        Skip: skip,
                                         Take: parseInt($scope.pageSize),
                                         Search: $scope.search,
                                         TimezoneOffset: new Date().getTimezoneOffset()
