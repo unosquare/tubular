@@ -3747,13 +3747,13 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     // If we have nothing to save and it's not a new record, just close
                                     if (!innerModel.$isNew && !innerModel.$hasChanges) {
                                         $scope.closePopup();
-                                        return;
+                                        return null;
                                     }
 
                                     var result = innerModel.save();
 
                                     if (angular.isUndefined(result) || result === false) {
-                                        return;
+                                        return null;
                                     }
 
                                     result.then(
@@ -3768,6 +3768,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                             $rootScope.$broadcast('tbForm_OnConnectionError', error);
                                             $scope.Model.$isLoading = false;
                                         });
+
+                                    return result;
                                 };
 
                                 $scope.closePopup = function () {

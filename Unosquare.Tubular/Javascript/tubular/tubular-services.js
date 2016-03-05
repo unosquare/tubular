@@ -58,13 +58,13 @@
                                     // If we have nothing to save and it's not a new record, just close
                                     if (!innerModel.$isNew && !innerModel.$hasChanges) {
                                         $scope.closePopup();
-                                        return;
+                                        return null;
                                     }
 
                                     var result = innerModel.save();
 
                                     if (angular.isUndefined(result) || result === false) {
-                                        return;
+                                        return null;
                                     }
 
                                     result.then(
@@ -79,6 +79,8 @@
                                             $rootScope.$broadcast('tbForm_OnConnectionError', error);
                                             $scope.Model.$isLoading = false;
                                         });
+
+                                    return result;
                                 };
 
                                 $scope.closePopup = function () {
