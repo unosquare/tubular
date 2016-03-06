@@ -69,7 +69,7 @@ You can get all the dependencies using the following links in your master HTML p
 <link rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap/latest/css/bootstrap.min.css" />
 <link rel="stylesheet" href="//cdn.jsdelivr.net/fontawesome/latest/css/font-awesome.min.css" />
 
-<script src="//cdn.jsdelivr.net/g/jquery@2.1.4,bootstrap,angularjs(angular.min.js+angular-animate.min.js+angular-route.min.js),filesaver.js,angular.bootstrap(ui-bootstrap.min.js+ui-bootstrap-tpls.min.js),blob.js(Blob.js),filesaver.js"></script>
+<script src="//cdn.jsdelivr.net/g/jquery@2.1.4,bootstrap,angularjs@1.2.2(angular.min.js+angular-animate.min.js+angular-route.min.js),filesaver.js,angular.bootstrap(ui-bootstrap.min.js+ui-bootstrap-tpls.min.js),blob.js(Blob.js),filesaver.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/angular-local-storage/0.1.5/angular-local-storage.min.js"></script>
 ```
 

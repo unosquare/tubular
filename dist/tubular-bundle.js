@@ -2336,7 +2336,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 restrict: 'E',
                 replace: true,
                 transclude: true,
-                controller: ['$scope', '$modal', function ($scope, $modal) {
+                controller: ['$scope', '$uibModal', function ($scope, $modal) {
                     $scope.$component = $scope.$parent;
 
                     $scope.openColumnsSelector = function () {
@@ -3707,7 +3707,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * Use `tubularPopupService` to show or generate popups with a `tbForm` inside.
          */
         .service('tubularPopupService', [
-            '$modal', '$rootScope', 'tubularTemplateService',
+            '$uibModal', '$rootScope', 'tubularTemplateService',
             function tubularPopupService($modal, $rootScope, tubularTemplateService) {
                 var me = this;
 
@@ -3763,10 +3763,14 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                             $scope.Model.$isLoading = false;
                                             if (gridScope.autoRefresh) gridScope.retrieveData();
                                             dialog.close();
+
+                                            return data;
                                         }, function (error) {
                                             $scope.$emit('tbForm_OnConnectionError', error);
                                             $rootScope.$broadcast('tbForm_OnConnectionError', error);
                                             $scope.Model.$isLoading = false;
+
+                                            return error;
                                         });
 
                                     return result;

@@ -18,7 +18,7 @@
          * Use `tubularPopupService` to show or generate popups with a `tbForm` inside.
          */
         .service('tubularPopupService', [
-            '$modal', '$rootScope', 'tubularTemplateService',
+            '$uibModal', '$rootScope', 'tubularTemplateService',
             function tubularPopupService($modal, $rootScope, tubularTemplateService) {
                 var me = this;
 
@@ -74,10 +74,14 @@
                                             $scope.Model.$isLoading = false;
                                             if (gridScope.autoRefresh) gridScope.retrieveData();
                                             dialog.close();
+
+                                            return data;
                                         }, function (error) {
                                             $scope.$emit('tbForm_OnConnectionError', error);
                                             $rootScope.$broadcast('tbForm_OnConnectionError', error);
                                             $scope.Model.$isLoading = false;
+
+                                            return error;
                                         });
 
                                     return result;

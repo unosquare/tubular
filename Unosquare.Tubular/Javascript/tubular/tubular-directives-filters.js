@@ -35,7 +35,7 @@
                 restrict: 'E',
                 replace: true,
                 transclude: true,
-                controller: ['$scope', '$modal', function ($scope, $modal) {
+                controller: ['$scope', '$uibModal', function ($scope, $modal) {
                     $scope.$component = $scope.$parent;
 
                     $scope.openColumnsSelector = function () {
