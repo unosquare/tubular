@@ -798,7 +798,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         onBeforeGetData: '=?',
                         requestMethod: '@',
                         dataServiceName: '@?serviceName',
-                        requireAuthentication: '=?',
+                        requireAuthentication: '@?',
                         name: '@?gridName',
                         editorMode: '@?',
                         showLoading: '=?',
@@ -840,7 +840,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             $scope.isEmpty = false;
                             $scope.tempRow = new TubularModel($scope, {});
                             $scope.dataService = tubularHttp.getDataService($scope.dataServiceName);
-                            $scope.requireAuthentication = angular.isUndefined($scope.requireAuthentication) ? true : $scope.requireAuthentication;
+                            $scope.requireAuthentication = $scope.requireAuthentication || true;
                             tubularHttp.setRequireAuthentication($scope.requireAuthentication);
                             $scope.editorMode = $scope.editorMode || 'none';
                             $scope.canSaveState = false;
@@ -900,7 +900,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 }
                             };
 
-                            $scope.deleteRow = function(row) {
+                            $scope.deleteRow = function (row) {
                                 var urlparts = $scope.serverDeleteUrl.split('?');
                                 var url = urlparts[0] + "/" + row.$key;
 
@@ -981,8 +981,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     $scope.pageSize = (localStorageService.get($scope.name + "_pageSize") || $scope.pageSize);
                                 }
 
-                                var skipPage = ($scope.requestedPage - 1);
-                                if (skipPage < 0) skipPage = 0;
+                                if ($scope.pageSize < 10) $scope.pageSize = 20; // default
+
+                                var skip = ($scope.requestedPage - 1) * $scope.pageSize;
+
+                                if (skip < 0) skip = 0;
 
                                 var request = {
                                     serverUrl: $scope.serverUrl,
@@ -992,7 +995,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     data: {
                                         Count: $scope.requestCounter,
                                         Columns: $scope.columns,
-                                        Skip: skipPage * $scope.pageSize,
+                                        Skip: skip,
                                         Take: parseInt($scope.pageSize),
                                         Search: $scope.search,
                                         TimezoneOffset: new Date().getTimezoneOffset()
@@ -1033,16 +1036,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                             model.$component = $scope;
 
                                             model.editPopup = function(template, size) {
-                                                var data = {};
-
-                                                angular.forEach(model, function(value, key) {
-                                                    if (key[0] === '$') return;
-
-                                                    data[key] = value;
-                                                });
-
-                                                var clone = new TubularModel($scope, data, $scope.dataService);
-                                                tubularPopupService.openDialog(template, clone, $scope, size);
+                                                tubularPopupService.openDialog(template, model, $scope, size);
                                             };
 
                                             return model;
@@ -1340,7 +1334,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @param {boolean} isGrouping Define a group key.
          */
         .directive('tbColumn', [
-            'tubularGridColumnModel', function(ColumnModel) {
+            'tubularGridColumnModel', function (ColumnModel) {
                 return {
                     require: '^tbColumnDefinitions',
                     template: '<th ng-transclude ng-class="{sortable: column.Sortable}" ng-show="column.Visible"></th>',
@@ -1348,29 +1342,36 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     replace: true,
                     transclude: true,
                     scope: {
-                        visible: '='
+                        visible: '=',
+                        label: '@?'
                     },
                     controller: [
-                        '$scope', function($scope) {
+                        '$scope', function ($scope) {
                             $scope.column = { Label: '' };
                             $scope.$component = $scope.$parent.$parent.$component;
                             $scope.tubularDirective = 'tubular-column';
 
-                            $scope.sortColumn = function(multiple) {
+                            $scope.sortColumn = function (multiple) {
                                 $scope.$component.sortColumn($scope.column.Name, multiple);
                             };
 
-                            $scope.$watch("visible", function(val) {
+                            $scope.$watch("visible", function (val) {
                                 if (angular.isDefined(val)) {
                                     $scope.column.Visible = val;
                                 }
                             });
+
+                            $scope.$watch('label', function () {
+                                $scope.column.Label = $scope.label;
+                                // this broadcast here is used for backwards compatibility with tbColumnHeader requiring a scope.label value on its own
+                                $scope.$broadcast('tbColumn_LabelChanged', $scope.label);
+                            })
                         }
                     ],
                     compile: function compile() {
                         return {
-                            pre: function(scope, lElement, lAttrs) {
-                                lAttrs.label = lAttrs.label || (lAttrs.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
+                            pre: function (scope, lElement, lAttrs) {
+                                lAttrs.label = angular.isDefined(lAttrs.label) ? lAttrs.label : (lAttrs.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
 
                                 var column = new ColumnModel(lAttrs);
                                 scope.$component.addColumn(column);
@@ -1396,66 +1397,40 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @scope
          */
         .directive('tbColumnHeader', [
-            '$timeout', 'tubularConst', function($timeout, tubularConst) {
+            '$compile', function ($compile) {
 
                 return {
                     require: '^tbColumn',
-                    template: '<span><a title="Click to sort. Press Ctrl to sort by multiple columns" ' +
-                        'class="column-header" ng-transclude href="javascript:void(0)" ' +
-                        'ng-if="sortable"' +
-                        'ng-click="sortColumn($event)"></a>' +
-                        '<span ng-transclude ng-if="!sortable"></span></span>',
+                    template: '<span><a title="Click to sort. Press Ctrl to sort by multiple columns" class="column-header" href ng-click="sortColumn($event)">' +
+                                '<span class="column-header-default">{{ $parent.column.Label }}</span>' +
+                                '<span ng-transclude></span></a> ' +
+                                '<i class="fa sort-icon" ng-class="' + "{'fa-long-arrow-up': $parent.column.SortDirection == 'Ascending', 'fa-long-arrow-down': $parent.column.SortDirection == 'Descending'}" + '">&nbsp;</i>' +
+                                '</span>',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
                     scope: false,
                     controller: [
-                        '$scope', function($scope) {
-                            $scope.sortColumn = function($event) {
+                        '$scope', function ($scope) {
+                            $scope.sortColumn = function ($event) {
                                 $scope.$parent.sortColumn($event.ctrlKey);
                             };
+                            // this listener here is used for backwards compatibility with tbColumnHeader requiring a scope.label value on its own
+                            $scope.$on('tbColumn_LabelChanged', function ($event, value) {
+                                $scope.label = value;
+                            })
                         }
                     ],
-                    compile: function compile() {
-                        return {
-                            pre: function(scope, lElement) {
-                                var refreshIcon = function(icon) {
-                                    $(icon).removeClass(tubularConst.upCssClass);
-                                    $(icon).removeClass(tubularConst.downCssClass);
+                    link: function ($scope, $element, $attrs, controller) {
+                        if ($element.find('[ng-transclude] *').length > 0) {
+                            $element.find('span.column-header-default').remove();
+                        }
 
-                                    var cssClass = "";
-
-                                    if (scope.$parent.column.SortDirection === 'Ascending') {
-                                        cssClass = tubularConst.upCssClass;
-                                    }
-
-                                    if (scope.$parent.column.SortDirection === 'Descending') {
-                                        cssClass = tubularConst.downCssClass;
-                                    }
-
-                                    $(icon).addClass(cssClass);
-                                };
-
-                                scope.$on('tbGrid_OnColumnSorted', function() {
-                                    refreshIcon($('i.sort-icon.fa', lElement.parent()));
-                                });
-
-                                var timer = $timeout(function() {
-                                    $(lElement).after('&nbsp;<i class="sort-icon fa"></i>');
-
-                                    var icon = $('i.sort-icon.fa', lElement.parent());
-                                    refreshIcon(icon);
-                                }, 0);
-
-                                scope.$on('$destroy', function() { $timeout.cancel(timer); });
-                            },
-                            post: function(scope, lElement) {
-                                scope.label = scope.$parent.label;
-                                scope.sortable = scope.$parent.column.Sortable;
-                            }
-                        };
+                        if (!$scope.$parent.column.Sortable) {
+                            $element.find('a').replaceWith($element.find('a').children());
+                        }
                     }
-                };
+                }
             }
         ])
         /**
@@ -1502,7 +1477,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @scope
          */
         .directive('tbFootSet', [
-            function() {
+            function () {
 
                 return {
                     require: '^tbGrid',
@@ -1512,7 +1487,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     transclude: true,
                     scope: false,
                     controller: [
-                        '$scope', function($scope) {
+                        '$scope', function ($scope) {
                             $scope.$component = $scope.$parent.$component || $scope.$parent.$parent.$component;
                             $scope.tubularDirective = 'tubular-foot-set';
                         }
@@ -1629,7 +1604,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             $scope.columnName = $scope.columnName || null;
                             $scope.$component = $scope.$parent.$parent.$component;
 
-                            $scope.getFormScope = function() {
+                            $scope.getFormScope = function () {
                                 // TODO: Implement a form in inline editors
                                 return null;
                             };
@@ -2361,7 +2336,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 restrict: 'E',
                 replace: true,
                 transclude: true,
-                controller: ['$scope', '$modal', function ($scope, $modal) {
+                controller: ['$scope', '$uibModal', function ($scope, $modal) {
                     $scope.$component = $scope.$parent;
 
                     $scope.openColumnsSelector = function () {
@@ -3732,7 +3707,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * Use `tubularPopupService` to show or generate popups with a `tbForm` inside.
          */
         .service('tubularPopupService', [
-            '$modal', '$rootScope', 'tubularTemplateService',
+            '$uibModal', '$rootScope', 'tubularTemplateService',
             function tubularPopupService($modal, $rootScope, tubularTemplateService) {
                 var me = this;
 
@@ -3772,13 +3747,13 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     // If we have nothing to save and it's not a new record, just close
                                     if (!innerModel.$isNew && !innerModel.$hasChanges) {
                                         $scope.closePopup();
-                                        return;
+                                        return null;
                                     }
 
                                     var result = innerModel.save();
 
                                     if (angular.isUndefined(result) || result === false) {
-                                        return;
+                                        return null;
                                     }
 
                                     result.then(
@@ -3788,11 +3763,17 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                             $scope.Model.$isLoading = false;
                                             if (gridScope.autoRefresh) gridScope.retrieveData();
                                             dialog.close();
+
+                                            return data;
                                         }, function (error) {
                                             $scope.$emit('tbForm_OnConnectionError', error);
                                             $rootScope.$broadcast('tbForm_OnConnectionError', error);
                                             $scope.Model.$isLoading = false;
+
+                                            return error;
                                         });
+
+                                    return result;
                                 };
 
                                 $scope.closePopup = function () {
