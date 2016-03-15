@@ -3269,10 +3269,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     require: '^tbGrid',
                     template:
                         '<div class="tubular-pager">' +
-                            '<pagination ng-disabled="$component.isEmpty" direction-links="true" ' +
+                            '<uib-pagination ng-disabled="$component.isEmpty" direction-links="true" ' +
                             'boundary-links="true" total-items="$component.filteredRecordCount" ' +
                             'items-per-page="$component.pageSize" max-size="5" ng-model="$component.currentPage" ng-change="pagerPageChanged()">' +
-                            '</pagination>' +
+                            '</uib-pagination>' +
                             '<div>',
                     restrict: 'E',
                     replace: true,
