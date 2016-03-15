@@ -272,7 +272,7 @@
                                     $scope.onBeforeGetData();
                                 }
 
-                                $scope.$emit('tbGrid_OnBeforeRequest', request);
+                                $scope.$emit('tbGrid_OnBeforeRequest', request, $scope);
 
                                 $scope.currentRequest = $scope.dataService.retrieveDataAsync(request);
 

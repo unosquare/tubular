@@ -1012,7 +1012,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     $scope.onBeforeGetData();
                                 }
 
-                                $scope.$emit('tbGrid_OnBeforeRequest', request);
+                                $scope.$emit('tbGrid_OnBeforeRequest', request, $scope);
 
                                 $scope.currentRequest = $scope.dataService.retrieveDataAsync(request);
 
