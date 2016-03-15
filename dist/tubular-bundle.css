@@ -499,12 +499,12 @@ div.tubular-pager {
     min-height: 32px;
 }
 
-    div.tubular-pager .uib-pagination {
+    div.tubular-pager .pagination {
         margin: 0 !important;
         display: block !important;
     }
 
-        div.tubular-pager .uib-pagination > li > a {
+        div.tubular-pager .pagination > li > a {
             text-align: center;
             font-size: 10px;
             outline: none;
@@ -638,7 +638,7 @@ table.tubular-grid-table thead tr th.column-md {
         font-size: 12px;
     }
 
-    div.tubular-pager .uib-pagination > li > a {
+    div.tubular-pager .pagination > li > a {
         font-size: 12px;
         min-width: 37px;
     }
@@ -665,11 +665,11 @@ table.tubular-grid-table thead tr th.column-md {
         font-size: 14px;
     }
 
-    .tubular-pager ul.uib-pagination li {
+    .tubular-pager ul.pagination li {
         font-size: 14px;
     }
 
-        .tubular-pager ul.uib-pagination li a {
+        .tubular-pager ul.pagination li a {
             min-width: 42px;
         }
 }
