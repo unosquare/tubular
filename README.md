@@ -43,10 +43,10 @@ $ npm install tubular --save
 
 You will need to reference the following JS libraries in order to use Tubular in your HTML:
 
-* [jQuery](http://jquery.com/)
+* [jQuery](http://jquery.com/) - 2.1.4
 * [Twitter Bootstrap](http://getbootstrap.com/)
 * [AngularJS (optionally Animate and Route)](https://angularjs.org/)
-* [AngularJS UI Bootstrap](https://angular-ui.github.io/bootstrap/)
+* [AngularJS UI Bootstrap](https://angular-ui.github.io/bootstrap/) - 1.2.2
 * [AngularJS Local Storage](https://github.com/grevory/angular-local-storage)
 * [Font Awesome](http://fortawesome.github.io/Font-Awesome/)
 * [FileSaver.js and Blob.js](https://github.com/eligrey/FileSaver.js)
