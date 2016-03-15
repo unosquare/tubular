@@ -471,7 +471,6 @@ input[type="checkbox"] .styled:checked + label::after {
   border-radius: 5px;
 }
 
-/* Miscelaneous additions to Bootstrap CSS */
 .panel.panel-rounded {
     margin: 0;
 }
@@ -500,12 +499,12 @@ div.tubular-pager {
     min-height: 32px;
 }
 
-    div.tubular-pager .pagination {
+    div.tubular-pager .uib-pagination {
         margin: 0 !important;
         display: block !important;
     }
 
-        div.tubular-pager .pagination > li > a {
+        div.tubular-pager .uib-pagination > li > a {
             text-align: center;
             font-size: 10px;
             outline: none;
@@ -639,7 +638,7 @@ table.tubular-grid-table thead tr th.column-md {
         font-size: 12px;
     }
 
-    div.tubular-pager .pagination > li > a {
+    div.tubular-pager .uib-pagination > li > a {
         font-size: 12px;
         min-width: 37px;
     }
@@ -666,11 +665,11 @@ table.tubular-grid-table thead tr th.column-md {
         font-size: 14px;
     }
 
-    .tubular-pager ul.pagination li {
+    .tubular-pager ul.uib-pagination li {
         font-size: 14px;
     }
 
-        .tubular-pager ul.pagination li a {
+        .tubular-pager ul.uib-pagination li a {
             min-width: 42px;
         }
 }
@@ -839,4 +838,18 @@ select.checkbox-list:hover option:checked, select.checkbox-list:focus option:che
                 float: left;
                 font-weight: bold;
             }
+}
+
+.maximized {
+    position: absolute;
+    z-index: 5001;
+    width: 100%;
+    top: 0;
+    left: 0;
+    padding: 20px;
+    height: 100%;
+}
+
+.widget-panel .panel.panel-default {
+    height: 100%;
 }
