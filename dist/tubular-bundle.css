@@ -853,3 +853,7 @@ select.checkbox-list:hover option:checked, select.checkbox-list:focus option:che
 .widget-panel .panel.panel-default {
     height: 100%;
 }
+
+div.input-group-addon.fa {
+    font-size: 10px;
+}
