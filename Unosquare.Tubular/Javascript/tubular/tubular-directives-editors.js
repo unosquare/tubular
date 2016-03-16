@@ -47,7 +47,7 @@
                     controller: [
                         '$scope', function($scope) {
                             $scope.validate = function () {
-                                if (angular.isDefined($scope.regex) && $scope.regex != null && angular.isDefined($scope.value) && $scope.value != null) {
+                                if (angular.isDefined($scope.regex) && $scope.regex != null && angular.isDefined($scope.value) && $scope.value != null && $scope.value != '') {
                                     var patt = new RegExp($scope.regex);
 
                                     if (patt.test($scope.value) === false) {
