@@ -442,26 +442,9 @@
          * @param {string} css Set the CSS classes for the input.
          */
         .directive('tbTypeaheadEditor', [
-            'tubularEditorService', '$q', function(tubularEditorService, $q) {
+            'tubularEditorService', '$q', '$compile', function (tubularEditorService, $q, $compile) {
 
                 return {
-                    template: '<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid && $dirty() }">' +
-                        '<span ng-hide="isEditing">{{ value }}</span>' +
-                        '<label ng-show="showLabel">{{ label }}</label>' +
-                        '<div class="input-group" ng-show="isEditing">' +
-                        '<input ng-model="value" placeholder="{{placeholder}}" title="{{tooltip}}" ' +
-                        'class="form-control {{css}}" ng-readonly="readOnly || lastSet.indexOf(value) !== -1" typeahead="{{ selectOptions }}" ' +
-                        'ng-required="required" name="{{name}}" /> ' +
-                        '<div class="input-group-addon" ng-hide="lastSet.indexOf(value) !== -1"><i class="fa fa-pencil"></i></div>' +
-                        '<span class="input-group-btn" ng-show="lastSet.indexOf(value) !== -1" tabindex="-1">' +
-                        '<button class="btn btn-default" type="button" ng-click="value = null"><i class="fa fa-times"></i>' +
-                        '</span>' +
-                        '</div>' +
-                        '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">' +
-                        '{{error}}' +
-                        '</span>' +
-                        '<span class="help-block" ng-show="isEditing && help">{{help}}</span>' +
-                        '</div>',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
@@ -472,8 +455,31 @@
                         optionLabel: '@?',
                         css: '@?'
                     }, tubularEditorService.defaultScope),
+                    link: function (scope, element) {
+                        var template = '<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid && $dirty() }">' +
+                            '<span ng-hide="isEditing">{{ value }}</span>' +
+                            '<label ng-show="showLabel">{{ label }}</label>' +
+                            '<div class="input-group" ng-show="isEditing">' +
+                            '<input ng-model="value" placeholder="{{placeholder}}" title="{{tooltip}}" ' +
+                            'class="form-control {{css}}" ng-readonly="readOnly || lastSet.indexOf(value) !== -1" uib-typeahead="' + scope.selectOptions + '" ' +
+                            'ng-required="required" name="{{name}}" /> ' +
+                            '<div class="input-group-addon" ng-hide="lastSet.indexOf(value) !== -1"><i class="fa fa-pencil"></i></div>' +
+                            '<span class="input-group-btn" ng-show="lastSet.indexOf(value) !== -1" tabindex="-1">' +
+                            '<button class="btn btn-default" type="button" ng-click="value = null"><i class="fa fa-times"></i>' +
+                            '</span>' +
+                            '</div>' +
+                            '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">' +
+                            '{{error}}' +
+                            '</span>' +
+                            '<span class="help-block" ng-show="isEditing && help">{{help}}</span>' +
+                            '</div>';
+
+                        var linkFn = $compile(template);
+                        var content = linkFn(scope);
+                        element.append(content);
+                    },
                     controller: [
-                        '$scope', function($scope) {
+                        '$scope', function ($scope) {
                             tubularEditorService.setupScope($scope);
                             $scope.selectOptions = "d for d in getValues($viewValue)";
                             $scope.lastSet = [];
@@ -482,7 +488,7 @@
                                 $scope.selectOptions = "d as d." + $scope.optionLabel + " for d in getValues($viewValue)";
                             }
 
-                            $scope.$watch('value', function(val) {
+                            $scope.$watch('value', function (val) {
                                 $scope.$emit('tbForm_OnFieldChange', $scope.$component, $scope.name, val);
                                 $scope.tooltip = val;
                                 if (angular.isDefined(val) && val != null && angular.isDefined($scope.optionLabel)) {
@@ -490,7 +496,7 @@
                                 }
                             });
 
-                            $scope.getValues = function(val) {
+                            $scope.getValues = function (val) {
                                 if (angular.isDefined($scope.optionsUrl)) {
                                     if (angular.isUndefined($scope.$component) || $scope.$component == null) {
                                         throw 'You need to define a parent Form or Grid';
@@ -501,7 +507,7 @@
                                         requestMethod: $scope.optionsMethod || 'GET'
                                     }).promise;
 
-                                    p.then(function(data) {
+                                    p.then(function (data) {
                                         $scope.lastSet = data;
                                         return data;
                                     });
@@ -509,7 +515,7 @@
                                     return p;
                                 }
 
-                                return $q(function(resolve) {
+                                return $q(function (resolve) {
                                     $scope.lastSet = $scope.options;
                                     resolve($scope.options);
                                 });
