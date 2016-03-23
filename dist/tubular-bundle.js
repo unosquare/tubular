@@ -2834,7 +2834,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 template:
                     '<div class="tubular-grid-search">' +
                         '<div class="input-group input-group-sm">' +
-                        '<span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>' +
+                        '<span class="input-group-addon"><i class="fa fa-search"></i></span>' +
                         '<input type="search" class="form-control" placeholder="{{:: placeholder || (\'UI_SEARCH\' | translate) }}" maxlength="20" ' +
                         'ng-model="$component.search.Text" ng-model-options="{ debounce: 300 }">' +
                         '<span class="input-group-btn" ng-show="$component.search.Text.length > 0">' +
