@@ -730,8 +730,7 @@ table.tubular-grid-table thead tr th div.tubular-column-menu {
             outline: none;
         }
 
-    table.tubular-grid-table thead tr th div.tubular-column-menu button i.fa,
-    table.tubular-grid-table thead tr th div.tubular-column-menu button .glyphicon {
+    table.tubular-grid-table thead tr th div.tubular-column-menu button i.fa {
         font-size: 10px;
     }
 
