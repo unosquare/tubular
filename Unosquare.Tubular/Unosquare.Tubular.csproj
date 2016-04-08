@@ -70,6 +70,7 @@
     <Compile Include="ObjectModel\MultipleSerieChartResponse.cs" />
     <Compile Include="ObjectModel\SingleSerieChartResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TubularDefaultSettings.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Css\awesome-bootstrap-checkbox\awesome-bootstrap-checkbox.css" />

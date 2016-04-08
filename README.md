@@ -46,7 +46,7 @@ You will need to reference the following JS libraries in order to use Tubular in
 * [jQuery](http://jquery.com/) - 2.1.4
 * [Twitter Bootstrap](http://getbootstrap.com/)
 * [AngularJS (optionally Animate and Route)](https://angularjs.org/)
-* [AngularJS UI Bootstrap](https://angular-ui.github.io/bootstrap/) - 1.2.2
+* [AngularJS UI Bootstrap](https://angular-ui.github.io/bootstrap/) - 1.3
 * [AngularJS Local Storage](https://github.com/grevory/angular-local-storage)
 * [Font Awesome](http://fortawesome.github.io/Font-Awesome/)
 * [FileSaver.js and Blob.js](https://github.com/eligrey/FileSaver.js)
@@ -86,11 +86,20 @@ Finally update your modules to include Tubular, for example if your module is ca
 angular.module('app', ['ngRoute','tubular']);
 ```
 
+## Global Settings
+
+You can access to global settings by using the static object <i>TubularDefaultSettings</i> and setup common behavior in Tubular. The settings included are:
+
+<table>
+    <tr><th>Setting</th><th>Default value</th><th>Notes</th></tr>
+    <tr><th>AdjustTimezoneOffset</th><td><i>True</i></td><td>Determines if the DateTime from a Response should adjust the timezone offset send by within the Request.</td></tr>
+</table>
+
 ##Boilerplate
 
 We have a basic <a href="https://github.com/unosquare/tubular-boilerplate" target="_blank">Boilerplate</a> with everything that you need to start your own tubular project. If you are working with .NET WebAPI you can check our [C# Boilerplate](https://github.com/unosquare/tubular-boilerplate-csharp) too.
 
-We are already working on a <a href="http://yeoman.io/" taget="_blank">Yeoman Generator</a>. Check out the <a href="https://github.com/unosquare/generator-tubular" target="_blank">generator-tubular</a> repository to check out our progress.
+A <a href="http://yeoman.io/" taget="_blank">Yeoman Generator</a> can be found at <a href="https://github.com/unosquare/generator-tubular" target="_blank">generator-tubular</a> but it's not longer in maintenance.
 
 ## Samples
 

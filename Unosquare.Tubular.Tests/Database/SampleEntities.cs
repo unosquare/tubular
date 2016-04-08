@@ -21,7 +21,7 @@
                 var rand = new Random();
                 Things.Add(new Thing()
                 {
-                    Date = DateTime.Now.AddDays(-i),
+                    Date = DateTime.UtcNow.AddDays(-i),
                     Id = i,
                     Name = "Name - " + i,
                     Bool = (i%2) == 0,

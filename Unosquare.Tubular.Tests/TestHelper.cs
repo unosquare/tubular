@@ -24,11 +24,11 @@ namespace Unosquare.Tubular.Tests
             _context.Fill();
         }
 
-        [Test]
-        public void SimpleList()
+        private void SimpleListTest(bool ignoreTimezone)
         {
             var dataSource = _context.Things;
             var data = dataSource.Take(PageSize).ToList();
+            var timezoneOffset = 300;
 
             Assert.AreEqual(PageSize, data.Count, "Set has 10 items");
 
@@ -37,7 +37,8 @@ namespace Unosquare.Tubular.Tests
                 Take = PageSize,
                 Skip = 0,
                 Search = new Filter(),
-                Columns = Thing.GetColumns() 
+                Columns = Thing.GetColumns(),
+                TimezoneOffset = timezoneOffset
             };
 
             var response = request.CreateGridDataResponse(dataSource);
@@ -45,7 +46,25 @@ namespace Unosquare.Tubular.Tests
             Assert.AreEqual(data.Count, response.Payload.Count, "Same length");
             Assert.AreEqual(data.First().Id, response.Payload.First().First(), "Same first item");
 
+            Assert.AreEqual(ignoreTimezone ? data.First().Date : data.First().Date.AddMinutes(-timezoneOffset),
+                response.Payload.First()[2], "Same date at first item");
+
             Assert.AreEqual(dataSource.Count(), response.TotalRecordCount, "Total rows matching");
+        }
+
+        [Test]
+        public void SimpleList()
+        {
+            SimpleListTest(false);
+        }
+
+        [Test]
+        public void SimpleListIgnoreTimezoneOffset()
+        {
+            // Ignore timezone adjustment
+            TubularDefaultSettings.AdjustTimezoneOffset = false;
+            SimpleListTest(true);
+            TubularDefaultSettings.AdjustTimezoneOffset = true;
         }
 
         [Test]

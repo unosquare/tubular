@@ -74,7 +74,8 @@
                 {
                     if (column.Value is DateTime)
                     {
-                        if (column.Key.DataType == DataType.DateTimeUtc)
+                        if (column.Key.DataType == DataType.DateTimeUtc ||
+                            TubularDefaultSettings.AdjustTimezoneOffset == false)
                             payloadItem.Add(((DateTime) column.Value));
                         else
                             payloadItem.Add(((DateTime) column.Value).AddMinutes(-timezoneOffset));
