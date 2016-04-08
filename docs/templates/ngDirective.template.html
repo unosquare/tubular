@@ -6,12 +6,17 @@
 
 <div>
     {$ doc.description | marked $}
-    
+
     {% if doc.params %}
     <h3>Directive's attributes</h3>
     {$ paramTable(doc.params) $}
     {% endif %}
-</div>
 
-{% include "partials/dependencies.template.html" %}
+    {% if doc.example %}
+    <h3>Example</h3>
+    {$ doc.example | marked $}
+    {% endif %}
+
+    {% include "partials/dependencies.template.html" %}
+</div>
 {% endblock %}
