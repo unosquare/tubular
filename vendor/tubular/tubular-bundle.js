@@ -1012,7 +1012,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     $scope.onBeforeGetData();
                                 }
 
-                                $scope.$emit('tbGrid_OnBeforeRequest', request);
+                                $scope.$emit('tbGrid_OnBeforeRequest', request, $scope);
 
                                 $scope.currentRequest = $scope.dataService.retrieveDataAsync(request);
 
@@ -1672,7 +1672,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     controller: [
                         '$scope', function($scope) {
                             $scope.validate = function () {
-                                if (angular.isDefined($scope.regex) && $scope.regex != null && angular.isDefined($scope.value) && $scope.value != null) {
+                                if (angular.isDefined($scope.regex) && $scope.regex != null && angular.isDefined($scope.value) && $scope.value != null && $scope.value != '') {
                                     var patt = new RegExp($scope.regex);
 
                                     if (patt.test($scope.value) === false) {
@@ -1740,7 +1740,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         '<span ng-hide="isEditing">{{value | numberorcurrency: format }}</span>' +
                         '<label ng-show="showLabel">{{ label }}</label>' +
                         '<div class="input-group" ng-show="isEditing">' +
-                        '<div class="input-group-addon" ng-hide="format == \'I\'">{{format == \'C\' ? \'$\' : \'.\'}}</div>' +
+                        '<div class="input-group-addon" ng-hide="format == \'I\'">' +
+                        '<i ng-class="{ \'fa\': true, \'fa-calculator\': format != \'C\', \'fa-usd\': format == \'C\'}"></i>' +
+                        '</div>' +
                         '<input type="number" placeholder="{{placeholder}}" ng-model="value" class="form-control" ' +
                         'ng-required="required" ng-hide="readOnly" step="{{step || \'any\'}}"  name="{{name}}" />' +
                         '<p class="form-control form-control-static text-right" ng-show="readOnly">{{value | numberorcurrency: format}}</span></p>' +
@@ -2065,26 +2067,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @param {string} css Set the CSS classes for the input.
          */
         .directive('tbTypeaheadEditor', [
-            'tubularEditorService', '$q', function(tubularEditorService, $q) {
+            'tubularEditorService', '$q', '$compile', function (tubularEditorService, $q, $compile) {
 
                 return {
-                    template: '<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid && $dirty() }">' +
-                        '<span ng-hide="isEditing">{{ value }}</span>' +
-                        '<label ng-show="showLabel">{{ label }}</label>' +
-                        '<div class="input-group" ng-show="isEditing">' +
-                        '<input ng-model="value" placeholder="{{placeholder}}" title="{{tooltip}}" ' +
-                        'class="form-control {{css}}" ng-readonly="readOnly || lastSet.indexOf(value) !== -1" typeahead="{{ selectOptions }}" ' +
-                        'ng-required="required" name="{{name}}" /> ' +
-                        '<div class="input-group-addon" ng-hide="lastSet.indexOf(value) !== -1"><i class="fa fa-pencil"></i></div>' +
-                        '<span class="input-group-btn" ng-show="lastSet.indexOf(value) !== -1" tabindex="-1">' +
-                        '<button class="btn btn-default" type="button" ng-click="value = null"><i class="fa fa-times"></i>' +
-                        '</span>' +
-                        '</div>' +
-                        '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">' +
-                        '{{error}}' +
-                        '</span>' +
-                        '<span class="help-block" ng-show="isEditing && help">{{help}}</span>' +
-                        '</div>',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
@@ -2095,8 +2080,31 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         optionLabel: '@?',
                         css: '@?'
                     }, tubularEditorService.defaultScope),
+                    link: function (scope, element) {
+                        var template = '<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid && $dirty() }">' +
+                            '<span ng-hide="isEditing">{{ value }}</span>' +
+                            '<label ng-show="showLabel">{{ label }}</label>' +
+                            '<div class="input-group" ng-show="isEditing">' +
+                            '<input ng-model="value" placeholder="{{placeholder}}" title="{{tooltip}}" ' +
+                            'class="form-control {{css}}" ng-readonly="readOnly || lastSet.indexOf(value) !== -1" uib-typeahead="' + scope.selectOptions + '" ' +
+                            'ng-required="required" name="{{name}}" /> ' +
+                            '<div class="input-group-addon" ng-hide="lastSet.indexOf(value) !== -1"><i class="fa fa-pencil"></i></div>' +
+                            '<span class="input-group-btn" ng-show="lastSet.indexOf(value) !== -1" tabindex="-1">' +
+                            '<button class="btn btn-default" type="button" ng-click="value = null"><i class="fa fa-times"></i>' +
+                            '</span>' +
+                            '</div>' +
+                            '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">' +
+                            '{{error}}' +
+                            '</span>' +
+                            '<span class="help-block" ng-show="isEditing && help">{{help}}</span>' +
+                            '</div>';
+
+                        var linkFn = $compile(template);
+                        var content = linkFn(scope);
+                        element.append(content);
+                    },
                     controller: [
-                        '$scope', function($scope) {
+                        '$scope', function ($scope) {
                             tubularEditorService.setupScope($scope);
                             $scope.selectOptions = "d for d in getValues($viewValue)";
                             $scope.lastSet = [];
@@ -2105,7 +2113,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 $scope.selectOptions = "d as d." + $scope.optionLabel + " for d in getValues($viewValue)";
                             }
 
-                            $scope.$watch('value', function(val) {
+                            $scope.$watch('value', function (val) {
                                 $scope.$emit('tbForm_OnFieldChange', $scope.$component, $scope.name, val);
                                 $scope.tooltip = val;
                                 if (angular.isDefined(val) && val != null && angular.isDefined($scope.optionLabel)) {
@@ -2113,7 +2121,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 }
                             });
 
-                            $scope.getValues = function(val) {
+                            $scope.getValues = function (val) {
                                 if (angular.isDefined($scope.optionsUrl)) {
                                     if (angular.isUndefined($scope.$component) || $scope.$component == null) {
                                         throw 'You need to define a parent Form or Grid';
@@ -2124,7 +2132,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                         requestMethod: $scope.optionsMethod || 'GET'
                                     }).promise;
 
-                                    p.then(function(data) {
+                                    p.then(function (data) {
                                         $scope.lastSet = data;
                                         return data;
                                     });
@@ -2132,7 +2140,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     return p;
                                 }
 
-                                return $q(function(resolve) {
+                                return $q(function (resolve) {
                                     $scope.lastSet = $scope.options;
                                     resolve($scope.options);
                                 });
@@ -2826,11 +2834,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 template:
                     '<div class="tubular-grid-search">' +
                         '<div class="input-group input-group-sm">' +
-                        '<span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>' +
+                        '<span class="input-group-addon"><i class="fa fa-search"></i></span>' +
                         '<input type="search" class="form-control" placeholder="{{:: placeholder || (\'UI_SEARCH\' | translate) }}" maxlength="20" ' +
                         'ng-model="$component.search.Text" ng-model-options="{ debounce: 300 }">' +
                         '<span class="input-group-btn" ng-show="$component.search.Text.length > 0">' +
-                        '<button class="btn btn-default" tooltip="{{\'CAPTION_CLEAR\' | translate}}" ng-click="$component.search.Text = \'\'">' +
+                        '<button class="btn btn-default" uib-tooltip="{{\'CAPTION_CLEAR\' | translate}}" ng-click="$component.search.Text = \'\'">' +
                         '<i class="fa fa-times-circle"></i>' +
                         '</button>' +
                         '</span>' +
