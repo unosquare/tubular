@@ -38,6 +38,10 @@
          * @param {bool} savePage Set if the grid autosave current page, default true.
          * @param {bool} savePageSize Set if the grid autosave page size, default true.
          * @param {bool} saveSearch Set if the grid autosave search, default true.
+         * 
+         * @example
+         * You must start creating a `tbGrid` as root node to display a Tubular Grid.
+         * <tb-grid></tb-grid>
          */
         .directive('tbGrid', [
             function() {

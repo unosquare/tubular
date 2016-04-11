@@ -17,6 +17,8 @@
     /// </summary>
     public static class Extensions
     {
+        private static Regex _timezoneOffset = new Regex(@"timezoneOffset=(\d[^&]*)");
+
         private static readonly object SyncRoot = new object();
 
         private static readonly Dictionary<Type, Dictionary<string, PropertyInfo>> TypePropertyCache =
@@ -127,7 +129,7 @@
 
             if (string.IsNullOrWhiteSpace(query)) return data;
 
-            var match = new Regex(@"timezoneOffset=(\d.*)").Match(query);
+            var match = _timezoneOffset.Match(query);
 
             if (!match.Success) return data;
             var timeDiff = int.Parse(match.Groups[1].Value);
@@ -288,7 +290,9 @@
                 if (response.TotalPages > 0)
                 {
                     response.CurrentPage = 1 +
-                                           (int) Math.Round((request.Skip/(float) response.FilteredRecordCount)*response.TotalPages);
+                                           (int)
+                                               Math.Round((request.Skip/(float) response.FilteredRecordCount)*
+                                                          response.TotalPages);
 
                     if (response.CurrentPage > response.TotalPages)
                     {
@@ -311,7 +315,7 @@
             response.Payload = CreateGridPayload(subset, columnMap, pageSize, request.TimezoneOffset);
 
             return response;
-}
+        }
 
         private static string GetSqlOperator(CompareOperators op)
         {

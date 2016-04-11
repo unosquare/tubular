@@ -126,7 +126,9 @@
     <Content Include="Javascript\tubular\tubular.js" />
     <None Include="app.config" />
     <None Include="bundleconfig.json" />
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Javascript\tubular\tubular-directives-editors.js" />
