@@ -163,7 +163,6 @@
     <Content Include="ui\app\common\viewformat.html" />
     <Content Include="ui\app\common\widget.html" />
     <Content Include="ui\chosen\chosen.js" />
-    <Content Include="ui\chosen\ng-chosen.js" />
     <Content Include="ui\chosen\tb-chosen.js" />
     <Content Include="ui\media\favicon.ico" />
     <Content Include="ui\media\tubular.png" />

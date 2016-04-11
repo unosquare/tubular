@@ -113,8 +113,7 @@
             var me = this;
 
             me.getColumns = function (gridScope) {
-                return gridScope.columns
-                    .map(function (c) { return c.Name.replace(/([a-z])([A-Z])/g, '$1 $2'); });
+                return gridScope.columns.map(function (c) { return c.Label; });
             };
 
             me.getColumnsVisibility = function (gridScope) {
