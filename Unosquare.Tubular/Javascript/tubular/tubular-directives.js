@@ -58,7 +58,7 @@
                         serverSaveUrl: '@',
                         serverDeleteUrl: '@',
                         serverSaveMethod: '@',
-                        pageSize: '@?',
+                        pageSize: '=?',
                         onBeforeGetData: '=?',
                         requestMethod: '@',
                         dataServiceName: '@?serviceName',
