@@ -8,9 +8,15 @@
          * @restrict E
          *
          * @description
-         * The `tbForm` directive is the base to create any form. You can define a `dataService` and a
+         * The `tbForm` directive is the base to create any form powered by Tubular. Define `dataService` and 
          * `modelKey` to auto-load a record. The `serverSaveUrl` can be used to create a new or update
          * an existing record.
+         * 
+         * Please don't bind a controller directly to the `tbForm`, Angular will throw an exception. If you want
+         * to extend the form behavior put a controller in a upper node like a div.
+         * 
+         * The `save` method can be forced to update a model against the REST service, otherwise if the Model
+         * doesn't detect any change will ignore the save call.
          * 
          * @scope
          * 
@@ -134,12 +140,12 @@
                                 $scope.bindFields();
                             };
 
-                            $scope.save = function () {
+                            $scope.save = function (forceUpdate) {
                                 if (!$scope.model.$valid()) {
                                     return;
                                 }
 
-                                $scope.currentRequest = $scope.model.save();
+                                $scope.currentRequest = $scope.model.save(forceUpdate);
 
                                 if ($scope.currentRequest === false) {
                                     $scope.$emit('tbForm_OnSavingNoChanges', $scope);
@@ -164,8 +170,8 @@
                                     });
                             };
 
-                            $scope.update = function () {
-                                $scope.save();
+                            $scope.update = function (forceUpdate) {
+                                $scope.save(forceUpdate);
                             };
 
                             $scope.create = function () {

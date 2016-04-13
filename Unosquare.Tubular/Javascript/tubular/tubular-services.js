@@ -1,4 +1,4 @@
-﻿(function () {
+﻿(function() {
     'use strict';
 
     /**
@@ -22,11 +22,11 @@
             function tubularPopupService($modal, $rootScope, tubularTemplateService) {
                 var me = this;
 
-                me.onSuccessForm = function (callback) {
+                me.onSuccessForm = function(callback) {
                     $rootScope.$on('tbForm_OnSuccessfulSave', callback);
                 };
 
-                me.onConnectionError = function (callback) {
+                me.onConnectionError = function(callback) {
                     $rootScope.$on('tbForm_OnConnectionError', callback);
                 };
 
@@ -38,7 +38,7 @@
                  * @param {string} size 
                  * @returns {object} The Popup instance
                  */
-                me.openDialog = function (template, model, gridScope, size) {
+                me.openDialog = function(template, model, gridScope, size) {
                     if (angular.isUndefined(template)) {
                         template = tubularTemplateService.generatePopup(model);
                     }
@@ -49,26 +49,26 @@
                         animation: false,
                         size: size,
                         controller: [
-                            '$scope', function ($scope) {
+                            '$scope', function($scope) {
                                 $scope.Model = model;
 
-                                $scope.savePopup = function (innerModel) {
+                                $scope.savePopup = function(innerModel, forceUpdate) {
                                     innerModel = innerModel || $scope.Model;
 
                                     // If we have nothing to save and it's not a new record, just close
-                                    if (!innerModel.$isNew && !innerModel.$hasChanges) {
+                                    if (!forceUpdate && !innerModel.$isNew && !innerModel.$hasChanges) {
                                         $scope.closePopup();
                                         return null;
                                     }
 
-                                    var result = innerModel.save();
+                                    var result = innerModel.save(forceUpdate);
 
                                     if (angular.isUndefined(result) || result === false) {
                                         return null;
                                     }
 
                                     result.then(
-                                        function (data) {
+                                        function(data) {
                                             $scope.$emit('tbForm_OnSuccessfulSave', data);
                                             $rootScope.$broadcast('tbForm_OnSuccessfulSave', data);
                                             $scope.Model.$isLoading = false;
@@ -76,7 +76,7 @@
                                             dialog.close();
 
                                             return data;
-                                        }, function (error) {
+                                        }, function(error) {
                                             $scope.$emit('tbForm_OnConnectionError', error);
                                             $rootScope.$broadcast('tbForm_OnConnectionError', error);
                                             $scope.Model.$isLoading = false;
@@ -87,7 +87,7 @@
                                     return result;
                                 };
 
-                                $scope.closePopup = function () {
+                                $scope.closePopup = function() {
                                     if (angular.isDefined($scope.Model.revertChanges)) {
                                         $scope.Model.revertChanges();
                                     }
@@ -112,25 +112,25 @@
         .service('tubularGridExportService', function tubularGridExportService() {
             var me = this;
 
-            me.getColumns = function (gridScope) {
-                return gridScope.columns.map(function (c) { return c.Label; });
+            me.getColumns = function(gridScope) {
+                return gridScope.columns.map(function(c) { return c.Label; });
             };
 
-            me.getColumnsVisibility = function (gridScope) {
+            me.getColumnsVisibility = function(gridScope) {
                 return gridScope.columns
-                    .map(function (c) { return c.Visible; });
+                    .map(function(c) { return c.Visible; });
             };
 
-            me.exportAllGridToCsv = function (filename, gridScope) {
+            me.exportAllGridToCsv = function(filename, gridScope) {
                 var columns = me.getColumns(gridScope);
                 var visibility = me.getColumnsVisibility(gridScope);
 
-                gridScope.getFullDataSource(function (data) {
+                gridScope.getFullDataSource(function(data) {
                     me.exportToCsv(filename, columns, data, visibility);
                 });
             };
 
-            me.exportGridToCsv = function (filename, gridScope) {
+            me.exportGridToCsv = function(filename, gridScope) {
                 var columns = me.getColumns(gridScope);
                 var visibility = me.getColumnsVisibility(gridScope);
 
@@ -139,10 +139,10 @@
                 gridScope.currentRequest = null;
             };
 
-            me.exportToCsv = function (filename, header, rows, visibility) {
-                var processRow = function (row) {
+            me.exportToCsv = function(filename, header, rows, visibility) {
+                var processRow = function(row) {
                     if (typeof (row) === 'object') {
-                        row = Object.keys(row).map(function (key) { return row[key]; });
+                        row = Object.keys(row).map(function(key) { return row[key]; });
                     }
 
                     var finalVal = '';
@@ -198,20 +198,20 @@
             'tubularGridFilterModel', '$compile', '$filter', function tubularGridFilterService(FilterModel, $compile, $filter) {
                 var me = this;
 
-                me.applyFilterFuncs = function (scope, el, attributes, openCallback) {
+                me.applyFilterFuncs = function(scope, el, attributes, openCallback) {
                     scope.$component = scope.$parent.$component;
 
-                    scope.$watch('filter.Operator', function (val) {
+                    scope.$watch('filter.Operator', function(val) {
                         if (val === 'None') scope.filter.Text = '';
                     });
 
-                    scope.$watch(function () {
-                        var columns = scope.$component.columns.filter(function (el) {
+                    scope.$watch(function() {
+                        var columns = scope.$component.columns.filter(function(el) {
                             return el.Name === scope.filter.Name;
                         });
 
                         return columns.length !== 0 ? columns[0] : null;
-                    }, function (val) {
+                    }, function(val) {
                         if (val && val != null) {
                             if (scope.filter.HasFilter != val.Filter.HasFilter) {
                                 scope.filter.HasFilter = val.Filter.HasFilter;
@@ -221,8 +221,8 @@
                         }
                     }, true);
 
-                    scope.retrieveData = function () {
-                        var columns = scope.$component.columns.filter(function (el) {
+                    scope.retrieveData = function() {
+                        var columns = scope.$component.columns.filter(function(el) {
                             return el.Name === scope.filter.Name;
                         });
 
@@ -234,7 +234,7 @@
                         scope.close();
                     };
 
-                    scope.clearFilter = function () {
+                    scope.clearFilter = function() {
                         if (scope.filter.Operator != 'Multiple') {
                             scope.filter.Operator = 'None';
                         }
@@ -245,20 +245,20 @@
                         scope.retrieveData();
                     };
 
-                    scope.applyFilter = function () {
+                    scope.applyFilter = function() {
                         scope.filter.HasFilter = true;
                         scope.retrieveData();
                     };
 
-                    scope.close = function () {
+                    scope.close = function() {
                         $(el).find('.btn-popover').popover('hide');
                     };
 
-                    scope.open = function () {
+                    scope.open = function() {
                         $(el).find('.btn-popover').popover('toggle');
                     };
 
-                    scope.checkEvent = function (keyEvent) {
+                    scope.checkEvent = function(keyEvent) {
                         if (keyEvent.which === 13) {
                             scope.applyFilter();
                             keyEvent.preventDefault();
@@ -269,9 +269,9 @@
                         html: true,
                         placement: 'bottom',
                         trigger: 'manual',
-                        content: function () {
+                        content: function() {
                             var selectEl = $(this).next().find('select').find('option').remove().end();
-                            angular.forEach(scope.filterOperators, function (val, key) {
+                            angular.forEach(scope.filterOperators, function(val, key) {
                                 $(selectEl).append('<option value="' + key + '">' + val + '</option>');
                             });
 
@@ -279,7 +279,7 @@
                         }
                     });
 
-                    $(el).find('.btn-popover').on('show.bs.popover', function (e) {
+                    $(el).find('.btn-popover').on('show.bs.popover', function(e) {
                         $('.btn-popover').not(e.target).popover("hide");
                     });
 
@@ -291,16 +291,16 @@
                 /**
                  * Creates a `FilterModel` using a scope and an Attributes array
                  */
-                me.createFilterModel = function (scope, lAttrs) {
+                me.createFilterModel = function(scope, lAttrs) {
                     scope.filter = new FilterModel(lAttrs);
                     scope.filter.Name = scope.$parent.column.Name;
-                    var columns = scope.$component.columns.filter(function (el) {
+                    var columns = scope.$component.columns.filter(function(el) {
                         return el.Name === scope.filter.Name;
                     });
 
                     if (columns.length === 0) return;
 
-                    scope.$watch('filter', function (n) {
+                    scope.$watch('filter', function(n) {
                         if (columns[0].Filter.Text != n.Text) {
                             n.Text = columns[0].Filter.Text;
 
@@ -372,18 +372,18 @@
                  * @param {string} format 
                  * @returns {array}  The controller definition
                  */
-                me.dateEditorController = function (format) {
+                me.dateEditorController = function(format) {
                     return [
-                        '$scope', function (innerScope) {
+                        '$scope', function(innerScope) {
                             innerScope.DataType = "date";
 
-                            innerScope.$watch('value', function (val) {
+                            innerScope.$watch('value', function(val) {
                                 if (typeof (val) === 'string') {
                                     innerScope.value = new Date(val);
                                 }
                             });
 
-                            innerScope.validate = function () {
+                            innerScope.validate = function() {
                                 if (angular.isDefined(innerScope.min)) {
                                     if (Object.prototype.toString.call(innerScope.min) !== "[object Date]") {
                                         innerScope.min = new Date(innerScope.min);
@@ -420,8 +420,8 @@
 
                 /**
                 * Simple helper to generate a unique name for Tubular Forms
-                */ 
-                me.getUniqueTbFormName = function () {
+                */
+                me.getUniqueTbFormName = function() {
                     // TODO: Maybe move this to another service
                     window.tbFormCounter = window.tbFormCounter || (window.tbFormCounter = -1);
                     window.tbFormCounter++;
@@ -432,7 +432,7 @@
                  * Setups a new Editor, this functions is like a common class constructor to be used
                  * with all the tubularEditors.
                  */
-                me.setupScope = function (scope, defaultFormat) {
+                me.setupScope = function(scope, defaultFormat) {
                     scope.isEditing = angular.isUndefined(scope.isEditing) ? true : scope.isEditing;
                     scope.showLabel = scope.showLabel || false;
                     scope.label = scope.label || (scope.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
@@ -443,7 +443,7 @@
 
                     // Get the field reference using the Angular way
                     // Get the field reference using the Angular way
-                    scope.getFormField = function () {
+                    scope.getFormField = function() {
                         var parent = scope.$parent;
 
                         while (true) {
@@ -458,14 +458,14 @@
                         }
                     };
 
-                    scope.$dirty = function () {
+                    scope.$dirty = function() {
                         // Just forward the property
                         var formField = scope.getFormField();
 
                         return formField == null ? true : formField.$dirty;
                     };
 
-                    scope.checkValid = function () {
+                    scope.checkValid = function() {
                         scope.$valid = true;
                         scope.state.$errors = [];
 
@@ -495,24 +495,24 @@
                     };
 
                     // HACK: I need to know why
-                    scope.$watch('label', function (n, o) {
+                    scope.$watch('label', function(n, o) {
                         if (angular.isUndefined(n)) {
                             scope.label = (scope.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
                         }
                     });
 
-                    scope.$watch('value', function (newValue, oldValue) {
+                    scope.$watch('value', function(newValue, oldValue) {
                         if (angular.isUndefined(oldValue) && angular.isUndefined(newValue)) {
                             return;
                         }
 
                         // This is the state API for every property in the Model
                         scope.state = {
-                            $valid: function () {
+                            $valid: function() {
                                 scope.checkValid();
                                 return this.$errors.length === 0;
                             },
-                            $dirty: function () {
+                            $dirty: function() {
                                 return scope.$dirty;
                             },
                             $errors: []
@@ -544,7 +544,7 @@
                     while (true) {
                         if (parent == null) break;
                         if (angular.isDefined(parent.tubularDirective) &&
-                            (parent.tubularDirective === 'tubular-form' ||
+                        (parent.tubularDirective === 'tubular-form' ||
                             parent.tubularDirective === 'tubular-rowset')) {
 
                             if (scope.name === null) {
@@ -559,7 +559,7 @@
 
                             scope.Name = scope.name;
 
-                            scope.bindScope = function () {
+                            scope.bindScope = function() {
                                 scope.$parent.Model = parent.model;
 
                                 if (angular.equals(scope.value, parent.model[scope.Name]) === false) {
@@ -569,9 +569,9 @@
                                             parent.model[scope.Name];
                                     }
 
-                                    parent.$watch(function () {
+                                    parent.$watch(function() {
                                         return scope.value;
-                                    }, function (value) {
+                                    }, function(value) {
                                         parent.model[scope.Name] = value;
                                     });
                                 }
@@ -593,11 +593,11 @@
 
                                 // This is the state API for every property in the Model
                                 parent.model.$state[scope.Name] = {
-                                    $valid: function () {
+                                    $valid: function() {
                                         scope.checkValid();
                                         return this.$errors.length === 0;
                                     },
-                                    $dirty: function () {
+                                    $dirty: function() {
                                         return scope.$dirty;
                                     },
                                     $errors: []

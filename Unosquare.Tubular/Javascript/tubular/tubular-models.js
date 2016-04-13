@@ -239,7 +239,7 @@
                 };
 
                 // Returns a save promise
-                obj.save = function() {
+                obj.save = function(forceUpdate) {
                     if (angular.isUndefined(dataService) || dataService == null) {
                         throw 'Define DataService to your model.';
                     }
@@ -248,7 +248,7 @@
                         throw 'Define a Save URL.';
                     }
 
-                    if (!obj.$isNew && !obj.$hasChanges) {
+                    if (!forceUpdate && !obj.$isNew && !obj.$hasChanges) {
                         return false;
                     }
 
