@@ -5,6 +5,8 @@
 
 ![Tubular](http://unosquare.github.io/tubular/assets/tubular.png)
 
+*:star:Please star this project if you find it useful!*
+
 Tubular is a set of <a href="https://angularjs.org/" target="_blank">AngularJS</a> directives and C# classes designed to rapidly build modern web applications.  The centerpiece of Tubular is its fully templateable grid with lots of features such as server-side pagination, multi-column sorting and filtering, built-in export to CSV (client-side), and in-line editing of rows via templates.
 
 Please visit the <a href="http://unosquare.github.io/tubular" target="_blank">Tubular GitHub Page</a> to learn how quickly you can start coding. Don't forget to check out the Tubular Generator which quickly turns models into an awesome UIs!
