@@ -107,7 +107,7 @@
          * @name tubularGridExportService
          *
          * @description
-         * Use `tubularGridExportService` to export your `tbGrid` to CSV format.
+         * Use `tubularGridExportService` to export your `tbGrid` to a CSV file.
          */
         .service('tubularGridExportService', function tubularGridExportService() {
             var me = this;
@@ -442,10 +442,20 @@
                     scope.$valid = true;
 
                     // Get the field reference using the Angular way
+                    // Get the field reference using the Angular way
                     scope.getFormField = function () {
-                        var formScope = scope.$parent.$parent.getFormScope();
+                        var parent = scope.$parent;
 
-                        return formScope == null ? null : formScope[scope.Name];
+                        while (true) {
+                            if (parent == null) break;
+                            if (angular.isDefined(parent.tubularDirective) && parent.tubularDirective === 'tubular-form') {
+                                var formScope = parent.getFormScope();
+
+                                return formScope == null ? null : formScope[scope.Name];
+                            }
+
+                            parent = parent.$parent;
+                        }
                     };
 
                     scope.$dirty = function () {
