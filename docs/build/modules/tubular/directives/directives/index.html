@@ -100,9 +100,15 @@ The parent scope will provide information about the data type.</li>
     <li class="list-group-item">
         tbColumnOptionsFilter - The `tbColumnOptionsFilter` directive is a filter with an dropdown listing all the possible values to filter.</li>
     <li class="list-group-item">
-        tbForm - The `tbForm` directive is the base to create any form. You can define a `dataService` and a
+        tbForm - The `tbForm` directive is the base to create any form powered by Tubular. Define `dataService` and 
 `modelKey` to auto-load a record. The `serverSaveUrl` can be used to create a new or update
-an existing record.</li>
+an existing record.
+
+Please don't bind a controller directly to the `tbForm`, Angular will throw an exception. If you want
+to extend the form behavior put a controller in a upper node like a div.
+
+The `save` method can be forced to update a model against the REST service, otherwise if the Model
+doesn't detect any change will ignore the save call.</li>
     <li class="list-group-item">
         tbTextSearch - The `tbTextSearch` directive is visual component to enable free-text search in a grid.</li>
     <li class="list-group-item">

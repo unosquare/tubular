@@ -5,9 +5,13 @@
 </div>
 
 <div>
-    <p>The <code>tbForm</code> directive is the base to create any form. You can define a <code>dataService</code> and a
+    <p>The <code>tbForm</code> directive is the base to create any form powered by Tubular. Define <code>dataService</code> and 
 <code>modelKey</code> to auto-load a record. The <code>serverSaveUrl</code> can be used to create a new or update
 an existing record.</p>
+<p>Please don&#39;t bind a controller directly to the <code>tbForm</code>, Angular will throw an exception. If you want
+to extend the form behavior put a controller in a upper node like a div.</p>
+<p>The <code>save</code> method can be forced to update a model against the REST service, otherwise if the Model
+doesn&#39;t detect any change will ignore the save call.</p>
 
 
     
