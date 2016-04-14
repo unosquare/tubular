@@ -2651,7 +2651,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         serverUrl: '@',
                         serverSaveUrl: '@',
                         serverSaveMethod: '@',
-                        isNew: '@',
+                        isNew: '=',
                         modelKey: '@?',
                         dataServiceName: '@?serviceName',
                         requireAuthentication: '=?',
