@@ -57,6 +57,16 @@
                                     }
                                 }
 
+                                if (angular.isDefined($scope.match) && $scope.match) {
+                                    var matchElement = document.getElementsByName($scope.match)[1].value;
+                                    var matchElementLabel = document.getElementsByName($scope.match)[0].getElementsByTagName('label')[0].innerHTML;
+                                    if ($scope.value != matchElement) {
+                                        $scope.state.$errors = [$scope$filter('translate')('EDITOR_MATCH', matchElementLabel)];
+                                        $scope.$valid = false;
+                                        return;
+                                    }
+                                }
+
                                 if (angular.isDefined($scope.min) && angular.isDefined($scope.value) && $scope.value != null) {
                                     if ($scope.value.length < parseInt($scope.min)) {
                                         $scope.$valid = false;
