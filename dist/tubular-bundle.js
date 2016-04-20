@@ -1689,8 +1689,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                                 if (angular.isDefined($scope.match) && $scope.match) {
                                     if ($scope.value != $scope.$component.model[$scope.match]) {
+                                        var label = $filter('filter')($scope.$component.fields, { name: $scope.match }, true)[0].label;
                                         $scope.$valid = false;
-                                        $scope.state.$errors = [$filter('translate')('EDITOR_MATCH', $scope.match)];
+                                        $scope.state.$errors = [$filter('translate')('EDITOR_MATCH', label)];
                                         return;
                                     }
                                 }
