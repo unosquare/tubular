@@ -27,6 +27,7 @@
          * @param {number} max Set the maximum characters.
          * @param {string} regex Set the regex validation text.
          * @param {string} regexErrorMessage Set the regex validation error message.
+         * @param {string} match Set the field name to match values.
          */
         .directive('tbSimpleEditor', [
             'tubularEditorService', '$filter', function(tubularEditorService, $filter) {
@@ -95,9 +96,12 @@
          *
          * @description
          * The `tbNumericEditor` directive is numeric input, similar to `tbSimpleEditor` 
-         * but can render an addon to the input visual element.
+         * but can render an add-on to the input visual element.
          * 
-         * It uses the `TubularModel` to retrieve column or field information.
+         * When you need a numeric editor but without the visual elements you can use 
+         * `tbSimpleEditor` with the `editorType` attribute with value `number`.
+         * 
+         * This directive uses the `TubularModel` to retrieve the model information.
          * 
          * @scope
          * 

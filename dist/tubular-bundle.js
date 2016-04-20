@@ -1656,6 +1656,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @param {number} max Set the maximum characters.
          * @param {string} regex Set the regex validation text.
          * @param {string} regexErrorMessage Set the regex validation error message.
+         * @param {string} match Set the field name to match values.
          */
         .directive('tbSimpleEditor', [
             'tubularEditorService', '$filter', function(tubularEditorService, $filter) {
@@ -1682,6 +1683,14 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     if (patt.test($scope.value) === false) {
                                         $scope.$valid = false;
                                         $scope.state.$errors = [$scope.regexErrorMessage || $filter('translate')('EDITOR_REGEX_DOESNT_MATCH')];
+                                        return;
+                                    }
+                                }
+
+                                if (angular.isDefined($scope.match) && $scope.match) {
+                                    if ($scope.value != $scope.$component.model[$scope.match]) {
+                                        $scope.$valid = false;
+                                        $scope.state.$errors = [$filter('translate')('EDITOR_MATCH', $scope.match)];
                                         return;
                                     }
                                 }
@@ -1716,9 +1725,12 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          *
          * @description
          * The `tbNumericEditor` directive is numeric input, similar to `tbSimpleEditor` 
-         * but can render an addon to the input visual element.
+         * but can render an add-on to the input visual element.
          * 
-         * It uses the `TubularModel` to retrieve column or field information.
+         * When you need a numeric editor but without the visual elements you can use 
+         * `tbSimpleEditor` with the `editorType` attribute with value `number`.
+         * 
+         * This directive uses the `TubularModel` to retrieve the model information.
          * 
          * @scope
          * 
@@ -4071,7 +4083,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     placeholder: '@?',
                     readOnly: '=?',
                     help: '@?',
-                    defaultValue: '@?'
+                    defaultValue: '@?',
+                    match: '@?'
                 };
 
                 /**
@@ -5163,6 +5176,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         'EDITOR_MAX_NUMBER': "The maximum number is {0}.",
                         'EDITOR_MIN_DATE': "The minimum date is {0}.",
                         'EDITOR_MAX_DATE': "The maximum date is {0}.",
+                        'EDITOR_MATCH': 'The field needs to match the {0} field.',
                         'CAPTION_APPLY': 'Apply',
                         'CAPTION_CLEAR': 'Clear',
                         'CAPTION_CLOSE': 'Close',
@@ -5215,7 +5229,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         'EDITOR_MIN_NUMBER': "El número mínimo es {0}.",
                         'EDITOR_MAX_NUMBER': "El número maximo es {0}.",
                         'EDITOR_MIN_DATE': "La fecha mínima es {0}.",
-                        'EDITOR_MAX_DATE': "La fecha maxima es {0}.",
+                        'EDITOR_MAX_DATE': "La fecha máxima es {0}.",
+                        'EDITOR_MATCH': 'El campo debe de conincidir con el campo {0}.',
                         'CAPTION_APPLY': 'Aplicar',
                         'CAPTION_CLEAR': 'Limpiar',
                         'CAPTION_CLOSE': 'Cerrar',
