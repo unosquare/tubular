@@ -365,7 +365,7 @@
                     readOnly: '=?',
                     help: '@?',
                     defaultValue: '@?',
-                    match: '@'
+                    match: '@?'
                 };
 
                 /**
