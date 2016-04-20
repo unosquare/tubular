@@ -1,13 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unosquare.Tubular", "Unosquare.Tubular\Unosquare.Tubular.csproj", "{1A8F5423-F375-4ADD-82A7-5B93182219FF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unosquare.Tubular.Sample", "Unosquare.Tubular.Sample\Unosquare.Tubular.Sample.csproj", "{FB930993-4912-4022-9435-718B3E576478}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unosquare.Tubular.Security", "Unosquare.Tubular.Security\Unosquare.Tubular.Security.csproj", "{45CAA51E-0DDE-4F90-91E0-D636BB918095}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Folder", "Solution Folder", "{142E9E46-AD02-4F12-98D2-1E0EE6A4F26A}"
 	ProjectSection(SolutionItems) = preProject
@@ -43,10 +41,6 @@ Global
 		{FB930993-4912-4022-9435-718B3E576478}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FB930993-4912-4022-9435-718B3E576478}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FB930993-4912-4022-9435-718B3E576478}.Release|Any CPU.Build.0 = Release|Any CPU
-		{45CAA51E-0DDE-4F90-91E0-D636BB918095}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{45CAA51E-0DDE-4F90-91E0-D636BB918095}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{45CAA51E-0DDE-4F90-91E0-D636BB918095}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{45CAA51E-0DDE-4F90-91E0-D636BB918095}.Release|Any CPU.Build.0 = Release|Any CPU
 		{91590BE4-DBFD-4A67-943C-AF47EEF3F386}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{91590BE4-DBFD-4A67-943C-AF47EEF3F386}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{91590BE4-DBFD-4A67-943C-AF47EEF3F386}.Release|Any CPU.ActiveCfg = Release|Any CPU

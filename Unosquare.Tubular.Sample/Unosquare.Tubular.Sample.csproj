@@ -173,8 +173,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApiModels\OrderDto.cs" />
+    <Compile Include="Application\BasicOAuthAuthorizationProvider.cs" />
     <Compile Include="Application\Extensions.cs" />
     <Compile Include="Application\Startup.cs" />
+    <Compile Include="Application\UserAuthenticationResult.cs" />
     <Compile Include="Controllers\OrdersController.cs" />
     <Compile Include="Controllers\ReportController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
@@ -198,10 +200,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Unosquare.Tubular.Security\Unosquare.Tubular.Security.csproj">
-      <Project>{45caa51e-0dde-4f90-91e0-d636bb918095}</Project>
-      <Name>Unosquare.Tubular.Security</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Unosquare.Tubular\Unosquare.Tubular.csproj">
       <Project>{1a8f5423-f375-4add-82a7-5b93182219ff}</Project>
       <Name>Unosquare.Tubular</Name>

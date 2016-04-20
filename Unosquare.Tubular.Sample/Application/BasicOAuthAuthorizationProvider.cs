@@ -1,9 +1,9 @@
-﻿namespace Unosquare.Tubular.Security
+﻿namespace Unosquare.Tubular.Sample.Application
 {
-    using Microsoft.Owin.Security.OAuth;
     using System;
     using System.Security.Claims;
     using System.Threading.Tasks;
+    using Microsoft.Owin.Security.OAuth;
 
     /// <summary>
     /// Basic OAuth authorization provider
@@ -26,7 +26,7 @@
             : base()
         {
             if (authenticateFunction == null)
-                throw new ArgumentException("An authentication function must be provided", "authenticateFunction");
+                throw new ArgumentException("An authentication function must be provided", nameof(authenticateFunction));
 
             this.AuthenticateAsync = authenticateFunction;
 

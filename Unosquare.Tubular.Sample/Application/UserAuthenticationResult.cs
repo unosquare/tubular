@@ -1,7 +1,7 @@
-﻿namespace Unosquare.Tubular.Security
+﻿namespace Unosquare.Tubular.Sample.Application
 {
-    using Microsoft.AspNet.Identity;
     using System;
+    using Microsoft.AspNet.Identity;
 
     /// <summary>
     /// Represents a user authentication result

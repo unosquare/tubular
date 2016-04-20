@@ -10,7 +10,6 @@ using Unosquare.Tubular.Sample.Application;
 using Unosquare.Tubular.Sample.Models;
 
 [assembly: OwinStartup(typeof(Startup))]
-
 namespace Unosquare.Tubular.Sample.Application
 {
     public class Startup
@@ -30,9 +29,9 @@ namespace Unosquare.Tubular.Sample.Application
             public static void Configure(IAppBuilder app)
             {
                 var authFunc =
-                    new Func<OAuthGrantResourceOwnerCredentialsContext, Task<Security.UserAuthenticationResult>>((c) =>
+                    new Func<OAuthGrantResourceOwnerCredentialsContext, Task<UserAuthenticationResult>>((c) =>
                     {
-                        var task = new Task<Security.UserAuthenticationResult>(() =>
+                        var task = new Task<UserAuthenticationResult>(() =>
                         {
                             using (var context = new SampleDbContext())
                             {
@@ -41,10 +40,10 @@ namespace Unosquare.Tubular.Sample.Application
                                         u => u.Id == c.UserName && u.Password == c.Password);
 
                                 if (user == null)
-                                    return Security.UserAuthenticationResult.CreateErrorResult("Invalid credentials");
+                                    return UserAuthenticationResult.CreateErrorResult("Invalid credentials");
 
                                 var roles = user.Roles.ToArray();
-                                return Security.UserAuthenticationResult.CreateAuthorizedResult(user, roles);
+                                return UserAuthenticationResult.CreateAuthorizedResult(user, roles);
                             }
                         });
 
@@ -57,22 +56,13 @@ namespace Unosquare.Tubular.Sample.Application
                     AllowInsecureHttp = true,
                     TokenEndpointPath = new PathString("/token"),
                     AccessTokenExpireTimeSpan = TimeSpan.FromDays(1),
-                    Provider = new Security.BasicOAuthAuthorizationProvider(authFunc),
+                    Provider = new BasicOAuthAuthorizationProvider(authFunc),
                     AuthenticationMode = Microsoft.Owin.Security.AuthenticationMode.Active,
                     AuthenticationType = "Bearer"
                 };
-
-                var bearerAuthOptions = new OAuthBearerAuthenticationOptions()
-                {
-                    AuthenticationType = authServerOptions.AuthenticationType,
-                    AuthenticationMode = authServerOptions.AuthenticationMode,
-                    AccessTokenFormat = authServerOptions.AccessTokenFormat,
-                    AccessTokenProvider = authServerOptions.AccessTokenProvider,
-                };
-
+                
                 // Token Generation
-                app.UseOAuthAuthorizationServer(authServerOptions);
-                app.UseOAuthBearerAuthentication(bearerAuthOptions);
+                app.UseOAuthBearerTokens(authServerOptions);
             }
         }
 
