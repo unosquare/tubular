@@ -31,7 +31,6 @@
                         '<div>' +
                         '<div>',
                 restrict: 'E',
-                replace: true,
                 transclude: false,
                 scope: {
                     minChars: '@?',
