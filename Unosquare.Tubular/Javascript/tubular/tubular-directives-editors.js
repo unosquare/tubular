@@ -58,11 +58,9 @@
                                 }
 
                                 if (angular.isDefined($scope.match) && $scope.match) {
-                                    var matchElement = document.getElementsByName($scope.match)[1].value;
-                                    var matchElementLabel = document.getElementsByName($scope.match)[0].getElementsByTagName('label')[0].innerHTML;
-                                    if ($scope.value != matchElement) {
-                                        $scope.state.$errors = [$scope$filter('translate')('EDITOR_MATCH', matchElementLabel)];
+                                    if ($scope.value != $scope.$component.model[$scope.match]) {
                                         $scope.$valid = false;
+                                        $scope.state.$errors = [$filter('translate')('EDITOR_MATCH', $scope.match)];
                                         return;
                                     }
                                 }
