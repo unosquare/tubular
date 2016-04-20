@@ -86,9 +86,12 @@
     <Content Include="Javascript\angular-filter\watcher.js" />
     <Content Include="Javascript\highchartjs-ng\highcharts-ng.min.js" />
     <Content Include="Javascript\tadaaapickr\tadaaapickr.pack.js" />
-    <Content Include="Javascript\tubular-bundle.js" />
+    <Content Include="Javascript\tubular-bundle.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Javascript\tubular-bundle.min.js">
       <DependentUpon>tubular-bundle.js</DependentUpon>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Javascript\tubular-chartjs-bundle.js" />
     <Content Include="Javascript\tubular-chartjs-bundle.min.js">
@@ -113,7 +116,10 @@
     <Content Include="Javascript\tubular\node-module.js" />
     <Content Include="Javascript\tubular\tubular-directives-filters.js" />
     <Content Include="Javascript\tubular\tubular-directives-forms.js" />
-    <Content Include="Javascript\tubular\tubular-directives-gridcomponents.js" />
+    <Content Include="..\..\Desktop\tubular-directives-gridcomponents.js">
+      <Link>Javascript\tubular\tubular-directives-gridcomponents.js</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Javascript\tubular\tubular-directives-gridpager.js" />
     <Content Include="Javascript\tubular\tubular-directives.js" />
     <Content Include="Javascript\tubular\tubular-models.js" />
