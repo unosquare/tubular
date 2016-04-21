@@ -2840,12 +2840,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
     angular.module('tubular.directives')
         /**
-         * @ngdoc directive
+         * @ngdoc component
          * @name tbTextSearch
-         * @restrict E
          *
          * @description
-         * The `tbTextSearch` directive is visual component to enable free-text search in a grid.
+         * The `tbTextSearch` is visual component to enable free-text search in a grid.
          * 
          * @scope
          * 
@@ -2907,7 +2906,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             ]
         })
         /**
-         * @ngdoc directive
+         * @ngdoc component
          * @name tbRemoveButton
          * @restrict E
          *
@@ -3053,12 +3052,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          }
          ])
         /**
-         * @ngdoc directive
+         * @ngdoc component
          * @name tbEditButton
-         * @restrict E
          *
          * @description
-         * The `tbEditButton` directive is visual helper to create an Edit button.
+         * The `tbEditButton` component is visual helper to create an Edit button.
          * 
          * @scope
          * 
@@ -3089,12 +3087,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             ]
         })
         /**
-         * @ngdoc directive
+         * @ngdoc component
          * @name tbPageSizeSelector
-         * @restrict E
          *
          * @description
-         * The `tbPageSizeSelector` directive is visual helper to render a dropdown to allow user select how many rows by page.
+         * The `tbPageSizeSelector` component is visual helper to render a dropdown to allow user select how many rows by page.
          * 
          * @scope
          * 
@@ -3127,12 +3124,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             ]
         })
         /**
-         * @ngdoc directive
+         * @ngdoc component
          * @name tbExportButton
-         * @restrict E
          *
          * @description
-         * The `tbExportButton` directive is visual helper to render a button to export grid to CSV format.
+         * The `tbExportButton` component is visual helper to render a button to export grid to CSV format.
          * 
          * @scope
          * 
@@ -3177,12 +3173,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
         })
 
         /**
-         * @ngdoc directive
+         * @ngdoc component
          * @name tbPrintButton
-         * @restrict E
          *
          * @description
-         * The `tbPrintButton` directive is visual helper to render a button to print the `tbGrid`.
+         * The `tbPrintButton` component is visual helper to render a button to print the `tbGrid`.
          * 
          * @scope
          * 
