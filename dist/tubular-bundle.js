@@ -2985,68 +2985,73 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @param {string} cancelCaption Set the caption to use in cancel the button, default Cancel.
          * @param {string} cancelCss Add a CSS class to Cancel button.
          */
-         .component('tbSaveButton', {
-             require: '^tbGrid',
-             template: '<div ng-show="model.$isEditing">' +
-                 '<button ng-click="save()" class="btn btn-default {{:: $ctrl.saveCss || \'\' }}" ' +
-                 'ng-disabled="!model.$valid()">' +
-                 '{{:: $ctrl.saveCaption || (\'CAPTION_SAVE\' | translate) }}' +
-                 '</button>' +
-                 '<button ng-click="cancel()" class="btn {{:: $ctrl.cancelCss || \'btn-default\' }}">' +
-                 '{{:: $ctrl.cancelCaption || (\'CAPTION_CANCEL\' | translate) }}' +
-                 '</button></div>',
-             transclude: true,
-             bindings: {
-                 model: '=',
-                 isNew: '=?',
-                 saveCaption: '@',
-                 saveCss: '@',
-                 cancelCaption: '@',
-                 cancelCss: '@'
-             },
-             controller: [
-                 '$scope', function ($scope) {
-                     $scope.isNew = $scope.$ctrl.isNew || false;
-                     $scope.model = $scope.$ctrl.model
+         .directive('tbSaveButton', [function () {
 
-                     $scope.save = function () {
-                         if ($scope.isNew) {
-                             $scope.model.$isNew = true;
-                         }
+             return {
+                 require: '^tbGrid',
+                 template: '<div ng-show="model.$isEditing">' +
+                     '<button ng-click="save()" class="btn btn-default {{:: saveCss || \'\' }}" ' +
+                     'ng-disabled="!model.$valid()">' +
+                     '{{:: saveCaption || (\'CAPTION_SAVE\' | translate) }}' +
+                     '</button>' +
+                     '<button ng-click="cancel()" class="btn {{:: cancelCss || \'btn-default\' }}">' +
+                     '{{:: cancelCaption || (\'CAPTION_CANCEL\' | translate) }}' +
+                     '</button></div>',
+                 restrict: 'E',
+                 replace: true,
+                 transclude: true,
+                 scope: {
+                     model: '=',
+                     isNew: '=?',
+                     saveCaption: '@',
+                     saveCss: '@',
+                     cancelCaption: '@',
+                     cancelCss: '@'
+                 },
+                 controller: [
+                     '$scope', function ($scope) {
+                         $scope.isNew = $scope.isNew || false;
 
-                         if (!$scope.model.$valid()) {
-                             return;
-                         }
+                         $scope.save = function () {
+                             if ($scope.isNew) {
+                                 $scope.model.$isNew = true;
+                             }
 
-                         $scope.currentRequest = $scope.model.save();
+                             if (!$scope.model.$valid()) {
+                                 return;
+                             }
 
-                         if ($scope.currentRequest === false) {
-                             $scope.$emit('tbGrid_OnSavingNoChanges', $scope.model);
-                             return;
-                         }
+                             $scope.currentRequest = $scope.model.save();
 
-                         $scope.currentRequest.then(
-                             function (data) {
-                                 $scope.model.$isEditing = false;
+                             if ($scope.currentRequest === false) {
+                                 $scope.$emit('tbGrid_OnSavingNoChanges', $scope.model);
+                                 return;
+                             }
 
-                                 if (angular.isDefined($scope.model.$component) &&
-                                     angular.isDefined($scope.model.$component.autoRefresh) &&
-                                     $scope.model.$component.autoRefresh) {
-                                     $scope.model.$component.retrieveData();
-                                 }
+                             $scope.currentRequest.then(
+                                 function (data) {
+                                     $scope.model.$isEditing = false;
 
-                                 $scope.$emit('tbGrid_OnSuccessfulSave', data, $scope.model.$component);
-                             }, function (error) {
-                                 $scope.$emit('tbGrid_OnConnectionError', error);
-                             });
-                     };
+                                     if (angular.isDefined($scope.model.$component) &&
+                                         angular.isDefined($scope.model.$component.autoRefresh) &&
+                                         $scope.model.$component.autoRefresh) {
+                                         $scope.model.$component.retrieveData();
+                                     }
 
-                     $scope.cancel = function () {
-                         $scope.model.revertChanges();
-                     };
-                 }
-             ]
-         })
+                                     $scope.$emit('tbGrid_OnSuccessfulSave', data, $scope.model.$component);
+                                 }, function (error) {
+                                     $scope.$emit('tbGrid_OnConnectionError', error);
+                                 });
+                         };
+
+                         $scope.cancel = function () {
+                             $scope.model.revertChanges();
+                         };
+                     }
+                 ]
+             };
+         }
+         ])
         /**
          * @ngdoc directive
          * @name tbEditButton
@@ -3139,13 +3144,15 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          */
         .component('tbExportButton', {
             require: '^tbGrid',
-            template: '<button class="btn btn-info btn-sm dropdown-toggle {{::$ctrl.css}}" data-toggle="dropdown" aria-expanded="false">' +
+            template: '<div class="btn-group">' +
+                '<button class="btn btn-info btn-sm dropdown-toggle {{::$ctrl.css}}" data-toggle="dropdown" aria-expanded="false">' +
                 '<span class="fa fa-download"></span>&nbsp;{{:: $ctrl.caption || (\'UI_EXPORTCSV\' | translate)}}&nbsp;<span class="caret"></span>' +
                 '</button>' +
                 '<ul class="dropdown-menu" role="menu">' +
                 '<li><a href="javascript:void(0)" ng-click="downloadCsv($parent)">{{:: $ctrl.captionMenuCurrent || (\'UI_CURRENTROWS\' | translate)}}</a></li>' +
                 '<li><a href="javascript:void(0)" ng-click="downloadAllCsv($parent)">{{:: $ctrl.captionMenuAll || (\'UI_ALLROWS\' | translate)}}</a></li>' +
-                '</ul>',
+                '</ul>' +
+                '</div>',
             transclude: true,
             bindings: {
                 filename: '@',

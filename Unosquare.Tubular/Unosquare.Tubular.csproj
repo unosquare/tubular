@@ -116,10 +116,7 @@
     <Content Include="Javascript\tubular\node-module.js" />
     <Content Include="Javascript\tubular\tubular-directives-filters.js" />
     <Content Include="Javascript\tubular\tubular-directives-forms.js" />
-    <Content Include="..\..\Desktop\tubular-directives-gridcomponents.js">
-      <Link>Javascript\tubular\tubular-directives-gridcomponents.js</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="Javascript\tubular\tubular-directives-gridcomponents.js" />
     <Content Include="Javascript\tubular\tubular-directives-gridpager.js" />
     <Content Include="Javascript\tubular\tubular-directives.js" />
     <Content Include="Javascript\tubular\tubular-models.js" />
