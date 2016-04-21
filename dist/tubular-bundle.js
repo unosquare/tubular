@@ -1720,12 +1720,12 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
         //    }
         //])
         .component('tbSimpleEditor', {
-                    template: '<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : $ctrl.!$valid && $ctrl.$dirty() }">' +
+                    template: '<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">' +
                         '<span ng-hide="$ctrl.isEditing">{{$ctrl.value}}</span>' +
                         '<label ng-show="$ctrl.showLabel">{{ $ctrl.label }}</label>' +
                         '<input type="{{$ctrl.editorType}}" placeholder="{{$ctrl.placeholder}}" ng-show="$ctrl.isEditing" ng-model="$ctrl.value" class="form-control" ' +
                         ' ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}" />' +
-                        '<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">{{$ctrl.error}}</span>' +
+                        '<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">{{error}}</span>' +
                         '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help">{{$ctrl.help}}</span>' +
                         '</div>',
                     transclude: true,
@@ -4508,7 +4508,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     scope.$parent.Model = parent.model;
 
                                     if (angular.equals(ctrl.value, parent.model[scope.Name]) === false) {
-                                        if (angular.isDefined(parent.model[ctrl.Name])) {
+                                        if (angular.isDefined(parent.model[scope.Name])) {
                                             ctrl.value = (ctrl.DataType === 'date' && parent.model[ctrl.Name] != null) ?
                                                 new Date(parent.model[scope.Name]) :
                                                 parent.model[scope.Name];

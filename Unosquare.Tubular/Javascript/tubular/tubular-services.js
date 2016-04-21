@@ -749,7 +749,7 @@
                                     scope.$parent.Model = parent.model;
 
                                     if (angular.equals(ctrl.value, parent.model[scope.Name]) === false) {
-                                        if (angular.isDefined(parent.model[ctrl.Name])) {
+                                        if (angular.isDefined(parent.model[scope.Name])) {
                                             ctrl.value = (ctrl.DataType === 'date' && parent.model[ctrl.Name] != null) ?
                                                 new Date(parent.model[scope.Name]) :
                                                 parent.model[scope.Name];
