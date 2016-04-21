@@ -135,10 +135,12 @@
     </Content>
     <Content Include="..\dist\tubular-bundle.js">
       <Link>ui\tubular\tubular-bundle.js</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="..\dist\tubular-bundle.min.js">
       <Link>ui\tubular\tubular-bundle.min.js</Link>
       <DependentUpon>tubular-bundle.js</DependentUpon>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="..\dist\tubular-chartjs-bundle.js">
       <Link>ui\tubular\tubular-chartjs-bundle.js</Link>

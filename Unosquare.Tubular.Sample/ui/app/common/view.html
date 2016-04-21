@@ -10,8 +10,8 @@
             <tb-grid-pager class="col-md-5 col-xs-12"></tb-grid-pager>
             <div class="col-md-4 col-xs-6">
                 <div class="btn-group btn-group-sm">
-                    <tb-export-button filename="data.csv" css="btn-info btn-sm"></tb-export-button>
-                    <tb-print-button title="Sample"></tb-print-button>
+                    <tb-export-button filename="data.csv" class="btn-group"></tb-export-button>
+                    <tb-print-button title="Sample" class="btn-group"></tb-print-button>
                     <tb-column-selector></tb-column-selector>
                 </div>
             </div>
@@ -81,7 +81,7 @@
                             <tb-row-template ng-show="$component.tempRow.$isEditing">
                                 <tb-cell-template class="text-center">
                                     <div class="btn-group">
-                                        <tb-save-button model="$component.tempRow" save-css="btn-xs hidden-xs hidden-sm"
+                                        <tb-save-button model="$component.tempRow" save-css="btn-xs"
                                                         cancel-css="btn-xs btn-danger" is-new="true"
                                                         component="$component">
                                         </tb-save-button>
@@ -121,10 +121,10 @@
                                 <tb-cell-template ng-class="{'danger': rowModel.$hasChanges}"
                                                   class="cell-menu text-center">
                                     <div class="btn-group">
-                                        <tb-save-button model="row" save-css="btn-xs hidden-xs hidden-sm"
+                                        <tb-save-button model="row" save-css="btn-xs"
                                                         cancel-css="btn-danger btn-xs">
                                         </tb-save-button>
-                                        <tb-edit-button model="row" class="btn-xs hidden-xs hidden-sm">
+                                        <tb-edit-button model="row" class="btn btn-xs hidden-xs hidden-sm">
                                         </tb-edit-button>
                                         <button ng-click="row.editPopup('/ui/app/common/popup.html')"
                                                 class="btn btn-default btn-xs"
