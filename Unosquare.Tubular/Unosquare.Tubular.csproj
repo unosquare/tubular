@@ -114,6 +114,10 @@
     </Content>
     <Content Include="Javascript\tubular-widget\tubular-directives-widget.js" />
     <Content Include="Javascript\tubular\node-module.js" />
+    <Content Include="Javascript\tubular\tubular-directives-editors.js" />
+    <Content Include="Javascript\tubular\tabular-directives-editos.min.js">
+      <DependentUpon>tubular-directives-editors.js</DependentUpon>
+    </Content>
     <Content Include="Javascript\tubular\tubular-directives-filters.js" />
     <Content Include="Javascript\tubular\tubular-directives-forms.js" />
     <Content Include="Javascript\tubular\tubular-directives-gridcomponents.js" />
@@ -132,9 +136,6 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Javascript\tubular\tubular-directives-editors.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

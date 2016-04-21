@@ -1,4 +1,4 @@
-﻿(function() {
+(function() {
     'use strict';
 
     angular.module('tubular.directives')
@@ -29,67 +29,141 @@
          * @param {string} regexErrorMessage Set the regex validation error message.
          * @param {string} match Set the field name to match values.
          */
-        .directive('tbSimpleEditor', [
-            'tubularEditorService', '$filter', function(tubularEditorService, $filter) {
+        //.directive('tbSimpleEditor', [
+        //    'tubularEditorService', '$filter', function(tubularEditorService, $filter) {
 
-                return {
-                    template: '<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid && $dirty() }">' +
-                        '<span ng-hide="isEditing">{{value}}</span>' +
-                        '<label ng-show="showLabel">{{ label }}</label>' +
-                        '<input type="{{editorType}}" placeholder="{{placeholder}}" ng-show="isEditing" ng-model="value" class="form-control" ' +
-                        ' ng-required="required" ng-readonly="readOnly" name="{{name}}" />' +
-                        '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
-                        '<span class="help-block" ng-show="isEditing && help">{{help}}</span>' +
+        //        return {
+        //            template: '<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid && $dirty() }">' +
+        //                '<span ng-hide="isEditing">{{value}}</span>' +
+        //                '<label ng-show="showLabel">{{ label }}</label>' +
+        //                '<input type="{{editorType}}" placeholder="{{placeholder}}" ng-show="isEditing" ng-model="value" class="form-control" ' +
+        //                ' ng-required="required" ng-readonly="readOnly" name="{{name}}" />' +
+        //                '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
+        //                '<span class="help-block" ng-show="isEditing && help">{{help}}</span>' +
+        //                '</div>',
+        //            restrict: 'E',
+        //            replace: true,
+        //            transclude: true,
+        //            scope: angular.extend({ regex: '@?', regexErrorMessage: '@?' }, tubularEditorService.defaultScope),
+        //            controller: [
+        //                '$scope', function($scope) {
+        //                    $scope.validate = function () {
+        //                        if (angular.isDefined($scope.regex) && $scope.regex != null && angular.isDefined($scope.value) && $scope.value != null && $scope.value != '') {
+        //                            var patt = new RegExp($scope.regex);
+
+        //                            if (patt.test($scope.value) === false) {
+        //                                $scope.$valid = false;
+        //                                $scope.state.$errors = [$scope.regexErrorMessage || $filter('translate')('EDITOR_REGEX_DOESNT_MATCH')];
+        //                                return;
+        //                            }
+        //                        }
+
+        //                        if (angular.isDefined($scope.match) && $scope.match) {
+        //                            if ($scope.value != $scope.$component.model[$scope.match]) {
+        //                                var label = $filter('filter')($scope.$component.fields, { name: $scope.match }, true)[0].label;
+        //                                $scope.$valid = false;
+        //                                $scope.state.$errors = [$filter('translate')('EDITOR_MATCH', label)];
+        //                                return;
+        //                            }
+        //                        }
+
+        //                        if (angular.isDefined($scope.min) && angular.isDefined($scope.value) && $scope.value != null) {
+        //                            if ($scope.value.length < parseInt($scope.min)) {
+        //                                $scope.$valid = false;
+        //                                $scope.state.$errors = [$filter('translate')('EDITOR_MIN_CHARS', $scope.min)];
+        //                                return;
+        //                            }
+        //                        }
+
+        //                        if (angular.isDefined($scope.max) && angular.isDefined($scope.value) && $scope.value != null) {
+        //                            if ($scope.value.length > parseInt($scope.max)) {
+        //                                $scope.$valid = false;
+        //                                $scope.state.$errors = [$filter('translate')('EDITOR_MAX_CHARS', $scope.max)];
+        //                                return;
+        //                            }
+        //                        }
+        //                    };
+
+        //                    tubularEditorService.setupScope($scope);
+        //                }
+        //            ]
+        //        };
+        //    }
+        //])
+        .component('tbSimpleEditor', {
+                    template: '<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : $ctrl.!$valid && $ctrl.$dirty() }">' +
+                        '<span ng-hide="$ctrl.isEditing">{{$ctrl.value}}</span>' +
+                        '<label ng-show="$ctrl.showLabel">{{ $ctrl.label }}</label>' +
+                        '<input type="{{$ctrl.editorType}}" placeholder="{{$ctrl.placeholder}}" ng-show="$ctrl.isEditing" ng-model="$ctrl.value" class="form-control" ' +
+                        ' ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}" />' +
+                        '<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">{{$ctrl.error}}</span>' +
+                        '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help">{{$ctrl.help}}</span>' +
                         '</div>',
-                    restrict: 'E',
-                    replace: true,
                     transclude: true,
-                    scope: angular.extend({ regex: '@?', regexErrorMessage: '@?' }, tubularEditorService.defaultScope),
+                    bindings: {
+                        regex: '@?',
+                        regexErrorMessage: '@?',
+                        value: '=?',
+                        isEditing: '=?',
+                        editorType: '@',
+                        showLabel: '=?',
+                        label: '@?',
+                        required: '=?',
+                        format: '@?',
+                        min: '=?',
+                        max: '=?',
+                        name: '@',
+                        placeholder: '@?',
+                        readOnly: '=?',
+                        help: '@?',
+                        defaultValue: '@?',
+                        match: '@?'
+                    },
                     controller: [
-                        '$scope', function($scope) {
-                            $scope.validate = function () {
-                                if (angular.isDefined($scope.regex) && $scope.regex != null && angular.isDefined($scope.value) && $scope.value != null && $scope.value != '') {
-                                    var patt = new RegExp($scope.regex);
+                        'tubularEditorService', '$scope', '$filter', function (tubularEditorService, $scope, $filter) {
+                            var ctrl = this;
 
-                                    if (patt.test($scope.value) === false) {
-                                        $scope.$valid = false;
-                                        $scope.state.$errors = [$scope.regexErrorMessage || $filter('translate')('EDITOR_REGEX_DOESNT_MATCH')];
+                            ctrl.validate = function () {
+                                if (angular.isDefined(ctrl.regex) && ctrl.regex != null && angular.isDefined(ctrl.value) && ctrl.value != null && ctrl.value != '') {
+                                    var patt = new RegExp(ctrl.regex);
+
+                                    if (patt.test(ctrl.value) === false) {
+                                        ctrl.$valid = false;
+                                        ctrl.state.$errors = [ctrl.regexErrorMessage || $filter('translate')('EDITOR_REGEX_DOESNT_MATCH')];
                                         return;
                                     }
                                 }
 
-                                if (angular.isDefined($scope.match) && $scope.match) {
-                                    if ($scope.value != $scope.$component.model[$scope.match]) {
-                                        var label = $filter('filter')($scope.$component.fields, { name: $scope.match }, true)[0].label;
-                                        $scope.$valid = false;
-                                        $scope.state.$errors = [$filter('translate')('EDITOR_MATCH', label)];
+                                if (angular.isDefined(ctrl.match) && ctrl.match) {
+                                    if (ctrl.value != $scope.$component.model[ctrl.match]) {
+                                        var label = $filter('filter')($scope.$component.fields, { name: ctrl.match }, true)[0].label;
+                                        ctrl.$valid = false;
+                                        ctrl.state.$errors = [$filter('translate')('EDITOR_MATCH', label)];
                                         return;
                                     }
                                 }
 
-                                if (angular.isDefined($scope.min) && angular.isDefined($scope.value) && $scope.value != null) {
-                                    if ($scope.value.length < parseInt($scope.min)) {
-                                        $scope.$valid = false;
-                                        $scope.state.$errors = [$filter('translate')('EDITOR_MIN_CHARS', $scope.min)];
+                                if (angular.isDefined(ctrl.min) && angular.isDefined(ctrl.value) && ctrl.value != null) {
+                                    if (ctrl.value.length < parseInt(ctrl.min)) {
+                                        ctrl.$valid = false;
+                                        ctrl.state.$errors = [$filter('translate')('EDITOR_MIN_CHARS', ctrl.min)];
                                         return;
                                     }
                                 }
 
-                                if (angular.isDefined($scope.max) && angular.isDefined($scope.value) && $scope.value != null) {
-                                    if ($scope.value.length > parseInt($scope.max)) {
-                                        $scope.$valid = false;
-                                        $scope.state.$errors = [$filter('translate')('EDITOR_MAX_CHARS', $scope.max)];
+                                if (angular.isDefined(ctrl.max) && angular.isDefined(ctrl.value) && ctrl.value != null) {
+                                    if (ctrl.value.length > parseInt(ctrl.max)) {
+                                        ctrl.$valid = false;
+                                        ctrl.state.$errors = [$filter('translate')('EDITOR_MAX_CHARS', ctrl.max)];
                                         return;
                                     }
                                 }
                             };
 
-                            tubularEditorService.setupScope($scope);
+                            tubularEditorService.setupScope($scope, null, ctrl);
                         }
                     ]
-                };
-            }
-        ])
+            })
         /**
          * @ngdoc directive
          * @name tbNumericEditor

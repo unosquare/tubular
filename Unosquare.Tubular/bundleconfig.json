@@ -20,7 +20,8 @@
       "Javascript/tubular/tubular-services-template.js",
       "Javascript/tubular/tubular-services-i18n.js",
       "Javascript/tadaaapickr/tadaaapickr.pack.js"
-    ]
+    ],
+    "sourceMap": false
   },
   {
     "outputFileName": "Css/tubular-bundle.css",
@@ -29,32 +30,37 @@
       "Css/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css",
       "Css/angular-chartjs/angular-chart.css",
       "Css/tubular/tubular.css"
-    ]
+    ],
+    "sourceMap": false
   },
   {
     "outputFileName": "Javascript/tubular-chartjs-bundle.js",
     "inputFiles": [
       "Javascript/tubular-chart/tubular-directives-chartjs.js",
       "Javascript/angular-chartjs/angular-chart.js"
-    ]
+    ],
+    "sourceMap": false
   },
   {
     "outputFileName": "Javascript/tubular-highcharts-bundle.js",
     "inputFiles": [
       "Javascript/tubular-chart/tubular-directives-highcharts.js",
       "Javascript/highchartjs-ng/highcharts-ng.min.js"
-    ]
+    ],
+    "sourceMap": false
   },
   {
     "outputFileName": "Javascript/tubular-reporting-bundle.js",
     "inputFiles": [
       "Javascript/tubular-reporting/tubular-directives-reporting.js"
-    ]
+    ],
+    "sourceMap": false
   },
   {
     "outputFileName": "Javascript/tubular-widget-bundle.js",
     "inputFiles": [
       "Javascript/tubular-widget/tubular-directives-widget.js"
-    ]
+    ],
+    "sourceMap": false
   }
 ]
