@@ -846,40 +846,38 @@
          * 
          * @param {string} columnName Setting the related column, by passing the name, the cell can share attributes (like visibility) with the column.
          */
-        .directive('tbCellTemplate', [
-            function() {
+        .component('tbCellTemplate', {
+            require: {
+                $component: '^tbGrid'
+            },
+            template: '<ng-transclude ng-show="$ctrl.column.Visible" data-label="{{::$ctrl.column.Label}}"></ng-transclude>',
+            transclude: true,
+            bindings: {
+                columnName: '@?'
+            },
+            controller: [
+                '$scope', function ($scope) {
+                    var $ctrl = this;
 
-                return {
-                    require: '^tbRowTemplate',
-                    template: '<td ng-transclude ng-show="column.Visible" data-label="{{::column.Label}}"></td>',
-                    restrict: 'E',
-                    replace: true,
-                    transclude: true,
-                    scope: {
-                        columnName: '@?'
-                    },
-                    controller: [
-                        '$scope', function($scope) {
-                            $scope.column = { Visible: true };
-                            $scope.columnName = $scope.columnName || null;
-                            $scope.$component = $scope.$parent.$parent.$component;
+                    $ctrl.$onInit = function() {
+                        $ctrl.column = { Visible: true };
+                        $ctrl.columnName = $ctrl.columnName || null;
 
-                            $scope.getFormScope = function() {
-                                // TODO: Implement a form in inline editors
-                                return null;
-                            };
+                        if ($ctrl.columnName != null) {
+                            var columnModel = $ctrl.$component.columns
+                                .filter(function (el) { return el.Name === $ctrl.columnName; });
 
-                            if ($scope.columnName != null) {
-                                var columnModel = $scope.$component.columns
-                                    .filter(function(el) { return el.Name === $scope.columnName; });
-
-                                if (columnModel.length > 0) {
-                                    $scope.column = columnModel[0];
-                                }
+                            if (columnModel.length > 0) {
+                                $ctrl.column = columnModel[0];
                             }
                         }
-                    ]
-                };
-            }
-        ]);
+                    }
+
+                    $ctrl.getFormScope = function () {
+                        // TODO: Implement a form in inline editors
+                        return null;
+                    };
+                }
+            ]
+        });
 })();
