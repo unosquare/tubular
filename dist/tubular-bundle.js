@@ -1673,14 +1673,12 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 showLabel: '=?',
                 label: '@?',
                 required: '=?',
-                format: '@?',
                 min: '=?',
                 max: '=?',
                 name: '@',
                 placeholder: '@?',
                 readOnly: '=?',
                 help: '@?',
-                defaultValue: '@?',
                 match: '@?'
             },
             controller: [
@@ -1776,7 +1774,6 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             bindings: {
                 value: '=?',
                 isEditing: '=?',
-                editorType: '@',
                 showLabel: '=?',
                 label: '@?',
                 required: '=?',
@@ -1787,8 +1784,6 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 placeholder: '@?',
                 readOnly: '=?',
                 help: '@?',
-                defaultValue: '@?',
-                match: '@?',
                 step: '=?'
             },
             controller: [
@@ -2002,19 +1997,13 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             bindings: {
                 value: '=?',
                 isEditing: '=?',
-                editorType: '@',
                 showLabel: '=?',
                 label: '@?',
                 required: '=?',
-                format: '@?',
-                min: '=?',
-                max: '=?',
                 name: '@',
-                placeholder: '@?',
                 readOnly: '=?',
                 help: '@?',
                 defaultValue: '@?',
-                match: '@?',
                 options: '=?',
                 optionsUrl: '@',
                 optionsMethod: '@?',
@@ -2221,20 +2210,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             transclude: true,
             bindings: {
                 value: '=?',
-                isEditing: '=?',
-                editorType: '@',
-                showLabel: '=?',
-                label: '@?',
-                required: '=?',
-                format: '@?',
-                min: '=?',
-                max: '=?',
                 name: '@',
-                placeholder: '@?',
-                readOnly: '=?',
-                help: '@?',
-                defaultValue: '@?',
-                match: '@?'
             },
             controller: [
                 'tubularEditorService', '$scope', function (tubularEditorService, $scope) {
@@ -2284,15 +2260,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 showLabel: '=?',
                 label: '@?',
                 required: '=?',
-                format: '@?',
-                min: '=?',
-                max: '=?',
                 name: '@',
-                placeholder: '@?',
                 readOnly: '=?',
                 help: '@?',
-                defaultValue: '@?',
-                match: '@?',
                 checkedValue: '=?',
                 uncheckedValue: '=?'
             },
@@ -2300,9 +2270,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 'tubularEditorService', '$scope', '$element', function (tubularEditorService, $scope) {
                     var $ctrl = this;
 
-                    $scope.required = false; // overwrite required to false always
-                    $scope.checkedValue = angular.isDefined($scope.checkedValue) ? $scope.checkedValue : true;
-                    $scope.uncheckedValue = angular.isDefined($scope.uncheckedValue) ? $scope.uncheckedValue : false;
+                    $ctrl.required = false; // overwrite required to false always
+                    $ctrl.checkedValue = angular.isDefined($ctrl.checkedValue) ? $ctrl.checkedValue : true;
+                    $ctrl.uncheckedValue = angular.isDefined($ctrl.uncheckedValue) ? $ctrl.uncheckedValue : false;
 
                     tubularEditorService.setupScope($scope, null, $ctrl);
                 }
@@ -2347,19 +2317,15 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             bindings: {
                 value: '=?',
                 isEditing: '=?',
-                editorType: '@',
                 showLabel: '=?',
                 label: '@?',
+                placeholder: '@?',
                 required: '=?',
-                format: '@?',
                 min: '=?',
                 max: '=?',
                 name: '@',
-                placeholder: '@?',
                 readOnly: '=?',
                 help: '@?',
-                defaultValue: '@?',
-                match: '@?'
             },
             controller: [
                 'tubularEditorService', '$scope', '$filter', function (tubularEditorService, $scope, $filter) {

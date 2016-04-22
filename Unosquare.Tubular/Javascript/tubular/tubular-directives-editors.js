@@ -47,14 +47,12 @@
                 showLabel: '=?',
                 label: '@?',
                 required: '=?',
-                format: '@?',
                 min: '=?',
                 max: '=?',
                 name: '@',
                 placeholder: '@?',
                 readOnly: '=?',
                 help: '@?',
-                defaultValue: '@?',
                 match: '@?'
             },
             controller: [
@@ -150,7 +148,6 @@
             bindings: {
                 value: '=?',
                 isEditing: '=?',
-                editorType: '@',
                 showLabel: '=?',
                 label: '@?',
                 required: '=?',
@@ -161,8 +158,6 @@
                 placeholder: '@?',
                 readOnly: '=?',
                 help: '@?',
-                defaultValue: '@?',
-                match: '@?',
                 step: '=?'
             },
             controller: [
@@ -376,19 +371,13 @@
             bindings: {
                 value: '=?',
                 isEditing: '=?',
-                editorType: '@',
                 showLabel: '=?',
                 label: '@?',
                 required: '=?',
-                format: '@?',
-                min: '=?',
-                max: '=?',
                 name: '@',
-                placeholder: '@?',
                 readOnly: '=?',
                 help: '@?',
                 defaultValue: '@?',
-                match: '@?',
                 options: '=?',
                 optionsUrl: '@',
                 optionsMethod: '@?',
@@ -595,20 +584,7 @@
             transclude: true,
             bindings: {
                 value: '=?',
-                isEditing: '=?',
-                editorType: '@',
-                showLabel: '=?',
-                label: '@?',
-                required: '=?',
-                format: '@?',
-                min: '=?',
-                max: '=?',
                 name: '@',
-                placeholder: '@?',
-                readOnly: '=?',
-                help: '@?',
-                defaultValue: '@?',
-                match: '@?'
             },
             controller: [
                 'tubularEditorService', '$scope', function (tubularEditorService, $scope) {
@@ -658,15 +634,9 @@
                 showLabel: '=?',
                 label: '@?',
                 required: '=?',
-                format: '@?',
-                min: '=?',
-                max: '=?',
                 name: '@',
-                placeholder: '@?',
                 readOnly: '=?',
                 help: '@?',
-                defaultValue: '@?',
-                match: '@?',
                 checkedValue: '=?',
                 uncheckedValue: '=?'
             },
@@ -674,9 +644,9 @@
                 'tubularEditorService', '$scope', '$element', function (tubularEditorService, $scope) {
                     var $ctrl = this;
 
-                    $scope.required = false; // overwrite required to false always
-                    $scope.checkedValue = angular.isDefined($scope.checkedValue) ? $scope.checkedValue : true;
-                    $scope.uncheckedValue = angular.isDefined($scope.uncheckedValue) ? $scope.uncheckedValue : false;
+                    $ctrl.required = false; // overwrite required to false always
+                    $ctrl.checkedValue = angular.isDefined($ctrl.checkedValue) ? $ctrl.checkedValue : true;
+                    $ctrl.uncheckedValue = angular.isDefined($ctrl.uncheckedValue) ? $ctrl.uncheckedValue : false;
 
                     tubularEditorService.setupScope($scope, null, $ctrl);
                 }
@@ -721,19 +691,15 @@
             bindings: {
                 value: '=?',
                 isEditing: '=?',
-                editorType: '@',
                 showLabel: '=?',
                 label: '@?',
+                placeholder: '@?',
                 required: '=?',
-                format: '@?',
                 min: '=?',
                 max: '=?',
                 name: '@',
-                placeholder: '@?',
                 readOnly: '=?',
                 help: '@?',
-                defaultValue: '@?',
-                match: '@?'
             },
             controller: [
                 'tubularEditorService', '$scope', '$filter', function (tubularEditorService, $scope, $filter) {
