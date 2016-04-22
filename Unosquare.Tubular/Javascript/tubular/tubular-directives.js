@@ -342,7 +342,7 @@
 
                                 $ctrl.dataSource = data;
 
-                                $ctrl.rows = data.Payload.map(function (el) {
+                                $ctrl.rows = data.Payload.map(function(el) {
                                     var model = new TubularModel($scope, $ctrl, el, $ctrl.dataService);
                                     model.$component = $ctrl;
 
@@ -658,8 +658,7 @@
          * @scope
          */
         .directive('tbColumnHeader', [
-            '$compile', function($compile) {
-
+            function() {
                 return {
                     require: '^tbColumn',
                     template: '<span><a title="Click to sort. Press Ctrl to sort by multiple columns" class="column-header" href ng-click="sortColumn($event)">' +
@@ -679,10 +678,10 @@
                             // this listener here is used for backwards compatibility with tbColumnHeader requiring a scope.label value on its own
                             $scope.$on('tbColumn_LabelChanged', function($event, value) {
                                 $scope.label = value;
-                            })
+                            });
                         }
                     ],
-                    link: function($scope, $element, $attrs, controller) {
+                    link: function($scope, $element) {
                         if ($element.find('[ng-transclude] *').length > 0) {
                             $element.find('span.column-header-default').remove();
                         }

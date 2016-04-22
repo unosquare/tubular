@@ -525,7 +525,7 @@ div.tubular-overlay {
 
     div.tubular-overlay > div {
         position: absolute;
-        background-color: rgb(180,180,180);
+        background-color: #b4b4b4;
         color: #fff;
         height: 100%;
         top: 0;
@@ -572,7 +572,7 @@ div.tubular-general-overlay {
 
     div.tubular-general-overlay > div {
         position: absolute;
-        background-color: rgb(180,180,180);
+        background-color: #b4b4b4;
         color: #fff;
         height: 100%;
         width: 100%;
