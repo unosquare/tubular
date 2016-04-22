@@ -20,6 +20,8 @@
         <tb-numeric-editor name="InvalidIntField" label="Invalid Numeric Field" show-label="true"
                            required="true">
         </tb-numeric-editor>
+        <tb-text-area name="testTextArea" label="Test" show-label="true" max="10"
+                      required="true"></tb-text-area>
     </div>
     <div class="modal-footer">
         <button class="btn btn-primary" ng-click="savePopup()" ng-disabled="!Model.$valid()">

@@ -618,8 +618,7 @@
                             parent = parent.$parent;
                         }
                     }
-                    else
-                    {
+                    else {
                         ctrl.isEditing = angular.isUndefined(ctrl.isEditing) ? true : ctrl.isEditing;
                         ctrl.showLabel = ctrl.showLabel || false;
                         ctrl.label = ctrl.label || (ctrl.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
