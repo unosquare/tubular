@@ -23,8 +23,8 @@
   "homepage": "http://unosquare.github.io/tubular",
   "devDependencies": {
     "canonical-path": "0.0.2",
-    "dgeni": "^0.4.1",
-    "dgeni-packages": "git://github.com/angular/dgeni-packages.git#angular-docs",
-    "gulp": "^3.8.11"
+    "dgeni": "^0.4.2",
+    "dgeni-packages": "0.12.0",
+    "gulp": "^3.9.1"
   }
 }
