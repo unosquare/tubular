@@ -2865,7 +2865,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 placeholder: '@'
             },
             controller: [
-                '$scope', function ($scope) {
+                '$scope', function($scope) {
                     var $ctrl = this;
 
                     $ctrl.$onInit = function() {
@@ -3191,11 +3191,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 caption: '@'
             },
             controller: [
-                '$scope', function ($scope) {
+                '$scope', function($scope) {
                     var $ctrl = this;
 
-                    $ctrl.printGrid = function () {
-                        $ctrl.$component.getFullDataSource(function (data) {
+                    $ctrl.printGrid = function() {
+                        $ctrl.$component.getFullDataSource(function(data) {
                             var tableHtml = "<table class='table table-bordered table-striped'><thead><tr>"
                                 + $ctrl.$component.columns
                                 .filter(function(c) { return c.Visible; })

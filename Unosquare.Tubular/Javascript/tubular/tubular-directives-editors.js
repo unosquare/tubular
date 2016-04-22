@@ -408,7 +408,9 @@
                             };
 
                             if (angular.isDefined($scope.optionsUrl)) {
-                                $scope.$watch('optionsUrl', function() {
+                                $scope.$watch('optionsUrl', function (val, prev) {
+                                    if (val == prev) return;
+
                                     $scope.dataIsLoaded = false;
                                     $scope.loadData();
                                 });
