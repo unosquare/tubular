@@ -12,15 +12,17 @@
          * @param {number} minChars How many chars before to search, default 3.
          */
         .component('tbTextSearch', {
-            require: '^tbGrid',
+            require: {
+                $component: '^tbGrid'
+            },
             template:
                 '<div class="tubular-grid-search">' +
                     '<div class="input-group input-group-sm">' +
                     '<span class="input-group-addon"><i class="fa fa-search"></i></span>' +
                     '<input type="search" class="form-control" placeholder="{{:: $ctrl.placeholder || (\'UI_SEARCH\' | translate) }}" maxlength="20" ' +
                     'ng-model="$component.search.Text" ng-model-options="{ debounce: 300 }">' +
-                    '<span class="input-group-btn" ng-show="$component.search.Text.length > 0">' +
-                    '<button class="btn btn-default" uib-tooltip="{{\'CAPTION_CLEAR\' | translate}}" ng-click="$component.search.Text = \'\'">' +
+                    '<span class="input-group-btn" ng-show="$ctrl.$component.search.Text.length > 0">' +
+                    '<button class="btn btn-default" uib-tooltip="{{\'CAPTION_CLEAR\' | translate}}" ng-click="$ctrl.$component.search.Text = \'\'">' +
                     '<i class="fa fa-times-circle"></i>' +
                     '</button>' +
                     '</span>' +
@@ -36,9 +38,7 @@
                     var $ctrl = this;
 
                     $ctrl.$onInit = function() {
-                        $ctrl.$component = $scope.$parent.$parent.$ctrl;
                         $ctrl.minChars = $ctrl.minChars || 3;
-                        $ctrl.tubularDirective = 'tubular-grid-text-search';
                         $ctrl.lastSearch = $ctrl.$component.search.Text;
                     };
 
@@ -46,6 +46,8 @@
                         if (angular.isUndefined(val) || val === prev) {
                             return;
                         }
+
+                        $ctrl.$component.search.Text = val;
 
                         if ($ctrl.lastSearch !== "" && val === "") {
                             $ctrl.$component.saveSearch();
