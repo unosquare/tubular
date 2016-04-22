@@ -12,15 +12,13 @@
      */
     angular.module('tubular.directives', ['tubular.services', 'tubular.models'])
         /**
-         * @ngdoc directive
+         * @ngdoc component
          * @name tbGrid
          * @restrict E
          *
          * @description
          * The `tbGrid` directive is the base to create any grid. This is the root node where you should start
          * designing your grid. Don't need to add a `controller`.
-         * 
-         * @scope
          * 
          * @param {string} serverUrl Set the HTTP URL where the data comes.
          * @param {string} serverSaveUrl Set the HTTP URL where the data will be saved.
@@ -43,467 +41,466 @@
          * You must start creating a `tbGrid` as root node to display a Tubular Grid.
          * <tb-grid></tb-grid>
          */
-        .directive('tbGrid', [
-            function() {
-                return {
-                    template: '<div class="tubular-grid">' +
-                        '<div class="tubular-overlay" ng-show="showLoading && currentRequest != null"><div><div class="fa fa-refresh fa-2x fa-spin"></div></div></div>' +
-                        '<ng-transclude></ng-transclude>' +
-                        '</div>',
-                    restrict: 'E',
-                    replace: true,
-                    transclude: true,
-                    scope: {
-                        serverUrl: '@',
-                        serverSaveUrl: '@',
-                        serverDeleteUrl: '@',
-                        serverSaveMethod: '@',
-                        pageSize: '=?',
-                        onBeforeGetData: '=?',
-                        requestMethod: '@',
-                        dataServiceName: '@?serviceName',
-                        requireAuthentication: '@?',
-                        name: '@?gridName',
-                        editorMode: '@?',
-                        showLoading: '=?',
-                        autoRefresh: '=?',
-                        savePage: '=?',
-                        savePageSize: '=?',
-                        saveSearch: '=?'
-                    },
-                    controller: [
-                        '$scope', 'localStorageService', 'tubularPopupService', 'tubularModel', 'tubularHttp', '$routeParams',
-                        function($scope, localStorageService, tubularPopupService, TubularModel, tubularHttp, $routeParams) {
-                            $scope.name = $scope.name || 'tbgrid';
-                            $scope.tubularDirective = 'tubular-grid';
-                            $scope.columns = [];
-                            $scope.rows = [];
-
-                            $scope.savePage = angular.isUndefined($scope.savePage) ? true : $scope.savePage;
-                            $scope.currentPage = $scope.savePage ? (localStorageService.get($scope.name + "_page") || 1) : 1;
-
-                            $scope.savePageSize = angular.isUndefined($scope.savePageSize) ? true : $scope.savePageSize;
-                            $scope.pageSize = angular.isUndefined($scope.pageSize) ? 20 : $scope.pageSize;
-                            $scope.saveSearch = angular.isUndefined($scope.saveSearch) ? true : $scope.saveSearch;
-                            $scope.totalPages = 0;
-                            $scope.totalRecordCount = 0;
-                            $scope.filteredRecordCount = 0;
-                            $scope.requestedPage = $scope.currentPage;
-                            $scope.hasColumnsDefinitions = false;
-                            $scope.requestCounter = 0;
-                            $scope.requestMethod = $scope.requestMethod || 'POST';
-                            $scope.serverSaveMethod = $scope.serverSaveMethod || 'POST';
-                            $scope.requestTimeout = 15000;
-                            $scope.currentRequest = null;
-                            $scope.autoSearch = $routeParams.param || ($scope.saveSearch ? (localStorageService.get($scope.name + "_search") || '') : '');
-                            $scope.search = {
-                                Text: $scope.autoSearch,
-                                Operator: $scope.autoSearch == '' ? 'None' : 'Auto'
-                            };
-
-                            $scope.isEmpty = false;
-                            $scope.tempRow = new TubularModel($scope, {});
-                            $scope.dataService = tubularHttp.getDataService($scope.dataServiceName);
-                            $scope.requireAuthentication = $scope.requireAuthentication || true;
-                            tubularHttp.setRequireAuthentication($scope.requireAuthentication);
-                            $scope.editorMode = $scope.editorMode || 'none';
-                            $scope.canSaveState = false;
-                            $scope.groupBy = '';
-                            $scope.showLoading = angular.isUndefined($scope.showLoading) ? true : $scope.showLoading;
-                            $scope.autoRefresh = angular.isUndefined($scope.autoRefresh) ? true : $scope.autoRefresh;
-                            $scope.serverDeleteUrl = $scope.serverDeleteUrl || $scope.serverSaveUrl;
-
-                            $scope.$watch('columns', function() {
-                                if ($scope.hasColumnsDefinitions === false || $scope.canSaveState === false) {
-                                    return;
-                                }
-
-                                localStorageService.set($scope.name + "_columns", $scope.columns);
-                            }, true);
-
-                            $scope.$watch('serverUrl', function(newVal, prevVal) {
-                                if ($scope.hasColumnsDefinitions === false || $scope.currentRequest || newVal === prevVal) {
-                                    return;
-                                }
-
-                                $scope.retrieveData();
-                            }, true);
-
-                            $scope.saveSearch = function() {
-                                if ($scope.saveSearch) {
-                                    if ($scope.search.Text === '') {
-                                        localStorageService.remove($scope.name + "_search");
-                                    } else {
-                                        localStorageService.set($scope.name + "_search", $scope.search.Text);
-                                    }
-                                }
-                            };
-
-                            $scope.addColumn = function(item) {
-                                if (item.Name == null) {
-                                    return;
-                                }
-
-                                if ($scope.hasColumnsDefinitions !== false) {
-                                    throw 'Cannot define more columns. Column definitions have been sealed';
-                                }
-
-                                $scope.columns.push(item);
-                            };
-
-                            $scope.newRow = function(template, popup, size) {
-                                $scope.tempRow = new TubularModel($scope, {}, $scope.dataService);
-                                $scope.tempRow.$isNew = true;
-                                $scope.tempRow.$isEditing = true;
-                                $scope.tempRow.$component = $scope;
-
-                                if (angular.isDefined(template)) {
-                                    if (angular.isDefined(popup) && popup) {
-                                        tubularPopupService.openDialog(template, $scope.tempRow, $scope, size);
-                                    }
-                                }
-                            };
-
-                            $scope.deleteRow = function (row) {
-                                var urlparts = $scope.serverDeleteUrl.split('?');
-                                var url = urlparts[0] + "/" + row.$key;
-
-                                if (urlparts.length > 1) {
-                                    url += '?' + urlparts[1];
-                                }
-
-                                var request = {
-                                    serverUrl: url,
-                                    requestMethod: 'DELETE',
-                                    timeout: $scope.requestTimeout,
-                                    requireAuthentication: $scope.requireAuthentication,
-                                };
-
-                                $scope.currentRequest = $scope.dataService.retrieveDataAsync(request);
-
-                                $scope.currentRequest.promise.then(
-                                    function(data) {
-                                        row.$hasChanges = false;
-                                        $scope.$emit('tbGrid_OnRemove', data);
-                                    }, function(error) {
-                                        $scope.$emit('tbGrid_OnConnectionError', error);
-                                    }).then(function() {
-                                    $scope.currentRequest = null;
-                                    $scope.retrieveData();
-                                });
-                            };
-
-                            $scope.verifyColumns = function() {
-                                var columns = localStorageService.get($scope.name + "_columns");
-                                if (columns == null || columns === "") {
-                                    // Nothing in settings, saving initial state
-                                    localStorageService.set($scope.name + "_columns", $scope.columns);
-                                    return;
-                                }
-
-                                for (var index in columns) {
-                                    if (columns.hasOwnProperty(index)) {
-                                        var columnName = columns[index].Name;
-                                        var filtered = $scope.columns.filter(function(el) { return el.Name == columnName; });
-
-                                        if (filtered.length === 0) {
-                                            continue;
-                                        }
-
-                                        var current = filtered[0];
-                                        // Updates visibility by now
-                                        current.Visible = columns[index].Visible;
-
-                                        // Update sorting
-                                        if ($scope.requestCounter < 1) {
-                                            current.SortOrder = columns[index].SortOrder;
-                                            current.SortDirection = columns[index].SortDirection;
-                                        }
-
-                                        // Update Filters
-                                        if (current.Filter != null && current.Filter.Text != null) {
-                                            continue;
-                                        }
-
-                                        if (columns[index].Filter != null && columns[index].Filter.Text != null && columns[index].Filter.Operator != 'None') {
-                                            current.Filter = columns[index].Filter;
-                                        }
-                                    }
-                                }
-                            };
-
-                            $scope.retrieveData = function() {
-                                // If the ServerUrl is empty skip data load
-                                if ($scope.serverUrl == '') {
-                                    return;
-                                }
-
-                                $scope.canSaveState = true;
-                                $scope.verifyColumns();
-
-                                if ($scope.savePageSize) {
-                                    $scope.pageSize = (localStorageService.get($scope.name + "_pageSize") || $scope.pageSize);
-                                }
-
-                                if ($scope.pageSize < 10) $scope.pageSize = 20; // default
-
-                                var skip = ($scope.requestedPage - 1) * $scope.pageSize;
-
-                                if (skip < 0) skip = 0;
-
-                                var request = {
-                                    serverUrl: $scope.serverUrl,
-                                    requestMethod: $scope.requestMethod || 'POST',
-                                    timeout: $scope.requestTimeout,
-                                    requireAuthentication: $scope.requireAuthentication,
-                                    data: {
-                                        Count: $scope.requestCounter,
-                                        Columns: $scope.columns,
-                                        Skip: skip,
-                                        Take: parseInt($scope.pageSize),
-                                        Search: $scope.search,
-                                        TimezoneOffset: new Date().getTimezoneOffset()
-                                    }
-                                };
-
-                                if ($scope.currentRequest !== null) {
-                                    // This message is annoying when you connect errors to toastr
-                                    //$scope.currentRequest.cancel('tubularGrid(' + $scope.$id + '): new request coming.');
-                                    return;
-                                }
-
-                                if (angular.isUndefined($scope.onBeforeGetData) === false) {
-                                    $scope.onBeforeGetData();
-                                }
-
-                                $scope.$emit('tbGrid_OnBeforeRequest', request, $scope);
-
-                                $scope.currentRequest = $scope.dataService.retrieveDataAsync(request);
-
-                                $scope.currentRequest.promise.then(
-                                    function(data) {
-                                        $scope.requestCounter += 1;
-
-                                        if (angular.isUndefined(data) || data == null) {
-                                            $scope.$emit('tbGrid_OnConnectionError', {
-                                                statusText: "Data is empty",
-                                                status: 0
-                                            });
-
-                                            return;
-                                        }
-
-                                        $scope.dataSource = data;
-
-                                        $scope.rows = data.Payload.map(function(el) {
-                                            var model = new TubularModel($scope, el, $scope.dataService);
-                                            model.$component = $scope;
-
-                                            model.editPopup = function(template, size) {
-                                                tubularPopupService.openDialog(template, model, $scope, size);
-                                            };
-
-                                            return model;
-                                        });
-
-                                        $scope.$emit('tbGrid_OnDataLoaded', $scope);
-
-                                        $scope.aggregationFunctions = data.AggregationPayload;
-                                        $scope.currentPage = data.CurrentPage;
-                                        $scope.totalPages = data.TotalPages;
-                                        $scope.totalRecordCount = data.TotalRecordCount;
-                                        $scope.filteredRecordCount = data.FilteredRecordCount;
-                                        $scope.isEmpty = $scope.filteredRecordCount === 0;
-
-                                        if ($scope.savePage) {
-                                            localStorageService.set($scope.name + "_page", $scope.currentPage);
-                                        }
-                                    }, function(error) {
-                                        $scope.requestedPage = $scope.currentPage;
-                                        $scope.$emit('tbGrid_OnConnectionError', error);
-                                    }).then(function() {
-                                    $scope.currentRequest = null;
-                                });
-                            };
-
-                            $scope.$watch('hasColumnsDefinitions', function(newVal) {
-                                if (newVal !== true) return;
-
-                                var isGrouping = false;
-                                // Check columns
-                                angular.forEach($scope.columns, function(column) {
-                                    if (column.IsGrouping) {
-                                        if (isGrouping) {
-                                            throw 'Only one column is allowed to grouping';
-                                        }
-
-                                        isGrouping = true;
-                                        column.Visible = false;
-                                        column.Sortable = true;
-                                        column.SortOrder = 1;
-                                        $scope.groupBy = column.Name;
-                                    }
-                                });
-
-                                angular.forEach($scope.columns, function(column) {
-                                    if ($scope.groupBy == column.Name) return;
-
-                                    if (column.Sortable && column.SortOrder > 0) {
-                                        column.SortOrder++;
-                                    }
-                                });
-
-                                $scope.retrieveData();
-                            });
-
-                            $scope.$watch('pageSize', function() {
-                                if ($scope.hasColumnsDefinitions && $scope.requestCounter > 0) {
-                                    if ($scope.savePageSize) {
-                                        localStorageService.set($scope.name + "_pageSize", $scope.pageSize);
-                                    }
-                                    $scope.retrieveData();
-                                }
-                            });
-
-                            $scope.$watch('requestedPage', function() {
-                                // TODO: we still need to inter-lock failed, initial and paged requests
-                                if ($scope.hasColumnsDefinitions && $scope.requestCounter > 0) {
-                                    $scope.retrieveData();
-                                }
-                            });
-
-                            $scope.sortColumn = function(columnName, multiple) {
-                                var filterColumn = $scope.columns.filter(function(el) {
-                                    return el.Name === columnName;
-                                });
-
-                                if (filterColumn.length === 0) return;
-
-                                var column = filterColumn[0];
-
-                                if (column.Sortable === false) return;
-
-                                // need to know if it's currently sorted before we reset stuff
-                                var currentSortDirection = column.SortDirection;
-                                var toBeSortDirection = currentSortDirection === 'None' ? 'Ascending' : currentSortDirection === 'Ascending' ? 'Descending' : 'None';
-
-                                // the latest sorting takes less priority than previous sorts
-                                if (toBeSortDirection === 'None') {
-                                    column.SortOrder = -1;
-                                    column.SortDirection = 'None';
-                                } else {
-                                    column.SortOrder = Number.MAX_VALUE;
-                                    column.SortDirection = toBeSortDirection;
-                                }
-
-                                // if it's not a multiple sorting, remove the sorting from all other columns
-                                if (multiple === false) {
-                                    angular.forEach($scope.columns.filter(function(col) { return col.Name !== columnName; }), function(col) {
-                                        col.SortOrder = -1;
-                                        col.SortDirection = 'None';
-                                    });
-                                }
-
-                                // take the columns that actually need to be sorted in order to reindex them
-                                var currentlySortedColumns = $scope.columns.filter(function(col) {
-                                    return col.SortOrder > 0;
-                                });
-
-                                // reindex the sort order
-                                currentlySortedColumns.sort(function(a, b) {
-                                    return a.SortOrder == b.SortOrder ? 0 : a.SortOrder > b.SortOrder;
-                                });
-
-                                currentlySortedColumns.forEach(function(col, index) {
-                                    col.SortOrder = index + 1;
-                                });
-
-                                $scope.$broadcast('tbGrid_OnColumnSorted');
-
-                                $scope.retrieveData();
-                            };
-
-                            $scope.selectedRows = function() {
-                                var rows = localStorageService.get($scope.name + "_rows");
-                                if (rows == null || rows === "") {
-                                    rows = [];
-                                }
-
-                                return rows;
-                            };
-
-                            $scope.clearSelection = function() {
-                                angular.forEach($scope.rows, function(value) {
-                                    value.$selected = false;
-                                });
-
-                                localStorageService.set($scope.name + "_rows", []);
-                            };
-
-                            $scope.isEmptySelection = function() {
-                                return $scope.selectedRows().length === 0;
-                            };
-
-                            $scope.selectFromSession = function(row) {
-                                row.$selected = $scope.selectedRows().filter(function(el) {
-                                    return el.$key === row.$key;
-                                }).length > 0;
-                            };
-
-                            $scope.changeSelection = function(row) {
-                                if (angular.isUndefined(row)) return;
-
-                                row.$selected = !row.$selected;
-
-                                var rows = $scope.selectedRows();
-
-                                if (row.$selected) {
-                                    rows.push({ $key: row.$key });
-                                } else {
-                                    rows = rows.filter(function(el) {
-                                        return el.$key !== row.$key;
-                                    });
-                                }
-
-                                localStorageService.set($scope.name + "_rows", rows);
-                            };
-
-                            $scope.getFullDataSource = function(callback) {
-                                $scope.dataService.retrieveDataAsync({
-                                    serverUrl: $scope.serverUrl,
-                                    requestMethod: $scope.requestMethod || 'POST',
-                                    timeout: $scope.requestTimeout,
-                                    requireAuthentication: $scope.requireAuthentication,
-                                    data: {
-                                        Count: $scope.requestCounter,
-                                        Columns: $scope.columns,
-                                        Skip: 0,
-                                        Take: -1,
-                                        Search: {
-                                            Text: '',
-                                            Operator: 'None'
-                                        }
-                                    }
-                                }).promise.then(
-                                    function(data) {
-                                        callback(data.Payload);
-                                    }, function(error) {
-                                        $scope.$emit('tbGrid_OnConnectionError', error);
-                                    }).then(function() {
-                                    $scope.currentRequest = null;
-                                });
-                            };
-
-                            $scope.visibleColumns = function() {
-                                return $scope.columns.filter(function(el) { return el.Visible; }).length;
-                            };
-
-                            $scope.$emit('tbGrid_OnGreetParentController', $scope);
+        .component('tbGrid', {
+            template: '<div>' +
+                '<div class="tubular-overlay" ng-show="$ctrl.showLoading && $ctrl.currentRequest != null">' +
+                '<div><div class="fa fa-refresh fa-2x fa-spin"></div></div></div>' +
+                '<ng-transclude></ng-transclude>' +
+                '</div>',
+            transclude: true,
+            bindings: {
+                serverUrl: '@',
+                serverSaveUrl: '@',
+                serverDeleteUrl: '@',
+                serverSaveMethod: '@',
+                pageSize: '=?',
+                onBeforeGetData: '=?',
+                requestMethod: '@',
+                dataServiceName: '@?serviceName',
+                requireAuthentication: '@?',
+                name: '@?gridName',
+                editorMode: '@?',
+                showLoading: '=?',
+                autoRefresh: '=?',
+                savePage: '=?',
+                savePageSize: '=?',
+                saveSearch: '=?'
+            },
+            controller: [
+                '$scope', 'localStorageService', 'tubularPopupService', 'tubularModel', 'tubularHttp', '$routeParams',
+                function($scope, localStorageService, tubularPopupService, TubularModel, tubularHttp, $routeParams) {
+                    var $ctrl = this;
+
+                    $ctrl.$onInit = function() {
+                        $ctrl.tubularDirective = 'tubular-grid';
+
+                        $ctrl.name = $ctrl.name || 'tbgrid';
+                        $ctrl.columns = [];
+                        $ctrl.rows = [];
+
+                        $ctrl.savePage = angular.isUndefined($ctrl.savePage) ? true : $ctrl.savePage;
+                        $ctrl.currentPage = $ctrl.savePage ? (localStorageService.get($ctrl.name + "_page") || 1) : 1;
+
+                        $ctrl.savePageSize = angular.isUndefined($ctrl.savePageSize) ? true : $ctrl.savePageSize;
+                        $ctrl.pageSize = angular.isUndefined($ctrl.pageSize) ? 20 : $ctrl.pageSize;
+                        $ctrl.saveSearch = angular.isUndefined($ctrl.saveSearch) ? true : $ctrl.saveSearch;
+                        $ctrl.totalPages = 0;
+                        $ctrl.totalRecordCount = 0;
+                        $ctrl.filteredRecordCount = 0;
+                        $ctrl.requestedPage = $ctrl.currentPage;
+                        $ctrl.hasColumnsDefinitions = false;
+                        $ctrl.requestCounter = 0;
+                        $ctrl.requestMethod = $ctrl.requestMethod || 'POST';
+                        $ctrl.serverSaveMethod = $ctrl.serverSaveMethod || 'POST';
+                        $ctrl.requestTimeout = 15000;
+                        $ctrl.currentRequest = null;
+                        $ctrl.autoSearch = $routeParams.param || ($ctrl.saveSearch ? (localStorageService.get($ctrl.name + "_search") || '') : '');
+                        $ctrl.search = {
+                            Text: $ctrl.autoSearch,
+                            Operator: $ctrl.autoSearch == '' ? 'None' : 'Auto'
+                        };
+
+                        $ctrl.isEmpty = false;
+                        $ctrl.tempRow = new TubularModel($scope, $ctrl, {}, $ctrl.dataService);
+                        $ctrl.dataService = tubularHttp.getDataService($ctrl.dataServiceName);
+                        $ctrl.requireAuthentication = $ctrl.requireAuthentication || true;
+                        tubularHttp.setRequireAuthentication($ctrl.requireAuthentication);
+                        $ctrl.editorMode = $ctrl.editorMode || 'none';
+                        $ctrl.canSaveState = false;
+                        $ctrl.groupBy = '';
+                        $ctrl.showLoading = angular.isUndefined($ctrl.showLoading) ? true : $ctrl.showLoading;
+                        $ctrl.autoRefresh = angular.isUndefined($ctrl.autoRefresh) ? true : $ctrl.autoRefresh;
+                        $ctrl.serverDeleteUrl = $ctrl.serverDeleteUrl || $ctrl.serverSaveUrl;
+
+                        // Emit a welcome message
+                        $scope.$emit('tbGrid_OnGreetParentController', $ctrl);
+                    };
+
+                    $scope.$watch('$ctrl.columns', function() {
+                        if ($ctrl.hasColumnsDefinitions === false || $ctrl.canSaveState === false) {
+                            return;
                         }
-                    ]
-                };
-            }
-        ])
+
+                        localStorageService.set($ctrl.name + "_columns", $ctrl.columns);
+                    }, true);
+
+                    $scope.$watch('$ctrl.serverUrl', function(newVal, prevVal) {
+                        if ($ctrl.hasColumnsDefinitions === false || $ctrl.currentRequest || newVal === prevVal) {
+                            return;
+                        }
+
+                        $ctrl.retrieveData();
+                    }, true);
+
+                    $scope.$watch('$ctrl.hasColumnsDefinitions', function(newVal) {
+                        if (newVal !== true) return;
+
+                        var isGrouping = false;
+                        // Check columns
+                        angular.forEach($ctrl.columns, function(column) {
+                            if (column.IsGrouping) {
+                                if (isGrouping) {
+                                    throw 'Only one column is allowed to grouping';
+                                }
+
+                                isGrouping = true;
+                                column.Visible = false;
+                                column.Sortable = true;
+                                column.SortOrder = 1;
+                                $ctrl.groupBy = column.Name;
+                            }
+                        });
+
+                        angular.forEach($ctrl.columns, function(column) {
+                            if ($ctrl.groupBy == column.Name) return;
+
+                            if (column.Sortable && column.SortOrder > 0) {
+                                column.SortOrder++;
+                            }
+                        });
+
+                        $ctrl.retrieveData();
+                    });
+
+                    $scope.$watch('$ctrl.pageSize', function() {
+                        if ($ctrl.hasColumnsDefinitions && $ctrl.requestCounter > 0) {
+                            if ($ctrl.savePageSize) {
+                                localStorageService.set($ctrl.name + "_pageSize", $ctrl.pageSize);
+                            }
+                            $ctrl.retrieveData();
+                        }
+                    });
+
+                    $scope.$watch('$ctrl.requestedPage', function() {
+                        // TODO: we still need to inter-lock failed, initial and paged requests
+                        if ($ctrl.hasColumnsDefinitions && $ctrl.requestCounter > 0) {
+                            $ctrl.retrieveData();
+                        }
+                    });
+
+                    $ctrl.saveSearch = function() {
+                        if ($ctrl.saveSearch) {
+                            if ($ctrl.search.Text === '') {
+                                localStorageService.remove($ctrl.name + "_search");
+                            } else {
+                                localStorageService.set($ctrl.name + "_search", $ctrl.search.Text);
+                            }
+                        }
+                    };
+
+                    $ctrl.addColumn = function(item) {
+                        if (item.Name == null) {
+                            return;
+                        }
+
+                        if ($ctrl.hasColumnsDefinitions !== false) {
+                            throw 'Cannot define more columns. Column definitions have been sealed';
+                        }
+
+                        $ctrl.columns.push(item);
+                    };
+
+                    $ctrl.newRow = function(template, popup, size) {
+                        $ctrl.tempRow = new TubularModel($scope, $ctrl, {}, $ctrl.dataService);
+                        $ctrl.tempRow.$isNew = true;
+                        $ctrl.tempRow.$isEditing = true;
+                        $ctrl.tempRow.$component = $ctrl;
+
+                        if (angular.isDefined(template) && angular.isDefined(popup) && popup) {
+                            tubularPopupService.openDialog(template, $ctrl.tempRow, $ctrl, size);
+                        }
+                    };
+
+                    $ctrl.deleteRow = function(row) {
+                        var urlparts = $ctrl.serverDeleteUrl.split('?');
+                        var url = urlparts[0] + "/" + row.$key;
+
+                        if (urlparts.length > 1) {
+                            url += '?' + urlparts[1];
+                        }
+
+                        var request = {
+                            serverUrl: url,
+                            requestMethod: 'DELETE',
+                            timeout: $ctrl.requestTimeout,
+                            requireAuthentication: $ctrl.requireAuthentication,
+                        };
+
+                        $ctrl.currentRequest = $ctrl.dataService.retrieveDataAsync(request);
+
+                        $ctrl.currentRequest.promise.then(
+                            function(data) {
+                                row.$hasChanges = false;
+                                $scope.$emit('tbGrid_OnRemove', data);
+                            }, function(error) {
+                                $scope.$emit('tbGrid_OnConnectionError', error);
+                            }).then(function() {
+                            $ctrl.currentRequest = null;
+                            $ctrl.retrieveData();
+                        });
+                    };
+
+                    $ctrl.verifyColumns = function() {
+                        var columns = localStorageService.get($ctrl.name + "_columns");
+                        if (columns == null || columns === "") {
+                            // Nothing in settings, saving initial state
+                            localStorageService.set($ctrl.name + "_columns", $ctrl.columns);
+                            return;
+                        }
+
+                        for (var index in columns) {
+                            if (columns.hasOwnProperty(index)) {
+                                var columnName = columns[index].Name;
+                                var filtered = $ctrl.columns.filter(function(el) { return el.Name == columnName; });
+
+                                if (filtered.length === 0) {
+                                    continue;
+                                }
+
+                                var current = filtered[0];
+                                // Updates visibility by now
+                                current.Visible = columns[index].Visible;
+
+                                // Update sorting
+                                if ($ctrl.requestCounter < 1) {
+                                    current.SortOrder = columns[index].SortOrder;
+                                    current.SortDirection = columns[index].SortDirection;
+                                }
+
+                                // Update Filters
+                                if (current.Filter != null && current.Filter.Text != null) {
+                                    continue;
+                                }
+
+                                if (columns[index].Filter != null && columns[index].Filter.Text != null && columns[index].Filter.Operator != 'None') {
+                                    current.Filter = columns[index].Filter;
+                                }
+                            }
+                        }
+                    };
+
+                    $ctrl.retrieveData = function() {
+                        // If the ServerUrl is empty skip data load
+                        if ($ctrl.serverUrl == '') {
+                            return;
+                        }
+
+                        $ctrl.canSaveState = true;
+                        $ctrl.verifyColumns();
+
+                        if ($ctrl.savePageSize) {
+                            $ctrl.pageSize = (localStorageService.get($ctrl.name + "_pageSize") || $ctrl.pageSize);
+                        }
+
+                        if ($ctrl.pageSize < 10) $ctrl.pageSize = 20; // default
+
+                        var skip = ($ctrl.requestedPage - 1) * $ctrl.pageSize;
+
+                        if (skip < 0) skip = 0;
+
+                        var request = {
+                            serverUrl: $ctrl.serverUrl,
+                            requestMethod: $ctrl.requestMethod || 'POST',
+                            timeout: $ctrl.requestTimeout,
+                            requireAuthentication: $ctrl.requireAuthentication,
+                            data: {
+                                Count: $ctrl.requestCounter,
+                                Columns: $ctrl.columns,
+                                Skip: skip,
+                                Take: parseInt($ctrl.pageSize),
+                                Search: $ctrl.search,
+                                TimezoneOffset: new Date().getTimezoneOffset()
+                            }
+                        };
+
+                        if ($ctrl.currentRequest !== null) {
+                            // This message is annoying when you connect errors to toastr
+                            //$ctrl.currentRequest.cancel('tubularGrid(' + $ctrl.$id + '): new request coming.');
+                            return;
+                        }
+
+                        if (angular.isUndefined($ctrl.onBeforeGetData) === false) {
+                            $ctrl.onBeforeGetData();
+                        }
+
+                        $scope.$emit('tbGrid_OnBeforeRequest', request, $ctrl);
+
+                        $ctrl.currentRequest = $ctrl.dataService.retrieveDataAsync(request);
+
+                        $ctrl.currentRequest.promise.then(
+                            function(data) {
+                                $ctrl.requestCounter += 1;
+
+                                if (angular.isUndefined(data) || data == null) {
+                                    $scope.$emit('tbGrid_OnConnectionError', {
+                                        statusText: "Data is empty",
+                                        status: 0
+                                    });
+
+                                    return;
+                                }
+
+                                $ctrl.dataSource = data;
+
+                                $ctrl.rows = data.Payload.map(function (el) {
+                                    var model = new TubularModel($scope, $ctrl, el, $ctrl.dataService);
+                                    model.$component = $ctrl;
+
+                                    model.editPopup = function(template, size) {
+                                        tubularPopupService.openDialog(template, model, $ctrl, size);
+                                    };
+
+                                    return model;
+                                });
+
+                                $scope.$emit('tbGrid_OnDataLoaded', $ctrl);
+
+                                $ctrl.aggregationFunctions = data.AggregationPayload;
+                                $ctrl.currentPage = data.CurrentPage;
+                                $ctrl.totalPages = data.TotalPages;
+                                $ctrl.totalRecordCount = data.TotalRecordCount;
+                                $ctrl.filteredRecordCount = data.FilteredRecordCount;
+                                $ctrl.isEmpty = $ctrl.filteredRecordCount === 0;
+
+                                if ($ctrl.savePage) {
+                                    localStorageService.set($ctrl.name + "_page", $ctrl.currentPage);
+                                }
+                            }, function(error) {
+                                $ctrl.requestedPage = $ctrl.currentPage;
+                                $scope.$emit('tbGrid_OnConnectionError', error);
+                            }).then(function() {
+                            $ctrl.currentRequest = null;
+                        });
+                    };
+
+                    $ctrl.sortColumn = function(columnName, multiple) {
+                        var filterColumn = $ctrl.columns.filter(function(el) {
+                            return el.Name === columnName;
+                        });
+
+                        if (filterColumn.length === 0) return;
+
+                        var column = filterColumn[0];
+
+                        if (column.Sortable === false) return;
+
+                        // need to know if it's currently sorted before we reset stuff
+                        var currentSortDirection = column.SortDirection;
+                        var toBeSortDirection = currentSortDirection === 'None' ? 'Ascending' : currentSortDirection === 'Ascending' ? 'Descending' : 'None';
+
+                        // the latest sorting takes less priority than previous sorts
+                        if (toBeSortDirection === 'None') {
+                            column.SortOrder = -1;
+                            column.SortDirection = 'None';
+                        } else {
+                            column.SortOrder = Number.MAX_VALUE;
+                            column.SortDirection = toBeSortDirection;
+                        }
+
+                        // if it's not a multiple sorting, remove the sorting from all other columns
+                        if (multiple === false) {
+                            angular.forEach($ctrl.columns.filter(function(col) { return col.Name !== columnName; }), function(col) {
+                                col.SortOrder = -1;
+                                col.SortDirection = 'None';
+                            });
+                        }
+
+                        // take the columns that actually need to be sorted in order to reindex them
+                        var currentlySortedColumns = $ctrl.columns.filter(function(col) {
+                            return col.SortOrder > 0;
+                        });
+
+                        // reindex the sort order
+                        currentlySortedColumns.sort(function(a, b) {
+                            return a.SortOrder == b.SortOrder ? 0 : a.SortOrder > b.SortOrder;
+                        });
+
+                        currentlySortedColumns.forEach(function(col, index) {
+                            col.SortOrder = index + 1;
+                        });
+
+                        $scope.$broadcast('tbGrid_OnColumnSorted');
+
+                        $ctrl.retrieveData();
+                    };
+
+                    $ctrl.selectedRows = function() {
+                        var rows = localStorageService.get($ctrl.name + "_rows");
+                        if (rows == null || rows === "") {
+                            rows = [];
+                        }
+
+                        return rows;
+                    };
+
+                    $ctrl.clearSelection = function() {
+                        angular.forEach($ctrl.rows, function(value) {
+                            value.$selected = false;
+                        });
+
+                        localStorageService.set($ctrl.name + "_rows", []);
+                    };
+
+                    $ctrl.isEmptySelection = function() {
+                        return $ctrl.selectedRows().length === 0;
+                    };
+
+                    $ctrl.selectFromSession = function(row) {
+                        row.$selected = $ctrl.selectedRows().filter(function(el) {
+                            return el.$key === row.$key;
+                        }).length > 0;
+                    };
+
+                    $ctrl.changeSelection = function(row) {
+                        if (angular.isUndefined(row)) return;
+
+                        row.$selected = !row.$selected;
+
+                        var rows = $ctrl.selectedRows();
+
+                        if (row.$selected) {
+                            rows.push({ $key: row.$key });
+                        } else {
+                            rows = rows.filter(function(el) {
+                                return el.$key !== row.$key;
+                            });
+                        }
+
+                        localStorageService.set($ctrl.name + "_rows", rows);
+                    };
+
+                    $ctrl.getFullDataSource = function(callback) {
+                        $ctrl.dataService.retrieveDataAsync({
+                            serverUrl: $ctrl.serverUrl,
+                            requestMethod: $ctrl.requestMethod || 'POST',
+                            timeout: $ctrl.requestTimeout,
+                            requireAuthentication: $ctrl.requireAuthentication,
+                            data: {
+                                Count: $ctrl.requestCounter,
+                                Columns: $ctrl.columns,
+                                Skip: 0,
+                                Take: -1,
+                                Search: {
+                                    Text: '',
+                                    Operator: 'None'
+                                }
+                            }
+                        }).promise.then(
+                            function(data) {
+                                callback(data.Payload);
+                            }, function(error) {
+                                $scope.$emit('tbGrid_OnConnectionError', error);
+                            }).then(function() {
+                            $ctrl.currentRequest = null;
+                        });
+                    };
+
+                    $ctrl.visibleColumns = function() {
+                        return $ctrl.columns.filter(function(el) { return el.Visible; }).length;
+                    };
+                }
+            ]
+        })
         /**
          * @ngdoc directive
          * @name tbGridTable
@@ -528,7 +525,7 @@
                     scope: true,
                     controller: [
                         '$scope', function($scope) {
-                            $scope.$component = $scope.$parent.$parent;
+                            $scope.$component = $scope.$parent.$parent.$ctrl;
                             $scope.tubularDirective = 'tubular-grid-table';
                         }
                     ]
@@ -598,7 +595,7 @@
          * @param {boolean} isGrouping Define a group key.
          */
         .directive('tbColumn', [
-            'tubularGridColumnModel', function (ColumnModel) {
+            'tubularGridColumnModel', function(ColumnModel) {
                 return {
                     require: '^tbColumnDefinitions',
                     template: '<th ng-transclude ng-class="{sortable: column.Sortable}" ng-show="column.Visible"></th>',
@@ -610,22 +607,22 @@
                         label: '@?'
                     },
                     controller: [
-                        '$scope', function ($scope) {
+                        '$scope', function($scope) {
                             $scope.column = { Label: '' };
                             $scope.$component = $scope.$parent.$parent.$component;
                             $scope.tubularDirective = 'tubular-column';
 
-                            $scope.sortColumn = function (multiple) {
+                            $scope.sortColumn = function(multiple) {
                                 $scope.$component.sortColumn($scope.column.Name, multiple);
                             };
 
-                            $scope.$watch("visible", function (val) {
+                            $scope.$watch("visible", function(val) {
                                 if (angular.isDefined(val)) {
                                     $scope.column.Visible = val;
                                 }
                             });
 
-                            $scope.$watch('label', function () {
+                            $scope.$watch('label', function() {
                                 $scope.column.Label = $scope.label;
                                 // this broadcast here is used for backwards compatibility with tbColumnHeader requiring a scope.label value on its own
                                 $scope.$broadcast('tbColumn_LabelChanged', $scope.label);
@@ -634,7 +631,7 @@
                     ],
                     compile: function compile() {
                         return {
-                            pre: function (scope, lElement, lAttrs) {
+                            pre: function(scope, lElement, lAttrs) {
                                 lAttrs.label = angular.isDefined(lAttrs.label) ? lAttrs.label : (lAttrs.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
 
                                 var column = new ColumnModel(lAttrs);
@@ -661,31 +658,31 @@
          * @scope
          */
         .directive('tbColumnHeader', [
-            '$compile', function ($compile) {
+            '$compile', function($compile) {
 
                 return {
                     require: '^tbColumn',
                     template: '<span><a title="Click to sort. Press Ctrl to sort by multiple columns" class="column-header" href ng-click="sortColumn($event)">' +
-                                '<span class="column-header-default">{{ $parent.column.Label }}</span>' +
-                                '<span ng-transclude></span></a> ' +
-                                '<i class="fa sort-icon" ng-class="' + "{'fa-long-arrow-up': $parent.column.SortDirection == 'Ascending', 'fa-long-arrow-down': $parent.column.SortDirection == 'Descending'}" + '">&nbsp;</i>' +
-                                '</span>',
+                        '<span class="column-header-default">{{ $parent.column.Label }}</span>' +
+                        '<span ng-transclude></span></a> ' +
+                        '<i class="fa sort-icon" ng-class="' + "{'fa-long-arrow-up': $parent.column.SortDirection == 'Ascending', 'fa-long-arrow-down': $parent.column.SortDirection == 'Descending'}" + '">&nbsp;</i>' +
+                        '</span>',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
                     scope: false,
                     controller: [
-                        '$scope', function ($scope) {
-                            $scope.sortColumn = function ($event) {
+                        '$scope', function($scope) {
+                            $scope.sortColumn = function($event) {
                                 $scope.$parent.sortColumn($event.ctrlKey);
                             };
                             // this listener here is used for backwards compatibility with tbColumnHeader requiring a scope.label value on its own
-                            $scope.$on('tbColumn_LabelChanged', function ($event, value) {
+                            $scope.$on('tbColumn_LabelChanged', function($event, value) {
                                 $scope.label = value;
                             })
                         }
                     ],
-                    link: function ($scope, $element, $attrs, controller) {
+                    link: function($scope, $element, $attrs, controller) {
                         if ($element.find('[ng-transclude] *').length > 0) {
                             $element.find('span.column-header-default').remove();
                         }
@@ -741,7 +738,7 @@
          * @scope
          */
         .directive('tbFootSet', [
-            function () {
+            function() {
 
                 return {
                     require: '^tbGrid',
@@ -751,7 +748,7 @@
                     transclude: true,
                     scope: false,
                     controller: [
-                        '$scope', function ($scope) {
+                        '$scope', function($scope) {
                             $scope.$component = $scope.$parent.$component || $scope.$parent.$parent.$component;
                             $scope.tubularDirective = 'tubular-foot-set';
                         }
@@ -868,7 +865,7 @@
                             $scope.columnName = $scope.columnName || null;
                             $scope.$component = $scope.$parent.$parent.$component;
 
-                            $scope.getFormScope = function () {
+                            $scope.getFormScope = function() {
                                 // TODO: Implement a form in inline editors
                                 return null;
                             };

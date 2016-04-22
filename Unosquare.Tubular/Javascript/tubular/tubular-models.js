@@ -20,98 +20,100 @@
         * 
         * This model doesn't need to be created in your controller, the `tbGrid` generate it from any `tbColumn`.
         */
-        .factory('tubularGridColumnModel', ["$filter", function($filter) {
+        .factory('tubularGridColumnModel', [
+            "$filter", function($filter) {
 
-            var parseSortDirection = function(value) {
-                if (angular.isUndefined(value)) {
-                    return 'None';
-                }
-
-                if (value.toLowerCase().indexOf('asc') === 0) {
-                    return 'Ascending';
-                }
-
-                if (value.toLowerCase().indexOf('desc') === 0) {
-                    return 'Descending';
-                }
-
-                return 'None';
-            };
-
-            return function(attrs) {
-                this.Name = attrs.name || null;
-                this.Label = attrs.label || null;
-                this.Sortable = attrs.sortable === "true";
-                this.SortOrder = parseInt(attrs.sortOrder) || -1;
-                this.SortDirection = parseSortDirection(attrs.sortDirection);
-                this.IsKey = attrs.isKey === "true";
-                this.Searchable = attrs.searchable === "true";
-                this.Visible = attrs.visible === "false" ? false : true;
-                this.Filter = null;
-                this.DataType = attrs.columnType || "string";
-                this.IsGrouping = attrs.isGrouping === "true";
-                this.Aggregate = attrs.aggregate || "none";
-                this.MetaAggregate = attrs.metaAggregate || "none";
-
-                this.FilterOperators = {
-                    'string': {
-                        'None': $filter('translate')('OP_NONE'),
-                        'Equals': $filter('translate')('OP_EQUALS'),
-                        'NotEquals': $filter('translate')('OP_NOTEQUALS'),
-                        'Contains': $filter('translate')('OP_CONTAINS'),
-                        'NotContains': $filter('translate')('OP_NOTCONTAINS'),
-                        'StartsWith': $filter('translate')('OP_STARTSWITH'),
-                        'NotStartsWith': $filter('translate')('OP_NOTSTARTSWITH'),
-                        'EndsWith': $filter('translate')('OP_ENDSWITH'),
-                        'NotEndsWith': $filter('translate')('OP_NOTENDSWITH')
-                    },
-                    'numeric': {
-                        'None': $filter('translate')('OP_NONE'),
-                        'Equals': $filter('translate')('OP_EQUALS'),
-                        'Between': $filter('translate')('OP_BETWEEN'),
-                        'Gte': '>=',
-                        'Gt': '>',
-                        'Lte': '<=',
-                        'Lt': '<'
-                    },
-                    'date': {
-                        'None': $filter('translate')('OP_NONE'),
-                        'Equals': $filter('translate')('OP_EQUALS'),
-                        'NotEquals': $filter('translate')('OP_NOTEQUALS'),
-                        'Between': $filter('translate')('OP_BETWEEN'),
-                        'Gte': '>=',
-                        'Gt': '>',
-                        'Lte': '<=',
-                        'Lt': '<'
-                    },
-                    'datetime': {
-                        'None': $filter('translate')('OP_NONE'),
-                        'Equals': $filter('translate')('OP_EQUALS'),
-                        'NotEquals': $filter('translate')('OP_NOTEQUALS'),
-                        'Between': $filter('translate')('OP_BETWEEN'),
-                        'Gte': '>=',
-                        'Gt': '>',
-                        'Lte': '<=',
-                        'Lt': '<'
-                    },
-                    'datetimeutc': {
-                        'None': $filter('translate')('OP_NONE'),
-                        'Equals': $filter('translate')('OP_EQUALS'),
-                        'NotEquals': $filter('translate')('OP_NOTEQUALS'),
-                        'Between': $filter('translate')('OP_BETWEEN'),
-                        'Gte': '>=',
-                        'Gt': '>',
-                        'Lte': '<=',
-                        'Lt': '<'
-                    },
-                    'boolean': {
-                        'None': $filter('translate')('OP_NONE'),
-                        'Equals': $filter('translate')('OP_EQUALS'),
-                        'NotEquals': $filter('translate')('OP_NOTEQUALS')
+                var parseSortDirection = function(value) {
+                    if (angular.isUndefined(value)) {
+                        return 'None';
                     }
+
+                    if (value.toLowerCase().indexOf('asc') === 0) {
+                        return 'Ascending';
+                    }
+
+                    if (value.toLowerCase().indexOf('desc') === 0) {
+                        return 'Descending';
+                    }
+
+                    return 'None';
                 };
-            };
-        }])
+
+                return function(attrs) {
+                    this.Name = attrs.name || null;
+                    this.Label = attrs.label || null;
+                    this.Sortable = attrs.sortable === "true";
+                    this.SortOrder = parseInt(attrs.sortOrder) || -1;
+                    this.SortDirection = parseSortDirection(attrs.sortDirection);
+                    this.IsKey = attrs.isKey === "true";
+                    this.Searchable = attrs.searchable === "true";
+                    this.Visible = attrs.visible === "false" ? false : true;
+                    this.Filter = null;
+                    this.DataType = attrs.columnType || "string";
+                    this.IsGrouping = attrs.isGrouping === "true";
+                    this.Aggregate = attrs.aggregate || "none";
+                    this.MetaAggregate = attrs.metaAggregate || "none";
+
+                    this.FilterOperators = {
+                        'string': {
+                            'None': $filter('translate')('OP_NONE'),
+                            'Equals': $filter('translate')('OP_EQUALS'),
+                            'NotEquals': $filter('translate')('OP_NOTEQUALS'),
+                            'Contains': $filter('translate')('OP_CONTAINS'),
+                            'NotContains': $filter('translate')('OP_NOTCONTAINS'),
+                            'StartsWith': $filter('translate')('OP_STARTSWITH'),
+                            'NotStartsWith': $filter('translate')('OP_NOTSTARTSWITH'),
+                            'EndsWith': $filter('translate')('OP_ENDSWITH'),
+                            'NotEndsWith': $filter('translate')('OP_NOTENDSWITH')
+                        },
+                        'numeric': {
+                            'None': $filter('translate')('OP_NONE'),
+                            'Equals': $filter('translate')('OP_EQUALS'),
+                            'Between': $filter('translate')('OP_BETWEEN'),
+                            'Gte': '>=',
+                            'Gt': '>',
+                            'Lte': '<=',
+                            'Lt': '<'
+                        },
+                        'date': {
+                            'None': $filter('translate')('OP_NONE'),
+                            'Equals': $filter('translate')('OP_EQUALS'),
+                            'NotEquals': $filter('translate')('OP_NOTEQUALS'),
+                            'Between': $filter('translate')('OP_BETWEEN'),
+                            'Gte': '>=',
+                            'Gt': '>',
+                            'Lte': '<=',
+                            'Lt': '<'
+                        },
+                        'datetime': {
+                            'None': $filter('translate')('OP_NONE'),
+                            'Equals': $filter('translate')('OP_EQUALS'),
+                            'NotEquals': $filter('translate')('OP_NOTEQUALS'),
+                            'Between': $filter('translate')('OP_BETWEEN'),
+                            'Gte': '>=',
+                            'Gt': '>',
+                            'Lte': '<=',
+                            'Lt': '<'
+                        },
+                        'datetimeutc': {
+                            'None': $filter('translate')('OP_NONE'),
+                            'Equals': $filter('translate')('OP_EQUALS'),
+                            'NotEquals': $filter('translate')('OP_NOTEQUALS'),
+                            'Between': $filter('translate')('OP_BETWEEN'),
+                            'Gte': '>=',
+                            'Gt': '>',
+                            'Lte': '<=',
+                            'Lt': '<'
+                        },
+                        'boolean': {
+                            'None': $filter('translate')('OP_NONE'),
+                            'Equals': $filter('translate')('OP_EQUALS'),
+                            'NotEquals': $filter('translate')('OP_NOTEQUALS')
+                        }
+                    };
+                };
+            }
+        ])
         /**
         * @ngdoc factory
         * @name tubularGridFilterModel
@@ -144,7 +146,7 @@
         * The `tubularModel` factory is the base to generate a row model to use with `tbGrid` and `tbForm`.
         */
         .factory('tubularModel', function() {
-            return function($scope, data, dataService) {
+            return function($scope, $ctrl, data, dataService) {
                 var obj = {
                     $key: "",
                     $addField: function(key, value, ignoreOriginal) {
@@ -178,8 +180,8 @@
                     });
                 }
 
-                if (angular.isDefined($scope.columns)) {
-                    angular.forEach($scope.columns, function(col, key) {
+                if (angular.isDefined($ctrl.columns)) {
+                    angular.forEach($ctrl.columns, function(col, key) {
                         var value = data[key] || data[col.Name];
 
                         if (angular.isUndefined(value) && data[key] === 0) {
@@ -244,7 +246,7 @@
                         throw 'Define DataService to your model.';
                     }
 
-                    if (angular.isUndefined($scope.serverSaveUrl) || $scope.serverSaveUrl == null) {
+                    if (angular.isUndefined($ctrl.serverSaveUrl) || $ctrl.serverSaveUrl == null) {
                         throw 'Define a Save URL.';
                     }
 
@@ -255,8 +257,8 @@
                     obj.$isLoading = true;
 
                     return dataService.saveDataAsync(obj, {
-                        serverUrl: $scope.serverSaveUrl,
-                        requestMethod: obj.$isNew ? ($scope.serverSaveMethod || 'POST') : 'PUT'
+                        serverUrl: $ctrl.serverSaveUrl,
+                        requestMethod: obj.$isNew ? ($ctrl.serverSaveMethod || 'POST') : 'PUT'
                     }).promise;
                 };
 
@@ -269,7 +271,7 @@
                 };
 
                 obj.delete = function() {
-                    $scope.deleteRow(obj);
+                    $ctrl.deleteRow(obj);
                 };
 
                 obj.resetOriginal = function() {

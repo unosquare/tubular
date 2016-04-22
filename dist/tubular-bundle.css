@@ -476,20 +476,20 @@ input[type="checkbox"] .styled:checked + label::after {
 }
 
 /* Tubular Grid General Styles */
-div.tubular-grid {
+tb-grid {
     position: relative;
 }
 
-    div.tubular-grid div.row {
+    tb-grid div.row {
         margin-top: 4px;
         margin-bottom: 4px;
     }
 
-        div.tubular-grid div.row:first-child {
+        tb-grid div.row:first-child {
             margin-top: 0;
         }
 
-        div.tubular-grid div.row:last-child {
+        tb-grid div.row:last-child {
             margin-bottom: 0;
         }
 
@@ -855,4 +855,9 @@ select.checkbox-list:hover option:checked, select.checkbox-list:focus option:che
 
 div.input-group-addon.fa {
     font-size: 10px;
+}
+
+/* Components styling */
+tb-edit-button.btn {
+    padding: 0;
 }
