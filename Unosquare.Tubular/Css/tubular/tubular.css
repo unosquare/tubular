@@ -122,14 +122,6 @@ div.panel > table.tubular-grid-table.table-bordered > thead > tr > th {
         border-right-width: 0;
     }
 
-div.panel > table.tubular-grid-table.table-bordered > tbody > tr > td {
-    border-right: 1px solid #ddd;
-}
-
-    div.panel > table.tubular-grid-table.table-bordered > tbody > tr > td:last-child {
-        border-right-width: 0;
-    }
-
 table.tubular-grid-table {
     font-size: 11px;
     table-layout: fixed;
@@ -144,7 +136,7 @@ table.tubular-grid-table {
         margin: 0;
     }
 
-th.show-xl, td.show-xl {
+.show-xl {
     display: none;
 }
 
@@ -184,7 +176,7 @@ table.tubular-grid-table thead tr th.column-md {
 }
 
 @media (min-width: 1400px) {
-    th.show-xl, td.show-xl {
+    .show-xl {
         display: table-cell;
     }
 
@@ -201,7 +193,6 @@ table.tubular-grid-table thead tr th.column-md {
         }
 }
 
-table.tubular-grid-table tr td,
 table.tubular-grid-table tr th {
     padding: 2px;
 }
@@ -210,16 +201,6 @@ table.tubular-grid-table thead tr .column-action {
     width: 75px;
 }
 
-table.tubular-grid-table tbody tr td {
-    overflow: hidden;
-    -ms-text-overflow: ellipsis;
-    -o-text-overflow: ellipsis;
-    text-overflow: ellipsis;
-}
-
-    table.tubular-grid-table tbody tr td.no-wrap, table.tubular-grid-table tbody tr td.no-wrap span {
-        white-space: nowrap;
-    }
 
 table.tubular-grid-table tbody tr .cell-menu {
     overflow: visible;
@@ -344,22 +325,22 @@ select.checkbox-list:hover option:checked, select.checkbox-list:focus option:che
             border-bottom: 2px solid #ddd;
         }
 
-        table.responsive-mobile td {
+        table.responsive-mobile tb-cell-template {
             display: block;
             font-size: 14px;
             height: 28px;
             border-bottom: 1px dotted #ccc;
         }
 
-            table.responsive-mobile td:not(.text-center) {
+            table.responsive-mobile tb-cell-template:not(.text-center) {
                 text-align: right;
             }
 
-            table.responsive-mobile td:last-child {
+            table.responsive-mobile tb-cell-template:last-child {
                 border-bottom: 0;
             }
 
-            table.responsive-mobile td:before {
+            table.responsive-mobile tb-cell-template:before {
                 content: attr(data-label);
                 float: left;
                 font-weight: bold;
@@ -388,3 +369,30 @@ div.input-group-addon.fa {
 tb-edit-button.btn {
     padding: 0;
 }
+tb-cell-template {
+    display: table-cell;
+    vertical-align: inherit;
+}
+div.panel > table.tubular-grid-table.table-bordered > tbody > tr > tb-cell-template {
+    border-right: 1px solid #ddd;
+}
+
+    div.panel > table.tubular-grid-table.table-bordered > tbody > tr > tb-cell-template:last-child {
+        border-right-width: 0;
+    }
+
+
+table.tubular-grid-table tr tb-cell-template {
+    padding: 2px;
+}
+
+table.tubular-grid-table tbody tr tb-cell-template {
+    overflow: hidden;
+    -ms-text-overflow: ellipsis;
+    -o-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+}
+
+    table.tubular-grid-table tbody tr tb-cell-template.no-wrap, table.tubular-grid-table tbody tr tb-cell-template.no-wrap span {
+        white-space: nowrap;
+    }

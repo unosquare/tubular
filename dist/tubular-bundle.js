@@ -1082,7 +1082,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                                 $ctrl.dataSource = data;
 
-                                $ctrl.rows = data.Payload.map(function (el) {
+                                $ctrl.rows = data.Payload.map(function(el) {
                                     var model = new TubularModel($scope, $ctrl, el, $ctrl.dataService);
                                     model.$component = $ctrl;
 
@@ -1398,8 +1398,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @scope
          */
         .directive('tbColumnHeader', [
-            '$compile', function($compile) {
-
+            function() {
                 return {
                     require: '^tbColumn',
                     template: '<span><a title="Click to sort. Press Ctrl to sort by multiple columns" class="column-header" href ng-click="sortColumn($event)">' +
@@ -1419,10 +1418,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             // this listener here is used for backwards compatibility with tbColumnHeader requiring a scope.label value on its own
                             $scope.$on('tbColumn_LabelChanged', function($event, value) {
                                 $scope.label = value;
-                            })
+                            });
                         }
                     ],
-                    link: function($scope, $element, $attrs, controller) {
+                    link: function($scope, $element) {
                         if ($element.find('[ng-transclude] *').length > 0) {
                             $element.find('span.column-header-default').remove();
                         }
@@ -1587,42 +1586,40 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * 
          * @param {string} columnName Setting the related column, by passing the name, the cell can share attributes (like visibility) with the column.
          */
-        .directive('tbCellTemplate', [
-            function() {
+        .component('tbCellTemplate', {
+            require: {
+                $component: '^tbGrid'
+            },
+            template: '<ng-transclude ng-show="$ctrl.column.Visible" data-label="{{::$ctrl.column.Label}}"></ng-transclude>',
+            transclude: true,
+            bindings: {
+                columnName: '@?'
+            },
+            controller: [
+                '$scope', function ($scope) {
+                    var $ctrl = this;
 
-                return {
-                    require: '^tbRowTemplate',
-                    template: '<td ng-transclude ng-show="column.Visible" data-label="{{::column.Label}}"></td>',
-                    restrict: 'E',
-                    replace: true,
-                    transclude: true,
-                    scope: {
-                        columnName: '@?'
-                    },
-                    controller: [
-                        '$scope', function($scope) {
-                            $scope.column = { Visible: true };
-                            $scope.columnName = $scope.columnName || null;
-                            $scope.$component = $scope.$parent.$parent.$component;
+                    $ctrl.$onInit = function() {
+                        $ctrl.column = { Visible: true };
+                        $ctrl.columnName = $ctrl.columnName || null;
 
-                            $scope.getFormScope = function() {
-                                // TODO: Implement a form in inline editors
-                                return null;
-                            };
+                        if ($ctrl.columnName != null) {
+                            var columnModel = $ctrl.$component.columns
+                                .filter(function (el) { return el.Name === $ctrl.columnName; });
 
-                            if ($scope.columnName != null) {
-                                var columnModel = $scope.$component.columns
-                                    .filter(function(el) { return el.Name === $scope.columnName; });
-
-                                if (columnModel.length > 0) {
-                                    $scope.column = columnModel[0];
-                                }
+                            if (columnModel.length > 0) {
+                                $ctrl.column = columnModel[0];
                             }
                         }
-                    ]
-                };
-            }
-        ]);
+                    }
+
+                    $ctrl.getFormScope = function () {
+                        // TODO: Implement a form in inline editors
+                        return null;
+                    };
+                }
+            ]
+        });
 })();
 (function () {
     'use strict';
@@ -2879,15 +2876,17 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @param {number} minChars How many chars before to search, default 3.
          */
         .component('tbTextSearch', {
-            require: '^tbGrid',
+            require: {
+                $component: '^tbGrid'
+            },
             template:
                 '<div class="tubular-grid-search">' +
                     '<div class="input-group input-group-sm">' +
                     '<span class="input-group-addon"><i class="fa fa-search"></i></span>' +
                     '<input type="search" class="form-control" placeholder="{{:: $ctrl.placeholder || (\'UI_SEARCH\' | translate) }}" maxlength="20" ' +
                     'ng-model="$component.search.Text" ng-model-options="{ debounce: 300 }">' +
-                    '<span class="input-group-btn" ng-show="$component.search.Text.length > 0">' +
-                    '<button class="btn btn-default" uib-tooltip="{{\'CAPTION_CLEAR\' | translate}}" ng-click="$component.search.Text = \'\'">' +
+                    '<span class="input-group-btn" ng-show="$ctrl.$component.search.Text.length > 0">' +
+                    '<button class="btn btn-default" uib-tooltip="{{\'CAPTION_CLEAR\' | translate}}" ng-click="$ctrl.$component.search.Text = \'\'">' +
                     '<i class="fa fa-times-circle"></i>' +
                     '</button>' +
                     '</span>' +
@@ -2903,9 +2902,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     var $ctrl = this;
 
                     $ctrl.$onInit = function() {
-                        $ctrl.$component = $scope.$parent.$parent.$ctrl;
                         $ctrl.minChars = $ctrl.minChars || 3;
-                        $ctrl.tubularDirective = 'tubular-grid-text-search';
                         $ctrl.lastSearch = $ctrl.$component.search.Text;
                     };
 
@@ -2913,6 +2910,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         if (angular.isUndefined(val) || val === prev) {
                             return;
                         }
+
+                        $ctrl.$component.search.Text = val;
 
                         if ($ctrl.lastSearch !== "" && val === "") {
                             $ctrl.$component.saveSearch();
@@ -3094,7 +3093,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @param {string} caption Set the caption to use in the button, default Edit.
          */
         .component('tbEditButton', {
-            require: '^tbGrid',
+            require: {
+                $component: '^tbGrid'
+            },
             template: '<button ng-click="edit()" class="btn btn-xs btn-default" ' +
                 'ng-hide="$ctrl.model.$isEditing">{{:: $ctrl.caption || (\'CAPTION_EDIT\' | translate) }}</button>',
             transclude: true,
@@ -3104,8 +3105,6 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             },
             controller: [
                 '$scope', function($scope) {
-                    $scope.component = $scope.$parent.$parent.$component;
-
                     $scope.edit = function() {
                         if ($scope.component.editorMode === 'popup') {
                             $scope.$ctrl.model.editPopup();
@@ -3129,11 +3128,13 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @param {array} options Set the page options array, default [10, 20, 50, 100].
          */
         .component('tbPageSizeSelector', {
-            require: '^tbGrid',
+            require: {
+                $component: '^tbGrid'
+            },
             template: '<div class="{{::$ctrl.css}}"><form class="form-inline">' +
                 '<div class="form-group">' +
                 '<label class="small">{{:: $ctrl.caption || (\'UI_PAGESIZE\' | translate) }} </label>&nbsp;' +
-                '<select ng-model="$parent.$parent.pageSize" class="form-control input-sm {{::$ctrl.selectorCss}}" ' +
+                '<select ng-model="$ctrl.$component.pageSize" class="form-control input-sm {{::$ctrl.selectorCss}}" ' +
                 'ng-options="item for item in options">' +
                 '</select>' +
                 '</div>' +
@@ -3165,7 +3166,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @param {string} captionMenuAll Set the caption.
          */
         .component('tbExportButton', {
-            require: '^tbGrid',
+            require: {
+                $component: '^tbGrid'
+            },
             template: '<div class="btn-group">' +
                 '<button class="btn btn-info btn-sm dropdown-toggle {{::$ctrl.css}}" data-toggle="dropdown" aria-expanded="false">' +
                 '<span class="fa fa-download"></span>&nbsp;{{:: $ctrl.caption || (\'UI_EXPORTCSV\' | translate)}}&nbsp;<span class="caret"></span>' +
@@ -3185,8 +3188,6 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             },
             controller: [
                 '$scope', 'tubularGridExportService', function($scope, tubularGridExportService) {
-                    $scope.$component = $scope.$parent.$parent;
-
                     $scope.downloadCsv = function() {
                         tubularGridExportService.exportGridToCsv($scope.$ctrl.filename, $scope.$component);
                     };
@@ -3210,8 +3211,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @param {string} caption Set the caption.
          */
         .component('tbPrintButton', {
-            require: '^tbGrid',
-            template: '<button class="btn btn-default btn-sm" ng-click="printGrid()">' +
+            require: {
+                $component: '^tbGrid'
+            },
+            template: '<button class="btn btn-default btn-sm" ng-click="$ctrl.printGrid()">' +
                 '<span class="fa fa-print"></span>&nbsp;{{$ctrl.caption || (\'CAPTION_PRINT\' | translate)}}' +
                 '</button>',
             transclude: true,
@@ -3221,13 +3224,13 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 caption: '@'
             },
             controller: [
-                '$scope', function($scope) {
-                    $scope.$component = $scope.$parent.$parent;
+                '$scope', function ($scope) {
+                    var $ctrl = this;
 
-                    $scope.printGrid = function() {
-                        $scope.$component.getFullDataSource(function(data) {
+                    $ctrl.printGrid = function () {
+                        $ctrl.$component.getFullDataSource(function (data) {
                             var tableHtml = "<table class='table table-bordered table-striped'><thead><tr>"
-                                + $scope.$component.columns
+                                + $ctrl.$component.columns
                                 .filter(function(c) { return c.Visible; })
                                 .map(function(el) {
                                     return "<th>" + (el.Label || el.Name) + "</th>";
@@ -3240,8 +3243,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     }
 
                                     return "<tr>" + row.map(function(cell, index) {
-                                        if (angular.isDefined($scope.$component.columns[index]) &&
-                                            !$scope.$component.columns[index].Visible) {
+                                        if (angular.isDefined($ctrl.$component.columns[index]) &&
+                                            !$ctrl.$component.columns[index].Visible) {
                                             return "";
                                         }
 
@@ -3254,12 +3257,12 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             var popup = window.open("about:blank", "Print", "menubar=0,location=0,height=500,width=800");
                             popup.document.write('<link rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap/latest/css/bootstrap.min.css" />');
 
-                            if ($scope.$ctrl.printCss != '') {
-                                popup.document.write('<link rel="stylesheet" href="' + $scope.$ctrl.printCss + '" />');
+                            if ($ctrl.printCss != '') {
+                                popup.document.write('<link rel="stylesheet" href="' + $ctrl.printCss + '" />');
                             }
 
                             popup.document.write('<body onload="window.print();">');
-                            popup.document.write('<h1>' + $scope.$ctrl.title + '</h1>');
+                            popup.document.write('<h1>' + $ctrl.title + '</h1>');
                             popup.document.write(tableHtml);
                             popup.document.write('</body>');
                             popup.document.close();
