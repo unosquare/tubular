@@ -86,7 +86,7 @@
                                     data[key] = value;
                                 });
 
-                                $scope.model = new TubularModel($scope, data, $scope.dataService);
+                                $scope.model = new TubularModel($scope, $scope, data, $scope.dataService);
                                 $scope.bindFields();
                             }
 
@@ -106,7 +106,7 @@
                                         $scope.modelKey !== '') {
                                         $scope.dataService.getByKey($scope.serverUrl, $scope.modelKey).promise.then(
                                             function (data) {
-                                                $scope.model = new TubularModel($scope, data, $scope.dataService);
+                                                $scope.model = new TubularModel($scope, $scope, data, $scope.dataService);
                                                 $scope.bindFields();
                                             }, function (error) {
                                                 $scope.$emit('tbForm_OnConnectionError', error);
@@ -122,7 +122,7 @@
                                                     dataService = $scope.model.$component.dataService;
                                                 }
 
-                                                $scope.model = new TubularModel(innerScope, data, dataService);
+                                                $scope.model = new TubularModel(innerScope, innerScope, data, dataService);
                                                 $scope.bindFields();
                                                 $scope.model.$isNew = true;
                                             }, function (error) {
@@ -134,7 +134,7 @@
                                 }
 
                                 if (angular.isUndefined($scope.model)) {
-                                    $scope.model = new TubularModel($scope, {}, $scope.dataService);
+                                    $scope.model = new TubularModel($scope, $scope, {}, $scope.dataService);
                                 }
 
                                 $scope.bindFields();

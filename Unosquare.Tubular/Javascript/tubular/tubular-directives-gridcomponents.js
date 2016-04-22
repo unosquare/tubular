@@ -1,4 +1,4 @@
-﻿(function () {
+﻿(function() {
     'use strict';
 
     angular.module('tubular.directives')
@@ -8,8 +8,6 @@
          *
          * @description
          * The `tbTextSearch` is visual component to enable free-text search in a grid.
-         * 
-         * @scope
          * 
          * @param {number} minChars How many chars before to search, default 3.
          */
@@ -35,48 +33,50 @@
             },
             controller: [
                 '$scope', function ($scope) {
-                    $scope.$component = $scope.$parent.$parent;
-                    $scope.minChars = $scope.$ctrl.minChars || 3;
-                    $scope.tubularDirective = 'tubular-grid-text-search';
-                    $scope.lastSearch = $scope.$component.search.Text;
+                    var $ctrl = this;
 
-                    $scope.$watch("$component.search.Text", function (val, prev) {
+                    $ctrl.$onInit = function() {
+                        $ctrl.$component = $scope.$parent.$parent.$ctrl;
+                        $ctrl.minChars = $ctrl.minChars || 3;
+                        $ctrl.tubularDirective = 'tubular-grid-text-search';
+                        $ctrl.lastSearch = $ctrl.$component.search.Text;
+                    };
+
+                    $scope.$watch("$component.search.Text", function(val, prev) {
                         if (angular.isUndefined(val) || val === prev) {
                             return;
                         }
 
-                        if ($scope.lastSearch !== "" && val === "") {
-                            $scope.$component.saveSearch();
-                            $scope.$component.search.Operator = 'None';
-                            $scope.$component.retrieveData();
+                        if ($ctrl.lastSearch !== "" && val === "") {
+                            $ctrl.$component.saveSearch();
+                            $ctrl.$component.search.Operator = 'None';
+                            $ctrl.$component.retrieveData();
                             return;
                         }
 
-                        if (val === "" || val.length < $scope.minChars) {
+                        if (val === "" || val.length < $ctrl.minChars) {
                             return;
                         }
 
-                        if (val === $scope.lastSearch) {
+                        if (val === $ctrl.lastSearch) {
                             return;
                         }
 
-                        $scope.lastSearch = val;
-                        $scope.$component.saveSearch();
-                        $scope.$component.search.Operator = 'Auto';
-                        $scope.$component.retrieveData();
+                        $ctrl.lastSearch = val;
+                        $ctrl.$component.saveSearch();
+                        $ctrl.$component.search.Operator = 'Auto';
+                        $ctrl.$component.retrieveData();
                     });
                 }
             ]
         })
         /**
-         * @ngdoc component
+         * @ngdoc directive
          * @name tbRemoveButton
          * @restrict E
          *
          * @description
          * The `tbRemoveButton` directive is visual helper to show a Remove button with a popover to confirm the action.
-         * 
-         * @scope
          * 
          * @param {object} model The row to remove.
          * @param {string} caption Set the caption to use in the button, default Remove.
@@ -84,51 +84,52 @@
          * @param {string} legend Set the legend to warn user, default 'Do you want to delete this row?'.
          * @param {string} icon Set the CSS icon's class, the button can have only icon.
          */
-        .directive('tbRemoveButton', ['$compile', function ($compile) {
-            return {
-                require: '^tbGrid',
-                template: '<button ng-click="confirmDelete()" class="btn" ng-hide="model.$isEditing">' +
-                    '<span ng-show="showIcon" class="{{::icon}}"></span>' +
-                    '<span ng-show="showCaption">{{:: caption || (\'CAPTION_REMOVE\' | translate) }}</span>' +
-                    '</button>',
-                restrict: 'E',
-                replace: true,
-                transclude: true,
-                scope: {
-                    model: '=',
-                    caption: '@',
-                    cancelCaption: '@',
-                    legend: '@',
-                    icon: '@'
-                },
-                controller: [
-                    '$scope', '$element', '$filter', function ($scope, $element, $filter) {
-                        $scope.showIcon = angular.isDefined($scope.icon);
-                        $scope.showCaption = !($scope.showIcon && angular.isUndefined($scope.caption));
-                        $scope.confirmDelete = function () {
-                            $element.popover({
-                                html: true,
-                                title: $scope.legend || $filter('translate')('UI_REMOVEROW'),
-                                content: function () {
-                                    var html = '<div class="tubular-remove-popover">' +
-                                        '<button ng-click="model.delete()" class="btn btn-danger btn-xs">' + ($scope.caption || $filter('translate')('CAPTION_REMOVE')) + '</button>' +
-                                        '&nbsp;<button ng-click="cancelDelete()" class="btn btn-default btn-xs">' + ($scope.cancelCaption || $filter('translate')('CAPTION_CANCEL')) + '</button>' +
-                                        '</div>';
+        .directive('tbRemoveButton', [
+            '$compile', function($compile) {
+                return {
+                    require: '^tbGrid',
+                    template: '<button ng-click="confirmDelete()" class="btn" ng-hide="model.$isEditing">' +
+                        '<span ng-show="showIcon" class="{{::icon}}"></span>' +
+                        '<span ng-show="showCaption">{{:: caption || (\'CAPTION_REMOVE\' | translate) }}</span>' +
+                        '</button>',
+                    restrict: 'E',
+                    replace: true,
+                    transclude: true,
+                    scope: {
+                        model: '=',
+                        caption: '@',
+                        cancelCaption: '@',
+                        legend: '@',
+                        icon: '@'
+                    },
+                    controller: [
+                        '$scope', '$element', '$filter', function($scope, $element, $filter) {
+                            $scope.showIcon = angular.isDefined($scope.icon);
+                            $scope.showCaption = !($scope.showIcon && angular.isUndefined($scope.caption));
+                            $scope.confirmDelete = function() {
+                                $element.popover({
+                                    html: true,
+                                    title: $scope.legend || $filter('translate')('UI_REMOVEROW'),
+                                    content: function() {
+                                        var html = '<div class="tubular-remove-popover">' +
+                                            '<button ng-click="model.delete()" class="btn btn-danger btn-xs">' + ($scope.caption || $filter('translate')('CAPTION_REMOVE')) + '</button>' +
+                                            '&nbsp;<button ng-click="cancelDelete()" class="btn btn-default btn-xs">' + ($scope.cancelCaption || $filter('translate')('CAPTION_CANCEL')) + '</button>' +
+                                            '</div>';
 
-                                    return $compile(html)($scope);
-                                }
-                            });
+                                        return $compile(html)($scope);
+                                    }
+                                });
 
-                            $element.popover('show');
-                        };
+                                $element.popover('show');
+                            };
 
-                        $scope.cancelDelete = function () {
-                            $element.popover('destroy');
-                        };
-                    }
-                ]
-            };
-        }
+                            $scope.cancelDelete = function() {
+                                $element.popover('destroy');
+                            };
+                        }
+                    ]
+                };
+            }
         ])
         /**
          * @ngdoc directive
@@ -147,81 +148,80 @@
          * @param {string} cancelCaption Set the caption to use in cancel the button, default Cancel.
          * @param {string} cancelCss Add a CSS class to Cancel button.
          */
-         .directive('tbSaveButton', [function () {
+        .directive('tbSaveButton', [
+            function() {
 
-             return {
-                 require: '^tbGrid',
-                 template: '<div ng-show="model.$isEditing">' +
-                     '<button ng-click="save()" class="btn btn-default {{:: saveCss || \'\' }}" ' +
-                     'ng-disabled="!model.$valid()">' +
-                     '{{:: saveCaption || (\'CAPTION_SAVE\' | translate) }}' +
-                     '</button>' +
-                     '<button ng-click="cancel()" class="btn {{:: cancelCss || \'btn-default\' }}">' +
-                     '{{:: cancelCaption || (\'CAPTION_CANCEL\' | translate) }}' +
-                     '</button></div>',
-                 restrict: 'E',
-                 replace: true,
-                 transclude: true,
-                 scope: {
-                     model: '=',
-                     isNew: '=?',
-                     saveCaption: '@',
-                     saveCss: '@',
-                     cancelCaption: '@',
-                     cancelCss: '@'
-                 },
-                 controller: [
-                     '$scope', function ($scope) {
-                         $scope.isNew = $scope.isNew || false;
+                return {
+                    require: '^tbGrid',
+                    template: '<div ng-show="model.$isEditing">' +
+                        '<button ng-click="save()" class="btn btn-default {{:: saveCss || \'\' }}" ' +
+                        'ng-disabled="!model.$valid()">' +
+                        '{{:: saveCaption || (\'CAPTION_SAVE\' | translate) }}' +
+                        '</button>' +
+                        '<button ng-click="cancel()" class="btn {{:: cancelCss || \'btn-default\' }}">' +
+                        '{{:: cancelCaption || (\'CAPTION_CANCEL\' | translate) }}' +
+                        '</button></div>',
+                    restrict: 'E',
+                    replace: true,
+                    transclude: true,
+                    scope: {
+                        model: '=',
+                        isNew: '=?',
+                        saveCaption: '@',
+                        saveCss: '@',
+                        cancelCaption: '@',
+                        cancelCss: '@'
+                    },
+                    controller: [
+                        '$scope', function($scope) {
+                            $scope.isNew = $scope.isNew || false;
 
-                         $scope.save = function () {
-                             if ($scope.isNew) {
-                                 $scope.model.$isNew = true;
-                             }
+                            $scope.save = function() {
+                                if ($scope.isNew) {
+                                    $scope.model.$isNew = true;
+                                }
 
-                             if (!$scope.model.$valid()) {
-                                 return;
-                             }
+                                if (!$scope.model.$valid()) {
+                                    return;
+                                }
 
-                             $scope.currentRequest = $scope.model.save();
+                                $scope.currentRequest = $scope.model.save();
 
-                             if ($scope.currentRequest === false) {
-                                 $scope.$emit('tbGrid_OnSavingNoChanges', $scope.model);
-                                 return;
-                             }
+                                if ($scope.currentRequest === false) {
+                                    $scope.$emit('tbGrid_OnSavingNoChanges', $scope.model);
+                                    return;
+                                }
 
-                             $scope.currentRequest.then(
-                                 function (data) {
-                                     $scope.model.$isEditing = false;
+                                $scope.currentRequest.then(
+                                    function(data) {
+                                        $scope.model.$isEditing = false;
 
-                                     if (angular.isDefined($scope.model.$component) &&
-                                         angular.isDefined($scope.model.$component.autoRefresh) &&
-                                         $scope.model.$component.autoRefresh) {
-                                         $scope.model.$component.retrieveData();
-                                     }
+                                        if (angular.isDefined($scope.model.$component) &&
+                                            angular.isDefined($scope.model.$component.autoRefresh) &&
+                                            $scope.model.$component.autoRefresh) {
+                                            $scope.model.$component.retrieveData();
+                                        }
 
-                                     $scope.$emit('tbGrid_OnSuccessfulSave', data, $scope.model.$component);
-                                 }, function (error) {
-                                     $scope.$emit('tbGrid_OnConnectionError', error);
-                                 });
-                         };
+                                        $scope.$emit('tbGrid_OnSuccessfulSave', data, $scope.model.$component);
+                                    }, function(error) {
+                                        $scope.$emit('tbGrid_OnConnectionError', error);
+                                    });
+                            };
 
-                         $scope.cancel = function () {
-                             $scope.model.revertChanges();
-                         };
-                     }
-                 ]
-             };
-         }
-         ])
+                            $scope.cancel = function() {
+                                $scope.model.revertChanges();
+                            };
+                        }
+                    ]
+                };
+            }
+        ])
         /**
          * @ngdoc component
          * @name tbEditButton
          *
          * @description
          * The `tbEditButton` component is visual helper to create an Edit button.
-         * 
-         * @scope
          * 
          * @param {object} model The row to remove.
          * @param {string} caption Set the caption to use in the button, default Edit.
@@ -236,10 +236,10 @@
                 caption: '@'
             },
             controller: [
-                '$scope', function ($scope) {
+                '$scope', function($scope) {
                     $scope.component = $scope.$parent.$parent.$component;
 
-                    $scope.edit = function () {
+                    $scope.edit = function() {
                         if ($scope.component.editorMode === 'popup') {
                             $scope.$ctrl.model.editPopup();
                         } else {
@@ -255,8 +255,6 @@
          *
          * @description
          * The `tbPageSizeSelector` component is visual helper to render a dropdown to allow user select how many rows by page.
-         * 
-         * @scope
          * 
          * @param {string} caption Set the caption to use in the button, default "Page size:".
          * @param {string} css Add a CSS class to the `div` HTML element.
@@ -281,7 +279,7 @@
                 options: '=?'
             },
             controller: [
-                '$scope', function ($scope) {
+                '$scope', function($scope) {
                     $scope.options = angular.isDefined($scope.$ctrl.options) ? $scope.$ctrl.options : [10, 20, 50, 100];
                 }
             ]
@@ -292,8 +290,6 @@
          *
          * @description
          * The `tbExportButton` component is visual helper to render a button to export grid to CSV format.
-         * 
-         * @scope
          * 
          * @param {string} filename Set the export file name.
          * @param {string} css Add a CSS class to the `button` HTML element.
@@ -321,14 +317,14 @@
                 captionMenuAll: '@'
             },
             controller: [
-                '$scope', 'tubularGridExportService', function ($scope, tubularGridExportService) {
+                '$scope', 'tubularGridExportService', function($scope, tubularGridExportService) {
                     $scope.$component = $scope.$parent.$parent;
 
-                    $scope.downloadCsv = function () {
+                    $scope.downloadCsv = function() {
                         tubularGridExportService.exportGridToCsv($scope.$ctrl.filename, $scope.$component);
                     };
 
-                    $scope.downloadAllCsv = function () {
+                    $scope.downloadAllCsv = function() {
                         tubularGridExportService.exportAllGridToCsv($scope.$ctrl.filename, $scope.$component);
                     };
                 }
@@ -341,8 +337,6 @@
          *
          * @description
          * The `tbPrintButton` component is visual helper to render a button to print the `tbGrid`.
-         * 
-         * @scope
          * 
          * @param {string} title Set the document's title.
          * @param {string} printCss Set a stylesheet URL to attach to print mode.
@@ -360,27 +354,27 @@
                 caption: '@'
             },
             controller: [
-                '$scope', function ($scope) {
+                '$scope', function($scope) {
                     $scope.$component = $scope.$parent.$parent;
 
-                    $scope.printGrid = function () {
-                        $scope.$component.getFullDataSource(function (data) {
+                    $scope.printGrid = function() {
+                        $scope.$component.getFullDataSource(function(data) {
                             var tableHtml = "<table class='table table-bordered table-striped'><thead><tr>"
                                 + $scope.$component.columns
-                                .filter(function (c) { return c.Visible; })
-                                .map(function (el) {
+                                .filter(function(c) { return c.Visible; })
+                                .map(function(el) {
                                     return "<th>" + (el.Label || el.Name) + "</th>";
                                 }).join(" ")
                                 + "</tr></thead>"
                                 + "<tbody>"
-                                + data.map(function (row) {
+                                + data.map(function(row) {
                                     if (typeof (row) === 'object') {
-                                        row = $.map(row, function (el) { return el; });
+                                        row = $.map(row, function(el) { return el; });
                                     }
 
-                                    return "<tr>" + row.map(function (cell, index) {
+                                    return "<tr>" + row.map(function(cell, index) {
                                         if (angular.isDefined($scope.$component.columns[index]) &&
-                                        !$scope.$component.columns[index].Visible) {
+                                            !$scope.$component.columns[index].Visible) {
                                             return "";
                                         }
 
