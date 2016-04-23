@@ -1,7 +1,7 @@
 {% include "lib/macros.html" %}
 {% block body %}
 <div class="page-header">
-    <h1>{$ doc.name $} <small>component in {$ doc.module.name $}</small></h1>
+    <h1>{$ doc.name $} <small>component in {$ doc.module $}</small></h1>
 </div>
 
 <div>
@@ -16,7 +16,6 @@
     <h3>Example</h3>
     {$ doc.example | marked $}
     {% endif %}
-
     {% include "partials/dependencies.template.html" %}
 </div>
 {% endblock %}
