@@ -73,12 +73,11 @@
             }
         ])
         /**
-         * @ngdoc directive
+         * @ngdoc component
          * @name tbGridPagerInfo
-         * @restrict E
          *
          * @description
-         * The `tbGridPagerInfo` directive shows how many records are shown in a page and total rows.
+         * The `tbGridPagerInfo` component shows how many records are shown in a page and total rows.
          * 
          * @scope
          */
@@ -111,21 +110,21 @@
                               $ctrl.currentTop = 0;
                           }
 
-                          if ($ctrl.currentInitial < 0 || $ctrl.$component.totalRecordCount === 0) {
+                          if ($ctrl.currentInitial < 0 || $ctrl.$component.$ctrl.totalRecordCount === 0) {
                               $ctrl.currentInitial = 0;
                           }
                       };
 
-                      $ctrl.$component.$watch('filteredRecordCount', function () {
+                      $ctrl.$component.$watch('$ctrl.filteredRecordCount', function () {
                           $ctrl.filtered = $ctrl.$component.$ctrl.totalRecordCount != $ctrl.$component.$ctrl.filteredRecordCount;
                           $ctrl.fixCurrentTop();
                       });
 
-                      $ctrl.$component.$watch('currentPage', function () {
+                      $ctrl.$component.$watch('$ctrl.currentPage', function () {
                           $ctrl.fixCurrentTop();
                       });
 
-                      $ctrl.$component.$watch('pageSize', function () {
+                      $ctrl.$component.$watch('$ctrl.pageSize', function () {
                           $ctrl.fixCurrentTop();
                       });
 

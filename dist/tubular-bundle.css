@@ -478,6 +478,7 @@ input[type="checkbox"] .styled:checked + label::after {
 /* Tubular Grid General Styles */
 tb-grid {
     position: relative;
+    display: block;
 }
 
     tb-grid div.row {
