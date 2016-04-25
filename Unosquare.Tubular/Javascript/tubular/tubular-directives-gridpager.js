@@ -1,4 +1,4 @@
-﻿(function () {
+﻿(function() {
     'use strict';
 
     angular.module('tubular.directives')
@@ -13,7 +13,7 @@
          * @scope
          */
         .directive('tbGridPager', [
-            '$timeout', function ($timeout) {
+            '$timeout', function($timeout) {
                 return {
                     require: '^tbGrid',
                     template:
@@ -29,17 +29,17 @@
                     scope: true,
                     terminal: false,
                     controller: [
-                        '$scope', '$element', function ($scope, $element) {
-                            $scope.$component = $scope.$parent.$parent;
+                        '$scope', '$element', function($scope, $element) {
+                            $scope.$component = $scope.$parent.$parent.$ctrl;
                             $scope.tubularDirective = 'tubular-grid-pager';
 
-                            $scope.$watch('$component.currentPage', function () {
+                            $scope.$watch('$component.currentPage', function() {
                                 if ($scope.$component.currentPage != $scope.$component.requestedPage) {
                                     $scope.$component.requestedPage = $scope.$component.currentPage;
                                 }
                             });
 
-                            $scope.pagerPageChanged = function () {
+                            $scope.pagerPageChanged = function() {
                                 $scope.$component.requestedPage = $scope.$component.currentPage;
                                 var allLinks = $element.find('li a');
                                 $(allLinks).blur();
@@ -48,14 +48,14 @@
                     ],
                     compile: function compile() {
                         return {
-                            post: function (scope, lElement, lAttrs) {
+                            post: function(scope, lElement, lAttrs) {
                                 scope.firstButtonClass = lAttrs.firstButtonClass || 'fa fa-fast-backward';
                                 scope.prevButtonClass = lAttrs.prevButtonClass || 'fa fa-backward';
 
                                 scope.nextButtonClass = lAttrs.nextButtonClass || 'fa fa-forward';
                                 scope.lastButtonClass = lAttrs.lastButtonClass || 'fa fa-fast-forward';
 
-                                var timer = $timeout(function () {
+                                var timer = $timeout(function() {
                                     var allLinks = lElement.find('li a');
 
                                     $(allLinks[0]).html('<i class="' + scope.firstButtonClass + '"></i>');
@@ -65,7 +65,7 @@
                                     $(allLinks[allLinks.length - 1]).html('<i class="' + scope.lastButtonClass + '"></i>');
                                 }, 0);
 
-                                scope.$on('$destroy', function () { $timeout.cancel(timer); });
+                                scope.$on('$destroy', function() { $timeout.cancel(timer); });
                             }
                         };
                     }
@@ -82,55 +82,57 @@
          * 
          * @scope
          */
-          .component('tbGridPagerInfo', {
-              require: '^tbGrid', // TODO: Find how to inject $scope here to change this line to=> $component: $scope.$parent.$parent
-              template: '<div class="pager-info small" ng-hide="$ctrl.$component.isEmpty">' +
-                  '{{\'UI_SHOWINGRECORDS\' | translate: $ctrl.currentInitial:$ctrl.currentTop:$ctrl.$component.$ctrl.filteredRecordCount}} ' +
-                  '<span ng-show="$ctrl.filtered">' +
-                  '{{\'UI_FILTEREDRECORDS\' | translate: $ctrl.$component.$ctrl.totalRecordCount}}</span>' +
-                  '</div>',
-              transclude: true,
-              bindings: {
-                  cssClass: '@?'
-              },
-              controller: [
-                  '$scope', function ($scope) {
-                      var $ctrl = this;
+        .component('tbGridPagerInfo', {
+            require: {
+                $component: '^tbGrid'
+            },
+            template: '<div class="pager-info small" ng-hide="$ctrl.$component.isEmpty">' +
+                '{{\'UI_SHOWINGRECORDS\' | translate: $ctrl.currentInitial:$ctrl.currentTop:$ctrl.$component.filteredRecordCount}} ' +
+                '<span ng-show="$ctrl.filtered">' +
+                '{{\'UI_FILTEREDRECORDS\' | translate: $ctrl.$component.totalRecordCount}}</span>' +
+                '</div>',
+            transclude: true,
+            bindings: {
+                cssClass: '@?'
+            },
+            controller: [
+                '$scope', function($scope) {
+                    var $ctrl = this;
 
-                      $ctrl.$component = $scope.$parent.$parent;
+                    $ctrl.fixCurrentTop = function() {
+                        $ctrl.currentTop = $ctrl.$component.pageSize * $ctrl.$component.currentPage;
+                        $ctrl.currentInitial = (($ctrl.$component.currentPage - 1) * $ctrl.$component.pageSize) + 1;
 
-                      $ctrl.fixCurrentTop = function () {
-                          $ctrl.currentTop = $ctrl.$component.$ctrl.pageSize * $ctrl.$component.$ctrl.currentPage;
-                          $ctrl.currentInitial = (($ctrl.$component.$ctrl.currentPage - 1) * $ctrl.$component.$ctrl.pageSize) + 1;
+                        if ($ctrl.currentTop > $ctrl.$component.filteredRecordCount) {
+                            $ctrl.currentTop = $ctrl.$component.filteredRecordCount;
+                        }
 
-                          if ($ctrl.currentTop > $ctrl.$component.$ctrl.filteredRecordCount) {
-                              $ctrl.currentTop = $ctrl.$component.$ctrl.filteredRecordCount;
-                          }
+                        if ($ctrl.currentTop < 0) {
+                            $ctrl.currentTop = 0;
+                        }
 
-                          if ($ctrl.currentTop < 0) {
-                              $ctrl.currentTop = 0;
-                          }
+                        if ($ctrl.currentInitial < 0 || $ctrl.$component.totalRecordCount === 0) {
+                            $ctrl.currentInitial = 0;
+                        }
+                    };
 
-                          if ($ctrl.currentInitial < 0 || $ctrl.$component.totalRecordCount === 0) {
-                              $ctrl.currentInitial = 0;
-                          }
-                      };
+                    $scope.$watch('$component.filteredRecordCount', function () {
+                        $ctrl.filtered = $ctrl.$component.totalRecordCount != $ctrl.$component.filteredRecordCount;
+                        $ctrl.fixCurrentTop();
+                    });
 
-                      $ctrl.$component.$watch('filteredRecordCount', function () {
-                          $ctrl.filtered = $ctrl.$component.$ctrl.totalRecordCount != $ctrl.$component.$ctrl.filteredRecordCount;
-                          $ctrl.fixCurrentTop();
-                      });
+                    $scope.$watch('$component.currentPage', function () {
+                        $ctrl.fixCurrentTop();
+                    });
 
-                      $ctrl.$component.$watch('currentPage', function () {
-                          $ctrl.fixCurrentTop();
-                      });
+                    $scope.$watch('$component.pageSize', function () {
+                        $ctrl.fixCurrentTop();
+                    });
 
-                      $ctrl.$component.$watch('pageSize', function () {
-                          $ctrl.fixCurrentTop();
-                      });
-
-                      $ctrl.fixCurrentTop();
-                  }
-              ]
-          });
+                    $ctrl.$onInit = function() {
+                        $ctrl.fixCurrentTop();
+                    };
+                }
+            ]
+        });
 })();
