@@ -16,9 +16,9 @@
                                    show-label="true" required="true" default-value="100">
                 </tb-numeric-editor>
 
-                <tb-date-editor name="ShippedDate" required="true" format="'dd-MM-yyyy'" show-label="true"
+                <tb-date-time-editor name="ShippedDate" required="true" format="'dd-MM-yyyy'" show-label="true"
                                 default-value="{{sample.defaultDate | date}}">
-                </tb-date-editor>
+                </tb-date-time-editor>
 
                 <tb-hidden-field name="OrderID" is-key="true" value="Model.OrderID">
                 </tb-hidden-field>

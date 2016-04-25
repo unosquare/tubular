@@ -1679,7 +1679,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             controller: [
                 'tubularEditorService', '$scope', '$filter', function(tubularEditorService, $scope, $filter) {
                     var $ctrl = this;
-
+                    
                     $ctrl.validate = function() {
                         if (angular.isDefined($ctrl.regex) && $ctrl.regex != null && angular.isDefined($ctrl.value) && $ctrl.value != null && $ctrl.value != '') {
                             var patt = new RegExp($ctrl.regex);
@@ -1833,51 +1833,99 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @param {number} min Set the minimum value.
          * @param {number} max Set the maximum value.
          */
-        .directive('tbDateTimeEditor', [
-            'tubularEditorService', function(tubularEditorService) {
+        .component('tbDateTimeEditor', {
+                template: '<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">' +
+                    '<span ng-hide="$ctrl.isEditing">{{ $ctrl.value | date: format }}</span>' +
+                    '<label ng-show="$ctrl.showLabel">{{ $ctrl.label }}</label>' +
+                    '<input type="datetime-local" ng-show="$ctrl.isEditing" ng-model="$ctrl.value" class="form-control" ' +
+                    'ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}" />' +
+                    '<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">' +
+                    '{{error}}' +
+                    '</span>' +
+                    '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help">{{$ctrl.help}}</span>' +
+                    '</div>',
+                transclude: true,
+                bindings: {
+                    value: '=?',
+                    isEditing: '=?',
+                    showLabel: '=?',
+                    label: '@?',
+                    required: '=?',
+                    format: '@?',
+                    min: '=?',
+                    max: '=?',
+                    name: '@',
+                    placeholder: '@?',
+                    readOnly: '=?',
+                    help: '@?'
+                },
+                controller: [
+                    '$scope', '$element', 'tubularEditorService', '$filter', function($scope, $element, tubularEditorService, $filter) {
+                        var $ctrl = this;
 
-                return {
-                    template: '<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid && $dirty() }">' +
-                        '<span ng-hide="isEditing">{{ value | date: format }}</span>' +
-                        '<label ng-show="showLabel">{{ label }}</label>' +
-                        '<input type="datetime-local" ng-show="isEditing" ng-model="value" class="form-control" ' +
-                        'ng-required="required" ng-readonly="readOnly" name="{{name}}" />' +
-                        '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">' +
-                        '{{error}}' +
-                        '</span>' +
-                        '<span class="help-block" ng-show="isEditing && help">{{help}}</span>' +
-                        '</div>',
-                    restrict: 'E',
-                    replace: false,
-                    transclude: true,
-                    scope: tubularEditorService.defaultScope,
-                    controller: tubularEditorService.dateEditorController('yyyy-MM-dd HH:mm'),
-                    compile: function compile() {
-                        return {
-                            post: function(scope, lElement) {
-                                var inp = $(lElement).find("input[type=datetime-local]")[0];
-                                if (inp.type !== 'datetime-local') {
-                                    $(inp).datepicker({
-                                            dateFormat: scope.format.toLowerCase().split(' ')[0]
-                                        })
-                                        .datepicker("setDate", scope.value)
-                                        .on("dateChange", function(e) {
-                                            scope.$apply(function() {
-                                                scope.value = e.date;
+                        $ctrl.$postLink = function() {
+                            var inp = $element.find("input[type=datetime-local]")[0];
+                            if (inp.type !== 'datetime-local') {
+                                $(inp).datepicker({
+                                        dateFormat: $ctrl.format.toLowerCase().split(' ')[0]
+                                    })
+                                    .datepicker("setDate", $ctrl.value)
+                                    .on("dateChange", function(e) {
+                                        $scope.$apply(function() {
+                                            $ctrl.value = e.date;
 
-                                                if (angular.isDefined(scope.$parent.Model)) {
-                                                    scope.$parent.Model.$hasChanges = true;
-                                                }
-                                            });
+                                            if (angular.isDefined($scope.$parent.Model)) {
+                                                $scope.$parent.Model.$hasChanges = true;
+                                            }
                                         });
+                                    });
+                            }
+                        };
+
+                        $ctrl.DataType = "date";
+
+                        // This could be $onChange??
+                        $scope.$watch('value', function(val) {
+                            if (typeof (val) === 'string') {
+                                $ctrl.value = new Date(val);
+                            }
+                        });
+
+                        $scope.validate = function() {
+                            if (angular.isDefined($ctrl.min)) {
+                                if (Object.prototype.toString.call($ctrl.min) !== "[object Date]") {
+                                    $ctrl.min = new Date($ctrl.min);
+                                }
+
+                                $ctrl.$valid = $ctrl.value >= $ctrl.min;
+
+                                if (!$ctrl.$valid) {
+                                    $ctrl.state.$errors = [$filter('translate')('EDITOR_MIN_DATE', $filter('date')(innerScope.min, innerScope.format))];
+                                }
+                            }
+
+                            if (!$ctrl.$valid) {
+                                return;
+                            }
+
+                            if (angular.isDefined($ctrl.max)) {
+                                if (Object.prototype.toString.call($ctrl.max) !== "[object Date]") {
+                                    $ctrl.max = new Date($ctrl.max);
+                                }
+
+                                $ctrl.$valid = $ctrl.value <= $ctrl.max;
+
+                                if (!$ctrl.$valid) {
+                                    $ctrl.state.$errors = [$filter('translate')('EDITOR_MAX_DATE', $filter('date')(innerScope.max, innerScope.format))];
                                 }
                             }
                         };
+
+                        tubularEditorService.setupScope($scope, $ctrl.format, $ctrl);
                     }
-                };
-            }
-        ])
-        /**
+                ]
+        })
+            /**
          * @ngdoc directive
          * @name tbDateEditor
          * @restrict E
@@ -3088,7 +3136,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             require: {
                 $component: '^tbGrid'
             },
-            template: '<button ng-click="edit()" class="btn btn-xs btn-default" ' +
+            template: '<button ng-click="$ctrl.edit()" class="btn btn-xs btn-default" ' +
                 'ng-hide="$ctrl.model.$isEditing">{{:: $ctrl.caption || (\'CAPTION_EDIT\' | translate) }}</button>',
             transclude: true,
             bindings: {
@@ -3097,11 +3145,13 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             },
             controller: [
                 '$scope', function($scope) {
-                    $scope.edit = function() {
-                        if ($scope.component.editorMode === 'popup') {
-                            $scope.$ctrl.model.editPopup();
+                    var $ctrl = this;
+
+                    $ctrl.edit = function () {
+                        if ($ctrl.$component.editorMode === 'popup') {
+                            $ctrl.model.editPopup();
                         } else {
-                            $scope.$ctrl.model.edit();
+                            $ctrl.model.edit();
                         }
                     };
                 }
@@ -4082,7 +4132,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                  */
                 me.dateEditorController = function(format) {
                     return [
-                        '$scope', function(innerScope) {
+                        '$scope', '$element', function (innerScope, $element) {
                             innerScope.DataType = "date";
 
                             innerScope.$watch('value', function(val) {
