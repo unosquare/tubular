@@ -394,7 +394,7 @@
                                 $ctrl.selectOptions = 'd.' + $ctrl.optionKey + ' as ' + $ctrl.selectOptions;
                             }
                         }
-                    }
+                    };
 
                     $scope.$watch('value', function(val) {
                         $scope.$emit('tbForm_OnFieldChange', $ctrl.$component, $ctrl.name, val);
