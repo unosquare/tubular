@@ -3389,12 +3389,12 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             }
         ])
         /**
-         * @ngdoc directive
+         * @ngdoc component
          * @name tbGridPagerInfo
          * @restrict E
          *
          * @description
-         * The `tbGridPagerInfo` directive shows how many records are shown in a page and total rows.
+         * The `tbGridPagerInfo` component shows how many records are shown in a page and total rows.
          * 
          * @scope
          */
@@ -3405,17 +3405,17 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             template: '<div class="pager-info small" ng-hide="$ctrl.$component.isEmpty">' +
                 '{{\'UI_SHOWINGRECORDS\' | translate: $ctrl.currentInitial:$ctrl.currentTop:$ctrl.$component.filteredRecordCount}} ' +
                 '<span ng-show="$ctrl.filtered">' +
-                '{{\'UI_FILTEREDRECORDS\' | translate: $ctrl.$component.totalRecordCount}}</span>' +
+                '{{\'UI_FILTEREDRECORDS\' | translate: $ctrl.$component.$ctrl.totalRecordCount}}</span>' +
                 '</div>',
             transclude: true,
             bindings: {
                 cssClass: '@?'
             },
             controller: [
-                '$scope', function($scope) {
+                '$scope', function ($scope) {
                     var $ctrl = this;
 
-                    $ctrl.fixCurrentTop = function() {
+                    $ctrl.fixCurrentTop = function () {
                         $ctrl.currentTop = $ctrl.$component.pageSize * $ctrl.$component.currentPage;
                         $ctrl.currentInitial = (($ctrl.$component.currentPage - 1) * $ctrl.$component.pageSize) + 1;
 
@@ -3432,20 +3432,20 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         }
                     };
 
-                    $scope.$watch('$component.filteredRecordCount', function () {
+                    $scope.$watch('$ctrl.$component.filteredRecordCount', function () {
                         $ctrl.filtered = $ctrl.$component.totalRecordCount != $ctrl.$component.filteredRecordCount;
                         $ctrl.fixCurrentTop();
                     });
 
-                    $scope.$watch('$component.currentPage', function () {
+                    $scope.$watch('$ctrl.$component.currentPage', function () {
                         $ctrl.fixCurrentTop();
                     });
 
-                    $scope.$watch('$component.pageSize', function () {
+                    $scope.$watch('$ctrl.$component.pageSize', function () {
                         $ctrl.fixCurrentTop();
                     });
 
-                    $ctrl.$onInit = function() {
+                    $ctrl.$onInit = function () {
                         $ctrl.fixCurrentTop();
                     };
                 }
