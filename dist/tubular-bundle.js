@@ -2898,7 +2898,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 placeholder: '@'
             },
             controller: [
-                '$scope', function ($scope) {
+                '$scope', function($scope) {
                     var $ctrl = this;
 
                     $ctrl.$onInit = function() {
@@ -3224,11 +3224,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 caption: '@'
             },
             controller: [
-                '$scope', function ($scope) {
+                '$scope', function($scope) {
                     var $ctrl = this;
 
-                    $ctrl.printGrid = function () {
-                        $ctrl.$component.getFullDataSource(function (data) {
+                    $ctrl.printGrid = function() {
+                        $ctrl.$component.getFullDataSource(function(data) {
                             var tableHtml = "<table class='table table-bordered table-striped'><thead><tr>"
                                 + $ctrl.$component.columns
                                 .filter(function(c) { return c.Visible; })
@@ -3356,58 +3356,57 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * 
          * @scope
          */
-        .directive('tbGridPagerInfo', [
-            function () {
-                return {
-                    require: '^tbGrid',
-                    template: '<div class="pager-info small" ng-hide="$component.isEmpty">' +
-                        '{{\'UI_SHOWINGRECORDS\' | translate: currentInitial:currentTop:$component.filteredRecordCount}} ' +
-                        '<span ng-show="filtered">' +
-                        '{{\'UI_FILTEREDRECORDS\' | translate: $component.totalRecordCount}}</span>' +
-                        '</div>',
-                    restrict: 'E',
-                    replace: true,
-                    transclude: true,
-                    scope: true,
-                    controller: [
-                        '$scope', function ($scope) {
-                            $scope.$component = $scope.$parent.$parent;
-                            $scope.fixCurrentTop = function () {
-                                $scope.currentTop = $scope.$component.pageSize * $scope.$component.currentPage;
-                                $scope.currentInitial = (($scope.$component.currentPage - 1) * $scope.$component.pageSize) + 1;
+          .component('tbGridPagerInfo', {
+              require: '^tbGrid', // TODO: Find how to inject $scope here to change this line to=> $component: $scope.$parent.$parent
+              template: '<div class="pager-info small" ng-hide="$ctrl.$component.isEmpty">' +
+                  '{{\'UI_SHOWINGRECORDS\' | translate: $ctrl.currentInitial:$ctrl.currentTop:$ctrl.$component.$ctrl.filteredRecordCount}} ' +
+                  '<span ng-show="$ctrl.filtered">' +
+                  '{{\'UI_FILTEREDRECORDS\' | translate: $ctrl.$component.$ctrl.totalRecordCount}}</span>' +
+                  '</div>',
+              transclude: true,
+              bindings: {
+                  cssClass: '@?'
+              },
+              controller: [
+                  '$scope', function ($scope) {
+                      var $ctrl = this;
 
-                                if ($scope.currentTop > $scope.$component.filteredRecordCount) {
-                                    $scope.currentTop = $scope.$component.filteredRecordCount;
-                                }
+                      $ctrl.$component = $scope.$parent.$parent;
 
-                                if ($scope.currentTop < 0) {
-                                    $scope.currentTop = 0;
-                                }
+                      $ctrl.fixCurrentTop = function () {
+                          $ctrl.currentTop = $ctrl.$component.$ctrl.pageSize * $ctrl.$component.$ctrl.currentPage;
+                          $ctrl.currentInitial = (($ctrl.$component.$ctrl.currentPage - 1) * $ctrl.$component.$ctrl.pageSize) + 1;
 
-                                if ($scope.currentInitial < 0 || $scope.$component.totalRecordCount === 0) {
-                                    $scope.currentInitial = 0;
-                                }
-                            };
+                          if ($ctrl.currentTop > $ctrl.$component.$ctrl.filteredRecordCount) {
+                              $ctrl.currentTop = $ctrl.$component.$ctrl.filteredRecordCount;
+                          }
 
-                            $scope.$component.$watch('filteredRecordCount', function () {
-                                $scope.filtered = $scope.$component.totalRecordCount != $scope.$component.filteredRecordCount;
-                                $scope.fixCurrentTop();
-                            });
+                          if ($ctrl.currentTop < 0) {
+                              $ctrl.currentTop = 0;
+                          }
 
-                            $scope.$component.$watch('currentPage', function () {
-                                $scope.fixCurrentTop();
-                            });
+                          if ($ctrl.currentInitial < 0 || $ctrl.$component.totalRecordCount === 0) {
+                              $ctrl.currentInitial = 0;
+                          }
+                      };
 
-                            $scope.$component.$watch('pageSize', function () {
-                                $scope.fixCurrentTop();
-                            });
+                      $ctrl.$component.$watch('filteredRecordCount', function () {
+                          $ctrl.filtered = $ctrl.$component.$ctrl.totalRecordCount != $ctrl.$component.$ctrl.filteredRecordCount;
+                          $ctrl.fixCurrentTop();
+                      });
 
-                            $scope.fixCurrentTop();
-                        }
-                    ]
-                };
-            }
-        ]);
+                      $ctrl.$component.$watch('currentPage', function () {
+                          $ctrl.fixCurrentTop();
+                      });
+
+                      $ctrl.$component.$watch('pageSize', function () {
+                          $ctrl.fixCurrentTop();
+                      });
+
+                      $ctrl.fixCurrentTop();
+                  }
+              ]
+          });
 })();
 (function() {
     'use strict';
