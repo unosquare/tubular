@@ -1621,17 +1621,16 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             ]
         });
 })();
-(function() {
+(function () {
     'use strict';
 
     angular.module('tubular.directives')
         /**
-         * @ngdoc directive
+         * @ngdoc component
          * @name tbSimpleEditor
-         * @restrict E
          *
          * @description
-         * The `tbSimpleEditor` directive is the basic input to show in a grid or form.
+         * The `tbSimpleEditor` component is the basic input to show in a grid or form.
          * It uses the `TubularModel` to retrieve column or field information.
          * 
          * @scope
@@ -1652,74 +1651,84 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @param {string} regexErrorMessage Set the regex validation error message.
          * @param {string} match Set the field name to match values.
          */
-        .directive('tbSimpleEditor', [
-            'tubularEditorService', '$filter', function(tubularEditorService, $filter) {
+        .component('tbSimpleEditor', {
+            template: '<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">' +
+                '<span ng-hide="$ctrl.isEditing">{{$ctrl.value}}</span>' +
+                '<label ng-show="$ctrl.showLabel">{{ $ctrl.label }}</label>' +
+                '<input type="{{$ctrl.editorType}}" placeholder="{{$ctrl.placeholder}}" ng-show="$ctrl.isEditing" ng-model="$ctrl.value" class="form-control" ' +
+                ' ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}" />' +
+                '<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">{{error}}</span>' +
+                '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help">{{$ctrl.help}}</span>' +
+                '</div>',
+            transclude: true,
+            bindings: {
+                regex: '@?',
+                regexErrorMessage: '@?',
+                value: '=?',
+                isEditing: '=?',
+                editorType: '@',
+                showLabel: '=?',
+                label: '@?',
+                required: '=?',
+                min: '=?',
+                max: '=?',
+                name: '@',
+                placeholder: '@?',
+                readOnly: '=?',
+                help: '@?',
+                match: '@?'
+            },
+            controller: [
+                'tubularEditorService', '$scope', '$filter', function (tubularEditorService, $scope, $filter) {
+                    var $ctrl = this;
 
-                return {
-                    template: '<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid && $dirty() }">' +
-                        '<span ng-hide="isEditing">{{value}}</span>' +
-                        '<label ng-show="showLabel">{{ label }}</label>' +
-                        '<input type="{{editorType}}" placeholder="{{placeholder}}" ng-show="isEditing" ng-model="value" class="form-control" ' +
-                        ' ng-required="required" ng-readonly="readOnly" name="{{name}}" />' +
-                        '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
-                        '<span class="help-block" ng-show="isEditing && help">{{help}}</span>' +
-                        '</div>',
-                    restrict: 'E',
-                    replace: true,
-                    transclude: true,
-                    scope: angular.extend({ regex: '@?', regexErrorMessage: '@?' }, tubularEditorService.defaultScope),
-                    controller: [
-                        '$scope', function($scope) {
-                            $scope.validate = function () {
-                                if (angular.isDefined($scope.regex) && $scope.regex != null && angular.isDefined($scope.value) && $scope.value != null && $scope.value != '') {
-                                    var patt = new RegExp($scope.regex);
+                    $ctrl.validate = function () {
+                        if (angular.isDefined($ctrl.regex) && $ctrl.regex != null && angular.isDefined($ctrl.value) && $ctrl.value != null && $ctrl.value != '') {
+                            var patt = new RegExp($ctrl.regex);
 
-                                    if (patt.test($scope.value) === false) {
-                                        $scope.$valid = false;
-                                        $scope.state.$errors = [$scope.regexErrorMessage || $filter('translate')('EDITOR_REGEX_DOESNT_MATCH')];
-                                        return;
-                                    }
-                                }
-
-                                if (angular.isDefined($scope.match) && $scope.match) {
-                                    if ($scope.value != $scope.$component.model[$scope.match]) {
-                                        var label = $filter('filter')($scope.$component.fields, { name: $scope.match }, true)[0].label;
-                                        $scope.$valid = false;
-                                        $scope.state.$errors = [$filter('translate')('EDITOR_MATCH', label)];
-                                        return;
-                                    }
-                                }
-
-                                if (angular.isDefined($scope.min) && angular.isDefined($scope.value) && $scope.value != null) {
-                                    if ($scope.value.length < parseInt($scope.min)) {
-                                        $scope.$valid = false;
-                                        $scope.state.$errors = [$filter('translate')('EDITOR_MIN_CHARS', $scope.min)];
-                                        return;
-                                    }
-                                }
-
-                                if (angular.isDefined($scope.max) && angular.isDefined($scope.value) && $scope.value != null) {
-                                    if ($scope.value.length > parseInt($scope.max)) {
-                                        $scope.$valid = false;
-                                        $scope.state.$errors = [$filter('translate')('EDITOR_MAX_CHARS', $scope.max)];
-                                        return;
-                                    }
-                                }
-                            };
-
-                            tubularEditorService.setupScope($scope);
+                            if (patt.test($ctrl.value) === false) {
+                                $ctrl.$valid = false;
+                                $ctrl.state.$errors = [$ctrl.regexErrorMessage || $filter('translate')('EDITOR_REGEX_DOESNT_MATCH')];
+                                return;
+                            }
                         }
-                    ]
-                };
-            }
-        ])
+
+                        if (angular.isDefined($ctrl.match) && $ctrl.match) {
+                            if ($ctrl.value != $scope.$component.model[$ctrl.match]) {
+                                var label = $filter('filter')($scope.$component.fields, { name: $ctrl.match }, true)[0].label;
+                                $ctrl.$valid = false;
+                                $ctrl.state.$errors = [$filter('translate')('EDITOR_MATCH', label)];
+                                return;
+                            }
+                        }
+
+                        if (angular.isDefined($ctrl.min) && angular.isDefined($ctrl.value) && $ctrl.value != null) {
+                            if ($ctrl.value.length < parseInt($ctrl.min)) {
+                                $ctrl.$valid = false;
+                                $ctrl.state.$errors = [$filter('translate')('EDITOR_MIN_CHARS', $ctrl.min)];
+                                return;
+                            }
+                        }
+
+                        if (angular.isDefined($ctrl.max) && angular.isDefined($ctrl.value) && $ctrl.value != null) {
+                            if ($ctrl.value.length > parseInt($ctrl.max)) {
+                                $ctrl.$valid = false;
+                                $ctrl.state.$errors = [$filter('translate')('EDITOR_MAX_CHARS', $ctrl.max)];
+                                return;
+                            }
+                        }
+                    };
+
+                    tubularEditorService.setupScope($scope, null, $ctrl);
+                }
+            ]
+        })
         /**
-         * @ngdoc directive
+         * @ngdoc component
          * @name tbNumericEditor
-         * @restrict E
          *
          * @description
-         * The `tbNumericEditor` directive is numeric input, similar to `tbSimpleEditor` 
+         * The `tbNumericEditor` component is numeric input, similar to `tbSimpleEditor` 
          * but can render an add-on to the input visual element.
          * 
          * When you need a numeric editor but without the visual elements you can use 
@@ -1743,58 +1752,66 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @param {number} max Set the maximum value.
          * @param {number} step Set the step setting, default 'any'.
          */
-        .directive('tbNumericEditor', [
-            'tubularEditorService', '$filter', function (tubularEditorService, $filter) {
+        .component('tbNumericEditor', {
+            template: '<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">' +
+                '<span ng-hide="$ctrl.isEditing">{{$ctrl.value | numberorcurrency: format }}</span>' +
+                '<label ng-show="$ctrl.showLabel">{{ $ctrl.label }}</label>' +
+                '<div class="input-group" ng-show="$ctrl.isEditing">' +
+                '<div class="input-group-addon" ng-hide="$ctrl.format == \'I\'">' +
+                '<i ng-class="{ \'fa\': true, \'fa-calculator\': $ctrl.format != \'C\', \'fa-usd\': $ctrl.format == \'C\'}"></i>' +
+                '</div>' +
+                '<input type="number" placeholder="{{$ctrl.placeholder}}" ng-model="$ctrl.value" class="form-control" ' +
+                'ng-required="$ctrl.required" ng-hide="$ctrl.readOnly" step="{{$ctrl.step || \'any\'}}"  name="{{$ctrl.name}}" />' +
+                '<p class="form-control form-control-static text-right" ng-show="$ctrl.readOnly">{{$ctrl.value | numberorcurrency: format}}</span></p>' +
+                '</div>' +
+                '<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">{{error}}</span>' +
+                '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help">{{$ctrl.help}}</span>' +
+                '</div>',
+            transclude: true,
+            bindings: {
+                value: '=?',
+                isEditing: '=?',
+                showLabel: '=?',
+                label: '@?',
+                required: '=?',
+                format: '@?',
+                min: '=?',
+                max: '=?',
+                name: '@',
+                placeholder: '@?',
+                readOnly: '=?',
+                help: '@?',
+                step: '=?'
+            },
+            controller: [
+                'tubularEditorService', '$scope', '$filter', function (tubularEditorService, $scope, $filter) {
+                    var $ctrl = this;
+                    $ctrl.DataType = "numeric";
 
-                return {
-                    template: '<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid && $dirty() }">' +
-                        '<span ng-hide="isEditing">{{value | numberorcurrency: format }}</span>' +
-                        '<label ng-show="showLabel">{{ label }}</label>' +
-                        '<div class="input-group" ng-show="isEditing">' +
-                        '<div class="input-group-addon" ng-hide="format == \'I\'">' +
-                        '<i ng-class="{ \'fa\': true, \'fa-calculator\': format != \'C\', \'fa-usd\': format == \'C\'}"></i>' +
-                        '</div>' +
-                        '<input type="number" placeholder="{{placeholder}}" ng-model="value" class="form-control" ' +
-                        'ng-required="required" ng-hide="readOnly" step="{{step || \'any\'}}"  name="{{name}}" />' +
-                        '<p class="form-control form-control-static text-right" ng-show="readOnly">{{value | numberorcurrency: format}}</span></p>' +
-                        '</div>' +
-                        '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
-                        '<span class="help-block" ng-show="isEditing && help">{{help}}</span>' +
-                        '</div>',
-                    restrict: 'E',
-                    replace: true,
-                    transclude: true,
-                    scope: angular.extend({ step: '=?' }, tubularEditorService.defaultScope),
-                    controller: [
-                        '$scope', function ($scope) {
-                            $scope.DataType = "numeric";
-
-                            $scope.validate = function() {
-                                if (angular.isDefined($scope.min) && angular.isDefined($scope.value) && $scope.value != null) {
-                                    $scope.$valid = $scope.value >= $scope.min;
-                                    if (!$scope.$valid) {
-                                        $scope.state.$errors = [$filter('translate')('EDITOR_MIN_NUMBER', $scope.min)];
-                                    }
-                                }
-
-                                if (!$scope.$valid) {
-                                    return;
-                                }
-
-                                if (angular.isDefined($scope.max) && angular.isDefined($scope.value) && $scope.value != null) {
-                                    $scope.$valid = $scope.value <= $scope.max;
-                                    if (!$scope.$valid) {
-                                        $scope.state.$errors = [$filter('translate')('EDITOR_MAX_NUMBER', $scope.max)];
-                                    }
-                                }
-                            };
-
-                            tubularEditorService.setupScope($scope, 0);
+                    $ctrl.validate = function () {
+                        if (angular.isDefined($ctrl.min) && angular.isDefined($ctrl.value) && $ctrl.value != null) {
+                            $ctrl.$valid = $ctrl.value >= $ctrl.min;
+                            if (!$ctrl.$valid) {
+                                $ctrl.state.$errors = [$filter('translate')('EDITOR_MIN_NUMBER', $ctrl.min)];
+                            }
                         }
-                    ]
-                };
-            }
-        ])
+
+                        if (!$ctrl.$valid) {
+                            return;
+                        }
+
+                        if (angular.isDefined($ctrl.max) && angular.isDefined($ctrl.value) && $ctrl.value != null) {
+                            $ctrl.$valid = $ctrl.value <= $ctrl.max;
+                            if (!$ctrl.$valid) {
+                                $ctrl.state.$errors = [$filter('translate')('EDITOR_MAX_NUMBER', $ctrl.max)];
+                            }
+                        }
+                    };
+
+                    tubularEditorService.setupScope($scope, 0, $ctrl);
+                }
+            ]
+        })
         /**
          * @ngdoc directive
          * @name tbDateTimeEditor
@@ -1821,7 +1838,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @param {number} max Set the maximum value.
          */
         .directive('tbDateTimeEditor', [
-            'tubularEditorService', function(tubularEditorService) {
+            'tubularEditorService', function (tubularEditorService) {
 
                 return {
                     template: '<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid && $dirty() }">' +
@@ -1835,21 +1852,21 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         '<span class="help-block" ng-show="isEditing && help">{{help}}</span>' +
                         '</div>',
                     restrict: 'E',
-                    replace: true,
+                    replace: false,
                     transclude: true,
                     scope: tubularEditorService.defaultScope,
                     controller: tubularEditorService.dateEditorController('yyyy-MM-dd HH:mm'),
                     compile: function compile() {
                         return {
-                            post: function(scope, lElement) {
+                            post: function (scope, lElement) {
                                 var inp = $(lElement).find("input[type=datetime-local]")[0];
                                 if (inp.type !== 'datetime-local') {
                                     $(inp).datepicker({
-                                            dateFormat: scope.format.toLowerCase().split(' ')[0]
-                                        })
+                                        dateFormat: scope.format.toLowerCase().split(' ')[0]
+                                    })
                                         .datepicker("setDate", scope.value)
-                                        .on("dateChange", function(e) {
-                                            scope.$apply(function() {
+                                        .on("dateChange", function (e) {
+                                            scope.$apply(function () {
                                                 scope.value = e.date;
 
                                                 if (angular.isDefined(scope.$parent.Model)) {
@@ -1892,7 +1909,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @param {number} max Set the maximum value.
          */
         .directive('tbDateEditor', [
-            'tubularEditorService', function(tubularEditorService) {
+            'tubularEditorService', function (tubularEditorService) {
 
                 return {
                     template: '<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid && $dirty() }">' +
@@ -1912,15 +1929,15 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     controller: tubularEditorService.dateEditorController('yyyy-MM-dd'),
                     compile: function compile() {
                         return {
-                            post: function(scope, lElement) {
+                            post: function (scope, lElement) {
                                 var inp = $(lElement).find("input[type=date]")[0];
                                 if (inp.type !== 'date') {
                                     $(inp).datepicker({
-                                            dateFormat: scope.format.toLowerCase()
-                                        })
+                                        dateFormat: scope.format.toLowerCase()
+                                    })
                                         .datepicker("setDate", scope.value)
-                                        .on("dateChange", function(e) {
-                                            scope.$apply(function() {
+                                        .on("dateChange", function (e) {
+                                            scope.$apply(function () {
                                                 scope.value = e.date;
 
                                                 if (angular.isDefined(scope.$parent.Model)) {
@@ -1936,12 +1953,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             }
         ])
         /**
-         * @ngdoc directive
+         * @ngdoc component
          * @name tbDropdownEditor
-         * @restrict E
          *
          * @description
-         * The `tbDropdownEditor` directive is drowpdown editor, it can get information from a HTTP 
+         * The `tbDropdownEditor` component is drowpdown editor, it can get information from a HTTP 
          * source or it can be an object declared in the attributes.
          * 
          * It uses the `TubularModel` to retrieve column or field information.
@@ -1963,94 +1979,106 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @param {string} optionKey Set the property to get the keys.
          * @param {string} defaultValue Set the default value.
          */
-        .directive('tbDropdownEditor', [
-            'tubularEditorService', function(tubularEditorService) {
+        .component('tbDropdownEditor', {
+            template: '<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">' +
+                '<span ng-hide="$ctrl.isEditing">{{ $ctrl.value }}</span>' +
+                '<label ng-show="$ctrl.showLabel">{{ $ctrl.label }}</label>' +
+                '<select ng-options="{{ $ctrl.selectOptions }}" ng-show="$ctrl.isEditing" ng-model="$ctrl.value" class="form-control" ' +
+                'ng-required="$ctrl.required" ng-disabled="$ctrl.readOnly" name="{{$ctrl.name}}" />' +
+                '<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">' +
+                '{{error}}' +
+                '</span>' +
+                '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help">{{$ctrl.help}}</span>' +
+                '</div>',
+            transclude: true,
+            bindings: {
+                value: '=?',
+                isEditing: '=?',
+                showLabel: '=?',
+                label: '@?',
+                required: '=?',
+                name: '@',
+                readOnly: '=?',
+                help: '@?',
+                defaultValue: '@?',
+                options: '=?',
+                optionsUrl: '@',
+                optionsMethod: '@?',
+                optionLabel: '@?',
+                optionKey: '@?'
+            },
+            controller: [
+                'tubularEditorService', '$scope', function (tubularEditorService, $scope) {
+                    var $ctrl = this;
 
-                return {
-                    template: '<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid && $dirty() }">' +
-                        '<span ng-hide="isEditing">{{ value }}</span>' +
-                        '<label ng-show="showLabel">{{ label }}</label>' +
-                        '<select ng-options="{{ selectOptions }}" ng-show="isEditing" ng-model="value" class="form-control" ' +
-                        'ng-required="required" ng-disabled="readOnly" name="{{name}}" />' +
-                        '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">' +
-                        '{{error}}' +
-                        '</span>' +
-                        '<span class="help-block" ng-show="isEditing && help">{{help}}</span>' +
-                        '</div>',
-                    restrict: 'E',
-                    replace: true,
-                    transclude: true,
-                    scope: angular.extend({ options: '=?', optionsUrl: '@', optionsMethod: '@?', optionLabel: '@?', optionKey: '@?' }, tubularEditorService.defaultScope),
-                    controller: [
-                        '$scope', function($scope) {
-                            tubularEditorService.setupScope($scope);
-                            $scope.dataIsLoaded = false;
-                            $scope.selectOptions = "d for d in options";
+                    $ctrl.$onInit = function () {
+                        tubularEditorService.setupScope($scope, null, $ctrl);
+                        $ctrl.dataIsLoaded = false;
+                        $ctrl.selectOptions = "d for d in $ctrl.options";
 
-                            if (angular.isDefined($scope.optionLabel)) {
-                                $scope.selectOptions = "d." + $scope.optionLabel + " for d in options";
+                        if (angular.isDefined($ctrl.optionLabel)) {
+                            $ctrl.selectOptions = "d." + $ctrl.optionLabel + " for d in options";
 
-                                if (angular.isDefined($scope.optionKey)) {
-                                    $scope.selectOptions = 'd.' + $scope.optionKey + ' as ' + $scope.selectOptions;
-                                }
-                            }
-
-                            $scope.$watch('value', function(val) {
-                                $scope.$emit('tbForm_OnFieldChange', $scope.$component, $scope.name, val);
-                            });
-
-                            $scope.loadData = function() {
-                                if ($scope.dataIsLoaded) {
-                                    return;
-                                }
-
-                                if (angular.isUndefined($scope.$component) || $scope.$component == null) {
-                                    throw 'You need to define a parent Form or Grid';
-                                }
-
-                                var currentRequest = $scope.$component.dataService.retrieveDataAsync({
-                                    serverUrl: $scope.optionsUrl,
-                                    requestMethod: $scope.optionsMethod || 'GET'
-                                });
-
-                                var value = $scope.value;
-                                $scope.value = '';
-
-                                currentRequest.promise.then(
-                                    function(data) {
-                                        $scope.options = data;
-                                        $scope.dataIsLoaded = true;
-                                        // TODO: Add an attribute to define if autoselect is OK
-                                        var possibleValue = $scope.options && $scope.options.length > 0 ?
-                                            angular.isDefined($scope.optionKey) ? $scope.options[0][$scope.optionKey] : $scope.options[0]
-                                            : '';
-                                        $scope.value = value || $scope.defaultValue || possibleValue;
-                                    }, function(error) {
-                                        $scope.$emit('tbGrid_OnConnectionError', error);
-                                    });
-                            };
-
-                            if (angular.isDefined($scope.optionsUrl)) {
-                                $scope.$watch('optionsUrl', function() {
-                                    $scope.dataIsLoaded = false;
-                                    $scope.loadData();
-                                });
-
-                                if ($scope.isEditing) {
-                                    $scope.loadData();
-                                } else {
-                                    $scope.$watch('isEditing', function() {
-                                        if ($scope.isEditing) {
-                                            $scope.loadData();
-                                        }
-                                    });
-                                }
+                            if (angular.isDefined($ctrl.optionKey)) {
+                                $ctrl.selectOptions = 'd.' + $ctrl.optionKey + ' as ' + $ctrl.selectOptions;
                             }
                         }
-                    ]
-                };
-            }
-        ])
+                    }
+
+                    $scope.$watch('value', function (val) {
+                        $scope.$emit('tbForm_OnFieldChange', $ctrl.$component, $ctrl.name, val);
+                    });
+
+                    $ctrl.loadData = function () {
+                        if ($ctrl.dataIsLoaded) {
+                            return;
+                        }
+
+                        if (angular.isUndefined($ctrl.$component) || $ctrl.$component == null) {
+                            throw 'You need to define a parent Form or Grid';
+                        }
+
+                        var currentRequest = $ctrl.$component.dataService.retrieveDataAsync({
+                            serverUrl: $ctrl.optionsUrl,
+                            requestMethod: $ctrl.optionsMethod || 'GET'
+                        });
+
+                        var value = $ctrl.value;
+                        $ctrl.value = '';
+
+                        currentRequest.promise.then(
+                            function (data) {
+                                $ctrl.options = data;
+                                $ctrl.dataIsLoaded = true;
+                                // TODO: Add an attribute to define if autoselect is OK
+                                var possibleValue = $ctrl.options && $ctrl.options.length > 0 ?
+                                    angular.isDefined($ctrl.optionKey) ? $ctrl.options[0][$ctrl.optionKey] : $ctrl.options[0]
+                                    : '';
+                                $ctrl.value = value || $ctrl.defaultValue || possibleValue;
+                            }, function (error) {
+                                $scope.$emit('tbGrid_OnConnectionError', error);
+                            });
+                    };
+
+                    if (angular.isDefined($ctrl.optionsUrl)) {
+                        $scope.$watch('optionsUrl', function () {
+                            $ctrl.dataIsLoaded = false;
+                            $ctrl.loadData();
+                        });
+
+                        if ($ctrl.isEditing) {
+                            $ctrl.loadData();
+                        } else {
+                            $scope.$watch('isEditing', function () {
+                                if ($ctrl.isEditing) {
+                                    $ctrl.loadData();
+                                }
+                            });
+                        }
+                    }
+                }
+            ]
+        })
         /**
          * @ngdoc directive
          * @name tbTypeaheadEditor
@@ -2162,12 +2190,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             }
         ])
         /**
-         * @ngdoc directive
+         * @ngdoc component
          * @name tbHiddenField
-         * @restrict E
          *
          * @description
-         * The `tbHiddenField` directive represents a hidden field.
+         * The `tbHiddenField` component represents a hidden field.
          * 
          * It uses the `TubularModel` to retrieve column or field information.
          * 
@@ -2175,30 +2202,26 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @param {string} name Set the field name.
          * @param {object} value Set the value.
          */
-        .directive('tbHiddenField', [
-            'tubularEditorService', function(tubularEditorService) {
-
-                return {
-                    template: '<input type="hidden" ng-model="value" class="form-control" name="{{name}}"  />',
-                    restrict: 'E',
-                    replace: true,
-                    transclude: true,
-                    scope: tubularEditorService.defaultScope,
-                    controller: [
-                        '$scope', function($scope) {
-                            tubularEditorService.setupScope($scope);
-                        }
-                    ]
-                };
-            }
-        ])
+        .component('tbHiddenField', {
+            template: '<input type="hidden" ng-model="$ctrl.value" class="form-control" name="{{$ctrl.name}}"  />',
+            transclude: true,
+            bindings: {
+                value: '=?',
+                name: '@',
+            },
+            controller: [
+                'tubularEditorService', '$scope', function (tubularEditorService, $scope) {
+                    var $ctrl = this;
+                    tubularEditorService.setupScope($scope, null, $ctrl);
+                }
+            ]
+        })
         /**
-         * @ngdoc directive
+         * @ngdoc component
          * @name tbCheckboxField
-         * @restrict E
          *
          * @description
-         * The `tbCheckboxField` directive represents a checkbox field.
+         * The `tbCheckboxField` component represents a checkbox field.
          * 
          * It uses the `TubularModel` to retrieve column or field information.
          * 
@@ -2212,49 +2235,52 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @param {string} label Set the field's label otherwise the name is used.
          * @param {string} help Set the help text.
          */
-        .directive('tbCheckboxField', [
-            'tubularEditorService', function(tubularEditorService) {
+        .component('tbCheckboxField', {
+            template: '<div ng-class="{ \'checkbox\' : $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }" class="tubular-checkbox">' +
+                '<span ng-hide="$ctrl.isEditing">{{$ctrl.value ? checkedValue : uncheckedValue}}</span>' +
+                '<input ng-show="$ctrl.isEditing" type="checkbox" ng-model="$ctrl.value" ng-disabled="$ctrl.readOnly"' +
+                'class="tubular-checkbox" id="{{$ctrl.name}}" name="{{$ctrl.name}}" /> ' +
+                '<label ng-show="$ctrl.isEditing" for="{{$ctrl.name}}">' +
+                '{{$ctrl.label}}' +
+                '</label>' +
+                '<span class="help-block error-block" ng-show="$ctrl.isEditing" ' +
+                'ng-repeat="error in $ctrl.state.$errors">' +
+                '{{error}}' +
+                '</span>' +
+                '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help">{{help}}</span>' +
+                '</div>',
+            transclude: true,
+            bindings: {
+                value: '=?',
+                isEditing: '=?',
+                editorType: '@',
+                showLabel: '=?',
+                label: '@?',
+                required: '=?',
+                name: '@',
+                readOnly: '=?',
+                help: '@?',
+                checkedValue: '=?',
+                uncheckedValue: '=?'
+            },
+            controller: [
+                'tubularEditorService', '$scope', '$element', function (tubularEditorService, $scope) {
+                    var $ctrl = this;
 
-                return {
-                    template: '<div ng-class="{ \'checkbox\' : isEditing, \'has-error\' : !$valid && $dirty() }" class="tubular-checkbox">' +
-                        '<span ng-hide="isEditing">{{value ? checkedValue : uncheckedValue}}</span>' +
-                        '<input ng-show="isEditing" type="checkbox" ng-model="value" ng-disabled="readOnly"' +
-                        'class="tubular-checkbox" id="{{name}}" name="{{name}}" /> ' +
-                        '<label ng-show="isEditing" for="{{name}}">' +
-                        '{{label}}' +
-                        '</label>' +
-                        '<span class="help-block error-block" ng-show="isEditing" ' +
-                        'ng-repeat="error in state.$errors">' +
-                        '{{error}}' +
-                        '</span>' +
-                        '<span class="help-block" ng-show="isEditing && help">{{help}}</span>' +
-                        '</div>',
-                    restrict: 'E',
-                    replace: true,
-                    transclude: true,
-                    scope: angular.extend({
-                        checkedValue: '=?',
-                        uncheckedValue: '=?'
-                    }, tubularEditorService.defaultScope),
-                    controller: [
-                        '$scope', '$element', function ($scope) {
-                            $scope.required = false; // overwrite required to false always
-                            $scope.checkedValue = angular.isDefined($scope.checkedValue) ? $scope.checkedValue : true;
-                            $scope.uncheckedValue = angular.isDefined($scope.uncheckedValue) ? $scope.uncheckedValue : false;
+                    $ctrl.required = false; // overwrite required to false always
+                    $ctrl.checkedValue = angular.isDefined($ctrl.checkedValue) ? $ctrl.checkedValue : true;
+                    $ctrl.uncheckedValue = angular.isDefined($ctrl.uncheckedValue) ? $ctrl.uncheckedValue : false;
 
-                            tubularEditorService.setupScope($scope);
-                        }
-                    ]
-                };
-            }
-        ])
-        /**
-         * @ngdoc directive
+                    tubularEditorService.setupScope($scope, null, $ctrl);
+                }
+            ]
+        })
+          /**
+         * @ngdoc component
          * @name tbTextArea
-         * @restrict E
          *
          * @description
-         * The `tbTextArea` directive represents a textarea field. 
+         * The `tbTextArea` component represents a textarea field. 
          * Similar to `tbSimpleEditor` but with a `textarea` HTML element instead of `input`.
          * 
          * It uses the `TubularModel` to retrieve column or field information.
@@ -2273,50 +2299,57 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @param {number} min Set the minimum characters.
          * @param {number} max Set the maximum characters.
          */
-        .directive('tbTextArea', [
-            'tubularEditorService', '$filter', function (tubularEditorService, $filter) {
+        .component('tbTextArea', {
+            template: '<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">' +
+                '<span ng-hide="$ctrl.isEditing">{{$ctrl.value}}</span>' +
+                '<label ng-show="$ctrl.showLabel">{{ $ctrl.label }}</label>' +
+                '<textarea ng-show="$ctrl.isEditing" placeholder="{{$ctrl.placeholder}}" ng-model="$ctrl.value" class="form-control" ' +
+                ' ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}"></textarea>' +
+                '<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">' +
+                '{{error}}' +
+                '</span>' +
+                '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help">{{$ctrl.help}}</span>' +
+                '</div>',
+            transclude: true,
+            bindings: {
+                value: '=?',
+                isEditing: '=?',
+                showLabel: '=?',
+                label: '@?',
+                placeholder: '@?',
+                required: '=?',
+                min: '=?',
+                max: '=?',
+                name: '@',
+                readOnly: '=?',
+                help: '@?',
+            },
+            controller: [
+                'tubularEditorService', '$scope', '$filter', function (tubularEditorService, $scope, $filter) {
+                    var $ctrl = this;
 
-                return {
-                    template: '<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid && $dirty() }">' +
-                        '<span ng-hide="isEditing">{{value}}</span>' +
-                        '<label ng-show="showLabel">{{ label }}</label>' +
-                        '<textarea ng-show="isEditing" placeholder="{{placeholder}}" ng-model="value" class="form-control" ' +
-                        ' ng-required="required" ng-readonly="readOnly" name="{{name}}"></textarea>' +
-                        '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">' +
-                        '{{error}}' +
-                        '</span>' +
-                        '<span class="help-block" ng-show="isEditing && help">{{help}}</span>' +
-                        '</div>',
-                    restrict: 'E',
-                    replace: true,
-                    transclude: true,
-                    scope: tubularEditorService.defaultScope,
-                    controller: [
-                        '$scope', function($scope) {
-                            $scope.validate = function() {
-                                if (angular.isDefined($scope.min) && angular.isDefined($scope.value) && $scope.value != null) {
-                                    if ($scope.value.length < parseInt($scope.min)) {
-                                        $scope.$valid = false;
-                                        $scope.state.$errors = [$filter('translate')('EDITOR_MIN_CHARS', +$scope.min)];
-                                        return;
-                                    }
-                                }
-
-                                if (angular.isDefined($scope.max) && angular.isDefined($scope.value) && $scope.value != null) {
-                                    if ($scope.value.length > parseInt($scope.max)) {
-                                        $scope.$valid = false;
-                                        $scope.state.$errors = [$filter('translate')('EDITOR_MAX_CHARS', +$scope.max)];
-                                        return;
-                                    }
-                                }
-                            };
-
-                            tubularEditorService.setupScope($scope);
+                    $ctrl.validate = function () {
+                        if (angular.isDefined($ctrl.min) && angular.isDefined($ctrl.value) && $ctrl.value != null) {
+                            if ($ctrl.value.length < parseInt($ctrl.min)) {
+                                $ctrl.$valid = false;
+                                $ctrl.state.$errors = [$filter('translate')('EDITOR_MIN_CHARS', +$ctrl.min)];
+                                return;
+                            }
                         }
-                    ]
-                };
-            }
-        ]);
+
+                        if (angular.isDefined($ctrl.max) && angular.isDefined($ctrl.value) && $ctrl.value != null) {
+                            if ($ctrl.value.length > parseInt($ctrl.max)) {
+                                $ctrl.$valid = false;
+                                $ctrl.state.$errors = [$filter('translate')('EDITOR_MAX_CHARS', +$ctrl.max)];
+                                return;
+                            }
+                        }
+                    };
+
+                    tubularEditorService.setupScope($scope, null, $ctrl);
+                }
+            ]
+        });
 })();
 (function() {
     'use strict';
@@ -3323,58 +3356,57 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * 
          * @scope
          */
-        .directive('tbGridPagerInfo', [
-            function () {
-                return {
-                    require: '^tbGrid',
-                    template: '<div class="pager-info small" ng-hide="$component.isEmpty">' +
-                        '{{\'UI_SHOWINGRECORDS\' | translate: currentInitial:currentTop:$component.filteredRecordCount}} ' +
-                        '<span ng-show="filtered">' +
-                        '{{\'UI_FILTEREDRECORDS\' | translate: $component.totalRecordCount}}</span>' +
-                        '</div>',
-                    restrict: 'E',
-                    replace: true,
-                    transclude: true,
-                    scope: true,
-                    controller: [
-                        '$scope', function ($scope) {
-                            $scope.$component = $scope.$parent.$parent;
-                            $scope.fixCurrentTop = function () {
-                                $scope.currentTop = $scope.$component.pageSize * $scope.$component.currentPage;
-                                $scope.currentInitial = (($scope.$component.currentPage - 1) * $scope.$component.pageSize) + 1;
+          .component('tbGridPagerInfo', {
+              require: '^tbGrid', // TODO: Find how to inject $scope here to change this line to=> $component: $scope.$parent.$parent
+              template: '<div class="pager-info small" ng-hide="$ctrl.$component.isEmpty">' +
+                  '{{\'UI_SHOWINGRECORDS\' | translate: $ctrl.currentInitial:$ctrl.currentTop:$ctrl.$component.$ctrl.filteredRecordCount}} ' +
+                  '<span ng-show="$ctrl.filtered">' +
+                  '{{\'UI_FILTEREDRECORDS\' | translate: $ctrl.$component.$ctrl.totalRecordCount}}</span>' +
+                  '</div>',
+              transclude: true,
+              bindings: {
+                  cssClass: '@?'
+              },
+              controller: [
+                  '$scope', function ($scope) {
+                      var $ctrl = this;
 
-                                if ($scope.currentTop > $scope.$component.filteredRecordCount) {
-                                    $scope.currentTop = $scope.$component.filteredRecordCount;
-                                }
+                      $ctrl.$component = $scope.$parent.$parent;
 
-                                if ($scope.currentTop < 0) {
-                                    $scope.currentTop = 0;
-                                }
+                      $ctrl.fixCurrentTop = function () {
+                          $ctrl.currentTop = $ctrl.$component.$ctrl.pageSize * $ctrl.$component.$ctrl.currentPage;
+                          $ctrl.currentInitial = (($ctrl.$component.$ctrl.currentPage - 1) * $ctrl.$component.$ctrl.pageSize) + 1;
 
-                                if ($scope.currentInitial < 0 || $scope.$component.totalRecordCount === 0) {
-                                    $scope.currentInitial = 0;
-                                }
-                            };
+                          if ($ctrl.currentTop > $ctrl.$component.$ctrl.filteredRecordCount) {
+                              $ctrl.currentTop = $ctrl.$component.$ctrl.filteredRecordCount;
+                          }
 
-                            $scope.$component.$watch('filteredRecordCount', function () {
-                                $scope.filtered = $scope.$component.totalRecordCount != $scope.$component.filteredRecordCount;
-                                $scope.fixCurrentTop();
-                            });
+                          if ($ctrl.currentTop < 0) {
+                              $ctrl.currentTop = 0;
+                          }
 
-                            $scope.$component.$watch('currentPage', function () {
-                                $scope.fixCurrentTop();
-                            });
+                          if ($ctrl.currentInitial < 0 || $ctrl.$component.totalRecordCount === 0) {
+                              $ctrl.currentInitial = 0;
+                          }
+                      };
 
-                            $scope.$component.$watch('pageSize', function () {
-                                $scope.fixCurrentTop();
-                            });
+                      $ctrl.$component.$watch('filteredRecordCount', function () {
+                          $ctrl.filtered = $ctrl.$component.$ctrl.totalRecordCount != $ctrl.$component.$ctrl.filteredRecordCount;
+                          $ctrl.fixCurrentTop();
+                      });
 
-                            $scope.fixCurrentTop();
-                        }
-                    ]
-                };
-            }
-        ]);
+                      $ctrl.$component.$watch('currentPage', function () {
+                          $ctrl.fixCurrentTop();
+                      });
+
+                      $ctrl.$component.$watch('pageSize', function () {
+                          $ctrl.fixCurrentTop();
+                      });
+
+                      $ctrl.fixCurrentTop();
+                  }
+              ]
+          });
 })();
 (function() {
     'use strict';
@@ -4114,188 +4146,373 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                  * Setups a new Editor, this functions is like a common class constructor to be used
                  * with all the tubularEditors.
                  */
-                me.setupScope = function(scope, defaultFormat) {
-                    scope.isEditing = angular.isUndefined(scope.isEditing) ? true : scope.isEditing;
-                    scope.showLabel = scope.showLabel || false;
-                    scope.label = scope.label || (scope.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
-                    scope.required = scope.required || false;
-                    scope.readOnly = scope.readOnly || false;
-                    scope.format = scope.format || defaultFormat;
-                    scope.$valid = true;
+                me.setupScope = function (scope, defaultFormat, ctrl) {
+                    if (angular.isUndefined(ctrl)) {
+                        scope.isEditing = angular.isUndefined(scope.isEditing) ? true : scope.isEditing;
+                        scope.showLabel = scope.showLabel || false;
+                        scope.label = scope.label || (scope.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
+                        scope.required = scope.required || false;
+                        scope.readOnly = scope.readOnly || false;
+                        scope.format = scope.format || defaultFormat;
+                        scope.$valid = true;
 
-                    // Get the field reference using the Angular way
-                    // Get the field reference using the Angular way
-                    scope.getFormField = function() {
+                        // Get the field reference using the Angular way
+                        // Get the field reference using the Angular way
+                        scope.getFormField = function () {
+                            var parent = scope.$parent;
+
+                            while (true) {
+                                if (parent == null) break;
+                                if (angular.isDefined(parent.tubularDirective) && parent.tubularDirective === 'tubular-form') {
+                                    var formScope = parent.getFormScope();
+
+                                    return formScope == null ? null : formScope[scope.Name];
+                                }
+
+                                parent = parent.$parent;
+                            }
+                        };
+
+                        scope.$dirty = function () {
+                            // Just forward the property
+                            var formField = scope.getFormField();
+
+                            return formField == null ? true : formField.$dirty;
+                        };
+
+                        scope.checkValid = function () {
+                            scope.$valid = true;
+                            scope.state.$errors = [];
+
+                            if ((angular.isUndefined(scope.value) && scope.required) ||
+                            (Object.prototype.toString.call(scope.value) === "[object Date]" && isNaN(scope.value.getTime()) && scope.required)) {
+                                scope.$valid = false;
+
+                                // Although this property is invalid, if it is not $dirty
+                                // then there should not be any errors for it
+                                if (scope.$dirty()) {
+                                    scope.state.$errors = [$filter('translate')('EDITOR_REQUIRED')];
+                                }
+
+                                if (angular.isDefined(scope.$parent.Model)) {
+                                    scope.$parent.Model.$state[scope.Name] = scope.state;
+                                }
+
+                                return;
+                            }
+
+                            // Check if we have a validation function, otherwise return
+                            if (angular.isUndefined(scope.validate)) {
+                                return;
+                            }
+
+                            scope.validate();
+                        };
+
+                        // HACK: I need to know why
+                        scope.$watch('label', function (n, o) {
+                            if (angular.isUndefined(n)) {
+                                scope.label = (scope.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
+                            }
+                        });
+
+                        scope.$watch('value', function (newValue, oldValue) {
+                            if (angular.isUndefined(oldValue) && angular.isUndefined(newValue)) {
+                                return;
+                            }
+
+                            // This is the state API for every property in the Model
+                            scope.state = {
+                                $valid: function () {
+                                    scope.checkValid();
+                                    return this.$errors.length === 0;
+                                },
+                                $dirty: function () {
+                                    return scope.$dirty;
+                                },
+                                $errors: []
+                            };
+
+                            scope.$valid = true;
+
+                            // Try to match the model to the parent, if it exists
+                            if (angular.isDefined(scope.$parent.Model)) {
+                                if (angular.isDefined(scope.$parent.Model[scope.name])) {
+                                    scope.$parent.Model[scope.name] = newValue;
+
+                                    if (angular.isUndefined(scope.$parent.Model.$state)) {
+                                        scope.$parent.Model.$state = [];
+                                    }
+
+                                    scope.$parent.Model.$state[scope.Name] = scope.state;
+                                } else if (angular.isDefined(scope.$parent.Model.$addField)) {
+                                    scope.$parent.Model.$addField(scope.name, newValue, true);
+                                }
+                            }
+
+                            scope.checkValid();
+                        });
+
                         var parent = scope.$parent;
 
+                        // We try to find a Tubular Form in the parents
                         while (true) {
                             if (parent == null) break;
-                            if (angular.isDefined(parent.tubularDirective) && parent.tubularDirective === 'tubular-form') {
-                                var formScope = parent.getFormScope();
+                            if (angular.isDefined(parent.tubularDirective) &&
+                            (parent.tubularDirective === 'tubular-form' ||
+                                parent.tubularDirective === 'tubular-rowset')) {
 
-                                return formScope == null ? null : formScope[scope.Name];
+                                if (scope.name === null) {
+                                    return;
+                                }
+
+                                if (parent.hasFieldsDefinitions !== false) {
+                                    throw 'Cannot define more fields. Field definitions have been sealed';
+                                }
+
+                                scope.$component = parent.tubularDirective === 'tubular-form' ? parent : parent.$component;
+
+                                scope.Name = scope.name;
+
+                                scope.bindScope = function () {
+                                    scope.$parent.Model = parent.model;
+
+                                    if (angular.equals(scope.value, parent.model[scope.Name]) === false) {
+                                        if (angular.isDefined(parent.model[scope.Name])) {
+                                            scope.value = (scope.DataType === 'date' && parent.model[scope.Name] != null) ?
+                                                new Date(parent.model[scope.Name]) :
+                                                parent.model[scope.Name];
+                                        }
+
+                                        parent.$watch(function () {
+                                            return scope.value;
+                                        }, function (value) {
+                                            parent.model[scope.Name] = value;
+                                        });
+                                    }
+
+                                    if ((!scope.value || scope.value == null) && (scope.defaultValue && scope.defaultValue != null)) {
+                                        if (scope.DataType === 'date' && scope.defaultValue != null) {
+                                            scope.defaultValue = new Date(scope.defaultValue);
+                                        }
+                                        if (scope.DataType === 'numeric' && scope.defaultValue != null) {
+                                            scope.defaultValue = parseFloat(scope.defaultValue);
+                                        }
+
+                                        scope.value = scope.defaultValue;
+                                    }
+
+                                    if (angular.isUndefined(parent.model.$state)) {
+                                        parent.model.$state = {};
+                                    }
+
+                                    // This is the state API for every property in the Model
+                                    parent.model.$state[scope.Name] = {
+                                        $valid: function () {
+                                            scope.checkValid();
+                                            return this.$errors.length === 0;
+                                        },
+                                        $dirty: function () {
+                                            return scope.$dirty;
+                                        },
+                                        $errors: []
+                                    };
+
+                                    if (angular.equals(scope.state, parent.model.$state[scope.Name]) === false) {
+                                        scope.state = parent.model.$state[scope.Name];
+                                    }
+                                };
+
+                                parent.fields.push(scope);
+
+                                break;
                             }
 
                             parent = parent.$parent;
                         }
-                    };
+                    }
+                    else {
+                        ctrl.isEditing = angular.isUndefined(ctrl.isEditing) ? true : ctrl.isEditing;
+                        ctrl.showLabel = ctrl.showLabel || false;
+                        ctrl.label = ctrl.label || (ctrl.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
+                        ctrl.required = ctrl.required || false;
+                        ctrl.readOnly = ctrl.readOnly || false;
+                        ctrl.format = ctrl.format || defaultFormat;
+                        ctrl.$valid = true;
 
-                    scope.$dirty = function() {
-                        // Just forward the property
-                        var formField = scope.getFormField();
+                        // Get the field reference using the Angular way
+                        ctrl.getFormField = function () {
+                            var parent = scope.$parent;
 
-                        return formField == null ? true : formField.$dirty;
-                    };
+                            while (true) {
+                                if (parent == null) break;
+                                if (angular.isDefined(parent.tubularDirective) && parent.tubularDirective === 'tubular-form') {
+                                    var formScope = parent.getFormScope();
 
-                    scope.checkValid = function() {
-                        scope.$valid = true;
-                        scope.state.$errors = [];
-
-                        if ((angular.isUndefined(scope.value) && scope.required) ||
-                        (Object.prototype.toString.call(scope.value) === "[object Date]" && isNaN(scope.value.getTime()) && scope.required)) {
-                            scope.$valid = false;
-
-                            // Although this property is invalid, if it is not $dirty
-                            // then there should not be any errors for it
-                            if (scope.$dirty()) {
-                                scope.state.$errors = [$filter('translate')('EDITOR_REQUIRED')];
-                            }
-
-                            if (angular.isDefined(scope.$parent.Model)) {
-                                scope.$parent.Model.$state[scope.Name] = scope.state;
-                            }
-
-                            return;
-                        }
-
-                        // Check if we have a validation function, otherwise return
-                        if (angular.isUndefined(scope.validate)) {
-                            return;
-                        }
-
-                        scope.validate();
-                    };
-
-                    // HACK: I need to know why
-                    scope.$watch('label', function(n, o) {
-                        if (angular.isUndefined(n)) {
-                            scope.label = (scope.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
-                        }
-                    });
-
-                    scope.$watch('value', function(newValue, oldValue) {
-                        if (angular.isUndefined(oldValue) && angular.isUndefined(newValue)) {
-                            return;
-                        }
-
-                        // This is the state API for every property in the Model
-                        scope.state = {
-                            $valid: function() {
-                                scope.checkValid();
-                                return this.$errors.length === 0;
-                            },
-                            $dirty: function() {
-                                return scope.$dirty;
-                            },
-                            $errors: []
-                        };
-
-                        scope.$valid = true;
-
-                        // Try to match the model to the parent, if it exists
-                        if (angular.isDefined(scope.$parent.Model)) {
-                            if (angular.isDefined(scope.$parent.Model[scope.name])) {
-                                scope.$parent.Model[scope.name] = newValue;
-
-                                if (angular.isUndefined(scope.$parent.Model.$state)) {
-                                    scope.$parent.Model.$state = [];
+                                    return formScope == null ? null : formScope[scope.Name];
                                 }
 
-                                scope.$parent.Model.$state[scope.Name] = scope.state;
-                            } else if (angular.isDefined(scope.$parent.Model.$addField)) {
-                                scope.$parent.Model.$addField(scope.name, newValue, true);
+                                parent = parent.$parent;
                             }
-                        }
+                        };
 
-                        scope.checkValid();
-                    });
+                        ctrl.$dirty = function () {
+                            // Just forward the property
+                            var formField = ctrl.getFormField();
 
-                    var parent = scope.$parent;
+                            return formField == null ? true : formField.$dirty;
+                        };
 
-                    // We try to find a Tubular Form in the parents
-                    while (true) {
-                        if (parent == null) break;
-                        if (angular.isDefined(parent.tubularDirective) &&
-                        (parent.tubularDirective === 'tubular-form' ||
-                            parent.tubularDirective === 'tubular-rowset')) {
+                        ctrl.checkValid = function () {
+                            ctrl.$valid = true;
+                            ctrl.state.$errors = [];
 
-                            if (scope.name === null) {
+                            if ((angular.isUndefined(ctrl.value) && ctrl.required) ||
+                            (Object.prototype.toString.call(ctrl.value) === "[object Date]" && isNaN(ctrl.value.getTime()) && ctrl.required)) {
+                                ctrl.$valid = false;
+
+                                // Although this property is invalid, if it is not $dirty
+                                // then there should not be any errors for it
+                                if (ctrl.$dirty()) {
+                                    ctrl.state.$errors = [$filter('translate')('EDITOR_REQUIRED')];
+                                }
+
+                                if (angular.isDefined(scope.$parent.Model)) {
+                                    scope.$parent.Model.$state[scope.Name] = ctrl.state;
+                                }
+
                                 return;
                             }
 
-                            if (parent.hasFieldsDefinitions !== false) {
-                                throw 'Cannot define more fields. Field definitions have been sealed';
+                            // Check if we have a validation function, otherwise return
+                            if (angular.isUndefined(ctrl.validate)) {
+                                return;
                             }
 
-                            scope.$component = parent.tubularDirective === 'tubular-form' ? parent : parent.$component;
+                            ctrl.validate();
+                        };
 
-                            scope.Name = scope.name;
+                        // HACK: I need to know why
+                        scope.$watch('label', function (n, o) {
+                            if (angular.isUndefined(n)) {
+                                ctrl.label = (ctrl.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
+                            }
+                        });
 
-                            scope.bindScope = function() {
-                                scope.$parent.Model = parent.model;
+                        scope.$watch('value', function (newValue, oldValue) {
+                            if (angular.isUndefined(oldValue) && angular.isUndefined(newValue)) {
+                                return;
+                            }
 
-                                if (angular.equals(scope.value, parent.model[scope.Name]) === false) {
-                                    if (angular.isDefined(parent.model[scope.Name])) {
-                                        scope.value = (scope.DataType === 'date' && parent.model[scope.Name] != null) ?
-                                            new Date(parent.model[scope.Name]) :
-                                            parent.model[scope.Name];
-                                    }
-
-                                    parent.$watch(function() {
-                                        return scope.value;
-                                    }, function(value) {
-                                        parent.model[scope.Name] = value;
-                                    });
-                                }
-
-                                if ((!scope.value || scope.value == null) && (scope.defaultValue && scope.defaultValue != null)) {
-                                    if (scope.DataType === 'date' && scope.defaultValue != null) {
-                                        scope.defaultValue = new Date(scope.defaultValue);
-                                    }
-                                    if (scope.DataType === 'numeric' && scope.defaultValue != null) {
-                                        scope.defaultValue = parseFloat(scope.defaultValue);
-                                    }
-
-                                    scope.value = scope.defaultValue;
-                                }
-
-                                if (angular.isUndefined(parent.model.$state)) {
-                                    parent.model.$state = {};
-                                }
-
-                                // This is the state API for every property in the Model
-                                parent.model.$state[scope.Name] = {
-                                    $valid: function() {
-                                        scope.checkValid();
-                                        return this.$errors.length === 0;
-                                    },
-                                    $dirty: function() {
-                                        return scope.$dirty;
-                                    },
-                                    $errors: []
-                                };
-
-                                if (angular.equals(scope.state, parent.model.$state[scope.Name]) === false) {
-                                    scope.state = parent.model.$state[scope.Name];
-                                }
+                            // This is the state API for every property in the Model
+                            ctrl.state = {
+                                $valid: function () {
+                                    ctrl.checkValid();
+                                    return this.$errors.length === 0;
+                                },
+                                $dirty: function () {
+                                    return ctrl.$dirty;
+                                },
+                                $errors: []
                             };
 
-                            parent.fields.push(scope);
+                            ctrl.$valid = true;
 
-                            break;
+                            // Try to match the model to the parent, if it exists
+                            if (angular.isDefined(scope.$parent.Model)) {
+                                if (angular.isDefined(scope.$parent.Model[ctrl.name])) {
+                                    scope.$parent.Model[ctrl.name] = newValue;
+
+                                    if (angular.isUndefined(scope.$parent.Model.$state)) {
+                                        scope.$parent.Model.$state = [];
+                                    }
+
+                                    scope.$parent.Model.$state[scope.Name] = ctrl.state;
+                                } else if (angular.isDefined(scope.$parent.Model.$addField)) {
+                                    scope.$parent.Model.$addField(ctrl.name, newValue, true);
+                                }
+                            }
+
+                            ctrl.checkValid();
+                        });
+
+                        var parent = scope.$parent;
+
+                        // We try to find a Tubular Form in the parents
+                        while (true) {
+                            if (parent == null) break;
+                            if (angular.isDefined(parent.tubularDirective) &&
+                            (parent.tubularDirective === 'tubular-form' ||
+                                parent.tubularDirective === 'tubular-rowset')) {
+
+                                if (ctrl.name === null) {
+                                    return;
+                                }
+
+                                if (parent.hasFieldsDefinitions !== false) {
+                                    throw 'Cannot define more fields. Field definitions have been sealed';
+                                }
+
+                                ctrl.$component = parent.tubularDirective === 'tubular-form' ? parent : parent.$component;
+
+                                scope.Name = ctrl.name;
+
+                                ctrl.bindScope = function () {
+                                    scope.$parent.Model = parent.model;
+
+                                    if (angular.equals(ctrl.value, parent.model[scope.Name]) === false) {
+                                        if (angular.isDefined(parent.model[scope.Name])) {
+                                            ctrl.value = (ctrl.DataType === 'date' && parent.model[ctrl.Name] != null) ?
+                                                new Date(parent.model[scope.Name]) :
+                                                parent.model[scope.Name];
+                                        }
+
+                                        parent.$watch(function () {
+                                            return ctrl.value;
+                                        }, function (value) {
+                                            parent.model[scope.Name] = value;
+                                        });
+                                    }
+
+                                    if ((!ctrl.value || ctrl.value == null) && (ctrl.defaultValue && ctrl.defaultValue != null)) {
+                                        if (ctrl.DataType === 'date' && ctrl.defaultValue != null) {
+                                            ctrl.defaultValue = new Date(ctrl.defaultValue);
+                                        }
+                                        if (ctrl.DataType === 'numeric' && ctrl.defaultValue != null) {
+                                            ctrl.defaultValue = parseFloat(ctrl.defaultValue);
+                                        }
+
+                                        ctrl.value = ctrl.defaultValue;
+                                    }
+
+                                    if (angular.isUndefined(parent.model.$state)) {
+                                        parent.model.$state = {};
+                                    }
+
+                                    // This is the state API for every property in the Model
+                                    parent.model.$state[scope.Name] = {
+                                        $valid: function () {
+                                            ctrl.checkValid();
+                                            return this.$errors.length === 0;
+                                        },
+                                        $dirty: function () {
+                                            return ctrl.$dirty;
+                                        },
+                                        $errors: []
+                                    };
+
+                                    if (angular.equals(ctrl.state, parent.model.$state[scope.Name]) === false) {
+                                        ctrl.state = parent.model.$state[scope.Name];
+                                    }
+                                };
+
+                                parent.fields.push(ctrl);
+
+                                break;
+                            }
+
+                            parent = parent.$parent;
                         }
-
-                        parent = parent.$parent;
                     }
                 };
             }
