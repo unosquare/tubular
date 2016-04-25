@@ -3339,12 +3339,12 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             }
         ])
         /**
-         * @ngdoc directive
+         * @ngdoc component
          * @name tbGridPagerInfo
          * @restrict E
          *
          * @description
-         * The `tbGridPagerInfo` directive shows how many records are shown in a page and total rows.
+         * The `tbGridPagerInfo` component shows how many records are shown in a page and total rows.
          * 
          * @scope
          */
@@ -3353,7 +3353,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 $component: '^tbGrid'
             },
             template: '<div class="pager-info small" ng-hide="$ctrl.$component.isEmpty">' +
-                '{{\'UI_SHOWINGRECORDS\' | translate: $ctrl.currentInitial:$ctrl.currentTop:$ctrl.$component.$ctrl.filteredRecordCount}} ' +
+                '{{\'UI_SHOWINGRECORDS\' | translate: $ctrl.currentInitial:$ctrl.currentTop:$ctrl.$component.filteredRecordCount}} ' +
                 '<span ng-show="$ctrl.filtered">' +
                 '{{\'UI_FILTEREDRECORDS\' | translate: $ctrl.$component.$ctrl.totalRecordCount}}</span>' +
                 '</div>',
@@ -3362,42 +3362,42 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 cssClass: '@?'
             },
             controller: [
-                '$scope', function($scope) {
+                '$scope', function ($scope) {
                     var $ctrl = this;
 
-                    $ctrl.$component = $scope.$parent.$parent;
-
                     $ctrl.fixCurrentTop = function () {
-                        $ctrl.currentTop = $ctrl.$component.$ctrl.pageSize * $ctrl.$component.$ctrl.currentPage;
-                        $ctrl.currentInitial = (($ctrl.$component.$ctrl.currentPage - 1) * $ctrl.$component.$ctrl.pageSize) + 1;
+                        $ctrl.currentTop = $ctrl.$component.pageSize * $ctrl.$component.currentPage;
+                        $ctrl.currentInitial = (($ctrl.$component.currentPage - 1) * $ctrl.$component.pageSize) + 1;
 
-                        if ($ctrl.currentTop > $ctrl.$component.$ctrl.filteredRecordCount) {
-                            $ctrl.currentTop = $ctrl.$component.$ctrl.filteredRecordCount;
+                        if ($ctrl.currentTop > $ctrl.$component.filteredRecordCount) {
+                            $ctrl.currentTop = $ctrl.$component.filteredRecordCount;
                         }
 
                         if ($ctrl.currentTop < 0) {
                             $ctrl.currentTop = 0;
                         }
 
-                        if ($ctrl.currentInitial < 0 || $ctrl.$component.$ctrl.totalRecordCount === 0) {
+                        if ($ctrl.currentInitial < 0 || $ctrl.$component.totalRecordCount === 0) {
                             $ctrl.currentInitial = 0;
                         }
                     };
 
-                    $ctrl.$component.$watch('$ctrl.filteredRecordCount', function () {
-                        $ctrl.filtered = $ctrl.$component.$ctrl.totalRecordCount != $ctrl.$component.$ctrl.filteredRecordCount;
+                    $scope.$watch('$ctrl.$component.filteredRecordCount', function () {
+                        $ctrl.filtered = $ctrl.$component.totalRecordCount != $ctrl.$component.filteredRecordCount;
                         $ctrl.fixCurrentTop();
                     });
 
-                    $ctrl.$component.$watch('$ctrl.currentPage', function () {
+                    $scope.$watch('$ctrl.$component.currentPage', function () {
                         $ctrl.fixCurrentTop();
                     });
 
-                    $ctrl.$component.$watch('$ctrl.pageSize', function () {
+                    $scope.$watch('$ctrl.$component.pageSize', function () {
                         $ctrl.fixCurrentTop();
                     });
 
-                    $ctrl.fixCurrentTop();
+                    $ctrl.$onInit = function () {
+                        $ctrl.fixCurrentTop();
+                    };
                 }
             ]
         });
