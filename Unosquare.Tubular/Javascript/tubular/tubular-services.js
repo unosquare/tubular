@@ -375,7 +375,7 @@
                  */
                 me.dateEditorController = function(format) {
                     return [
-                        '$scope', function(innerScope) {
+                        '$scope', '$element', function (innerScope, $element) {
                             innerScope.DataType = "date";
 
                             innerScope.$watch('value', function(val) {
