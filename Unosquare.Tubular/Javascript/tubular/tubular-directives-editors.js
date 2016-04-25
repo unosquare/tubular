@@ -411,9 +411,19 @@
                             return;
                         }
 
+<<<<<<< HEAD
                         if (angular.isUndefined($ctrl.$component) || $ctrl.$component == null) {
                             throw 'You need to define a parent Form or Grid';
                         }
+=======
+                            if (angular.isDefined($scope.optionsUrl)) {
+                                $scope.$watch('optionsUrl', function (val, prev) {
+                                    if (val == prev) return;
+
+                                    $scope.dataIsLoaded = false;
+                                    $scope.loadData();
+                                });
+>>>>>>> upstream/master
 
                         var currentRequest = $ctrl.$component.dataService.retrieveDataAsync({
                             serverUrl: $ctrl.optionsUrl,
