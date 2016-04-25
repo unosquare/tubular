@@ -3353,9 +3353,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 $component: '^tbGrid'
             },
             template: '<div class="pager-info small" ng-hide="$ctrl.$component.isEmpty">' +
-                '{{\'UI_SHOWINGRECORDS\' | translate: $ctrl.currentInitial:$ctrl.currentTop:$ctrl.$component.filteredRecordCount}} ' +
+                '{{\'UI_SHOWINGRECORDS\' | translate: $ctrl.currentInitial:$ctrl.currentTop:$ctrl.$component.$ctrl.filteredRecordCount}} ' +
                 '<span ng-show="$ctrl.filtered">' +
-                '{{\'UI_FILTEREDRECORDS\' | translate: $ctrl.$component.totalRecordCount}}</span>' +
+                '{{\'UI_FILTEREDRECORDS\' | translate: $ctrl.$component.$ctrl.totalRecordCount}}</span>' +
                 '</div>',
             transclude: true,
             bindings: {
@@ -3365,39 +3365,39 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 '$scope', function($scope) {
                     var $ctrl = this;
 
-                    $ctrl.fixCurrentTop = function() {
-                        $ctrl.currentTop = $ctrl.$component.pageSize * $ctrl.$component.currentPage;
-                        $ctrl.currentInitial = (($ctrl.$component.currentPage - 1) * $ctrl.$component.pageSize) + 1;
+                    $ctrl.$component = $scope.$parent.$parent;
 
-                        if ($ctrl.currentTop > $ctrl.$component.filteredRecordCount) {
-                            $ctrl.currentTop = $ctrl.$component.filteredRecordCount;
+                    $ctrl.fixCurrentTop = function () {
+                        $ctrl.currentTop = $ctrl.$component.$ctrl.pageSize * $ctrl.$component.$ctrl.currentPage;
+                        $ctrl.currentInitial = (($ctrl.$component.$ctrl.currentPage - 1) * $ctrl.$component.$ctrl.pageSize) + 1;
+
+                        if ($ctrl.currentTop > $ctrl.$component.$ctrl.filteredRecordCount) {
+                            $ctrl.currentTop = $ctrl.$component.$ctrl.filteredRecordCount;
                         }
 
                         if ($ctrl.currentTop < 0) {
                             $ctrl.currentTop = 0;
                         }
 
-                        if ($ctrl.currentInitial < 0 || $ctrl.$component.totalRecordCount === 0) {
+                        if ($ctrl.currentInitial < 0 || $ctrl.$component.$ctrl.totalRecordCount === 0) {
                             $ctrl.currentInitial = 0;
                         }
                     };
 
-                    $scope.$watch('$component.filteredRecordCount', function () {
-                        $ctrl.filtered = $ctrl.$component.totalRecordCount != $ctrl.$component.filteredRecordCount;
+                    $ctrl.$component.$watch('$ctrl.filteredRecordCount', function () {
+                        $ctrl.filtered = $ctrl.$component.$ctrl.totalRecordCount != $ctrl.$component.$ctrl.filteredRecordCount;
                         $ctrl.fixCurrentTop();
                     });
 
-                    $scope.$watch('$component.currentPage', function () {
+                    $ctrl.$component.$watch('$ctrl.currentPage', function () {
                         $ctrl.fixCurrentTop();
                     });
 
-                    $scope.$watch('$component.pageSize', function () {
+                    $ctrl.$component.$watch('$ctrl.pageSize', function () {
                         $ctrl.fixCurrentTop();
                     });
 
-                    $ctrl.$onInit = function() {
-                        $ctrl.fixCurrentTop();
-                    };
+                    $ctrl.fixCurrentTop();
                 }
             ]
         });
