@@ -1809,7 +1809,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             ]
         })
         /**
-         * @ngdoc directive
+         * @ngdoc component
          * @name tbDateTimeEditor
          * @restrict E
          *
@@ -1818,8 +1818,6 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * components fails it falls back to a jQuery datepicker.
          * 
          * It uses the `TubularModel` to retrieve column or field information.
-         * 
-         * @scope
          * 
          * @param {string} name Set the field name.
          * @param {object} value Set the value.
@@ -1855,7 +1853,6 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     min: '=?',
                     max: '=?',
                     name: '@',
-                    placeholder: '@?',
                     readOnly: '=?',
                     help: '@?'
                 },
@@ -3405,7 +3402,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             template: '<div class="pager-info small" ng-hide="$ctrl.$component.isEmpty">' +
                 '{{\'UI_SHOWINGRECORDS\' | translate: $ctrl.currentInitial:$ctrl.currentTop:$ctrl.$component.filteredRecordCount}} ' +
                 '<span ng-show="$ctrl.filtered">' +
-                '{{\'UI_FILTEREDRECORDS\' | translate: $ctrl.$component.$ctrl.totalRecordCount}}</span>' +
+                '{{\'UI_FILTEREDRECORDS\' | translate: $ctrl.$component.totalRecordCount}}</span>' +
                 '</div>',
             transclude: true,
             bindings: {

@@ -89,7 +89,7 @@
             template: '<div class="pager-info small" ng-hide="$ctrl.$component.isEmpty">' +
                 '{{\'UI_SHOWINGRECORDS\' | translate: $ctrl.currentInitial:$ctrl.currentTop:$ctrl.$component.filteredRecordCount}} ' +
                 '<span ng-show="$ctrl.filtered">' +
-                '{{\'UI_FILTEREDRECORDS\' | translate: $ctrl.$component.$ctrl.totalRecordCount}}</span>' +
+                '{{\'UI_FILTEREDRECORDS\' | translate: $ctrl.$component.totalRecordCount}}</span>' +
                 '</div>',
             transclude: true,
             bindings: {

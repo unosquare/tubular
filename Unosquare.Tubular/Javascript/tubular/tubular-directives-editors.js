@@ -186,7 +186,7 @@
             ]
         })
         /**
-         * @ngdoc directive
+         * @ngdoc component
          * @name tbDateTimeEditor
          * @restrict E
          *
@@ -195,8 +195,6 @@
          * components fails it falls back to a jQuery datepicker.
          * 
          * It uses the `TubularModel` to retrieve column or field information.
-         * 
-         * @scope
          * 
          * @param {string} name Set the field name.
          * @param {object} value Set the value.
