@@ -1,4 +1,4 @@
-(function () {
+(function() {
     'use strict';
 
     angular.module('tubular.directives')
@@ -9,8 +9,6 @@
          * @description
          * The `tbSimpleEditor` component is the basic input to show in a grid or form.
          * It uses the `TubularModel` to retrieve column or field information.
-         * 
-         * @scope
          * 
          * @param {string} name Set the field name.
          * @param {object} value Set the value.
@@ -56,10 +54,10 @@
                 match: '@?'
             },
             controller: [
-                'tubularEditorService', '$scope', '$filter', function (tubularEditorService, $scope, $filter) {
+                'tubularEditorService', '$scope', '$filter', function(tubularEditorService, $scope, $filter) {
                     var $ctrl = this;
 
-                    $ctrl.validate = function () {
+                    $ctrl.validate = function() {
                         if (angular.isDefined($ctrl.regex) && $ctrl.regex != null && angular.isDefined($ctrl.value) && $ctrl.value != null && $ctrl.value != '') {
                             var patt = new RegExp($ctrl.regex);
 
@@ -113,8 +111,6 @@
          * 
          * This directive uses the `TubularModel` to retrieve the model information.
          * 
-         * @scope
-         * 
          * @param {string} name Set the field name.
          * @param {object} value Set the value.
          * @param {boolean} isEditing Indicate if the field is showing editor.
@@ -161,11 +157,11 @@
                 step: '=?'
             },
             controller: [
-                'tubularEditorService', '$scope', '$filter', function (tubularEditorService, $scope, $filter) {
+                'tubularEditorService', '$scope', '$filter', function(tubularEditorService, $scope, $filter) {
                     var $ctrl = this;
                     $ctrl.DataType = "numeric";
 
-                    $ctrl.validate = function () {
+                    $ctrl.validate = function() {
                         if (angular.isDefined($ctrl.min) && angular.isDefined($ctrl.value) && $ctrl.value != null) {
                             $ctrl.$valid = $ctrl.value >= $ctrl.min;
                             if (!$ctrl.$valid) {
@@ -215,7 +211,7 @@
          * @param {number} max Set the maximum value.
          */
         .directive('tbDateTimeEditor', [
-            'tubularEditorService', function (tubularEditorService) {
+            'tubularEditorService', function(tubularEditorService) {
 
                 return {
                     template: '<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid && $dirty() }">' +
@@ -235,15 +231,15 @@
                     controller: tubularEditorService.dateEditorController('yyyy-MM-dd HH:mm'),
                     compile: function compile() {
                         return {
-                            post: function (scope, lElement) {
+                            post: function(scope, lElement) {
                                 var inp = $(lElement).find("input[type=datetime-local]")[0];
                                 if (inp.type !== 'datetime-local') {
                                     $(inp).datepicker({
-                                        dateFormat: scope.format.toLowerCase().split(' ')[0]
-                                    })
+                                            dateFormat: scope.format.toLowerCase().split(' ')[0]
+                                        })
                                         .datepicker("setDate", scope.value)
-                                        .on("dateChange", function (e) {
-                                            scope.$apply(function () {
+                                        .on("dateChange", function(e) {
+                                            scope.$apply(function() {
                                                 scope.value = e.date;
 
                                                 if (angular.isDefined(scope.$parent.Model)) {
@@ -286,7 +282,7 @@
          * @param {number} max Set the maximum value.
          */
         .directive('tbDateEditor', [
-            'tubularEditorService', function (tubularEditorService) {
+            'tubularEditorService', function(tubularEditorService) {
 
                 return {
                     template: '<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid && $dirty() }">' +
@@ -306,15 +302,15 @@
                     controller: tubularEditorService.dateEditorController('yyyy-MM-dd'),
                     compile: function compile() {
                         return {
-                            post: function (scope, lElement) {
+                            post: function(scope, lElement) {
                                 var inp = $(lElement).find("input[type=date]")[0];
                                 if (inp.type !== 'date') {
                                     $(inp).datepicker({
-                                        dateFormat: scope.format.toLowerCase()
-                                    })
+                                            dateFormat: scope.format.toLowerCase()
+                                        })
                                         .datepicker("setDate", scope.value)
-                                        .on("dateChange", function (e) {
-                                            scope.$apply(function () {
+                                        .on("dateChange", function(e) {
+                                            scope.$apply(function() {
                                                 scope.value = e.date;
 
                                                 if (angular.isDefined(scope.$parent.Model)) {
@@ -338,8 +334,6 @@
          * source or it can be an object declared in the attributes.
          * 
          * It uses the `TubularModel` to retrieve column or field information.
-         * 
-         * @scope
          * 
          * @param {string} name Set the field name.
          * @param {object} value Set the value.
@@ -385,10 +379,10 @@
                 optionKey: '@?'
             },
             controller: [
-                'tubularEditorService', '$scope', function (tubularEditorService, $scope) {
+                'tubularEditorService', '$scope', function(tubularEditorService, $scope) {
                     var $ctrl = this;
 
-                    $ctrl.$onInit = function () {
+                    $ctrl.$onInit = function() {
                         tubularEditorService.setupScope($scope, null, $ctrl);
                         $ctrl.dataIsLoaded = false;
                         $ctrl.selectOptions = "d for d in $ctrl.options";
@@ -402,28 +396,17 @@
                         }
                     }
 
-                    $scope.$watch('value', function (val) {
+                    $scope.$watch('value', function(val) {
                         $scope.$emit('tbForm_OnFieldChange', $ctrl.$component, $ctrl.name, val);
                     });
-
-                    $ctrl.loadData = function () {
+                    $ctrl.loadData = function() {
                         if ($ctrl.dataIsLoaded) {
                             return;
                         }
 
-<<<<<<< HEAD
                         if (angular.isUndefined($ctrl.$component) || $ctrl.$component == null) {
                             throw 'You need to define a parent Form or Grid';
                         }
-=======
-                            if (angular.isDefined($scope.optionsUrl)) {
-                                $scope.$watch('optionsUrl', function (val, prev) {
-                                    if (val == prev) return;
-
-                                    $scope.dataIsLoaded = false;
-                                    $scope.loadData();
-                                });
->>>>>>> upstream/master
 
                         var currentRequest = $ctrl.$component.dataService.retrieveDataAsync({
                             serverUrl: $ctrl.optionsUrl,
@@ -434,7 +417,7 @@
                         $ctrl.value = '';
 
                         currentRequest.promise.then(
-                            function (data) {
+                            function(data) {
                                 $ctrl.options = data;
                                 $ctrl.dataIsLoaded = true;
                                 // TODO: Add an attribute to define if autoselect is OK
@@ -442,13 +425,15 @@
                                     angular.isDefined($ctrl.optionKey) ? $ctrl.options[0][$ctrl.optionKey] : $ctrl.options[0]
                                     : '';
                                 $ctrl.value = value || $ctrl.defaultValue || possibleValue;
-                            }, function (error) {
+                            }, function(error) {
                                 $scope.$emit('tbGrid_OnConnectionError', error);
                             });
                     };
 
                     if (angular.isDefined($ctrl.optionsUrl)) {
-                        $scope.$watch('optionsUrl', function () {
+                        $scope.$watch('optionsUrl', function(val, prev) {
+                            if (val == prev) return;
+
                             $ctrl.dataIsLoaded = false;
                             $ctrl.loadData();
                         });
@@ -456,7 +441,7 @@
                         if ($ctrl.isEditing) {
                             $ctrl.loadData();
                         } else {
-                            $scope.$watch('isEditing', function () {
+                            $scope.$watch('isEditing', function() {
                                 if ($ctrl.isEditing) {
                                     $ctrl.loadData();
                                 }
@@ -493,7 +478,7 @@
          * @param {string} css Set the CSS classes for the input.
          */
         .directive('tbTypeaheadEditor', [
-            'tubularEditorService', '$q', '$compile', function (tubularEditorService, $q, $compile) {
+            'tubularEditorService', '$q', '$compile', function(tubularEditorService, $q, $compile) {
 
                 return {
                     restrict: 'E',
@@ -506,7 +491,7 @@
                         optionLabel: '@?',
                         css: '@?'
                     }, tubularEditorService.defaultScope),
-                    link: function (scope, element) {
+                    link: function(scope, element) {
                         var template = '<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid && $dirty() }">' +
                             '<span ng-hide="isEditing">{{ value }}</span>' +
                             '<label ng-show="showLabel">{{ label }}</label>' +
@@ -530,7 +515,7 @@
                         element.append(content);
                     },
                     controller: [
-                        '$scope', function ($scope) {
+                        '$scope', function($scope) {
                             tubularEditorService.setupScope($scope);
                             $scope.selectOptions = "d for d in getValues($viewValue)";
                             $scope.lastSet = [];
@@ -539,7 +524,7 @@
                                 $scope.selectOptions = "d as d." + $scope.optionLabel + " for d in getValues($viewValue)";
                             }
 
-                            $scope.$watch('value', function (val) {
+                            $scope.$watch('value', function(val) {
                                 $scope.$emit('tbForm_OnFieldChange', $scope.$component, $scope.name, val);
                                 $scope.tooltip = val;
                                 if (angular.isDefined(val) && val != null && angular.isDefined($scope.optionLabel)) {
@@ -547,7 +532,7 @@
                                 }
                             });
 
-                            $scope.getValues = function (val) {
+                            $scope.getValues = function(val) {
                                 if (angular.isDefined($scope.optionsUrl)) {
                                     if (angular.isUndefined($scope.$component) || $scope.$component == null) {
                                         throw 'You need to define a parent Form or Grid';
@@ -558,7 +543,7 @@
                                         requestMethod: $scope.optionsMethod || 'GET'
                                     }).promise;
 
-                                    p.then(function (data) {
+                                    p.then(function(data) {
                                         $scope.lastSet = data;
                                         return data;
                                     });
@@ -566,7 +551,7 @@
                                     return p;
                                 }
 
-                                return $q(function (resolve) {
+                                return $q(function(resolve) {
                                     $scope.lastSet = $scope.options;
                                     resolve($scope.options);
                                 });
@@ -585,7 +570,6 @@
          * 
          * It uses the `TubularModel` to retrieve column or field information.
          * 
-         * @scope
          * @param {string} name Set the field name.
          * @param {object} value Set the value.
          */
@@ -597,7 +581,7 @@
                 name: '@',
             },
             controller: [
-                'tubularEditorService', '$scope', function (tubularEditorService, $scope) {
+                'tubularEditorService', '$scope', function(tubularEditorService, $scope) {
                     var $ctrl = this;
                     tubularEditorService.setupScope($scope, null, $ctrl);
                 }
@@ -651,7 +635,7 @@
                 uncheckedValue: '=?'
             },
             controller: [
-                'tubularEditorService', '$scope', '$element', function (tubularEditorService, $scope) {
+                'tubularEditorService', '$scope', '$element', function(tubularEditorService, $scope) {
                     var $ctrl = this;
 
                     $ctrl.required = false; // overwrite required to false always
@@ -662,7 +646,7 @@
                 }
             ]
         })
-          /**
+        /**
          * @ngdoc component
          * @name tbTextArea
          *
@@ -671,9 +655,7 @@
          * Similar to `tbSimpleEditor` but with a `textarea` HTML element instead of `input`.
          * 
          * It uses the `TubularModel` to retrieve column or field information.
-         * 
-         * @scope
-         * 
+         *  
          * @param {string} name Set the field name.
          * @param {object} value Set the value.
          * @param {boolean} isEditing Indicate if the field is showing editor.
@@ -712,10 +694,10 @@
                 help: '@?',
             },
             controller: [
-                'tubularEditorService', '$scope', '$filter', function (tubularEditorService, $scope, $filter) {
+                'tubularEditorService', '$scope', '$filter', function(tubularEditorService, $scope, $filter) {
                     var $ctrl = this;
 
-                    $ctrl.validate = function () {
+                    $ctrl.validate = function() {
                         if (angular.isDefined($ctrl.min) && angular.isDefined($ctrl.value) && $ctrl.value != null) {
                             if ($ctrl.value.length < parseInt($ctrl.min)) {
                                 $ctrl.$valid = false;
