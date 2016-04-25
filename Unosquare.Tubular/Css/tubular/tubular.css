@@ -5,6 +5,7 @@
 /* Tubular Grid General Styles */
 tb-grid {
     position: relative;
+    display: block;
 }
 
     tb-grid div.row {

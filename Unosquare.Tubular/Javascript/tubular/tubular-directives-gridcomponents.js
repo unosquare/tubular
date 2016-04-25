@@ -232,7 +232,7 @@
             require: {
                 $component: '^tbGrid'
             },
-            template: '<button ng-click="edit()" class="btn btn-xs btn-default" ' +
+            template: '<button ng-click="$ctrl.edit()" class="btn btn-xs btn-default" ' +
                 'ng-hide="$ctrl.model.$isEditing">{{:: $ctrl.caption || (\'CAPTION_EDIT\' | translate) }}</button>',
             transclude: true,
             bindings: {
@@ -241,11 +241,13 @@
             },
             controller: [
                 '$scope', function($scope) {
-                    $scope.edit = function() {
-                        if ($scope.component.editorMode === 'popup') {
-                            $scope.$ctrl.model.editPopup();
+                    var $ctrl = this;
+
+                    $ctrl.edit = function () {
+                        if ($ctrl.$component.editorMode === 'popup') {
+                            $ctrl.model.editPopup();
                         } else {
-                            $scope.$ctrl.model.edit();
+                            $ctrl.model.edit();
                         }
                     };
                 }
