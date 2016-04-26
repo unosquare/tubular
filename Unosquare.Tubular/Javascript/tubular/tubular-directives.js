@@ -787,7 +787,8 @@
                     },
                     controller: [
                         '$scope', function($scope) {
-                            // TODO: Rename this directive
+                            // TODO: I can't change to component because the layout related
+                            // to the headers width can't be attached
                             $scope.tubularDirective = 'tubular-rowset';
                             $scope.fields = [];
                             $scope.hasFieldsDefinitions = false;
@@ -831,6 +832,7 @@
                 };
             }
         ])
+
         /**
          * @ngdoc directive
          * @name tbCellTemplate
@@ -846,38 +848,40 @@
          * 
          * @param {string} columnName Setting the related column, by passing the name, the cell can share attributes (like visibility) with the column.
          */
-        .component('tbCellTemplate', {
-            require: {
-                $component: '^tbGrid'
-            },
-            template: '<ng-transclude ng-show="$ctrl.column.Visible" data-label="{{::$ctrl.column.Label}}"></ng-transclude>',
-            transclude: true,
-            bindings: {
-                columnName: '@?'
-            },
-            controller: [
-                '$scope', function ($scope) {
-                    var $ctrl = this;
+        .directive('tbCellTemplate', [
+            function () {
 
-                    $ctrl.$onInit = function() {
-                        $ctrl.column = { Visible: true };
-                        $ctrl.columnName = $ctrl.columnName || null;
+                return {
+                    require: '^tbRowTemplate',
+                    template: '<td ng-transclude ng-show="column.Visible" data-label="{{::column.Label}}"></td>',
+                    restrict: 'E',
+                    replace: true,
+                    transclude: true,
+                    scope: {
+                        columnName: '@?'
+                    },
+                    controller: [
+                        '$scope', function ($scope) {
+                            $scope.column = { Visible: true };
+                            $scope.columnName = $scope.columnName || null;
+                            $scope.$component = $scope.$parent.$parent.$component;
 
-                        if ($ctrl.columnName != null) {
-                            var columnModel = $ctrl.$component.columns
-                                .filter(function (el) { return el.Name === $ctrl.columnName; });
+                            $scope.getFormScope = function () {
+                                // TODO: Implement a form in inline editors
+                                return null;
+                            };
 
-                            if (columnModel.length > 0) {
-                                $ctrl.column = columnModel[0];
+                            if ($scope.columnName != null) {
+                                var columnModel = $scope.$component.columns
+                                    .filter(function (el) { return el.Name === $scope.columnName; });
+
+                                if (columnModel.length > 0) {
+                                    $scope.column = columnModel[0];
+                                }
                             }
                         }
-                    }
-
-                    $ctrl.getFormScope = function () {
-                        // TODO: Implement a form in inline editors
-                        return null;
-                    };
-                }
-            ]
-        });
+                    ]
+                };
+            }
+        ]);
 })();
