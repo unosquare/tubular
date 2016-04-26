@@ -109,7 +109,7 @@
          * When you need a numeric editor but without the visual elements you can use 
          * `tbSimpleEditor` with the `editorType` attribute with value `number`.
          * 
-         * This directive uses the `TubularModel` to retrieve the model information.
+         * This component uses the `TubularModel` to retrieve the model information.
          * 
          * @param {string} name Set the field name.
          * @param {object} value Set the value.

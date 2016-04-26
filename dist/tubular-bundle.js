@@ -746,7 +746,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
      * @name tubular.directives
      * 
      * @description 
-     * Tubular Directives module. It contains all the directives.
+     * Tubular Directives and Components module.
      * 
      * It depends upon {@link tubular.services} and {@link tubular.models}.
      */
@@ -1619,13 +1619,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 };
             }
         ]);
-<<<<<<< HEAD
-})();
-(function () {
-=======
 })(window.angular);
-(function() {
->>>>>>> upstream/master
+(function () {
     'use strict';
 
     angular.module('tubular.directives')
@@ -1736,7 +1731,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * When you need a numeric editor but without the visual elements you can use 
          * `tbSimpleEditor` with the `editorType` attribute with value `number`.
          * 
-         * This directive uses the `TubularModel` to retrieve the model information.
+         * This component uses the `TubularModel` to retrieve the model information.
          * 
          * @param {string} name Set the field name.
          * @param {object} value Set the value.
@@ -3376,8 +3371,6 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          *
          * @description
          * The `tbGridPager` component generates a pager connected to the parent `tbGrid`.
-         * 
-         * @scope
          */
         .component('tbGridPager', {
             require: {
@@ -3396,8 +3389,6 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             controller: [
                 '$scope', '$element', '$attrs', '$timeout', function ($scope, $element, $attrs, $timeout) {
                     var $ctrl = this;
-
-                    $ctrl.tubularDirective = 'tubular-grid-pager';
 
                     $scope.$watch('$ctrl.$component.currentPage', function () {
                         if ($ctrl.$component.currentPage != $ctrl.$component.requestedPage) {
@@ -4148,27 +4139,6 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             '$filter', function tubularEditorService($filter) {
                 var me = this;
 
-                /*
-                 * Returns the Default Scope parameters
-                 */
-                me.defaultScope = {
-                    value: '=?',
-                    isEditing: '=?',
-                    editorType: '@',
-                    showLabel: '=?',
-                    label: '@?',
-                    required: '=?',
-                    format: '@?',
-                    min: '=?',
-                    max: '=?',
-                    name: '@',
-                    placeholder: '@?',
-                    readOnly: '=?',
-                    help: '@?',
-                    defaultValue: '@?',
-                    match: '@?'
-                };
-
                 /**
                 * Simple helper to generate a unique name for Tubular Forms
                 */
@@ -4183,373 +4153,189 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                  * Setups a new Editor, this functions is like a common class constructor to be used
                  * with all the tubularEditors.
                  */
-                me.setupScope = function (scope, defaultFormat, ctrl) {
-                    if (angular.isUndefined(ctrl)) {
-                        scope.isEditing = angular.isUndefined(scope.isEditing) ? true : scope.isEditing;
-                        scope.showLabel = scope.showLabel || false;
-                        scope.label = scope.label || (scope.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
-                        scope.required = scope.required || false;
-                        scope.readOnly = scope.readOnly || false;
-                        scope.format = scope.format || defaultFormat;
-                        scope.$valid = true;
+                me.setupScope = function(scope, defaultFormat, ctrl) {
+                    if (angular.isUndefined(ctrl)) ctrl = scope;
 
-                        // Get the field reference using the Angular way
-                        // Get the field reference using the Angular way
-                        scope.getFormField = function () {
-                            var parent = scope.$parent;
+                    ctrl.isEditing = angular.isUndefined(ctrl.isEditing) ? true : ctrl.isEditing;
+                    ctrl.showLabel = ctrl.showLabel || false;
+                    ctrl.label = ctrl.label || (ctrl.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
+                    ctrl.required = ctrl.required || false;
+                    ctrl.readOnly = ctrl.readOnly || false;
+                    ctrl.format = ctrl.format || defaultFormat;
+                    ctrl.$valid = true;
 
-                            while (true) {
-                                if (parent == null) break;
-                                if (angular.isDefined(parent.tubularDirective) && parent.tubularDirective === 'tubular-form') {
-                                    var formScope = parent.getFormScope();
-
-                                    return formScope == null ? null : formScope[scope.Name];
-                                }
-
-                                parent = parent.$parent;
-                            }
-                        };
-
-                        scope.$dirty = function () {
-                            // Just forward the property
-                            var formField = scope.getFormField();
-
-                            return formField == null ? true : formField.$dirty;
-                        };
-
-                        scope.checkValid = function () {
-                            scope.$valid = true;
-                            scope.state.$errors = [];
-
-                            if ((angular.isUndefined(scope.value) && scope.required) ||
-                            (Object.prototype.toString.call(scope.value) === "[object Date]" && isNaN(scope.value.getTime()) && scope.required)) {
-                                scope.$valid = false;
-
-                                // Although this property is invalid, if it is not $dirty
-                                // then there should not be any errors for it
-                                if (scope.$dirty()) {
-                                    scope.state.$errors = [$filter('translate')('EDITOR_REQUIRED')];
-                                }
-
-                                if (angular.isDefined(scope.$parent.Model)) {
-                                    scope.$parent.Model.$state[scope.Name] = scope.state;
-                                }
-
-                                return;
-                            }
-
-                            // Check if we have a validation function, otherwise return
-                            if (angular.isUndefined(scope.validate)) {
-                                return;
-                            }
-
-                            scope.validate();
-                        };
-
-                        // HACK: I need to know why
-                        scope.$watch('label', function (n, o) {
-                            if (angular.isUndefined(n)) {
-                                scope.label = (scope.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
-                            }
-                        });
-
-                        scope.$watch('value', function (newValue, oldValue) {
-                            if (angular.isUndefined(oldValue) && angular.isUndefined(newValue)) {
-                                return;
-                            }
-
-                            // This is the state API for every property in the Model
-                            scope.state = {
-                                $valid: function () {
-                                    scope.checkValid();
-                                    return this.$errors.length === 0;
-                                },
-                                $dirty: function () {
-                                    return scope.$dirty;
-                                },
-                                $errors: []
-                            };
-
-                            scope.$valid = true;
-
-                            // Try to match the model to the parent, if it exists
-                            if (angular.isDefined(scope.$parent.Model)) {
-                                if (angular.isDefined(scope.$parent.Model[scope.name])) {
-                                    scope.$parent.Model[scope.name] = newValue;
-
-                                    if (angular.isUndefined(scope.$parent.Model.$state)) {
-                                        scope.$parent.Model.$state = [];
-                                    }
-
-                                    scope.$parent.Model.$state[scope.Name] = scope.state;
-                                } else if (angular.isDefined(scope.$parent.Model.$addField)) {
-                                    scope.$parent.Model.$addField(scope.name, newValue, true);
-                                }
-                            }
-
-                            scope.checkValid();
-                        });
-
+                    // Get the field reference using the Angular way
+                    ctrl.getFormField = function() {
                         var parent = scope.$parent;
 
-                        // We try to find a Tubular Form in the parents
                         while (true) {
                             if (parent == null) break;
-                            if (angular.isDefined(parent.tubularDirective) &&
-                            (parent.tubularDirective === 'tubular-form' ||
-                                parent.tubularDirective === 'tubular-rowset')) {
+                            if (angular.isDefined(parent.tubularDirective) && parent.tubularDirective === 'tubular-form') {
+                                var formScope = parent.getFormScope();
 
-                                if (scope.name === null) {
-                                    return;
-                                }
-
-                                if (parent.hasFieldsDefinitions !== false) {
-                                    throw 'Cannot define more fields. Field definitions have been sealed';
-                                }
-
-                                scope.$component = parent.tubularDirective === 'tubular-form' ? parent : parent.$component;
-
-                                scope.Name = scope.name;
-
-                                scope.bindScope = function () {
-                                    scope.$parent.Model = parent.model;
-
-                                    if (angular.equals(scope.value, parent.model[scope.Name]) === false) {
-                                        if (angular.isDefined(parent.model[scope.Name])) {
-                                            scope.value = (scope.DataType === 'date' && parent.model[scope.Name] != null) ?
-                                                new Date(parent.model[scope.Name]) :
-                                                parent.model[scope.Name];
-                                        }
-
-                                        parent.$watch(function () {
-                                            return scope.value;
-                                        }, function (value) {
-                                            parent.model[scope.Name] = value;
-                                        });
-                                    }
-
-                                    if ((!scope.value || scope.value == null) && (scope.defaultValue && scope.defaultValue != null)) {
-                                        if (scope.DataType === 'date' && scope.defaultValue != null) {
-                                            scope.defaultValue = new Date(scope.defaultValue);
-                                        }
-                                        if (scope.DataType === 'numeric' && scope.defaultValue != null) {
-                                            scope.defaultValue = parseFloat(scope.defaultValue);
-                                        }
-
-                                        scope.value = scope.defaultValue;
-                                    }
-
-                                    if (angular.isUndefined(parent.model.$state)) {
-                                        parent.model.$state = {};
-                                    }
-
-                                    // This is the state API for every property in the Model
-                                    parent.model.$state[scope.Name] = {
-                                        $valid: function () {
-                                            scope.checkValid();
-                                            return this.$errors.length === 0;
-                                        },
-                                        $dirty: function () {
-                                            return scope.$dirty;
-                                        },
-                                        $errors: []
-                                    };
-
-                                    if (angular.equals(scope.state, parent.model.$state[scope.Name]) === false) {
-                                        scope.state = parent.model.$state[scope.Name];
-                                    }
-                                };
-
-                                parent.fields.push(scope);
-
-                                break;
+                                return formScope == null ? null : formScope[scope.Name];
                             }
 
                             parent = parent.$parent;
                         }
-                    }
-                    else {
-                        ctrl.isEditing = angular.isUndefined(ctrl.isEditing) ? true : ctrl.isEditing;
-                        ctrl.showLabel = ctrl.showLabel || false;
-                        ctrl.label = ctrl.label || (ctrl.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
-                        ctrl.required = ctrl.required || false;
-                        ctrl.readOnly = ctrl.readOnly || false;
-                        ctrl.format = ctrl.format || defaultFormat;
+                    };
+
+                    ctrl.$dirty = function() {
+                        // Just forward the property
+                        var formField = ctrl.getFormField();
+
+                        return formField == null ? true : formField.$dirty;
+                    };
+
+                    ctrl.checkValid = function() {
+                        ctrl.$valid = true;
+                        ctrl.state.$errors = [];
+
+                        if ((angular.isUndefined(ctrl.value) && ctrl.required) ||
+                        (Object.prototype.toString.call(ctrl.value) === "[object Date]" && isNaN(ctrl.value.getTime()) && ctrl.required)) {
+                            ctrl.$valid = false;
+
+                            // Although this property is invalid, if it is not $dirty
+                            // then there should not be any errors for it
+                            if (ctrl.$dirty()) {
+                                ctrl.state.$errors = [$filter('translate')('EDITOR_REQUIRED')];
+                            }
+
+                            if (angular.isDefined(scope.$parent.Model)) {
+                                scope.$parent.Model.$state[scope.Name] = ctrl.state;
+                            }
+
+                            return;
+                        }
+
+                        // Check if we have a validation function, otherwise return
+                        if (angular.isUndefined(ctrl.validate)) {
+                            return;
+                        }
+
+                        ctrl.validate();
+                    };
+
+                    // HACK: I need to know why
+                    scope.$watch('label', function(n, o) {
+                        if (angular.isUndefined(n)) {
+                            ctrl.label = (ctrl.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
+                        }
+                    });
+
+                    scope.$watch('value', function(newValue, oldValue) {
+                        if (angular.isUndefined(oldValue) && angular.isUndefined(newValue)) {
+                            return;
+                        }
+
+                        // This is the state API for every property in the Model
+                        ctrl.state = {
+                            $valid: function() {
+                                ctrl.checkValid();
+                                return this.$errors.length === 0;
+                            },
+                            $dirty: function() {
+                                return ctrl.$dirty;
+                            },
+                            $errors: []
+                        };
+
                         ctrl.$valid = true;
 
-                        // Get the field reference using the Angular way
-                        ctrl.getFormField = function () {
-                            var parent = scope.$parent;
+                        // Try to match the model to the parent, if it exists
+                        if (angular.isDefined(scope.$parent.Model)) {
+                            if (angular.isDefined(scope.$parent.Model[ctrl.name])) {
+                                scope.$parent.Model[ctrl.name] = newValue;
 
-                            while (true) {
-                                if (parent == null) break;
-                                if (angular.isDefined(parent.tubularDirective) && parent.tubularDirective === 'tubular-form') {
-                                    var formScope = parent.getFormScope();
-
-                                    return formScope == null ? null : formScope[scope.Name];
+                                if (angular.isUndefined(scope.$parent.Model.$state)) {
+                                    scope.$parent.Model.$state = [];
                                 }
 
-                                parent = parent.$parent;
+                                scope.$parent.Model.$state[scope.Name] = ctrl.state;
+                            } else if (angular.isDefined(scope.$parent.Model.$addField)) {
+                                scope.$parent.Model.$addField(ctrl.name, newValue, true);
                             }
-                        };
+                        }
 
-                        ctrl.$dirty = function () {
-                            // Just forward the property
-                            var formField = ctrl.getFormField();
+                        ctrl.checkValid();
+                    });
 
-                            return formField == null ? true : formField.$dirty;
-                        };
+                    var parent = scope.$parent;
 
-                        ctrl.checkValid = function () {
-                            ctrl.$valid = true;
-                            ctrl.state.$errors = [];
+                    // We try to find a Tubular Form in the parents
+                    while (true) {
+                        if (parent == null) break;
+                        if (angular.isDefined(parent.tubularDirective) &&
+                        (parent.tubularDirective === 'tubular-form' ||
+                            parent.tubularDirective === 'tubular-rowset')) {
 
-                            if ((angular.isUndefined(ctrl.value) && ctrl.required) ||
-                            (Object.prototype.toString.call(ctrl.value) === "[object Date]" && isNaN(ctrl.value.getTime()) && ctrl.required)) {
-                                ctrl.$valid = false;
-
-                                // Although this property is invalid, if it is not $dirty
-                                // then there should not be any errors for it
-                                if (ctrl.$dirty()) {
-                                    ctrl.state.$errors = [$filter('translate')('EDITOR_REQUIRED')];
-                                }
-
-                                if (angular.isDefined(scope.$parent.Model)) {
-                                    scope.$parent.Model.$state[scope.Name] = ctrl.state;
-                                }
-
+                            if (ctrl.name === null) {
                                 return;
                             }
 
-                            // Check if we have a validation function, otherwise return
-                            if (angular.isUndefined(ctrl.validate)) {
-                                return;
+                            if (parent.hasFieldsDefinitions !== false) {
+                                throw 'Cannot define more fields. Field definitions have been sealed';
                             }
 
-                            ctrl.validate();
-                        };
+                            ctrl.$component = parent.tubularDirective === 'tubular-form' ? parent : parent.$component;
 
-                        // HACK: I need to know why
-                        scope.$watch('label', function (n, o) {
-                            if (angular.isUndefined(n)) {
-                                ctrl.label = (ctrl.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
-                            }
-                        });
+                            scope.Name = ctrl.name;
 
-                        scope.$watch('value', function (newValue, oldValue) {
-                            if (angular.isUndefined(oldValue) && angular.isUndefined(newValue)) {
-                                return;
-                            }
+                            ctrl.bindScope = function() {
+                                scope.$parent.Model = parent.model;
 
-                            // This is the state API for every property in the Model
-                            ctrl.state = {
-                                $valid: function () {
-                                    ctrl.checkValid();
-                                    return this.$errors.length === 0;
-                                },
-                                $dirty: function () {
-                                    return ctrl.$dirty;
-                                },
-                                $errors: []
-                            };
-
-                            ctrl.$valid = true;
-
-                            // Try to match the model to the parent, if it exists
-                            if (angular.isDefined(scope.$parent.Model)) {
-                                if (angular.isDefined(scope.$parent.Model[ctrl.name])) {
-                                    scope.$parent.Model[ctrl.name] = newValue;
-
-                                    if (angular.isUndefined(scope.$parent.Model.$state)) {
-                                        scope.$parent.Model.$state = [];
+                                if (angular.equals(ctrl.value, parent.model[scope.Name]) === false) {
+                                    if (angular.isDefined(parent.model[scope.Name])) {
+                                        ctrl.value = (ctrl.DataType === 'date' && parent.model[ctrl.Name] != null) ?
+                                            new Date(parent.model[scope.Name]) :
+                                            parent.model[scope.Name];
                                     }
 
-                                    scope.$parent.Model.$state[scope.Name] = ctrl.state;
-                                } else if (angular.isDefined(scope.$parent.Model.$addField)) {
-                                    scope.$parent.Model.$addField(ctrl.name, newValue, true);
-                                }
-                            }
-
-                            ctrl.checkValid();
-                        });
-
-                        var parent = scope.$parent;
-
-                        // We try to find a Tubular Form in the parents
-                        while (true) {
-                            if (parent == null) break;
-                            if (angular.isDefined(parent.tubularDirective) &&
-                            (parent.tubularDirective === 'tubular-form' ||
-                                parent.tubularDirective === 'tubular-rowset')) {
-
-                                if (ctrl.name === null) {
-                                    return;
+                                    parent.$watch(function() {
+                                        return ctrl.value;
+                                    }, function(value) {
+                                        parent.model[scope.Name] = value;
+                                    });
                                 }
 
-                                if (parent.hasFieldsDefinitions !== false) {
-                                    throw 'Cannot define more fields. Field definitions have been sealed';
+                                if ((!ctrl.value || ctrl.value == null) && (ctrl.defaultValue && ctrl.defaultValue != null)) {
+                                    if (ctrl.DataType === 'date' && ctrl.defaultValue != null) {
+                                        ctrl.defaultValue = new Date(ctrl.defaultValue);
+                                    }
+                                    if (ctrl.DataType === 'numeric' && ctrl.defaultValue != null) {
+                                        ctrl.defaultValue = parseFloat(ctrl.defaultValue);
+                                    }
+
+                                    ctrl.value = ctrl.defaultValue;
                                 }
 
-                                ctrl.$component = parent.tubularDirective === 'tubular-form' ? parent : parent.$component;
+                                if (angular.isUndefined(parent.model.$state)) {
+                                    parent.model.$state = {};
+                                }
 
-                                scope.Name = ctrl.name;
-
-                                ctrl.bindScope = function () {
-                                    scope.$parent.Model = parent.model;
-
-                                    if (angular.equals(ctrl.value, parent.model[scope.Name]) === false) {
-                                        if (angular.isDefined(parent.model[scope.Name])) {
-                                            ctrl.value = (ctrl.DataType === 'date' && parent.model[ctrl.Name] != null) ?
-                                                new Date(parent.model[scope.Name]) :
-                                                parent.model[scope.Name];
-                                        }
-
-                                        parent.$watch(function () {
-                                            return ctrl.value;
-                                        }, function (value) {
-                                            parent.model[scope.Name] = value;
-                                        });
-                                    }
-
-                                    if ((!ctrl.value || ctrl.value == null) && (ctrl.defaultValue && ctrl.defaultValue != null)) {
-                                        if (ctrl.DataType === 'date' && ctrl.defaultValue != null) {
-                                            ctrl.defaultValue = new Date(ctrl.defaultValue);
-                                        }
-                                        if (ctrl.DataType === 'numeric' && ctrl.defaultValue != null) {
-                                            ctrl.defaultValue = parseFloat(ctrl.defaultValue);
-                                        }
-
-                                        ctrl.value = ctrl.defaultValue;
-                                    }
-
-                                    if (angular.isUndefined(parent.model.$state)) {
-                                        parent.model.$state = {};
-                                    }
-
-                                    // This is the state API for every property in the Model
-                                    parent.model.$state[scope.Name] = {
-                                        $valid: function () {
-                                            ctrl.checkValid();
-                                            return this.$errors.length === 0;
-                                        },
-                                        $dirty: function () {
-                                            return ctrl.$dirty;
-                                        },
-                                        $errors: []
-                                    };
-
-                                    if (angular.equals(ctrl.state, parent.model.$state[scope.Name]) === false) {
-                                        ctrl.state = parent.model.$state[scope.Name];
-                                    }
+                                // This is the state API for every property in the Model
+                                parent.model.$state[scope.Name] = {
+                                    $valid: function() {
+                                        ctrl.checkValid();
+                                        return this.$errors.length === 0;
+                                    },
+                                    $dirty: function() {
+                                        return ctrl.$dirty;
+                                    },
+                                    $errors: []
                                 };
 
-                                parent.fields.push(ctrl);
+                                if (angular.equals(ctrl.state, parent.model.$state[scope.Name]) === false) {
+                                    ctrl.state = parent.model.$state[scope.Name];
+                                }
+                            };
 
-                                break;
-                            }
+                            parent.fields.push(ctrl);
 
-                            parent = parent.$parent;
+                            break;
                         }
+
+                        parent = parent.$parent;
                     }
                 };
             }
@@ -5012,7 +4798,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                     if (request.serverUrl.indexOf('data:') === 0) {
                         return {
-                            promise: $q(function (resolve, reject) {
+                            promise: $q(function (resolve) {
                                 var urlData = request.serverUrl.substr('data:application/json;base64,'.length);
                                 urlData = atob(urlData);
                                 var data = angular.fromJson(urlData);

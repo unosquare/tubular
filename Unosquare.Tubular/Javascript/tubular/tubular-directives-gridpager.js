@@ -8,8 +8,6 @@
          *
          * @description
          * The `tbGridPager` component generates a pager connected to the parent `tbGrid`.
-         * 
-         * @scope
          */
         .component('tbGridPager', {
             require: {
@@ -28,8 +26,6 @@
             controller: [
                 '$scope', '$element', '$attrs', '$timeout', function ($scope, $element, $attrs, $timeout) {
                     var $ctrl = this;
-
-                    $ctrl.tubularDirective = 'tubular-grid-pager';
 
                     $scope.$watch('$ctrl.$component.currentPage', function () {
                         if ($ctrl.$component.currentPage != $ctrl.$component.requestedPage) {

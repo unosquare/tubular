@@ -6,7 +6,7 @@
      * @name tubular.directives
      * 
      * @description 
-     * Tubular Directives module. It contains all the directives.
+     * Tubular Directives and Components module.
      * 
      * It depends upon {@link tubular.services} and {@link tubular.models}.
      */

@@ -2,7 +2,8 @@
     "use strict";
 
     var chosenCtrl = [
-        '$scope', 'tubularEditorService', '$timeout', '$element', function($scope, tubularEditorService, $timeout, $element) {
+        '$scope', 'tubularEditorService', '$timeout', '$element',
+        function ($scope, tubularEditorService, $timeout, $element) {
             tubularEditorService.setupScope($scope);
             $scope.dataIsLoaded = false;
             $scope.alreadyChosen = false;
@@ -134,7 +135,7 @@
     ];
 
     angular.module('tubular.chosen', ['tubular.services', 'tubular.models']).directive('tbChosen', [
-        'tubularEditorService', function(tubularEditorService) {
+        function() {
 
             return {
                 template: '<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid }">' +
@@ -150,7 +151,15 @@
                 restrict: 'E',
                 replace: true,
                 transclude: true,
-                scope: angular.extend({
+                scope: {
+                    value: '=?',
+                    isEditing: '=?',
+                    showLabel: '=?',
+                    label: '@?',
+                    required: '=?',
+                    name: '@',
+                    readOnly: '=?',
+                    help: '@?',
                     options: '=?',
                     optionsUrl: '@',
                     optionsMethod: '@?',
@@ -160,12 +169,12 @@
                     allowEmpty: '=?',
                     helpLink: '@?',
                     helpText: '@?'
-                }, tubularEditorService.defaultScope),
+                },
                 controller: chosenCtrl
             };
         }
     ]).directive('tbChosenMultiple', [
-        'tubularEditorService', function(tubularEditorService) {
+        function() {
 
             return {
                 template: '<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid }">' +
@@ -181,14 +190,22 @@
                 restrict: 'E',
                 replace: true,
                 transclude: true,
-                scope: angular.extend({
+                scope: {
+                    value: '=?',
+                    isEditing: '=?',
+                    showLabel: '=?',
+                    label: '@?',
+                    required: '=?',
+                    name: '@',
+                    readOnly: '=?',
+                    help: '@?',
                     options: '=?',
                     optionsUrl: '@',
                     optionsMethod: '@?',
                     optionLabel: '@?',
                     optionKey: '@?',
                     defaultValue: '@?'
-                }, tubularEditorService.defaultScope),
+                },
                 controller: chosenCtrl
             };
         }

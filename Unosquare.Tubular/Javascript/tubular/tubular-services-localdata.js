@@ -24,7 +24,7 @@
 
                     if (request.serverUrl.indexOf('data:') === 0) {
                         return {
-                            promise: $q(function (resolve, reject) {
+                            promise: $q(function (resolve) {
                                 var urlData = request.serverUrl.substr('data:application/json;base64,'.length);
                                 urlData = atob(urlData);
                                 var data = angular.fromJson(urlData);
