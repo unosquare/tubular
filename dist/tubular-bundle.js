@@ -738,7 +738,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             };
         });
 })();
-(function() {
+(function (angular) {
     'use strict';
 
     /**
@@ -754,8 +754,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
         /**
          * @ngdoc component
          * @name tbGrid
-         * @restrict E
-         *
+         * 
          * @description
          * The `tbGrid` directive is the base to create any grid. This is the root node where you should start
          * designing your grid. Don't need to add a `controller`.
@@ -776,10 +775,6 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @param {bool} savePage Set if the grid autosave current page, default true.
          * @param {bool} savePageSize Set if the grid autosave page size, default true.
          * @param {bool} saveSearch Set if the grid autosave search, default true.
-         * 
-         * @example
-         * You must start creating a `tbGrid` as root node to display a Tubular Grid.
-         * <tb-grid></tb-grid>
          */
         .component('tbGrid', {
             template: '<div>' +
@@ -963,7 +958,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             serverUrl: url,
                             requestMethod: 'DELETE',
                             timeout: $ctrl.requestTimeout,
-                            requireAuthentication: $ctrl.requireAuthentication,
+                            requireAuthentication: $ctrl.requireAuthentication
                         };
 
                         $ctrl.currentRequest = $ctrl.dataService.retrieveDataAsync(request);
@@ -1624,7 +1619,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 };
             }
         ]);
-})();
+})(window.angular);
 (function() {
     'use strict';
 

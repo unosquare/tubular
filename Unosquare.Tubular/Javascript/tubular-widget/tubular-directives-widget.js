@@ -49,7 +49,6 @@
 
                             $scope.divideIntoRows = function () {
                                 var widgets = $scope.widgets.slice(0);
-                                var hiddenWidgets = [];
                                 var rows = [];
                                 while (widgets.length) {
                                     if (widgets[0].fullWidth || widgets[0].isHidden) {
@@ -277,7 +276,7 @@
          *
          * @scope
          */
-        .directive('tbWidgetActions', ['$compile', function ($compile) {
+        .directive('tbWidgetActions', [function () {
             return {
                 template: '<div class="pull-right"><ng-transclude></ng-transclude></div>',
                 restrict: 'E',
@@ -287,7 +286,7 @@
                 controller: function ($scope) {
                     $scope.$widget = $scope.$parent.$parent.$parent;
                 },
-                link: function (scope, iElement, iAttrs) {
+                link: function (scope, iElement) {
                     var header = iElement.parents('.panel').find('.panel-heading');
                     header.append(iElement);
                 }

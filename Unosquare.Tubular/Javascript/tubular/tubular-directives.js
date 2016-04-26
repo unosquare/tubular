@@ -1,4 +1,4 @@
-﻿(function() {
+﻿(function (angular) {
     'use strict';
 
     /**
@@ -14,8 +14,7 @@
         /**
          * @ngdoc component
          * @name tbGrid
-         * @restrict E
-         *
+         * 
          * @description
          * The `tbGrid` directive is the base to create any grid. This is the root node where you should start
          * designing your grid. Don't need to add a `controller`.
@@ -36,10 +35,6 @@
          * @param {bool} savePage Set if the grid autosave current page, default true.
          * @param {bool} savePageSize Set if the grid autosave page size, default true.
          * @param {bool} saveSearch Set if the grid autosave search, default true.
-         * 
-         * @example
-         * You must start creating a `tbGrid` as root node to display a Tubular Grid.
-         * <tb-grid></tb-grid>
          */
         .component('tbGrid', {
             template: '<div>' +
@@ -223,7 +218,7 @@
                             serverUrl: url,
                             requestMethod: 'DELETE',
                             timeout: $ctrl.requestTimeout,
-                            requireAuthentication: $ctrl.requireAuthentication,
+                            requireAuthentication: $ctrl.requireAuthentication
                         };
 
                         $ctrl.currentRequest = $ctrl.dataService.retrieveDataAsync(request);
@@ -884,4 +879,4 @@
                 };
             }
         ]);
-})();
+})(window.angular);
