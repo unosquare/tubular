@@ -1,42 +1,46 @@
 {
-    "name": "tubular",
-    "version": "0.9.46",
-    "description": "A set of AngularJS directives and designed to rapidly build modern web applications.",
-    "homepage": "http://unosquare.github.io/tubular",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/unosquare/tubular"
-    },
-    "keywords": [
-        "grid",
-        "forms",
-        "bootstrap",
-        "angularjs"
-    ],
-    "main": [
-        "dist/tubular-bundle.js",
-        "dist/tubular-bundle.css"
-    ],
-    "ignore": [
-        "**/.*",
-        "packages/",
-        "Unosquare.Tubular/",
-        "Unosquare.Tubular.EmbedioSample/",
-        "Unosquare.Tubular.Sample/",
-        "Unosquare.Tubular.Security/",
-        "LICENSE",
-        "package.json",
-        "README.md",
-        "Unosquare.Tubular.sln"
-    ],
-    "license": "MIT",
-    "dependencies": {
-        "bootstrap": "~3.3.6",
-        "angular": "~1.3.15",
-        "angular-route": "~1.3.15",
-        "angular-bootstrap": "~0.13.0",
-        "file-saver.js": "~1.20150304.1",
-        "angular-local-storage": "~0.2.2",
-        "font-awesome": "~4.5.0"
-    }
+  "name": "tubular",
+  "version": "0.9.46",
+  "description": "A set of AngularJS directives and designed to rapidly build modern web applications.",
+  "homepage": "http://unosquare.github.io/tubular",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/unosquare/tubular"
+  },
+  "keywords": [
+    "grid",
+    "forms",
+    "bootstrap",
+    "angularjs"
+  ],
+  "main": [
+    "dist/tubular-bundle.js",
+    "dist/tubular-bundle.css"
+  ],
+  "ignore": [
+    "**/.*",
+    "packages/",
+    "Unosquare.Tubular/",
+    "Unosquare.Tubular.EmbedioSample/",
+    "Unosquare.Tubular.Sample/",
+    "Unosquare.Tubular.Security/",
+    "LICENSE",
+    "package.json",
+    "README.md",
+    "Unosquare.Tubular.sln"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "bootstrap": "~3.3.6",
+    "angular": "~1.5.3",
+    "angular-route": "~1.5.3",
+    "angular-bootstrap": "~1.3.2",
+    "file-saver.js": "~1.20150304.1",
+    "angular-local-storage": "~0.2.2",
+    "font-awesome": "~4.5.0",
+    "jquery": "~2.1.4"
+  },
+  "resolutions": {
+    "angular": "~1.5.3"
+  }
 }

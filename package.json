@@ -9,7 +9,8 @@
   },
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha",
-    "test-travis": "npm install && ./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- -R spec"
+    "test-travis": "npm install && ./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- -R spec",
+    "test-e2e": "node node_modules\\karma\\bin\\karma start karma.conf.js"
   },
   "keywords": [
     "grid",
@@ -34,6 +35,13 @@
   "devDependencies": {
     "coveralls": "^2.11.2",
     "istanbul": "^0.3.14",
-    "mocha": "^2.2.4"
+    "jasmine": "^2.4.1",
+    "jasmine-core": "^2.4.1",
+    "karma": "^0.13.22",
+    "karma-chrome-launcher": "^0.2.3",
+    "karma-jasmine": "^0.3.8",
+    "karma-junit-reporter": "^0.4.2",
+    "mocha": "^2.2.4",
+    "protractor": "^3.3.0"
   }
 }
