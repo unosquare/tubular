@@ -8,9 +8,12 @@
     "url": "https://github.com/unosquare/tubular"
   },
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha",
+    "test": "mocha",
     "test-travis": "npm install && ./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- -R spec",
-    "test-e2e": "node node_modules\\karma\\bin\\karma start karma.conf.js"
+    "test-e2e": "karma start karma.conf.js",
+    "update-webdriver": "webdriver-manager update",
+    "preprotractor": "npm run update-webdriver",
+    "protractor": "protractor e2e-tests/protractor.conf.js"
   },
   "keywords": [
     "grid",

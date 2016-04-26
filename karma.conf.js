@@ -6,6 +6,7 @@ module.exports = function(config) {
             'bower_components/jquery/dist/jquery.js',
             'bower_components/angular/angular.js',
             'bower_components/angular-route/angular-route.js',
+            'bower_components/angular-route/angular-mocks.js',
             'dist/tubular-bundle.js'
         ],
 
@@ -25,6 +26,5 @@ module.exports = function(config) {
             outputFile: 'test_out/unit.xml',
             suite: 'unit'
         }
-
     });
 };
