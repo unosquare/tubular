@@ -361,7 +361,7 @@
                  * Setups a new Editor, this functions is like a common class constructor to be used
                  * with all the tubularEditors.
                  */
-                me.setupScope = function(scope, defaultFormat, ctrl) {
+                me.setupScope = function(scope, defaultFormat, ctrl, setDirty) {
                     if (angular.isUndefined(ctrl)) ctrl = scope;
 
                     ctrl.isEditing = angular.isUndefined(ctrl.isEditing) ? true : ctrl.isEditing;
@@ -535,6 +535,11 @@
 
                                 if (angular.equals(ctrl.state, parent.model.$state[scope.Name]) === false) {
                                     ctrl.state = parent.model.$state[scope.Name];
+                                }
+
+                                if (setDirty) {
+                                    var formScope = ctrl.getFormField();
+                                    if (formScope) formScope.$setDirty();
                                 }
                             };
 

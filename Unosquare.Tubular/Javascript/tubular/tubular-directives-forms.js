@@ -47,7 +47,6 @@
                         serverUrl: '@',
                         serverSaveUrl: '@',
                         serverSaveMethod: '@',
-                        isNew: '=',
                         modelKey: '@?',
                         dataServiceName: '@?serviceName',
                         requireAuthentication: '=?',

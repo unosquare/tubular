@@ -1930,6 +1930,10 @@ try {
                                     angular.isDefined($ctrl.optionKey) ? $ctrl.options[0][$ctrl.optionKey] : $ctrl.options[0]
                                     : '';
                                 $ctrl.value = value || $ctrl.defaultValue || possibleValue;
+
+                                // Set the field dirty
+                                var formScope = $ctrl.getFormField();
+                                if (formScope) formScope.$setDirty();
                             }, function (error) {
                                 $scope.$emit('tbGrid_OnConnectionError', error);
                             });
@@ -2097,7 +2101,7 @@ try {
             controller: [
                 'tubularEditorService', '$scope', function (tubularEditorService, $scope) {
                     var $ctrl = this;
-                    tubularEditorService.setupScope($scope, null, $ctrl);
+                    tubularEditorService.setupScope($scope, null, $ctrl, true);
                 }
             ]
         })
@@ -2156,7 +2160,7 @@ try {
                     $ctrl.checkedValue = angular.isDefined($ctrl.checkedValue) ? $ctrl.checkedValue : true;
                     $ctrl.uncheckedValue = angular.isDefined($ctrl.uncheckedValue) ? $ctrl.uncheckedValue : false;
 
-                    tubularEditorService.setupScope($scope, null, $ctrl);
+                    tubularEditorService.setupScope($scope, null, $ctrl, true);
                 }
             ]
         })
@@ -3503,24 +3507,15 @@ try {
                 obj.$isNew = false;
 
                 obj.$valid = function() {
-                    for (var k in obj.$state) {
-                        if (obj.$state.hasOwnProperty(k)) {
-                            var key = k;
-                            if (angular.isUndefined(obj.$state[key]) ||
-                                obj.$state[key] == null ||
-                                angular.isUndefined(obj.$state[key].$valid)) {
-                                continue;
-                            }
+                    var valid = true;
 
-                            if (obj.$state[key].$valid() && obj.$state[key].$dirty()) {
-                                continue;
-                            }
-
-                            return false;
+                    angular.forEach(obj.$state, function(val, k) {
+                        if (angular.isUndefined(val) || !val.$valid() || !val.$dirty()) {
+                            valid = false;
                         }
-                    }
+                    });
 
-                    return true;
+                    return valid;
                 };
 
                 // Returns a save promise
@@ -3947,7 +3942,7 @@ try {
                  * Setups a new Editor, this functions is like a common class constructor to be used
                  * with all the tubularEditors.
                  */
-                me.setupScope = function(scope, defaultFormat, ctrl) {
+                me.setupScope = function(scope, defaultFormat, ctrl, setDirty) {
                     if (angular.isUndefined(ctrl)) ctrl = scope;
 
                     ctrl.isEditing = angular.isUndefined(ctrl.isEditing) ? true : ctrl.isEditing;
@@ -4121,6 +4116,11 @@ try {
 
                                 if (angular.equals(ctrl.state, parent.model.$state[scope.Name]) === false) {
                                     ctrl.state = parent.model.$state[scope.Name];
+                                }
+
+                                if (setDirty) {
+                                    var formScope = ctrl.getFormField();
+                                    if (formScope) formScope.$setDirty();
                                 }
                             };
 

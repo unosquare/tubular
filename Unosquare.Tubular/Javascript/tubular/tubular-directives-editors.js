@@ -514,6 +514,10 @@
                                     angular.isDefined($ctrl.optionKey) ? $ctrl.options[0][$ctrl.optionKey] : $ctrl.options[0]
                                     : '';
                                 $ctrl.value = value || $ctrl.defaultValue || possibleValue;
+
+                                // Set the field dirty
+                                var formScope = $ctrl.getFormField();
+                                if (formScope) formScope.$setDirty();
                             }, function (error) {
                                 $scope.$emit('tbGrid_OnConnectionError', error);
                             });
@@ -681,7 +685,7 @@
             controller: [
                 'tubularEditorService', '$scope', function (tubularEditorService, $scope) {
                     var $ctrl = this;
-                    tubularEditorService.setupScope($scope, null, $ctrl);
+                    tubularEditorService.setupScope($scope, null, $ctrl, true);
                 }
             ]
         })
@@ -740,7 +744,7 @@
                     $ctrl.checkedValue = angular.isDefined($ctrl.checkedValue) ? $ctrl.checkedValue : true;
                     $ctrl.uncheckedValue = angular.isDefined($ctrl.uncheckedValue) ? $ctrl.uncheckedValue : false;
 
-                    tubularEditorService.setupScope($scope, null, $ctrl);
+                    tubularEditorService.setupScope($scope, null, $ctrl, true);
                 }
             ]
         })

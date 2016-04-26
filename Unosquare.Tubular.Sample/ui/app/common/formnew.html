@@ -1,6 +1,5 @@
 ﻿<div class="container" ng-controller="tubularSampleCtrl as sample">
-    <tb-form server-save-url="/api/orders/save" is-new="true"
-             require-authentication="false">
+    <tb-form server-save-url="/api/orders/save" require-authentication="false" model="Model">
         <div class="row">
             <div class="col-md-9">
                 <tb-simple-editor min="3" show-label="true" name="CustomerName" default-value="Customer" 
@@ -16,19 +15,16 @@
                                    show-label="true" required="true" default-value="100">
                 </tb-numeric-editor>
 
-                <tb-date-time-editor name="ShippedDate" required="true" format="'dd-MM-yyyy'" show-label="true"
+                <tb-date-editor name="ShippedDate" required="true" format="'dd-MM-yyyy'" show-label="true"
                                 default-value="{{sample.defaultDate | date}}">
-                </tb-date-time-editor>
-
-                <tb-hidden-field name="OrderID" is-key="true" value="Model.OrderID">
-                </tb-hidden-field>
+                </tb-date-editor>
 
                 <tb-checkbox-field value="Model.IsShipped" name="IsShipped" show-label="true" label="Is Shipped?">
                 </tb-checkbox-field>
 
                 <hr />
                 <div class="pull-right">
-                    <button class="btn btn-primary" ng-click="$parent.save()" ng-disabled="!$parent.model.$valid()">
+                    <button class="btn btn-primary" ng-click="$parent.create()" ng-disabled="!$parent.model.$valid()">
                         <i class="fa fa-floppy-o"></i>&nbsp;Save
                     </button>
                     <button class="btn btn-danger" ng-click="$parent.cancel()">
