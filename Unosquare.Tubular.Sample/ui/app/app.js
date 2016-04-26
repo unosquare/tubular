@@ -1,6 +1,18 @@
 ﻿(function() {
     'use strict';
 
+    // define console methods if not defined
+    if (typeof console === "undefined") {
+        window.console = {
+            log: function () { },
+            debug: function () { },
+            error: function () { },
+            assert: function () { },
+            info: function () { },
+            warn: function () { },
+        };
+    }
+
     angular.module('app.routes', ['ngRoute'])
         .config([
             '$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {

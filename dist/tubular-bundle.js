@@ -412,198 +412,6 @@ try {
 } catch (e) {
     // Ignore
 }
-/**
- * @ngdoc provider
- * @name filterWatcher
- * @kind function
- *
- * @description
- * store specific filters result in $$cache, based on scope life time(avoid memory leak).
- * on scope.$destroy remove it's cache from $$cache container
- */
-
-angular.module('a8m.filter-watcher', [])
-  .provider('filterWatcher', function () {
-
-      this.$get = ['$window', '$rootScope', function ($window, $rootScope) {
-
-          /**
-           * Cache storing
-           * @type {Object}
-           */
-          var $$cache = {};
-
-          /**
-           * Scope listeners container
-           * scope.$destroy => remove all cache keys
-           * bind to current scope.
-           * @type {Object}
-           */
-          var $$listeners = {};
-
-          /**
-           * $timeout without triggering the digest cycle
-           * @type {function}
-           */
-          var $$timeout = $window.setTimeout;
-
-          /**
-           * @description
-           * get `HashKey` string based on the given arguments.
-           * @param fName
-           * @param args
-           * @returns {string}
-           */
-          function getHashKey(fName, args) {
-              return [fName, angular.toJson(args)]
-                .join('#')
-                .replace(/"/g, '');
-          }
-
-          /**
-           * @description
-           * fir on $scope.$destroy,
-           * remove cache based scope from `$$cache`,
-           * and remove itself from `$$listeners`
-           * @param event
-           */
-          function removeCache(event) {
-              var id = event.targetScope.$id;
-              forEach($$listeners[id], function (key) {
-                  delete $$cache[key];
-              });
-              delete $$listeners[id];
-          }
-
-          /**
-           * @description
-           * for angular version that greater than v.1.3.0
-           * it clear cache when the digest cycle is end.
-           */
-          function cleanStateless() {
-              $$timeout(function () {
-                  if (!$rootScope.$$phase)
-                      $$cache = {};
-              });
-          }
-
-          /**
-           * @description
-           * Store hashKeys in $$listeners container
-           * on scope.$destroy, remove them all(bind an event).
-           * @param scope
-           * @param hashKey
-           * @returns {*}
-           */
-          function addListener(scope, hashKey) {
-              var id = scope.$id;
-              if (isUndefined($$listeners[id])) {
-                  scope.$on('$destroy', removeCache);
-                  $$listeners[id] = [];
-              }
-              return $$listeners[id].push(hashKey);
-          }
-
-          /**
-           * @description
-           * return the `cacheKey` or undefined.
-           * @param filterName
-           * @param args
-           * @returns {*}
-           */
-          function $$isMemoized(filterName, args) {
-              var hashKey = getHashKey(filterName, args);
-              return $$cache[hashKey];
-          }
-
-          /**
-         * @description
-         * Test if given object is a Scope instance
-         * @param obj
-         * @returns {Boolean}
-         */
-          function isScope(obj) {
-              return obj && obj.$evalAsync && obj.$watch;
-          }
-
-          /**
-           * @description
-           * store `result` in `$$cache` container, based on the hashKey.
-           * add $destroy listener and return result
-           * @param filterName
-           * @param args
-           * @param scope
-           * @param result
-           * @returns {*}
-           */
-          function $$memoize(filterName, args, scope, result) {
-              var hashKey = getHashKey(filterName, args);
-              //store result in `$$cache` container
-              $$cache[hashKey] = result;
-              // for angular versions that less than 1.3
-              // add to `$destroy` listener, a cleaner callback
-              if (isScope(scope)) {
-                  addListener(scope, hashKey);
-              } else {
-                  cleanStateless();
-              }
-              return result;
-          }
-
-          return {
-              isMemoized: $$isMemoized,
-              memoize: $$memoize
-          }
-
-      }];
-  });
-/**
- * @ngdoc filter
- * @name groupBy
- * @kind function
- *
- * @description
- * Create an object composed of keys generated from the result of running each element of a collection,
- * each key is an array of the elements.
- */
-
-angular.module('a8m.group-by', ['a8m.filter-watcher'])
-
-  .filter('groupBy', ['$parse', 'filterWatcher', function ($parse, filterWatcher) {
-      return function (collection, property) {
-
-          if (!angular.isObject(collection) || angular.isUndefined(property)) {
-              return collection;
-          }
-
-          var getterFn = $parse(property);
-
-          return filterWatcher.isMemoized('groupBy', arguments) ||
-            filterWatcher.memoize('groupBy', arguments, this,
-              _groupBy(collection, getterFn));
-
-          /**
-           * groupBy function
-           * @param collection
-           * @param getter
-           * @returns {{}}
-           */
-          function _groupBy(collection, getter) {
-              var result = {};
-              var prop;
-
-              angular.forEach(collection, function (elm) {
-                  prop = getter(elm);
-
-                  if (!result[prop]) {
-                      result[prop] = [];
-                  }
-                  result[prop].push(elm);
-              });
-              return result;
-          }
-      }
-  }]);
 (function() {
     'use strict';
 
@@ -617,22 +425,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
      * 
      * It depends upon  {@link tubular.directives}, {@link tubular.services} and {@link tubular.models}.
      */
-    angular.module('tubular', ['tubular.directives', 'tubular.services', 'tubular.models', 'LocalStorageModule', 'a8m.group-by'])
+    angular.module('tubular', ['tubular.directives', 'tubular.services', 'tubular.models', 'LocalStorageModule'])
         .config([
             'localStorageServiceProvider', function(localStorageServiceProvider) {
                 localStorageServiceProvider.setPrefix('tubular');
-
-                // define console methods if not defined
-                if (typeof console === "undefined") {
-                    window.console = {
-                        log: function() {},
-                        debug: function() {},
-                        error: function() {},
-                        assert: function() {},
-                        info: function() {},
-                        warn: function() {},
-                    };
-                }
             }
         ])
         .run(['tubularHttp', 'tubularOData', 'tubularLocalData',
@@ -649,10 +445,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @description
          * The `tubularConst` holds some UI constants.
          */
-        .constant("tubularConst", {
-            "upCssClass": "fa-long-arrow-up",
-            "downCssClass": "fa-long-arrow-down"
-        })
+        .constant("tubularConst", {})
         /**
          * @ngdoc filter
          * @name errormessage
@@ -668,8 +461,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             return function(input) {
                 if (angular.isDefined(input) && angular.isDefined(input.data) &&
                     input.data &&
-                    angular.isDefined(input.data.ExceptionMessage))
+                    angular.isDefined(input.data.ExceptionMessage)) {
                     return input.data.ExceptionMessage;
+                }
 
                 return input.statusText || "Connection Error";
             };
@@ -746,7 +540,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
      * @name tubular.directives
      * 
      * @description 
-     * Tubular Directives module. It contains all the directives.
+     * Tubular Directives and Components module.
      * 
      * It depends upon {@link tubular.services} and {@link tubular.models}.
      */
@@ -1678,7 +1472,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             controller: [
                 'tubularEditorService', '$scope', '$filter', function (tubularEditorService, $scope, $filter) {
                     var $ctrl = this;
-
+                    
                     $ctrl.validate = function () {
                         if (angular.isDefined($ctrl.regex) && $ctrl.regex != null && angular.isDefined($ctrl.value) && $ctrl.value != null && $ctrl.value != '') {
                             var patt = new RegExp($ctrl.regex);
@@ -1716,7 +1510,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         }
                     };
 
-                    tubularEditorService.setupScope($scope, null, $ctrl);
+                    $ctrl.$onInit = function() {
+                        tubularEditorService.setupScope($scope, null, $ctrl, false);
+                    };
                 }
             ]
         })
@@ -1731,7 +1527,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * When you need a numeric editor but without the visual elements you can use 
          * `tbSimpleEditor` with the `editorType` attribute with value `number`.
          * 
-         * This directive uses the `TubularModel` to retrieve the model information.
+         * This component uses the `TubularModel` to retrieve the model information.
          * 
          * @param {string} name Set the field name.
          * @param {object} value Set the value.
@@ -1781,8 +1577,6 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             controller: [
                 'tubularEditorService', '$scope', '$filter', function (tubularEditorService, $scope, $filter) {
                     var $ctrl = this;
-                    $ctrl.DataType = "numeric";
-
                     $ctrl.validate = function () {
                         if (angular.isDefined($ctrl.min) && angular.isDefined($ctrl.value) && $ctrl.value != null) {
                             $ctrl.$valid = $ctrl.value >= $ctrl.min;
@@ -1803,7 +1597,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         }
                     };
 
-                    tubularEditorService.setupScope($scope, 0, $ctrl);
+                    $ctrl.$onInit = function() {
+                        $ctrl.DataType = "numeric";
+
+                        tubularEditorService.setupScope($scope, 0, $ctrl, false);
+                    };
                 }
             ]
         })
@@ -1877,10 +1675,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         }
                     };
 
-                    $ctrl.DataType = "date";
-
                     // This could be $onChange??
-                    $scope.$watch('value', function (val) {
+                    $scope.$watch(function () {
+                        return $ctrl.value;
+                    }, function (val) {
                         if (typeof (val) === 'string') {
                             $ctrl.value = new Date(val);
                         }
@@ -1916,7 +1714,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         }
                     };
 
-                    tubularEditorService.setupScope($scope, $ctrl.format, $ctrl);
+                    $ctrl.$onInit = function () {
+                        $ctrl.DataType = "date";
+                        tubularEditorService.setupScope($scope, $ctrl.format, $ctrl);
+                    };
                 }
             ]
         })
@@ -1969,7 +1770,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 max: '=?',
                 name: '@',
                 readOnly: '=?',
-                help: '@?',
+                help: '@?'
             },
             controller: [
                '$scope', '$element', 'tubularEditorService', '$filter', function ($scope, $element, tubularEditorService, $filter) {
@@ -1994,9 +1795,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                        }
                    };
 
-                   $ctrl.DataType = "date";
-
-                   $scope.$watch('value', function (val) {
+                   $scope.$watch(function() {
+                       return $ctrl.value;
+                   }, function (val) {
                        if (typeof (val) === 'string') {
                            $ctrl.value = new Date(val);
                        }
@@ -2032,8 +1833,11 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                        }
                    };
 
-                   tubularEditorService.setupScope($scope, $ctrl.format, $ctrl);
-               }
+                   $ctrl.$onInit = function() {
+                        $ctrl.DataType = "date";
+                        tubularEditorService.setupScope($scope, $ctrl.format, $ctrl);
+                   };
+                }
             ]
         })
         /**
@@ -2090,10 +1894,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 optionKey: '@?'
             },
             controller: [
-                'tubularEditorService', '$scope', function (tubularEditorService, $scope) {
+                'tubularEditorService', '$scope', function(tubularEditorService, $scope) {
                     var $ctrl = this;
 
-                    $ctrl.$onInit = function () {
+                    $ctrl.$onInit = function() {
                         tubularEditorService.setupScope($scope, null, $ctrl);
                         $ctrl.dataIsLoaded = false;
                         $ctrl.selectOptions = "d for d in $ctrl.options";
@@ -2105,12 +1909,34 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 $ctrl.selectOptions = 'd.' + $ctrl.optionKey + ' as ' + $ctrl.selectOptions;
                             }
                         }
+
+                        if (angular.isDefined($ctrl.optionsUrl)) {
+                            $scope.$watch('optionsUrl', function(val, prev) {
+                                if (val == prev) return;
+
+                                $ctrl.dataIsLoaded = false;
+                                $ctrl.loadData();
+                            });
+
+                            if ($ctrl.isEditing) {
+                                $ctrl.loadData();
+                            } else {
+                                $scope.$watch('isEditing', function() {
+                                    if ($ctrl.isEditing) {
+                                        $ctrl.loadData();
+                                    }
+                                });
+                            }
+                        }
                     };
 
-                    $scope.$watch('value', function (val) {
+                    $scope.$watch(function() {
+                        return $ctrl.value;
+                    }, function(val) {
                         $scope.$emit('tbForm_OnFieldChange', $ctrl.$component, $ctrl.name, val);
                     });
-                    $ctrl.loadData = function () {
+
+                    $ctrl.loadData = function() {
                         if ($ctrl.dataIsLoaded) {
                             return;
                         }
@@ -2128,7 +1954,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         $ctrl.value = '';
 
                         currentRequest.promise.then(
-                            function (data) {
+                            function(data) {
                                 $ctrl.options = data;
                                 $ctrl.dataIsLoaded = true;
                                 // TODO: Add an attribute to define if autoselect is OK
@@ -2136,29 +1962,14 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     angular.isDefined($ctrl.optionKey) ? $ctrl.options[0][$ctrl.optionKey] : $ctrl.options[0]
                                     : '';
                                 $ctrl.value = value || $ctrl.defaultValue || possibleValue;
-                            }, function (error) {
+
+                                // Set the field dirty
+                                var formScope = $ctrl.getFormField();
+                                if (formScope) formScope.$setDirty();
+                            }, function(error) {
                                 $scope.$emit('tbGrid_OnConnectionError', error);
                             });
                     };
-
-                    if (angular.isDefined($ctrl.optionsUrl)) {
-                        $scope.$watch('optionsUrl', function (val, prev) {
-                            if (val == prev) return;
-
-                            $ctrl.dataIsLoaded = false;
-                            $ctrl.loadData();
-                        });
-
-                        if ($ctrl.isEditing) {
-                            $ctrl.loadData();
-                        } else {
-                            $scope.$watch('isEditing', function () {
-                                if ($ctrl.isEditing) {
-                                    $ctrl.loadData();
-                                }
-                            });
-                        }
-                    }
                 }
             ]
         })
@@ -2298,12 +2109,15 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             transclude: true,
             bindings: {
                 value: '=?',
-                name: '@',
+                name: '@'
             },
             controller: [
                 'tubularEditorService', '$scope', function (tubularEditorService, $scope) {
                     var $ctrl = this;
-                    tubularEditorService.setupScope($scope, null, $ctrl);
+
+                    $ctrl.$onInit = function() {
+                        tubularEditorService.setupScope($scope, null, $ctrl, true);
+                    };
                 }
             ]
         })
@@ -2355,14 +2169,16 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 uncheckedValue: '=?'
             },
             controller: [
-                'tubularEditorService', '$scope', '$element', function (tubularEditorService, $scope) {
+                'tubularEditorService', '$scope', function (tubularEditorService, $scope) {
                     var $ctrl = this;
 
-                    $ctrl.required = false; // overwrite required to false always
-                    $ctrl.checkedValue = angular.isDefined($ctrl.checkedValue) ? $ctrl.checkedValue : true;
-                    $ctrl.uncheckedValue = angular.isDefined($ctrl.uncheckedValue) ? $ctrl.uncheckedValue : false;
+                    $ctrl.$onInit = function () {
+                        $ctrl.required = false; // overwrite required to false always
+                        $ctrl.checkedValue = angular.isDefined($ctrl.checkedValue) ? $ctrl.checkedValue : true;
+                        $ctrl.uncheckedValue = angular.isDefined($ctrl.uncheckedValue) ? $ctrl.uncheckedValue : false;
 
-                    tubularEditorService.setupScope($scope, null, $ctrl);
+                        tubularEditorService.setupScope($scope, null, $ctrl, true);
+                    };
                 }
             ]
         })
@@ -2411,7 +2227,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 max: '=?',
                 name: '@',
                 readOnly: '=?',
-                help: '@?',
+                help: '@?'
             },
             controller: [
                 'tubularEditorService', '$scope', '$filter', function (tubularEditorService, $scope, $filter) {
@@ -2435,7 +2251,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         }
                     };
 
-                    tubularEditorService.setupScope($scope, null, $ctrl);
+
+                    $ctrl.$onInit = function() {
+                        tubularEditorService.setupScope($scope, null, $ctrl, false);
+                    };
                 }
             ]
         });
@@ -2851,7 +2670,6 @@ function ctrlTest($scope, $ctrl, $element, $attrs, $compile, FilterModel, $filte
          * @param {string} serverSaveUrl Set the HTTP URL where the data will be saved.
          * @param {string} serverSaveMethod Set HTTP Method to save data.
          * @param {object} model The object model to show in the form.
-         * @param {boolean} isNew Set if the form is for create a new record.
          * @param {string} modelKey Defines the fields to use like Keys.
          * @param {string} formName Defines the form name.
          * @param {string} serviceName Define Data service (name) to retrieve data, defaults `tubularHttp`.
@@ -2874,7 +2692,6 @@ function ctrlTest($scope, $ctrl, $element, $attrs, $compile, FilterModel, $filte
                         serverUrl: '@',
                         serverSaveUrl: '@',
                         serverSaveMethod: '@',
-                        isNew: '=',
                         modelKey: '@?',
                         dataServiceName: '@?serviceName',
                         requireAuthentication: '=?',
@@ -3467,8 +3284,6 @@ function ctrlTest($scope, $ctrl, $element, $attrs, $compile, FilterModel, $filte
          *
          * @description
          * The `tbGridPager` component generates a pager connected to the parent `tbGrid`.
-         * 
-         * @scope
          */
         .component('tbGridPager', {
             require: {
@@ -3487,8 +3302,6 @@ function ctrlTest($scope, $ctrl, $element, $attrs, $compile, FilterModel, $filte
             controller: [
                 '$scope', '$element', '$attrs', '$timeout', function ($scope, $element, $attrs, $timeout) {
                     var $ctrl = this;
-
-                    $ctrl.tubularDirective = 'tubular-grid-pager';
 
                     $scope.$watch('$ctrl.$component.currentPage', function () {
                         if ($ctrl.$component.currentPage != $ctrl.$component.requestedPage) {
@@ -3809,24 +3622,15 @@ function ctrlTest($scope, $ctrl, $element, $attrs, $compile, FilterModel, $filte
                 obj.$isNew = false;
 
                 obj.$valid = function() {
-                    for (var k in obj.$state) {
-                        if (obj.$state.hasOwnProperty(k)) {
-                            var key = k;
-                            if (angular.isUndefined(obj.$state[key]) ||
-                                obj.$state[key] == null ||
-                                angular.isUndefined(obj.$state[key].$valid)) {
-                                continue;
-                            }
+                    var valid = true;
 
-                            if (obj.$state[key].$valid() && obj.$state[key].$dirty) {
-                                continue;
-                            }
-
-                            return false;
+                    angular.forEach(obj.$state, function(val) {
+                        if (angular.isUndefined(val) || !val.$valid() || !val.$dirty()) {
+                            valid = false;
                         }
-                    }
+                    });
 
-                    return true;
+                    return valid;
                 };
 
                 // Returns a save promise
@@ -3890,7 +3694,7 @@ function ctrlTest($scope, $ctrl, $element, $attrs, $compile, FilterModel, $filte
             };
         });
 })();
-(function() {
+(function (angular) {
     'use strict';
 
     /**
@@ -4239,27 +4043,6 @@ function ctrlTest($scope, $ctrl, $element, $attrs, $compile, FilterModel, $filte
             '$filter', function tubularEditorService($filter) {
                 var me = this;
 
-                /*
-                 * Returns the Default Scope parameters
-                 */
-                me.defaultScope = {
-                    value: '=?',
-                    isEditing: '=?',
-                    editorType: '@',
-                    showLabel: '=?',
-                    label: '@?',
-                    required: '=?',
-                    format: '@?',
-                    min: '=?',
-                    max: '=?',
-                    name: '@',
-                    placeholder: '@?',
-                    readOnly: '=?',
-                    help: '@?',
-                    defaultValue: '@?',
-                    match: '@?'
-                };
-
                 /**
                 * Simple helper to generate a unique name for Tubular Forms
                 */
@@ -4274,378 +4057,194 @@ function ctrlTest($scope, $ctrl, $element, $attrs, $compile, FilterModel, $filte
                  * Setups a new Editor, this functions is like a common class constructor to be used
                  * with all the tubularEditors.
                  */
-                me.setupScope = function (scope, defaultFormat, ctrl) {
-                    if (angular.isUndefined(ctrl)) {
-                        scope.isEditing = angular.isUndefined(scope.isEditing) ? true : scope.isEditing;
-                        scope.showLabel = scope.showLabel || false;
-                        scope.label = scope.label || (scope.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
-                        scope.required = scope.required || false;
-                        scope.readOnly = scope.readOnly || false;
-                        scope.format = scope.format || defaultFormat;
-                        scope.$valid = true;
+                me.setupScope = function(scope, defaultFormat, ctrl, setDirty) {
+                    if (angular.isUndefined(ctrl)) ctrl = scope;
 
-                        // Get the field reference using the Angular way
-                        // Get the field reference using the Angular way
-                        scope.getFormField = function () {
-                            var parent = scope.$parent;
+                    ctrl.isEditing = angular.isUndefined(ctrl.isEditing) ? true : ctrl.isEditing;
+                    ctrl.showLabel = ctrl.showLabel || false;
+                    ctrl.label = ctrl.label || (ctrl.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
+                    ctrl.required = ctrl.required || false;
+                    ctrl.readOnly = ctrl.readOnly || false;
+                    ctrl.format = ctrl.format || defaultFormat;
+                    ctrl.$valid = true;
 
-                            while (true) {
-                                if (parent == null) break;
-                                if (angular.isDefined(parent.tubularDirective) && parent.tubularDirective === 'tubular-form') {
-                                    var formScope = parent.getFormScope();
-
-                                    return formScope == null ? null : formScope[scope.Name];
-                                }
-
-                                parent = parent.$parent;
-                            }
-                        };
-
-                        scope.$dirty = function () {
-                            // Just forward the property
-                            var formField = scope.getFormField();
-
-                            return formField == null ? true : formField.$dirty;
-                        };
-
-                        scope.checkValid = function () {
-                            scope.$valid = true;
-                            scope.state.$errors = [];
-
-                            if ((angular.isUndefined(scope.value) && scope.required) ||
-                            (Object.prototype.toString.call(scope.value) === "[object Date]" && isNaN(scope.value.getTime()) && scope.required)) {
-                                scope.$valid = false;
-
-                                // Although this property is invalid, if it is not $dirty
-                                // then there should not be any errors for it
-                                if (scope.$dirty()) {
-                                    scope.state.$errors = [$filter('translate')('EDITOR_REQUIRED')];
-                                }
-
-                                if (angular.isDefined(scope.$parent.Model)) {
-                                    scope.$parent.Model.$state[scope.Name] = scope.state;
-                                }
-
-                                return;
-                            }
-
-                            // Check if we have a validation function, otherwise return
-                            if (angular.isUndefined(scope.validate)) {
-                                return;
-                            }
-
-                            scope.validate();
-                        };
-
-                        // HACK: I need to know why
-                        scope.$watch('label', function (n, o) {
-                            if (angular.isUndefined(n)) {
-                                scope.label = (scope.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
-                            }
-                        });
-
-                        scope.$watch('value', function (newValue, oldValue) {
-                            if (angular.isUndefined(oldValue) && angular.isUndefined(newValue)) {
-                                return;
-                            }
-
-                            // This is the state API for every property in the Model
-                            scope.state = {
-                                $valid: function () {
-                                    scope.checkValid();
-                                    return this.$errors.length === 0;
-                                },
-                                $dirty: function () {
-                                    return scope.$dirty;
-                                },
-                                $errors: []
-                            };
-
-                            scope.$valid = true;
-
-                            // Try to match the model to the parent, if it exists
-                            if (angular.isDefined(scope.$parent.Model)) {
-                                if (angular.isDefined(scope.$parent.Model[scope.name])) {
-                                    scope.$parent.Model[scope.name] = newValue;
-
-                                    if (angular.isUndefined(scope.$parent.Model.$state)) {
-                                        scope.$parent.Model.$state = [];
-                                    }
-
-                                    scope.$parent.Model.$state[scope.Name] = scope.state;
-                                } else if (angular.isDefined(scope.$parent.Model.$addField)) {
-                                    scope.$parent.Model.$addField(scope.name, newValue, true);
-                                }
-                            }
-
-                            scope.checkValid();
-                        });
-
+                    // Get the field reference using the Angular way
+                    ctrl.getFormField = function() {
                         var parent = scope.$parent;
 
-                        // We try to find a Tubular Form in the parents
                         while (true) {
                             if (parent == null) break;
-                            if (angular.isDefined(parent.tubularDirective) &&
-                            (parent.tubularDirective === 'tubular-form' ||
-                                parent.tubularDirective === 'tubular-rowset')) {
+                            if (angular.isDefined(parent.tubularDirective) && parent.tubularDirective === 'tubular-form') {
+                                var formScope = parent.getFormScope();
 
-                                if (scope.name === null) {
-                                    return;
-                                }
-
-                                if (parent.hasFieldsDefinitions !== false) {
-                                    throw 'Cannot define more fields. Field definitions have been sealed';
-                                }
-
-                                scope.$component = parent.tubularDirective === 'tubular-form' ? parent : parent.$component;
-
-                                scope.Name = scope.name;
-
-                                scope.bindScope = function () {
-                                    scope.$parent.Model = parent.model;
-
-                                    if (angular.equals(scope.value, parent.model[scope.Name]) === false) {
-                                        if (angular.isDefined(parent.model[scope.Name])) {
-                                            scope.value = (scope.DataType === 'date' && parent.model[scope.Name] != null) ?
-                                                new Date(parent.model[scope.Name]) :
-                                                parent.model[scope.Name];
-                                        }
-
-                                        parent.$watch(function () {
-                                            return scope.value;
-                                        }, function (value) {
-                                            parent.model[scope.Name] = value;
-                                        });
-                                    }
-
-                                    if ((!scope.value || scope.value == null) && (scope.defaultValue && scope.defaultValue != null)) {
-                                        if (scope.DataType === 'date' && scope.defaultValue != null) {
-                                            scope.defaultValue = new Date(scope.defaultValue);
-                                        }
-                                        if (scope.DataType === 'numeric' && scope.defaultValue != null) {
-                                            scope.defaultValue = parseFloat(scope.defaultValue);
-                                        }
-
-                                        scope.value = scope.defaultValue;
-                                    }
-
-                                    if (angular.isUndefined(parent.model.$state)) {
-                                        parent.model.$state = {};
-                                    }
-
-                                    // This is the state API for every property in the Model
-                                    parent.model.$state[scope.Name] = {
-                                        $valid: function () {
-                                            scope.checkValid();
-                                            return this.$errors.length === 0;
-                                        },
-                                        $dirty: function () {
-                                            return scope.$dirty;
-                                        },
-                                        $errors: []
-                                    };
-
-                                    if (angular.equals(scope.state, parent.model.$state[scope.Name]) === false) {
-                                        scope.state = parent.model.$state[scope.Name];
-                                    }
-                                };
-
-                                parent.fields.push(scope);
-
-                                break;
+                                return formScope == null ? null : formScope[scope.Name];
                             }
 
                             parent = parent.$parent;
                         }
-                    }
-                    else {
-                        ctrl.isEditing = angular.isUndefined(ctrl.isEditing) ? true : ctrl.isEditing;
-                        ctrl.showLabel = ctrl.showLabel || false;
-                        ctrl.label = ctrl.label || (ctrl.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
-                        ctrl.required = ctrl.required || false;
-                        ctrl.readOnly = ctrl.readOnly || false;
-                        ctrl.format = ctrl.format || defaultFormat;
+                    };
+
+                    ctrl.$dirty = function() {
+                        // Just forward the property
+                        var formField = ctrl.getFormField();
+
+                        return formField == null ? true : formField.$dirty;
+                    };
+
+                    ctrl.checkValid = function() {
+                        ctrl.$valid = true;
+                        ctrl.state.$errors = [];
+
+                        if ((angular.isUndefined(ctrl.value) && ctrl.required) ||
+                        (Object.prototype.toString.call(ctrl.value) === "[object Date]" && isNaN(ctrl.value.getTime()) && ctrl.required)) {
+                            ctrl.$valid = false;
+
+                            // Although this property is invalid, if it is not $dirty
+                            // then there should not be any errors for it
+                            if (ctrl.$dirty()) {
+                                ctrl.state.$errors = [$filter('translate')('EDITOR_REQUIRED')];
+                            }
+
+                            if (angular.isDefined(scope.$parent.Model)) {
+                                scope.$parent.Model.$state[scope.Name] = ctrl.state;
+                            }
+
+                            return;
+                        }
+
+                        // Check if we have a validation function, otherwise return
+                        if (angular.isUndefined(ctrl.validate)) {
+                            return;
+                        }
+
+                        ctrl.validate();
+                    };
+
+                    scope.$watch(function() {
+                        return ctrl.value;
+                    }, function(newValue, oldValue) {
+                        if (angular.isUndefined(oldValue) && angular.isUndefined(newValue)) {
+                            return;
+                        }
+
+                        // This is the state API for every property in the Model
+                        ctrl.state = {
+                            $valid: function() {
+                                ctrl.checkValid();
+                                return this.$errors.length === 0;
+                            },
+                            $dirty: function() {
+                                return ctrl.$dirty;
+                            },
+                            $errors: []
+                        };
+
                         ctrl.$valid = true;
 
-                        // Get the field reference using the Angular way
-                        ctrl.getFormField = function () {
-                            var parent = scope.$parent;
+                        // Try to match the model to the parent, if it exists
+                        if (angular.isDefined(scope.$parent.Model)) {
+                            if (angular.isDefined(scope.$parent.Model[ctrl.name])) {
+                                scope.$parent.Model[ctrl.name] = newValue;
 
-                            while (true) {
-                                if (parent == null) break;
-                                if (angular.isDefined(parent.tubularDirective) && parent.tubularDirective === 'tubular-form') {
-                                    var formScope = parent.getFormScope();
-
-                                    return formScope == null ? null : formScope[scope.Name];
+                                if (angular.isUndefined(scope.$parent.Model.$state)) {
+                                    scope.$parent.Model.$state = [];
                                 }
 
-                                parent = parent.$parent;
+                                scope.$parent.Model.$state[scope.Name] = ctrl.state;
+                            } else if (angular.isDefined(scope.$parent.Model.$addField)) {
+                                scope.$parent.Model.$addField(ctrl.name, newValue, true);
                             }
-                        };
+                        }
 
-                        ctrl.$dirty = function () {
-                            // Just forward the property
-                            var formField = ctrl.getFormField();
+                        ctrl.checkValid();
+                    });
 
-                            return formField == null ? true : formField.$dirty;
-                        };
+                    var parent = scope.$parent;
 
-                        ctrl.checkValid = function () {
-                            ctrl.$valid = true;
-                            ctrl.state.$errors = [];
+                    // We try to find a Tubular Form in the parents
+                    while (true) {
+                        if (parent == null) break;
+                        if (angular.isDefined(parent.tubularDirective) &&
+                        (parent.tubularDirective === 'tubular-form' ||
+                            parent.tubularDirective === 'tubular-rowset')) {
 
-                            if ((angular.isUndefined(ctrl.value) && ctrl.required) ||
-                            (Object.prototype.toString.call(ctrl.value) === "[object Date]" && isNaN(ctrl.value.getTime()) && ctrl.required)) {
-                                ctrl.$valid = false;
-
-                                // Although this property is invalid, if it is not $dirty
-                                // then there should not be any errors for it
-                                if (ctrl.$dirty()) {
-                                    ctrl.state.$errors = [$filter('translate')('EDITOR_REQUIRED')];
-                                }
-
-                                if (angular.isDefined(scope.$parent.Model)) {
-                                    scope.$parent.Model.$state[scope.Name] = ctrl.state;
-                                }
-
+                            if (ctrl.name === null) {
                                 return;
                             }
 
-                            // Check if we have a validation function, otherwise return
-                            if (angular.isUndefined(ctrl.validate)) {
-                                return;
+                            if (parent.hasFieldsDefinitions !== false) {
+                                throw 'Cannot define more fields. Field definitions have been sealed';
                             }
 
-                            ctrl.validate();
-                        };
+                            ctrl.$component = parent.tubularDirective === 'tubular-form' ? parent : parent.$component;
 
-                        // HACK: I need to know why
-                        scope.$watch('label', function (n, o) {
-                            if (angular.isUndefined(n)) {
-                                ctrl.label = (ctrl.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
-                            }
-                        });
+                            scope.Name = ctrl.name;
 
-                        scope.$watch('value', function (newValue, oldValue) {
-                            if (angular.isUndefined(oldValue) && angular.isUndefined(newValue)) {
-                                return;
-                            }
+                            ctrl.bindScope = function() {
+                                scope.$parent.Model = parent.model;
 
-                            // This is the state API for every property in the Model
-                            ctrl.state = {
-                                $valid: function () {
-                                    ctrl.checkValid();
-                                    return this.$errors.length === 0;
-                                },
-                                $dirty: function () {
-                                    return ctrl.$dirty;
-                                },
-                                $errors: []
-                            };
-
-                            ctrl.$valid = true;
-
-                            // Try to match the model to the parent, if it exists
-                            if (angular.isDefined(scope.$parent.Model)) {
-                                if (angular.isDefined(scope.$parent.Model[ctrl.name])) {
-                                    scope.$parent.Model[ctrl.name] = newValue;
-
-                                    if (angular.isUndefined(scope.$parent.Model.$state)) {
-                                        scope.$parent.Model.$state = [];
+                                if (angular.equals(ctrl.value, parent.model[scope.Name]) === false) {
+                                    if (angular.isDefined(parent.model[scope.Name])) {
+                                        ctrl.value = (ctrl.DataType === 'date' && parent.model[ctrl.Name] != null) ?
+                                            new Date(parent.model[scope.Name]) :
+                                            parent.model[scope.Name];
                                     }
 
-                                    scope.$parent.Model.$state[scope.Name] = ctrl.state;
-                                } else if (angular.isDefined(scope.$parent.Model.$addField)) {
-                                    scope.$parent.Model.$addField(ctrl.name, newValue, true);
-                                }
-                            }
-
-                            ctrl.checkValid();
-                        });
-
-                        var parent = scope.$parent;
-
-                        // We try to find a Tubular Form in the parents
-                        while (true) {
-                            if (parent == null) break;
-                            if (angular.isDefined(parent.tubularDirective) &&
-                            (parent.tubularDirective === 'tubular-form' ||
-                                parent.tubularDirective === 'tubular-rowset')) {
-
-                                if (ctrl.name === null) {
-                                    return;
+                                    parent.$watch(function() {
+                                        return ctrl.value;
+                                    }, function(value) {
+                                        parent.model[scope.Name] = value;
+                                    });
                                 }
 
-                                if (parent.hasFieldsDefinitions !== false) {
-                                    throw 'Cannot define more fields. Field definitions have been sealed';
+                                if ((!ctrl.value || ctrl.value == null) && (ctrl.defaultValue && ctrl.defaultValue != null)) {
+                                    if (ctrl.DataType === 'date' && ctrl.defaultValue != null) {
+                                        ctrl.defaultValue = new Date(ctrl.defaultValue);
+                                    }
+                                    if (ctrl.DataType === 'numeric' && ctrl.defaultValue != null) {
+                                        ctrl.defaultValue = parseFloat(ctrl.defaultValue);
+                                    }
+
+                                    ctrl.value = ctrl.defaultValue;
                                 }
 
-                                ctrl.$component = parent.tubularDirective === 'tubular-form' ? parent : parent.$component;
+                                if (angular.isUndefined(parent.model.$state)) {
+                                    parent.model.$state = {};
+                                }
 
-                                scope.Name = ctrl.name;
-
-                                ctrl.bindScope = function () {
-                                    scope.$parent.Model = parent.model;
-
-                                    if (angular.equals(ctrl.value, parent.model[scope.Name]) === false) {
-                                        if (angular.isDefined(parent.model[scope.Name])) {
-                                            ctrl.value = (ctrl.DataType === 'date' && parent.model[ctrl.Name] != null) ?
-                                                new Date(parent.model[scope.Name]) :
-                                                parent.model[scope.Name];
-                                        }
-
-                                        parent.$watch(function () {
-                                            return ctrl.value;
-                                        }, function (value) {
-                                            parent.model[scope.Name] = value;
-                                        });
-                                    }
-
-                                    if ((!ctrl.value || ctrl.value == null) && (ctrl.defaultValue && ctrl.defaultValue != null)) {
-                                        if (ctrl.DataType === 'date' && ctrl.defaultValue != null) {
-                                            ctrl.defaultValue = new Date(ctrl.defaultValue);
-                                        }
-                                        if (ctrl.DataType === 'numeric' && ctrl.defaultValue != null) {
-                                            ctrl.defaultValue = parseFloat(ctrl.defaultValue);
-                                        }
-
-                                        ctrl.value = ctrl.defaultValue;
-                                    }
-
-                                    if (angular.isUndefined(parent.model.$state)) {
-                                        parent.model.$state = {};
-                                    }
-
-                                    // This is the state API for every property in the Model
-                                    parent.model.$state[scope.Name] = {
-                                        $valid: function () {
-                                            ctrl.checkValid();
-                                            return this.$errors.length === 0;
-                                        },
-                                        $dirty: function () {
-                                            return ctrl.$dirty;
-                                        },
-                                        $errors: []
-                                    };
-
-                                    if (angular.equals(ctrl.state, parent.model.$state[scope.Name]) === false) {
-                                        ctrl.state = parent.model.$state[scope.Name];
-                                    }
+                                // This is the state API for every property in the Model
+                                parent.model.$state[scope.Name] = {
+                                    $valid: function() {
+                                        ctrl.checkValid();
+                                        return this.$errors.length === 0;
+                                    },
+                                    $dirty: function() {
+                                        return ctrl.$dirty();
+                                    },
+                                    $errors: []
                                 };
 
-                                parent.fields.push(ctrl);
+                                if (angular.equals(ctrl.state, parent.model.$state[scope.Name]) === false) {
+                                    ctrl.state = parent.model.$state[scope.Name];
+                                }
 
-                                break;
-                            }
+                                if (setDirty) {
+                                    var formScope = ctrl.getFormField();
+                                    if (formScope) formScope.$setDirty();
+                                }
+                            };
 
-                            parent = parent.$parent;
+                            parent.fields.push(ctrl);
+
+                            break;
                         }
+
+                        parent = parent.$parent;
                     }
                 };
             }
         ]);
-})();
+})(window.angular);
 (function() {
     'use strict';
 
@@ -4918,6 +4517,12 @@ function ctrlTest($scope, $ctrl, $element, $attrs, $compile, FilterModel, $filte
                         }
                     }
 
+                    request.timeout = request.timeout || 15000;
+
+                    var timeoutHanlder = $timeout(function () {
+                        cancel('Timed out');
+                    }, request.timeout);
+
                     var promise = $http({
                         url: request.serverUrl,
                         method: request.requestMethod,
@@ -4949,12 +4554,6 @@ function ctrlTest($scope, $ctrl, $element, $attrs, $compile, FilterModel, $filte
                         return $q.reject(error);
                     });
 
-                    request.timeout = request.timeout || 15000;
-
-                    var timeoutHanlder = $timeout(function () {
-                        cancel('Timed out');
-                    }, request.timeout);
-
                     return {
                         promise: promise,
                         cancel: cancel
@@ -4967,7 +4566,7 @@ function ctrlTest($scope, $ctrl, $element, $attrs, $compile, FilterModel, $filte
 
                         // Return empty dataset
                         return {
-                            promise: $q(function (resolve, reject) {
+                            promise: $q(function (resolve) {
                                 resolve(null);
                             }),
                             cancel: function (reason) {
@@ -5017,7 +4616,7 @@ function ctrlTest($scope, $ctrl, $element, $attrs, $compile, FilterModel, $filte
                     if (me.requireAuthentication && me.isAuthenticated() === false) {
                         // Return empty dataset
                         return {
-                            promise: $q(function (resolve, reject) {
+                            promise: $q(function (resolve) {
                                 resolve(null);
                             }),
                             cancel: cancel
@@ -5103,7 +4702,7 @@ function ctrlTest($scope, $ctrl, $element, $attrs, $compile, FilterModel, $filte
 
                     if (request.serverUrl.indexOf('data:') === 0) {
                         return {
-                            promise: $q(function (resolve, reject) {
+                            promise: $q(function (resolve) {
                                 var urlData = request.serverUrl.substr('data:application/json;base64,'.length);
                                 urlData = atob(urlData);
                                 var data = angular.fromJson(urlData);

@@ -11,6 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Folder", "Solution
 	ProjectSection(SolutionItems) = preProject
 		.travis.yml = .travis.yml
 		bower.json = bower.json
+		karma.conf.js = karma.conf.js
 		LICENSE = LICENSE
 		package.json = package.json
 		README.md = README.md
@@ -26,6 +27,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{FD6CA34B-8
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unosquare.Tubular.Tests", "Unosquare.Tubular.Tests\Unosquare.Tubular.Tests.csproj", "{2B9D1173-BB0F-4B39-8E65-17C08F69C4BB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "e2e-tests", "e2e-tests", "{8894759D-8938-4ABE-8BEB-D9C5F62D3296}"
+	ProjectSection(SolutionItems) = preProject
+		e2e-tests\protractor.conf.js = e2e-tests\protractor.conf.js
+		e2e-tests\scenarios.js = e2e-tests\scenarios.js
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

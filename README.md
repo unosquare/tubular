@@ -47,11 +47,12 @@ You will need to reference the following JS libraries in order to use Tubular in
 
 * [jQuery](http://jquery.com/) - 2.1.4
 * [Twitter Bootstrap](http://getbootstrap.com/)
-* [AngularJS (optionally Animate and Route)](https://angularjs.org/) - 1.5
+* [AngularJS (optionally Animate and Route)](https://angularjs.org/) - 1.5.3
 * [AngularJS UI Bootstrap](https://angular-ui.github.io/bootstrap/) - 1.3
 * [AngularJS Local Storage](https://github.com/grevory/angular-local-storage)
 * [Font Awesome](http://fortawesome.github.io/Font-Awesome/)
 * [FileSaver.js and Blob.js](https://github.com/eligrey/FileSaver.js)
+* [Angular-filter](https://github.com/a8m/angular-filter) - Only if you need to use groupBy filter in tbGrid.
 
 Also, if you use the Visual Studio you will need the excellent <a href="http://vswebessentials.com/download" target="_blank">Web Essentials</a> if you are running VS2013 or [Bundler & Minifier](https://visualstudiogallery.msdn.microsoft.com/9ec27da7-e24b-4d56-8064-fd7e88ac1c40) plug-in for VS2015 in order to generate the Tubular bundles.
 

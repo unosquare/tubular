@@ -3,8 +3,6 @@
     "outputFileName": "Javascript/tubular-bundle.js",
     "inputFiles": [
       "Javascript/tubular/node-module.js",
-      "Javascript/angular-filter/watcher.js",
-      "Javascript/angular-filter/group-by.js",
       "Javascript/tubular/tubular.js",
       "Javascript/tubular/tubular-directives.js",
       "Javascript/tubular/tubular-directives-editors.js",

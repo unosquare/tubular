@@ -220,24 +220,15 @@
                 obj.$isNew = false;
 
                 obj.$valid = function() {
-                    for (var k in obj.$state) {
-                        if (obj.$state.hasOwnProperty(k)) {
-                            var key = k;
-                            if (angular.isUndefined(obj.$state[key]) ||
-                                obj.$state[key] == null ||
-                                angular.isUndefined(obj.$state[key].$valid)) {
-                                continue;
-                            }
+                    var valid = true;
 
-                            if (obj.$state[key].$valid() && obj.$state[key].$dirty) {
-                                continue;
-                            }
-
-                            return false;
+                    angular.forEach(obj.$state, function(val) {
+                        if (angular.isUndefined(val) || !val.$valid() || !val.$dirty()) {
+                            valid = false;
                         }
-                    }
+                    });
 
-                    return true;
+                    return valid;
                 };
 
                 // Returns a save promise
