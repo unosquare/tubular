@@ -369,57 +369,6 @@
                 };
 
                 /**
-                 * Setups a basic Date Editor Controller
-                 * @param {string} format 
-                 * @returns {array}  The controller definition
-                 */
-                me.dateEditorController = function(format) {
-                    return [
-                        '$scope', '$element', function (innerScope, $element) {
-                            innerScope.DataType = "date";
-
-                            innerScope.$watch('value', function(val) {
-                                if (typeof (val) === 'string') {
-                                    innerScope.value = new Date(val);
-                                }
-                            });
-
-                            innerScope.validate = function() {
-                                if (angular.isDefined(innerScope.min)) {
-                                    if (Object.prototype.toString.call(innerScope.min) !== "[object Date]") {
-                                        innerScope.min = new Date(innerScope.min);
-                                    }
-
-                                    innerScope.$valid = innerScope.value >= innerScope.min;
-
-                                    if (!innerScope.$valid) {
-                                        innerScope.state.$errors = [$filter('translate')('EDITOR_MIN_DATE', $filter('date')(innerScope.min, innerScope.format))];
-                                    }
-                                }
-
-                                if (!innerScope.$valid) {
-                                    return;
-                                }
-
-                                if (angular.isDefined(innerScope.max)) {
-                                    if (Object.prototype.toString.call(innerScope.max) !== "[object Date]") {
-                                        innerScope.max = new Date(innerScope.max);
-                                    }
-
-                                    innerScope.$valid = innerScope.value <= innerScope.max;
-
-                                    if (!innerScope.$valid) {
-                                        innerScope.state.$errors = [$filter('translate')('EDITOR_MAX_DATE', $filter('date')(innerScope.max, innerScope.format))];
-                                    }
-                                }
-                            };
-
-                            me.setupScope(innerScope, format);
-                        }
-                    ];
-                };
-
-                /**
                 * Simple helper to generate a unique name for Tubular Forms
                 */
                 me.getUniqueTbFormName = function() {
