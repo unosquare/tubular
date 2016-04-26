@@ -3512,7 +3512,7 @@ try {
                                 continue;
                             }
 
-                            if (obj.$state[key].$valid() && obj.$state[key].$dirty) {
+                            if (obj.$state[key].$valid() && obj.$state[key].$dirty()) {
                                 continue;
                             }
 
@@ -3584,7 +3584,7 @@ try {
             };
         });
 })();
-(function() {
+(function (angular) {
     'use strict';
 
     /**
@@ -4114,7 +4114,7 @@ try {
                                         return this.$errors.length === 0;
                                     },
                                     $dirty: function() {
-                                        return ctrl.$dirty;
+                                        return ctrl.$dirty();
                                     },
                                     $errors: []
                                 };
@@ -4134,7 +4134,7 @@ try {
                 };
             }
         ]);
-})();
+})(window.angular);
 (function() {
     'use strict';
 
@@ -4407,6 +4407,12 @@ try {
                         }
                     }
 
+                    request.timeout = request.timeout || 15000;
+
+                    var timeoutHanlder = $timeout(function () {
+                        cancel('Timed out');
+                    }, request.timeout);
+
                     var promise = $http({
                         url: request.serverUrl,
                         method: request.requestMethod,
@@ -4437,12 +4443,6 @@ try {
 
                         return $q.reject(error);
                     });
-
-                    request.timeout = request.timeout || 15000;
-
-                    var timeoutHanlder = $timeout(function () {
-                        cancel('Timed out');
-                    }, request.timeout);
 
                     return {
                         promise: promise,

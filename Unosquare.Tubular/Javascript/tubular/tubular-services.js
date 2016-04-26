@@ -1,4 +1,4 @@
-﻿(function() {
+﻿(function (angular) {
     'use strict';
 
     /**
@@ -528,7 +528,7 @@
                                         return this.$errors.length === 0;
                                     },
                                     $dirty: function() {
-                                        return ctrl.$dirty;
+                                        return ctrl.$dirty();
                                     },
                                     $errors: []
                                 };
@@ -548,4 +548,4 @@
                 };
             }
         ]);
-})();
+})(window.angular);

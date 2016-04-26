@@ -229,7 +229,7 @@
                                 continue;
                             }
 
-                            if (obj.$state[key].$valid() && obj.$state[key].$dirty) {
+                            if (obj.$state[key].$valid() && obj.$state[key].$dirty()) {
                                 continue;
                             }
 
