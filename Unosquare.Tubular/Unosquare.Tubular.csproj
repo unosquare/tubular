@@ -84,8 +84,6 @@
     <Content Include="Css\tubular\tubular.css" />
     <Content Include="Css\angular-chartjs\angular-chart.css" />
     <Content Include="Javascript\angular-chartjs\angular-chart.js" />
-    <Content Include="Javascript\angular-filter\group-by.js" />
-    <Content Include="Javascript\angular-filter\watcher.js" />
     <Content Include="Javascript\highchartjs-ng\highcharts-ng.min.js" />
     <Content Include="Javascript\tadaaapickr\tadaaapickr.pack.js" />
     <Content Include="Javascript\tubular-bundle.js">

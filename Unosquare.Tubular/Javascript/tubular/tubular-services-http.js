@@ -270,6 +270,12 @@
                         }
                     }
 
+                    request.timeout = request.timeout || 15000;
+
+                    var timeoutHanlder = $timeout(function () {
+                        cancel('Timed out');
+                    }, request.timeout);
+
                     var promise = $http({
                         url: request.serverUrl,
                         method: request.requestMethod,
@@ -301,12 +307,6 @@
                         return $q.reject(error);
                     });
 
-                    request.timeout = request.timeout || 15000;
-
-                    var timeoutHanlder = $timeout(function () {
-                        cancel('Timed out');
-                    }, request.timeout);
-
                     return {
                         promise: promise,
                         cancel: cancel
@@ -319,7 +319,7 @@
 
                         // Return empty dataset
                         return {
-                            promise: $q(function (resolve, reject) {
+                            promise: $q(function (resolve) {
                                 resolve(null);
                             }),
                             cancel: function (reason) {
@@ -369,7 +369,7 @@
                     if (me.requireAuthentication && me.isAuthenticated() === false) {
                         // Return empty dataset
                         return {
-                            promise: $q(function (resolve, reject) {
+                            promise: $q(function (resolve) {
                                 resolve(null);
                             }),
                             cancel: cancel

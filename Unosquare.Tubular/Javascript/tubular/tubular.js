@@ -11,22 +11,10 @@
      * 
      * It depends upon  {@link tubular.directives}, {@link tubular.services} and {@link tubular.models}.
      */
-    angular.module('tubular', ['tubular.directives', 'tubular.services', 'tubular.models', 'LocalStorageModule', 'a8m.group-by'])
+    angular.module('tubular', ['tubular.directives', 'tubular.services', 'tubular.models', 'LocalStorageModule'])
         .config([
             'localStorageServiceProvider', function(localStorageServiceProvider) {
                 localStorageServiceProvider.setPrefix('tubular');
-
-                // define console methods if not defined
-                if (typeof console === "undefined") {
-                    window.console = {
-                        log: function() {},
-                        debug: function() {},
-                        error: function() {},
-                        assert: function() {},
-                        info: function() {},
-                        warn: function() {},
-                    };
-                }
             }
         ])
         .run(['tubularHttp', 'tubularOData', 'tubularLocalData',
@@ -43,10 +31,7 @@
          * @description
          * The `tubularConst` holds some UI constants.
          */
-        .constant("tubularConst", {
-            "upCssClass": "fa-long-arrow-up",
-            "downCssClass": "fa-long-arrow-down"
-        })
+        .constant("tubularConst", {})
         /**
          * @ngdoc filter
          * @name errormessage
@@ -62,8 +47,9 @@
             return function(input) {
                 if (angular.isDefined(input) && angular.isDefined(input.data) &&
                     input.data &&
-                    angular.isDefined(input.data.ExceptionMessage))
+                    angular.isDefined(input.data.ExceptionMessage)) {
                     return input.data.ExceptionMessage;
+                }
 
                 return input.statusText || "Connection Error";
             };
