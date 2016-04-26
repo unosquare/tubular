@@ -1,4 +1,4 @@
-(function() {
+(function (angular) {
     'use strict';
 
     angular.module('tubular-reporting.directives', ['tubular.services'])
@@ -241,4 +241,4 @@
                 $sceDelegateProvider.resourceUrlWhitelist(['self', 'blob:**']);
             }
         ]);
-})();
+})(window.angular);
