@@ -130,7 +130,7 @@
         $ctrl.filterTitle = $attrs.title || $filter('translate')('CAPTION_FILTER');
 
         if (angular.isDefined($element[0]) && $element[0].localName == "tb-column-options-filter") {
-            scope.filter.Operator = 'Multiple';
+            $ctrl.filter.Operator = 'Multiple';
         }
     }
 };
@@ -338,15 +338,15 @@
                 $component: '^tbGrid'
             },
             template: '<div class="tubular-column-menu">' +
-                '<button class="btn btn-xs btn-default btn-popover" ng-click="open()" ' +
-                'ng-class="{ \'btn-success\': filter.HasFilter }">' +
+                '<button class="btn btn-xs btn-default btn-popover" ng-click="$ctrl.open()" ' +
+                'ng-class="{ \'btn-success\': $ctrl.filter.HasFilter }">' +
                 '<i class="fa fa-filter"></i></button>' +
                 '<div style="display: none;">' +
-                '<button type="button" class="close" data-dismiss="modal" ng-click="close()"><span aria-hidden="true">×</span></button>' +
-                '<h4>{{::filterTitle}}</h4>' +
+                '<button type="button" class="close" data-dismiss="modal" ng-click="$ctrl.close()"><span aria-hidden="true">×</span></button>' +
+                '<h4>{{::$ctrl.filterTitle}}</h4>' +
                 '<form class="tubular-column-filter-form" onsubmit="return false;">' +
-                '<select class="form-control checkbox-list" ng-model="filter.Argument" ng-options="item for item in optionsItems" ' +
-                ' multiple ng-disabled="dataIsLoaded == false"></select>' +
+                '<select class="form-control checkbox-list" ng-model="$ctrl.filter.Argument" ng-options="item for item in $ctrl.optionsItems" ' +
+                ' multiple ng-disabled="$ctrl.dataIsLoaded == false"></select>' +
                 '<hr />' +
                 '<tb-column-filter-buttons></tb-column-filter-buttons>' +
                 '</form></div>' +
@@ -378,7 +378,7 @@
                 };
 
                 ctrlTest($scope, $ctrl, $element, $attrs, $compile, FilterModel, $filter, function () {
-                    scope.getOptionsFromUrl();
+                    $ctrl.getOptionsFromUrl();
                 });
             }]
         });
