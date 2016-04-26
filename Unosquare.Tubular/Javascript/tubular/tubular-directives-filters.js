@@ -22,58 +22,56 @@
             };
         }])
         /**
-         * @ngdoc directive
+         * @ngdoc component
          * @name tbColumnSelector
-         * @restrict E
          *
          * @description
          * The `tbColumnSelector` is a button to show columns selector popup.
          */
-        .directive('tbColumnSelector', [function () {
-            return {
-                template: '<button class="btn btn-sm btn-default" ng-click="openColumnsSelector()">{{\'CAPTION_SELECTCOLUMNS\' | translate}}</button></div>',
-                restrict: 'E',
-                replace: true,
-                transclude: true,
-                controller: ['$scope', '$uibModal', function ($scope, $modal) {
-                    $scope.$component = $scope.$parent;
+        .component('tbColumnSelector', {
+            require: {
+                $component : '^tbGrid'
+            },
+            template: '<button class="btn btn-sm btn-default" ng-click="$ctrl.openColumnsSelector()">{{\'CAPTION_SELECTCOLUMNS\' | translate}}</button></div>',
+            transclude: true,
+            controller: ['$scope', '$uibModal', function ($scope, $modal) {
+                var $ctrl = this;
 
-                    $scope.openColumnsSelector = function () {
-                        var model = $scope.$component.columns;
+                $ctrl.openColumnsSelector = function () {
+                    var model = $ctrl.$component.columns;
 
-                        var dialog = $modal.open({
-                            template: '<div class="modal-header">' +
-                                '<h3 class="modal-title">{{\'CAPTION_SELECTCOLUMNS\' | translate}}</h3>' +
-                                '</div>' +
-                                '<div class="modal-body">' +
-                                '<table class="table table-bordered table-responsive table-striped table-hover table-condensed">' +
-                                '<thead><tr><th>Visible?</th><th>Name</th><th>Grouping?</th></tr></thead>' +
-                                '<tbody><tr ng-repeat="col in Model">' +
-                                '<td><input type="checkbox" ng-model="col.Visible" ng-disabled="col.Visible && isInvalid()" /></td>' +
-                                '<td>{{col.Label}}</td>' +
-                                '<td><input type="checkbox" ng-disabled="true" ng-model="col.IsGrouping" /></td>' +
-                                '</tr></tbody></table></div>' +
-                                '</div>' +
-                                '<div class="modal-footer"><button class="btn btn-warning" ng-click="closePopup()">{{\'CAPTION_CLOSE\' | translate}}</button></div>',
-                            backdropClass: 'fullHeight',
-                            animation: false,
-                            controller: [
-                                '$scope', function ($innerScope) {
-                                    $innerScope.Model = model;
-                                    $innerScope.isInvalid = function () {
-                                        return $innerScope.Model.filter(function (el) { return el.Visible; }).length === 1;
-                                    }
-
-                                    $innerScope.closePopup = function () {
-                                        dialog.close();
-                                    };
+                    var dialog = $modal.open({
+                        template: '<div class="modal-header">' +
+                            '<h3 class="modal-title">{{\'CAPTION_SELECTCOLUMNS\' | translate}}</h3>' +
+                            '</div>' +
+                            '<div class="modal-body">' +
+                            '<table class="table table-bordered table-responsive table-striped table-hover table-condensed">' +
+                            '<thead><tr><th>Visible?</th><th>Name</th><th>Grouping?</th></tr></thead>' +
+                            '<tbody><tr ng-repeat="col in Model">' +
+                            '<td><input type="checkbox" ng-model="col.Visible" ng-disabled="col.Visible && isInvalid()" /></td>' +
+                            '<td>{{col.Label}}</td>' +
+                            '<td><input type="checkbox" ng-disabled="true" ng-model="col.IsGrouping" /></td>' +
+                            '</tr></tbody></table></div>' +
+                            '</div>' +
+                            '<div class="modal-footer"><button class="btn btn-warning" ng-click="closePopup()">{{\'CAPTION_CLOSE\' | translate}}</button></div>',
+                        backdropClass: 'fullHeight',
+                        animation: false,
+                        controller: [
+                            '$scope', function ($innerScope) {
+                                $innerScope.Model = model;
+                                $innerScope.isInvalid = function () {
+                                    return $innerScope.Model.filter(function (el) { return el.Visible; }).length === 1;
                                 }
-                            ]
-                        });
-                    };
-                }]
-            };
-        }])
+
+                                $innerScope.closePopup = function () {
+                                    dialog.close();
+                                };
+                            }
+                        ]
+                    });
+                };
+            }]
+        })
         /**
          * @ngdoc directive
          * @name tbColumnFilter

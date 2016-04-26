@@ -2469,58 +2469,56 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
             };
         }])
         /**
-         * @ngdoc directive
+         * @ngdoc component
          * @name tbColumnSelector
-         * @restrict E
          *
          * @description
          * The `tbColumnSelector` is a button to show columns selector popup.
          */
-        .directive('tbColumnSelector', [function () {
-            return {
-                template: '<button class="btn btn-sm btn-default" ng-click="openColumnsSelector()">{{\'CAPTION_SELECTCOLUMNS\' | translate}}</button></div>',
-                restrict: 'E',
-                replace: true,
-                transclude: true,
-                controller: ['$scope', '$uibModal', function ($scope, $modal) {
-                    $scope.$component = $scope.$parent;
+        .component('tbColumnSelector', {
+            require: {
+                $component : '^tbGrid'
+            },
+            template: '<button class="btn btn-sm btn-default" ng-click="$ctrl.openColumnsSelector()">{{\'CAPTION_SELECTCOLUMNS\' | translate}}</button></div>',
+            transclude: true,
+            controller: ['$scope', '$uibModal', function ($scope, $modal) {
+                var $ctrl = this;
 
-                    $scope.openColumnsSelector = function () {
-                        var model = $scope.$component.columns;
+                $ctrl.openColumnsSelector = function () {
+                    var model = $ctrl.$component.columns;
 
-                        var dialog = $modal.open({
-                            template: '<div class="modal-header">' +
-                                '<h3 class="modal-title">{{\'CAPTION_SELECTCOLUMNS\' | translate}}</h3>' +
-                                '</div>' +
-                                '<div class="modal-body">' +
-                                '<table class="table table-bordered table-responsive table-striped table-hover table-condensed">' +
-                                '<thead><tr><th>Visible?</th><th>Name</th><th>Grouping?</th></tr></thead>' +
-                                '<tbody><tr ng-repeat="col in Model">' +
-                                '<td><input type="checkbox" ng-model="col.Visible" ng-disabled="col.Visible && isInvalid()" /></td>' +
-                                '<td>{{col.Label}}</td>' +
-                                '<td><input type="checkbox" ng-disabled="true" ng-model="col.IsGrouping" /></td>' +
-                                '</tr></tbody></table></div>' +
-                                '</div>' +
-                                '<div class="modal-footer"><button class="btn btn-warning" ng-click="closePopup()">{{\'CAPTION_CLOSE\' | translate}}</button></div>',
-                            backdropClass: 'fullHeight',
-                            animation: false,
-                            controller: [
-                                '$scope', function ($innerScope) {
-                                    $innerScope.Model = model;
-                                    $innerScope.isInvalid = function () {
-                                        return $innerScope.Model.filter(function (el) { return el.Visible; }).length === 1;
-                                    }
-
-                                    $innerScope.closePopup = function () {
-                                        dialog.close();
-                                    };
+                    var dialog = $modal.open({
+                        template: '<div class="modal-header">' +
+                            '<h3 class="modal-title">{{\'CAPTION_SELECTCOLUMNS\' | translate}}</h3>' +
+                            '</div>' +
+                            '<div class="modal-body">' +
+                            '<table class="table table-bordered table-responsive table-striped table-hover table-condensed">' +
+                            '<thead><tr><th>Visible?</th><th>Name</th><th>Grouping?</th></tr></thead>' +
+                            '<tbody><tr ng-repeat="col in Model">' +
+                            '<td><input type="checkbox" ng-model="col.Visible" ng-disabled="col.Visible && isInvalid()" /></td>' +
+                            '<td>{{col.Label}}</td>' +
+                            '<td><input type="checkbox" ng-disabled="true" ng-model="col.IsGrouping" /></td>' +
+                            '</tr></tbody></table></div>' +
+                            '</div>' +
+                            '<div class="modal-footer"><button class="btn btn-warning" ng-click="closePopup()">{{\'CAPTION_CLOSE\' | translate}}</button></div>',
+                        backdropClass: 'fullHeight',
+                        animation: false,
+                        controller: [
+                            '$scope', function ($innerScope) {
+                                $innerScope.Model = model;
+                                $innerScope.isInvalid = function () {
+                                    return $innerScope.Model.filter(function (el) { return el.Visible; }).length === 1;
                                 }
-                            ]
-                        });
-                    };
-                }]
-            };
-        }])
+
+                                $innerScope.closePopup = function () {
+                                    dialog.close();
+                                };
+                            }
+                        ]
+                    });
+                };
+            }]
+        })
         /**
          * @ngdoc directive
          * @name tbColumnFilter
@@ -3373,79 +3371,71 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
     angular.module('tubular.directives')
         /**
-         * @ngdoc directive
+         * @ngdoc component
          * @name tbGridPager
-         * @restrict E
          *
          * @description
-         * The `tbGridPager` directive generates a pager connected to the parent `tbGrid`.
+         * The `tbGridPager` component generates a pager connected to the parent `tbGrid`.
          * 
          * @scope
          */
-        .directive('tbGridPager', [
-            '$timeout', function($timeout) {
-                return {
-                    require: '^tbGrid',
-                    template:
-                        '<div class="tubular-pager">' +
-                            '<uib-pagination ng-disabled="$component.isEmpty" direction-links="true" ' +
-                            'boundary-links="true" total-items="$component.filteredRecordCount" ' +
-                            'items-per-page="$component.pageSize" max-size="5" ng-model="$component.currentPage" ng-change="pagerPageChanged()">' +
-                            '</uib-pagination>' +
-                            '<div>',
-                    restrict: 'E',
-                    replace: true,
-                    transclude: false,
-                    scope: true,
-                    terminal: false,
-                    controller: [
-                        '$scope', '$element', function($scope, $element) {
-                            $scope.$component = $scope.$parent.$parent.$ctrl;
-                            $scope.tubularDirective = 'tubular-grid-pager';
+        .component('tbGridPager', {
+            require: {
+                $component : '^tbGrid'
+            },
+            template:
+                '<div class="tubular-pager">' +
+                    '<uib-pagination ng-disabled="$ctrl.$component.isEmpty" direction-links="true" ' +
+                    'boundary-links="true" total-items="$ctrl.$component.filteredRecordCount" ' +
+                    'items-per-page="$ctrl.$component.pageSize" max-size="5" ng-model="$ctrl.$component.currentPage" ng-change="$ctrl.pagerPageChanged()">' +
+                    '</uib-pagination>' +
+                    '<div>',
+            transclude: false,
+            scope: true,
+            terminal: false,
+            controller: [
+                '$scope', '$element', '$attrs', '$timeout', function ($scope, $element, $attrs, $timeout) {
+                    var $ctrl = this;
 
-                            $scope.$watch('$component.currentPage', function() {
-                                if ($scope.$component.currentPage != $scope.$component.requestedPage) {
-                                    $scope.$component.requestedPage = $scope.$component.currentPage;
-                                }
-                            });
+                    $ctrl.tubularDirective = 'tubular-grid-pager';
 
-                            $scope.pagerPageChanged = function() {
-                                $scope.$component.requestedPage = $scope.$component.currentPage;
-                                var allLinks = $element.find('li a');
-                                $(allLinks).blur();
-                            };
+                    $scope.$watch('$ctrl.$component.currentPage', function () {
+                        if ($ctrl.$component.currentPage != $ctrl.$component.requestedPage) {
+                            $ctrl.$component.requestedPage = $ctrl.$component.currentPage;
                         }
-                    ],
-                    compile: function compile() {
-                        return {
-                            post: function(scope, lElement, lAttrs) {
-                                scope.firstButtonClass = lAttrs.firstButtonClass || 'fa fa-fast-backward';
-                                scope.prevButtonClass = lAttrs.prevButtonClass || 'fa fa-backward';
+                    });
 
-                                scope.nextButtonClass = lAttrs.nextButtonClass || 'fa fa-forward';
-                                scope.lastButtonClass = lAttrs.lastButtonClass || 'fa fa-fast-forward';
+                    $ctrl.pagerPageChanged = function () {
+                        $ctrl.$component.requestedPage = $ctrl.$component.currentPage;
+                        var allLinks = $element.find('li a');
+                        $(allLinks).blur();
+                    };
 
-                                var timer = $timeout(function() {
-                                    var allLinks = lElement.find('li a');
+                    $ctrl.$postLink = function () {
+                        $ctrl.firstButtonClass = $attrs.firstButtonClass || 'fa fa-fast-backward';
+                        $ctrl.prevButtonClass = $attrs.prevButtonClass || 'fa fa-backward';
 
-                                    $(allLinks[0]).html('<i class="' + scope.firstButtonClass + '"></i>');
-                                    $(allLinks[1]).html('<i class="' + scope.prevButtonClass + '"></i>');
+                        $ctrl.nextButtonClass = $attrs.nextButtonClass || 'fa fa-forward';
+                        $ctrl.lastButtonClass = $attrs.lastButtonClass || 'fa fa-fast-forward';
 
-                                    $(allLinks[allLinks.length - 2]).html('<i class="' + scope.nextButtonClass + '"></i>');
-                                    $(allLinks[allLinks.length - 1]).html('<i class="' + scope.lastButtonClass + '"></i>');
-                                }, 0);
+                        var timer = $timeout(function () {
+                            var allLinks = $element.find('li a');
 
-                                scope.$on('$destroy', function() { $timeout.cancel(timer); });
-                            }
-                        };
-                    }
-                };
-            }
-        ])
+                            $(allLinks[0]).html('<i class="' + $ctrl.firstButtonClass + '"></i>');
+                            $(allLinks[1]).html('<i class="' + $ctrl.prevButtonClass + '"></i>');
+
+                            $(allLinks[allLinks.length - 2]).html('<i class="' + $ctrl.nextButtonClass + '"></i>');
+                            $(allLinks[allLinks.length - 1]).html('<i class="' + $ctrl.lastButtonClass + '"></i>');
+                        }, 0);
+
+                        $scope.$on('$destroy', function () { $timeout.cancel(timer); });
+                    };
+                }
+            ]
+        })
         /**
          * @ngdoc component
          * @name tbGridPagerInfo
-         * @restrict E
          *
          * @description
          * The `tbGridPagerInfo` component shows how many records are shown in a page and total rows.
