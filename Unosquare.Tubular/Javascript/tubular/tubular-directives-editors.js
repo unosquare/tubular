@@ -56,7 +56,7 @@
             controller: [
                 'tubularEditorService', '$scope', '$filter', function (tubularEditorService, $scope, $filter) {
                     var $ctrl = this;
-
+                    
                     $ctrl.validate = function () {
                         if (angular.isDefined($ctrl.regex) && $ctrl.regex != null && angular.isDefined($ctrl.value) && $ctrl.value != null && $ctrl.value != '') {
                             var patt = new RegExp($ctrl.regex);
@@ -94,7 +94,9 @@
                         }
                     };
 
-                    tubularEditorService.setupScope($scope, null, $ctrl);
+                    $ctrl.$onInit = function() {
+                        tubularEditorService.setupScope($scope, null, $ctrl, false);
+                    };
                 }
             ]
         })
@@ -159,8 +161,6 @@
             controller: [
                 'tubularEditorService', '$scope', '$filter', function (tubularEditorService, $scope, $filter) {
                     var $ctrl = this;
-                    $ctrl.DataType = "numeric";
-
                     $ctrl.validate = function () {
                         if (angular.isDefined($ctrl.min) && angular.isDefined($ctrl.value) && $ctrl.value != null) {
                             $ctrl.$valid = $ctrl.value >= $ctrl.min;
@@ -181,7 +181,11 @@
                         }
                     };
 
-                    tubularEditorService.setupScope($scope, 0, $ctrl);
+                    $ctrl.$onInit = function() {
+                        $ctrl.DataType = "numeric";
+
+                        tubularEditorService.setupScope($scope, 0, $ctrl, false);
+                    };
                 }
             ]
         })
@@ -255,10 +259,10 @@
                         }
                     };
 
-                    $ctrl.DataType = "date";
-
                     // This could be $onChange??
-                    $scope.$watch('value', function (val) {
+                    $scope.$watch(function () {
+                        return $ctrl.value;
+                    }, function (val) {
                         if (typeof (val) === 'string') {
                             $ctrl.value = new Date(val);
                         }
@@ -294,7 +298,10 @@
                         }
                     };
 
-                    tubularEditorService.setupScope($scope, $ctrl.format, $ctrl);
+                    $ctrl.$onInit = function () {
+                        $ctrl.DataType = "date";
+                        tubularEditorService.setupScope($scope, $ctrl.format, $ctrl);
+                    };
                 }
             ]
         })
@@ -347,7 +354,7 @@
                 max: '=?',
                 name: '@',
                 readOnly: '=?',
-                help: '@?',
+                help: '@?'
             },
             controller: [
                '$scope', '$element', 'tubularEditorService', '$filter', function ($scope, $element, tubularEditorService, $filter) {
@@ -372,9 +379,9 @@
                        }
                    };
 
-                   $ctrl.DataType = "date";
-
-                   $scope.$watch('value', function (val) {
+                   $scope.$watch(function() {
+                       return $ctrl.value;
+                   }, function (val) {
                        if (typeof (val) === 'string') {
                            $ctrl.value = new Date(val);
                        }
@@ -410,8 +417,11 @@
                        }
                    };
 
-                   tubularEditorService.setupScope($scope, $ctrl.format, $ctrl);
-               }
+                   $ctrl.$onInit = function() {
+                        $ctrl.DataType = "date";
+                        tubularEditorService.setupScope($scope, $ctrl.format, $ctrl);
+                   };
+                }
             ]
         })
         /**
@@ -468,10 +478,10 @@
                 optionKey: '@?'
             },
             controller: [
-                'tubularEditorService', '$scope', function (tubularEditorService, $scope) {
+                'tubularEditorService', '$scope', function(tubularEditorService, $scope) {
                     var $ctrl = this;
 
-                    $ctrl.$onInit = function () {
+                    $ctrl.$onInit = function() {
                         tubularEditorService.setupScope($scope, null, $ctrl);
                         $ctrl.dataIsLoaded = false;
                         $ctrl.selectOptions = "d for d in $ctrl.options";
@@ -483,12 +493,34 @@
                                 $ctrl.selectOptions = 'd.' + $ctrl.optionKey + ' as ' + $ctrl.selectOptions;
                             }
                         }
+
+                        if (angular.isDefined($ctrl.optionsUrl)) {
+                            $scope.$watch('optionsUrl', function(val, prev) {
+                                if (val == prev) return;
+
+                                $ctrl.dataIsLoaded = false;
+                                $ctrl.loadData();
+                            });
+
+                            if ($ctrl.isEditing) {
+                                $ctrl.loadData();
+                            } else {
+                                $scope.$watch('isEditing', function() {
+                                    if ($ctrl.isEditing) {
+                                        $ctrl.loadData();
+                                    }
+                                });
+                            }
+                        }
                     };
 
-                    $scope.$watch('value', function (val) {
+                    $scope.$watch(function() {
+                        return $ctrl.value;
+                    }, function(val) {
                         $scope.$emit('tbForm_OnFieldChange', $ctrl.$component, $ctrl.name, val);
                     });
-                    $ctrl.loadData = function () {
+
+                    $ctrl.loadData = function() {
                         if ($ctrl.dataIsLoaded) {
                             return;
                         }
@@ -506,7 +538,7 @@
                         $ctrl.value = '';
 
                         currentRequest.promise.then(
-                            function (data) {
+                            function(data) {
                                 $ctrl.options = data;
                                 $ctrl.dataIsLoaded = true;
                                 // TODO: Add an attribute to define if autoselect is OK
@@ -518,29 +550,10 @@
                                 // Set the field dirty
                                 var formScope = $ctrl.getFormField();
                                 if (formScope) formScope.$setDirty();
-                            }, function (error) {
+                            }, function(error) {
                                 $scope.$emit('tbGrid_OnConnectionError', error);
                             });
                     };
-
-                    if (angular.isDefined($ctrl.optionsUrl)) {
-                        $scope.$watch('optionsUrl', function (val, prev) {
-                            if (val == prev) return;
-
-                            $ctrl.dataIsLoaded = false;
-                            $ctrl.loadData();
-                        });
-
-                        if ($ctrl.isEditing) {
-                            $ctrl.loadData();
-                        } else {
-                            $scope.$watch('isEditing', function () {
-                                if ($ctrl.isEditing) {
-                                    $ctrl.loadData();
-                                }
-                            });
-                        }
-                    }
                 }
             ]
         })
@@ -680,12 +693,15 @@
             transclude: true,
             bindings: {
                 value: '=?',
-                name: '@',
+                name: '@'
             },
             controller: [
                 'tubularEditorService', '$scope', function (tubularEditorService, $scope) {
                     var $ctrl = this;
-                    tubularEditorService.setupScope($scope, null, $ctrl, true);
+
+                    $ctrl.$onInit = function() {
+                        tubularEditorService.setupScope($scope, null, $ctrl, true);
+                    };
                 }
             ]
         })
@@ -737,14 +753,16 @@
                 uncheckedValue: '=?'
             },
             controller: [
-                'tubularEditorService', '$scope', '$element', function (tubularEditorService, $scope) {
+                'tubularEditorService', '$scope', function (tubularEditorService, $scope) {
                     var $ctrl = this;
 
-                    $ctrl.required = false; // overwrite required to false always
-                    $ctrl.checkedValue = angular.isDefined($ctrl.checkedValue) ? $ctrl.checkedValue : true;
-                    $ctrl.uncheckedValue = angular.isDefined($ctrl.uncheckedValue) ? $ctrl.uncheckedValue : false;
+                    $ctrl.$onInit = function () {
+                        $ctrl.required = false; // overwrite required to false always
+                        $ctrl.checkedValue = angular.isDefined($ctrl.checkedValue) ? $ctrl.checkedValue : true;
+                        $ctrl.uncheckedValue = angular.isDefined($ctrl.uncheckedValue) ? $ctrl.uncheckedValue : false;
 
-                    tubularEditorService.setupScope($scope, null, $ctrl, true);
+                        tubularEditorService.setupScope($scope, null, $ctrl, true);
+                    };
                 }
             ]
         })
@@ -793,7 +811,7 @@
                 max: '=?',
                 name: '@',
                 readOnly: '=?',
-                help: '@?',
+                help: '@?'
             },
             controller: [
                 'tubularEditorService', '$scope', '$filter', function (tubularEditorService, $scope, $filter) {
@@ -817,7 +835,10 @@
                         }
                     };
 
-                    tubularEditorService.setupScope($scope, null, $ctrl);
+
+                    $ctrl.$onInit = function() {
+                        tubularEditorService.setupScope($scope, null, $ctrl, false);
+                    };
                 }
             ]
         });

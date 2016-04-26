@@ -424,14 +424,9 @@
                         ctrl.validate();
                     };
 
-                    // HACK: I need to know why
-                    scope.$watch('label', function(n, o) {
-                        if (angular.isUndefined(n)) {
-                            ctrl.label = (ctrl.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
-                        }
-                    });
-
-                    scope.$watch('value', function(newValue, oldValue) {
+                    scope.$watch(function() {
+                        return ctrl.value;
+                    }, function(newValue, oldValue) {
                         if (angular.isUndefined(oldValue) && angular.isUndefined(newValue)) {
                             return;
                         }

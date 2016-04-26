@@ -1472,7 +1472,7 @@ try {
             controller: [
                 'tubularEditorService', '$scope', '$filter', function (tubularEditorService, $scope, $filter) {
                     var $ctrl = this;
-
+                    
                     $ctrl.validate = function () {
                         if (angular.isDefined($ctrl.regex) && $ctrl.regex != null && angular.isDefined($ctrl.value) && $ctrl.value != null && $ctrl.value != '') {
                             var patt = new RegExp($ctrl.regex);
@@ -1510,7 +1510,9 @@ try {
                         }
                     };
 
-                    tubularEditorService.setupScope($scope, null, $ctrl);
+                    $ctrl.$onInit = function() {
+                        tubularEditorService.setupScope($scope, null, $ctrl, false);
+                    };
                 }
             ]
         })
@@ -1575,8 +1577,6 @@ try {
             controller: [
                 'tubularEditorService', '$scope', '$filter', function (tubularEditorService, $scope, $filter) {
                     var $ctrl = this;
-                    $ctrl.DataType = "numeric";
-
                     $ctrl.validate = function () {
                         if (angular.isDefined($ctrl.min) && angular.isDefined($ctrl.value) && $ctrl.value != null) {
                             $ctrl.$valid = $ctrl.value >= $ctrl.min;
@@ -1597,7 +1597,11 @@ try {
                         }
                     };
 
-                    tubularEditorService.setupScope($scope, 0, $ctrl);
+                    $ctrl.$onInit = function() {
+                        $ctrl.DataType = "numeric";
+
+                        tubularEditorService.setupScope($scope, 0, $ctrl, false);
+                    };
                 }
             ]
         })
@@ -1671,10 +1675,10 @@ try {
                         }
                     };
 
-                    $ctrl.DataType = "date";
-
                     // This could be $onChange??
-                    $scope.$watch('value', function (val) {
+                    $scope.$watch(function () {
+                        return $ctrl.value;
+                    }, function (val) {
                         if (typeof (val) === 'string') {
                             $ctrl.value = new Date(val);
                         }
@@ -1710,7 +1714,10 @@ try {
                         }
                     };
 
-                    tubularEditorService.setupScope($scope, $ctrl.format, $ctrl);
+                    $ctrl.$onInit = function () {
+                        $ctrl.DataType = "date";
+                        tubularEditorService.setupScope($scope, $ctrl.format, $ctrl);
+                    };
                 }
             ]
         })
@@ -1763,7 +1770,7 @@ try {
                 max: '=?',
                 name: '@',
                 readOnly: '=?',
-                help: '@?',
+                help: '@?'
             },
             controller: [
                '$scope', '$element', 'tubularEditorService', '$filter', function ($scope, $element, tubularEditorService, $filter) {
@@ -1788,9 +1795,9 @@ try {
                        }
                    };
 
-                   $ctrl.DataType = "date";
-
-                   $scope.$watch('value', function (val) {
+                   $scope.$watch(function() {
+                       return $ctrl.value;
+                   }, function (val) {
                        if (typeof (val) === 'string') {
                            $ctrl.value = new Date(val);
                        }
@@ -1826,8 +1833,11 @@ try {
                        }
                    };
 
-                   tubularEditorService.setupScope($scope, $ctrl.format, $ctrl);
-               }
+                   $ctrl.$onInit = function() {
+                        $ctrl.DataType = "date";
+                        tubularEditorService.setupScope($scope, $ctrl.format, $ctrl);
+                   };
+                }
             ]
         })
         /**
@@ -1884,10 +1894,10 @@ try {
                 optionKey: '@?'
             },
             controller: [
-                'tubularEditorService', '$scope', function (tubularEditorService, $scope) {
+                'tubularEditorService', '$scope', function(tubularEditorService, $scope) {
                     var $ctrl = this;
 
-                    $ctrl.$onInit = function () {
+                    $ctrl.$onInit = function() {
                         tubularEditorService.setupScope($scope, null, $ctrl);
                         $ctrl.dataIsLoaded = false;
                         $ctrl.selectOptions = "d for d in $ctrl.options";
@@ -1899,12 +1909,34 @@ try {
                                 $ctrl.selectOptions = 'd.' + $ctrl.optionKey + ' as ' + $ctrl.selectOptions;
                             }
                         }
+
+                        if (angular.isDefined($ctrl.optionsUrl)) {
+                            $scope.$watch('optionsUrl', function(val, prev) {
+                                if (val == prev) return;
+
+                                $ctrl.dataIsLoaded = false;
+                                $ctrl.loadData();
+                            });
+
+                            if ($ctrl.isEditing) {
+                                $ctrl.loadData();
+                            } else {
+                                $scope.$watch('isEditing', function() {
+                                    if ($ctrl.isEditing) {
+                                        $ctrl.loadData();
+                                    }
+                                });
+                            }
+                        }
                     };
 
-                    $scope.$watch('value', function (val) {
+                    $scope.$watch(function() {
+                        return $ctrl.value;
+                    }, function(val) {
                         $scope.$emit('tbForm_OnFieldChange', $ctrl.$component, $ctrl.name, val);
                     });
-                    $ctrl.loadData = function () {
+
+                    $ctrl.loadData = function() {
                         if ($ctrl.dataIsLoaded) {
                             return;
                         }
@@ -1922,7 +1954,7 @@ try {
                         $ctrl.value = '';
 
                         currentRequest.promise.then(
-                            function (data) {
+                            function(data) {
                                 $ctrl.options = data;
                                 $ctrl.dataIsLoaded = true;
                                 // TODO: Add an attribute to define if autoselect is OK
@@ -1934,29 +1966,10 @@ try {
                                 // Set the field dirty
                                 var formScope = $ctrl.getFormField();
                                 if (formScope) formScope.$setDirty();
-                            }, function (error) {
+                            }, function(error) {
                                 $scope.$emit('tbGrid_OnConnectionError', error);
                             });
                     };
-
-                    if (angular.isDefined($ctrl.optionsUrl)) {
-                        $scope.$watch('optionsUrl', function (val, prev) {
-                            if (val == prev) return;
-
-                            $ctrl.dataIsLoaded = false;
-                            $ctrl.loadData();
-                        });
-
-                        if ($ctrl.isEditing) {
-                            $ctrl.loadData();
-                        } else {
-                            $scope.$watch('isEditing', function () {
-                                if ($ctrl.isEditing) {
-                                    $ctrl.loadData();
-                                }
-                            });
-                        }
-                    }
                 }
             ]
         })
@@ -2096,12 +2109,15 @@ try {
             transclude: true,
             bindings: {
                 value: '=?',
-                name: '@',
+                name: '@'
             },
             controller: [
                 'tubularEditorService', '$scope', function (tubularEditorService, $scope) {
                     var $ctrl = this;
-                    tubularEditorService.setupScope($scope, null, $ctrl, true);
+
+                    $ctrl.$onInit = function() {
+                        tubularEditorService.setupScope($scope, null, $ctrl, true);
+                    };
                 }
             ]
         })
@@ -2153,14 +2169,16 @@ try {
                 uncheckedValue: '=?'
             },
             controller: [
-                'tubularEditorService', '$scope', '$element', function (tubularEditorService, $scope) {
+                'tubularEditorService', '$scope', function (tubularEditorService, $scope) {
                     var $ctrl = this;
 
-                    $ctrl.required = false; // overwrite required to false always
-                    $ctrl.checkedValue = angular.isDefined($ctrl.checkedValue) ? $ctrl.checkedValue : true;
-                    $ctrl.uncheckedValue = angular.isDefined($ctrl.uncheckedValue) ? $ctrl.uncheckedValue : false;
+                    $ctrl.$onInit = function () {
+                        $ctrl.required = false; // overwrite required to false always
+                        $ctrl.checkedValue = angular.isDefined($ctrl.checkedValue) ? $ctrl.checkedValue : true;
+                        $ctrl.uncheckedValue = angular.isDefined($ctrl.uncheckedValue) ? $ctrl.uncheckedValue : false;
 
-                    tubularEditorService.setupScope($scope, null, $ctrl, true);
+                        tubularEditorService.setupScope($scope, null, $ctrl, true);
+                    };
                 }
             ]
         })
@@ -2209,7 +2227,7 @@ try {
                 max: '=?',
                 name: '@',
                 readOnly: '=?',
-                help: '@?',
+                help: '@?'
             },
             controller: [
                 'tubularEditorService', '$scope', '$filter', function (tubularEditorService, $scope, $filter) {
@@ -2233,7 +2251,10 @@ try {
                         }
                     };
 
-                    tubularEditorService.setupScope($scope, null, $ctrl);
+
+                    $ctrl.$onInit = function() {
+                        tubularEditorService.setupScope($scope, null, $ctrl, false);
+                    };
                 }
             ]
         });
@@ -2553,7 +2574,6 @@ try {
          * @param {string} serverSaveUrl Set the HTTP URL where the data will be saved.
          * @param {string} serverSaveMethod Set HTTP Method to save data.
          * @param {object} model The object model to show in the form.
-         * @param {boolean} isNew Set if the form is for create a new record.
          * @param {string} modelKey Defines the fields to use like Keys.
          * @param {string} formName Defines the form name.
          * @param {string} serviceName Define Data service (name) to retrieve data, defaults `tubularHttp`.
@@ -2576,7 +2596,6 @@ try {
                         serverUrl: '@',
                         serverSaveUrl: '@',
                         serverSaveMethod: '@',
-                        isNew: '=',
                         modelKey: '@?',
                         dataServiceName: '@?serviceName',
                         requireAuthentication: '=?',
@@ -3509,7 +3528,7 @@ try {
                 obj.$valid = function() {
                     var valid = true;
 
-                    angular.forEach(obj.$state, function(val, k) {
+                    angular.forEach(obj.$state, function(val) {
                         if (angular.isUndefined(val) || !val.$valid() || !val.$dirty()) {
                             valid = false;
                         }
@@ -4005,14 +4024,9 @@ try {
                         ctrl.validate();
                     };
 
-                    // HACK: I need to know why
-                    scope.$watch('label', function(n, o) {
-                        if (angular.isUndefined(n)) {
-                            ctrl.label = (ctrl.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
-                        }
-                    });
-
-                    scope.$watch('value', function(newValue, oldValue) {
+                    scope.$watch(function() {
+                        return ctrl.value;
+                    }, function(newValue, oldValue) {
                         if (angular.isUndefined(oldValue) && angular.isUndefined(newValue)) {
                             return;
                         }

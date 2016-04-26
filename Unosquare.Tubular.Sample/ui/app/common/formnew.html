@@ -6,6 +6,9 @@
                                   regex="[A-Z][a-z].*" regex-error-message="Customer should start with uppercase">
                 </tb-simple-editor>
 
+                <tb-simple-editor show-label="true" name="Comments">
+                </tb-simple-editor>
+
                 <tb-dropdown-editor name="ShipperCity" value="Model.ShipperCity"
                                     show-label="true" required="true"
                                     options-url="api/orders/cities">
@@ -15,8 +18,7 @@
                                    show-label="true" required="true" default-value="100">
                 </tb-numeric-editor>
 
-                <tb-date-editor name="ShippedDate" required="true" format="'dd-MM-yyyy'" show-label="true"
-                                default-value="{{sample.defaultDate | date}}">
+                <tb-date-editor name="ShippedDate" required="true" format="'dd-MM-yyyy'" show-label="true">
                 </tb-date-editor>
 
                 <tb-checkbox-field value="Model.IsShipped" name="IsShipped" show-label="true" label="Is Shipped?">
@@ -38,7 +40,10 @@
 
             <div class="col-md-3">
                 <div class="jumbotron">
-                    <h3>Please complete the form, we must have orders.<small>Just one more.</small></h3>
+                    <h3>
+                        <i class="fa fa-truck fa-5x" aria-hidden="true"></i>
+                        Please complete the form, we must have orders.
+                    </h3>
                 </div>
             </div>
         </div>

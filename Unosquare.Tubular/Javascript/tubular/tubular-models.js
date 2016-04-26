@@ -222,7 +222,7 @@
                 obj.$valid = function() {
                     var valid = true;
 
-                    angular.forEach(obj.$state, function(val, k) {
+                    angular.forEach(obj.$state, function(val) {
                         if (angular.isUndefined(val) || !val.$valid() || !val.$dirty()) {
                             valid = false;
                         }
