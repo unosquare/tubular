@@ -326,22 +326,22 @@ select.checkbox-list:hover option:checked, select.checkbox-list:focus option:che
             border-bottom: 2px solid #ddd;
         }
 
-        table.responsive-mobile tb-cell-template {
+        table.responsive-mobile td {
             display: block;
             font-size: 14px;
             height: 28px;
             border-bottom: 1px dotted #ccc;
         }
 
-            table.responsive-mobile tb-cell-template:not(.text-center) {
+            table.responsive-mobile td:not(.text-center) {
                 text-align: right;
             }
 
-            table.responsive-mobile tb-cell-template:last-child {
+            table.responsive-mobile td:last-child {
                 border-bottom: 0;
             }
 
-            table.responsive-mobile tb-cell-template:before {
+            table.responsive-mobile td:before {
                 content: attr(data-label);
                 float: left;
                 font-weight: bold;
@@ -370,30 +370,27 @@ div.input-group-addon.fa {
 tb-edit-button.btn {
     padding: 0;
 }
-tb-cell-template {
-    display: table-cell;
-    vertical-align: inherit;
-}
-div.panel > table.tubular-grid-table.table-bordered > tbody > tr > tb-cell-template {
+
+div.panel > table.tubular-grid-table.table-bordered > tbody > tr > td {
     border-right: 1px solid #ddd;
 }
 
-    div.panel > table.tubular-grid-table.table-bordered > tbody > tr > tb-cell-template:last-child {
+    div.panel > table.tubular-grid-table.table-bordered > tbody > tr > td:last-child {
         border-right-width: 0;
     }
 
 
-table.tubular-grid-table tr tb-cell-template {
+table.tubular-grid-table tr td {
     padding: 2px;
 }
 
-table.tubular-grid-table tbody tr tb-cell-template {
+table.tubular-grid-table tbody tr td {
     overflow: hidden;
     -ms-text-overflow: ellipsis;
     -o-text-overflow: ellipsis;
     text-overflow: ellipsis;
 }
 
-    table.tubular-grid-table tbody tr tb-cell-template.no-wrap, table.tubular-grid-table tbody tr tb-cell-template.no-wrap span {
+    table.tubular-grid-table tbody tr td.no-wrap, table.tubular-grid-table tbody tr td.no-wrap span {
         white-space: nowrap;
     }
