@@ -1,7 +1,7 @@
 ﻿(function (angular) {
     'use strict';
 
-    function ctrlTest($scope, $element, $compile, $filter, $ctrl, openCallback) {
+    function setupFilter($scope, $element, $compile, $filter, $ctrl, openCallback) {
         $scope.$watch('$ctrl.filter.Operator', function (val) {
             if (val === 'None') $ctrl.filter.Text = '';
         });
@@ -94,10 +94,11 @@
                 Argument: $ctrl.argument ? [$ctrl.argument] : null,
                 Operator: $ctrl.operator || "Contains",
                 OptionsUrl: $ctrl.optionsUrl || null,
-                HastFilter: !($ctrl.text == null)
+                HasFilter: !($ctrl.text == null)
             };
 
             $ctrl.filter.Name = $scope.$parent.$parent.column.Name;
+
             var columns = $ctrl.$component.columns.filter(function ($element) {
                 return $element.Name === $ctrl.filter.Name;
             });
@@ -279,7 +280,7 @@
                     var $ctrl = this;
 
                     $ctrl.$onInit = function () {
-                        ctrlTest($scope, $element, $compile, $filter, $ctrl, null);
+                        setupFilter($scope, $element, $compile, $filter, $ctrl, null);
                     }
                 }
             ]
@@ -334,7 +335,7 @@
                         $ctrl.filter = {};
                         $ctrl.format = 'yyyy-MM-dd';
 
-                        ctrlTest($scope, $element, $compile, $filter, $ctrl, function () {
+                        setupFilter($scope, $element, $compile, $filter, $ctrl, function () {
                             var inp = $element.find("input[type=date]")[0];
 
                             if (inp.type !== 'date') {
@@ -360,14 +361,12 @@
             ]
         })
         /**
-         * @ngdoc directive
+         * @ngdoc component
          * @name tbColumnOptionsFilter
          * @restrict E
          *
          * @description
          * The `tbColumnOptionsFilter` directive is a filter with an dropdown listing all the possible values to filter.
-         * 
-         * @scope
          * 
          * @param {object} argument Set the search object.
          * @param {string} operator Set the initial operator, default depends on data type.
@@ -426,7 +425,7 @@
                     $ctrl.$onInit = function () {
                         $ctrl.dataIsLoaded = false;
 
-                        ctrlTest($scope, $element, $compile, $filter, $ctrl, function () {
+                        setupFilter($scope, $element, $compile, $filter, $ctrl, function () {
                             $ctrl.getOptionsFromUrl();
                         });
                     }

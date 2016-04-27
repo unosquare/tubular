@@ -1733,8 +1733,6 @@ try {
          * 
          * It uses the `TubularModel` to retrieve column or field information.
          * 
-         * @scope
-         * 
          * @param {string} name Set the field name.
          * @param {object} value Set the value.
          * @param {boolean} isEditing Indicate if the field is showing editor.
@@ -2130,7 +2128,6 @@ try {
          * 
          * It uses the `TubularModel` to retrieve column or field information.
          * 
-         * @scope
          * @param {string} name Set the field name.
          * @param {object} value Set the value.
          * @param {object} checkedValue Set the checked value.
@@ -2262,7 +2259,7 @@ try {
 (function (angular) {
     'use strict';
 
-    function ctrlTest($scope, $element, $compile, $filter, $ctrl, openCallback) {
+    function setupFilter($scope, $element, $compile, $filter, $ctrl, openCallback) {
         $scope.$watch('$ctrl.filter.Operator', function (val) {
             if (val === 'None') $ctrl.filter.Text = '';
         });
@@ -2355,10 +2352,11 @@ try {
                 Argument: $ctrl.argument ? [$ctrl.argument] : null,
                 Operator: $ctrl.operator || "Contains",
                 OptionsUrl: $ctrl.optionsUrl || null,
-                HastFilter: !($ctrl.text == null)
+                HasFilter: !($ctrl.text == null)
             };
 
             $ctrl.filter.Name = $scope.$parent.$parent.column.Name;
+
             var columns = $ctrl.$component.columns.filter(function ($element) {
                 return $element.Name === $ctrl.filter.Name;
             });
@@ -2540,7 +2538,7 @@ try {
                     var $ctrl = this;
 
                     $ctrl.$onInit = function () {
-                        ctrlTest($scope, $element, $compile, $filter, $ctrl, null);
+                        setupFilter($scope, $element, $compile, $filter, $ctrl, null);
                     }
                 }
             ]
@@ -2595,7 +2593,7 @@ try {
                         $ctrl.filter = {};
                         $ctrl.format = 'yyyy-MM-dd';
 
-                        ctrlTest($scope, $element, $compile, $filter, $ctrl, function () {
+                        setupFilter($scope, $element, $compile, $filter, $ctrl, function () {
                             var inp = $element.find("input[type=date]")[0];
 
                             if (inp.type !== 'date') {
@@ -2621,14 +2619,12 @@ try {
             ]
         })
         /**
-         * @ngdoc directive
+         * @ngdoc component
          * @name tbColumnOptionsFilter
          * @restrict E
          *
          * @description
          * The `tbColumnOptionsFilter` directive is a filter with an dropdown listing all the possible values to filter.
-         * 
-         * @scope
          * 
          * @param {object} argument Set the search object.
          * @param {string} operator Set the initial operator, default depends on data type.
@@ -2687,7 +2683,7 @@ try {
                     $ctrl.$onInit = function () {
                         $ctrl.dataIsLoaded = false;
 
-                        ctrlTest($scope, $element, $compile, $filter, $ctrl, function () {
+                        setupFilter($scope, $element, $compile, $filter, $ctrl, function () {
                             $ctrl.getOptionsFromUrl();
                         });
                     }
@@ -2913,7 +2909,7 @@ try {
             }
         ]);
 })();
-(function() {
+(function (angular) {
     'use strict';
 
     angular.module('tubular.directives')
@@ -3326,7 +3322,7 @@ try {
                 }
             ]
         });
-})();
+})(window.angular);
 (function() {
     'use strict';
 
@@ -3396,8 +3392,6 @@ try {
          *
          * @description
          * The `tbGridPagerInfo` component shows how many records are shown in a page and total rows.
-         * 
-         * @scope
          */
         .component('tbGridPagerInfo', {
             require: {

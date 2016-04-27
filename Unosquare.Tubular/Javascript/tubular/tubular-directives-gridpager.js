@@ -67,8 +67,6 @@
          *
          * @description
          * The `tbGridPagerInfo` component shows how many records are shown in a page and total rows.
-         * 
-         * @scope
          */
         .component('tbGridPagerInfo', {
             require: {

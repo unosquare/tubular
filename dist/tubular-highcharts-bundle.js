@@ -9,8 +9,6 @@
          * @description
          * The `tbHighcharts` component is the base to create any Highcharts component.
          * 
-         * @scope
-         * 
          * @param {string} serverUrl Set the HTTP URL where the data comes.
          * @param {string} chartName Defines the chart name.
          * @param {string} chartType Defines the chart type.
@@ -138,7 +136,7 @@
 
                     $scope.$watch('$ctrl.chartType', function (val) {
                         if (angular.isDefined(val) && val != null) {
-                            $ctrl.options.chart.type = val;
+                            $ctrl.options.options.chart.type = val;
                         }
                     });
                 }

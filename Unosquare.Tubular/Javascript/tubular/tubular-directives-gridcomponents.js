@@ -1,4 +1,4 @@
-﻿(function() {
+﻿(function(angular) {
     'use strict';
 
     angular.module('tubular.directives')
@@ -243,7 +243,7 @@
                 '$scope', function($scope) {
                     var $ctrl = this;
 
-                    $ctrl.edit = function () {
+                    $ctrl.edit = function() {
                         if ($ctrl.$component.editorMode === 'popup') {
                             $ctrl.model.editPopup();
                         } else {
@@ -338,7 +338,6 @@
                 }
             ]
         })
-
         /**
          * @ngdoc component
          * @name tbPrintButton
@@ -363,52 +362,50 @@
                 printCss: '@',
                 caption: '@'
             },
-            controller: [
-                '$scope', function($scope) {
-                    var $ctrl = this;
+            controller: function() {
+                var $ctrl = this;
 
-                    $ctrl.printGrid = function() {
-                        $ctrl.$component.getFullDataSource(function(data) {
-                            var tableHtml = "<table class='table table-bordered table-striped'><thead><tr>"
-                                + $ctrl.$component.columns
-                                .filter(function(c) { return c.Visible; })
-                                .map(function(el) {
-                                    return "<th>" + (el.Label || el.Name) + "</th>";
-                                }).join(" ")
-                                + "</tr></thead>"
-                                + "<tbody>"
-                                + data.map(function(row) {
-                                    if (typeof (row) === 'object') {
-                                        row = $.map(row, function(el) { return el; });
+                $ctrl.printGrid = function() {
+                    $ctrl.$component.getFullDataSource(function(data) {
+                        var tableHtml = "<table class='table table-bordered table-striped'><thead><tr>"
+                            + $ctrl.$component.columns
+                            .filter(function(c) { return c.Visible; })
+                            .map(function(el) {
+                                return "<th>" + (el.Label || el.Name) + "</th>";
+                            }).join(" ")
+                            + "</tr></thead>"
+                            + "<tbody>"
+                            + data.map(function(row) {
+                                if (typeof (row) === 'object') {
+                                    row = $.map(row, function(el) { return el; });
+                                }
+
+                                return "<tr>" + row.map(function(cell, index) {
+                                    if (angular.isDefined($ctrl.$component.columns[index]) &&
+                                        !$ctrl.$component.columns[index].Visible) {
+                                        return "";
                                     }
 
-                                    return "<tr>" + row.map(function(cell, index) {
-                                        if (angular.isDefined($ctrl.$component.columns[index]) &&
-                                            !$ctrl.$component.columns[index].Visible) {
-                                            return "";
-                                        }
+                                    return "<td>" + cell + "</td>";
+                                }).join(" ") + "</tr>";
+                            }).join(" ")
+                            + "</tbody>"
+                            + "</table>";
 
-                                        return "<td>" + cell + "</td>";
-                                    }).join(" ") + "</tr>";
-                                }).join(" ")
-                                + "</tbody>"
-                                + "</table>";
+                        var popup = window.open("about:blank", "Print", "menubar=0,location=0,height=500,width=800");
+                        popup.document.write('<link rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap/latest/css/bootstrap.min.css" />');
 
-                            var popup = window.open("about:blank", "Print", "menubar=0,location=0,height=500,width=800");
-                            popup.document.write('<link rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap/latest/css/bootstrap.min.css" />');
+                        if ($ctrl.printCss != '') {
+                            popup.document.write('<link rel="stylesheet" href="' + $ctrl.printCss + '" />');
+                        }
 
-                            if ($ctrl.printCss != '') {
-                                popup.document.write('<link rel="stylesheet" href="' + $ctrl.printCss + '" />');
-                            }
-
-                            popup.document.write('<body onload="window.print();">');
-                            popup.document.write('<h1>' + $ctrl.title + '</h1>');
-                            popup.document.write(tableHtml);
-                            popup.document.write('</body>');
-                            popup.document.close();
-                        });
-                    };
-                }
-            ]
+                        popup.document.write('<body onload="window.print();">');
+                        popup.document.write('<h1>' + $ctrl.title + '</h1>');
+                        popup.document.write(tableHtml);
+                        popup.document.write('</body>');
+                        popup.document.close();
+                    });
+                };
+            }
         });
-})();
+})(window.angular);
