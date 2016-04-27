@@ -116,28 +116,6 @@
         ])
         /**
         * @ngdoc factory
-        * @name tubularGridFilterModel
-        *
-        * @description
-        * The `tubularGridFilterModel` factory is the base to generate a filter model to use with `tbGrid`.
-        */
-        .factory('tubularGridFilterModel', function() {
-
-            return function(attrs) {
-                this.Text = attrs.text || null;
-                this.Argument = null;
-
-                if (attrs.argument) {
-                    this.Argument = [attrs.argument];
-                }
-
-                this.Operator = attrs.operator || 'Contains';
-                this.OptionsUrl = attrs.optionsUrl || null;
-                this.HasFilter = !(this.Text == null);
-            };
-        })
-        /**
-        * @ngdoc factory
         * @name tubularModel
         *
         * @description

@@ -1,7 +1,7 @@
 ﻿(function (angular) {
     'use strict';
 
-    function ctrlTest($scope, $ctrl, $element, $attrs, $compile, FilterModel, $filter, openCallback) {
+    function ctrlTest($scope, $element, $compile, $filter, $ctrl, openCallback) {
         $scope.$watch('$ctrl.filter.Operator', function (val) {
             if (val === 'None') $ctrl.filter.Text = '';
         });
@@ -75,7 +75,7 @@
                 angular.forEach($ctrl.filterOperators, function (val, key) {
                     $(selectEl).append('<option value="' + key + '">' + val + '</option>');
                 });
-
+                $scope.$ctrl.x = 2;
                 return $compile($(this).next().html())($scope);
             }
         });
@@ -90,9 +90,13 @@
 
         $ctrl.$postLink = function () {
             $ctrl.filter = {
-                Text: $ctrl.text
+                Text: $ctrl.text || null,
+                Argument: $ctrl.argument ? [$ctrl.argument] : null,
+                Operator: $ctrl.operator || "Contains",
+                OptionsUrl: $ctrl.optionsUrl || null,
+                HastFilter: !($ctrl.text == null)
             };
-            
+
             $ctrl.filter.Name = $scope.$parent.$parent.column.Name;
             var columns = $ctrl.$component.columns.filter(function ($element) {
                 return $element.Name === $ctrl.filter.Name;
@@ -132,7 +136,7 @@
                 }
             }
 
-            $ctrl.filterTitle = $attrs.title || $filter('translate')('CAPTION_FILTER');
+            $ctrl.filterTitle = $ctrl.title || $filter('translate')('CAPTION_FILTER');
 
             if (angular.isDefined($element[0]) && $element[0].localName == "tb-column-options-filter") {
                 $ctrl.filter.Operator = 'Multiple';
@@ -142,22 +146,34 @@
 
     angular.module('tubular.directives')
          /**
-         * @ngdoc directive
+         * @ngdoc component
          * @name tbColumnFilterButtons
-         * @restrict E
          *
          * @description
-         * The `tbColumnFilterButtons` is an internal directive, and it is used to show basic filtering buttons.
+         * The `tbColumnFilterButtons` is an internal component, and it is used to show basic filtering buttons.
          */
-        .directive('tbColumnFilterButtons', function () {
-            return {
-                require: '^tbColumnFilter',
-                template: '<div class="text-right">' +
-                          '<a class="btn btn-sm btn-success" ng-click="$ctrl.applyFilter()" ng-disabled="$ctrl.filter.Operator == \'None\'">{{\'CAPTION_APPLY\' | translate}}</a>&nbsp;' +
-                          '<button class="btn btn-sm btn-danger" ng-click="$ctrl.clearFilter()">{{\'CAPTION_CLEAR\' | translate}}</button>' +
-                          '</div>',
-                transclude: true
-            }
+        .component('tbColumnFilterButtons', {
+            require: {
+                $columnFilter: '^?tbColumnFilter',
+                $columnDateTimeFilter: '^?tbColumnDateTimeFilter',
+                $columnOptionsFilter: '^?tbColumnOptionsFilter'
+            },
+            template: '<div class="text-right">' +
+                      '<a class="btn btn-sm btn-success" ng-click="$ctrl.currentFilter.applyFilter()"' +
+                      'ng-disabled="$ctrl.currentFilter.filter.Operator == \'None\'">{{\'CAPTION_APPLY\' | translate}}</a>&nbsp;' +
+                      '<button class="btn btn-sm btn-danger" ng-click="$ctrl.currentFilter.clearFilter()">{{\'CAPTION_CLEAR\' | translate}}</button>' +
+                      '</div>',
+            transclude: true,
+            controller: ['$scope',
+                function ($scope) {
+                    var $ctrl = this;
+
+                    $ctrl.$onInit = function () {
+                        // Set currentFilter to either one of the parent components or for when this template is being rendered by $compile
+                        $ctrl.currentFilter = $ctrl.$columnFilter || $ctrl.$columnDateTimeFilter || $ctrl.$columnOptionsFilter || $scope.$parent.$ctrl;
+                    }
+                }
+            ]
         })
         /**
          * @ngdoc component
@@ -172,43 +188,45 @@
             },
             template: '<button class="btn btn-sm btn-default" ng-click="$ctrl.openColumnsSelector()">{{\'CAPTION_SELECTCOLUMNS\' | translate}}</button></div>',
             transclude: true,
-            controller: ['$scope', '$uibModal', function ($scope, $modal) {
-                var $ctrl = this;
+            controller: [
+                '$scope', '$uibModal', function ($scope, $modal) {
+                    var $ctrl = this;
 
-                $ctrl.openColumnsSelector = function () {
-                    var model = $ctrl.$component.columns;
+                    $ctrl.openColumnsSelector = function () {
+                        var model = $ctrl.$component.columns;
 
-                    var dialog = $modal.open({
-                        template: '<div class="modal-header">' +
-                            '<h3 class="modal-title">{{\'CAPTION_SELECTCOLUMNS\' | translate}}</h3>' +
-                            '</div>' +
-                            '<div class="modal-body">' +
-                            '<table class="table table-bordered table-responsive table-striped table-hover table-condensed">' +
-                            '<thead><tr><th>Visible?</th><th>Name</th><th>Grouping?</th></tr></thead>' +
-                            '<tbody><tr ng-repeat="col in Model">' +
-                            '<td><input type="checkbox" ng-model="col.Visible" ng-disabled="col.Visible && isInvalid()" /></td>' +
-                            '<td>{{col.Label}}</td>' +
-                            '<td><input type="checkbox" ng-disabled="true" ng-model="col.IsGrouping" /></td>' +
-                            '</tr></tbody></table></div>' +
-                            '</div>' +
-                            '<div class="modal-footer"><button class="btn btn-warning" ng-click="closePopup()">{{\'CAPTION_CLOSE\' | translate}}</button></div>',
-                        backdropClass: 'fullHeight',
-                        animation: false,
-                        controller: [
-                            '$scope', function ($innerScope) {
-                                $innerScope.Model = model;
-                                $innerScope.isInvalid = function () {
-                                    return $innerScope.Model.filter(function (el) { return el.Visible; }).length === 1;
+                        var dialog = $modal.open({
+                            template: '<div class="modal-header">' +
+                                '<h3 class="modal-title">{{\'CAPTION_SELECTCOLUMNS\' | translate}}</h3>' +
+                                '</div>' +
+                                '<div class="modal-body">' +
+                                '<table class="table table-bordered table-responsive table-striped table-hover table-condensed">' +
+                                '<thead><tr><th>Visible?</th><th>Name</th><th>Grouping?</th></tr></thead>' +
+                                '<tbody><tr ng-repeat="col in Model">' +
+                                '<td><input type="checkbox" ng-model="col.Visible" ng-disabled="col.Visible && isInvalid()" /></td>' +
+                                '<td>{{col.Label}}</td>' +
+                                '<td><input type="checkbox" ng-disabled="true" ng-model="col.IsGrouping" /></td>' +
+                                '</tr></tbody></table></div>' +
+                                '</div>' +
+                                '<div class="modal-footer"><button class="btn btn-warning" ng-click="closePopup()">{{\'CAPTION_CLOSE\' | translate}}</button></div>',
+                            backdropClass: 'fullHeight',
+                            animation: false,
+                            controller: [
+                                '$scope', function ($innerScope) {
+                                    $innerScope.Model = model;
+                                    $innerScope.isInvalid = function () {
+                                        return $innerScope.Model.filter(function (el) { return el.Visible; }).length === 1;
+                                    }
+
+                                    $innerScope.closePopup = function () {
+                                        dialog.close();
+                                    };
                                 }
-
-                                $innerScope.closePopup = function () {
-                                    dialog.close();
-                                };
-                            }
-                        ]
-                    });
-                };
-            }]
+                            ]
+                        });
+                    };
+                }
+            ]
         })
         /**
          * @ngdoc directive
@@ -250,15 +268,21 @@
                 '</div>',
             transclude: true,
             bindings: {
-                text: '@'
+                text: '@',
+                argument: '@',
+                operator: '@',
+                optionsUrl: '@',
+                title: '@'
             },
-            controller: ['$scope', '$element', '$attrs', '$compile', 'tubularGridFilterModel', '$filter', function ($scope, $element, $attrs, $compile, FilterModel, $filter) {
-                var $ctrl = this;
+            controller: [
+                '$scope', '$element', '$compile', '$filter', function ($scope, $element, $compile, $filter) {
+                    var $ctrl = this;
 
-                $ctrl.$onInit = function() {
-                    ctrlTest($scope, $ctrl, $element, $attrs, $compile, FilterModel, $filter, null);
+                    $ctrl.$onInit = function () {
+                        ctrlTest($scope, $element, $compile, $filter, $ctrl, null);
+                    }
                 }
-            }]
+            ]
         })
         /**
          * @ngdoc directive
@@ -295,34 +319,45 @@
                 '</form></div>' +
                 '</div>',
             transclude: true,
-            controller: ['$scope', '$element', '$attrs', '$compile', 'tubularGridFilterModel', '$filter', function ($scope, $element, $attrs, $compile, FilterModel, $filter) {
-                var $ctrl = this;
+            bindings: {
+                text: '@',
+                argument: '@',
+                operator: '@',
+                optionsUrl: '@',
+                title: '@'
+            },
+            controller: [
+                '$scope', '$element', '$compile', '$filter', function ($scope, $element, $compile, $filter) {
+                    var $ctrl = this;
 
-                $ctrl.filter = {};
-                $ctrl.format = 'yyyy-MM-dd';
+                    $ctrl.$onInit = function () {
+                        $ctrl.filter = {};
+                        $ctrl.format = 'yyyy-MM-dd';
 
-                ctrlTest($scope, $ctrl, $element, $attrs, $compile, FilterModel, $filter, function () {
-                    var inp = $element.find("input[type=date]")[0];
+                        ctrlTest($scope, $element, $compile, $filter, $ctrl, function () {
+                            var inp = $element.find("input[type=date]")[0];
 
-                    if (inp.type !== 'date') {
-                        $(inp).datepicker({
-                            dateFormat: scope.format.toLowerCase()
-                        }).on("dateChange", function (e) {
-                            scope.filter.Text = e.date;
+                            if (inp.type !== 'date') {
+                                $(inp).datepicker({
+                                    dateFormat: scope.format.toLowerCase()
+                                }).on("dateChange", function (e) {
+                                    scope.filter.Text = e.date;
+                                });
+                            }
+
+                            var inpLev = $element.find("input[type=date]")[1];
+
+                            if (inpLev.type !== 'date') {
+                                $(inpLev).datepicker({
+                                    dateFormat: scope.format.toLowerCase()
+                                }).on("dateChange", function (e) {
+                                    scope.filter.Argument = [e.date];
+                                });
+                            }
                         });
                     }
-
-                    var inpLev = $element.find("input[type=date]")[1];
-
-                    if (inpLev.type !== 'date') {
-                        $(inpLev).datepicker({
-                            dateFormat: scope.format.toLowerCase()
-                        }).on("dateChange", function (e) {
-                            scope.filter.Argument = [e.date];
-                        });
-                    }
-                });
-            }]
+                }
+            ]
         })
         /**
          * @ngdoc directive
@@ -357,34 +392,45 @@
                 '</form></div>' +
                 '</div>',
             transclude: true,
-            controller: ['$scope', '$element', '$attrs', '$compile', 'tubularGridFilterModel', '$filter', function ($scope, $element, $attrs, $compile, FilterModel, $filter) {
-                var $ctrl = this;
+            bindings: {
+                text: '@',
+                argument: '@',
+                operator: '@',
+                optionsUrl: '@',
+                title: '@'
+            },
+            controller: [
+                '$scope', '$element', '$compile', '$filter', function ($scope, $element, $compile, $filter) {
+                    var $ctrl = this;
 
-                $ctrl.dataIsLoaded = false;
+                    $ctrl.getOptionsFromUrl = function () {
+                        if ($ctrl.dataIsLoaded) {
+                            $scope.$apply();
+                            return;
+                        }
 
-                $ctrl.getOptionsFromUrl = function () {
-                    if ($ctrl.dataIsLoaded) {
-                        $scope.$apply();
-                        return;
-                    }
-
-                    var currentRequest = $ctrl.$component.dataService.retrieveDataAsync({
-                        serverUrl: $ctrl.filter.OptionsUrl,
-                        requestMethod: 'GET'
-                    });
-
-                    currentRequest.promise.then(
-                        function (data) {
-                            $ctrl.optionsItems = data;
-                            $ctrl.dataIsLoaded = true;
-                        }, function (error) {
-                            $scope.$emit('tbGrid_OnConnectionError', error);
+                        var currentRequest = $ctrl.$component.dataService.retrieveDataAsync({
+                            serverUrl: $ctrl.filter.OptionsUrl,
+                            requestMethod: 'GET'
                         });
-                };
 
-                ctrlTest($scope, $ctrl, $element, $attrs, $compile, FilterModel, $filter, function () {
-                    $ctrl.getOptionsFromUrl();
-                });
-            }]
+                        currentRequest.promise.then(
+                            function (data) {
+                                $ctrl.optionsItems = data;
+                                $ctrl.dataIsLoaded = true;
+                            }, function (error) {
+                                $scope.$emit('tbGrid_OnConnectionError', error);
+                            });
+                    };
+
+                    $ctrl.$onInit = function () {
+                        $ctrl.dataIsLoaded = false;
+
+                        ctrlTest($scope, $element, $compile, $filter, $ctrl, function () {
+                            $ctrl.getOptionsFromUrl();
+                        });
+                    }
+                }
+            ]
         });
 })(window.angular);
