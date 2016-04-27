@@ -2262,7 +2262,7 @@ try {
 (function (angular) {
     'use strict';
 
-    function ctrlTest($scope, $element, $compile, $filter, $ctrl, openCallback) {
+    function setupFilter($scope, $element, $compile, $filter, $ctrl, openCallback) {
         $scope.$watch('$ctrl.filter.Operator', function (val) {
             if (val === 'None') $ctrl.filter.Text = '';
         });
@@ -2355,10 +2355,11 @@ try {
                 Argument: $ctrl.argument ? [$ctrl.argument] : null,
                 Operator: $ctrl.operator || "Contains",
                 OptionsUrl: $ctrl.optionsUrl || null,
-                HastFilter: !($ctrl.text == null)
+                HasFilter: !($ctrl.text == null)
             };
 
             $ctrl.filter.Name = $scope.$parent.$parent.column.Name;
+
             var columns = $ctrl.$component.columns.filter(function ($element) {
                 return $element.Name === $ctrl.filter.Name;
             });
@@ -2540,7 +2541,7 @@ try {
                     var $ctrl = this;
 
                     $ctrl.$onInit = function () {
-                        ctrlTest($scope, $element, $compile, $filter, $ctrl, null);
+                        setupFilter($scope, $element, $compile, $filter, $ctrl, null);
                     }
                 }
             ]
@@ -2595,7 +2596,7 @@ try {
                         $ctrl.filter = {};
                         $ctrl.format = 'yyyy-MM-dd';
 
-                        ctrlTest($scope, $element, $compile, $filter, $ctrl, function () {
+                        setupFilter($scope, $element, $compile, $filter, $ctrl, function () {
                             var inp = $element.find("input[type=date]")[0];
 
                             if (inp.type !== 'date') {
@@ -2687,7 +2688,7 @@ try {
                     $ctrl.$onInit = function () {
                         $ctrl.dataIsLoaded = false;
 
-                        ctrlTest($scope, $element, $compile, $filter, $ctrl, function () {
+                        setupFilter($scope, $element, $compile, $filter, $ctrl, function () {
                             $ctrl.getOptionsFromUrl();
                         });
                     }
