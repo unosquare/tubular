@@ -1,11 +1,11 @@
 
 
 <div class="page-header">
-    <h1>tbChartjs <small>directive in .</small></h1>
+    <h1>tbRemoveButton <small>directive in tubular.directives</small></h1>
 </div>
 
 <div>
-    <p>The <code>tbChartjs</code> directive is the base to create any ChartJs component.</p>
+    <p>The <code>tbRemoveButton</code> directive is visual helper to show a Remove button with a popover to confirm the action.</p>
 
 
     
@@ -23,15 +23,15 @@
     
     <tr>
       <td>
-        serverUrl
+        model
         
         
       </td>
       <td>
-        string
+        object
       </td>
       <td>
-        <p>Set the HTTP URL where the data comes.</p>
+        <p>The row to remove.</p>
 
         
       </td>
@@ -39,7 +39,7 @@
     
     <tr>
       <td>
-        chartName
+        caption
         
         
       </td>
@@ -47,7 +47,7 @@
         string
       </td>
       <td>
-        <p>Defines the chart name.</p>
+        <p>Set the caption to use in the button, default Remove.</p>
 
         
       </td>
@@ -55,7 +55,7 @@
     
     <tr>
       <td>
-        chartType
+        cancelCaption
         
         
       </td>
@@ -63,7 +63,7 @@
         string
       </td>
       <td>
-        <p>Defines the chart type.</p>
+        <p>Set the caption to use in the Cancel button, default Cancel.</p>
 
         
       </td>
@@ -71,15 +71,31 @@
     
     <tr>
       <td>
-        requireAuthentication
+        legend
         
         
       </td>
       <td>
-        bool
+        string
       </td>
       <td>
-        <p>Set if authentication check must be executed, default true.</p>
+        <p>Set the legend to warn user, default &#39;Do you want to delete this row?&#39;.</p>
+
+        
+      </td>
+    </tr>
+    
+    <tr>
+      <td>
+        icon
+        
+        
+      </td>
+      <td>
+        string
+      </td>
+      <td>
+        <p>Set the CSS icon&#39;s class, the button can have only icon.</p>
 
         
       </td>

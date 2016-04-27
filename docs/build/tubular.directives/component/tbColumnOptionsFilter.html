@@ -1,15 +1,15 @@
 
 
 <div class="page-header">
-    <h1>tbChartjs <small>directive in .</small></h1>
+    <h1>tbColumnOptionsFilter <small>component in tubular.directives</small></h1>
 </div>
 
 <div>
-    <p>The <code>tbChartjs</code> directive is the base to create any ChartJs component.</p>
+    <p>The <code>tbColumnOptionsFilter</code> directive is a filter with an dropdown listing all the possible values to filter.</p>
 
 
     
-    <h3>Directive's attributes</h3>
+    <h3>Component's attributes</h3>
     
 <table class="table table-bordered table-hover">
   <thead>
@@ -23,15 +23,15 @@
     
     <tr>
       <td>
-        serverUrl
+        argument
         
         
       </td>
       <td>
-        string
+        object
       </td>
       <td>
-        <p>Set the HTTP URL where the data comes.</p>
+        <p>Set the search object.</p>
 
         
       </td>
@@ -39,7 +39,7 @@
     
     <tr>
       <td>
-        chartName
+        operator
         
         
       </td>
@@ -47,7 +47,7 @@
         string
       </td>
       <td>
-        <p>Defines the chart name.</p>
+        <p>Set the initial operator, default depends on data type.</p>
 
         
       </td>
@@ -55,7 +55,7 @@
     
     <tr>
       <td>
-        chartType
+        optionsUrl
         
         
       </td>
@@ -63,23 +63,7 @@
         string
       </td>
       <td>
-        <p>Defines the chart type.</p>
-
-        
-      </td>
-    </tr>
-    
-    <tr>
-      <td>
-        requireAuthentication
-        
-        
-      </td>
-      <td>
-        bool
-      </td>
-      <td>
-        <p>Set if authentication check must be executed, default true.</p>
+        <p>Set the URL to retrieve options</p>
 
         
       </td>

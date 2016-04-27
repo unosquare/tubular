@@ -1,11 +1,17 @@
 
 
 <div class="page-header">
-    <h1>tbHighcharts <small>directive in .</small></h1>
+    <h1>tbForm <small>directive in tubular.directives</small></h1>
 </div>
 
 <div>
-    <p>The <code>tbHighcharts</code> directive is the base to create any Highcharts component.</p>
+    <p>The <code>tbForm</code> directive is the base to create any form powered by Tubular. Define <code>dataService</code> and 
+<code>modelKey</code> to auto-load a record. The <code>serverSaveUrl</code> can be used to create a new or update
+an existing record.</p>
+<p>Please don&#39;t bind a controller directly to the <code>tbForm</code>, Angular will throw an exception. If you want
+to extend the form behavior put a controller in a upper node like a div.</p>
+<p>The <code>save</code> method can be forced to update a model against the REST service, otherwise if the Model
+doesn&#39;t detect any change will ignore the save call.</p>
 
 
     
@@ -39,7 +45,7 @@
     
     <tr>
       <td>
-        chartName
+        serverSaveUrl
         
         
       </td>
@@ -47,7 +53,7 @@
         string
       </td>
       <td>
-        <p>Defines the chart name.</p>
+        <p>Set the HTTP URL where the data will be saved.</p>
 
         
       </td>
@@ -55,7 +61,7 @@
     
     <tr>
       <td>
-        chartType
+        serverSaveMethod
         
         
       </td>
@@ -63,7 +69,7 @@
         string
       </td>
       <td>
-        <p>Defines the chart type.</p>
+        <p>Set HTTP Method to save data.</p>
 
         
       </td>
@@ -71,7 +77,23 @@
     
     <tr>
       <td>
-        title
+        model
+        
+        
+      </td>
+      <td>
+        object
+      </td>
+      <td>
+        <p>The object model to show in the form.</p>
+
+        
+      </td>
+    </tr>
+    
+    <tr>
+      <td>
+        modelKey
         
         
       </td>
@@ -79,7 +101,39 @@
         string
       </td>
       <td>
-        <p>Defines the title.</p>
+        <p>Defines the fields to use like Keys.</p>
+
+        
+      </td>
+    </tr>
+    
+    <tr>
+      <td>
+        formName
+        
+        
+      </td>
+      <td>
+        string
+      </td>
+      <td>
+        <p>Defines the form name.</p>
+
+        
+      </td>
+    </tr>
+    
+    <tr>
+      <td>
+        serviceName
+        
+        
+      </td>
+      <td>
+        string
+      </td>
+      <td>
+        <p>Define Data service (name) to retrieve data, defaults <code>tubularHttp</code>.</p>
 
         
       </td>
@@ -96,70 +150,6 @@
       </td>
       <td>
         <p>Set if authentication check must be executed, default true.</p>
-
-        
-      </td>
-    </tr>
-    
-    <tr>
-      <td>
-        onLoad
-        
-        
-      </td>
-      <td>
-        function
-      </td>
-      <td>
-        <p>Defines a method to run in chart data load</p>
-
-        
-      </td>
-    </tr>
-    
-    <tr>
-      <td>
-        emptyMessage
-        
-        
-      </td>
-      <td>
-        string
-      </td>
-      <td>
-        <p>The empty message.</p>
-
-        
-      </td>
-    </tr>
-    
-    <tr>
-      <td>
-        errorMessage
-        
-        
-      </td>
-      <td>
-        string
-      </td>
-      <td>
-        <p>The error message.</p>
-
-        
-      </td>
-    </tr>
-    
-    <tr>
-      <td>
-        options
-        
-        
-      </td>
-      <td>
-        object
-      </td>
-      <td>
-        <p>The Highcharts options method.</p>
 
         
       </td>

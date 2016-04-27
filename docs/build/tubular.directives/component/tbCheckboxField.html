@@ -1,15 +1,16 @@
 
 
 <div class="page-header">
-    <h1>tbHighcharts <small>directive in .</small></h1>
+    <h1>tbCheckboxField <small>component in tubular.directives</small></h1>
 </div>
 
 <div>
-    <p>The <code>tbHighcharts</code> directive is the base to create any Highcharts component.</p>
+    <p>The <code>tbCheckboxField</code> component represents a checkbox field.</p>
+<p>It uses the <code>TubularModel</code> to retrieve column or field information.</p>
 
 
     
-    <h3>Directive's attributes</h3>
+    <h3>Component's attributes</h3>
     
 <table class="table table-bordered table-hover">
   <thead>
@@ -23,7 +24,7 @@
     
     <tr>
       <td>
-        serverUrl
+        name
         
         
       </td>
@@ -31,7 +32,7 @@
         string
       </td>
       <td>
-        <p>Set the HTTP URL where the data comes.</p>
+        <p>Set the field name.</p>
 
         
       </td>
@@ -39,119 +40,7 @@
     
     <tr>
       <td>
-        chartName
-        
-        
-      </td>
-      <td>
-        string
-      </td>
-      <td>
-        <p>Defines the chart name.</p>
-
-        
-      </td>
-    </tr>
-    
-    <tr>
-      <td>
-        chartType
-        
-        
-      </td>
-      <td>
-        string
-      </td>
-      <td>
-        <p>Defines the chart type.</p>
-
-        
-      </td>
-    </tr>
-    
-    <tr>
-      <td>
-        title
-        
-        
-      </td>
-      <td>
-        string
-      </td>
-      <td>
-        <p>Defines the title.</p>
-
-        
-      </td>
-    </tr>
-    
-    <tr>
-      <td>
-        requireAuthentication
-        
-        
-      </td>
-      <td>
-        bool
-      </td>
-      <td>
-        <p>Set if authentication check must be executed, default true.</p>
-
-        
-      </td>
-    </tr>
-    
-    <tr>
-      <td>
-        onLoad
-        
-        
-      </td>
-      <td>
-        function
-      </td>
-      <td>
-        <p>Defines a method to run in chart data load</p>
-
-        
-      </td>
-    </tr>
-    
-    <tr>
-      <td>
-        emptyMessage
-        
-        
-      </td>
-      <td>
-        string
-      </td>
-      <td>
-        <p>The empty message.</p>
-
-        
-      </td>
-    </tr>
-    
-    <tr>
-      <td>
-        errorMessage
-        
-        
-      </td>
-      <td>
-        string
-      </td>
-      <td>
-        <p>The error message.</p>
-
-        
-      </td>
-    </tr>
-    
-    <tr>
-      <td>
-        options
+        value
         
         
       </td>
@@ -159,7 +48,103 @@
         object
       </td>
       <td>
-        <p>The Highcharts options method.</p>
+        <p>Set the value.</p>
+
+        
+      </td>
+    </tr>
+    
+    <tr>
+      <td>
+        checkedValue
+        
+        
+      </td>
+      <td>
+        object
+      </td>
+      <td>
+        <p>Set the checked value.</p>
+
+        
+      </td>
+    </tr>
+    
+    <tr>
+      <td>
+        uncheckedValue
+        
+        
+      </td>
+      <td>
+        object
+      </td>
+      <td>
+        <p>Set the unchecked value.</p>
+
+        
+      </td>
+    </tr>
+    
+    <tr>
+      <td>
+        isEditing
+        
+        
+      </td>
+      <td>
+        boolean
+      </td>
+      <td>
+        <p>Indicate if the field is showing editor.</p>
+
+        
+      </td>
+    </tr>
+    
+    <tr>
+      <td>
+        showLabel
+        
+        
+      </td>
+      <td>
+        boolean
+      </td>
+      <td>
+        <p>Set if the label should be display.</p>
+
+        
+      </td>
+    </tr>
+    
+    <tr>
+      <td>
+        label
+        
+        
+      </td>
+      <td>
+        string
+      </td>
+      <td>
+        <p>Set the field&#39;s label otherwise the name is used.</p>
+
+        
+      </td>
+    </tr>
+    
+    <tr>
+      <td>
+        help
+        
+        
+      </td>
+      <td>
+        string
+      </td>
+      <td>
+        <p>Set the help text.</p>
 
         
       </td>
