@@ -75,7 +75,7 @@
                 angular.forEach($ctrl.filterOperators, function (val, key) {
                     $(selectEl).append('<option value="' + key + '">' + val + '</option>');
                 });
-                $scope.$ctrl.x = 2;
+
                 return $compile($(this).next().html())($scope);
             }
         });
