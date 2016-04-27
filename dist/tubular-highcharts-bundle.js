@@ -138,7 +138,7 @@
 
                     $scope.$watch('$ctrl.chartType', function (val) {
                         if (angular.isDefined(val) && val != null) {
-                            $ctrl.options.chart.type = val;
+                            $ctrl.options.options.chart.type = val;
                         }
                     });
                 }
