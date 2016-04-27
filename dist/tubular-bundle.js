@@ -1733,8 +1733,6 @@ try {
          * 
          * It uses the `TubularModel` to retrieve column or field information.
          * 
-         * @scope
-         * 
          * @param {string} name Set the field name.
          * @param {object} value Set the value.
          * @param {boolean} isEditing Indicate if the field is showing editor.
@@ -2130,7 +2128,6 @@ try {
          * 
          * It uses the `TubularModel` to retrieve column or field information.
          * 
-         * @scope
          * @param {string} name Set the field name.
          * @param {object} value Set the value.
          * @param {object} checkedValue Set the checked value.
@@ -2622,14 +2619,12 @@ try {
             ]
         })
         /**
-         * @ngdoc directive
+         * @ngdoc component
          * @name tbColumnOptionsFilter
          * @restrict E
          *
          * @description
          * The `tbColumnOptionsFilter` directive is a filter with an dropdown listing all the possible values to filter.
-         * 
-         * @scope
          * 
          * @param {object} argument Set the search object.
          * @param {string} operator Set the initial operator, default depends on data type.
@@ -2914,7 +2909,7 @@ try {
             }
         ]);
 })();
-(function() {
+(function (angular) {
     'use strict';
 
     angular.module('tubular.directives')
@@ -3325,7 +3320,7 @@ try {
                 }
             ]
         });
-})();
+})(window.angular);
 (function() {
     'use strict';
 
@@ -3395,8 +3390,6 @@ try {
          *
          * @description
          * The `tbGridPagerInfo` component shows how many records are shown in a page and total rows.
-         * 
-         * @scope
          */
         .component('tbGridPagerInfo', {
             require: {

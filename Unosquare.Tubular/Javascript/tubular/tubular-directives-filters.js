@@ -361,14 +361,12 @@
             ]
         })
         /**
-         * @ngdoc directive
+         * @ngdoc component
          * @name tbColumnOptionsFilter
          * @restrict E
          *
          * @description
          * The `tbColumnOptionsFilter` directive is a filter with an dropdown listing all the possible values to filter.
-         * 
-         * @scope
          * 
          * @param {object} argument Set the search object.
          * @param {string} operator Set the initial operator, default depends on data type.

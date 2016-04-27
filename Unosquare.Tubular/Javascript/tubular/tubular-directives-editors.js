@@ -317,8 +317,6 @@
          * 
          * It uses the `TubularModel` to retrieve column or field information.
          * 
-         * @scope
-         * 
          * @param {string} name Set the field name.
          * @param {object} value Set the value.
          * @param {boolean} isEditing Indicate if the field is showing editor.
@@ -714,7 +712,6 @@
          * 
          * It uses the `TubularModel` to retrieve column or field information.
          * 
-         * @scope
          * @param {string} name Set the field name.
          * @param {object} value Set the value.
          * @param {object} checkedValue Set the checked value.
