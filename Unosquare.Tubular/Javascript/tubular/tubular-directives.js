@@ -590,7 +590,7 @@
          * @param {boolean} isGrouping Define a group key.
          */
         .directive('tbColumn', [
-            'tubularGridColumnModel', function(ColumnModel) {
+            function () {
                 return {
                     require: '^tbColumnDefinitions',
                     template: '<th ng-transclude ng-class="{sortable: column.Sortable}" ng-show="column.Visible"></th>',
@@ -599,46 +599,136 @@
                     transclude: true,
                     scope: {
                         visible: '=',
-                        label: '@?'
+                        label: '@',
+                        name: '@',
+                        sortable: '=?',
+                        sortOrder: '=?',
+                        isKey: '=?',
+                        searchable: '=?',
+                        columnType: '@?',
+                        isGrouping: '=?',
+                        aggregate: '@?',
+                        metaAggregate: '@?',
+                        sortDirection: '@?'
                     },
                     controller: [
-                        '$scope', function($scope) {
+                        '$scope', '$filter', function ($scope, $filter) {
                             $scope.column = { Label: '' };
                             $scope.$component = $scope.$parent.$parent.$component;
                             $scope.tubularDirective = 'tubular-column';
+                            $scope.label = angular.isDefined($scope.label) ? $scope.label : ($scope.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
 
-                            $scope.sortColumn = function(multiple) {
+                            $scope.sortColumn = function (multiple) {
                                 $scope.$component.sortColumn($scope.column.Name, multiple);
                             };
 
-                            $scope.$watch("visible", function(val) {
+                            $scope.$watch("visible", function (val) {
                                 if (angular.isDefined(val)) {
                                     $scope.column.Visible = val;
                                 }
                             });
 
-                            $scope.$watch('label', function() {
+                            $scope.$watch('label', function () {
                                 $scope.column.Label = $scope.label;
                                 // this broadcast here is used for backwards compatibility with tbColumnHeader requiring a scope.label value on its own
                                 $scope.$broadcast('tbColumn_LabelChanged', $scope.label);
                             })
-                        }
-                    ],
-                    compile: function compile() {
-                        return {
-                            pre: function(scope, lElement, lAttrs) {
-                                lAttrs.label = angular.isDefined(lAttrs.label) ? lAttrs.label : (lAttrs.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
 
-                                var column = new ColumnModel(lAttrs);
-                                scope.$component.addColumn(column);
-                                scope.column = column;
-                                scope.label = column.Label;
-                            }
-                        };
-                    }
+                            var column = new function () {
+                                this.Name = $scope.name || null;
+                                this.Label = $scope.label || null;
+                                this.Sortable = $scope.sortable === "true";
+                                this.SortOrder = parseInt($scope.sortOrder) || -1;
+                                this.SortDirection = function () {
+                                    if (angular.isUndefined($scope.sortDirection)) {
+                                        return 'None';
+                                    }
+
+                                    if ($scope.sortDirection.toLowerCase().indexOf('asc') === 0) {
+                                        return 'Ascending';
+                                    }
+
+                                    if ($scope.sortDirection.toLowerCase().indexOf('desc') === 0) {
+                                        return 'Descending';
+                                    }
+
+                                    return 'None';
+                                }();
+                                this.IsKey = $scope.isKey === "true";
+                                this.Searchable = $scope.searchable === "true";
+                                this.Visible = $scope.visible === "false" ? false : true;
+                                this.Filter = null;
+                                this.DataType = $scope.columnType || "string";
+                                this.IsGrouping = $scope.isGrouping === "true";
+                                this.Aggregate = $scope.aggregate || "none";
+                                this.MetaAggregate = $scope.metaAggregate || "none";
+
+                                this.FilterOperators = {
+                                    'string': {
+                                        'None': $filter('translate')('OP_NONE'),
+                                        'Equals': $filter('translate')('OP_EQUALS'),
+                                        'NotEquals': $filter('translate')('OP_NOTEQUALS'),
+                                        'Contains': $filter('translate')('OP_CONTAINS'),
+                                        'NotContains': $filter('translate')('OP_NOTCONTAINS'),
+                                        'StartsWith': $filter('translate')('OP_STARTSWITH'),
+                                        'NotStartsWith': $filter('translate')('OP_NOTSTARTSWITH'),
+                                        'EndsWith': $filter('translate')('OP_ENDSWITH'),
+                                        'NotEndsWith': $filter('translate')('OP_NOTENDSWITH')
+                                    },
+                                    'numeric': {
+                                        'None': $filter('translate')('OP_NONE'),
+                                        'Equals': $filter('translate')('OP_EQUALS'),
+                                        'Between': $filter('translate')('OP_BETWEEN'),
+                                        'Gte': '>=',
+                                        'Gt': '>',
+                                        'Lte': '<=',
+                                        'Lt': '<'
+                                    },
+                                    'date': {
+                                        'None': $filter('translate')('OP_NONE'),
+                                        'Equals': $filter('translate')('OP_EQUALS'),
+                                        'NotEquals': $filter('translate')('OP_NOTEQUALS'),
+                                        'Between': $filter('translate')('OP_BETWEEN'),
+                                        'Gte': '>=',
+                                        'Gt': '>',
+                                        'Lte': '<=',
+                                        'Lt': '<'
+                                    },
+                                    'datetime': {
+                                        'None': $filter('translate')('OP_NONE'),
+                                        'Equals': $filter('translate')('OP_EQUALS'),
+                                        'NotEquals': $filter('translate')('OP_NOTEQUALS'),
+                                        'Between': $filter('translate')('OP_BETWEEN'),
+                                        'Gte': '>=',
+                                        'Gt': '>',
+                                        'Lte': '<=',
+                                        'Lt': '<'
+                                    },
+                                    'datetimeutc': {
+                                        'None': $filter('translate')('OP_NONE'),
+                                        'Equals': $filter('translate')('OP_EQUALS'),
+                                        'NotEquals': $filter('translate')('OP_NOTEQUALS'),
+                                        'Between': $filter('translate')('OP_BETWEEN'),
+                                        'Gte': '>=',
+                                        'Gt': '>',
+                                        'Lte': '<=',
+                                        'Lt': '<'
+                                    },
+                                    'boolean': {
+                                        'None': $filter('translate')('OP_NONE'),
+                                        'Equals': $filter('translate')('OP_EQUALS'),
+                                        'NotEquals': $filter('translate')('OP_NOTEQUALS')
+                                    }
+                                };
+                            };
+                            
+                            $scope.$component.addColumn(column);
+                            $scope.column = column;
+                            $scope.label = column.Label;
+                        }
+                    ]
                 };
-            }
-        ])
+            }])
         /**
          * @ngdoc directive
          * @name tbColumnHeader

@@ -312,8 +312,8 @@
                 '<span class="fa fa-download"></span>&nbsp;{{:: $ctrl.caption || (\'UI_EXPORTCSV\' | translate)}}&nbsp;<span class="caret"></span>' +
                 '</button>' +
                 '<ul class="dropdown-menu" role="menu">' +
-                '<li><a href="javascript:void(0)" ng-click="downloadCsv($parent)">{{:: $ctrl.captionMenuCurrent || (\'UI_CURRENTROWS\' | translate)}}</a></li>' +
-                '<li><a href="javascript:void(0)" ng-click="downloadAllCsv($parent)">{{:: $ctrl.captionMenuAll || (\'UI_ALLROWS\' | translate)}}</a></li>' +
+                '<li><a href="javascript:void(0)" ng-click="$ctrl.downloadCsv($parent)">{{:: $ctrl.captionMenuCurrent || (\'UI_CURRENTROWS\' | translate)}}</a></li>' +
+                '<li><a href="javascript:void(0)" ng-click="$ctrl.downloadAllCsv($parent)">{{:: $ctrl.captionMenuAll || (\'UI_ALLROWS\' | translate)}}</a></li>' +
                 '</ul>' +
                 '</div>',
             transclude: true,
@@ -325,13 +325,15 @@
                 captionMenuAll: '@'
             },
             controller: [
-                '$scope', 'tubularGridExportService', function($scope, tubularGridExportService) {
-                    $scope.downloadCsv = function() {
-                        tubularGridExportService.exportGridToCsv($scope.$ctrl.filename, $scope.$component);
+                '$scope', 'tubularGridExportService', function ($scope, tubularGridExportService) {
+                    var $ctrl = this;
+
+                    $ctrl.downloadCsv = function () {
+                        tubularGridExportService.exportGridToCsv($ctrl.filename, $ctrl.$component);
                     };
 
-                    $scope.downloadAllCsv = function() {
-                        tubularGridExportService.exportAllGridToCsv($scope.$ctrl.filename, $scope.$component);
+                    $ctrl.downloadAllCsv = function () {
+                        tubularGridExportService.exportAllGridToCsv($ctrl.filename, $ctrl.$component);
                     };
                 }
             ]
