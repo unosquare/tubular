@@ -373,6 +373,7 @@
 
     angular.module('app', [
         'hljs',
+        'angular.filter',
         'tubular',
         'tubular-chart.directives',
         'tubular-hchart.directives',
