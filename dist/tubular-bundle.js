@@ -418,7 +418,6 @@ try {
     /**
      * @ngdoc module
      * @name tubular
-     * @version 0.9.17
      * 
      * @description 
      * Tubular module. Entry point to get all the Tubular functionality.
@@ -1175,7 +1174,7 @@ try {
                             var column = new function () {
                                 this.Name = $scope.name || null;
                                 this.Label = $scope.label || null;
-                                this.Sortable = $scope.sortable === "true";
+                                this.Sortable = $scope.sortable;
                                 this.SortOrder = parseInt($scope.sortOrder) || -1;
                                 this.SortDirection = function () {
                                     if (angular.isUndefined($scope.sortDirection)) {
