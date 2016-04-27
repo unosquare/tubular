@@ -1,4 +1,4 @@
-﻿(function() {
+﻿(function (angular) {
     'use strict';
 
     /**                                           
@@ -120,8 +120,6 @@
         *
         * @description
         * The `tubularGridFilterModel` factory is the base to generate a filter model to use with `tbGrid`.
-        * 
-        * This model doesn't need to be created in your controller, the `tubularGridFilterService` generate it.
         */
         .factory('tubularGridFilterModel', function() {
 
@@ -291,4 +289,4 @@
                 return obj;
             };
         });
-})();
+})(window.angular);
