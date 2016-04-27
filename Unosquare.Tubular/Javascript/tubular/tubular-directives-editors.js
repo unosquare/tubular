@@ -5,7 +5,8 @@
         /**
          * @ngdoc component
          * @name tbSimpleEditor
-         *
+         * @module tubular.directives
+         * 
          * @description
          * The `tbSimpleEditor` component is the basic input to show in a grid or form.
          * It uses the `TubularModel` to retrieve column or field information.
@@ -103,6 +104,7 @@
         /**
          * @ngdoc component
          * @name tbNumericEditor
+         * @module tubular.directives
          *
          * @description
          * The `tbNumericEditor` component is numeric input, similar to `tbSimpleEditor` 
@@ -192,6 +194,7 @@
         /**
          * @ngdoc component
          * @name tbDateTimeEditor
+         * @module tubular.directives
          *
          * @description
          * The `tbDateTimeEditor` component is date/time input. It uses the `datetime-local` HTML5 attribute, but if this
@@ -308,6 +311,7 @@
         /**
          * @ngdoc component
          * @name tbDateEditor
+         * @module tubular.directives
          *
          * @description
          * The `tbDateEditor` component is date input. It uses the `datetime-local` HTML5 attribute, but if this
@@ -425,6 +429,7 @@
         /**
          * @ngdoc component
          * @name tbDropdownEditor
+         * @module tubular.directives
          *
          * @description
          * The `tbDropdownEditor` component is drowpdown editor, it can get information from a HTTP 
@@ -558,6 +563,7 @@
         /**
          * @ngdoc directive
          * @name tbTypeaheadEditor
+         * @module tubular.directives
          * @restrict E
          *
          * @description
@@ -677,6 +683,7 @@
         /**
          * @ngdoc component
          * @name tbHiddenField
+         * @module tubular.directives
          *
          * @description
          * The `tbHiddenField` component represents a hidden field.
@@ -706,6 +713,7 @@
         /**
          * @ngdoc component
          * @name tbCheckboxField
+         * @module tubular.directives
          *
          * @description
          * The `tbCheckboxField` component represents a checkbox field.
@@ -766,6 +774,7 @@
         /**
          * @ngdoc component
          * @name tbTextArea
+         * @module tubular.directives
          *
          * @description
          * The `tbTextArea` component represents a textarea field. 

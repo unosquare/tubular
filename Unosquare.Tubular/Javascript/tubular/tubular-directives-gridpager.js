@@ -5,6 +5,7 @@
         /**
          * @ngdoc component
          * @name tbGridPager
+         * @module tubular.directives
          *
          * @description
          * The `tbGridPager` component generates a pager connected to the parent `tbGrid`.
@@ -64,6 +65,7 @@
         /**
          * @ngdoc component
          * @name tbGridPagerInfo
+         * @module tubular.directives
          *
          * @description
          * The `tbGridPagerInfo` component shows how many records are shown in a page and total rows.

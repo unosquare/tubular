@@ -5,6 +5,7 @@
         /**
          * @ngdoc component
          * @name tbTextSearch
+         * @module tubular.directives
          *
          * @description
          * The `tbTextSearch` is visual component to enable free-text search in a grid.
@@ -75,6 +76,7 @@
         /**
          * @ngdoc directive
          * @name tbRemoveButton
+         * @module tubular.directives
          * @restrict E
          *
          * @description
@@ -136,6 +138,7 @@
         /**
          * @ngdoc directive
          * @name tbSaveButton
+         * @module tubular.directives
          * @restrict E
          *
          * @description
@@ -221,6 +224,7 @@
         /**
          * @ngdoc component
          * @name tbEditButton
+         * @module tubular.directives
          *
          * @description
          * The `tbEditButton` component is visual helper to create an Edit button.
@@ -256,6 +260,7 @@
         /**
          * @ngdoc component
          * @name tbPageSizeSelector
+         * @module tubular.directives
          *
          * @description
          * The `tbPageSizeSelector` component is visual helper to render a dropdown to allow user select how many rows by page.
@@ -293,6 +298,7 @@
         /**
          * @ngdoc component
          * @name tbExportButton
+         * @module tubular.directives
          *
          * @description
          * The `tbExportButton` component is visual helper to render a button to export grid to CSV format.
@@ -341,6 +347,7 @@
         /**
          * @ngdoc component
          * @name tbPrintButton
+         * @module tubular.directives
          *
          * @description
          * The `tbPrintButton` component is visual helper to render a button to print the `tbGrid`.

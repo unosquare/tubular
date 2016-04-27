@@ -4,6 +4,7 @@
     /**
      * @ngdoc module
      * @name tubular.directives
+     * @module tubular.directives
      * 
      * @description 
      * Tubular Directives and Components module.
@@ -499,6 +500,7 @@
         /**
          * @ngdoc directive
          * @name tbGridTable
+         * @module tubular.directives
          * @restrict E
          *
          * @description
@@ -530,6 +532,7 @@
         /**
          * @ngdoc directive
          * @name tbColumnDefinitions
+         * @module tubular.directives
          * @restrict E
          *
          * @description
@@ -568,6 +571,7 @@
         /**
          * @ngdoc directive
          * @name tbColumn
+         * @module tubular.directives
          * @restrict E
          *
          * @description
@@ -731,6 +735,7 @@
             }])
         /**
          * @ngdoc directive
+         * @module tubular.directives
          * @name tbColumnHeader
          * @restrict E
          *
@@ -781,6 +786,7 @@
         /**
          * @ngdoc directive
          * @name tbRowSet
+         * @module tubular.directives
          * @restrict E
          *
          * @description
@@ -812,6 +818,7 @@
         /**
          * @ngdoc directive
          * @name tbFootSet
+         * @module tubular.directives
          * @restrict E
          *
          * @description
@@ -843,6 +850,7 @@
         /**
          * @ngdoc directive
          * @name tbRowTemplate
+         * @module tubular.directives
          * @restrict E
          *
          * @description
@@ -859,7 +867,6 @@
             function() {
 
                 return {
-                    // TODO: I can't choose one require: ['^tbRowSet', '^tbFootSet'],
                     template: '<tr ng-transclude' +
                         ' ng-class="{\'info\': selectableBool && model.$selected}"' +
                         ' ng-click="changeSelection(model)"></tr>',
@@ -872,8 +879,6 @@
                     },
                     controller: [
                         '$scope', function($scope) {
-                            // TODO: I can't change to component because the layout related
-                            // to the headers width can't be attached
                             $scope.tubularDirective = 'tubular-rowset';
                             $scope.fields = [];
                             $scope.hasFieldsDefinitions = false;
@@ -921,6 +926,7 @@
         /**
          * @ngdoc directive
          * @name tbCellTemplate
+         * @module tubular.directives
          * @restrict E
          *
          * @description

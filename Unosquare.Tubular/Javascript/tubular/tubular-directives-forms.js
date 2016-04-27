@@ -5,6 +5,7 @@
         /**
          * @ngdoc directive
          * @name tbForm
+         * @module tubular.directives
          * @restrict E
          *
          * @description

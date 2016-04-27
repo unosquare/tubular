@@ -538,6 +538,7 @@ try {
     /**
      * @ngdoc module
      * @name tubular.directives
+     * @module tubular.directives
      * 
      * @description 
      * Tubular Directives and Components module.
@@ -1033,6 +1034,7 @@ try {
         /**
          * @ngdoc directive
          * @name tbGridTable
+         * @module tubular.directives
          * @restrict E
          *
          * @description
@@ -1064,6 +1066,7 @@ try {
         /**
          * @ngdoc directive
          * @name tbColumnDefinitions
+         * @module tubular.directives
          * @restrict E
          *
          * @description
@@ -1102,6 +1105,7 @@ try {
         /**
          * @ngdoc directive
          * @name tbColumn
+         * @module tubular.directives
          * @restrict E
          *
          * @description
@@ -1265,6 +1269,7 @@ try {
             }])
         /**
          * @ngdoc directive
+         * @module tubular.directives
          * @name tbColumnHeader
          * @restrict E
          *
@@ -1315,6 +1320,7 @@ try {
         /**
          * @ngdoc directive
          * @name tbRowSet
+         * @module tubular.directives
          * @restrict E
          *
          * @description
@@ -1346,6 +1352,7 @@ try {
         /**
          * @ngdoc directive
          * @name tbFootSet
+         * @module tubular.directives
          * @restrict E
          *
          * @description
@@ -1377,6 +1384,7 @@ try {
         /**
          * @ngdoc directive
          * @name tbRowTemplate
+         * @module tubular.directives
          * @restrict E
          *
          * @description
@@ -1393,7 +1401,6 @@ try {
             function() {
 
                 return {
-                    // TODO: I can't choose one require: ['^tbRowSet', '^tbFootSet'],
                     template: '<tr ng-transclude' +
                         ' ng-class="{\'info\': selectableBool && model.$selected}"' +
                         ' ng-click="changeSelection(model)"></tr>',
@@ -1406,8 +1413,6 @@ try {
                     },
                     controller: [
                         '$scope', function($scope) {
-                            // TODO: I can't change to component because the layout related
-                            // to the headers width can't be attached
                             $scope.tubularDirective = 'tubular-rowset';
                             $scope.fields = [];
                             $scope.hasFieldsDefinitions = false;
@@ -1455,6 +1460,7 @@ try {
         /**
          * @ngdoc directive
          * @name tbCellTemplate
+         * @module tubular.directives
          * @restrict E
          *
          * @description
@@ -1511,7 +1517,8 @@ try {
         /**
          * @ngdoc component
          * @name tbSimpleEditor
-         *
+         * @module tubular.directives
+         * 
          * @description
          * The `tbSimpleEditor` component is the basic input to show in a grid or form.
          * It uses the `TubularModel` to retrieve column or field information.
@@ -1609,6 +1616,7 @@ try {
         /**
          * @ngdoc component
          * @name tbNumericEditor
+         * @module tubular.directives
          *
          * @description
          * The `tbNumericEditor` component is numeric input, similar to `tbSimpleEditor` 
@@ -1698,6 +1706,7 @@ try {
         /**
          * @ngdoc component
          * @name tbDateTimeEditor
+         * @module tubular.directives
          *
          * @description
          * The `tbDateTimeEditor` component is date/time input. It uses the `datetime-local` HTML5 attribute, but if this
@@ -1814,6 +1823,7 @@ try {
         /**
          * @ngdoc component
          * @name tbDateEditor
+         * @module tubular.directives
          *
          * @description
          * The `tbDateEditor` component is date input. It uses the `datetime-local` HTML5 attribute, but if this
@@ -1931,6 +1941,7 @@ try {
         /**
          * @ngdoc component
          * @name tbDropdownEditor
+         * @module tubular.directives
          *
          * @description
          * The `tbDropdownEditor` component is drowpdown editor, it can get information from a HTTP 
@@ -2064,6 +2075,7 @@ try {
         /**
          * @ngdoc directive
          * @name tbTypeaheadEditor
+         * @module tubular.directives
          * @restrict E
          *
          * @description
@@ -2183,6 +2195,7 @@ try {
         /**
          * @ngdoc component
          * @name tbHiddenField
+         * @module tubular.directives
          *
          * @description
          * The `tbHiddenField` component represents a hidden field.
@@ -2212,6 +2225,7 @@ try {
         /**
          * @ngdoc component
          * @name tbCheckboxField
+         * @module tubular.directives
          *
          * @description
          * The `tbCheckboxField` component represents a checkbox field.
@@ -2272,6 +2286,7 @@ try {
         /**
          * @ngdoc component
          * @name tbTextArea
+         * @module tubular.directives
          *
          * @description
          * The `tbTextArea` component represents a textarea field. 
@@ -2497,6 +2512,7 @@ try {
          /**
          * @ngdoc component
          * @name tbColumnFilterButtons
+         * @module tubular.directives
          *
          * @description
          * The `tbColumnFilterButtons` is an internal component, and it is used to show basic filtering buttons.
@@ -2527,6 +2543,7 @@ try {
         /**
          * @ngdoc component
          * @name tbColumnSelector
+         * @module tubular.directives
          *
          * @description
          * The `tbColumnSelector` is a button to show columns selector popup.
@@ -2580,6 +2597,7 @@ try {
         /**
          * @ngdoc directive
          * @name tbColumnFilter
+         * @module tubular.directives
          * @restrict E
          *
          * @description
@@ -2636,6 +2654,7 @@ try {
         /**
          * @ngdoc directive
          * @name tbColumnDateTimeFilter
+         * @module tubular.directives
          * @restrict E
          *
          * @description
@@ -2711,6 +2730,7 @@ try {
         /**
          * @ngdoc component
          * @name tbColumnOptionsFilter
+         * @module tubular.directives
          * @restrict E
          *
          * @description
@@ -2788,6 +2808,7 @@ try {
         /**
          * @ngdoc directive
          * @name tbForm
+         * @module tubular.directives
          * @restrict E
          *
          * @description
@@ -3006,6 +3027,7 @@ try {
         /**
          * @ngdoc component
          * @name tbTextSearch
+         * @module tubular.directives
          *
          * @description
          * The `tbTextSearch` is visual component to enable free-text search in a grid.
@@ -3076,6 +3098,7 @@ try {
         /**
          * @ngdoc directive
          * @name tbRemoveButton
+         * @module tubular.directives
          * @restrict E
          *
          * @description
@@ -3137,6 +3160,7 @@ try {
         /**
          * @ngdoc directive
          * @name tbSaveButton
+         * @module tubular.directives
          * @restrict E
          *
          * @description
@@ -3222,6 +3246,7 @@ try {
         /**
          * @ngdoc component
          * @name tbEditButton
+         * @module tubular.directives
          *
          * @description
          * The `tbEditButton` component is visual helper to create an Edit button.
@@ -3257,6 +3282,7 @@ try {
         /**
          * @ngdoc component
          * @name tbPageSizeSelector
+         * @module tubular.directives
          *
          * @description
          * The `tbPageSizeSelector` component is visual helper to render a dropdown to allow user select how many rows by page.
@@ -3294,6 +3320,7 @@ try {
         /**
          * @ngdoc component
          * @name tbExportButton
+         * @module tubular.directives
          *
          * @description
          * The `tbExportButton` component is visual helper to render a button to export grid to CSV format.
@@ -3342,6 +3369,7 @@ try {
         /**
          * @ngdoc component
          * @name tbPrintButton
+         * @module tubular.directives
          *
          * @description
          * The `tbPrintButton` component is visual helper to render a button to print the `tbGrid`.
@@ -3417,6 +3445,7 @@ try {
         /**
          * @ngdoc component
          * @name tbGridPager
+         * @module tubular.directives
          *
          * @description
          * The `tbGridPager` component generates a pager connected to the parent `tbGrid`.
@@ -3476,6 +3505,7 @@ try {
         /**
          * @ngdoc component
          * @name tbGridPagerInfo
+         * @module tubular.directives
          *
          * @description
          * The `tbGridPagerInfo` component shows how many records are shown in a page and total rows.
@@ -3550,6 +3580,7 @@ try {
         /**
         * @ngdoc factory
         * @name tubularModel
+        * @module tubular.models
         *
         * @description
         * The `tubularModel` factory is the base to generate a row model to use with `tbGrid` and `tbForm`.

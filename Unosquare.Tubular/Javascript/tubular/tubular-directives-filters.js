@@ -149,6 +149,7 @@
          /**
          * @ngdoc component
          * @name tbColumnFilterButtons
+         * @module tubular.directives
          *
          * @description
          * The `tbColumnFilterButtons` is an internal component, and it is used to show basic filtering buttons.
@@ -179,6 +180,7 @@
         /**
          * @ngdoc component
          * @name tbColumnSelector
+         * @module tubular.directives
          *
          * @description
          * The `tbColumnSelector` is a button to show columns selector popup.
@@ -232,6 +234,7 @@
         /**
          * @ngdoc directive
          * @name tbColumnFilter
+         * @module tubular.directives
          * @restrict E
          *
          * @description
@@ -288,6 +291,7 @@
         /**
          * @ngdoc directive
          * @name tbColumnDateTimeFilter
+         * @module tubular.directives
          * @restrict E
          *
          * @description
@@ -363,6 +367,7 @@
         /**
          * @ngdoc component
          * @name tbColumnOptionsFilter
+         * @module tubular.directives
          * @restrict E
          *
          * @description
