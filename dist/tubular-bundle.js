@@ -2259,164 +2259,182 @@ try {
             ]
         });
 })();
-function ctrlTest($scope, $ctrl, $element, $attrs, $compile, FilterModel, $filter, openCallback) {
-    $scope.$watch('$ctrl.filter.Operator', function (val) {
-        if (val === 'None') $ctrl.filter.Text = '';
-    });
+(function (angular) {
+    'use strict';
 
-    $scope.$watch(function () {
-        var columns = $ctrl.$component.columns.filter(function ($element) {
-            return $element.Name === $ctrl.filter.Name;
+    function ctrlTest($scope, $element, $compile, $filter, $ctrl, openCallback) {
+        $scope.$watch('$ctrl.filter.Operator', function (val) {
+            if (val === 'None') $ctrl.filter.Text = '';
         });
 
-        return columns.length !== 0 ? columns[0] : null;
-    }, function (val) {
-        if (val && val != null) {
-            if ($ctrl.filter.HasFilter != val.Filter.HasFilter) {
-                $ctrl.filter.HasFilter = val.Filter.HasFilter;
-                $ctrl.filter.Text = val.Filter.Text;
-                $ctrl.retrieveData();
-            }
-        }
-    }, true);
-
-    $ctrl.retrieveData = function () {
-        var columns = $ctrl.$component.columns.filter(function ($element) {
-            return $element.Name === $ctrl.filter.Name;
-        });
-
-        if (columns.length !== 0) {
-            columns[0].Filter = $ctrl.filter;
-        }
-
-        $ctrl.$component.retrieveData();
-        $ctrl.close();
-    };
-
-    $ctrl.clearFilter = function () {
-        if ($ctrl.filter.Operator != 'Multiple') {
-            $ctrl.filter.Operator = 'None';
-        }
-
-        $ctrl.filter.Text = '';
-        $ctrl.filter.Argument = [];
-        $ctrl.filter.HasFilter = false;
-        $ctrl.retrieveData();
-    };
-
-    $ctrl.applyFilter = function () {
-        $ctrl.filter.HasFilter = true;
-        $ctrl.retrieveData();
-    };
-
-    $ctrl.close = function () {
-        $element.find('.btn-popover').popover('hide');
-    };
-
-    $ctrl.open = function () {
-        $element.find('.btn-popover').popover('toggle');
-    };
-
-    $ctrl.checkEvent = function (keyEvent) {
-        if (keyEvent.which === 13) {
-            $ctrl.applyFilter();
-            keyEvent.preventDefault();
-        }
-    };
-
-    $element.find('.btn-popover').popover({
-        html: true,
-        placement: 'bottom',
-        trigger: 'manual',
-        content: function () {
-            var selectEl = $(this).next().find('select').find('option').remove().end();
-            angular.forEach($ctrl.filterOperators, function (val, key) {
-                $(selectEl).append('<option value="' + key + '">' + val + '</option>');
+        $scope.$watch(function () {
+            var columns = $ctrl.$component.columns.filter(function ($element) {
+                return $element.Name === $ctrl.filter.Name;
             });
 
-            return $compile($(this).next().html())($scope);
-        }
-    });
+            return columns.length !== 0 ? columns[0] : null;
+        }, function (val) {
+            if (val && val != null) {
+                if ($ctrl.filter.HasFilter != val.Filter.HasFilter) {
+                    $ctrl.filter.HasFilter = val.Filter.HasFilter;
+                    $ctrl.filter.Text = val.Filter.Text;
+                    $ctrl.retrieveData();
+                }
+            }
+        }, true);
 
-    $element.find('.btn-popover').on('show.bs.popover', function (e) {
-        $('.btn-popover').not(e.target).popover("hide");
-    });
+        $ctrl.retrieveData = function () {
+            var columns = $ctrl.$component.columns.filter(function ($element) {
+                return $element.Name === $ctrl.filter.Name;
+            });
 
-    if (angular.isDefined(openCallback)) {
-        $element.find('.btn-popover').on('shown.bs.popover', openCallback);
-    }
+            if (columns.length !== 0) {
+                columns[0].Filter = $ctrl.filter;
+            }
 
-    $ctrl.$postLink = function () {
-        $ctrl.filter = new FilterModel($attrs);
-        //TODO: Replace $scope.$parentColumn with a component-ctrl binding when tbColumn is refactored into component
-        $ctrl.filter.Name = $scope.$parent.$parent.column.Name;
-        var columns = $ctrl.$component.columns.filter(function ($element) {
-            return $element.Name === $ctrl.filter.Name;
+            $ctrl.$component.retrieveData();
+            $ctrl.close();
+        };
+
+        $ctrl.clearFilter = function () {
+            if ($ctrl.filter.Operator != 'Multiple') {
+                $ctrl.filter.Operator = 'None';
+            }
+
+            $ctrl.filter.Text = '';
+            $ctrl.filter.Argument = [];
+            $ctrl.filter.HasFilter = false;
+            $ctrl.retrieveData();
+        };
+
+        $ctrl.applyFilter = function () {
+            $ctrl.filter.HasFilter = true;
+            $ctrl.retrieveData();
+        };
+
+        $ctrl.close = function () {
+            $element.find('.btn-popover').popover('hide');
+        };
+
+        $ctrl.open = function () {
+            $element.find('.btn-popover').popover('toggle');
+        };
+
+        $ctrl.checkEvent = function (keyEvent) {
+            if (keyEvent.which === 13) {
+                $ctrl.applyFilter();
+                keyEvent.preventDefault();
+            }
+        };
+
+        $element.find('.btn-popover').popover({
+            html: true,
+            placement: 'bottom',
+            trigger: 'manual',
+            content: function () {
+                var selectEl = $(this).next().find('select').find('option').remove().end();
+                angular.forEach($ctrl.filterOperators, function (val, key) {
+                    $(selectEl).append('<option value="' + key + '">' + val + '</option>');
+                });
+                $scope.$ctrl.x = 2;
+                return $compile($(this).next().html())($scope);
+            }
         });
 
-        if (columns.length === 0) return;
+        $element.find('.btn-popover').on('show.bs.popover', function (e) {
+            $('.btn-popover').not(e.target).popover("hide");
+        });
 
-        $scope.$watch('$ctrl.filter', function (n) {
-            if (columns[0].Filter.Text != n.Text) {
-                n.Text = columns[0].Filter.Text;
+        if (angular.isDefined(openCallback)) {
+            $element.find('.btn-popover').on('shown.bs.popover', openCallback);
+        }
 
-                if (columns[0].Filter.Operator != n.Operator) {
-                    n.Operator = columns[0].Filter.Operator;
+        $ctrl.$postLink = function () {
+            $ctrl.filter = {
+                Text: $ctrl.text || null,
+                Argument: $ctrl.argument ? [$ctrl.argument] : null,
+                Operator: $ctrl.operator || "Contains",
+                OptionsUrl: $ctrl.optionsUrl || null,
+                HastFilter: !($ctrl.text == null)
+            };
+
+            $ctrl.filter.Name = $scope.$parent.$parent.column.Name;
+            var columns = $ctrl.$component.columns.filter(function ($element) {
+                return $element.Name === $ctrl.filter.Name;
+            });
+
+            if (columns.length === 0) return;
+
+            $scope.$watch('$ctrl.filter', function (n) {
+                if (columns[0].Filter.Text != n.Text) {
+                    n.Text = columns[0].Filter.Text;
+
+                    if (columns[0].Filter.Operator != n.Operator) {
+                        n.Operator = columns[0].Filter.Operator;
+                    }
+                }
+
+                $ctrl.filter.HasFilter = columns[0].Filter.HasFilter;
+            });
+
+            columns[0].Filter = $ctrl.filter;
+            $ctrl.dataType = columns[0].DataType;
+            $ctrl.filterOperators = columns[0].FilterOperators[$ctrl.dataType];
+
+            if ($ctrl.dataType === 'date' || $ctrl.dataType === 'datetime' || $ctrl.dataType === 'datetimeutc') {
+                $ctrl.filter.Argument = [new Date()];
+
+                if ($ctrl.filter.Operator === 'Contains') {
+                    $ctrl.filter.Operator = 'Equals';
                 }
             }
 
-            $ctrl.filter.HasFilter = columns[0].Filter.HasFilter;
-        });
+            if ($ctrl.dataType === 'numeric' || $ctrl.dataType === 'boolean') {
+                $ctrl.filter.Argument = [1];
 
-        columns[0].Filter = $ctrl.filter;
-        $ctrl.dataType = columns[0].DataType;
-        $ctrl.filterOperators = columns[0].FilterOperators[$ctrl.dataType];
+                if ($ctrl.filter.Operator === 'Contains') {
+                    $ctrl.filter.Operator = 'Equals';
+                }
+            }
 
-        if ($ctrl.dataType === 'date' || $ctrl.dataType === 'datetime' || $ctrl.dataType === 'datetimeutc') {
-            $ctrl.filter.Argument = [new Date()];
+            $ctrl.filterTitle = $ctrl.title || $filter('translate')('CAPTION_FILTER');
 
-            if ($ctrl.filter.Operator === 'Contains') {
-                $ctrl.filter.Operator = 'Equals';
+            if (angular.isDefined($element[0]) && $element[0].localName == "tb-column-options-filter") {
+                $ctrl.filter.Operator = 'Multiple';
             }
         }
-
-        if ($ctrl.dataType === 'numeric' || $ctrl.dataType === 'boolean') {
-            $ctrl.filter.Argument = [1];
-
-            if ($ctrl.filter.Operator === 'Contains') {
-                $ctrl.filter.Operator = 'Equals';
-            }
-        }
-
-        $ctrl.filterTitle = $attrs.title || $filter('translate')('CAPTION_FILTER');
-
-        if (angular.isDefined($element[0]) && $element[0].localName == "tb-column-options-filter") {
-            $ctrl.filter.Operator = 'Multiple';
-        }
-    }
-};
-
-(function () {
-    'use strict';
+    };
 
     angular.module('tubular.directives')
          /**
-         * @ngdoc directive
+         * @ngdoc component
          * @name tbColumnFilterButtons
-         * @restrict E
          *
          * @description
-         * The `tbColumnFilterButtons` is an internal directive, and it is used to show basic filtering buttons.
+         * The `tbColumnFilterButtons` is an internal component, and it is used to show basic filtering buttons.
          */
-        .directive('tbColumnFilterButtons', function () {
-            return {
-                require: '^tbColumnFilter',
-                template: '<div class="text-right">' +
-                          '<a class="btn btn-sm btn-success" ng-click="$ctrl.applyFilter()" ng-disabled="$ctrl.filter.Operator == \'None\'">{{\'CAPTION_APPLY\' | translate}}</a>&nbsp;' +
-                          '<button class="btn btn-sm btn-danger" ng-click="$ctrl.clearFilter()">{{\'CAPTION_CLEAR\' | translate}}</button>' +
-                          '</div>',
-                transclude: true
-            }
+        .component('tbColumnFilterButtons', {
+            require: {
+                $columnFilter: '^?tbColumnFilter',
+                $columnDateTimeFilter: '^?tbColumnDateTimeFilter',
+                $columnOptionsFilter: '^?tbColumnOptionsFilter'
+            },
+            template: '<div class="text-right">' +
+                      '<a class="btn btn-sm btn-success" ng-click="$ctrl.currentFilter.applyFilter()"' +
+                      'ng-disabled="$ctrl.currentFilter.filter.Operator == \'None\'">{{\'CAPTION_APPLY\' | translate}}</a>&nbsp;' +
+                      '<button class="btn btn-sm btn-danger" ng-click="$ctrl.currentFilter.clearFilter()">{{\'CAPTION_CLEAR\' | translate}}</button>' +
+                      '</div>',
+            transclude: true,
+            controller: ['$scope',
+                function ($scope) {
+                    var $ctrl = this;
+
+                    $ctrl.$onInit = function () {
+                        // Set currentFilter to either one of the parent components or for when this template is being rendered by $compile
+                        $ctrl.currentFilter = $ctrl.$columnFilter || $ctrl.$columnDateTimeFilter || $ctrl.$columnOptionsFilter || $scope.$parent.$ctrl;
+                    }
+                }
+            ]
         })
         /**
          * @ngdoc component
@@ -2431,43 +2449,45 @@ function ctrlTest($scope, $ctrl, $element, $attrs, $compile, FilterModel, $filte
             },
             template: '<button class="btn btn-sm btn-default" ng-click="$ctrl.openColumnsSelector()">{{\'CAPTION_SELECTCOLUMNS\' | translate}}</button></div>',
             transclude: true,
-            controller: ['$scope', '$uibModal', function ($scope, $modal) {
-                var $ctrl = this;
+            controller: [
+                '$scope', '$uibModal', function ($scope, $modal) {
+                    var $ctrl = this;
 
-                $ctrl.openColumnsSelector = function () {
-                    var model = $ctrl.$component.columns;
+                    $ctrl.openColumnsSelector = function () {
+                        var model = $ctrl.$component.columns;
 
-                    var dialog = $modal.open({
-                        template: '<div class="modal-header">' +
-                            '<h3 class="modal-title">{{\'CAPTION_SELECTCOLUMNS\' | translate}}</h3>' +
-                            '</div>' +
-                            '<div class="modal-body">' +
-                            '<table class="table table-bordered table-responsive table-striped table-hover table-condensed">' +
-                            '<thead><tr><th>Visible?</th><th>Name</th><th>Grouping?</th></tr></thead>' +
-                            '<tbody><tr ng-repeat="col in Model">' +
-                            '<td><input type="checkbox" ng-model="col.Visible" ng-disabled="col.Visible && isInvalid()" /></td>' +
-                            '<td>{{col.Label}}</td>' +
-                            '<td><input type="checkbox" ng-disabled="true" ng-model="col.IsGrouping" /></td>' +
-                            '</tr></tbody></table></div>' +
-                            '</div>' +
-                            '<div class="modal-footer"><button class="btn btn-warning" ng-click="closePopup()">{{\'CAPTION_CLOSE\' | translate}}</button></div>',
-                        backdropClass: 'fullHeight',
-                        animation: false,
-                        controller: [
-                            '$scope', function ($innerScope) {
-                                $innerScope.Model = model;
-                                $innerScope.isInvalid = function () {
-                                    return $innerScope.Model.filter(function (el) { return el.Visible; }).length === 1;
+                        var dialog = $modal.open({
+                            template: '<div class="modal-header">' +
+                                '<h3 class="modal-title">{{\'CAPTION_SELECTCOLUMNS\' | translate}}</h3>' +
+                                '</div>' +
+                                '<div class="modal-body">' +
+                                '<table class="table table-bordered table-responsive table-striped table-hover table-condensed">' +
+                                '<thead><tr><th>Visible?</th><th>Name</th><th>Grouping?</th></tr></thead>' +
+                                '<tbody><tr ng-repeat="col in Model">' +
+                                '<td><input type="checkbox" ng-model="col.Visible" ng-disabled="col.Visible && isInvalid()" /></td>' +
+                                '<td>{{col.Label}}</td>' +
+                                '<td><input type="checkbox" ng-disabled="true" ng-model="col.IsGrouping" /></td>' +
+                                '</tr></tbody></table></div>' +
+                                '</div>' +
+                                '<div class="modal-footer"><button class="btn btn-warning" ng-click="closePopup()">{{\'CAPTION_CLOSE\' | translate}}</button></div>',
+                            backdropClass: 'fullHeight',
+                            animation: false,
+                            controller: [
+                                '$scope', function ($innerScope) {
+                                    $innerScope.Model = model;
+                                    $innerScope.isInvalid = function () {
+                                        return $innerScope.Model.filter(function (el) { return el.Visible; }).length === 1;
+                                    }
+
+                                    $innerScope.closePopup = function () {
+                                        dialog.close();
+                                    };
                                 }
-
-                                $innerScope.closePopup = function () {
-                                    dialog.close();
-                                };
-                            }
-                        ]
-                    });
-                };
-            }]
+                            ]
+                        });
+                    };
+                }
+            ]
         })
         /**
          * @ngdoc directive
@@ -2509,12 +2529,21 @@ function ctrlTest($scope, $ctrl, $element, $attrs, $compile, FilterModel, $filte
                 '</div>',
             transclude: true,
             bindings: {
+                text: '@',
+                argument: '@',
+                operator: '@',
+                optionsUrl: '@',
+                title: '@'
             },
-            controller: ['$scope', '$element', '$attrs', '$compile', 'tubularGridFilterModel', '$filter', function ($scope, $element, $attrs, $compile, FilterModel, $filter) {
-                var $ctrl = this;
+            controller: [
+                '$scope', '$element', '$compile', '$filter', function ($scope, $element, $compile, $filter) {
+                    var $ctrl = this;
 
-                ctrlTest($scope, $ctrl, $element, $attrs, $compile, FilterModel, $filter, null);
-            }]
+                    $ctrl.$onInit = function () {
+                        ctrlTest($scope, $element, $compile, $filter, $ctrl, null);
+                    }
+                }
+            ]
         })
         /**
          * @ngdoc directive
@@ -2551,34 +2580,45 @@ function ctrlTest($scope, $ctrl, $element, $attrs, $compile, FilterModel, $filte
                 '</form></div>' +
                 '</div>',
             transclude: true,
-            controller: ['$scope', '$element', '$attrs', '$compile', 'tubularGridFilterModel', '$filter', function ($scope, $element, $attrs, $compile, FilterModel, $filter) {
-                var $ctrl = this;
+            bindings: {
+                text: '@',
+                argument: '@',
+                operator: '@',
+                optionsUrl: '@',
+                title: '@'
+            },
+            controller: [
+                '$scope', '$element', '$compile', '$filter', function ($scope, $element, $compile, $filter) {
+                    var $ctrl = this;
 
-                $ctrl.filter = {};
-                $ctrl.format = 'yyyy-MM-dd';
+                    $ctrl.$onInit = function () {
+                        $ctrl.filter = {};
+                        $ctrl.format = 'yyyy-MM-dd';
 
-                ctrlTest($scope, $ctrl, $element, $attrs, $compile, FilterModel, $filter, function () {
-                    var inp = $(lElement).find("input[type=date]")[0];
+                        ctrlTest($scope, $element, $compile, $filter, $ctrl, function () {
+                            var inp = $element.find("input[type=date]")[0];
 
-                    if (inp.type !== 'date') {
-                        $(inp).datepicker({
-                            dateFormat: scope.format.toLowerCase()
-                        }).on("dateChange", function (e) {
-                            scope.filter.Text = e.date;
+                            if (inp.type !== 'date') {
+                                $(inp).datepicker({
+                                    dateFormat: scope.format.toLowerCase()
+                                }).on("dateChange", function (e) {
+                                    scope.filter.Text = e.date;
+                                });
+                            }
+
+                            var inpLev = $element.find("input[type=date]")[1];
+
+                            if (inpLev.type !== 'date') {
+                                $(inpLev).datepicker({
+                                    dateFormat: scope.format.toLowerCase()
+                                }).on("dateChange", function (e) {
+                                    scope.filter.Argument = [e.date];
+                                });
+                            }
                         });
                     }
-
-                    var inpLev = $(lElement).find("input[type=date]")[1];
-
-                    if (inpLev.type !== 'date') {
-                        $(inpLev).datepicker({
-                            dateFormat: scope.format.toLowerCase()
-                        }).on("dateChange", function (e) {
-                            scope.filter.Argument = [e.date];
-                        });
-                    }
-                });
-            }]
+                }
+            ]
         })
         /**
          * @ngdoc directive
@@ -2613,37 +2653,48 @@ function ctrlTest($scope, $ctrl, $element, $attrs, $compile, FilterModel, $filte
                 '</form></div>' +
                 '</div>',
             transclude: true,
-            controller: ['$scope', '$element', '$attrs', '$compile', 'tubularGridFilterModel', '$filter', function ($scope, $element, $attrs, $compile, FilterModel, $filter) {
-                var $ctrl = this;
+            bindings: {
+                text: '@',
+                argument: '@',
+                operator: '@',
+                optionsUrl: '@',
+                title: '@'
+            },
+            controller: [
+                '$scope', '$element', '$compile', '$filter', function ($scope, $element, $compile, $filter) {
+                    var $ctrl = this;
 
-                $ctrl.dataIsLoaded = false;
+                    $ctrl.getOptionsFromUrl = function () {
+                        if ($ctrl.dataIsLoaded) {
+                            $scope.$apply();
+                            return;
+                        }
 
-                $ctrl.getOptionsFromUrl = function () {
-                    if ($ctrl.dataIsLoaded) {
-                        $scope.$apply();
-                        return;
-                    }
-
-                    var currentRequest = $ctrl.$component.dataService.retrieveDataAsync({
-                        serverUrl: $ctrl.filter.OptionsUrl,
-                        requestMethod: 'GET'
-                    });
-
-                    currentRequest.promise.then(
-                        function (data) {
-                            $ctrl.optionsItems = data;
-                            $ctrl.dataIsLoaded = true;
-                        }, function (error) {
-                            $scope.$emit('tbGrid_OnConnectionError', error);
+                        var currentRequest = $ctrl.$component.dataService.retrieveDataAsync({
+                            serverUrl: $ctrl.filter.OptionsUrl,
+                            requestMethod: 'GET'
                         });
-                };
 
-                ctrlTest($scope, $ctrl, $element, $attrs, $compile, FilterModel, $filter, function () {
-                    $ctrl.getOptionsFromUrl();
-                });
-            }]
+                        currentRequest.promise.then(
+                            function (data) {
+                                $ctrl.optionsItems = data;
+                                $ctrl.dataIsLoaded = true;
+                            }, function (error) {
+                                $scope.$emit('tbGrid_OnConnectionError', error);
+                            });
+                    };
+
+                    $ctrl.$onInit = function () {
+                        $ctrl.dataIsLoaded = false;
+
+                        ctrlTest($scope, $element, $compile, $filter, $ctrl, function () {
+                            $ctrl.getOptionsFromUrl();
+                        });
+                    }
+                }
+            ]
         });
-})();
+})(window.angular);
 (function () {
     'use strict';
 
@@ -3400,7 +3451,7 @@ function ctrlTest($scope, $ctrl, $element, $attrs, $compile, FilterModel, $filte
             ]
         });
 })();
-(function() {
+(function (angular) {
     'use strict';
 
     /**                                           
@@ -3516,30 +3567,6 @@ function ctrlTest($scope, $ctrl, $element, $attrs, $compile, FilterModel, $filte
                 };
             }
         ])
-        /**
-        * @ngdoc factory
-        * @name tubularGridFilterModel
-        *
-        * @description
-        * The `tubularGridFilterModel` factory is the base to generate a filter model to use with `tbGrid`.
-        * 
-        * This model doesn't need to be created in your controller, the `tubularGridFilterService` generate it.
-        */
-        .factory('tubularGridFilterModel', function() {
-
-            return function(attrs) {
-                this.Text = attrs.text || null;
-                this.Argument = null;
-
-                if (attrs.argument) {
-                    this.Argument = [attrs.argument];
-                }
-
-                this.Operator = attrs.operator || 'Contains';
-                this.OptionsUrl = attrs.optionsUrl || null;
-                this.HasFilter = !(this.Text == null);
-            };
-        })
         /**
         * @ngdoc factory
         * @name tubularModel
@@ -3693,7 +3720,7 @@ function ctrlTest($scope, $ctrl, $element, $attrs, $compile, FilterModel, $filte
                 return obj;
             };
         });
-})();
+})(window.angular);
 (function (angular) {
     'use strict';
 
@@ -3883,155 +3910,6 @@ function ctrlTest($scope, $ctrl, $element, $attrs, $compile, FilterModel, $filte
                 window.saveAs(blob, filename);
             };
         })
-        /**
-         * @ngdoc service
-         * @name tubularGridFilterService
-         *
-         * @description
-         * The `tubularGridFilterService` service is a internal helper to setup any `FilterModel` with a UI.
-         */
-        .service('tubularGridFilterService', [
-            'tubularGridFilterModel', '$compile', '$filter', function tubularGridFilterService(FilterModel, $compile, $filter) {
-                var me = this;
-
-                me.applyFilterFuncs = function(scope, el, attributes, openCallback) {
-                    scope.$component = scope.$parent.$component;
-
-                    scope.$watch('filter.Operator', function(val) {
-                        if (val === 'None') scope.filter.Text = '';
-                    });
-
-                    scope.$watch(function() {
-                        var columns = scope.$component.columns.filter(function(el) {
-                            return el.Name === scope.filter.Name;
-                        });
-
-                        return columns.length !== 0 ? columns[0] : null;
-                    }, function(val) {
-                        if (val && val != null) {
-                            if (scope.filter.HasFilter != val.Filter.HasFilter) {
-                                scope.filter.HasFilter = val.Filter.HasFilter;
-                                scope.filter.Text = val.Filter.Text;
-                                scope.retrieveData();
-                            }
-                        }
-                    }, true);
-
-                    scope.retrieveData = function() {
-                        var columns = scope.$component.columns.filter(function(el) {
-                            return el.Name === scope.filter.Name;
-                        });
-
-                        if (columns.length !== 0) {
-                            columns[0].Filter = scope.filter;
-                        }
-
-                        scope.$component.retrieveData();
-                        scope.close();
-                    };
-
-                    scope.clearFilter = function() {
-                        if (scope.filter.Operator != 'Multiple') {
-                            scope.filter.Operator = 'None';
-                        }
-
-                        scope.filter.Text = '';
-                        scope.filter.Argument = [];
-                        scope.filter.HasFilter = false;
-                        scope.retrieveData();
-                    };
-
-                    scope.applyFilter = function() {
-                        scope.filter.HasFilter = true;
-                        scope.retrieveData();
-                    };
-
-                    scope.close = function() {
-                        $(el).find('.btn-popover').popover('hide');
-                    };
-
-                    scope.open = function() {
-                        $(el).find('.btn-popover').popover('toggle');
-                    };
-
-                    scope.checkEvent = function(keyEvent) {
-                        if (keyEvent.which === 13) {
-                            scope.applyFilter();
-                            keyEvent.preventDefault();
-                        }
-                    };
-
-                    $(el).find('.btn-popover').popover({
-                        html: true,
-                        placement: 'bottom',
-                        trigger: 'manual',
-                        content: function() {
-                            var selectEl = $(this).next().find('select').find('option').remove().end();
-                            angular.forEach(scope.filterOperators, function(val, key) {
-                                $(selectEl).append('<option value="' + key + '">' + val + '</option>');
-                            });
-
-                            return $compile($(this).next().html())(scope);
-                        }
-                    });
-
-                    $(el).find('.btn-popover').on('show.bs.popover', function(e) {
-                        $('.btn-popover').not(e.target).popover("hide");
-                    });
-
-                    if (angular.isDefined(openCallback)) {
-                        $(el).find('.btn-popover').on('shown.bs.popover', openCallback);
-                    }
-                };
-
-                /**
-                 * Creates a `FilterModel` using a scope and an Attributes array
-                 */
-                me.createFilterModel = function(scope, lAttrs) {
-                    scope.filter = new FilterModel(lAttrs);
-                    scope.filter.Name = scope.$parent.column.Name;
-                    var columns = scope.$component.columns.filter(function(el) {
-                        return el.Name === scope.filter.Name;
-                    });
-
-                    if (columns.length === 0) return;
-
-                    scope.$watch('filter', function(n) {
-                        if (columns[0].Filter.Text != n.Text) {
-                            n.Text = columns[0].Filter.Text;
-
-                            if (columns[0].Filter.Operator != n.Operator) {
-                                n.Operator = columns[0].Filter.Operator;
-                            }
-                        }
-
-                        scope.filter.HasFilter = columns[0].Filter.HasFilter;
-                    });
-
-                    columns[0].Filter = scope.filter;
-                    scope.dataType = columns[0].DataType;
-                    scope.filterOperators = columns[0].FilterOperators[scope.dataType];
-
-                    if (scope.dataType === 'date' || scope.dataType === 'datetime' || scope.dataType === 'datetimeutc') {
-                        scope.filter.Argument = [new Date()];
-
-                        if (scope.filter.Operator === 'Contains') {
-                            scope.filter.Operator = 'Equals';
-                        }
-                    }
-
-                    if (scope.dataType === 'numeric' || scope.dataType === 'boolean') {
-                        scope.filter.Argument = [1];
-
-                        if (scope.filter.Operator === 'Contains') {
-                            scope.filter.Operator = 'Equals';
-                        }
-                    }
-
-                    scope.filterTitle = lAttrs.title || $filter('translate')('CAPTION_FILTER');
-                };
-            }
-        ])
         /**
          * @ngdoc service
          * @name tubularEditorService
