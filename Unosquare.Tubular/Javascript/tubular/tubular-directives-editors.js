@@ -376,7 +376,8 @@
                 optionsUrl: '@',
                 optionsMethod: '@?',
                 optionLabel: '@?',
-                optionKey: '@?'
+                optionKey: '@?',
+                optionTrack: '@?'
             },
             controller: [
                 'tubularEditorService', '$scope', function(tubularEditorService, $scope) {
@@ -390,8 +391,13 @@
                         if (angular.isDefined($ctrl.optionLabel)) {
                             $ctrl.selectOptions = "d." + $ctrl.optionLabel + " for d in options";
 
-                            if (angular.isDefined($ctrl.optionKey)) {
-                                $ctrl.selectOptions = 'd.' + $ctrl.optionKey + ' as ' + $ctrl.selectOptions;
+                            if (angular.isDefined($ctrl.optionTrack)) {
+                                $scope.selectOptions = 'd as d.' + scope.optionLabel + ' for d in options track by d.' + $scope.optrionTrack;
+                            }
+                            else {
+                                if (angular.isDefined($ctrl.optionKey)) {
+                                    $ctrl.selectOptions = 'd.' + $ctrl.optionKey + ' as ' + $ctrl.selectOptions;
+                                }
                             }
                         }
                     };

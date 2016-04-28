@@ -161,6 +161,7 @@
                                             }
 
                                             $scope.$emit('tbForm_OnSuccessfulSave', data, $scope);
+                                            $scope.clear();
                                         }, function (error) {
                                             $scope.$emit('tbForm_OnConnectionError', error, $scope);
                                         })
@@ -181,6 +182,7 @@
 
                             $scope.cancel = function () {
                                 $scope.$emit('tbForm_OnCancel', $scope.model);
+                                $scope.clear();
                             };
 
                             $scope.clear = function () {
