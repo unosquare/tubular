@@ -2,17 +2,13 @@
     'use strict';
 
     function setupFilter($scope, $element, $compile, $filter, $ctrl, openCallback) {
-        $scope.$watch('$ctrl.filter.Operator', function (val) {
-            if (val === 'None') $ctrl.filter.Text = '';
-        });
-
-        $scope.$watch(function () {
-            var columns = $ctrl.$component.columns.filter(function ($element) {
+        $scope.$watch(function() {
+            var columns = $ctrl.$component.columns.filter(function($element) {
                 return $element.Name === $ctrl.filter.Name;
             });
 
             return columns.length !== 0 ? columns[0] : null;
-        }, function (val) {
+        }, function(val) {
             if (val && val != null) {
                 if ($ctrl.filter.HasFilter != val.Filter.HasFilter) {
                     $ctrl.filter.HasFilter = val.Filter.HasFilter;
@@ -22,8 +18,8 @@
             }
         }, true);
 
-        $ctrl.retrieveData = function () {
-            var columns = $ctrl.$component.columns.filter(function ($element) {
+        $ctrl.retrieveData = function() {
+            var columns = $ctrl.$component.columns.filter(function($element) {
                 return $element.Name === $ctrl.filter.Name;
             });
 
@@ -35,7 +31,7 @@
             $ctrl.close();
         };
 
-        $ctrl.clearFilter = function () {
+        $ctrl.clearFilter = function() {
             if ($ctrl.filter.Operator != 'Multiple') {
                 $ctrl.filter.Operator = 'None';
             }
@@ -46,20 +42,20 @@
             $ctrl.retrieveData();
         };
 
-        $ctrl.applyFilter = function () {
+        $ctrl.applyFilter = function() {
             $ctrl.filter.HasFilter = true;
             $ctrl.retrieveData();
         };
 
-        $ctrl.close = function () {
+        $ctrl.close = function() {
             $element.find('.btn-popover').popover('hide');
         };
 
-        $ctrl.open = function () {
+        $ctrl.open = function() {
             $element.find('.btn-popover').popover('toggle');
         };
 
-        $ctrl.checkEvent = function (keyEvent) {
+        $ctrl.checkEvent = function(keyEvent) {
             if (keyEvent.which === 13) {
                 $ctrl.applyFilter();
                 keyEvent.preventDefault();
@@ -70,9 +66,9 @@
             html: true,
             placement: 'bottom',
             trigger: 'manual',
-            content: function () {
+            content: function() {
                 var selectEl = $(this).next().find('select').find('option').remove().end();
-                angular.forEach($ctrl.filterOperators, function (val, key) {
+                angular.forEach($ctrl.filterOperators, function(val, key) {
                     $(selectEl).append('<option value="' + key + '">' + val + '</option>');
                 });
 
@@ -80,7 +76,7 @@
             }
         });
 
-        $element.find('.btn-popover').on('show.bs.popover', function (e) {
+        $element.find('.btn-popover').on('show.bs.popover', function(e) {
             $('.btn-popover').not(e.target).popover("hide");
         });
 
@@ -88,61 +84,59 @@
             $element.find('.btn-popover').on('shown.bs.popover', openCallback);
         }
 
-        $ctrl.$postLink = function () {
-            $ctrl.filter = {
-                Text: $ctrl.text || null,
-                Argument: $ctrl.argument ? [$ctrl.argument] : null,
-                Operator: $ctrl.operator || "Contains",
-                OptionsUrl: $ctrl.optionsUrl || null,
-                HasFilter: !($ctrl.text == null)
-            };
+        $ctrl.filter = {
+            Text: $ctrl.text || null,
+            Argument: $ctrl.argument ? [$ctrl.argument] : null,
+            Operator: $ctrl.operator || "Contains",
+            OptionsUrl: $ctrl.optionsUrl || null,
+            HasFilter: !($ctrl.text == null)
+        };
 
-            $ctrl.filter.Name = $scope.$parent.$parent.column.Name;
+        $ctrl.filter.Name = $scope.$parent.$parent.column.Name;
 
-            var columns = $ctrl.$component.columns.filter(function ($element) {
-                return $element.Name === $ctrl.filter.Name;
-            });
+        var columns = $ctrl.$component.columns.filter(function($element) {
+            return $element.Name === $ctrl.filter.Name;
+        });
 
-            if (columns.length === 0) return;
+        if (columns.length === 0) return;
 
-            $scope.$watch('$ctrl.filter', function (n) {
-                if (columns[0].Filter.Text != n.Text) {
-                    n.Text = columns[0].Filter.Text;
+        $scope.$watch('$ctrl.filter', function(n) {
+            if (columns[0].Filter.Text != n.Text) {
+                n.Text = columns[0].Filter.Text;
 
-                    if (columns[0].Filter.Operator != n.Operator) {
-                        n.Operator = columns[0].Filter.Operator;
-                    }
-                }
-
-                $ctrl.filter.HasFilter = columns[0].Filter.HasFilter;
-            });
-
-            columns[0].Filter = $ctrl.filter;
-            $ctrl.dataType = columns[0].DataType;
-            $ctrl.filterOperators = columns[0].FilterOperators[$ctrl.dataType];
-
-            if ($ctrl.dataType === 'date' || $ctrl.dataType === 'datetime' || $ctrl.dataType === 'datetimeutc') {
-                $ctrl.filter.Argument = [new Date()];
-
-                if ($ctrl.filter.Operator === 'Contains') {
-                    $ctrl.filter.Operator = 'Equals';
+                if (columns[0].Filter.Operator != n.Operator) {
+                    n.Operator = columns[0].Filter.Operator;
                 }
             }
 
-            if ($ctrl.dataType === 'numeric' || $ctrl.dataType === 'boolean') {
-                $ctrl.filter.Argument = [1];
+            $ctrl.filter.HasFilter = columns[0].Filter.HasFilter;
+        });
 
-                if ($ctrl.filter.Operator === 'Contains') {
-                    $ctrl.filter.Operator = 'Equals';
-                }
-            }
+        $scope.$watch('$ctrl.filter.Operator', function (val) {
+            if (val === 'None') $ctrl.filter.Text = '';
+        });
 
-            $ctrl.filterTitle = $ctrl.title || $filter('translate')('CAPTION_FILTER');
+        columns[0].Filter = $ctrl.filter;
+        $ctrl.dataType = columns[0].DataType;
+        $ctrl.filterOperators = columns[0].FilterOperators[$ctrl.dataType];
 
-            if (angular.isDefined($element[0]) && $element[0].localName == "tb-column-options-filter") {
-                $ctrl.filter.Operator = 'Multiple';
+        if ($ctrl.dataType === 'date' || $ctrl.dataType === 'datetime' || $ctrl.dataType === 'datetimeutc') {
+            $ctrl.filter.Argument = [new Date()];
+
+            if ($ctrl.filter.Operator === 'Contains') {
+                $ctrl.filter.Operator = 'Equals';
             }
         }
+
+        if ($ctrl.dataType === 'numeric' || $ctrl.dataType === 'boolean') {
+            $ctrl.filter.Argument = [1];
+
+            if ($ctrl.filter.Operator === 'Contains') {
+                $ctrl.filter.Operator = 'Equals';
+            }
+        }
+
+        $ctrl.filterTitle = $ctrl.title || $filter('translate')('CAPTION_FILTER');
     };
 
     angular.module('tubular.directives')
@@ -280,7 +274,7 @@
                     var $ctrl = this;
 
                     $ctrl.$onInit = function() {
-                        setupFilter($scope, $element, $compile, $filter, $ctrl, null);
+                        setupFilter($scope, $element, $compile, $filter, $ctrl);
                     };
                 }
             ]
@@ -332,30 +326,9 @@
                     var $ctrl = this;
 
                     $ctrl.$onInit = function() {
-                        $ctrl.filter = {};
                         $ctrl.format = 'yyyy-MM-dd';
 
-                        setupFilter($scope, $element, $compile, $filter, $ctrl, function() {
-                            var inp = $element.find("input[type=date]")[0];
-
-                            if (inp.type !== 'date') {
-                                $(inp).datepicker({
-                                    dateFormat: scope.format.toLowerCase()
-                                }).on("dateChange", function(e) {
-                                    scope.filter.Text = e.date;
-                                });
-                            }
-
-                            var inpLev = $element.find("input[type=date]")[1];
-
-                            if (inpLev.type !== 'date') {
-                                $(inpLev).datepicker({
-                                    dateFormat: scope.format.toLowerCase()
-                                }).on("dateChange", function(e) {
-                                    scope.filter.Argument = [e.date];
-                                });
-                            }
-                        });
+                        setupFilter($scope, $element, $compile, $filter, $ctrl);
                     };
                 }
             ]
@@ -424,10 +397,8 @@
 
                     $ctrl.$onInit = function() {
                         $ctrl.dataIsLoaded = false;
-
-                        setupFilter($scope, $element, $compile, $filter, $ctrl, function() {
-                            $ctrl.getOptionsFromUrl();
-                        });
+                        setupFilter($scope, $element, $compile, $filter, $ctrl, $ctrl.getOptionsFromUrl);
+                        $ctrl.filter.Operator = 'Multiple';
                     };
                 }
             ]

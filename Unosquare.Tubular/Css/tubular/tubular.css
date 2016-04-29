@@ -394,3 +394,7 @@ table.tubular-grid-table tbody tr td {
     table.tubular-grid-table tbody tr td.no-wrap, table.tubular-grid-table tbody tr td.no-wrap span {
         white-space: nowrap;
     }
+
+li.pagination-first, li.pagination-prev, li.pagination-next, li.pagination-last {
+    font-family: 'FontAwesome';
+}

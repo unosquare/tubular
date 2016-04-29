@@ -1,6 +1,16 @@
 (function (angular) {
     'use strict';
 
+    var canUseHtml5Date = function() {
+        var input = document.createElement('input');
+        input.setAttribute('type', 'date');
+
+        var notADateValue = 'not-a-date';
+        input.setAttribute('value', notADateValue);
+
+        return (input.value !== notADateValue);
+    }();
+
     angular.module('tubular.directives')
         /**
          * @ngdoc component
@@ -196,7 +206,7 @@
          *
          * @description
          * The `tbDateTimeEditor` component is date/time input. It uses the `datetime-local` HTML5 attribute, but if this
-         * components fails it falls back to a jQuery datepicker.
+         * components fails it falls back to Angular UI Bootstrap Datepicker (time functionality is unavailable).
          * 
          * It uses the `TubularModel` to retrieve column or field information.
          * 
@@ -216,6 +226,16 @@
             template: '<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">' +
                 '<span ng-hide="$ctrl.isEditing">{{ $ctrl.value | date: format }}</span>' +
                 '<label ng-show="$ctrl.showLabel">{{ $ctrl.label }}</label>' +
+                (canUseHtml5Date ?
+                    '<input type="datetime-local" ng-show="$ctrl.isEditing" ng-model="$ctrl.value" class="form-control" ' +
+                    'ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}"/>' :
+                    '<div class="input-group" ng-show="$ctrl.isEditing">' +
+                    '<input type="text" uib-datepicker-popup="{{$ctrl.format}}" ng-model="$ctrl.value" class="form-control" ' +
+                    'ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}" is-open="$ctrl.open" />' +
+                    '<span class="input-group-btn">' +
+                    '<button type="button" class="btn btn-default" ng-click="$ctrl.open = !$ctrl.open"><i class="fa fa-calendar"></i></button>' +
+                    '</span>' +
+                    '</div>') +
                 '<input type="datetime-local" ng-show="$ctrl.isEditing" ng-model="$ctrl.value" class="form-control" ' +
                 'ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}" />' +
                 '<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">' +
@@ -239,25 +259,6 @@
             controller: [
                 '$scope', '$element', 'tubularEditorService', '$filter', function ($scope, $element, tubularEditorService, $filter) {
                     var $ctrl = this;
-
-                    $ctrl.$postLink = function () {
-                        var inp = $element.find("input[type=datetime-local]")[0];
-                        if (inp.type !== 'datetime-local') {
-                            $(inp).datepicker({
-                                dateFormat: $ctrl.format.toLowerCase().split(' ')[0]
-                            })
-                                .datepicker("setDate", $ctrl.value)
-                                .on("dateChange", function (e) {
-                                    $scope.$apply(function () {
-                                        $ctrl.value = e.date;
-
-                                        if (angular.isDefined($scope.$parent.Model)) {
-                                            $scope.$parent.Model.$hasChanges = true;
-                                        }
-                                    });
-                                });
-                        }
-                    };
 
                     // This could be $onChange??
                     $scope.$watch(function () {
@@ -312,7 +313,7 @@
          *
          * @description
          * The `tbDateEditor` component is date input. It uses the `datetime-local` HTML5 attribute, but if this
-         * components fails it falls back to a jQuery datepicker.
+         * components fails it falls back to a Angular UI Bootstrap Datepicker.
          * 
          * Similar to `tbDateTimeEditor` but without a timepicker.
          * 
@@ -334,8 +335,16 @@
             template: '<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">' +
                 '<span ng-hide="$ctrl.isEditing">{{ $ctrl.value | date: $ctrl.format }}</span>' +
                 '<label ng-show="$ctrl.showLabel">{{ $ctrl.label }}</label>' +
-                '<input type="date" ng-show="$ctrl.isEditing" ng-model="$ctrl.value" class="form-control" ' +
-                'ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}"/>' +
+                (canUseHtml5Date ?
+                    '<input type="date" ng-show="$ctrl.isEditing" ng-model="$ctrl.value" class="form-control" ' +
+                    'ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}"/>' : 
+                    '<div class="input-group" ng-show="$ctrl.isEditing">' +
+                    '<input type="text" uib-datepicker-popup="{{$ctrl.format}}" ng-model="$ctrl.value" class="form-control" ' +
+                    'ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}" is-open="$ctrl.open" />' +
+                    '<span class="input-group-btn">' +
+                    '<button type="button" class="btn btn-default" ng-click="$ctrl.open = !$ctrl.open"><i class="fa fa-calendar"></i></button>' +
+                    '</span>' +
+                    '</div>') +
                 '<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">' +
                 '{{error}}' +
                 '</span>' +
@@ -357,25 +366,6 @@
             controller: [
                '$scope', '$element', 'tubularEditorService', '$filter', function ($scope, $element, tubularEditorService, $filter) {
                    var $ctrl = this;
-
-                   $ctrl.$postLink = function () {
-                       var inp = $element.find("input[type=date]")[0];
-                       if (inp.type !== 'date') {
-                           $(inp).datepicker({
-                               dateFormat: $ctrl.format.toLowerCase()
-                           })
-                               .datepicker("setDate", $ctrl.value)
-                               .on("dateChange", function (e) {
-                                   $scope.$apply(function () {
-                                       $ctrl.value = e.date;
-
-                                       if (angular.isDefined($scope.$parent.Model)) {
-                                           $scope.$parent.Model.$hasChanges = true;
-                                       }
-                                   });
-                               });
-                       }
-                   };
 
                    $scope.$watch(function() {
                        return $ctrl.value;

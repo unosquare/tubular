@@ -16,15 +16,13 @@
       "Javascript/tubular/tubular-services-localdata.js",
       "Javascript/tubular/tubular-services-odata.js",
       "Javascript/tubular/tubular-services-template.js",
-      "Javascript/tubular/tubular-services-i18n.js",
-      "Javascript/tadaaapickr/tadaaapickr.pack.js"
+      "Javascript/tubular/tubular-services-i18n.js"
     ],
     "sourceMap": false
   },
   {
     "outputFileName": "Css/tubular-bundle.css",
     "inputFiles": [
-      "Css/tadaaapickr/tadaaapickr.css",
       "Css/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css",
       "Css/angular-chartjs/angular-chart.css",
       "Css/tubular/tubular.css"
