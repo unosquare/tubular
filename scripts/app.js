@@ -21,8 +21,7 @@
                         templateUrl: 'assets/formgenerator.html'
                     }).when('/Documentation/:param?', {
                         templateUrl: 'assets/documentation.html'
-                    })
-                    .otherwise({
+                    }).otherwise({
                         redirectTo: '/'
                     });
             }
