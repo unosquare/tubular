@@ -1509,7 +1509,7 @@ try {
             }
         ]);
 })(window.angular);
-(function () {
+(function (angular) {
     'use strict';
 
     angular.module('tubular.directives')
@@ -2010,7 +2010,7 @@ try {
 
                         if (angular.isDefined($ctrl.optionsUrl)) {
                             $scope.$watch('optionsUrl', function(val, prev) {
-                                if (val == prev) return;
+                                if (val === prev) return;
 
                                 $ctrl.dataIsLoaded = false;
                                 $ctrl.loadData();
@@ -2019,7 +2019,7 @@ try {
                             if ($ctrl.isEditing) {
                                 $ctrl.loadData();
                             } else {
-                                $scope.$watch('isEditing', function() {
+                                $scope.$watch('$ctrl.isEditing', function () {
                                     if ($ctrl.isEditing) {
                                         $ctrl.loadData();
                                     }
@@ -2206,7 +2206,6 @@ try {
          */
         .component('tbHiddenField', {
             template: '<input type="hidden" ng-model="$ctrl.value" class="form-control" name="{{$ctrl.name}}"  />',
-            transclude: true,
             bindings: {
                 value: '=?',
                 name: '@'
@@ -2242,8 +2241,7 @@ try {
          */
         .component('tbCheckboxField', {
             template: '<div ng-class="{ \'checkbox\' : $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }" class="tubular-checkbox">' +
-                '<span ng-hide="$ctrl.isEditing">{{$ctrl.value ? checkedValue : uncheckedValue}}</span>' +
-                '<input ng-show="$ctrl.isEditing" type="checkbox" ng-model="$ctrl.value" ng-disabled="$ctrl.readOnly"' +
+                '<input type="checkbox" ng-model="$ctrl.value" ng-disabled="$ctrl.readOnly || !$ctrl.isEditing"' +
                 'class="tubular-checkbox" id="{{$ctrl.name}}" name="{{$ctrl.name}}" /> ' +
                 '<label ng-show="$ctrl.isEditing" for="{{$ctrl.name}}">' +
                 '{{$ctrl.label}}' +
@@ -2316,7 +2314,6 @@ try {
                 '</span>' +
                 '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help">{{$ctrl.help}}</span>' +
                 '</div>',
-            transclude: true,
             bindings: {
                 value: '=?',
                 isEditing: '=?',
@@ -2359,7 +2356,7 @@ try {
                 }
             ]
         });
-})();
+})(window.angular);
 (function (angular) {
     'use strict';
 
