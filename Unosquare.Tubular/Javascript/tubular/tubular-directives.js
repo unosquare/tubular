@@ -666,64 +666,6 @@
                                 this.IsGrouping = $scope.isGrouping === "true";
                                 this.Aggregate = $scope.aggregate || "none";
                                 this.MetaAggregate = $scope.metaAggregate || "none";
-
-                                this.FilterOperators = {
-                                    'string': {
-                                        'None': $filter('translate')('OP_NONE'),
-                                        'Equals': $filter('translate')('OP_EQUALS'),
-                                        'NotEquals': $filter('translate')('OP_NOTEQUALS'),
-                                        'Contains': $filter('translate')('OP_CONTAINS'),
-                                        'NotContains': $filter('translate')('OP_NOTCONTAINS'),
-                                        'StartsWith': $filter('translate')('OP_STARTSWITH'),
-                                        'NotStartsWith': $filter('translate')('OP_NOTSTARTSWITH'),
-                                        'EndsWith': $filter('translate')('OP_ENDSWITH'),
-                                        'NotEndsWith': $filter('translate')('OP_NOTENDSWITH')
-                                    },
-                                    'numeric': {
-                                        'None': $filter('translate')('OP_NONE'),
-                                        'Equals': $filter('translate')('OP_EQUALS'),
-                                        'Between': $filter('translate')('OP_BETWEEN'),
-                                        'Gte': '>=',
-                                        'Gt': '>',
-                                        'Lte': '<=',
-                                        'Lt': '<'
-                                    },
-                                    'date': {
-                                        'None': $filter('translate')('OP_NONE'),
-                                        'Equals': $filter('translate')('OP_EQUALS'),
-                                        'NotEquals': $filter('translate')('OP_NOTEQUALS'),
-                                        'Between': $filter('translate')('OP_BETWEEN'),
-                                        'Gte': '>=',
-                                        'Gt': '>',
-                                        'Lte': '<=',
-                                        'Lt': '<'
-                                    },
-                                    'datetime': {
-                                        'None': $filter('translate')('OP_NONE'),
-                                        'Equals': $filter('translate')('OP_EQUALS'),
-                                        'NotEquals': $filter('translate')('OP_NOTEQUALS'),
-                                        'Between': $filter('translate')('OP_BETWEEN'),
-                                        'Gte': '>=',
-                                        'Gt': '>',
-                                        'Lte': '<=',
-                                        'Lt': '<'
-                                    },
-                                    'datetimeutc': {
-                                        'None': $filter('translate')('OP_NONE'),
-                                        'Equals': $filter('translate')('OP_EQUALS'),
-                                        'NotEquals': $filter('translate')('OP_NOTEQUALS'),
-                                        'Between': $filter('translate')('OP_BETWEEN'),
-                                        'Gte': '>=',
-                                        'Gt': '>',
-                                        'Lte': '<=',
-                                        'Lt': '<'
-                                    },
-                                    'boolean': {
-                                        'None': $filter('translate')('OP_NONE'),
-                                        'Equals': $filter('translate')('OP_EQUALS'),
-                                        'NotEquals': $filter('translate')('OP_NOTEQUALS')
-                                    }
-                                };
                             };
                             
                             $scope.$component.addColumn(column);

@@ -2,6 +2,75 @@
     'use strict';
 
     function setupFilter($scope, $element, $compile, $filter, $ctrl, openCallback) {
+        var filterOperators = {
+            'string': {
+                'None': $filter('translate')('OP_NONE'),
+                'Equals': $filter('translate')('OP_EQUALS'),
+                'NotEquals': $filter('translate')('OP_NOTEQUALS'),
+                'Contains': $filter('translate')('OP_CONTAINS'),
+                'NotContains': $filter('translate')('OP_NOTCONTAINS'),
+                'StartsWith': $filter('translate')('OP_STARTSWITH'),
+                'NotStartsWith': $filter('translate')('OP_NOTSTARTSWITH'),
+                'EndsWith': $filter('translate')('OP_ENDSWITH'),
+                'NotEndsWith': $filter('translate')('OP_NOTENDSWITH')
+            },
+            'numeric': {
+                'None': $filter('translate')('OP_NONE'),
+                'Equals': $filter('translate')('OP_EQUALS'),
+                'Between': $filter('translate')('OP_BETWEEN'),
+                'Gte': '>=',
+                'Gt': '>',
+                'Lte': '<=',
+                'Lt': '<'
+            },
+            'date': {
+                'None': $filter('translate')('OP_NONE'),
+                'Equals': $filter('translate')('OP_EQUALS'),
+                'NotEquals': $filter('translate')('OP_NOTEQUALS'),
+                'Between': $filter('translate')('OP_BETWEEN'),
+                'Gte': '>=',
+                'Gt': '>',
+                'Lte': '<=',
+                'Lt': '<'
+            },
+            'datetime': {
+                'None': $filter('translate')('OP_NONE'),
+                'Equals': $filter('translate')('OP_EQUALS'),
+                'NotEquals': $filter('translate')('OP_NOTEQUALS'),
+                'Between': $filter('translate')('OP_BETWEEN'),
+                'Gte': '>=',
+                'Gt': '>',
+                'Lte': '<=',
+                'Lt': '<'
+            },
+            'datetimeutc': {
+                'None': $filter('translate')('OP_NONE'),
+                'Equals': $filter('translate')('OP_EQUALS'),
+                'NotEquals': $filter('translate')('OP_NOTEQUALS'),
+                'Between': $filter('translate')('OP_BETWEEN'),
+                'Gte': '>=',
+                'Gt': '>',
+                'Lte': '<=',
+                'Lt': '<'
+            },
+            'boolean': {
+                'None': $filter('translate')('OP_NONE'),
+                'Equals': $filter('translate')('OP_EQUALS'),
+                'NotEquals': $filter('translate')('OP_NOTEQUALS')
+            }
+        };
+
+        $ctrl.filter = {
+            Text: $ctrl.text || null,
+            Argument: $ctrl.argument ? [$ctrl.argument] : null,
+            Operator: $ctrl.operator || "Contains",
+            OptionsUrl: $ctrl.optionsUrl || null,
+            HasFilter: !($ctrl.text == null),
+            Name: $scope.$parent.$parent.column.Name
+        };
+
+        $ctrl.filterTitle = $ctrl.title || $filter('translate')('CAPTION_FILTER');
+
         $scope.$watch(function() {
             var columns = $ctrl.$component.columns.filter(function($element) {
                 return $element.Name === $ctrl.filter.Name;
@@ -32,7 +101,7 @@
         };
 
         $ctrl.clearFilter = function() {
-            if ($ctrl.filter.Operator != 'Multiple') {
+            if ($ctrl.filter.Operator !== 'Multiple') {
                 $ctrl.filter.Operator = 'None';
             }
 
@@ -62,49 +131,21 @@
             }
         };
 
-        $element.find('.btn-popover').popover({
-            html: true,
-            placement: 'bottom',
-            trigger: 'manual',
-            content: function() {
-                var selectEl = $(this).next().find('select').find('option').remove().end();
-                angular.forEach($ctrl.filterOperators, function(val, key) {
-                    $(selectEl).append('<option value="' + key + '">' + val + '</option>');
-                });
-
-                return $compile($(this).next().html())($scope);
-            }
-        });
-
-        $element.find('.btn-popover').on('show.bs.popover', function(e) {
-            $('.btn-popover').not(e.target).popover("hide");
-        });
-
-        if (angular.isDefined(openCallback)) {
-            $element.find('.btn-popover').on('shown.bs.popover', openCallback);
-        }
-
-        $ctrl.filter = {
-            Text: $ctrl.text || null,
-            Argument: $ctrl.argument ? [$ctrl.argument] : null,
-            Operator: $ctrl.operator || "Contains",
-            OptionsUrl: $ctrl.optionsUrl || null,
-            HasFilter: !($ctrl.text == null)
-        };
-
-        $ctrl.filter.Name = $scope.$parent.$parent.column.Name;
-
         var columns = $ctrl.$component.columns.filter(function($element) {
             return $element.Name === $ctrl.filter.Name;
         });
 
+        $scope.$watch('$ctrl.filter.Operator', function (val) {
+            if (val === 'None') $ctrl.filter.Text = '';
+        });
+
         if (columns.length === 0) return;
 
-        $scope.$watch('$ctrl.filter', function(n) {
-            if (columns[0].Filter.Text != n.Text) {
+        $scope.$watch('$ctrl.filter', function (n) {
+            if (columns[0].Filter.Text !== n.Text) {
                 n.Text = columns[0].Filter.Text;
 
-                if (columns[0].Filter.Operator != n.Operator) {
+                if (columns[0].Filter.Operator !== n.Operator) {
                     n.Operator = columns[0].Filter.Operator;
                 }
             }
@@ -112,13 +153,9 @@
             $ctrl.filter.HasFilter = columns[0].Filter.HasFilter;
         });
 
-        $scope.$watch('$ctrl.filter.Operator', function (val) {
-            if (val === 'None') $ctrl.filter.Text = '';
-        });
-
         columns[0].Filter = $ctrl.filter;
         $ctrl.dataType = columns[0].DataType;
-        $ctrl.filterOperators = columns[0].FilterOperators[$ctrl.dataType];
+        $ctrl.filterOperators = filterOperators[$ctrl.dataType];
 
         if ($ctrl.dataType === 'date' || $ctrl.dataType === 'datetime' || $ctrl.dataType === 'datetimeutc') {
             $ctrl.filter.Argument = [new Date()];
@@ -136,7 +173,22 @@
             }
         }
 
-        $ctrl.filterTitle = $ctrl.title || $filter('translate')('CAPTION_FILTER');
+        // Create and setup popover
+        $element.find('.btn-popover').popover({
+            html: true,
+            placement: 'bottom',
+            trigger: 'manual',
+            content: $compile($ctrl.dialogTemplate)($scope)
+        });
+
+        $element.find('.btn-popover').on('show.bs.popover', function (e) {
+            // TODO: Remove jquery
+            $('.btn-popover').not(e.target).popover("hide");
+        });
+
+        if (angular.isDefined(openCallback)) {
+            $element.find('.btn-popover').on('shown.bs.popover', openCallback);
+        }
     };
 
     angular.module('tubular.directives')
@@ -245,22 +297,6 @@
                 '<button class="btn btn-xs btn-default btn-popover" ng-click="$ctrl.open()" ' +
                 'ng-class="{ \'btn-success\': $ctrl.filter.HasFilter }">' +
                 '<i class="fa fa-filter"></i></button>' +
-                '<div style="display: none;">' +
-                '<button type="button" class="close" data-dismiss="modal" ng-click="$ctrl.close()"><span aria-hidden="true">×</span></button>' +
-                '<h4>{{$ctrl.filterTitle}}</h4>' +
-                '<form class="tubular-column-filter-form" onsubmit="return false;">' +
-                '<select class="form-control" ng-model="$ctrl.filter.Operator" ng-hide="$ctrl.dataType == \'boolean\'"></select>&nbsp;' +
-                '<input class="form-control" type="search" ng-model="$ctrl.filter.Text" autofocus ng-keypress="$ctrl.checkEvent($event)" ng-hide="$ctrl.dataType == \'boolean\'"' +
-                'placeholder="{{\'CAPTION_VALUE\' | translate}}" ng-disabled="$ctrl.filter.Operator == \'None\'" />' +
-                '<div class="text-center" ng-show="$ctrl.dataType == \'boolean\'">' +
-                '<button type="button" class="btn btn-default btn-md" ng-disabled="$ctrl.filter.Text === true" ng-click="$ctrl.filter.Text = true; $ctrl.filter.Operator = \'Equals\';">' +
-                '<i class="fa fa-check"></i></button>&nbsp;' +
-                '<button type="button" class="btn btn-default btn-md" ng-disabled="$ctrl.filter.Text === false" ng-click="$ctrl.filter.Text = false; $ctrl.filter.Operator = \'Equals\';">' +
-                '<i class="fa fa-times"></i></button></div>' +
-                '<input type="search" class="form-control" ng-model="$ctrl.filter.Argument[0]" ng-keypress="$ctrl.checkEvent($event)" ng-show="$ctrl.filter.Operator == \'Between\'" />' +
-                '<hr />' +
-                '<tb-column-filter-buttons></tb-column-filter-buttons>' +
-                '</form></div>' +
                 '</div>',
             bindings: {
                 text: '@',
@@ -274,6 +310,22 @@
                     var $ctrl = this;
 
                     $ctrl.$onInit = function() {
+                        $ctrl.dialogTemplate = '<button type="button" class="close" data-dismiss="modal" ng-click="$ctrl.close()"><span aria-hidden="true">×</span></button>' +
+                            '<h4>{{$ctrl.filterTitle}}</h4>' +
+                            '<form class="tubular-column-filter-form" onsubmit="return false;">' +
+                            '<select class="form-control" ng-options="key as value for (key , value) in $ctrl.filterOperators" ng-model="$ctrl.filter.Operator" ng-hide="$ctrl.dataType == \'boolean\'"></select>&nbsp;' +
+                            '<input class="form-control" type="search" ng-model="$ctrl.filter.Text" autofocus ng-keypress="$ctrl.checkEvent($event)" ng-hide="$ctrl.dataType == \'boolean\'"' +
+                            'placeholder="{{\'CAPTION_VALUE\' | translate}}" ng-disabled="$ctrl.filter.Operator == \'None\'" />' +
+                            '<div class="text-center" ng-show="$ctrl.dataType == \'boolean\'">' +
+                            '<button type="button" class="btn btn-default btn-md" ng-disabled="$ctrl.filter.Text === true" ng-click="$ctrl.filter.Text = true; $ctrl.filter.Operator = \'Equals\';">' +
+                            '<i class="fa fa-check"></i></button>&nbsp;' +
+                            '<button type="button" class="btn btn-default btn-md" ng-disabled="$ctrl.filter.Text === false" ng-click="$ctrl.filter.Text = false; $ctrl.filter.Operator = \'Equals\';">' +
+                            '<i class="fa fa-times"></i></button></div>' +
+                            '<input type="search" class="form-control" ng-model="$ctrl.filter.Argument[0]" ng-keypress="$ctrl.checkEvent($event)" ng-show="$ctrl.filter.Operator == \'Between\'" />' +
+                            '<hr />' +
+                            '<tb-column-filter-buttons></tb-column-filter-buttons>' +
+                            '</form>';
+
                         setupFilter($scope, $element, $compile, $filter, $ctrl);
                     };
                 }
@@ -302,17 +354,6 @@
                 '<button class="btn btn-xs btn-default btn-popover" ng-click="$ctrl.open()" ' +
                 'ng-class="{ \'btn-success\': $ctrl.filter.HasFilter }">' +
                 '<i class="fa fa-filter"></i></button>' +
-                '<div style="display: none;">' +
-                '<button type="button" class="close" data-dismiss="modal" ng-click="$ctrl.close()"><span aria-hidden="true">×</span></button>' +
-                '<h4>{{$ctrl.filterTitle}}</h4>' +
-                '<form class="tubular-column-filter-form" onsubmit="return false;">' +
-                '<select class="form-control" ng-model="$ctrl.filter.Operator"></select>' +
-                '<input type="date" class="form-control" ng-model="$ctrl.filter.Text" ng-keypress="$ctrl.checkEvent($event)" />&nbsp;' +
-                '<input type="date" class="form-control" ng-model="$ctrl.filter.Argument[0]" ng-keypress="$ctrl.checkEvent($event)" ' +
-                'ng-show="$ctrl.filter.Operator == \'Between\'" />' +
-                '<hr />' +
-                '<tb-column-filter-buttons></tb-column-filter-buttons>' +
-                '</form></div>' +
                 '</div>',
             bindings: {
                 text: '@',
@@ -327,6 +368,16 @@
 
                     $ctrl.$onInit = function() {
                         $ctrl.format = 'yyyy-MM-dd';
+                        $ctrl.dialogTemplate = '<button type="button" class="close" data-dismiss="modal" ng-click="$ctrl.close()"><span aria-hidden="true">×</span></button>' +
+                            '<h4>{{$ctrl.filterTitle}}</h4>' +
+                            '<form class="tubular-column-filter-form" onsubmit="return false;">' +
+                            '<select class="form-control" ng-model="$ctrl.filter.Operator" ng-options="key as value for (key , value) in $ctrl.filterOperators"></select>&nbsp;' +
+                            '<input type="date" class="form-control" ng-model="$ctrl.filter.Text" ng-keypress="$ctrl.checkEvent($event)" />&nbsp;' +
+                            '<input type="date" class="form-control" ng-model="$ctrl.filter.Argument[0]" ng-keypress="$ctrl.checkEvent($event)" ' +
+                            'ng-show="$ctrl.filter.Operator == \'Between\'" />' +
+                            '<hr />' +
+                            '<tb-column-filter-buttons></tb-column-filter-buttons>' +
+                            '</form>';
 
                         setupFilter($scope, $element, $compile, $filter, $ctrl);
                     };
@@ -354,15 +405,6 @@
                 '<button class="btn btn-xs btn-default btn-popover" ng-click="$ctrl.open()" ' +
                 'ng-class="{ \'btn-success\': $ctrl.filter.HasFilter }">' +
                 '<i class="fa fa-filter"></i></button>' +
-                '<div style="display: none;">' +
-                '<button type="button" class="close" data-dismiss="modal" ng-click="$ctrl.close()"><span aria-hidden="true">×</span></button>' +
-                '<h4>{{::$ctrl.filterTitle}}</h4>' +
-                '<form class="tubular-column-filter-form" onsubmit="return false;">' +
-                '<select class="form-control checkbox-list" ng-model="$ctrl.filter.Argument" ng-options="item for item in $ctrl.optionsItems" ' +
-                ' multiple ng-disabled="$ctrl.dataIsLoaded == false"></select>' +
-                '<hr />' +
-                '<tb-column-filter-buttons></tb-column-filter-buttons>' +
-                '</form></div>' +
                 '</div>',
             bindings: {
                 text: '@',
@@ -397,6 +439,15 @@
 
                     $ctrl.$onInit = function() {
                         $ctrl.dataIsLoaded = false;
+                        $ctrl.dialogTemplate = '<button type="button" class="close" data-dismiss="modal" ng-click="$ctrl.close()"><span aria-hidden="true">×</span></button>' +
+                            '<h4>{{::$ctrl.filterTitle}}</h4>' +
+                            '<form class="tubular-column-filter-form" onsubmit="return false;">' +
+                            '<select class="form-control checkbox-list" ng-model="$ctrl.filter.Argument" ng-options="item for item in $ctrl.optionsItems" ' +
+                            ' multiple ng-disabled="$ctrl.dataIsLoaded == false"></select>' +
+                            '<hr />' +
+                            '<tb-column-filter-buttons></tb-column-filter-buttons>' +
+                            '</form>';
+
                         setupFilter($scope, $element, $compile, $filter, $ctrl, $ctrl.getOptionsFromUrl);
                         $ctrl.filter.Operator = 'Multiple';
                     };
