@@ -66,12 +66,6 @@
                         title: 'Print and Export to CSV',
                         body: 'Easily you can print or export the current view or entire dataset to CSV using client-side only.',
                         key: 'sample5',
-                        next: 'sample6'
-                    },
-                    {
-                        title: 'Grouping',
-                        body: 'You can group by one column (we hope improve this later) and also select the columns to show.',
-                        key: 'sample6',
                         next: 'sample7'
                     },
                     {
