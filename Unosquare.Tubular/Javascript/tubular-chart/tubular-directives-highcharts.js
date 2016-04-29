@@ -1,4 +1,4 @@
-﻿(function () {
+﻿(function (angular) {
     'use strict';
 
     angular.module('tubular-hchart.directives', ['tubular.services', 'highcharts-ng'])
@@ -142,4 +142,4 @@
                 }
             ]
         });
-})();
+})(window.angular);

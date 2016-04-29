@@ -165,15 +165,14 @@
                       'ng-disabled="$ctrl.currentFilter.filter.Operator == \'None\'">{{\'CAPTION_APPLY\' | translate}}</a>&nbsp;' +
                       '<button class="btn btn-sm btn-danger" ng-click="$ctrl.currentFilter.clearFilter()">{{\'CAPTION_CLEAR\' | translate}}</button>' +
                       '</div>',
-            transclude: true,
             controller: ['$scope',
                 function ($scope) {
                     var $ctrl = this;
 
-                    $ctrl.$onInit = function () {
+                    $ctrl.$onInit = function() {
                         // Set currentFilter to either one of the parent components or for when this template is being rendered by $compile
                         $ctrl.currentFilter = $ctrl.$columnFilter || $ctrl.$columnDateTimeFilter || $ctrl.$columnOptionsFilter || $scope.$parent.$ctrl;
-                    }
+                    };
                 }
             ]
         })
@@ -190,7 +189,6 @@
                 $component: '^tbGrid'
             },
             template: '<button class="btn btn-sm btn-default" ng-click="$ctrl.openColumnsSelector()">{{\'CAPTION_SELECTCOLUMNS\' | translate}}</button></div>',
-            transclude: true,
             controller: [
                 '$scope', '$uibModal', function ($scope, $modal) {
                     var $ctrl = this;
@@ -270,7 +268,6 @@
                 '<tb-column-filter-buttons></tb-column-filter-buttons>' +
                 '</form></div>' +
                 '</div>',
-            transclude: true,
             bindings: {
                 text: '@',
                 argument: '@',
@@ -282,9 +279,9 @@
                 '$scope', '$element', '$compile', '$filter', function ($scope, $element, $compile, $filter) {
                     var $ctrl = this;
 
-                    $ctrl.$onInit = function () {
+                    $ctrl.$onInit = function() {
                         setupFilter($scope, $element, $compile, $filter, $ctrl, null);
-                    }
+                    };
                 }
             ]
         })
@@ -307,13 +304,13 @@
             require: {
                 $component: '^tbGrid'
             },
-            template: '<div ngTransclude class="btn-group tubular-column-menu">' +
+            template: '<div class="tubular-column-menu">' +
                 '<button class="btn btn-xs btn-default btn-popover" ng-click="$ctrl.open()" ' +
                 'ng-class="{ \'btn-success\': $ctrl.filter.HasFilter }">' +
                 '<i class="fa fa-filter"></i></button>' +
                 '<div style="display: none;">' +
                 '<button type="button" class="close" data-dismiss="modal" ng-click="$ctrl.close()"><span aria-hidden="true">×</span></button>' +
-                '<h4>{{filterTitle}}</h4>' +
+                '<h4>{{$ctrl.filterTitle}}</h4>' +
                 '<form class="tubular-column-filter-form" onsubmit="return false;">' +
                 '<select class="form-control" ng-model="$ctrl.filter.Operator"></select>' +
                 '<input type="date" class="form-control" ng-model="$ctrl.filter.Text" ng-keypress="$ctrl.checkEvent($event)" />&nbsp;' +
@@ -323,7 +320,6 @@
                 '<tb-column-filter-buttons></tb-column-filter-buttons>' +
                 '</form></div>' +
                 '</div>',
-            transclude: true,
             bindings: {
                 text: '@',
                 argument: '@',
@@ -335,17 +331,17 @@
                 '$scope', '$element', '$compile', '$filter', function ($scope, $element, $compile, $filter) {
                     var $ctrl = this;
 
-                    $ctrl.$onInit = function () {
+                    $ctrl.$onInit = function() {
                         $ctrl.filter = {};
                         $ctrl.format = 'yyyy-MM-dd';
 
-                        setupFilter($scope, $element, $compile, $filter, $ctrl, function () {
+                        setupFilter($scope, $element, $compile, $filter, $ctrl, function() {
                             var inp = $element.find("input[type=date]")[0];
 
                             if (inp.type !== 'date') {
                                 $(inp).datepicker({
                                     dateFormat: scope.format.toLowerCase()
-                                }).on("dateChange", function (e) {
+                                }).on("dateChange", function(e) {
                                     scope.filter.Text = e.date;
                                 });
                             }
@@ -355,12 +351,12 @@
                             if (inpLev.type !== 'date') {
                                 $(inpLev).datepicker({
                                     dateFormat: scope.format.toLowerCase()
-                                }).on("dateChange", function (e) {
+                                }).on("dateChange", function(e) {
                                     scope.filter.Argument = [e.date];
                                 });
                             }
                         });
-                    }
+                    };
                 }
             ]
         })
@@ -395,7 +391,6 @@
                 '<tb-column-filter-buttons></tb-column-filter-buttons>' +
                 '</form></div>' +
                 '</div>',
-            transclude: true,
             bindings: {
                 text: '@',
                 argument: '@',
@@ -427,13 +422,13 @@
                             });
                     };
 
-                    $ctrl.$onInit = function () {
+                    $ctrl.$onInit = function() {
                         $ctrl.dataIsLoaded = false;
 
-                        setupFilter($scope, $element, $compile, $filter, $ctrl, function () {
+                        setupFilter($scope, $element, $compile, $filter, $ctrl, function() {
                             $ctrl.getOptionsFromUrl();
                         });
-                    }
+                    };
                 }
             ]
         });

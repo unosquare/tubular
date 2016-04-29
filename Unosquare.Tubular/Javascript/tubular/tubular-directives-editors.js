@@ -36,7 +36,6 @@
                 '<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">{{error}}</span>' +
                 '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help">{{$ctrl.help}}</span>' +
                 '</div>',
-            transclude: true,
             bindings: {
                 regex: '@?',
                 regexErrorMessage: '@?',
@@ -144,7 +143,6 @@
                 '<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">{{error}}</span>' +
                 '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help">{{$ctrl.help}}</span>' +
                 '</div>',
-            transclude: true,
             bindings: {
                 value: '=?',
                 isEditing: '=?',
@@ -225,7 +223,6 @@
                 '</span>' +
                 '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help">{{$ctrl.help}}</span>' +
                 '</div>',
-            transclude: true,
             bindings: {
                 value: '=?',
                 isEditing: '=?',
@@ -344,7 +341,6 @@
                 '</span>' +
                 '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help">{{$ctrl.help}}</span>' +
                 '</div>',
-            transclude: true,
             bindings: {
                 value: '=?',
                 isEditing: '=?',
@@ -463,7 +459,6 @@
                 '</span>' +
                 '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help">{{$ctrl.help}}</span>' +
                 '</div>',
-            transclude: true,
             bindings: {
                 value: '=?',
                 isEditing: '=?',
@@ -599,7 +594,6 @@
                 return {
                     restrict: 'E',
                     replace: true,
-                    transclude: true,
                     scope: {
                         value: '=?',
                         isEditing: '=?',
@@ -747,7 +741,6 @@
                 '</span>' +
                 '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help">{{help}}</span>' +
                 '</div>',
-            transclude: true,
             bindings: {
                 value: '=?',
                 isEditing: '=?',

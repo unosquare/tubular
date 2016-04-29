@@ -1,4 +1,4 @@
-(function () {
+(function (angular) {
     'use strict';
 
     angular.module('tubular-chart.directives', ['tubular.services', 'chart.js'])
@@ -82,7 +82,7 @@
                 }
             ]
         });
-})();
+})(window.angular);
 (function (factory) {
   'use strict';
   if (typeof exports === 'object') {

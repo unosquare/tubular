@@ -51,7 +51,7 @@
                     var order = params.Columns
                         .filter(function (el) { return el.SortOrder > 0; })
                         .sort(function (a, b) { return a.SortOrder - b.SortOrder; })
-                        .map(function (el) { return el.Name + " " + (el.SortDirection == "Descending" ? "desc" : ""); });
+                        .map(function (el) { return el.Name + " " + (el.SortDirection === "Descending" ? "desc" : ""); });
 
                     if (order.length > 0) {
                         url += "&$orderby=" + order.join(',');

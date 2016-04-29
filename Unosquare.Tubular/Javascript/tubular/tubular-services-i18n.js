@@ -1,4 +1,4 @@
-﻿(function() {
+﻿(function (angular) {
     'use strict';
 
     angular.module('tubular.services')
@@ -178,4 +178,4 @@
                 };
             }
         ]);
-})();
+})(window.angular);

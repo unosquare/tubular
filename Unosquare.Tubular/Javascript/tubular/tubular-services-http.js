@@ -8,7 +8,7 @@
          *
          * @description
          * Use `tubularHttp` to connect a grid or a form to a HTTP Resource. Internally this service is
-         * using `$http` to make all the connections.
+         * using `$http` to make all the request.
          * 
          * This service provides authentication using bearer-tokens. Based on https://bitbucket.org/david.antaramian/so-21662778-spa-authentication-example
          */

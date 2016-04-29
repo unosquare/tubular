@@ -29,7 +29,6 @@
                     '</span>' +
                     '<div>' +
                     '<div>',
-            transclude: false,
             bindings: {
                 minChars: '@?',
                 placeholder: '@'
@@ -98,7 +97,6 @@
                         '</button>',
                     restrict: 'E',
                     replace: true,
-                    transclude: true,
                     scope: {
                         model: '=',
                         caption: '@',
@@ -168,7 +166,6 @@
                         '</button></div>',
                     restrict: 'E',
                     replace: true,
-                    transclude: true,
                     scope: {
                         model: '=',
                         isNew: '=?',
@@ -238,7 +235,6 @@
             },
             template: '<button ng-click="$ctrl.edit()" class="btn btn-xs btn-default" ' +
                 'ng-hide="$ctrl.model.$isEditing">{{:: $ctrl.caption || (\'CAPTION_EDIT\' | translate) }}</button>',
-            transclude: true,
             bindings: {
                 model: '=',
                 caption: '@'
@@ -282,7 +278,6 @@
                 '</select>' +
                 '</div>' +
                 '</form></div>',
-            transclude: true,
             bindings: {
                 caption: '@',
                 css: '@',
@@ -322,7 +317,6 @@
                 '<li><a href="javascript:void(0)" ng-click="$ctrl.downloadAllCsv($parent)">{{:: $ctrl.captionMenuAll || (\'UI_ALLROWS\' | translate)}}</a></li>' +
                 '</ul>' +
                 '</div>',
-            transclude: true,
             bindings: {
                 filename: '@',
                 css: '@',
@@ -363,7 +357,6 @@
             template: '<button class="btn btn-default btn-sm" ng-click="$ctrl.printGrid()">' +
                 '<span class="fa fa-print"></span>&nbsp;{{$ctrl.caption || (\'CAPTION_PRINT\' | translate)}}' +
                 '</button>',
-            transclude: true,
             bindings: {
                 title: '@',
                 printCss: '@',

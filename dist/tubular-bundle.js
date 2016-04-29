@@ -412,7 +412,7 @@ try {
 } catch (e) {
     // Ignore
 }
-(function() {
+(function (angular) {
     'use strict';
 
     /**
@@ -437,14 +437,6 @@ try {
                 tubularHttp.registerService('local', tubularLocalData);
             }
         ])
-        /**
-         * @ngdoc constants
-         * @name tubularConst
-         *
-         * @description
-         * The `tubularConst` holds some UI constants.
-         */
-        .constant("tubularConst", {})
         /**
          * @ngdoc filter
          * @name errormessage
@@ -493,44 +485,8 @@ try {
                     return $filter('number')(input, fractionSize);
                 };
             }
-        ])
-        /**
-         * @ngdoc filter
-         * @name characters
-         * @kind function
-         *
-         * @description
-         * `characters` filter truncates a sentence to a number of characters.
-         * 
-         * Based on https://github.com/sparkalow/angular-truncate/blob/master/src/truncate.js
-         */
-        .filter('characters', function() {
-            return function(input, chars, breakOnWord) {
-                if (isNaN(chars)) return input;
-                if (chars <= 0) return '';
-
-                if (input && input.length > chars) {
-                    input = input.substring(0, chars);
-
-                    if (!breakOnWord) {
-                        var lastspace = input.lastIndexOf(' ');
-
-                        //get last space
-                        if (lastspace !== -1) {
-                            input = input.substr(0, lastspace);
-                        }
-                    } else {
-                        while (input.charAt(input.length - 1) === ' ') {
-                            input = input.substr(0, input.length - 1);
-                        }
-                    }
-                    return input + '…';
-                }
-
-                return input;
-            };
-        });
-})();
+        ]);
+})(window.angular);
 (function (angular) {
     'use strict';
 
@@ -1547,7 +1503,6 @@ try {
                 '<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">{{error}}</span>' +
                 '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help">{{$ctrl.help}}</span>' +
                 '</div>',
-            transclude: true,
             bindings: {
                 regex: '@?',
                 regexErrorMessage: '@?',
@@ -1655,7 +1610,6 @@ try {
                 '<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">{{error}}</span>' +
                 '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help">{{$ctrl.help}}</span>' +
                 '</div>',
-            transclude: true,
             bindings: {
                 value: '=?',
                 isEditing: '=?',
@@ -1736,7 +1690,6 @@ try {
                 '</span>' +
                 '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help">{{$ctrl.help}}</span>' +
                 '</div>',
-            transclude: true,
             bindings: {
                 value: '=?',
                 isEditing: '=?',
@@ -1855,7 +1808,6 @@ try {
                 '</span>' +
                 '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help">{{$ctrl.help}}</span>' +
                 '</div>',
-            transclude: true,
             bindings: {
                 value: '=?',
                 isEditing: '=?',
@@ -1974,7 +1926,6 @@ try {
                 '</span>' +
                 '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help">{{$ctrl.help}}</span>' +
                 '</div>',
-            transclude: true,
             bindings: {
                 value: '=?',
                 isEditing: '=?',
@@ -1989,7 +1940,8 @@ try {
                 optionsUrl: '@',
                 optionsMethod: '@?',
                 optionLabel: '@?',
-                optionKey: '@?'
+                optionKey: '@?',
+                optionTrack: '@?'
             },
             controller: [
                 'tubularEditorService', '$scope', function(tubularEditorService, $scope) {
@@ -2003,8 +1955,13 @@ try {
                         if (angular.isDefined($ctrl.optionLabel)) {
                             $ctrl.selectOptions = "d." + $ctrl.optionLabel + " for d in options";
 
-                            if (angular.isDefined($ctrl.optionKey)) {
-                                $ctrl.selectOptions = 'd.' + $ctrl.optionKey + ' as ' + $ctrl.selectOptions;
+                            if (angular.isDefined($ctrl.optionTrack)) {
+                                $scope.selectOptions = 'd as d.' + scope.optionLabel + ' for d in options track by d.' + $scope.optrionTrack;
+                            }
+                            else {
+                                if (angular.isDefined($ctrl.optionKey)) {
+                                    $ctrl.selectOptions = 'd.' + $ctrl.optionKey + ' as ' + $ctrl.selectOptions;
+                                }
                             }
                         }
 
@@ -2104,7 +2061,6 @@ try {
                 return {
                     restrict: 'E',
                     replace: true,
-                    transclude: true,
                     scope: {
                         value: '=?',
                         isEditing: '=?',
@@ -2252,7 +2208,6 @@ try {
                 '</span>' +
                 '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help">{{help}}</span>' +
                 '</div>',
-            transclude: true,
             bindings: {
                 value: '=?',
                 isEditing: '=?',
@@ -2524,7 +2479,6 @@ try {
                       'ng-disabled="$ctrl.currentFilter.filter.Operator == \'None\'">{{\'CAPTION_APPLY\' | translate}}</a>&nbsp;' +
                       '<button class="btn btn-sm btn-danger" ng-click="$ctrl.currentFilter.clearFilter()">{{\'CAPTION_CLEAR\' | translate}}</button>' +
                       '</div>',
-            transclude: true,
             controller: ['$scope',
                 function ($scope) {
                     var $ctrl = this;
@@ -2549,7 +2503,6 @@ try {
                 $component: '^tbGrid'
             },
             template: '<button class="btn btn-sm btn-default" ng-click="$ctrl.openColumnsSelector()">{{\'CAPTION_SELECTCOLUMNS\' | translate}}</button></div>',
-            transclude: true,
             controller: [
                 '$scope', '$uibModal', function ($scope, $modal) {
                     var $ctrl = this;
@@ -2629,7 +2582,6 @@ try {
                 '<tb-column-filter-buttons></tb-column-filter-buttons>' +
                 '</form></div>' +
                 '</div>',
-            transclude: true,
             bindings: {
                 text: '@',
                 argument: '@',
@@ -2666,13 +2618,13 @@ try {
             require: {
                 $component: '^tbGrid'
             },
-            template: '<div ngTransclude class="btn-group tubular-column-menu">' +
+            template: '<div class="tubular-column-menu">' +
                 '<button class="btn btn-xs btn-default btn-popover" ng-click="$ctrl.open()" ' +
                 'ng-class="{ \'btn-success\': $ctrl.filter.HasFilter }">' +
                 '<i class="fa fa-filter"></i></button>' +
                 '<div style="display: none;">' +
                 '<button type="button" class="close" data-dismiss="modal" ng-click="$ctrl.close()"><span aria-hidden="true">×</span></button>' +
-                '<h4>{{filterTitle}}</h4>' +
+                '<h4>{{$ctrl.filterTitle}}</h4>' +
                 '<form class="tubular-column-filter-form" onsubmit="return false;">' +
                 '<select class="form-control" ng-model="$ctrl.filter.Operator"></select>' +
                 '<input type="date" class="form-control" ng-model="$ctrl.filter.Text" ng-keypress="$ctrl.checkEvent($event)" />&nbsp;' +
@@ -2682,7 +2634,6 @@ try {
                 '<tb-column-filter-buttons></tb-column-filter-buttons>' +
                 '</form></div>' +
                 '</div>',
-            transclude: true,
             bindings: {
                 text: '@',
                 argument: '@',
@@ -2754,7 +2705,6 @@ try {
                 '<tb-column-filter-buttons></tb-column-filter-buttons>' +
                 '</form></div>' +
                 '</div>',
-            transclude: true,
             bindings: {
                 text: '@',
                 argument: '@',
@@ -2959,6 +2909,7 @@ try {
                                             }
 
                                             $scope.$emit('tbForm_OnSuccessfulSave', data, $scope);
+                                            $scope.clear();
                                         }, function (error) {
                                             $scope.$emit('tbForm_OnConnectionError', error, $scope);
                                         })
@@ -2979,6 +2930,7 @@ try {
 
                             $scope.cancel = function () {
                                 $scope.$emit('tbForm_OnCancel', $scope.model);
+                                $scope.clear();
                             };
 
                             $scope.clear = function () {
@@ -3457,7 +3409,6 @@ try {
                     'items-per-page="$ctrl.$component.pageSize" max-size="5" ng-model="$ctrl.$component.currentPage" ng-change="$ctrl.pagerPageChanged()">' +
                     '</uib-pagination>' +
                     '<div>',
-            transclude: false,
             scope: true,
             terminal: false,
             controller: [
@@ -3465,7 +3416,7 @@ try {
                     var $ctrl = this;
 
                     $scope.$watch('$ctrl.$component.currentPage', function () {
-                        if ($ctrl.$component.currentPage != $ctrl.$component.requestedPage) {
+                        if ($ctrl.$component.currentPage !== $ctrl.$component.requestedPage) {
                             $ctrl.$component.requestedPage = $ctrl.$component.currentPage;
                         }
                     });
@@ -3493,6 +3444,7 @@ try {
                             $(allLinks[allLinks.length - 1]).html('<i class="' + $ctrl.lastButtonClass + '"></i>');
                         }, 0);
 
+                        // TODO: Change to proper destoy component event
                         $scope.$on('$destroy', function () { $timeout.cancel(timer); });
                     };
                 }
@@ -3515,7 +3467,6 @@ try {
                 '<span ng-show="$ctrl.filtered">' +
                 '{{\'UI_FILTEREDRECORDS\' | translate: $ctrl.$component.totalRecordCount}}</span>' +
                 '</div>',
-            transclude: true,
             bindings: {
                 cssClass: '@?'
             },
@@ -4140,7 +4091,7 @@ try {
          *
          * @description
          * Use `tubularHttp` to connect a grid or a form to a HTTP Resource. Internally this service is
-         * using `$http` to make all the connections.
+         * using `$http` to make all the request.
          * 
          * This service provides authentication using bearer-tokens. Based on https://bitbucket.org/david.antaramian/so-21662778-spa-authentication-example
          */
@@ -4792,7 +4743,7 @@ try {
                     var order = params.Columns
                         .filter(function (el) { return el.SortOrder > 0; })
                         .sort(function (a, b) { return a.SortOrder - b.SortOrder; })
-                        .map(function (el) { return el.Name + " " + (el.SortDirection == "Descending" ? "desc" : ""); });
+                        .map(function (el) { return el.Name + " " + (el.SortDirection === "Descending" ? "desc" : ""); });
 
                     if (order.length > 0) {
                         url += "&$orderby=" + order.join(',');
@@ -4939,7 +4890,7 @@ try {
             }
         ]);
 })();
-(function() {
+(function (angular) {
     'use strict';
 
     angular.module('tubular.services')
@@ -5119,7 +5070,7 @@ try {
                 };
             }
         ]);
-})();
+})(window.angular);
 /**
  * Usage example
  * var

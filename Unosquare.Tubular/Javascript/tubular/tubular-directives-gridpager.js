@@ -21,7 +21,6 @@
                     'items-per-page="$ctrl.$component.pageSize" max-size="5" ng-model="$ctrl.$component.currentPage" ng-change="$ctrl.pagerPageChanged()">' +
                     '</uib-pagination>' +
                     '<div>',
-            transclude: false,
             scope: true,
             terminal: false,
             controller: [
@@ -29,7 +28,7 @@
                     var $ctrl = this;
 
                     $scope.$watch('$ctrl.$component.currentPage', function () {
-                        if ($ctrl.$component.currentPage != $ctrl.$component.requestedPage) {
+                        if ($ctrl.$component.currentPage !== $ctrl.$component.requestedPage) {
                             $ctrl.$component.requestedPage = $ctrl.$component.currentPage;
                         }
                     });
@@ -57,6 +56,7 @@
                             $(allLinks[allLinks.length - 1]).html('<i class="' + $ctrl.lastButtonClass + '"></i>');
                         }, 0);
 
+                        // TODO: Change to proper destoy component event
                         $scope.$on('$destroy', function () { $timeout.cancel(timer); });
                     };
                 }
@@ -79,7 +79,6 @@
                 '<span ng-show="$ctrl.filtered">' +
                 '{{\'UI_FILTEREDRECORDS\' | translate: $ctrl.$component.totalRecordCount}}</span>' +
                 '</div>',
-            transclude: true,
             bindings: {
                 cssClass: '@?'
             },

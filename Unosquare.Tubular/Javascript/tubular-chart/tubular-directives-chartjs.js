@@ -1,4 +1,4 @@
-﻿(function () {
+﻿(function (angular) {
     'use strict';
 
     angular.module('tubular-chart.directives', ['tubular.services', 'chart.js'])
@@ -82,4 +82,4 @@
                 }
             ]
         });
-})();
+})(window.angular);
