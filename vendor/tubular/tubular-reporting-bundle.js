@@ -1,4 +1,4 @@
-(function() {
+(function (angular) {
     'use strict';
 
     angular.module('tubular-reporting.directives', ['tubular.services'])
@@ -38,7 +38,6 @@
                     controller: [
                         '$scope', 'tubularHttp', 'localStorageService',
                         function($scope, tubularHttp, localStorageService) {
-                            $scope.tubularDirective = 'tubular-reporting';
                             $scope.isShowing = true;
                             $scope.showLoading = true;
 
@@ -241,4 +240,4 @@
                 $sceDelegateProvider.resourceUrlWhitelist(['self', 'blob:**']);
             }
         ]);
-})();
+})(window.angular);

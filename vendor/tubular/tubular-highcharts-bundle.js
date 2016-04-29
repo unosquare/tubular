@@ -1,16 +1,13 @@
-(function() {
+(function (angular) {
     'use strict';
 
     angular.module('tubular-hchart.directives', ['tubular.services', 'highcharts-ng'])
         /**
-         * @ngdoc directive
+         * @ngdoc component
          * @name tbHighcharts
-         * @restrict E
          *
          * @description
-         * The `tbHighcharts` directive is the base to create any Highcharts component.
-         * 
-         * @scope
+         * The `tbHighcharts` component is the base to create any Highcharts component.
          * 
          * @param {string} serverUrl Set the HTTP URL where the data comes.
          * @param {string} chartName Defines the chart name.
@@ -22,135 +19,130 @@
          * @param {string} errorMessage The error message.
          * @param {object} options The Highcharts options method.
          */
-        .directive('tbHighcharts', [
-            function() {
-                return {
-                    template: '<div class="tubular-chart">' +
-                        '<highchart config="options" ng-hide="isEmpty || hasError">' +
-                        '</highchart>' +
-                        '<div class="alert alert-info" ng-show="isEmpty">{{emptyMessage}}</div>' +
-                        '<div class="alert alert-warning" ng-show="hasError">{{errorMessage}}</div>' +
-                        '</div>',
-                    restrict: 'E',
-                    replace: true,
-                    scope: {
-                        serverUrl: '@',
-                        title: '@?',
-                        requireAuthentication: '=?',
-                        name: '@?chartName',
-                        chartType: '@?',
-                        emptyMessage: '@?',
-                        errorMessage: '@?',
-                        onLoad: '=?',
-                        options: '=?',
-                        onClick: '=?'
-                    },
-                    controller: [
-                        '$scope', 'tubularHttp', '$timeout',
-                        function($scope, tubularHttp, $timeout) {
-                            $scope.tubularDirective = 'tubular-chart';
-                            $scope.dataService = tubularHttp.getDataService($scope.dataServiceName);
-                            $scope.showLegend = angular.isUndefined($scope.showLegend) ? true : $scope.showLegend;
-                            $scope.chartType = $scope.chartType || 'line';
+        .component('tbHighcharts', {
+            template: '<div class="tubular-chart">' +
+                '<highchart config="$ctrl.options" ng-hide="$ctrl.isEmpty || $ctrl.hasError">' +
+                '</highchart>' +
+                '<div class="alert alert-info" ng-show="$ctrl.isEmpty">{{$ctrl.emptyMessage}}</div>' +
+                '<div class="alert alert-warning" ng-show="$ctrl.hasError">{{$ctrl.errorMessage}}</div>' +
+                '</div>',
+            bindings: {
+                serverUrl: '@',
+                title: '@?',
+                requireAuthentication: '=?',
+                name: '@?chartName',
+                chartType: '@?',
+                emptyMessage: '@?',
+                errorMessage: '@?',
+                onLoad: '=?',
+                options: '=?',
+                onClick: '=?'
+            },
+            controller: [
+                '$scope', 'tubularHttp', '$timeout',
+                function ($scope, tubularHttp, $timeout) {
+                    var $ctrl = this;
 
-                            $scope.options = angular.extend({}, $scope.options, {
-                                options: {
-                                    chart: { type: $scope.chartType },
-                                    plotOptions: {
-                                        pie: {
-                                            point: {
-                                                events: {
-                                                    click: ($scope.onClick || angular.noop)
-                                                }
-                                            }
-                                        },
-                                        series: {
-                                            point: {
-                                                events: {
-                                                    click: ($scope.onClick || angular.noop)
-                                                }
-                                            }
+                    $ctrl.dataService = tubularHttp.getDataService($ctrl.dataServiceName);
+                    $ctrl.showLegend = angular.isUndefined($ctrl.showLegend) ? true : $ctrl.showLegend;
+                    $ctrl.chartType = $ctrl.chartType || 'line';
+
+                    $ctrl.options = angular.extend({}, $ctrl.options, {
+                        options: {
+                            chart: { type: $ctrl.chartType },
+                            plotOptions: {
+                                pie: {
+                                    point: {
+                                        events: {
+                                            click: ($ctrl.onClick || angular.noop)
                                         }
                                     }
                                 },
-                                title: { text: $scope.title || '' },
-                                xAxis: {
-                                    categories: []
-                                },
-                                yAxis: {},
-                                series: []
-                            });
-
-                            // Setup require authentication
-                            $scope.requireAuthentication = angular.isUndefined($scope.requireAuthentication) ? true : $scope.requireAuthentication;
-
-                            $scope.loadData = function() {
-                                tubularHttp.setRequireAuthentication($scope.requireAuthentication);
-                                $scope.hasError = false;
-
-                                tubularHttp.get($scope.serverUrl).promise.then(function(data) {
-                                    if (!data || !data.Data || data.Data.length === 0) {
-                                        $scope.isEmpty = true;
-                                        $scope.options.series = [{ data: [] }];
-
-                                        if ($scope.onLoad) {
-                                            $scope.onLoad($scope.options, {});
+                                series: {
+                                    point: {
+                                        events: {
+                                            click: ($ctrl.onClick || angular.noop)
                                         }
-
-                                        return;
                                     }
+                                }
+                            }
+                        },
+                        title: { text: $ctrl.title || '' },
+                        xAxis: {
+                            categories: []
+                        },
+                        yAxis: {},
+                        series: []
+                    });
 
-                                    $scope.isEmpty = false;
+                    // Setup require authentication
+                    $ctrl.requireAuthentication = angular.isUndefined($ctrl.requireAuthentication) ? true : $ctrl.requireAuthentication;
 
-                                    if (data.Series) {
-                                        $scope.options.xAxis.categories = data.Labels;
-                                        $scope.options.series = data.Series.map(function(el, ix) {
-                                            return {
-                                                name: el,
-                                                data: data.Data[ix]
-                                            };
-                                        });
-                                    } else {
-                                        var uniqueSerie = data.Labels.map(function(el, ix) {
-                                            return {
-                                                name: el,
-                                                y: data.Data[ix]
-                                            };
-                                        });
+                    $ctrl.loadData = function () {
+                        tubularHttp.setRequireAuthentication($ctrl.requireAuthentication);
+                        $ctrl.hasError = false;
 
-                                        $scope.options.series = [{ name: data.SerieName || '', data: uniqueSerie, showInLegend: (data.SerieName || '') != '' }];
-                                    }
+                        tubularHttp.get($ctrl.serverUrl).promise.then(function (data) {
+                            if (!data || !data.Data || data.Data.length === 0) {
+                                $ctrl.isEmpty = true;
+                                $ctrl.options.series = [{ data: [] }];
 
-                                    if ($scope.onLoad) {
-                                        $timeout(function() {
-                                            $scope.onLoad($scope.options, {}, $scope.options.getHighcharts().series);
-                                        }, 100);
+                                if ($ctrl.onLoad) {
+                                    $ctrl.onLoad($ctrl.options, {});
+                                }
 
-                                        $scope.onLoad($scope.options, {}, null);
-                                    }
-                                }, function(error) {
-                                    $scope.$emit('tbChart_OnConnectionError', error);
-                                    $scope.hasError = true;
+                                return;
+                            }
+
+                            $ctrl.isEmpty = false;
+
+                            if (data.Series) {
+                                $ctrl.options.xAxis.categories = data.Labels;
+                                $ctrl.options.series = data.Series.map(function (el, ix) {
+                                    return {
+                                        name: el,
+                                        data: data.Data[ix]
+                                    };
                                 });
-                            };
+                            } else {
+                                var uniqueSerie = data.Labels.map(function (el, ix) {
+                                    return {
+                                        name: el,
+                                        y: data.Data[ix]
+                                    };
+                                });
 
-                            $scope.$watch('serverUrl', function(val) {
-                                if (angular.isDefined(val) && val != null && val != '') {
-                                    $scope.loadData();
-                                }
-                            });
+                                $ctrl.options.series = [{ name: data.SerieName || '', data: uniqueSerie, showInLegend: (data.SerieName || '') != '' }];
+                            }
 
-                            $scope.$watch('chartType', function(val) {
-                                if (angular.isDefined(val) && val != null) {
-                                    $scope.options.options.chart.type = val;
-                                }
-                            });
+                            if ($ctrl.onLoad) {
+                                $timeout(function () {
+                                    $ctrl.onLoad($ctrl.options, {}, $ctrl.options.getHighcharts().series);
+                                }, 100);
+
+                                $ctrl.onLoad($ctrl.options, {}, null);
+                            }
+                        }, function (error) {
+                            $scope.$emit('tbChart_OnConnectionError', error);
+                            $ctrl.hasError = true;
+                        });
+                    };
+
+                    $scope.$watch('$ctrl.serverUrl', function (val) {
+                        if (angular.isDefined(val) && val != null && val != '') {
+                            $ctrl.loadData();
                         }
-                    ]
-                };
-            }
-        ]);
-})();
+                    });
+
+                    $scope.$watch('$ctrl.chartType', function (val) {
+                        if (angular.isDefined(val) && val != null) {
+                            $ctrl.options.options.chart.type = val;
+                        }
+                    });
+                }
+            ]
+        });
+})(window.angular);
 /**
  * highcharts-ng
  * @version v0.0.9-dev - 2015-02-25
