@@ -47,7 +47,7 @@ You will need to reference the following JS libraries in order to use Tubular in
 
 * [jQuery](http://jquery.com/) - 2.1.4
 * [Twitter Bootstrap](http://getbootstrap.com/)
-* [AngularJS (optionally Animate and Route)](https://angularjs.org/) - 1.5.3
+* [AngularJS (optionally Animate and Route)](https://angularjs.org/) - 1.5
 * [AngularJS UI Bootstrap](https://angular-ui.github.io/bootstrap/) - 1.3
 * [AngularJS Local Storage](https://github.com/grevory/angular-local-storage)
 * [Font Awesome](http://fortawesome.github.io/Font-Awesome/)

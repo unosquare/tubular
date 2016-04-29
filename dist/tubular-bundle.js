@@ -3340,7 +3340,7 @@ try {
             }
         });
 })(window.angular);
-(function() {
+(function (angular) {
     'use strict';
 
     angular.module('tubular.directives')
@@ -3441,7 +3441,7 @@ try {
                 }
             ]
         });
-})();
+})(window.angular);
 (function (angular) {
     'use strict';
 
