@@ -1,15 +1,29 @@
-describe('tubularPager', function() {
+
+// This protractor scen file tests tbPager component and the page navigation behaviour
+// that is related with it. 
+
+// It is assumed throughout the test that the data received for the main tbGrid
+// component at the related HTML file (tbPager_test.html) is static and constrained
+// to 153 records with consecutive ID's.
+
+describe('tbPager', function() {
     var tbGridPager, li_navListElements;
     
-    beforeEach(function(){
+    beforeAll(function(){
+        // Go to test
         browser.get('index.html');
-        
-        tbGridPager = element(by.tagName('tb-grid-pager'));
-        li_navListElements = tbGridPager.all(by.tagName('li'));
+        element(by.id('testsSelector')).click();
+        element(by.id('tbPagerTest')).click();
         
         // Select '10' on tbPageSizeSelector
         var pageSizeDropDown = element(by.model('$ctrl.$component.pageSize'));
         pageSizeDropDown.$('[value="number:10"]').click();
+    });
+    
+    beforeEach(function(){
+        // Get main pager elements
+        tbGridPager = element(by.tagName('tb-grid-pager'));
+        li_navListElements = tbGridPager.all(by.tagName('li'));
     })
     
     describe('navigation buttons', function(){
