@@ -44,6 +44,7 @@
     "jasmine-core": "^2.4.1",
     "karma": "^0.13.22",
     "karma-chrome-launcher": "^0.2.3",
+    "karma-firefox-launcher": "^0.1.7",
     "karma-jasmine": "^0.3.8",
     "karma-junit-reporter": "^0.4.2",
     "mocha": "^2.2.4",
@@ -68,5 +69,4 @@
 
     "update-index-async": "node -e \"require('shelljs/global'); sed('-i', /\\/\\/@@NG_LOADER_START@@[\\s\\S]*\\/\\/@@NG_LOADER_END@@/, '//@@NG_LOADER_START@@\\n' + sed(/sourceMappingURL=angular-loader.min.js.map/,'sourceMappingURL=bower_components/angular-loader/angular-loader.min.js.map','app/bower_components/angular-loader/angular-loader.min.js') + '\\n//@@NG_LOADER_END@@', 'app/index-async.html');\""
   }
-
 }
