@@ -1,0 +1,56 @@
+<tb-grid server-url="http://tubular.azurewebsites.net/api/orders/paged" request-method="POST" grid-name="sampleshap1"
+         page-size="10" require-authentication="false">
+    <div class="row">
+        <tb-grid-pager class="col-md-6 col-xs-12"></tb-grid-pager>
+        <tb-page-size-selector class="col-md-3 col-xs-6" selectorcss="input-sm">
+        </tb-page-size-selector>
+        <tb-grid-pager-info class="col-md-3 col-xs-6"></tb-grid-pager-info>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default panel-rounded">
+                <tb-grid-table class="table-bordered">
+                    <tb-column-definitions>
+                        <tb-column name="OrderID" column-type="numeric">
+                            <tb-column-header>
+                                <span>{{label}}</span>
+                            </tb-column-header>
+                        </tb-column>
+                        <tb-column name="CustomerName" searchable="true">
+                            <tb-column-header>
+                                <span>{{label}}</span>
+                            </tb-column-header>
+                        </tb-column>
+                        <tb-column name="ShippedDate">
+                            <tb-column-header>
+                                <span>{{label}}</span>
+                            </tb-column-header>
+                        </tb-column>
+                        <tb-column name="ShipperCity">
+                            <tb-column-header>
+                                <span>{{label}}</span>
+                            </tb-column-header>
+                        </tb-column>
+                    </tb-column-definitions>
+                    <tb-row-set>
+                        <tb-row-template ng-repeat="row in $component.rows"
+                                         row-model="row" selectable="false">
+                            <tb-cell-template>
+                                {{row.OrderID}}
+                            </tb-cell-template>
+                            <tb-cell-template>
+                                {{row.CustomerName}}
+                            </tb-cell-template>
+                            <tb-cell-template>
+                                {{row.ShippedDate | date: 'short'}}
+                            </tb-cell-template>
+                            <tb-cell-template>
+                                {{row.ShipperCity}}
+                            </tb-cell-template>
+                        </tb-row-template>
+                    </tb-row-set>
+                </tb-grid-table>
+            </div>
+        </div>
+    </div>
+</tb-grid>
