@@ -14,6 +14,7 @@
         /**
         * @ngdoc factory
         * @name tubularModel
+        * @module tubular.models
         *
         * @description
         * The `tubularModel` factory is the base to generate a row model to use with `tbGrid` and `tbForm`.

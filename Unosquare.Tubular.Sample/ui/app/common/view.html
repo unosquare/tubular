@@ -105,9 +105,9 @@
                                                        min="0" max="100" required="true">
                                     </tb-numeric-editor>
                                 </tb-cell-template>
-                                <tb-cell-template class="text-right col-md-3">
-                                    <tb-date-time-editor value="$component.tempRow.ShippedDate">
-                                    </tb-date-time-editor>
+                                <tb-cell-template class="text-right col-md-3 cell-menu">
+                                    <tb-date-editor value="$component.tempRow.ShippedDate">
+                                    </tb-date-editor>
                                 </tb-cell-template>
                                 <tb-cell-template class="text-center">
                                     <span class="small">You can't tag this order yet.</span>
@@ -154,7 +154,7 @@
                                                        format="C" min="1" max="100" required="true">
                                     </tb-numeric-editor>
                                 </tb-cell-template>
-                                <tb-cell-template class="text-right" column-name="ShippedDate">
+                                <tb-cell-template class="text-right cell-menu" column-name="ShippedDate">
                                     <tb-date-editor is-editing="row.$isEditing" name="ShippedDate">
                                     </tb-date-editor>
                                 </tb-cell-template>

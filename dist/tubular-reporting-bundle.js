@@ -38,7 +38,6 @@
                     controller: [
                         '$scope', 'tubularHttp', 'localStorageService',
                         function($scope, tubularHttp, localStorageService) {
-                            $scope.tubularDirective = 'tubular-reporting';
                             $scope.isShowing = true;
                             $scope.showLoading = true;
 

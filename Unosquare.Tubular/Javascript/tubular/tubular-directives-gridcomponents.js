@@ -5,6 +5,7 @@
         /**
          * @ngdoc component
          * @name tbTextSearch
+         * @module tubular.directives
          *
          * @description
          * The `tbTextSearch` is visual component to enable free-text search in a grid.
@@ -28,7 +29,6 @@
                     '</span>' +
                     '<div>' +
                     '<div>',
-            transclude: false,
             bindings: {
                 minChars: '@?',
                 placeholder: '@'
@@ -75,6 +75,7 @@
         /**
          * @ngdoc directive
          * @name tbRemoveButton
+         * @module tubular.directives
          * @restrict E
          *
          * @description
@@ -96,7 +97,6 @@
                         '</button>',
                     restrict: 'E',
                     replace: true,
-                    transclude: true,
                     scope: {
                         model: '=',
                         caption: '@',
@@ -136,6 +136,7 @@
         /**
          * @ngdoc directive
          * @name tbSaveButton
+         * @module tubular.directives
          * @restrict E
          *
          * @description
@@ -165,7 +166,6 @@
                         '</button></div>',
                     restrict: 'E',
                     replace: true,
-                    transclude: true,
                     scope: {
                         model: '=',
                         isNew: '=?',
@@ -221,6 +221,7 @@
         /**
          * @ngdoc component
          * @name tbEditButton
+         * @module tubular.directives
          *
          * @description
          * The `tbEditButton` component is visual helper to create an Edit button.
@@ -234,7 +235,6 @@
             },
             template: '<button ng-click="$ctrl.edit()" class="btn btn-xs btn-default" ' +
                 'ng-hide="$ctrl.model.$isEditing">{{:: $ctrl.caption || (\'CAPTION_EDIT\' | translate) }}</button>',
-            transclude: true,
             bindings: {
                 model: '=',
                 caption: '@'
@@ -256,6 +256,7 @@
         /**
          * @ngdoc component
          * @name tbPageSizeSelector
+         * @module tubular.directives
          *
          * @description
          * The `tbPageSizeSelector` component is visual helper to render a dropdown to allow user select how many rows by page.
@@ -277,7 +278,6 @@
                 '</select>' +
                 '</div>' +
                 '</form></div>',
-            transclude: true,
             bindings: {
                 caption: '@',
                 css: '@',
@@ -293,6 +293,7 @@
         /**
          * @ngdoc component
          * @name tbExportButton
+         * @module tubular.directives
          *
          * @description
          * The `tbExportButton` component is visual helper to render a button to export grid to CSV format.
@@ -316,7 +317,6 @@
                 '<li><a href="javascript:void(0)" ng-click="$ctrl.downloadAllCsv($parent)">{{:: $ctrl.captionMenuAll || (\'UI_ALLROWS\' | translate)}}</a></li>' +
                 '</ul>' +
                 '</div>',
-            transclude: true,
             bindings: {
                 filename: '@',
                 css: '@',
@@ -341,6 +341,7 @@
         /**
          * @ngdoc component
          * @name tbPrintButton
+         * @module tubular.directives
          *
          * @description
          * The `tbPrintButton` component is visual helper to render a button to print the `tbGrid`.
@@ -356,7 +357,6 @@
             template: '<button class="btn btn-default btn-sm" ng-click="$ctrl.printGrid()">' +
                 '<span class="fa fa-print"></span>&nbsp;{{$ctrl.caption || (\'CAPTION_PRINT\' | translate)}}' +
                 '</button>',
-            transclude: true,
             bindings: {
                 title: '@',
                 printCss: '@',

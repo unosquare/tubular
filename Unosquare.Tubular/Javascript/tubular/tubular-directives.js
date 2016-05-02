@@ -4,6 +4,7 @@
     /**
      * @ngdoc module
      * @name tubular.directives
+     * @module tubular.directives
      * 
      * @description 
      * Tubular Directives and Components module.
@@ -499,6 +500,7 @@
         /**
          * @ngdoc directive
          * @name tbGridTable
+         * @module tubular.directives
          * @restrict E
          *
          * @description
@@ -530,6 +532,7 @@
         /**
          * @ngdoc directive
          * @name tbColumnDefinitions
+         * @module tubular.directives
          * @restrict E
          *
          * @description
@@ -568,6 +571,7 @@
         /**
          * @ngdoc directive
          * @name tbColumn
+         * @module tubular.directives
          * @restrict E
          *
          * @description
@@ -637,7 +641,7 @@
                             var column = new function () {
                                 this.Name = $scope.name || null;
                                 this.Label = $scope.label || null;
-                                this.Sortable = $scope.sortable === "true";
+                                this.Sortable = $scope.sortable;
                                 this.SortOrder = parseInt($scope.sortOrder) || -1;
                                 this.SortDirection = function () {
                                     if (angular.isUndefined($scope.sortDirection)) {
@@ -662,64 +666,6 @@
                                 this.IsGrouping = $scope.isGrouping === "true";
                                 this.Aggregate = $scope.aggregate || "none";
                                 this.MetaAggregate = $scope.metaAggregate || "none";
-
-                                this.FilterOperators = {
-                                    'string': {
-                                        'None': $filter('translate')('OP_NONE'),
-                                        'Equals': $filter('translate')('OP_EQUALS'),
-                                        'NotEquals': $filter('translate')('OP_NOTEQUALS'),
-                                        'Contains': $filter('translate')('OP_CONTAINS'),
-                                        'NotContains': $filter('translate')('OP_NOTCONTAINS'),
-                                        'StartsWith': $filter('translate')('OP_STARTSWITH'),
-                                        'NotStartsWith': $filter('translate')('OP_NOTSTARTSWITH'),
-                                        'EndsWith': $filter('translate')('OP_ENDSWITH'),
-                                        'NotEndsWith': $filter('translate')('OP_NOTENDSWITH')
-                                    },
-                                    'numeric': {
-                                        'None': $filter('translate')('OP_NONE'),
-                                        'Equals': $filter('translate')('OP_EQUALS'),
-                                        'Between': $filter('translate')('OP_BETWEEN'),
-                                        'Gte': '>=',
-                                        'Gt': '>',
-                                        'Lte': '<=',
-                                        'Lt': '<'
-                                    },
-                                    'date': {
-                                        'None': $filter('translate')('OP_NONE'),
-                                        'Equals': $filter('translate')('OP_EQUALS'),
-                                        'NotEquals': $filter('translate')('OP_NOTEQUALS'),
-                                        'Between': $filter('translate')('OP_BETWEEN'),
-                                        'Gte': '>=',
-                                        'Gt': '>',
-                                        'Lte': '<=',
-                                        'Lt': '<'
-                                    },
-                                    'datetime': {
-                                        'None': $filter('translate')('OP_NONE'),
-                                        'Equals': $filter('translate')('OP_EQUALS'),
-                                        'NotEquals': $filter('translate')('OP_NOTEQUALS'),
-                                        'Between': $filter('translate')('OP_BETWEEN'),
-                                        'Gte': '>=',
-                                        'Gt': '>',
-                                        'Lte': '<=',
-                                        'Lt': '<'
-                                    },
-                                    'datetimeutc': {
-                                        'None': $filter('translate')('OP_NONE'),
-                                        'Equals': $filter('translate')('OP_EQUALS'),
-                                        'NotEquals': $filter('translate')('OP_NOTEQUALS'),
-                                        'Between': $filter('translate')('OP_BETWEEN'),
-                                        'Gte': '>=',
-                                        'Gt': '>',
-                                        'Lte': '<=',
-                                        'Lt': '<'
-                                    },
-                                    'boolean': {
-                                        'None': $filter('translate')('OP_NONE'),
-                                        'Equals': $filter('translate')('OP_EQUALS'),
-                                        'NotEquals': $filter('translate')('OP_NOTEQUALS')
-                                    }
-                                };
                             };
                             
                             $scope.$component.addColumn(column);
@@ -731,6 +677,7 @@
             }])
         /**
          * @ngdoc directive
+         * @module tubular.directives
          * @name tbColumnHeader
          * @restrict E
          *
@@ -781,6 +728,7 @@
         /**
          * @ngdoc directive
          * @name tbRowSet
+         * @module tubular.directives
          * @restrict E
          *
          * @description
@@ -812,6 +760,7 @@
         /**
          * @ngdoc directive
          * @name tbFootSet
+         * @module tubular.directives
          * @restrict E
          *
          * @description
@@ -843,6 +792,7 @@
         /**
          * @ngdoc directive
          * @name tbRowTemplate
+         * @module tubular.directives
          * @restrict E
          *
          * @description
@@ -859,7 +809,6 @@
             function() {
 
                 return {
-                    // TODO: I can't choose one require: ['^tbRowSet', '^tbFootSet'],
                     template: '<tr ng-transclude' +
                         ' ng-class="{\'info\': selectableBool && model.$selected}"' +
                         ' ng-click="changeSelection(model)"></tr>',
@@ -872,8 +821,6 @@
                     },
                     controller: [
                         '$scope', function($scope) {
-                            // TODO: I can't change to component because the layout related
-                            // to the headers width can't be attached
                             $scope.tubularDirective = 'tubular-rowset';
                             $scope.fields = [];
                             $scope.hasFieldsDefinitions = false;
@@ -921,6 +868,7 @@
         /**
          * @ngdoc directive
          * @name tbCellTemplate
+         * @module tubular.directives
          * @restrict E
          *
          * @description

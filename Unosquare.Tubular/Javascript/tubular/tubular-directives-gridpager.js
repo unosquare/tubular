@@ -1,10 +1,11 @@
-﻿(function() {
+﻿(function (angular) {
     'use strict';
 
     angular.module('tubular.directives')
         /**
          * @ngdoc component
          * @name tbGridPager
+         * @module tubular.directives
          *
          * @description
          * The `tbGridPager` component generates a pager connected to the parent `tbGrid`.
@@ -16,47 +17,24 @@
             template:
                 '<div class="tubular-pager">' +
                     '<uib-pagination ng-disabled="$ctrl.$component.isEmpty" direction-links="true" ' +
+                    'first-text="&#xf049;" previous-text="&#xf04a;" next-text="&#xf04e;" last-text="&#xf050;"' +
                     'boundary-links="true" total-items="$ctrl.$component.filteredRecordCount" ' +
                     'items-per-page="$ctrl.$component.pageSize" max-size="5" ng-model="$ctrl.$component.currentPage" ng-change="$ctrl.pagerPageChanged()">' +
                     '</uib-pagination>' +
                     '<div>',
-            transclude: false,
             scope: true,
             terminal: false,
-            controller: [
-                '$scope', '$element', '$attrs', '$timeout', function ($scope, $element, $attrs, $timeout) {
+            controller: ['$scope', function ($scope) {
                     var $ctrl = this;
 
                     $scope.$watch('$ctrl.$component.currentPage', function () {
-                        if ($ctrl.$component.currentPage != $ctrl.$component.requestedPage) {
+                        if ($ctrl.$component.currentPage !== $ctrl.$component.requestedPage) {
                             $ctrl.$component.requestedPage = $ctrl.$component.currentPage;
                         }
                     });
 
                     $ctrl.pagerPageChanged = function () {
                         $ctrl.$component.requestedPage = $ctrl.$component.currentPage;
-                        var allLinks = $element.find('li a');
-                        $(allLinks).blur();
-                    };
-
-                    $ctrl.$postLink = function () {
-                        $ctrl.firstButtonClass = $attrs.firstButtonClass || 'fa fa-fast-backward';
-                        $ctrl.prevButtonClass = $attrs.prevButtonClass || 'fa fa-backward';
-
-                        $ctrl.nextButtonClass = $attrs.nextButtonClass || 'fa fa-forward';
-                        $ctrl.lastButtonClass = $attrs.lastButtonClass || 'fa fa-fast-forward';
-
-                        var timer = $timeout(function () {
-                            var allLinks = $element.find('li a');
-
-                            $(allLinks[0]).html('<i class="' + $ctrl.firstButtonClass + '"></i>');
-                            $(allLinks[1]).html('<i class="' + $ctrl.prevButtonClass + '"></i>');
-
-                            $(allLinks[allLinks.length - 2]).html('<i class="' + $ctrl.nextButtonClass + '"></i>');
-                            $(allLinks[allLinks.length - 1]).html('<i class="' + $ctrl.lastButtonClass + '"></i>');
-                        }, 0);
-
-                        $scope.$on('$destroy', function () { $timeout.cancel(timer); });
                     };
                 }
             ]
@@ -64,6 +42,7 @@
         /**
          * @ngdoc component
          * @name tbGridPagerInfo
+         * @module tubular.directives
          *
          * @description
          * The `tbGridPagerInfo` component shows how many records are shown in a page and total rows.
@@ -77,7 +56,6 @@
                 '<span ng-show="$ctrl.filtered">' +
                 '{{\'UI_FILTEREDRECORDS\' | translate: $ctrl.$component.totalRecordCount}}</span>' +
                 '</div>',
-            transclude: true,
             bindings: {
                 cssClass: '@?'
             },
@@ -121,4 +99,4 @@
                 }
             ]
         });
-})();
+})(window.angular);

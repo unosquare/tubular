@@ -1,10 +1,9 @@
-﻿(function() {
+﻿(function (angular) {
     'use strict';
 
     /**
      * @ngdoc module
      * @name tubular
-     * @version 0.9.17
      * 
      * @description 
      * Tubular module. Entry point to get all the Tubular functionality.
@@ -24,14 +23,6 @@
                 tubularHttp.registerService('local', tubularLocalData);
             }
         ])
-        /**
-         * @ngdoc constants
-         * @name tubularConst
-         *
-         * @description
-         * The `tubularConst` holds some UI constants.
-         */
-        .constant("tubularConst", {})
         /**
          * @ngdoc filter
          * @name errormessage
@@ -80,41 +71,5 @@
                     return $filter('number')(input, fractionSize);
                 };
             }
-        ])
-        /**
-         * @ngdoc filter
-         * @name characters
-         * @kind function
-         *
-         * @description
-         * `characters` filter truncates a sentence to a number of characters.
-         * 
-         * Based on https://github.com/sparkalow/angular-truncate/blob/master/src/truncate.js
-         */
-        .filter('characters', function() {
-            return function(input, chars, breakOnWord) {
-                if (isNaN(chars)) return input;
-                if (chars <= 0) return '';
-
-                if (input && input.length > chars) {
-                    input = input.substring(0, chars);
-
-                    if (!breakOnWord) {
-                        var lastspace = input.lastIndexOf(' ');
-
-                        //get last space
-                        if (lastspace !== -1) {
-                            input = input.substr(0, lastspace);
-                        }
-                    } else {
-                        while (input.charAt(input.length - 1) === ' ') {
-                            input = input.substr(0, input.length - 1);
-                        }
-                    }
-                    return input + '…';
-                }
-
-                return input;
-            };
-        });
-})();
+        ]);
+})(window.angular);

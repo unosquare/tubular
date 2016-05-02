@@ -76,7 +76,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Css\awesome-bootstrap-checkbox\awesome-bootstrap-checkbox.css" />
-    <Content Include="Css\tadaaapickr\tadaaapickr.css" />
     <Content Include="Css\tubular-bundle.css" />
     <Content Include="Css\tubular-bundle.min.css">
       <DependentUpon>tubular-bundle.css</DependentUpon>
@@ -85,7 +84,6 @@
     <Content Include="Css\angular-chartjs\angular-chart.css" />
     <Content Include="Javascript\angular-chartjs\angular-chart.js" />
     <Content Include="Javascript\highchartjs-ng\highcharts-ng.min.js" />
-    <Content Include="Javascript\tadaaapickr\tadaaapickr.pack.js" />
     <Content Include="Javascript\tubular-bundle.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

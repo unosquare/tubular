@@ -1,4 +1,4 @@
-(function () {
+(function (angular) {
     'use strict';
 
     angular.module('tubular-hchart.directives', ['tubular.services', 'highcharts-ng'])
@@ -142,7 +142,7 @@
                 }
             ]
         });
-})();
+})(window.angular);
 /**
  * highcharts-ng
  * @version v0.0.9-dev - 2015-02-25
