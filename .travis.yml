@@ -10,6 +10,7 @@ before_script:
   - npm run update-webdriver
   - sleep 1 # give server time to start
   - touch /home/travis/build/unosquare/tubular/Unosquare.Tubular/Javascript/tubular-bundle.js
+  - touch /home/travis/build/unosquare/tubular/Unosquare.Tubular/Javascript/tubular-bundle.min.js
 script:
   - xbuild /p:Configuration=Release Unosquare.Tubular.Lib.sln
   - npm run-script test-travis
