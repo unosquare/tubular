@@ -132,12 +132,6 @@
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent Condition=" '$(OS)' != 'Unix'">IF EXIST $(SolutionDir)dist\ copy $(ProjectDir)Css\*.css $(SolutionDir)dist\
-IF EXIST $(SolutionDir)dist\ copy $(ProjectDir)Javascript\*.js $(SolutionDir)dist\
-IF EXIST $(SolutionDir)dist\ copy $(ProjectDir)Javascript\tubular\node-module.js $(SolutionDir)dist\</PostBuildEvent>
-  </PropertyGroup>
   <Import Project="..\packages\BuildBundlerMinifier.1.8.148\build\BuildBundlerMinifier.targets" Condition="Exists('..\packages\BuildBundlerMinifier.1.8.148\build\BuildBundlerMinifier.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -145,4 +139,12 @@ IF EXIST $(SolutionDir)dist\ copy $(ProjectDir)Javascript\tubular\node-module.js
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\BuildBundlerMinifier.1.8.148\build\BuildBundlerMinifier.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\BuildBundlerMinifier.1.8.148\build\BuildBundlerMinifier.targets'))" />
   </Target>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent Condition="'$(OS)' != 'Unix'">
+      IF EXIST $(SolutionDir)dist\ copy $(ProjectDir)Css\*.css $(SolutionDir)dist\
+      IF EXIST $(SolutionDir)dist\ copy $(ProjectDir)Javascript\*.js $(SolutionDir)dist\
+      IF EXIST $(SolutionDir)dist\ copy $(ProjectDir)Javascript\tubular\node-module.js $(SolutionDir)dist\
+    </PostBuildEvent>
+  </PropertyGroup>
 </Project>

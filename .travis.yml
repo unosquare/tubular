@@ -13,5 +13,4 @@ script:
   - xbuild /p:Configuration=Release Unosquare.Tubular.Lib.sln
   - npm run-script test-travis
   - cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
-  - node_modules/.bin/karma start karma.conf.js --no-auto-watch --single-run --reporters=dots --browsers=Firefox
   - node_modules/.bin/protractor e2e-tests/protractor.conf.js --browser=firefox
