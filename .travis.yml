@@ -1,4 +1,6 @@
 language: csharp
+node_js:
+  - "0.12"
 solution: Unosquare.Tubular.Lib.sln
 install:
   - nuget restore Unosquare.Tubular.Lib.sln
