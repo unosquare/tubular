@@ -4,6 +4,7 @@ install:
   - nuget restore Unosquare.Tubular.Lib.sln
   - npm install
 before_script:
+  - node -v
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
   - npm start > /dev/null &
