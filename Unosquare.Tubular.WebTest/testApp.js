@@ -17,8 +17,8 @@
         .config([
             '$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
                 $routeProvider.
-                    when('/tbPagerTest', {
-                        templateUrl: '/Unosquare.Tubular.WebTest/common/tbPager_test.html',
+                    when('/tbGridPagerTests', {
+                        templateUrl: '/Unosquare.Tubular.WebTest/common/tbGridPager_tests.html',
                         title: 'A Sample Data Grid!'
                     }).otherwise({
                         redirectTo: '/'
