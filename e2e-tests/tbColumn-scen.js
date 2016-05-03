@@ -56,8 +56,8 @@ describe('tbColumn', function () {
             dataSetHigherID = '53',
             dataSetLowerCustomerName = 'Advanced Technology Systems',
             dataSetHigherCustomerName = 'Vesta',
-            dataSetLowerDate = new Date('1/28/16 3:17 AM'),
-            dataSetHigherDate = new Date('2/6/16 3:17 AM');
+            dataSetLowerDate = '1/28/16 3:17 AM',
+            dataSetHigherDate ='2/6/16 3:17 AM';
         
         beforeEach(function(){
             // Clear possible sortings and start with default
@@ -104,11 +104,17 @@ describe('tbColumn', function () {
         
         it('should order data in ascending order when click-sorting an unsorted date column', function(){                
             a_shippedDateSorting.click();
+            
+            expect(firstDataRow.$$('td').get(2).getText()).toBe(dataSetLowerDate);
+            expect(lastDataRow.$$('td').get(2).getText()).toBe(dataSetHigherDate);            
         });
         
         it('should order data in descending order when click-sorting an ascending-sorted date column', function(){                
             a_shippedDateSorting.click();
             a_shippedDateSorting.click();
+            
+            expect(firstDataRow.$$('td').get(2).getText()).toBe(dataSetHigherDate);
+            expect(lastDataRow.$$('td').get(2).getText()).toBe(dataSetLowerDate);            
         });
        
     });
