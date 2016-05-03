@@ -19,8 +19,13 @@
                 $routeProvider.
                     when('/tbGridPagerTests', {
                         templateUrl: '/Unosquare.Tubular.WebTest/common/tbGridPager_tests.html',
-                        title: 'A Sample Data Grid!'
-                    }).otherwise({
+                        title: 'Tubular Grid Pager (and related) Tests'
+                    })
+                    .when('/tbColumnTests', {
+                        templateUrl: '/Unosquare.Tubular.WebTest/common/tbColumn_tests.html',
+                        title: 'Tubular Column Tests'
+                    })
+                    .otherwise({
                         redirectTo: '/'
                     });
 
