@@ -1888,7 +1888,7 @@ try {
                             $ctrl.selectOptions = "d." + $ctrl.optionLabel + " for d in options";
 
                             if (angular.isDefined($ctrl.optionTrack)) {
-                                $scope.selectOptions = 'd as d.' + scope.optionLabel + ' for d in options track by d.' + $scope.optrionTrack;
+                                $ctrl.selectOptions = 'd as d.' + $ctrl.optionLabel + ' for d in options track by d.' + $ctrl.optionTrack;
                             }
                             else {
                                 if (angular.isDefined($ctrl.optionKey)) {
@@ -2363,11 +2363,7 @@ try {
         };
 
         $ctrl.close = function() {
-            $element.find('.btn-popover').popover('hide');
-        };
-
-        $ctrl.open = function() {
-            $element.find('.btn-popover').popover('toggle');
+            $ctrl.isOpen = false;
         };
 
         $ctrl.checkEvent = function(keyEvent) {
@@ -2420,21 +2416,20 @@ try {
         }
 
         // Create and setup popover
-        $element.find('.btn-popover').popover({
-            html: true,
-            placement: 'bottom',
-            trigger: 'manual',
-            content: $compile($ctrl.dialogTemplate)($scope)
-        });
+        //$element.find('.btn-popover').popover({
+        //    html: true,
+        //    placement: 'bottom',
+        //    trigger: 'manual',
+        //    content: $compile($ctrl.dialogTemplate)($scope)
+        //});
 
-        $element.find('.btn-popover').on('show.bs.popover', function (e) {
-            // TODO: Remove jquery
-            $('.btn-popover').not(e.target).popover("hide");
-        });
+        //$element.find('.btn-popover').on('show.bs.popover', function (e) {
+        //    angular.element('.btn-popover').not(e.target).popover("hide");
+        //});
 
-        if (angular.isDefined(openCallback)) {
-            $element.find('.btn-popover').on('shown.bs.popover', openCallback);
-        }
+        //if (angular.isDefined(openCallback)) {
+        //    $element.find('.btn-popover').on('shown.bs.popover', openCallback);
+        //}
     };
 
     angular.module('tubular.directives')
@@ -2540,8 +2535,9 @@ try {
                 $component: '^tbGrid'
             },
             template: '<div class="tubular-column-menu">' +
-                '<button class="btn btn-xs btn-default btn-popover" ng-click="$ctrl.open()" ' +
-                'ng-class="{ \'btn-success\': $ctrl.filter.HasFilter }">' +
+                '<button class="btn btn-xs btn-default btn-popover" ' +
+                'uib-popover-template="$ctrl.templateName" popover-placement="bottom" popover-title="{{$ctrl.filterTitle}}" popover-is-open="$ctrl.isOpen"' +
+                ' popover-trigger="click outsideClick" ng-class="{ \'btn-success\': $ctrl.filter.HasFilter }">' +
                 '<i class="fa fa-filter"></i></button>' +
                 '</div>',
             bindings: {
@@ -2552,26 +2548,11 @@ try {
                 title: '@'
             },
             controller: [
-                '$scope', '$element', '$compile', '$filter', function ($scope, $element, $compile, $filter) {
+                '$scope', '$element', '$compile', '$filter', 'tubularTemplateService', function ($scope, $element, $compile, $filter, tubularTemplateService) {
                     var $ctrl = this;
 
-                    $ctrl.$onInit = function() {
-                        $ctrl.dialogTemplate = '<button type="button" class="close" data-dismiss="modal" ng-click="$ctrl.close()"><span aria-hidden="true">×</span></button>' +
-                            '<h4>{{$ctrl.filterTitle}}</h4>' +
-                            '<form class="tubular-column-filter-form" onsubmit="return false;">' +
-                            '<select class="form-control" ng-options="key as value for (key , value) in $ctrl.filterOperators" ng-model="$ctrl.filter.Operator" ng-hide="$ctrl.dataType == \'boolean\'"></select>&nbsp;' +
-                            '<input class="form-control" type="search" ng-model="$ctrl.filter.Text" autofocus ng-keypress="$ctrl.checkEvent($event)" ng-hide="$ctrl.dataType == \'boolean\'"' +
-                            'placeholder="{{\'CAPTION_VALUE\' | translate}}" ng-disabled="$ctrl.filter.Operator == \'None\'" />' +
-                            '<div class="text-center" ng-show="$ctrl.dataType == \'boolean\'">' +
-                            '<button type="button" class="btn btn-default btn-md" ng-disabled="$ctrl.filter.Text === true" ng-click="$ctrl.filter.Text = true; $ctrl.filter.Operator = \'Equals\';">' +
-                            '<i class="fa fa-check"></i></button>&nbsp;' +
-                            '<button type="button" class="btn btn-default btn-md" ng-disabled="$ctrl.filter.Text === false" ng-click="$ctrl.filter.Text = false; $ctrl.filter.Operator = \'Equals\';">' +
-                            '<i class="fa fa-times"></i></button></div>' +
-                            '<input type="search" class="form-control" ng-model="$ctrl.filter.Argument[0]" ng-keypress="$ctrl.checkEvent($event)" ng-show="$ctrl.filter.Operator == \'Between\'" />' +
-                            '<hr />' +
-                            '<tb-column-filter-buttons></tb-column-filter-buttons>' +
-                            '</form>';
-
+                    $ctrl.$onInit = function () {
+                        $ctrl.templateName = tubularTemplateService.tbColumnFilterPopoverTemplateName;
                         setupFilter($scope, $element, $compile, $filter, $ctrl);
                     };
                 }
@@ -4790,6 +4771,30 @@ try {
 
                 me.enums = tubularTemplateServiceModule.enums;
                 me.defaults = tubularTemplateServiceModule.defaults;
+
+                me.tbColumnFilterPopoverTemplateName = 'tbColumnFilterPopoverTemplate.html';
+
+                if (!$templateCache.get(me.tbColumnFilterPopoverTemplateName)) {
+                    me.tbColumnFilterPopoverTemplate = '<div>' +
+                        '<form class="tubular-column-filter-form" onsubmit="return false;">' +
+                        '<select class="form-control" ng-options="key as value for (key , value) in $ctrl.filterOperators" ng-model="$ctrl.filter.Operator" ng-hide="$ctrl.dataType == \'boolean\'"></select>&nbsp;' +
+                        '<input class="form-control" type="search" ng-model="$ctrl.filter.Text" autofocus ng-keypress="$ctrl.checkEvent($event)" ng-hide="$ctrl.dataType == \'boolean\'"' +
+                        'placeholder="{{\'CAPTION_VALUE\' | translate}}" ng-disabled="$ctrl.filter.Operator == \'None\'" />' +
+                        '<div class="text-center" ng-show="$ctrl.dataType == \'boolean\'">' +
+                        '<button type="button" class="btn btn-default btn-md" ng-disabled="$ctrl.filter.Text === true" ng-click="$ctrl.filter.Text = true; $ctrl.filter.Operator = \'Equals\';">' +
+                        '<i class="fa fa-check"></i></button>&nbsp;' +
+                        '<button type="button" class="btn btn-default btn-md" ng-disabled="$ctrl.filter.Text === false" ng-click="$ctrl.filter.Text = false; $ctrl.filter.Operator = \'Equals\';">' +
+                        '<i class="fa fa-times"></i></button></div>' +
+                        '<input type="search" class="form-control" ng-model="$ctrl.filter.Argument[0]" ng-keypress="$ctrl.checkEvent($event)" ng-show="$ctrl.filter.Operator == \'Between\'" />' +
+                        '<hr />' +
+                        '<tb-column-filter-buttons></tb-column-filter-buttons>' +
+                        '</form></div>';
+
+                    $templateCache.put(me.tbColumnFilterPopoverTemplateName, me.tbColumnFilterPopoverTemplate);
+
+                    console.log(me.tbColumnFilterPopoverTemplateName, $templateCache.get(me.tbColumnFilterPopoverTemplateName));
+                }
+
 
                 me.generatePopup = function(model, title) {
                     var templateName = 'temp' + (new Date().getTime()) + '.html';

@@ -479,7 +479,7 @@
                             $ctrl.selectOptions = "d." + $ctrl.optionLabel + " for d in options";
 
                             if (angular.isDefined($ctrl.optionTrack)) {
-                                $scope.selectOptions = 'd as d.' + scope.optionLabel + ' for d in options track by d.' + $scope.optrionTrack;
+                                $ctrl.selectOptions = 'd as d.' + $ctrl.optionLabel + ' for d in options track by d.' + $ctrl.optionTrack;
                             }
                             else {
                                 if (angular.isDefined($ctrl.optionKey)) {

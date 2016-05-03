@@ -37,11 +37,11 @@
 
                                 angular.forEach($scope.widgetsAsRows, function(row) {
                                     if (row[0].isHidden) return;
-                                    var newRow = $('<div class="row"></div>');
+                                    var newRow = angular.element('<div class="row"></div>');
                                     $element.append(newRow);
                                     angular.forEach(row, function(widget) {
                                         newRow.append(widget.content);
-                                    })
+                                    });
                                 });
 
                                 currentRows.remove();
