@@ -2,7 +2,9 @@ exports.config = {
   allScriptsTimeout: 11000,
 
   specs: [
-    'tbPager-scen.js'
+    'tbGridPager-scen.js',
+    'tbPageSizeSelector-scen.js',
+    'tbGridPagerInfo-scen.js'
   ],
 
   capabilities: {
@@ -14,6 +16,10 @@ exports.config = {
   framework: 'jasmine',
 
   jasmineNodeOpts: {
-    defaultTimeoutInterval: 30000
+    // High timeout interval for debugging purposes:
+    defaultTimeoutInterval: 3000000
+    
+    // Uncomment:
+    // defaultTimeoutInterval: 3000
   }
 };
