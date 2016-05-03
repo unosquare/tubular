@@ -2247,7 +2247,7 @@ try {
 (function (angular) {
     'use strict';
 
-    function setupFilter($scope, $element, $compile, $filter, $ctrl, openCallback) {
+    function setupFilter($scope, $element, $compile, $filter, $ctrl) {
         var filterOperators = {
             'string': {
                 'None': $filter('translate')('OP_NONE'),
@@ -2413,10 +2413,6 @@ try {
             if ($ctrl.filter.Operator === 'Contains') {
                 $ctrl.filter.Operator = 'Equals';
             }
-        }
-
-        if (angular.isDefined(openCallback)) {
-            openCallback();
         }
     };
 
@@ -2646,7 +2642,9 @@ try {
                     $ctrl.$onInit = function() {
                         $ctrl.dataIsLoaded = false;
                         $ctrl.templateName = tubularTemplateService.tbColumnOptionsFilterPopoverTemplateName;
-                        setupFilter($scope, $element, $compile, $filter, $ctrl, $ctrl.getOptionsFromUrl);
+                        setupFilter($scope, $element, $compile, $filter, $ctrl);
+                        $ctrl.getOptionsFromUrl();
+
                         $ctrl.filter.Operator = 'Multiple';
                     };
                 }
@@ -4746,7 +4744,7 @@ try {
                 // Loading popovers templates
                 me.tbColumnFilterPopoverTemplateName = 'tbColumnFilterPopoverTemplate.html';
                 me.tbColumnDateTimeFilterPopoverTemplateName = 'tbColumnDateTimeFilterPopoverTemplate.html';
-                me.tbColumnOptionsFilterPopoverTemplateName = 'tbColumnOptionsFilterPopoverTemplate.html'
+                me.tbColumnOptionsFilterPopoverTemplateName = 'tbColumnOptionsFilterPopoverTemplate.html';
 
                 if (!$templateCache.get(me.tbColumnFilterPopoverTemplateName)) {
                     me.tbColumnFilterPopoverTemplate = '<div>' +
@@ -4778,19 +4776,19 @@ try {
                         '<tb-column-filter-buttons></tb-column-filter-buttons>' +
                         '</form></div>';
 
-                    $templateCache.put(me.tbColumnDateTimeFilterPopoverTemplateName, me.tbColumnDateTimeFilterPopoverTemplate)
+                    $templateCache.put(me.tbColumnDateTimeFilterPopoverTemplateName, me.tbColumnDateTimeFilterPopoverTemplate);
                 }
 
                 if (!$templateCache.get(me.tbColumnOptionsFilterPopoverTemplateName)) {
                     me.tbColumnOptionsFilterPopoverTemplate = '<div>' +
                         '<form class="tubular-column-filter-form" onsubmit="return false;">' +
-                        '<select class="form-control checkbox-list" ng-options="key as value for (key , value) in $ctrl.optionsItems" ' +
+                        '<select class="form-control checkbox-list" ng-options="item for item in $ctrl.optionsItems" ' +
                         'ng-model="$ctrl.filter.Argument" multiple ng-disabled="$ctrl.dataIsLoaded == false"></select>&nbsp;' +
                         '<hr />' +
                         '<tb-column-filter-buttons></tb-column-filter-buttons>' +
                         '</form></div>';
 
-                    $templateCache.put(me.tbColumnOptionsFilterPopoverTemplateName, me.tbColumnOptionsFilterPopoverTemplate)
+                    $templateCache.put(me.tbColumnOptionsFilterPopoverTemplateName, me.tbColumnOptionsFilterPopoverTemplate);
                 }
 
                 me.generatePopup = function(model, title) {

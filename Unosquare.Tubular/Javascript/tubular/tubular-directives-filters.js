@@ -1,7 +1,7 @@
 ﻿(function (angular) {
     'use strict';
 
-    function setupFilter($scope, $element, $compile, $filter, $ctrl, openCallback) {
+    function setupFilter($scope, $element, $compile, $filter, $ctrl) {
         var filterOperators = {
             'string': {
                 'None': $filter('translate')('OP_NONE'),
@@ -167,10 +167,6 @@
             if ($ctrl.filter.Operator === 'Contains') {
                 $ctrl.filter.Operator = 'Equals';
             }
-        }
-
-        if (angular.isDefined(openCallback)) {
-            openCallback();
         }
     };
 
@@ -400,7 +396,9 @@
                     $ctrl.$onInit = function() {
                         $ctrl.dataIsLoaded = false;
                         $ctrl.templateName = tubularTemplateService.tbColumnOptionsFilterPopoverTemplateName;
-                        setupFilter($scope, $element, $compile, $filter, $ctrl, $ctrl.getOptionsFromUrl);
+                        setupFilter($scope, $element, $compile, $filter, $ctrl);
+                        $ctrl.getOptionsFromUrl();
+
                         $ctrl.filter.Operator = 'Multiple';
                     };
                 }
