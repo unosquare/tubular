@@ -2415,21 +2415,9 @@ try {
             }
         }
 
-        // Create and setup popover
-        //$element.find('.btn-popover').popover({
-        //    html: true,
-        //    placement: 'bottom',
-        //    trigger: 'manual',
-        //    content: $compile($ctrl.dialogTemplate)($scope)
-        //});
-
-        //$element.find('.btn-popover').on('show.bs.popover', function (e) {
-        //    angular.element('.btn-popover').not(e.target).popover("hide");
-        //});
-
-        //if (angular.isDefined(openCallback)) {
-        //    $element.find('.btn-popover').on('shown.bs.popover', openCallback);
-        //}
+        if (angular.isDefined(openCallback)) {
+            openCallback();
+        }
     };
 
     angular.module('tubular.directives')
@@ -2527,8 +2515,10 @@ try {
          * 
          * The parent scope will provide information about the data type.
          * 
+         * @param {string} title Set the popover title.
          * @param {string} text Set the search text.
          * @param {string} operator Set the initial operator, default depends on data type.
+         * @param {object} argument Set the argument.
          */
         .component('tbColumnFilter', {
             require: {
@@ -2544,7 +2534,6 @@ try {
                 text: '@',
                 argument: '@',
                 operator: '@',
-                optionsUrl: '@',
                 title: '@'
             },
             controller: [
@@ -2578,34 +2567,23 @@ try {
                 $component: '^tbGrid'
             },
             template: '<div class="tubular-column-menu">' +
-                '<button class="btn btn-xs btn-default btn-popover" ng-click="$ctrl.open()" ' +
-                'ng-class="{ \'btn-success\': $ctrl.filter.HasFilter }">' +
+                '<button class="btn btn-xs btn-default btn-popover" ' +
+                'uib-popover-template="$ctrl.templateName" popover-placement="bottom" popover-title="{{$ctrl.filterTitle}}" popover-is-open="$ctrl.isOpen" ' +
+                'popover-trigger="click outsideClick" ng-class="{ \'btn-success\': $ctrl.filter.HasFilter }">' +
                 '<i class="fa fa-filter"></i></button>' +
                 '</div>',
             bindings: {
                 text: '@',
                 argument: '@',
                 operator: '@',
-                optionsUrl: '@',
                 title: '@'
             },
             controller: [
-                '$scope', '$element', '$compile', '$filter', function ($scope, $element, $compile, $filter) {
+                '$scope', '$element', '$compile', '$filter', 'tubularTemplateService', function ($scope, $element, $compile, $filter, tubularTemplateService) {
                     var $ctrl = this;
 
-                    $ctrl.$onInit = function() {
-                        $ctrl.format = 'yyyy-MM-dd';
-                        $ctrl.dialogTemplate = '<button type="button" class="close" data-dismiss="modal" ng-click="$ctrl.close()"><span aria-hidden="true">×</span></button>' +
-                            '<h4>{{$ctrl.filterTitle}}</h4>' +
-                            '<form class="tubular-column-filter-form" onsubmit="return false;">' +
-                            '<select class="form-control" ng-model="$ctrl.filter.Operator" ng-options="key as value for (key , value) in $ctrl.filterOperators"></select>&nbsp;' +
-                            '<input type="date" class="form-control" ng-model="$ctrl.filter.Text" ng-keypress="$ctrl.checkEvent($event)" />&nbsp;' +
-                            '<input type="date" class="form-control" ng-model="$ctrl.filter.Argument[0]" ng-keypress="$ctrl.checkEvent($event)" ' +
-                            'ng-show="$ctrl.filter.Operator == \'Between\'" />' +
-                            '<hr />' +
-                            '<tb-column-filter-buttons></tb-column-filter-buttons>' +
-                            '</form>';
-
+                    $ctrl.$onInit = function() {                       
+                        $ctrl.templateName = tubularTemplateService.tbColumnDateTimeFilterPopoverTemplateName;
                         setupFilter($scope, $element, $compile, $filter, $ctrl);
                     };
                 }
@@ -2629,7 +2607,8 @@ try {
                 $component: '^tbGrid'
             },
             template: '<div class="tubular-column-menu">' +
-                '<button class="btn btn-xs btn-default btn-popover" ng-click="$ctrl.open()" ' +
+                '<button class="btn btn-xs btn-default btn-popover" uib-popover-template="$ctrl.templateName" popover-placement="bottom" ' +
+                'popover-title="{{$ctrl.filterTitle}}" popover-is-open="$ctrl.isOpen" popover-trigger="click outsideClick" ' +
                 'ng-class="{ \'btn-success\': $ctrl.filter.HasFilter }">' +
                 '<i class="fa fa-filter"></i></button>' +
                 '</div>',
@@ -2641,7 +2620,7 @@ try {
                 title: '@'
             },
             controller: [
-                '$scope', '$element', '$compile', '$filter', function ($scope, $element, $compile, $filter) {
+                '$scope', '$element', '$compile', '$filter', 'tubularTemplateService', function ($scope, $element, $compile, $filter, tubularTemplateService) {
                     var $ctrl = this;
 
                     $ctrl.getOptionsFromUrl = function () {
@@ -2666,15 +2645,7 @@ try {
 
                     $ctrl.$onInit = function() {
                         $ctrl.dataIsLoaded = false;
-                        $ctrl.dialogTemplate = '<button type="button" class="close" data-dismiss="modal" ng-click="$ctrl.close()"><span aria-hidden="true">×</span></button>' +
-                            '<h4>{{::$ctrl.filterTitle}}</h4>' +
-                            '<form class="tubular-column-filter-form" onsubmit="return false;">' +
-                            '<select class="form-control checkbox-list" ng-model="$ctrl.filter.Argument" ng-options="item for item in $ctrl.optionsItems" ' +
-                            ' multiple ng-disabled="$ctrl.dataIsLoaded == false"></select>' +
-                            '<hr />' +
-                            '<tb-column-filter-buttons></tb-column-filter-buttons>' +
-                            '</form>';
-
+                        $ctrl.templateName = tubularTemplateService.tbColumnOptionsFilterPopoverTemplateName;
                         setupFilter($scope, $element, $compile, $filter, $ctrl, $ctrl.getOptionsFromUrl);
                         $ctrl.filter.Operator = 'Multiple';
                     };
@@ -4772,7 +4743,10 @@ try {
                 me.enums = tubularTemplateServiceModule.enums;
                 me.defaults = tubularTemplateServiceModule.defaults;
 
+                // Loading popovers templates
                 me.tbColumnFilterPopoverTemplateName = 'tbColumnFilterPopoverTemplate.html';
+                me.tbColumnDateTimeFilterPopoverTemplateName = 'tbColumnDateTimeFilterPopoverTemplate.html';
+                me.tbColumnOptionsFilterPopoverTemplateName = 'tbColumnOptionsFilterPopoverTemplate.html'
 
                 if (!$templateCache.get(me.tbColumnFilterPopoverTemplateName)) {
                     me.tbColumnFilterPopoverTemplate = '<div>' +
@@ -4791,10 +4765,33 @@ try {
                         '</form></div>';
 
                     $templateCache.put(me.tbColumnFilterPopoverTemplateName, me.tbColumnFilterPopoverTemplate);
-
-                    console.log(me.tbColumnFilterPopoverTemplateName, $templateCache.get(me.tbColumnFilterPopoverTemplateName));
                 }
 
+                if (!$templateCache.get(me.tbColumnDateTimeFilterPopoverTemplateName)) {
+                    me.tbColumnDateTimeFilterPopoverTemplate = '<div>' +
+                        '<form class="tubular-column-filter-form" onsubmit="return false;">' +
+                        '<select class="form-control" ng-options="key as value for (key , value) in $ctrl.filterOperators" ng-model="$ctrl.filter.Operator" ng-hide="$ctrl.dataType == \'boolean\'"></select>&nbsp;' +
+                        '<input class="form-control" type="date" ng-model="$ctrl.filter.Text" autofocus ng-keypress="$ctrl.checkEvent($event)" '+
+                        'placeholder="{{\'CAPTION_VALUE\' | translate}}" ng-disabled="$ctrl.filter.Operator == \'None\'" />' +
+                        '<input type="date" class="form-control" ng-model="$ctrl.filter.Argument[0]" ng-keypress="$ctrl.checkEvent($event)" ng-show="$ctrl.filter.Operator == \'Between\'" />' +
+                        '<hr />' +
+                        '<tb-column-filter-buttons></tb-column-filter-buttons>' +
+                        '</form></div>';
+
+                    $templateCache.put(me.tbColumnDateTimeFilterPopoverTemplateName, me.tbColumnDateTimeFilterPopoverTemplate)
+                }
+
+                if (!$templateCache.get(me.tbColumnOptionsFilterPopoverTemplateName)) {
+                    me.tbColumnOptionsFilterPopoverTemplate = '<div>' +
+                        '<form class="tubular-column-filter-form" onsubmit="return false;">' +
+                        '<select class="form-control checkbox-list" ng-options="key as value for (key , value) in $ctrl.optionsItems" ' +
+                        'ng-model="$ctrl.filter.Argument" multiple ng-disabled="$ctrl.dataIsLoaded == false"></select>&nbsp;' +
+                        '<hr />' +
+                        '<tb-column-filter-buttons></tb-column-filter-buttons>' +
+                        '</form></div>';
+
+                    $templateCache.put(me.tbColumnOptionsFilterPopoverTemplateName, me.tbColumnOptionsFilterPopoverTemplate)
+                }
 
                 me.generatePopup = function(model, title) {
                     var templateName = 'temp' + (new Date().getTime()) + '.html';
