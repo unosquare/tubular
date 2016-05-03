@@ -20,7 +20,7 @@ describe('tbPageSizeSelctor', function(){
         // Go to test
         browser.get('index.html');
         element(by.id('testsSelector')).click();
-        element(by.id('tbPagerTest')).click();
+        element(by.id('tbPageSizeSelectorTest')).click();
                         
         ////////////////////////
         // * Test variables * //
@@ -43,7 +43,7 @@ describe('tbPageSizeSelctor', function(){
     });
     
     beforeEach(function(){
-        // Go to page 1 on every test if not there
+        // Go to page 1 before every test if not there
         firstPageBtn.click();
     });
     

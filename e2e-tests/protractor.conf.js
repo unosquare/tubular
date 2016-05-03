@@ -3,8 +3,8 @@ exports.config = {
 
   specs: [
     'tbGridPager-scen.js',
-    'tbPageSizeSelector-scen.js'
-    // 'tbGridPagerInfo-scen.js'
+    'tbPageSizeSelector-scen.js',
+    'tbGridPagerInfo-scen.js'
   ],
 
   capabilities: {
