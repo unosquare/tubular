@@ -2963,52 +2963,81 @@ try {
          * @param {string} legend Set the legend to warn user, default 'Do you want to delete this row?'.
          * @param {string} icon Set the CSS icon's class, the button can have only icon.
          */
-        .directive('tbRemoveButton', [
-            '$compile', function($compile) {
-                return {
-                    require: '^tbGrid',
-                    template: '<button ng-click="confirmDelete()" class="btn" ng-hide="model.$isEditing">' +
-                        '<span ng-show="showIcon" class="{{::icon}}"></span>' +
-                        '<span ng-show="showCaption">{{:: caption || (\'CAPTION_REMOVE\' | translate) }}</span>' +
-                        '</button>',
-                    restrict: 'E',
-                    replace: true,
-                    scope: {
-                        model: '=',
-                        caption: '@',
-                        cancelCaption: '@',
-                        legend: '@',
-                        icon: '@'
-                    },
-                    controller: [
-                        '$scope', '$element', '$filter', function($scope, $element, $filter) {
-                            $scope.showIcon = angular.isDefined($scope.icon);
-                            $scope.showCaption = !($scope.showIcon && angular.isUndefined($scope.caption));
-                            $scope.confirmDelete = function() {
-                                $element.popover({
-                                    html: true,
-                                    title: $scope.legend || $filter('translate')('UI_REMOVEROW'),
-                                    content: function() {
-                                        var html = '<div class="tubular-remove-popover">' +
-                                            '<button ng-click="model.delete()" class="btn btn-danger btn-xs">' + ($scope.caption || $filter('translate')('CAPTION_REMOVE')) + '</button>' +
-                                            '&nbsp;<button ng-click="cancelDelete()" class="btn btn-default btn-xs">' + ($scope.cancelCaption || $filter('translate')('CAPTION_CANCEL')) + '</button>' +
-                                            '</div>';
+        .component('tbRemoveButton', {
+            require: '^tbGrid',
+            template: '<button class="btn btn-danger btn-xs btn-popover" uib-popover-template="$ctrl.templateName" popover-placement="right" ' +
+                'popover-title="{{ $ctrl.legend || (\'UI_REMOVEROW\' | translate) }}" popover-is-open="$ctrl.isOpen" popover-trigger="click outsideClick" ' +
+                'ng-hide="$ctrl.model.$isEditing">' +
+                '<span ng-show="$ctrl.showIcon" class="{{::icon}}"></span>' +
+                '<span ng-show="$ctrl.showCaption">{{:: $ctrl.caption || (\'CAPTION_REMOVE\' | translate) }}</span>' +
+                '</button>',
+            bindings: {
+                model: '=',
+                caption: '@',
+                cancelCaption: '@',
+                legend: '@',
+                icon: '@'
+            },
+            controller: [
+               'tubularTemplateService', '$filter', function (tubularTemplateService, $filter) {
+                    var $ctrl = this;
 
-                                        return $compile(html)($scope);
-                                    }
-                                });
+                    $ctrl.showIcon = angular.isDefined($ctrl.icon);
+                    $ctrl.showCaption = !($ctrl.showIcon && angular.isUndefined($ctrl.caption));
 
-                                $element.popover('show');
-                            };
+                    $ctrl.$onInit = function () {
+                        $ctrl.templateName = tubularTemplateService.tbRemoveButtonrPopoverTemplateName;
+                    }
+                }
+            ]
+        })
+        //.directive('tbRemoveButton', [
+        //    '$compile', function ($compile) {
+        //        return {
+        //            require: '^tbGrid',
+        //            template: '<button ng-click="confirmDelete()" class="btn btn-danger btn-xs" ng-hide="model.$isEditing">' +
+        //                '<span ng-show="showIcon" class="{{::icon}}"></span>' +
+        //                '<span ng-show="showCaption">{{:: caption || (\'CAPTION_REMOVE\' | translate) }}</span>' +
+        //                '</button>',
+        //            restrict: 'E',
+        //            replace: false,
+        //            scope: {
+        //                model: '=',
+        //                caption: '@',
+        //                cancelCaption: '@',
+        //                legend: '@',
+        //                icon: '@'
+        //            },
+        //            controller: [
+        //                '$scope', '$element', '$filter', function ($scope, $element, $filter) {
+        //                    $scope.showIcon = angular.isDefined($scope.icon);
+        //                    $scope.showCaption = !($scope.showIcon && angular.isUndefined($scope.caption));
+        //                    $scope.confirmDelete = function () {
+        //                        $element.popover({
+        //                            html: true,
+        //                            title: $scope.legend || $filter('translate')('UI_REMOVEROW'),
+        //                            content: function () {
+        //                                var html = '<div class="tubular-remove-popover">' +
+        //                                    '<button ng-click="model.delete()" class="btn btn-danger btn-xs">' + ($scope.caption || $filter('translate')('CAPTION_REMOVE')) + '</button>' +
+        //                                    '&nbsp;<button ng-click="cancelDelete()" class="btn btn-default btn-xs">' + ($scope.cancelCaption || $filter('translate')('CAPTION_CANCEL')) + '</button>' +
+        //                                    '</div>';
 
-                            $scope.cancelDelete = function() {
-                                $element.popover('destroy');
-                            };
-                        }
-                    ]
-                };
-            }
-        ])
+        //                                return $compile(html)($scope);
+        //                            }
+        //                        });
+
+        //                        $element.popover('show');
+        //                    };
+
+        //                    $scope.cancelDelete = function () {
+        //                        $element.popover('destroy');
+        //                    };
+        //                }
+        //            ]
+        //        };
+        //    }
+        //])
+
         /**
          * @ngdoc directive
          * @name tbSaveButton
@@ -4747,6 +4776,7 @@ try {
                 me.tbColumnFilterPopoverTemplateName = 'tbColumnFilterPopoverTemplate.html';
                 me.tbColumnDateTimeFilterPopoverTemplateName = 'tbColumnDateTimeFilterPopoverTemplate.html';
                 me.tbColumnOptionsFilterPopoverTemplateName = 'tbColumnOptionsFilterPopoverTemplate.html'
+                me.tbRemoveButtonrPopoverTemplateName = 'tbRemoveButtonrPopoverTemplate.html';
 
                 if (!$templateCache.get(me.tbColumnFilterPopoverTemplateName)) {
                     me.tbColumnFilterPopoverTemplate = '<div>' +
@@ -4791,6 +4821,20 @@ try {
                         '</form></div>';
 
                     $templateCache.put(me.tbColumnOptionsFilterPopoverTemplateName, me.tbColumnOptionsFilterPopoverTemplate)
+                }
+
+                if (!$templateCache.get(me.tbRemoveButtonrPopoverTemplateName)) {
+                    me.tbRemoveButtonrPopoverTemplate = '<div class="tubular-remove-popover">' +
+                        '<button ng-click="$ctrl.model.delete()" class="btn btn-danger btn-xs">' +
+                        '{{:: $ctrl.caption || (\'CAPTION_REMOVE\' | translate) }}' +
+                        '</button>' +
+                        '&nbsp;' +
+                        '<button ng-click="$ctrl.isOpen = false;" class="btn btn-default btn-xs">' +
+                        '{{:: $ctrl.cancelCaption || (\'CAPTION_CANCEL\' | translate) }}' +
+                        '</button>' +
+                        '</div>';
+
+                    $templateCache.put(me.tbRemoveButtonrPopoverTemplateName, me.tbRemoveButtonrPopoverTemplate);
                 }
 
                 me.generatePopup = function(model, title) {

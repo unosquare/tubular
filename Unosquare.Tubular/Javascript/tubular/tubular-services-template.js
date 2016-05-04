@@ -22,6 +22,7 @@
                 me.tbColumnFilterPopoverTemplateName = 'tbColumnFilterPopoverTemplate.html';
                 me.tbColumnDateTimeFilterPopoverTemplateName = 'tbColumnDateTimeFilterPopoverTemplate.html';
                 me.tbColumnOptionsFilterPopoverTemplateName = 'tbColumnOptionsFilterPopoverTemplate.html'
+                me.tbRemoveButtonrPopoverTemplateName = 'tbRemoveButtonrPopoverTemplate.html';
 
                 if (!$templateCache.get(me.tbColumnFilterPopoverTemplateName)) {
                     me.tbColumnFilterPopoverTemplate = '<div>' +
@@ -66,6 +67,20 @@
                         '</form></div>';
 
                     $templateCache.put(me.tbColumnOptionsFilterPopoverTemplateName, me.tbColumnOptionsFilterPopoverTemplate)
+                }
+
+                if (!$templateCache.get(me.tbRemoveButtonrPopoverTemplateName)) {
+                    me.tbRemoveButtonrPopoverTemplate = '<div class="tubular-remove-popover">' +
+                        '<button ng-click="$ctrl.model.delete()" class="btn btn-danger btn-xs">' +
+                        '{{:: $ctrl.caption || (\'CAPTION_REMOVE\' | translate) }}' +
+                        '</button>' +
+                        '&nbsp;' +
+                        '<button ng-click="$ctrl.isOpen = false;" class="btn btn-default btn-xs">' +
+                        '{{:: $ctrl.cancelCaption || (\'CAPTION_CANCEL\' | translate) }}' +
+                        '</button>' +
+                        '</div>';
+
+                    $templateCache.put(me.tbRemoveButtonrPopoverTemplateName, me.tbRemoveButtonrPopoverTemplate);
                 }
 
                 me.generatePopup = function(model, title) {
