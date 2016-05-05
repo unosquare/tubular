@@ -20,14 +20,18 @@ describe('tbColumn', function () {
         element(by.id('testsSelector')).click();
         element(by.id('tbColumnSortingTest')).click();
         
+        // Go to first page if not there    
+        element(by.tagName('tb-grid-pager'))
+            .$('li.pagination-first a')
+            .click();
+        
         // Select '10' on tbPageSizeSelector
         element(by.model('$ctrl.$component.pageSize'))
             .$('[value="number:100"]').click();
-
-        ////////////////////////
+            
+        /**********************/
         // * Test variables * //
-        ////////////////////////
-
+        /**********************/
         // First showing row
         firstDataRow = element.all(by.repeater('row in $component.rows')).first();
         // Last showing row

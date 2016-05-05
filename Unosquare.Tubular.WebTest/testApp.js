@@ -25,6 +25,10 @@
                         templateUrl: '/Unosquare.Tubular.WebTest/common/tbColumn_tests.html',
                         title: 'Tubular Column Tests'
                     })
+                    .when('/tbFiltersTests', {
+                        templateUrl: '/Unosquare.Tubular.WebTest/common/tbFilters_tests.html',
+                        title: 'Tubular Column Tests'
+                    })
                     .otherwise({
                         redirectTo: '/'
                     });
