@@ -131,13 +131,13 @@
 
                 $scope.chartClick = function (points, evt) {
                     angular.forEach(points, function (point) {
-                        toastr.success(point.datasetLabel + ': ' + point.y);
+                        toastr.success(points[0]._chart.config.data.datasets[point._datasetIndex].label);
                     });
                 };
 
                 $scope.pieClick = function (points, evt) {
                     angular.forEach(points, function (point) {
-                        toastr.success(point.label + ': ' + point.y);
+                        toastr.success(point._model.label + ': ' + point._model.y);
                     });
                 };
 

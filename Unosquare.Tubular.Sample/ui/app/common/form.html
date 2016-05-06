@@ -9,8 +9,7 @@
                                   name="CustomerName" help="Please a good name">
                 </tb-simple-editor>
 
-                <tb-dropdown-editor name="ShipperCity" name="ShipperCity"
-                                    show-label="true" required="true"
+                <tb-dropdown-editor name="ShipperCity" show-label="true" required="true"
                                     options-url="api/orders/cities">
                 </tb-dropdown-editor>
 
@@ -22,10 +21,10 @@
                                 format="'dd-MM-yyyy'" show-label="true" label="Shipped Date please">
                 </tb-date-editor>
 
-                <tb-checkbox-field value="Model.IsShipped" name="IsShipped" show-label="true" label="Is Shipped?">
+                <tb-checkbox-field name="IsShipped" show-label="true" label="Is Shipped?">
                 </tb-checkbox-field>
 
-                <tb-hidden-field name="OrderID" is-key="true" value="Model.OrderID">
+                <tb-hidden-field name="OrderID">
                 </tb-hidden-field>
 
                 <hr />
