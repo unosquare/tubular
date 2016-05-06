@@ -1,6 +1,10 @@
 (function (angular) {
     'use strict';
 
+    if (moment) {
+        moment.fn.toJSON = function() { return this.format(); }
+    }
+
     var canUseHtml5Date = function() {
         var input = document.createElement('input');
         input.setAttribute('type', 'date');
@@ -333,13 +337,13 @@
          */
         .component('tbDateEditor', {
             template: '<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">' +
-                '<span ng-hide="$ctrl.isEditing">{{ $ctrl.value | date: $ctrl.format }}</span>' +
+                '<span ng-hide="$ctrl.isEditing">{{ $ctrl.value | moment: $ctrl.format }}</span>' +
                 '<label ng-show="$ctrl.showLabel">{{ $ctrl.label }}</label>' +
                 (canUseHtml5Date ?
-                    '<input type="date" ng-show="$ctrl.isEditing" ng-model="$ctrl.value" class="form-control" ' +
+                    '<input type="date" ng-show="$ctrl.isEditing" ng-model="$ctrl.dateValue" class="form-control" ' +
                     'ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}"/>' : 
                     '<div class="input-group" ng-show="$ctrl.isEditing">' +
-                    '<input type="text" uib-datepicker-popup="{{$ctrl.format}}" ng-model="$ctrl.value" class="form-control" ' +
+                    '<input type="text" uib-datepicker-popup="{{$ctrl.format}}" ng-model="$ctrl.dateValue" class="form-control" ' +
                     'ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}" is-open="$ctrl.open" />' +
                     '<span class="input-group-btn">' +
                     '<button type="button" class="btn btn-default" ng-click="$ctrl.open = !$ctrl.open"><i class="fa fa-calendar"></i></button>' +
@@ -370,8 +374,27 @@
                    $scope.$watch(function() {
                        return $ctrl.value;
                    }, function (val) {
+                       if (angular.isUndefined(val)) return;
+
                        if (typeof (val) === 'string') {
-                           $ctrl.value = new Date(val);
+                           $ctrl.value = moment ? moment(val) : new Date(val);
+                       }
+
+                       if (angular.isUndefined($ctrl.dateValue)) {
+                           if (moment) {
+                               var tmpDate = $ctrl.value.toObject();
+                               $ctrl.dateValue = new Date(tmpDate.years, tmpDate.months, tmpDate.date, tmpDate.hours, tmpDate.minutes, tmpDate.seconds);
+                           } else {
+                               $ctrl.dateValue = $ctrl.value;
+                           }
+
+                           $scope.$watch(function() {
+                               return $ctrl.dateValue;
+                           }, function(val) {
+                               if (angular.isDefined(val)) {
+                                   $ctrl.value = moment(val);
+                               }
+                           });
                        }
                    });
 
@@ -381,7 +404,7 @@
                                $ctrl.min = new Date($ctrl.min);
                            }
 
-                           $ctrl.$valid = $ctrl.value >= $ctrl.min;
+                           $ctrl.$valid = $ctrl.dateValue >= $ctrl.min;
 
                            if (!$ctrl.$valid) {
                                $ctrl.state.$errors = [$filter('translate')('EDITOR_MIN_DATE', $filter('date')($ctrl.min, $ctrl.format))];
@@ -397,7 +420,7 @@
                                $ctrl.max = new Date($ctrl.max);
                            }
 
-                           $ctrl.$valid = $ctrl.value <= $ctrl.max;
+                           $ctrl.$valid = $ctrl.dateValue <= $ctrl.max;
 
                            if (!$ctrl.$valid) {
                                $ctrl.state.$errors = [$filter('translate')('EDITOR_MAX_DATE', $filter('date')($ctrl.max, $ctrl.format))];
@@ -408,6 +431,9 @@
                    $ctrl.$onInit = function() {
                         $ctrl.DataType = "date";
                         tubularEditorService.setupScope($scope, $ctrl.format, $ctrl);
+                       if (angular.isUndefined($ctrl.format)) {
+                           $ctrl.format = "MMM D, Y";
+                       }
                    };
                 }
             ]

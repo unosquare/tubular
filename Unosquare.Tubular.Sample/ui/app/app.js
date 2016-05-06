@@ -1,4 +1,4 @@
-﻿(function() {
+﻿(function(angular) {
     'use strict';
 
     // define console methods if not defined
@@ -9,7 +9,7 @@
             error: function () { },
             assert: function () { },
             info: function () { },
-            warn: function () { },
+            warn: function () { }
         };
     }
 
@@ -76,7 +76,7 @@
                 // TODO: Complete
             }
         ]).controller('i18nCtrl', [
-            '$scope', 'tubularTranslate', function ($scope, tubularTranslate) {
+            '$scope', 'tubularTranslate', 'toastr', function ($scope, tubularTranslate, toastr) {
                 $scope.toggle = function () {
                     tubularTranslate.setLanguage(tubularTranslate.currentLanguage === 'en' ? 'es' : 'en');
                     toastr.info('New language: ' + tubularTranslate.currentLanguage);
@@ -84,7 +84,7 @@
             }
         ])
         .controller('tubularSampleCtrl', [
-            '$scope', '$location', function ($scope, $location) {
+            '$scope', '$location', 'toastr', function ($scope, $location, toastr) {
                 var me = this;
                 me.onTableController = function () {
                     console.log('On Before Get Data Event: fired.');
@@ -150,7 +150,7 @@
                 };
             }
         ]).controller("reportingCtrl", [
-            '$scope', function ($scope) {
+            '$scope', 'toastr', function ($scope, toastr) {
                 $scope.$on('tbReporting_OnConnectionError', function (event, error) { toastr.error(error); });
                 $scope.$on('tbReporting_OnSuccessfulSave', function (event, message) { toastr.success(message); });
                 $scope.$on('tbReporting_OnRemoved', function (event, message) { toastr.success(message); });
@@ -180,6 +180,7 @@
         'tubular-hchart.directives',
         'tubular-reporting.directives',
         'tubular-widget.directives',
+        'toastr',
         'app.routes',
         'app.controllers'
     ]).run([
@@ -191,4 +192,4 @@
             // console.log(tubularTranslate.translationTable);
         }
     ]);
-})();
+})(window.angular);

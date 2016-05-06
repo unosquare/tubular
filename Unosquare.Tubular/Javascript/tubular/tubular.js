@@ -53,23 +53,32 @@
          * @description
          * `numberorcurrency` is a hack to hold `currency` and `number` in a single filter.
          */
-        .filter('numberorcurrency', [
-            '$filter', function($filter) {
+        .filter("numberorcurrency", [
+            "$filter", function($filter) {
                 return function(input, format, symbol, fractionSize) {
                     symbol = symbol || "$";
                     fractionSize = fractionSize || 2;
 
-                    if (format === 'C') {
-                        return $filter('currency')(input, symbol, fractionSize);
+                    if (format === "C") {
+                        return $filter("currency")(input, symbol, fractionSize);
                     }
 
-                    if (format === 'I') {
+                    if (format === "I") {
                         return parseInt(input);
                     }
 
                     // default to decimal
-                    return $filter('number')(input, fractionSize);
+                    return $filter("number")(input, fractionSize);
                 };
             }
-        ]);
+        ])
+    .filter("moment", function () {
+        return function (input, format) {
+            if (angular.isDefined(input) && typeof(input) === "object") {
+                return input.format(format);
+            }
+
+            return input;
+        };
+    });
 })(window.angular);
