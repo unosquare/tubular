@@ -2,10 +2,11 @@ exports.config = {
     allScriptsTimeout: 11000,
 
     specs: [
-      'tbColumn-scen.js',
       'tbGridPager-scen.js',
       'tbPageSizeSelector-scen.js',
-      'tbGridPagerInfo-scen.js'
+      'tbGridPagerInfo-scen.js',
+      'tbColumn-scen.js',
+      'tbFilters-scen.js'
     ],
 
     capabilities: {
