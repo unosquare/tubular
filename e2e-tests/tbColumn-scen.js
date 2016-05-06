@@ -60,8 +60,8 @@ describe('tbColumn', function () {
             dataSetHigherID = '53',
             dataSetLowerCustomerName = 'Advanced Technology Systems',
             dataSetHigherCustomerName = 'Vesta',
-            dataSetLowerDate = '1/28/16 3:17 AM',
-            dataSetHigherDate ='2/6/16 3:17 AM';
+            dataSetLowerDate = '1/28/16 2:17 AM',
+            dataSetHigherDate ='2/6/16 2:17 AM';
         
         beforeEach(function(){
             // Clear possible sortings and start with default

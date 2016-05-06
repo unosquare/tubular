@@ -44,12 +44,12 @@ describe('tbGridPagerInfo', function () {
        nextPageBtn.click();
        tbPageSizeSelector.$('[value="number:20"]').click();
        
-       expect(tbGridPagerInfo.getText()).toBe('Showing 21 to 400 of 53 records');
+       expect(tbGridPagerInfo.getText()).toBe('Showing 21 to 40 of 53 records');
        
        // Go page 3
        nextPageBtn.click();
        
-       expect(tbGridPagerInfo.getText()).toBe('Showing 41 to 533 of 53 records');       
+       expect(tbGridPagerInfo.getText()).toBe('Showing 41 to 53 of 53 records');       
     });
 
 });

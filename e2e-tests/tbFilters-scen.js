@@ -51,16 +51,32 @@ describe('Tubular Filters', function () {
                 });
         });
 
+        afterAll(function () {
+            // Close popover, if it's open
+            element(by.tagName('tb-grid-pager')).$('.pagination-first a').click()
+                .then(function () {
+                    // Clear filters
+                    filterBtn.click()
+                        .then(function () {
+                            clearBtn.click()
+                                .then(function () {
+                                    loadData();
+                                });
+                        });
+                });
+        });
+
         beforeEach(function () {
             // Close popover, if it's open
-            element(by.tagName('tb-grid-pager')).$('.pagination-first a').click();
-
-            // Clear filters
-            filterBtn.click()
+            element(by.tagName('tb-grid-pager')).$('.pagination-first a').click()
                 .then(function () {
-                    clearBtn.click()
+                    // Clear filters
+                    filterBtn.click()
                         .then(function () {
-                            loadData();
+                            clearBtn.click()
+                                .then(function () {
+                                    loadData();
+                                });
                         });
                 });
         });
@@ -253,10 +269,6 @@ describe('Tubular Filters', function () {
                         row.$$('td').get(1).getText()
                             .then(function (customer) {
                                 filterOk = filterOk && (customer.indexOf(notContainedString) == -1);
-                                if (filterOk == false) {
-                                    console.log(notContainedString);
-                                    console.log(customer);
-                                }
                             });
                     }).then(function () {
                         expect(filterOk).toBe(true);
@@ -357,5 +369,5 @@ describe('Tubular Filters', function () {
         });
 
     });
-    
+
 });
