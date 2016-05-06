@@ -412,7 +412,7 @@ try {
 } catch (e) {
     // Ignore
 }
-(function (angular) {
+(function(angular) {
     'use strict';
 
     /**
@@ -430,8 +430,9 @@ try {
                 localStorageServiceProvider.setPrefix('tubular');
             }
         ])
-        .run(['tubularHttp', 'tubularOData', 'tubularLocalData',
-            function (tubularHttp, tubularOData, tubularLocalData) {
+        .run([
+            'tubularHttp', 'tubularOData', 'tubularLocalData',
+            function(tubularHttp, tubularOData, tubularLocalData) {
                 // register data services
                 tubularHttp.registerService('odata', tubularOData);
                 tubularHttp.registerService('local', tubularLocalData);
@@ -467,22 +468,45 @@ try {
          * @description
          * `numberorcurrency` is a hack to hold `currency` and `number` in a single filter.
          */
-        .filter('numberorcurrency', [
-            '$filter', function($filter) {
+        .filter("numberorcurrency", [
+            "$filter", function($filter) {
                 return function(input, format, symbol, fractionSize) {
                     symbol = symbol || "$";
                     fractionSize = fractionSize || 2;
 
-                    if (format === 'C') {
-                        return $filter('currency')(input, symbol, fractionSize);
+                    if (format === "C") {
+                        return $filter("currency")(input, symbol, fractionSize);
                     }
 
-                    if (format === 'I') {
+                    if (format === "I") {
                         return parseInt(input);
                     }
 
                     // default to decimal
-                    return $filter('number')(input, fractionSize);
+                    return $filter("number")(input, fractionSize);
+                };
+            }
+        ])
+        /**
+         * @ngdoc filter
+         * @name moment
+         * @kind function
+         *
+         * @description
+         * `moment` is a filter to call format from moment or, if the input is a Date, call Angular's `date` filter.
+         */
+        .filter("moment", [
+            "$filter", function($filter) {
+                return function(input, format) {
+                    if (angular.isDefined(input) && typeof (input) === "object") {
+                        if (typeof moment == 'function') {
+                            return input.format(format);
+                        } else {
+                            return $filter('date')(input);
+                        }
+                    }
+
+                    return input;
                 };
             }
         ]);
@@ -1184,7 +1208,7 @@ try {
                     require: '^tbColumn',
                     template: '<span><a title="Click to sort. Press Ctrl to sort by multiple columns" class="column-header" href ng-click="sortColumn($event)">' +
                         '<span class="column-header-default">{{ $parent.column.Label }}</span>' +
-                        '<span ng-transclude></span></a> ' +
+                        '<ng-transclude></ng-transclude></a> ' +
                         '<i class="fa sort-icon" ng-class="' + "{'fa-long-arrow-up': $parent.column.SortDirection == 'Ascending', 'fa-long-arrow-down': $parent.column.SortDirection == 'Descending'}" + '">&nbsp;</i>' +
                         '</span>',
                     restrict: 'E',
@@ -1203,8 +1227,8 @@ try {
                         }
                     ],
                     link: function($scope, $element) {
-                        if ($element.find('[ng-transclude] *').length > 0) {
-                            $element.find('span.column-header-default').remove();
+                        if ($element.find('ng-transclude').length > 0) {
+                            $element.find('span')[0].remove();
                         }
 
                         if (!$scope.$parent.column.Sortable) {
@@ -1409,6 +1433,10 @@ try {
 })(window.angular);
 (function (angular) {
     'use strict';
+
+    if (typeof moment == 'function') {
+        moment.fn.toJSON = function() { return this.format(); }
+    }
 
     var canUseHtml5Date = function() {
         var input = document.createElement('input');
@@ -1742,13 +1770,13 @@ try {
          */
         .component('tbDateEditor', {
             template: '<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">' +
-                '<span ng-hide="$ctrl.isEditing">{{ $ctrl.value | date: $ctrl.format }}</span>' +
+                '<span ng-hide="$ctrl.isEditing">{{ $ctrl.value | moment: $ctrl.format }}</span>' +
                 '<label ng-show="$ctrl.showLabel">{{ $ctrl.label }}</label>' +
                 (canUseHtml5Date ?
-                    '<input type="date" ng-show="$ctrl.isEditing" ng-model="$ctrl.value" class="form-control" ' +
+                    '<input type="date" ng-show="$ctrl.isEditing" ng-model="$ctrl.dateValue" class="form-control" ' +
                     'ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}"/>' : 
                     '<div class="input-group" ng-show="$ctrl.isEditing">' +
-                    '<input type="text" uib-datepicker-popup="{{$ctrl.format}}" ng-model="$ctrl.value" class="form-control" ' +
+                    '<input type="text" uib-datepicker-popup="{{$ctrl.format}}" ng-model="$ctrl.dateValue" class="form-control" ' +
                     'ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}" is-open="$ctrl.open" />' +
                     '<span class="input-group-btn">' +
                     '<button type="button" class="btn btn-default" ng-click="$ctrl.open = !$ctrl.open"><i class="fa fa-calendar"></i></button>' +
@@ -1779,8 +1807,27 @@ try {
                    $scope.$watch(function() {
                        return $ctrl.value;
                    }, function (val) {
+                       if (angular.isUndefined(val)) return;
+
                        if (typeof (val) === 'string') {
-                           $ctrl.value = new Date(val);
+                           $ctrl.value = typeof moment == 'function' ? moment(val) : new Date(val);
+                       }
+
+                       if (angular.isUndefined($ctrl.dateValue)) {
+                           if (typeof moment == 'function') {
+                               var tmpDate = $ctrl.value.toObject();
+                               $ctrl.dateValue = new Date(tmpDate.years, tmpDate.months, tmpDate.date, tmpDate.hours, tmpDate.minutes, tmpDate.seconds);
+                           } else {
+                               $ctrl.dateValue = $ctrl.value;
+                           }
+
+                           $scope.$watch(function() {
+                               return $ctrl.dateValue;
+                           }, function(val) {
+                               if (angular.isDefined(val)) {
+                                   $ctrl.value = typeof moment == 'function' ? moment(val) : new Date(val);
+                               }
+                           });
                        }
                    });
 
@@ -1790,7 +1837,7 @@ try {
                                $ctrl.min = new Date($ctrl.min);
                            }
 
-                           $ctrl.$valid = $ctrl.value >= $ctrl.min;
+                           $ctrl.$valid = $ctrl.dateValue >= $ctrl.min;
 
                            if (!$ctrl.$valid) {
                                $ctrl.state.$errors = [$filter('translate')('EDITOR_MIN_DATE', $filter('date')($ctrl.min, $ctrl.format))];
@@ -1806,7 +1853,7 @@ try {
                                $ctrl.max = new Date($ctrl.max);
                            }
 
-                           $ctrl.$valid = $ctrl.value <= $ctrl.max;
+                           $ctrl.$valid = $ctrl.dateValue <= $ctrl.max;
 
                            if (!$ctrl.$valid) {
                                $ctrl.state.$errors = [$filter('translate')('EDITOR_MAX_DATE', $filter('date')($ctrl.max, $ctrl.format))];
@@ -1817,6 +1864,10 @@ try {
                    $ctrl.$onInit = function() {
                         $ctrl.DataType = "date";
                         tubularEditorService.setupScope($scope, $ctrl.format, $ctrl);
+
+                        if (typeof moment == 'function' && angular.isUndefined($ctrl.format)) {
+                           $ctrl.format = "MMM D, Y";
+                       }
                    };
                 }
             ]
@@ -1888,7 +1939,7 @@ try {
                             $ctrl.selectOptions = "d." + $ctrl.optionLabel + " for d in options";
 
                             if (angular.isDefined($ctrl.optionTrack)) {
-                                $scope.selectOptions = 'd as d.' + scope.optionLabel + ' for d in options track by d.' + $scope.optrionTrack;
+                                $ctrl.selectOptions = 'd as d.' + $ctrl.optionLabel + ' for d in options track by d.' + $ctrl.optionTrack;
                             }
                             else {
                                 if (angular.isDefined($ctrl.optionKey)) {
@@ -2247,7 +2298,7 @@ try {
 (function (angular) {
     'use strict';
 
-    function setupFilter($scope, $element, $compile, $filter, $ctrl, openCallback) {
+    function setupFilter($scope, $element, $compile, $filter, $ctrl) {
         var filterOperators = {
             'string': {
                 'None': $filter('translate')('OP_NONE'),
@@ -2363,11 +2414,7 @@ try {
         };
 
         $ctrl.close = function() {
-            $element.find('.btn-popover').popover('hide');
-        };
-
-        $ctrl.open = function() {
-            $element.find('.btn-popover').popover('toggle');
+            $ctrl.isOpen = false;
         };
 
         $ctrl.checkEvent = function(keyEvent) {
@@ -2417,23 +2464,6 @@ try {
             if ($ctrl.filter.Operator === 'Contains') {
                 $ctrl.filter.Operator = 'Equals';
             }
-        }
-
-        // Create and setup popover
-        $element.find('.btn-popover').popover({
-            html: true,
-            placement: 'bottom',
-            trigger: 'manual',
-            content: $compile($ctrl.dialogTemplate)($scope)
-        });
-
-        $element.find('.btn-popover').on('show.bs.popover', function (e) {
-            // TODO: Remove jquery
-            $('.btn-popover').not(e.target).popover("hide");
-        });
-
-        if (angular.isDefined(openCallback)) {
-            $element.find('.btn-popover').on('shown.bs.popover', openCallback);
         }
     };
 
@@ -2494,11 +2524,10 @@ try {
                                 '</div>' +
                                 '<div class="modal-body">' +
                                 '<table class="table table-bordered table-responsive table-striped table-hover table-condensed">' +
-                                '<thead><tr><th>Visible?</th><th>Name</th><th>Grouping?</th></tr></thead>' +
+                                '<thead><tr><th>Visible?</th><th>Name</th></tr></thead>' +
                                 '<tbody><tr ng-repeat="col in Model">' +
                                 '<td><input type="checkbox" ng-model="col.Visible" ng-disabled="col.Visible && isInvalid()" /></td>' +
                                 '<td>{{col.Label}}</td>' +
-                                '<td><input type="checkbox" ng-disabled="true" ng-model="col.IsGrouping" /></td>' +
                                 '</tr></tbody></table></div>' +
                                 '</div>' +
                                 '<div class="modal-footer"><button class="btn btn-warning" ng-click="closePopup()">{{\'CAPTION_CLOSE\' | translate}}</button></div>',
@@ -2532,46 +2561,33 @@ try {
          * 
          * The parent scope will provide information about the data type.
          * 
+         * @param {string} title Set the popover title.
          * @param {string} text Set the search text.
          * @param {string} operator Set the initial operator, default depends on data type.
+         * @param {object} argument Set the argument.
          */
         .component('tbColumnFilter', {
             require: {
                 $component: '^tbGrid'
             },
             template: '<div class="tubular-column-menu">' +
-                '<button class="btn btn-xs btn-default btn-popover" ng-click="$ctrl.open()" ' +
-                'ng-class="{ \'btn-success\': $ctrl.filter.HasFilter }">' +
+                '<button class="btn btn-xs btn-default btn-popover" ' +
+                'uib-popover-template="$ctrl.templateName" popover-placement="bottom" popover-title="{{$ctrl.filterTitle}}" popover-is-open="$ctrl.isOpen"' +
+                ' popover-trigger="click outsideClick" ng-class="{ \'btn-success\': $ctrl.filter.HasFilter }">' +
                 '<i class="fa fa-filter"></i></button>' +
                 '</div>',
             bindings: {
                 text: '@',
                 argument: '@',
                 operator: '@',
-                optionsUrl: '@',
                 title: '@'
             },
             controller: [
-                '$scope', '$element', '$compile', '$filter', function ($scope, $element, $compile, $filter) {
+                '$scope', '$element', '$compile', '$filter', 'tubularTemplateService', function ($scope, $element, $compile, $filter, tubularTemplateService) {
                     var $ctrl = this;
 
-                    $ctrl.$onInit = function() {
-                        $ctrl.dialogTemplate = '<button type="button" class="close" data-dismiss="modal" ng-click="$ctrl.close()"><span aria-hidden="true">×</span></button>' +
-                            '<h4>{{$ctrl.filterTitle}}</h4>' +
-                            '<form class="tubular-column-filter-form" onsubmit="return false;">' +
-                            '<select class="form-control" ng-options="key as value for (key , value) in $ctrl.filterOperators" ng-model="$ctrl.filter.Operator" ng-hide="$ctrl.dataType == \'boolean\'"></select>&nbsp;' +
-                            '<input class="form-control" type="search" ng-model="$ctrl.filter.Text" autofocus ng-keypress="$ctrl.checkEvent($event)" ng-hide="$ctrl.dataType == \'boolean\'"' +
-                            'placeholder="{{\'CAPTION_VALUE\' | translate}}" ng-disabled="$ctrl.filter.Operator == \'None\'" />' +
-                            '<div class="text-center" ng-show="$ctrl.dataType == \'boolean\'">' +
-                            '<button type="button" class="btn btn-default btn-md" ng-disabled="$ctrl.filter.Text === true" ng-click="$ctrl.filter.Text = true; $ctrl.filter.Operator = \'Equals\';">' +
-                            '<i class="fa fa-check"></i></button>&nbsp;' +
-                            '<button type="button" class="btn btn-default btn-md" ng-disabled="$ctrl.filter.Text === false" ng-click="$ctrl.filter.Text = false; $ctrl.filter.Operator = \'Equals\';">' +
-                            '<i class="fa fa-times"></i></button></div>' +
-                            '<input type="search" class="form-control" ng-model="$ctrl.filter.Argument[0]" ng-keypress="$ctrl.checkEvent($event)" ng-show="$ctrl.filter.Operator == \'Between\'" />' +
-                            '<hr />' +
-                            '<tb-column-filter-buttons></tb-column-filter-buttons>' +
-                            '</form>';
-
+                    $ctrl.$onInit = function () {
+                        $ctrl.templateName = tubularTemplateService.tbColumnFilterPopoverTemplateName;
                         setupFilter($scope, $element, $compile, $filter, $ctrl);
                     };
                 }
@@ -2597,35 +2613,24 @@ try {
                 $component: '^tbGrid'
             },
             template: '<div class="tubular-column-menu">' +
-                '<button class="btn btn-xs btn-default btn-popover" ng-click="$ctrl.open()" ' +
-                'ng-class="{ \'btn-success\': $ctrl.filter.HasFilter }">' +
+                '<button class="btn btn-xs btn-default btn-popover" ' +
+                'uib-popover-template="$ctrl.templateName" popover-placement="bottom" popover-title="{{$ctrl.filterTitle}}" popover-is-open="$ctrl.isOpen" ' +
+                'popover-trigger="click outsideClick" ng-class="{ \'btn-success\': $ctrl.filter.HasFilter }">' +
                 '<i class="fa fa-filter"></i></button>' +
                 '</div>',
             bindings: {
                 text: '@',
                 argument: '@',
                 operator: '@',
-                optionsUrl: '@',
                 title: '@'
             },
             controller: [
-                '$scope', '$element', '$compile', '$filter', function ($scope, $element, $compile, $filter) {
+                '$scope', '$element', '$compile', '$filter', 'tubularTemplateService', function ($scope, $element, $compile, $filter, tubularTemplateService) {
                     var $ctrl = this;
 
-                    $ctrl.$onInit = function() {
-                        $ctrl.format = 'yyyy-MM-dd';
-                        $ctrl.dialogTemplate = '<button type="button" class="close" data-dismiss="modal" ng-click="$ctrl.close()"><span aria-hidden="true">×</span></button>' +
-                            '<h4>{{$ctrl.filterTitle}}</h4>' +
-                            '<form class="tubular-column-filter-form" onsubmit="return false;">' +
-                            '<select class="form-control" ng-model="$ctrl.filter.Operator" ng-options="key as value for (key , value) in $ctrl.filterOperators"></select>&nbsp;' +
-                            '<input type="date" class="form-control" ng-model="$ctrl.filter.Text" ng-keypress="$ctrl.checkEvent($event)" />&nbsp;' +
-                            '<input type="date" class="form-control" ng-model="$ctrl.filter.Argument[0]" ng-keypress="$ctrl.checkEvent($event)" ' +
-                            'ng-show="$ctrl.filter.Operator == \'Between\'" />' +
-                            '<hr />' +
-                            '<tb-column-filter-buttons></tb-column-filter-buttons>' +
-                            '</form>';
-
-                        setupFilter($scope, $element, $compile, $filter, $ctrl);
+                    $ctrl.$onInit = function() {                       
+                        $ctrl.templateName = tubularTemplateService.tbColumnDateTimeFilterPopoverTemplateName;
+                          setupFilter($scope, $element, $compile, $filter, $ctrl);
                     };
                 }
             ]
@@ -2648,7 +2653,8 @@ try {
                 $component: '^tbGrid'
             },
             template: '<div class="tubular-column-menu">' +
-                '<button class="btn btn-xs btn-default btn-popover" ng-click="$ctrl.open()" ' +
+                '<button class="btn btn-xs btn-default btn-popover" uib-popover-template="$ctrl.templateName" popover-placement="bottom" ' +
+                'popover-title="{{$ctrl.filterTitle}}" popover-is-open="$ctrl.isOpen" popover-trigger="click outsideClick" ' +
                 'ng-class="{ \'btn-success\': $ctrl.filter.HasFilter }">' +
                 '<i class="fa fa-filter"></i></button>' +
                 '</div>',
@@ -2660,7 +2666,7 @@ try {
                 title: '@'
             },
             controller: [
-                '$scope', '$element', '$compile', '$filter', function ($scope, $element, $compile, $filter) {
+                '$scope', '$element', '$compile', '$filter', 'tubularTemplateService', function ($scope, $element, $compile, $filter, tubularTemplateService) {
                     var $ctrl = this;
 
                     $ctrl.getOptionsFromUrl = function () {
@@ -2685,16 +2691,10 @@ try {
 
                     $ctrl.$onInit = function() {
                         $ctrl.dataIsLoaded = false;
-                        $ctrl.dialogTemplate = '<button type="button" class="close" data-dismiss="modal" ng-click="$ctrl.close()"><span aria-hidden="true">×</span></button>' +
-                            '<h4>{{::$ctrl.filterTitle}}</h4>' +
-                            '<form class="tubular-column-filter-form" onsubmit="return false;">' +
-                            '<select class="form-control checkbox-list" ng-model="$ctrl.filter.Argument" ng-options="item for item in $ctrl.optionsItems" ' +
-                            ' multiple ng-disabled="$ctrl.dataIsLoaded == false"></select>' +
-                            '<hr />' +
-                            '<tb-column-filter-buttons></tb-column-filter-buttons>' +
-                            '</form>';
+                        $ctrl.templateName = tubularTemplateService.tbColumnOptionsFilterPopoverTemplateName;
+                        setupFilter($scope, $element, $compile, $filter, $ctrl);
+                        $ctrl.getOptionsFromUrl();
 
-                        setupFilter($scope, $element, $compile, $filter, $ctrl, $ctrl.getOptionsFromUrl);
                         $ctrl.filter.Operator = 'Multiple';
                     };
                 }
@@ -2997,13 +2997,12 @@ try {
             ]
         })
         /**
-         * @ngdoc directive
+         * @ngdoc component
          * @name tbRemoveButton
          * @module tubular.directives
-         * @restrict E
          *
          * @description
-         * The `tbRemoveButton` directive is visual helper to show a Remove button with a popover to confirm the action.
+         * The `tbRemoveButton` component is visual helper to show a Remove button with a popover to confirm the action.
          * 
          * @param {object} model The row to remove.
          * @param {string} caption Set the caption to use in the button, default Remove.
@@ -3011,52 +3010,34 @@ try {
          * @param {string} legend Set the legend to warn user, default 'Do you want to delete this row?'.
          * @param {string} icon Set the CSS icon's class, the button can have only icon.
          */
-        .directive('tbRemoveButton', [
-            '$compile', function($compile) {
-                return {
-                    require: '^tbGrid',
-                    template: '<button ng-click="confirmDelete()" class="btn" ng-hide="model.$isEditing">' +
-                        '<span ng-show="showIcon" class="{{::icon}}"></span>' +
-                        '<span ng-show="showCaption">{{:: caption || (\'CAPTION_REMOVE\' | translate) }}</span>' +
-                        '</button>',
-                    restrict: 'E',
-                    replace: true,
-                    scope: {
-                        model: '=',
-                        caption: '@',
-                        cancelCaption: '@',
-                        legend: '@',
-                        icon: '@'
-                    },
-                    controller: [
-                        '$scope', '$element', '$filter', function($scope, $element, $filter) {
-                            $scope.showIcon = angular.isDefined($scope.icon);
-                            $scope.showCaption = !($scope.showIcon && angular.isUndefined($scope.caption));
-                            $scope.confirmDelete = function() {
-                                $element.popover({
-                                    html: true,
-                                    title: $scope.legend || $filter('translate')('UI_REMOVEROW'),
-                                    content: function() {
-                                        var html = '<div class="tubular-remove-popover">' +
-                                            '<button ng-click="model.delete()" class="btn btn-danger btn-xs">' + ($scope.caption || $filter('translate')('CAPTION_REMOVE')) + '</button>' +
-                                            '&nbsp;<button ng-click="cancelDelete()" class="btn btn-default btn-xs">' + ($scope.cancelCaption || $filter('translate')('CAPTION_CANCEL')) + '</button>' +
-                                            '</div>';
+        .component('tbRemoveButton', {
+            require: '^tbGrid',
+            template: '<button class="btn btn-danger btn-xs btn-popover" uib-popover-template="$ctrl.templateName" popover-placement="right" ' +
+                'popover-title="{{ $ctrl.legend || (\'UI_REMOVEROW\' | translate) }}" popover-is-open="$ctrl.isOpen" popover-trigger="click outsideClick" ' +
+                'ng-hide="$ctrl.model.$isEditing">' +
+                '<span ng-show="$ctrl.showIcon" class="{{::icon}}"></span>' +
+                '<span ng-show="$ctrl.showCaption">{{:: $ctrl.caption || (\'CAPTION_REMOVE\' | translate) }}</span>' +
+                '</button>',
+            bindings: {
+                model: '=',
+                caption: '@',
+                cancelCaption: '@',
+                legend: '@',
+                icon: '@'
+            },
+            controller: [
+               'tubularTemplateService', '$filter', function (tubularTemplateService, $filter) {
+                   var $ctrl = this;
 
-                                        return $compile(html)($scope);
-                                    }
-                                });
+                   $ctrl.showIcon = angular.isDefined($ctrl.icon);
+                   $ctrl.showCaption = !($ctrl.showIcon && angular.isUndefined($ctrl.caption));
 
-                                $element.popover('show');
-                            };
-
-                            $scope.cancelDelete = function() {
-                                $element.popover('destroy');
-                            };
-                        }
-                    ]
-                };
-            }
-        ])
+                   $ctrl.$onInit = function () {
+                       $ctrl.templateName = tubularTemplateService.tbRemoveButtonrPopoverTemplateName;
+                   }
+               }
+            ]
+        })
         /**
          * @ngdoc directive
          * @name tbSaveButton
@@ -3301,7 +3282,7 @@ try {
                             + "<tbody>"
                             + data.map(function(row) {
                                 if (typeof (row) === 'object') {
-                                    row = $.map(row, function(el) { return el; });
+                                    row = Object.keys(row).map(function (key) { return row[key] });
                                 }
 
                                 return "<tr>" + row.map(function(cell, index) {
@@ -3502,16 +3483,24 @@ try {
                         obj.$addField(col.Name, value);
 
                         if (col.DataType === "date" || col.DataType === "datetime" || col.DataType === "datetimeutc") {
-                            var timezone = new Date().toString().match(/([-\+][0-9]+)\s/)[1];
-                            timezone = timezone.substr(0, timezone.length - 2) + ':' + timezone.substr(timezone.length - 2, 2);
-                            var tempDate = new Date(Date.parse(obj[col.Name] + timezone));
-
-                            if (col.DataType === "date") {
-                                obj[col.Name] = new Date(1900 + tempDate.getYear(), tempDate.getMonth(), tempDate.getDate());
+                            if (typeof moment == 'function') {
+                                if (col.DataType === "datetimeutc") {
+                                    obj[col.Name] = moment.utc(obj[col.Name]);
+                                } else {
+                                    obj[col.Name] = moment(obj[col.Name]);
+                                }
                             } else {
-                                obj[col.Name] = new Date(1900 + tempDate.getYear(),
-                                    tempDate.getMonth(), tempDate.getDate(), tempDate.getHours(),
-                                    tempDate.getMinutes(), tempDate.getSeconds(), 0);
+                                var timezone = new Date().toString().match(/([-\+][0-9]+)\s/)[1];
+                                timezone = timezone.substr(0, timezone.length - 2) + ':' + timezone.substr(timezone.length - 2, 2);
+                                var tempDate = new Date(Date.parse(obj[col.Name] + timezone));
+
+                                if (col.DataType === "date") {
+                                    obj[col.Name] = new Date(1900 + tempDate.getYear(), tempDate.getMonth(), tempDate.getDate());
+                                } else {
+                                    obj[col.Name] = new Date(1900 + tempDate.getYear(),
+                                        tempDate.getMonth(), tempDate.getDate(), tempDate.getHours(),
+                                        tempDate.getMinutes(), tempDate.getSeconds(), 0);
+                                }
                             }
                         }
 
@@ -4005,7 +3994,7 @@ try {
             }
         ]);
 })(window.angular);
-(function() {
+(function(angular) {
     'use strict';
 
     angular.module('tubular.services')
@@ -4435,7 +4424,7 @@ try {
                 };
             }
         ]);
-})();
+})(window.angular);
 (function() {
     'use strict';
 
@@ -4790,6 +4779,71 @@ try {
 
                 me.enums = tubularTemplateServiceModule.enums;
                 me.defaults = tubularTemplateServiceModule.defaults;
+
+                // Loading popovers templates
+                me.tbColumnFilterPopoverTemplateName = 'tbColumnFilterPopoverTemplate.html';
+                me.tbColumnDateTimeFilterPopoverTemplateName = 'tbColumnDateTimeFilterPopoverTemplate.html';
+                me.tbColumnOptionsFilterPopoverTemplateName = 'tbColumnOptionsFilterPopoverTemplate.html';
+                me.tbRemoveButtonrPopoverTemplateName = 'tbRemoveButtonrPopoverTemplate.html';
+
+                if (!$templateCache.get(me.tbColumnFilterPopoverTemplateName)) {
+                    me.tbColumnFilterPopoverTemplate = '<div>' +
+                        '<form class="tubular-column-filter-form" onsubmit="return false;">' +
+                        '<select class="form-control" ng-options="key as value for (key , value) in $ctrl.filterOperators" ng-model="$ctrl.filter.Operator" ng-hide="$ctrl.dataType == \'boolean\'"></select>&nbsp;' +
+                        '<input class="form-control" type="search" ng-model="$ctrl.filter.Text" autofocus ng-keypress="$ctrl.checkEvent($event)" ng-hide="$ctrl.dataType == \'boolean\'"' +
+                        'placeholder="{{\'CAPTION_VALUE\' | translate}}" ng-disabled="$ctrl.filter.Operator == \'None\'" />' +
+                        '<div class="text-center" ng-show="$ctrl.dataType == \'boolean\'">' +
+                        '<button type="button" class="btn btn-default btn-md" ng-disabled="$ctrl.filter.Text === true" ng-click="$ctrl.filter.Text = true; $ctrl.filter.Operator = \'Equals\';">' +
+                        '<i class="fa fa-check"></i></button>&nbsp;' +
+                        '<button type="button" class="btn btn-default btn-md" ng-disabled="$ctrl.filter.Text === false" ng-click="$ctrl.filter.Text = false; $ctrl.filter.Operator = \'Equals\';">' +
+                        '<i class="fa fa-times"></i></button></div>' +
+                        '<input type="search" class="form-control" ng-model="$ctrl.filter.Argument[0]" ng-keypress="$ctrl.checkEvent($event)" ng-show="$ctrl.filter.Operator == \'Between\'" />' +
+                        '<hr />' +
+                        '<tb-column-filter-buttons></tb-column-filter-buttons>' +
+                        '</form></div>';
+
+                    $templateCache.put(me.tbColumnFilterPopoverTemplateName, me.tbColumnFilterPopoverTemplate);
+                }
+
+                if (!$templateCache.get(me.tbColumnDateTimeFilterPopoverTemplateName)) {
+                    me.tbColumnDateTimeFilterPopoverTemplate = '<div>' +
+                        '<form class="tubular-column-filter-form" onsubmit="return false;">' +
+                        '<select class="form-control" ng-options="key as value for (key , value) in $ctrl.filterOperators" ng-model="$ctrl.filter.Operator" ng-hide="$ctrl.dataType == \'boolean\'"></select>&nbsp;' +
+                        '<input class="form-control" type="date" ng-model="$ctrl.filter.Text" autofocus ng-keypress="$ctrl.checkEvent($event)" '+
+                        'placeholder="{{\'CAPTION_VALUE\' | translate}}" ng-disabled="$ctrl.filter.Operator == \'None\'" />' +
+                        '<input type="date" class="form-control" ng-model="$ctrl.filter.Argument[0]" ng-keypress="$ctrl.checkEvent($event)" ng-show="$ctrl.filter.Operator == \'Between\'" />' +
+                        '<hr />' +
+                        '<tb-column-filter-buttons></tb-column-filter-buttons>' +
+                        '</form></div>';
+
+                    $templateCache.put(me.tbColumnDateTimeFilterPopoverTemplateName, me.tbColumnDateTimeFilterPopoverTemplate);
+                }
+
+                if (!$templateCache.get(me.tbColumnOptionsFilterPopoverTemplateName)) {
+                    me.tbColumnOptionsFilterPopoverTemplate = '<div>' +
+                        '<form class="tubular-column-filter-form" onsubmit="return false;">' +
+                        '<select class="form-control checkbox-list" ng-options="item for item in $ctrl.optionsItems" ' +
+                        'ng-model="$ctrl.filter.Argument" multiple ng-disabled="$ctrl.dataIsLoaded == false"></select>&nbsp;' +
+                        '<hr />' +
+                        '<tb-column-filter-buttons></tb-column-filter-buttons>' +
+                        '</form></div>';
+
+                    $templateCache.put(me.tbColumnOptionsFilterPopoverTemplateName, me.tbColumnOptionsFilterPopoverTemplate);
+                }
+
+                if (!$templateCache.get(me.tbRemoveButtonrPopoverTemplateName)) {
+                    me.tbRemoveButtonrPopoverTemplate = '<div class="tubular-remove-popover">' +
+                        '<button ng-click="$ctrl.model.delete()" class="btn btn-danger btn-xs">' +
+                        '{{:: $ctrl.caption || (\'CAPTION_REMOVE\' | translate) }}' +
+                        '</button>' +
+                        '&nbsp;' +
+                        '<button ng-click="$ctrl.isOpen = false;" class="btn btn-default btn-xs">' +
+                        '{{:: $ctrl.cancelCaption || (\'CAPTION_CANCEL\' | translate) }}' +
+                        '</button>' +
+                        '</div>';
+
+                    $templateCache.put(me.tbRemoveButtonrPopoverTemplateName, me.tbRemoveButtonrPopoverTemplate);
+                }
 
                 me.generatePopup = function(model, title) {
                     var templateName = 'temp' + (new Date().getTime()) + '.html';
