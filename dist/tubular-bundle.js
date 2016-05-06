@@ -412,7 +412,7 @@ try {
 } catch (e) {
     // Ignore
 }
-(function (angular) {
+(function(angular) {
     'use strict';
 
     /**
@@ -430,8 +430,9 @@ try {
                 localStorageServiceProvider.setPrefix('tubular');
             }
         ])
-        .run(['tubularHttp', 'tubularOData', 'tubularLocalData',
-            function (tubularHttp, tubularOData, tubularLocalData) {
+        .run([
+            'tubularHttp', 'tubularOData', 'tubularLocalData',
+            function(tubularHttp, tubularOData, tubularLocalData) {
                 // register data services
                 tubularHttp.registerService('odata', tubularOData);
                 tubularHttp.registerService('local', tubularLocalData);
@@ -486,15 +487,29 @@ try {
                 };
             }
         ])
-    .filter("moment", function () {
-        return function (input, format) {
-            if (angular.isDefined(input) && typeof(input) === "object") {
-                return input.format(format);
-            }
+        /**
+         * @ngdoc filter
+         * @name moment
+         * @kind function
+         *
+         * @description
+         * `moment` is a filter to call format from moment or, if the input is a Date, call Angular's `date` filter.
+         */
+        .filter("moment", [
+            "$filter", function($filter) {
+                return function(input, format) {
+                    if (angular.isDefined(input) && typeof (input) === "object") {
+                        if (typeof moment == 'function') {
+                            return input.format(format);
+                        } else {
+                            return $filter('date')(input);
+                        }
+                    }
 
-            return input;
-        };
-    });
+                    return input;
+                };
+            }
+        ]);
 })(window.angular);
 (function (angular) {
     'use strict';
@@ -1419,7 +1434,7 @@ try {
 (function (angular) {
     'use strict';
 
-    if (moment) {
+    if (typeof moment == 'function') {
         moment.fn.toJSON = function() { return this.format(); }
     }
 
@@ -1795,11 +1810,11 @@ try {
                        if (angular.isUndefined(val)) return;
 
                        if (typeof (val) === 'string') {
-                           $ctrl.value = moment ? moment(val) : new Date(val);
+                           $ctrl.value = typeof moment == 'function' ? moment(val) : new Date(val);
                        }
 
                        if (angular.isUndefined($ctrl.dateValue)) {
-                           if (moment) {
+                           if (typeof moment == 'function') {
                                var tmpDate = $ctrl.value.toObject();
                                $ctrl.dateValue = new Date(tmpDate.years, tmpDate.months, tmpDate.date, tmpDate.hours, tmpDate.minutes, tmpDate.seconds);
                            } else {
@@ -1810,7 +1825,7 @@ try {
                                return $ctrl.dateValue;
                            }, function(val) {
                                if (angular.isDefined(val)) {
-                                   $ctrl.value = moment(val);
+                                   $ctrl.value = typeof moment == 'function' ? moment(val) : new Date(val);
                                }
                            });
                        }
@@ -1849,7 +1864,8 @@ try {
                    $ctrl.$onInit = function() {
                         $ctrl.DataType = "date";
                         tubularEditorService.setupScope($scope, $ctrl.format, $ctrl);
-                       if (angular.isUndefined($ctrl.format)) {
+
+                        if (typeof moment == 'function' && angular.isUndefined($ctrl.format)) {
                            $ctrl.format = "MMM D, Y";
                        }
                    };
@@ -3467,7 +3483,7 @@ try {
                         obj.$addField(col.Name, value);
 
                         if (col.DataType === "date" || col.DataType === "datetime" || col.DataType === "datetimeutc") {
-                            if (moment) {
+                            if (typeof moment == 'function') {
                                 if (col.DataType === "datetimeutc") {
                                     obj[col.Name] = moment.utc(obj[col.Name]);
                                 } else {

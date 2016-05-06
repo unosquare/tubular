@@ -1,4 +1,4 @@
-﻿(function (angular) {
+﻿(function(angular) {
     'use strict';
 
     /**
@@ -16,8 +16,9 @@
                 localStorageServiceProvider.setPrefix('tubular');
             }
         ])
-        .run(['tubularHttp', 'tubularOData', 'tubularLocalData',
-            function (tubularHttp, tubularOData, tubularLocalData) {
+        .run([
+            'tubularHttp', 'tubularOData', 'tubularLocalData',
+            function(tubularHttp, tubularOData, tubularLocalData) {
                 // register data services
                 tubularHttp.registerService('odata', tubularOData);
                 tubularHttp.registerService('local', tubularLocalData);
@@ -72,13 +73,27 @@
                 };
             }
         ])
-    .filter("moment", function () {
-        return function (input, format) {
-            if (angular.isDefined(input) && typeof(input) === "object") {
-                return input.format(format);
-            }
+        /**
+         * @ngdoc filter
+         * @name moment
+         * @kind function
+         *
+         * @description
+         * `moment` is a filter to call format from moment or, if the input is a Date, call Angular's `date` filter.
+         */
+        .filter("moment", [
+            "$filter", function($filter) {
+                return function(input, format) {
+                    if (angular.isDefined(input) && typeof (input) === "object") {
+                        if (typeof moment == 'function') {
+                            return input.format(format);
+                        } else {
+                            return $filter('date')(input);
+                        }
+                    }
 
-            return input;
-        };
-    });
+                    return input;
+                };
+            }
+        ]);
 })(window.angular);

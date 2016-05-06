@@ -1,7 +1,7 @@
 (function (angular) {
     'use strict';
 
-    if (moment) {
+    if (typeof moment == 'function') {
         moment.fn.toJSON = function() { return this.format(); }
     }
 
@@ -377,11 +377,11 @@
                        if (angular.isUndefined(val)) return;
 
                        if (typeof (val) === 'string') {
-                           $ctrl.value = moment ? moment(val) : new Date(val);
+                           $ctrl.value = typeof moment == 'function' ? moment(val) : new Date(val);
                        }
 
                        if (angular.isUndefined($ctrl.dateValue)) {
-                           if (moment) {
+                           if (typeof moment == 'function') {
                                var tmpDate = $ctrl.value.toObject();
                                $ctrl.dateValue = new Date(tmpDate.years, tmpDate.months, tmpDate.date, tmpDate.hours, tmpDate.minutes, tmpDate.seconds);
                            } else {
@@ -392,7 +392,7 @@
                                return $ctrl.dateValue;
                            }, function(val) {
                                if (angular.isDefined(val)) {
-                                   $ctrl.value = moment(val);
+                                   $ctrl.value = typeof moment == 'function' ? moment(val) : new Date(val);
                                }
                            });
                        }
@@ -431,7 +431,8 @@
                    $ctrl.$onInit = function() {
                         $ctrl.DataType = "date";
                         tubularEditorService.setupScope($scope, $ctrl.format, $ctrl);
-                       if (angular.isUndefined($ctrl.format)) {
+
+                        if (typeof moment == 'function' && angular.isUndefined($ctrl.format)) {
                            $ctrl.format = "MMM D, Y";
                        }
                    };

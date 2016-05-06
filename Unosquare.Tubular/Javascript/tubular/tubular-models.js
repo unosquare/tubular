@@ -65,7 +65,7 @@
                         obj.$addField(col.Name, value);
 
                         if (col.DataType === "date" || col.DataType === "datetime" || col.DataType === "datetimeutc") {
-                            if (moment) {
+                            if (typeof moment == 'function') {
                                 if (col.DataType === "datetimeutc") {
                                     obj[col.Name] = moment.utc(obj[col.Name]);
                                 } else {
