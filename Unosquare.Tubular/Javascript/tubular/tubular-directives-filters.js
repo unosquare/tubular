@@ -333,7 +333,7 @@
 
                     $ctrl.$onInit = function() {                       
                         $ctrl.templateName = tubularTemplateService.tbColumnDateTimeFilterPopoverTemplateName;
-                        setupFilter($scope, $element, $compile, $filter, $ctrl);
+                          setupFilter($scope, $element, $compile, $filter, $ctrl);
                     };
                 }
             ]

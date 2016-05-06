@@ -8,7 +8,6 @@
 describe('tbGridPagerInfo', function () {
     
     var tbGridPagerInfo,
-        firstPageBtn,
         nextPageBtn,
         tbPageSizeSelector;
 
@@ -17,27 +16,25 @@ describe('tbGridPagerInfo', function () {
         browser.get('index.html');
         element(by.id('testsSelector')).click();
         element(by.id('tbGridPagerInfoTest')).click();
-
-        // Select '10' on tbPageSizeSelector
-        tbPageSizeSelector = element(by.model('$ctrl.$component.pageSize'));
-        tbPageSizeSelector.$('[value="number:10"]').click();
-            
-        ////////////////////////
+                    
+        /**********************/
         // * Test variables * //
-        ////////////////////////
-        
+        /**********************/
         // Get the component
         tbGridPagerInfo = element(by.tagName('tb-grid-pager-info'));
-        // First page button
-        firstPageBtn = element(by.tagName('tb-grid-pager')).all(by.tagName('li')).$$('li.pagination-first a');
         // Next page button
-        nextPageBtn = element(by.tagName('tb-grid-pager')).all(by.tagName('li')).$$('li.pagination-next a');
+        nextPageBtn = element(by.tagName('tb-grid-pager')).$('li.pagination-next a');
+        // Page size selector component
+        tbPageSizeSelector = element(by.model('$ctrl.$component.pageSize'));
+        
+        // Go to first page if not there    
+        element(by.tagName('tb-grid-pager'))
+            .$('li.pagination-first a')
+            .click();
+        
+        // Select '10' on tbPageSizeSelector
+        tbPageSizeSelector.$('[value="number:10"]').click();        
     });
-    
-    beforeEach(function(){
-         // Go to page 1 before every test if not there
-        firstPageBtn.click();
-    });    
     
     it("should show text in accordance to numbered of filter rows and current results-page", function(){
        // Started on page 1
@@ -47,12 +44,12 @@ describe('tbGridPagerInfo', function () {
        nextPageBtn.click();
        tbPageSizeSelector.$('[value="number:20"]').click();
        
-       expect(tbGridPagerInfo.getText()).toBe('Showing 21 to 40 of 53 records');
+       expect(tbGridPagerInfo.getText()).toBe('Showing 21 to 400 of 53 records');
        
        // Go page 3
        nextPageBtn.click();
        
-       expect(tbGridPagerInfo.getText()).toBe('Showing 41 to 53 of 53 records');
+       expect(tbGridPagerInfo.getText()).toBe('Showing 41 to 533 of 53 records');       
     });
 
 });

@@ -22,10 +22,9 @@ describe('tbPageSizeSelctor', function(){
         element(by.id('testsSelector')).click();
         element(by.id('tbPageSizeSelectorTest')).click();
                         
-        ////////////////////////
+        /**********************/
         // * Test variables * //
-        ////////////////////////
-
+        /**********************/
         // tbPageSizeSelector element
         tbPageSizeSelector = element(by.model('$ctrl.$component.pageSize'));
         // All showing rows
@@ -35,11 +34,9 @@ describe('tbPageSizeSelctor', function(){
         // Last showing row
         lastDataRow = element.all(by.repeater('row in $component.rows')).last();
         // First page button
-        firstPageBtn = element(by.tagName('tb-grid-pager')).all(by.tagName('li'))
-            .$$('li.pagination-first a');
+        firstPageBtn = element(by.tagName('tb-grid-pager')).$('li.pagination-first a');
         // Next page button
-        nextPageBtn = element(by.tagName('tb-grid-pager')).all(by.tagName('li'))
-            .$$('li.pagination-next a');
+        nextPageBtn = element(by.tagName('tb-grid-pager')).$('li.pagination-next a');
     });
     
     beforeEach(function(){
