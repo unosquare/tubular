@@ -616,7 +616,7 @@
                         sortDirection: '@?'
                     },
                     controller: [
-                        '$scope', '$filter', function ($scope, $filter) {
+                        '$scope', function ($scope) {
                             $scope.column = { Label: '' };
                             $scope.$component = $scope.$parent.$parent.$component;
                             $scope.tubularDirective = 'tubular-column';
@@ -632,11 +632,11 @@
                                 }
                             });
 
-                            $scope.$watch('label', function () {
+                            $scope.$watch('label', function() {
                                 $scope.column.Label = $scope.label;
                                 // this broadcast here is used for backwards compatibility with tbColumnHeader requiring a scope.label value on its own
                                 $scope.$broadcast('tbColumn_LabelChanged', $scope.label);
-                            })
+                            });
 
                             var column = new function () {
                                 this.Name = $scope.name || null;
@@ -658,8 +658,9 @@
 
                                     return 'None';
                                 }();
+
                                 this.IsKey = $scope.isKey === "true";
-                                this.Searchable = $scope.searchable === "true";
+                                this.Searchable = angular.isDefined($scope.searchable) ? $scope.searchable : false;
                                 this.Visible = $scope.visible === "false" ? false : true;
                                 this.Filter = null;
                                 this.DataType = $scope.columnType || "string";
