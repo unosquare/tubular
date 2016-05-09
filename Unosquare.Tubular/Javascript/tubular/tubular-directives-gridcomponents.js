@@ -358,7 +358,7 @@
                             + "<tbody>"
                             + data.map(function(row) {
                                 if (typeof (row) === 'object') {
-                                    row = $.map(row, function(el) { return el; });
+                                    row = Object.keys(row).map(function (key) { return row[key] });
                                 }
 
                                 return "<tr>" + row.map(function(cell, index) {

@@ -412,7 +412,7 @@ try {
 } catch (e) {
     // Ignore
 }
-(function (angular) {
+(function(angular) {
     'use strict';
 
     /**
@@ -430,8 +430,9 @@ try {
                 localStorageServiceProvider.setPrefix('tubular');
             }
         ])
-        .run(['tubularHttp', 'tubularOData', 'tubularLocalData',
-            function (tubularHttp, tubularOData, tubularLocalData) {
+        .run([
+            'tubularHttp', 'tubularOData', 'tubularLocalData',
+            function(tubularHttp, tubularOData, tubularLocalData) {
                 // register data services
                 tubularHttp.registerService('odata', tubularOData);
                 tubularHttp.registerService('local', tubularLocalData);
@@ -467,22 +468,45 @@ try {
          * @description
          * `numberorcurrency` is a hack to hold `currency` and `number` in a single filter.
          */
-        .filter('numberorcurrency', [
-            '$filter', function($filter) {
+        .filter("numberorcurrency", [
+            "$filter", function($filter) {
                 return function(input, format, symbol, fractionSize) {
                     symbol = symbol || "$";
                     fractionSize = fractionSize || 2;
 
-                    if (format === 'C') {
-                        return $filter('currency')(input, symbol, fractionSize);
+                    if (format === "C") {
+                        return $filter("currency")(input, symbol, fractionSize);
                     }
 
-                    if (format === 'I') {
+                    if (format === "I") {
                         return parseInt(input);
                     }
 
                     // default to decimal
-                    return $filter('number')(input, fractionSize);
+                    return $filter("number")(input, fractionSize);
+                };
+            }
+        ])
+        /**
+         * @ngdoc filter
+         * @name moment
+         * @kind function
+         *
+         * @description
+         * `moment` is a filter to call format from moment or, if the input is a Date, call Angular's `date` filter.
+         */
+        .filter("moment", [
+            "$filter", function($filter) {
+                return function(input, format) {
+                    if (angular.isDefined(input) && typeof (input) === "object") {
+                        if (typeof moment == 'function') {
+                            return input.format(format);
+                        } else {
+                            return $filter('date')(input);
+                        }
+                    }
+
+                    return input;
                 };
             }
         ]);
@@ -1410,6 +1434,10 @@ try {
 (function (angular) {
     'use strict';
 
+    if (typeof moment == 'function') {
+        moment.fn.toJSON = function() { return this.format(); }
+    }
+
     var canUseHtml5Date = function() {
         var input = document.createElement('input');
         input.setAttribute('type', 'date');
@@ -1742,13 +1770,13 @@ try {
          */
         .component('tbDateEditor', {
             template: '<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">' +
-                '<span ng-hide="$ctrl.isEditing">{{ $ctrl.value | date: $ctrl.format }}</span>' +
+                '<span ng-hide="$ctrl.isEditing">{{ $ctrl.value | moment: $ctrl.format }}</span>' +
                 '<label ng-show="$ctrl.showLabel">{{ $ctrl.label }}</label>' +
                 (canUseHtml5Date ?
-                    '<input type="date" ng-show="$ctrl.isEditing" ng-model="$ctrl.value" class="form-control" ' +
+                    '<input type="date" ng-show="$ctrl.isEditing" ng-model="$ctrl.dateValue" class="form-control" ' +
                     'ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}"/>' : 
                     '<div class="input-group" ng-show="$ctrl.isEditing">' +
-                    '<input type="text" uib-datepicker-popup="{{$ctrl.format}}" ng-model="$ctrl.value" class="form-control" ' +
+                    '<input type="text" uib-datepicker-popup="{{$ctrl.format}}" ng-model="$ctrl.dateValue" class="form-control" ' +
                     'ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}" is-open="$ctrl.open" />' +
                     '<span class="input-group-btn">' +
                     '<button type="button" class="btn btn-default" ng-click="$ctrl.open = !$ctrl.open"><i class="fa fa-calendar"></i></button>' +
@@ -1779,8 +1807,27 @@ try {
                    $scope.$watch(function() {
                        return $ctrl.value;
                    }, function (val) {
+                       if (angular.isUndefined(val)) return;
+
                        if (typeof (val) === 'string') {
-                           $ctrl.value = new Date(val);
+                           $ctrl.value = typeof moment == 'function' ? moment(val) : new Date(val);
+                       }
+
+                       if (angular.isUndefined($ctrl.dateValue)) {
+                           if (typeof moment == 'function') {
+                               var tmpDate = $ctrl.value.toObject();
+                               $ctrl.dateValue = new Date(tmpDate.years, tmpDate.months, tmpDate.date, tmpDate.hours, tmpDate.minutes, tmpDate.seconds);
+                           } else {
+                               $ctrl.dateValue = $ctrl.value;
+                           }
+
+                           $scope.$watch(function() {
+                               return $ctrl.dateValue;
+                           }, function(val) {
+                               if (angular.isDefined(val)) {
+                                   $ctrl.value = typeof moment == 'function' ? moment(val) : new Date(val);
+                               }
+                           });
                        }
                    });
 
@@ -1790,7 +1837,7 @@ try {
                                $ctrl.min = new Date($ctrl.min);
                            }
 
-                           $ctrl.$valid = $ctrl.value >= $ctrl.min;
+                           $ctrl.$valid = $ctrl.dateValue >= $ctrl.min;
 
                            if (!$ctrl.$valid) {
                                $ctrl.state.$errors = [$filter('translate')('EDITOR_MIN_DATE', $filter('date')($ctrl.min, $ctrl.format))];
@@ -1806,7 +1853,7 @@ try {
                                $ctrl.max = new Date($ctrl.max);
                            }
 
-                           $ctrl.$valid = $ctrl.value <= $ctrl.max;
+                           $ctrl.$valid = $ctrl.dateValue <= $ctrl.max;
 
                            if (!$ctrl.$valid) {
                                $ctrl.state.$errors = [$filter('translate')('EDITOR_MAX_DATE', $filter('date')($ctrl.max, $ctrl.format))];
@@ -1817,6 +1864,10 @@ try {
                    $ctrl.$onInit = function() {
                         $ctrl.DataType = "date";
                         tubularEditorService.setupScope($scope, $ctrl.format, $ctrl);
+
+                        if (typeof moment == 'function' && angular.isUndefined($ctrl.format)) {
+                           $ctrl.format = "MMM D, Y";
+                       }
                    };
                 }
             ]
@@ -2473,11 +2524,10 @@ try {
                                 '</div>' +
                                 '<div class="modal-body">' +
                                 '<table class="table table-bordered table-responsive table-striped table-hover table-condensed">' +
-                                '<thead><tr><th>Visible?</th><th>Name</th><th>Grouping?</th></tr></thead>' +
+                                '<thead><tr><th>Visible?</th><th>Name</th></tr></thead>' +
                                 '<tbody><tr ng-repeat="col in Model">' +
                                 '<td><input type="checkbox" ng-model="col.Visible" ng-disabled="col.Visible && isInvalid()" /></td>' +
                                 '<td>{{col.Label}}</td>' +
-                                '<td><input type="checkbox" ng-disabled="true" ng-model="col.IsGrouping" /></td>' +
                                 '</tr></tbody></table></div>' +
                                 '</div>' +
                                 '<div class="modal-footer"><button class="btn btn-warning" ng-click="closePopup()">{{\'CAPTION_CLOSE\' | translate}}</button></div>',
@@ -3232,7 +3282,7 @@ try {
                             + "<tbody>"
                             + data.map(function(row) {
                                 if (typeof (row) === 'object') {
-                                    row = $.map(row, function(el) { return el; });
+                                    row = Object.keys(row).map(function (key) { return row[key] });
                                 }
 
                                 return "<tr>" + row.map(function(cell, index) {
@@ -3433,16 +3483,24 @@ try {
                         obj.$addField(col.Name, value);
 
                         if (col.DataType === "date" || col.DataType === "datetime" || col.DataType === "datetimeutc") {
-                            var timezone = new Date().toString().match(/([-\+][0-9]+)\s/)[1];
-                            timezone = timezone.substr(0, timezone.length - 2) + ':' + timezone.substr(timezone.length - 2, 2);
-                            var tempDate = new Date(Date.parse(obj[col.Name] + timezone));
-
-                            if (col.DataType === "date") {
-                                obj[col.Name] = new Date(1900 + tempDate.getYear(), tempDate.getMonth(), tempDate.getDate());
+                            if (typeof moment == 'function') {
+                                if (col.DataType === "datetimeutc") {
+                                    obj[col.Name] = moment.utc(obj[col.Name]);
+                                } else {
+                                    obj[col.Name] = moment(obj[col.Name]);
+                                }
                             } else {
-                                obj[col.Name] = new Date(1900 + tempDate.getYear(),
-                                    tempDate.getMonth(), tempDate.getDate(), tempDate.getHours(),
-                                    tempDate.getMinutes(), tempDate.getSeconds(), 0);
+                                var timezone = new Date().toString().match(/([-\+][0-9]+)\s/)[1];
+                                timezone = timezone.substr(0, timezone.length - 2) + ':' + timezone.substr(timezone.length - 2, 2);
+                                var tempDate = new Date(Date.parse(obj[col.Name] + timezone));
+
+                                if (col.DataType === "date") {
+                                    obj[col.Name] = new Date(1900 + tempDate.getYear(), tempDate.getMonth(), tempDate.getDate());
+                                } else {
+                                    obj[col.Name] = new Date(1900 + tempDate.getYear(),
+                                        tempDate.getMonth(), tempDate.getDate(), tempDate.getHours(),
+                                        tempDate.getMinutes(), tempDate.getSeconds(), 0);
+                                }
                             }
                         }
 
@@ -3936,7 +3994,7 @@ try {
             }
         ]);
 })(window.angular);
-(function() {
+(function(angular) {
     'use strict';
 
     angular.module('tubular.services')
@@ -4366,7 +4424,7 @@ try {
                 };
             }
         ]);
-})();
+})(window.angular);
 (function() {
     'use strict';
 

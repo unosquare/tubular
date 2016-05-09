@@ -1,4 +1,4 @@
-﻿(function (angular) {
+﻿(function(angular) {
     'use strict';
 
     /**
@@ -16,8 +16,9 @@
                 localStorageServiceProvider.setPrefix('tubular');
             }
         ])
-        .run(['tubularHttp', 'tubularOData', 'tubularLocalData',
-            function (tubularHttp, tubularOData, tubularLocalData) {
+        .run([
+            'tubularHttp', 'tubularOData', 'tubularLocalData',
+            function(tubularHttp, tubularOData, tubularLocalData) {
                 // register data services
                 tubularHttp.registerService('odata', tubularOData);
                 tubularHttp.registerService('local', tubularLocalData);
@@ -53,22 +54,45 @@
          * @description
          * `numberorcurrency` is a hack to hold `currency` and `number` in a single filter.
          */
-        .filter('numberorcurrency', [
-            '$filter', function($filter) {
+        .filter("numberorcurrency", [
+            "$filter", function($filter) {
                 return function(input, format, symbol, fractionSize) {
                     symbol = symbol || "$";
                     fractionSize = fractionSize || 2;
 
-                    if (format === 'C') {
-                        return $filter('currency')(input, symbol, fractionSize);
+                    if (format === "C") {
+                        return $filter("currency")(input, symbol, fractionSize);
                     }
 
-                    if (format === 'I') {
+                    if (format === "I") {
                         return parseInt(input);
                     }
 
                     // default to decimal
-                    return $filter('number')(input, fractionSize);
+                    return $filter("number")(input, fractionSize);
+                };
+            }
+        ])
+        /**
+         * @ngdoc filter
+         * @name moment
+         * @kind function
+         *
+         * @description
+         * `moment` is a filter to call format from moment or, if the input is a Date, call Angular's `date` filter.
+         */
+        .filter("moment", [
+            "$filter", function($filter) {
+                return function(input, format) {
+                    if (angular.isDefined(input) && typeof (input) === "object") {
+                        if (typeof moment == 'function') {
+                            return input.format(format);
+                        } else {
+                            return $filter('date')(input);
+                        }
+                    }
+
+                    return input;
                 };
             }
         ]);

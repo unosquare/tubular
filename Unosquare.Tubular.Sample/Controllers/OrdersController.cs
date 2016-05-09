@@ -91,7 +91,7 @@
                 order.Amount = request.New.Amount;
                 order.CustomerName = request.New.CustomerName;
                 order.IsShipped = request.New.IsShipped;
-                order.ShippedDate = request.New.ShippedDate;
+                order.ShippedDate = request.New.ShippedDate.Date;
                 order.ShipperCity = request.New.ShipperCity;
 
                 await context.SaveChangesAsync();

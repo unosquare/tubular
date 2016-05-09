@@ -3,13 +3,13 @@
     <p>Click a node or pie slice to get a notification.</p>
     <div class="row">
         <div class="col-md-5">
-            <tb-chartjs server-url="/api/orders/chart" chart-type="{{modelType}}"
+            <tb-chartjs server-url="/api/orders/chart" chart-type="{{modelType | lowercase}}"
                         on-click="chartClick"
                         require-authentication="false" show-legend="true">
             </tb-chartjs>
         </div>
         <div class="col-md-5">
-            <tb-chartjs server-url="/api/orders/chartpie" chart-type="{{modelPieType}}"
+            <tb-chartjs server-url="/api/orders/chartpie" chart-type="{{modelPieType | lowercase}}"
                         on-click="pieClick"
                         require-authentication="false" show-legend="true">
             </tb-chartjs>
