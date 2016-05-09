@@ -2580,7 +2580,7 @@ try {
 
                     $ctrl.$onInit = function() {                       
                         $ctrl.templateName = tubularTemplateService.tbColumnDateTimeFilterPopoverTemplateName;
-                        setupFilter($scope, $element, $compile, $filter, $ctrl);
+                          setupFilter($scope, $element, $compile, $filter, $ctrl);
                     };
                 }
             ]
@@ -2895,7 +2895,7 @@ try {
                     '<div class="input-group input-group-sm">' +
                     '<span class="input-group-addon"><i class="fa fa-search"></i></span>' +
                     '<input type="search" class="form-control" placeholder="{{:: $ctrl.placeholder || (\'UI_SEARCH\' | translate) }}" maxlength="20" ' +
-                    'ng-model="$component.search.Text" ng-model-options="{ debounce: 300 }">' +
+                    'ng-model="$ctrl.$component.search.Text" ng-model-options="{ debounce: 300 }">' +
                     '<span class="input-group-btn" ng-show="$ctrl.$component.search.Text.length > 0">' +
                     '<button class="btn btn-default" uib-tooltip="{{\'CAPTION_CLEAR\' | translate}}" ng-click="$ctrl.$component.search.Text = \'\'">' +
                     '<i class="fa fa-times-circle"></i>' +
@@ -2916,7 +2916,7 @@ try {
                         $ctrl.lastSearch = $ctrl.$component.search.Text;
                     };
 
-                    $scope.$watch("$component.search.Text", function(val, prev) {
+                    $scope.$watch("$ctrl.$component.search.Text", function(val, prev) {
                         if (angular.isUndefined(val) || val === prev) {
                             return;
                         }
