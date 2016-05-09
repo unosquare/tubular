@@ -6,7 +6,8 @@ exports.config = {
       'tbPageSizeSelector-scen.js',
       'tbGridPagerInfo-scen.js',
       'tbColumn-scen.js',
-      'tbFilters-scen.js'
+      'tbFilters-scen.js',
+      'tbForm-scen.js'
     ],
 
     capabilities: {
