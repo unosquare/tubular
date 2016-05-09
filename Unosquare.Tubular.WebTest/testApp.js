@@ -29,6 +29,10 @@
                         templateUrl: '/Unosquare.Tubular.WebTest/common/tbFilters_tests.html',
                         title: 'Tubular Column Tests'
                     })
+                    .when('/tbFormTests', {
+                        templateUrl: '/Unosquare.Tubular.WebTest/common/tbForm_tests.html',
+                        title: 'Tubular Form Tests'
+                    })
                     .otherwise({
                         redirectTo: '/'
                     });
@@ -49,6 +53,12 @@
                     return config;
                 }
             };
+        })
+        .controller("tbFormCtrl",function($scope, $http){
+            $scope.model = {};
+            $http.get("http://tubular.azurewebsites.net/api/orders/53").then(function(response){
+                $scope.model = response.data;
+            });
         });
 
     angular.module('app', [
