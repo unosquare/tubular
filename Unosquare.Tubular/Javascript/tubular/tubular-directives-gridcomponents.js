@@ -42,7 +42,7 @@
                         $ctrl.lastSearch = $ctrl.$component.search.Text;
                     };
 
-                    $scope.$watch("$ctrl.$component.search.Text", function(val, prev) {
+                    $scope.$watch("$ctrl.$component.search.Text", function (val, prev) {
                         if (angular.isUndefined(val) || val === prev) {
                             return;
                         }
