@@ -2,20 +2,11 @@ exports.config = {
     allScriptsTimeout: 11000,
 
     specs: [
-<<<<<<< HEAD
-    //   'tbGridPager-scen.js',
-    //   'tbPageSizeSelector-scen.js',
-    //   'tbGridPagerInfo-scen.js',
-    //   'tbColumn-scen.js',
-      'tbFilters-scen.js'
-=======
       'tbGridPager-scen.js',
       'tbPageSizeSelector-scen.js',
       'tbGridPagerInfo-scen.js',
       'tbColumn-scen.js',
-      'tbFilters-scen.js',
-      'tbForm-scen.js'
->>>>>>> unosquare/master
+      'tbFilters-scen.js'
     ],
 
     capabilities: {
