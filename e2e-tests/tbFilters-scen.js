@@ -43,20 +43,6 @@ describe('Tubular Filters', function () {
         element(by.id('tbFiltersTest')).click();
     });
 
-    beforeEach(function () {
-        // Clear filters
-        element(by.tagName('tb-grid-pager')).$('.pagination-first a').click()
-            .then(function () {
-                filterBtn.click();
-            })
-            .then(function () {
-                clearBtn.click();
-            })
-            .then(function () {
-                loadData();
-            });
-    });
-
     describe('tbColumnFilter', function () {
 
         beforeAll(function () {
@@ -75,6 +61,20 @@ describe('Tubular Filters', function () {
         });
 
         afterAll(function () {
+            // Clear filters
+            element(by.tagName('tb-grid-pager')).$('.pagination-first a').click()
+                .then(function () {
+                    filterBtn.click();
+                })
+                .then(function () {
+                    clearBtn.click();
+                })
+                .then(function () {
+                    loadData();
+                });
+        });
+
+        beforeEach(function () {
             // Clear filters
             element(by.tagName('tb-grid-pager')).$('.pagination-first a').click()
                 .then(function () {
@@ -409,6 +409,20 @@ describe('Tubular Filters', function () {
                 });
         });
 
+        beforeEach(function () {
+            // Clear filters
+            element(by.tagName('tb-grid-pager')).$('.pagination-first a').click()
+                .then(function () {
+                    filterBtn.click();
+                })
+                .then(function () {
+                    clearBtn.click();
+                })
+                .then(function () {
+                    loadData();
+                });
+        });
+
         it('should cancel filtering when clicking outside filter-popover', function () {
             var originalData;
             var equalData;
@@ -719,6 +733,20 @@ describe('Tubular Filters', function () {
                 });
         });
 
+        beforeEach(function () {
+            // Clear filters
+            element(by.tagName('tb-grid-pager')).$('.pagination-first a').click()
+                .then(function () {
+                    filterBtn.click();
+                })
+                .then(function () {
+                    clearBtn.click();
+                })
+                .then(function () {
+                    loadData();
+                });
+        });
+
         it('should cancel filtering when clicking outside filter-popover', function () {
             var originalData;
             var equalData;
@@ -817,6 +845,7 @@ describe('Tubular Filters', function () {
             tbTextSearch = $('tb-text-search');
             tbTextSearchInput = tbTextSearch.$('input');
             tbTextSearchClearBtn = tbTextSearch.$('button');
+            dataRows = element.all(by.repeater('row in $component.rows'));
 
             // Always show 50 recods and go to first page
             loadData().then(setPagination);
@@ -833,123 +862,119 @@ describe('Tubular Filters', function () {
             });
         });
 
-        describe('with no min-chars attribute', function () {
-
-            beforeEach(function () {
-                // Clear filters
-                tbTextSearchClearBtn.isDisplayed().then(function (displayed) {
-                    if (displayed) {
-                        tbTextSearchClearBtn.click().then(function () {
-                            loadData().then(function () { });
-                        });
-                    }
-                });
-            });
-
-            it('min-chars is not set', function () {
-                expect(tbTextSearch.getAttribute('min-chars')).toBe(null);
-            });
-
-            it('should filter data in searchable-column customer name to matching inputted text, starting from 3 characters', function () {
-                var filterOk = true;
-                var filteredCustomer = 'Microsoft';
-
-                // Set first 2 chars input
-                tbTextSearchInput.sendKeys('cr');
-
-                // Expect rows not to be filtered
-                dataRows.each(function (row, index) {
-                    row.$$('td').get(1).getText()
-                        .then(function (customer) {
-                            filterOk = filterOk && (customer == filteredCustomer);
-                        });
-                }).then(function () {
-                    expect(filterOk).toBe(false);
-                }).then(function () {
-                    filterOk = true;
-
-                    // Send 3rd char input
-                    tbTextSearchInput.sendKeys('o');
-
-                    // Verify filtering
-                    loadData().then(function () {
-                        dataRows.each(function (row, index) {
-                            row.$$('td').get(1).getText()
-                                .then(function (customer) {
-                                    filterOk = filterOk && (customer == filteredCustomer);
-                                });
-                        }).then(function () {
-                            expect(filterOk).toBe(true);
-                        });
+        beforeEach(function () {
+            // Clear filters
+            tbTextSearchClearBtn.isDisplayed().then(function (displayed) {
+                if (displayed) {
+                    tbTextSearchClearBtn.click().then(function () {
+                        loadData().then(function () { });
                     });
-                });
+                }
             });
+        });
 
-            it('should filter data in searchable-column shipper city to matching inputted text, starting from 3 characters', function () {
-                var filterOk = true;
-                var filteredCity = 'Los Angeles, CA, USA';
+        it('min-chars is not set', function () {
+            expect(tbTextSearch.getAttribute('min-chars')).toBe(null);
+        });
 
-                // Set first 2 chars input
-                tbTextSearchInput.sendKeys('lo');
+        it('should filter data in searchable-column customer name to matching inputted text, starting from 3 characters', function () {
+            var filterOk = true;
+            var filteredCustomer = 'Microsoft';
 
-                // Expect rows not to be filtered
-                dataRows.each(function (row, index) {
-                    row.$$('td').get(3).getText()
-                        .then(function (customer) {
-                            filterOk = filterOk && (customer == filteredCity);
-                        });
-                }).then(function () {
-                    expect(filterOk).toBe(false);
-                }).then(function () {
-                    filterOk = true;
+            // Set first 2 chars input
+            tbTextSearchInput.sendKeys('cr');
 
-                    // Send 3rd char input
-                    tbTextSearchInput.sendKeys('s');
-
-                    // Verify filtering
-                    loadData().then(function () {
-                        dataRows.each(function (row, index) {
-                            row.$$('td').get(3).getText()
-                                .then(function (customer) {
-                                    filterOk = filterOk && (customer == filteredCity);
-                                });
-                        }).then(function () {
-                            expect(filterOk).toBe(true);
-                        });
+            // Expect rows not to be filtered
+            dataRows.each(function (row, index) {
+                row.$$('td').get(1).getText()
+                    .then(function (customer) {
+                        filterOk = filterOk && (customer == filteredCustomer);
                     });
-                });
-            });
+            }).then(function () {
+                expect(filterOk).toBe(false);
+            }).then(function () {
+                filterOk = true;
 
-            it('should show clear button when there is inputted text only', function () {
-                expect(tbTextSearchClearBtn.isDisplayed()).toBe(false);
-                tbTextSearchInput.sendKeys('1').then(function () {
-                    expect(tbTextSearchClearBtn.isDisplayed()).toBe(true);
-                });
-            });
-
-            it('should clear filtering when clicking clear button', function () {
-                var filteredDataCount;
-
-                // Send filtering
-                tbTextSearchInput.sendKeys('uno');
+                // Send 3rd char input
+                tbTextSearchInput.sendKeys('o');
 
                 // Verify filtering
                 loadData().then(function () {
-                    dataRows.count().then(function (dataCount) {
-                        filteredDataCount = dataCount;
-                    })
-                        .then(function () {
-                            tbTextSearchClearBtn.click();
-
-                            loadData().then(function () {
-                                expect(dataRows.count()).not.toBe(filteredDataCount);
+                    dataRows.each(function (row, index) {
+                        row.$$('td').get(1).getText()
+                            .then(function (customer) {
+                                filterOk = filterOk && (customer == filteredCustomer);
                             });
-                        });
+                    }).then(function () {
+                        expect(filterOk).toBe(true);
+                    });
                 });
             });
-
         });
-        
+
+        it('should filter data in searchable-column shipper city to matching inputted text, starting from 3 characters', function () {
+            var filterOk = true;
+            var filteredCity = 'Los Angeles, CA, USA';
+
+            // Set first 2 chars input
+            tbTextSearchInput.sendKeys('lo');
+
+            // Expect rows not to be filtered
+            dataRows.each(function (row, index) {
+                row.$$('td').get(3).getText()
+                    .then(function (customer) {
+                        filterOk = filterOk && (customer == filteredCity);
+                    });
+            }).then(function () {
+                expect(filterOk).toBe(false);
+            }).then(function () {
+                filterOk = true;
+
+                // Send 3rd char input
+                tbTextSearchInput.sendKeys('s');
+
+                // Verify filtering
+                loadData().then(function () {
+                    dataRows.each(function (row, index) {
+                        row.$$('td').get(3).getText()
+                            .then(function (customer) {
+                                filterOk = filterOk && (customer == filteredCity);
+                            });
+                    }).then(function () {
+                        expect(filterOk).toBe(true);
+                    });
+                });
+            });
+        });
+
+        it('should show clear button when there is inputted text only', function () {
+            expect(tbTextSearchClearBtn.isDisplayed()).toBe(false);
+            tbTextSearchInput.sendKeys('1').then(function () {
+                expect(tbTextSearchClearBtn.isDisplayed()).toBe(true);
+            });
+        });
+
+        it('should clear filtering when clicking clear button', function () {
+            var filteredDataCount;
+
+            // Send filtering
+            tbTextSearchInput.sendKeys('uno');
+
+            // Verify filtering
+            loadData().then(function () {
+                dataRows.count().then(function (dataCount) {
+                    filteredDataCount = dataCount;
+                })
+                    .then(function () {
+                        tbTextSearchClearBtn.click();
+
+                        loadData().then(function () {
+                            expect(dataRows.count()).not.toBe(filteredDataCount);
+                        });
+                    });
+            });
+        });
+
     });
 
 });
