@@ -60,11 +60,11 @@ describe('Tubular Filters', function () {
             // Set test variables
             tbColumnFilter = element(by.tagName('tb-column-filter'));
             filterBtn = tbColumnFilter.$('.btn-popover');
-            popoverForm = $('form.tubular-column-filter-form');
+            popoverForm = $('tb-column-filter form.tubular-column-filter-form');
             applyBtn = popoverForm.$('tb-column-filter-buttons').$('.btn-success');
             clearBtn = popoverForm.$('tb-column-filter-buttons').$('.btn-danger');
             filterSelect = popoverForm.$('select');
-            valueInput = popoverForm.$('input:not(.ng-hide)')
+            valueInput = popoverForm.$('input:not(.ng-hide)');
             dataRows = element.all(by.repeater('row in $component.rows'));
 
             // Always show 50 recods and go to first page
@@ -513,6 +513,12 @@ describe('Tubular Filters', function () {
                 });
         });
 
+        /*********************************************************************************************** \
+        /* The following tests are commented because functionallity for 'Equals' and 'Not Equals' filters
+        /* on tbDateTimeColumnFilter is not yet ready.
+        /*********************************************************************************************** \
+          *
+          *
         // it('should corretlly filter data for the "Equals" filtering option', function () {
         //     var filterOk = true;
         //     var filterMatcher = /0*1\/30\/2016\s.*/;
@@ -549,15 +555,15 @@ describe('Tubular Filters', function () {
         //             dataRows.each(function (row, index) {
         //                 row.$$('td').get(2).getText()
         //                     .then(function (date) {
-                                
+
         //                         console.log('*************************** NOT EQUALS ****************************');
         //                         console.log('           date: ' + date);
         //                         console.log(filterMatcher.test(date));
 
         //                         filterOk = !filterOk && !(filterMatcher.test(date));
-                                
+
         //                         console.log('filterOk: ' + filterOk);
-                                
+
         //                     });
         //             }).then(function () {
         //                 expect(filterOk).toBe(true);
@@ -565,7 +571,7 @@ describe('Tubular Filters', function () {
         //         });
         // });
 
-        it('should corretlly filter data for the "Between" filtering option', function () {                    
+        it('should corretlly filter data for the "Between" filtering option', function () {
             var filterOk = true;
             var minDate = new Date('02/04/2016 00:00 AM');
             var maxDate = new Date('02/05/2016 00:00 AM');
@@ -581,7 +587,7 @@ describe('Tubular Filters', function () {
                     dataRows.each(function (row, index) {
                         row.$$('td').get(2).getText()
                             .then(function (date) {
-                                filterOk = filterOk && (minDate <= new Date(date) <= maxDate);                                                                
+                                filterOk = filterOk && (minDate <= new Date(date) <= maxDate);
                             });
                     }).then(function () {
                         expect(filterOk).toBe(true);
@@ -674,6 +680,128 @@ describe('Tubular Filters', function () {
                     }).then(function () {
                         expect(filterOk).toBe(true);
                     });
+                });
+        });
+
+    });
+
+    describe('tbColumnOptionsFilter', function () {
+
+        beforeAll(function () {
+            // Set test variables
+            tbColumnOptionsFilter = element(by.tagName('tb-column-options-filter'));
+            filterBtn = tbColumnOptionsFilter.$('.btn-popover');
+            popoverForm = $('tb-column-options-filter form.tubular-column-filter-form');
+            applyBtn = popoverForm.$('tb-column-filter-buttons').$('.btn-success');
+            clearBtn = popoverForm.$('tb-column-filter-buttons').$('.btn-danger');
+            filterSelect = popoverForm.$('select');
+            valueInput = popoverForm.$('input:not(.ng-hide)');
+            dataRows = element.all(by.repeater('row in $component.rows'));
+
+            // Always show 50 recods and go to first page
+            loadData().then(setPagination);
+        });
+
+        afterAll(function () {
+            // Clear filters
+            element(by.tagName('tb-grid-pager')).$('.pagination-first a').click()
+                .then(function () {
+                    filterBtn.click();
+                })
+                .then(function () {
+                    clearBtn.click();
+                })
+                .then(function () {
+                    loadData();
+                });
+        });
+
+        it('should cancel filtering when clicking outside filter-popover', function () {
+            var originalData;
+            var equalData;
+
+            dataRows.getText()
+                // Get original text
+                .then(function (originalText) {
+                    originalData = originalText;
+                })
+                // Filter and click away
+                .then(function () {
+                    filterBtn.click()
+                        // Set filtering
+                        .then(function () {
+                            filterSelect.$$('option').first().click()
+                        })
+                        // Click another element
+                        .then(function () {
+                            element(by.tagName('tb-grid-pager')).$('li.pagination-first a').click();
+                        })
+                })
+                // Compare data again
+                .then(function () {
+                    dataRows.getText()
+                        .then(function (modifiedText) {
+                            equalData = (originalData.length == modifiedText.length) && originalData.every(function (element, index) {
+                                return element === modifiedText[index];
+                            });
+
+                            expect(equalData).toBe(true);
+                        });
+                });
+        });
+
+        it('should decorate popover button when showing data is being filtered for its column', function () {
+            // Verify button has no decorating-class
+            expect(filterBtn.getAttribute('class')).not.toMatch(/btn-success/);
+
+            // Set filter and apply it
+            filterBtn.click();
+            filterSelect.$$('option').first().click()
+            applyBtn.click()
+                .then(function () {
+                    loadData().
+                        then(function () {
+                            expect(filterBtn.getAttribute('class')).toMatch(/btn-success/);
+                        });
+                });
+        });
+
+        it('should filter column-elements in accordance to the selected filter when selecting a single option', function () {
+            var filterOk = true;
+            var options;
+
+            filterBtn.click();
+
+            filterSelect.$$('option').getText().then(function (text) {
+                options = text;
+            })
+                .then(function () {
+                    options.forEach(function (option, index) {
+                        filterSelect.$$('option').get(index).click().then(function () {
+                            applyBtn.click();
+                            loadData().then(function () {
+
+                                dataRows.each(function (row) {
+                                    row.$$('td').get(3).getText().then(function (data) {
+                                        filterOk = filterOk && (data == option);
+                                    });
+                                });
+
+                            });
+                        })
+                            .then(function () {
+                                filterBtn.click().then(function () {
+                                    clearBtn.click().then(function () {
+                                        loadData().then(function () {
+                                            filterBtn.click();
+                                        });
+                                    });
+                                });
+                            });
+                    })
+                })
+                .then(function () {
+                    expect(filterOk).toBe(true);
                 });
         });
 
