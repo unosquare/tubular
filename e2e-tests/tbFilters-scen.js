@@ -31,7 +31,10 @@ describe('Tubular Filters', function () {
         filterSelect,
         valueInput,
         secondValueInput,
-        dataRows;
+        dataRows,
+        tbTextSearch,
+        tbTextSearchInput,
+        tbTextSearchClearBtn;
 
     beforeAll(function () {
         // Get page
@@ -805,6 +808,148 @@ describe('Tubular Filters', function () {
                 });
         });
 
+    });
+
+    describe('tbTextSearch', function () {
+
+        beforeAll(function () {
+            // Set this tests variables
+            tbTextSearch = $('tb-text-search');
+            tbTextSearchInput = tbTextSearch.$('input');
+            tbTextSearchClearBtn = tbTextSearch.$('button');
+
+            // Always show 50 recods and go to first page
+            loadData().then(setPagination);
+        });
+
+        afterAll(function () {
+            // Clear filters
+            tbTextSearchClearBtn.isDisplayed().then(function (displayed) {
+                if (displayed) {
+                    tbTextSearchClearBtn.click().then(function () {
+                        loadData().then(function () { });
+                    });
+                }
+            });
+        });
+
+        describe('with no min-chars attribute', function () {
+
+            beforeEach(function () {
+                // Clear filters
+                tbTextSearchClearBtn.isDisplayed().then(function (displayed) {
+                    if (displayed) {
+                        tbTextSearchClearBtn.click().then(function () {
+                            loadData().then(function () { });
+                        });
+                    }
+                });
+            });
+
+            it('min-chars is not set', function () {
+                expect(tbTextSearch.getAttribute('min-chars')).toBe(null);
+            });
+
+            it('should filter data in searchable-column customer name to matching inputted text, starting from 3 characters', function () {
+                var filterOk = true;
+                var filteredCustomer = 'Microsoft';
+
+                // Set first 2 chars input
+                tbTextSearchInput.sendKeys('cr');
+
+                // Expect rows not to be filtered
+                dataRows.each(function (row, index) {
+                    row.$$('td').get(1).getText()
+                        .then(function (customer) {
+                            filterOk = filterOk && (customer == filteredCustomer);
+                        });
+                }).then(function () {
+                    expect(filterOk).toBe(false);
+                }).then(function () {
+                    filterOk = true;
+
+                    // Send 3rd char input
+                    tbTextSearchInput.sendKeys('o');
+
+                    // Verify filtering
+                    loadData().then(function () {
+                        dataRows.each(function (row, index) {
+                            row.$$('td').get(1).getText()
+                                .then(function (customer) {
+                                    filterOk = filterOk && (customer == filteredCustomer);
+                                });
+                        }).then(function () {
+                            expect(filterOk).toBe(true);
+                        });
+                    });
+                });
+            });
+
+            it('should filter data in searchable-column shipper city to matching inputted text, starting from 3 characters', function () {
+                var filterOk = true;
+                var filteredCity = 'Los Angeles, CA, USA';
+
+                // Set first 2 chars input
+                tbTextSearchInput.sendKeys('lo');
+
+                // Expect rows not to be filtered
+                dataRows.each(function (row, index) {
+                    row.$$('td').get(3).getText()
+                        .then(function (customer) {
+                            filterOk = filterOk && (customer == filteredCity);
+                        });
+                }).then(function () {
+                    expect(filterOk).toBe(false);
+                }).then(function () {
+                    filterOk = true;
+
+                    // Send 3rd char input
+                    tbTextSearchInput.sendKeys('s');
+
+                    // Verify filtering
+                    loadData().then(function () {
+                        dataRows.each(function (row, index) {
+                            row.$$('td').get(3).getText()
+                                .then(function (customer) {
+                                    filterOk = filterOk && (customer == filteredCity);
+                                });
+                        }).then(function () {
+                            expect(filterOk).toBe(true);
+                        });
+                    });
+                });
+            });
+
+            it('should show clear button when there is inputted text only', function () {
+                expect(tbTextSearchClearBtn.isDisplayed()).toBe(false);
+                tbTextSearchInput.sendKeys('1').then(function () {
+                    expect(tbTextSearchClearBtn.isDisplayed()).toBe(true);
+                });
+            });
+
+            it('should clear filtering when clicking clear button', function () {
+                var filteredDataCount;
+
+                // Send filtering
+                tbTextSearchInput.sendKeys('uno');
+
+                // Verify filtering
+                loadData().then(function () {
+                    dataRows.count().then(function (dataCount) {
+                        filteredDataCount = dataCount;
+                    })
+                        .then(function () {
+                            tbTextSearchClearBtn.click();
+
+                            loadData().then(function () {
+                                expect(dataRows.count()).not.toBe(filteredDataCount);
+                            });
+                        });
+                });
+            });
+
+        });
+        
     });
 
 });
