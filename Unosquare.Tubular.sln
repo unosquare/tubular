@@ -9,6 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unosquare.Tubular.Sample", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Folder", "Solution Folder", "{142E9E46-AD02-4F12-98D2-1E0EE6A4F26A}"
 	ProjectSection(SolutionItems) = preProject
+		.jshintrc = .jshintrc
 		.travis.yml = .travis.yml
 		bower.json = bower.json
 		karma.conf.js = karma.conf.js
@@ -32,6 +33,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "e2e-tests", "e2e-tests", "{
 	ProjectSection(SolutionItems) = preProject
 		e2e-tests\protractor.conf.js = e2e-tests\protractor.conf.js
 		e2e-tests\tbColumn-scen.js = e2e-tests\tbColumn-scen.js
+		e2e-tests\tbFilters-scen.js = e2e-tests\tbFilters-scen.js
+		e2e-tests\tbForm-scen.js = e2e-tests\tbForm-scen.js
 		e2e-tests\tbGridPager-scen.js = e2e-tests\tbGridPager-scen.js
 		e2e-tests\tbGridPagerInfo-scen.js = e2e-tests\tbGridPagerInfo-scen.js
 		e2e-tests\tbPageSizeSelector-scen.js = e2e-tests\tbPageSizeSelector-scen.js
