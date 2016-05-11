@@ -1,7 +1,4 @@
 exports.config = {
-    sauceUser: 'geoperez',
-    sauceKey: 'dd986cd7-696b-433a-941e-3820d83aa09a',
-
     allScriptsTimeout: 11000,
 
     specs: [
