@@ -33,6 +33,10 @@
                         templateUrl: '/Unosquare.Tubular.WebTest/common/tbForm_tests.html',
                         title: 'Tubular Form Tests'
                     })
+                    .when('/tbFormSavingTests', {
+                        templateUrl: '/Unosquare.Tubular.WebTest/common/tbFormSaving_tests.html',
+                        title: 'Tubular Form Saving Tests'
+                    })
                     .otherwise({
                         redirectTo: '/'
                     });
@@ -41,7 +45,7 @@
             }
         ]).config([
         '$httpProvider', function ($httpProvider) {
-            $httpProvider.interceptors.push('noCacheInterceptor');
+            //$httpProvider.interceptors.push('noCacheInterceptor');
         }
         ]).factory('noCacheInterceptor', function () {
             return {
@@ -55,10 +59,11 @@
             };
         })
         .controller("tbFormCtrl",function($scope, $http){
-            $scope.model = {};
-            $http.get("http://tubular.azurewebsites.net/api/orders/53").then(function(response){
-                $scope.model = response.data;
+            
+            $scope.$on('tbForm_OnSuccessfulSave', function(event, data, form) {
+                toastr.success(data || "Updated");
             });
+            
         });
 
     angular.module('app', [
