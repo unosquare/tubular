@@ -1972,7 +1972,7 @@ try {
                     $scope.$watch(function() {
                         return $ctrl.value;
                     }, function(val) {
-                        $scope.$emit('tbForm_OnFieldChange', $ctrl.$component, $ctrl.name, val);
+                        $scope.$emit('tbForm_OnFieldChange', $ctrl.$component, $ctrl.name, val, $scope.options);
                     });
 
                     $ctrl.loadData = function() {
@@ -2095,7 +2095,7 @@ try {
                             }
 
                             $scope.$watch('value', function (val) {
-                                $scope.$emit('tbForm_OnFieldChange', $scope.$component, $scope.name, val);
+                                $scope.$emit('tbForm_OnFieldChange', $scope.$component, $scope.name, val, $scope.options);
                                 $scope.tooltip = val;
                                 if (angular.isDefined(val) && val != null && angular.isDefined($scope.optionLabel)) {
                                     $scope.tooltip = val[$scope.optionLabel];

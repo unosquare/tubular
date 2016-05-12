@@ -9,11 +9,7 @@
 
 <h1>This file tests: </h1>
 <ul>
-    <li>tbForm exist </li>
-    <li>tbSimpleEditor</li>
-    <li>tbNumericEditor</li>
-    <li>tbDateEditor</li>
-    <li>tbCheckboxField</li>
+    <li>tbForm Saving Function</li>
 </ul>
 <br />
 <div ng-controller="tbFormCtrl">
@@ -21,8 +17,7 @@
              server-save-url="http://tubular.azurewebsites.net/api/orders/save"
              model-key="53"
              server-save-method="POST"
-             require-authentication="false"
-             id="tbForm0">
+             require-authentication="false">
         <tb-numeric-editor name="OrderID"
                            id="OrderID"
                            show-label="true"
@@ -49,7 +44,7 @@
         <tb-checkbox-field name="IsShipped"
                            value="model.IsShipped"></tb-checkbox-field>
         <div>
-            <button class="btn btn-primary" ng-click="$parent.save()" ng-disabled="!$parent.model.$valid()">Save</button>
+            <button id="btnSave" class="btn btn-primary" ng-click="$parent.save()">Save</button>
             <button id="btnCancel" class="btn btn-danger" ng-click="$parent.cancel()" formnovalidate>Cancel</button>
         </div>
     </tb-form>
