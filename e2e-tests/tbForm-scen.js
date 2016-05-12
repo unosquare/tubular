@@ -1,4 +1,5 @@
-describe("tbForm",function(){
+describe("tbForm",function() {
+    
     var tbForm,
         orderIdEditor,
         customerNameEditor,
@@ -7,6 +8,7 @@ describe("tbForm",function(){
         shippedDateEditor,
         createdUserIdEditor,
         isShippedEditor;
+        
     beforeAll(function () {
         // Go to test
         browser.get('index.html');
@@ -28,10 +30,12 @@ describe("tbForm",function(){
         orderTypeEditor = element(by.css('input[name=OrderType]'));
         isShippedEditor = element(by.css('input[name=IsShipped]'));
     });
+    
     it("tbForm defined",function(){
         expect(tbForm).toBeDefined();
         expect(tbForm).not.toBeNull();
     });
+    
     it("tbForm editors filled out",function(){
         expect(orderIdEditor.getAttribute('value')).toBe("53");
         expect(customerNameEditor.getAttribute('value')).toBe("Microsoft");
@@ -56,4 +60,14 @@ describe("tbForm",function(){
         expect(createdUserIdEditor.getAttribute('value')).toBe("");
         expect(orderTypeEditor.getAttribute('value')).toBe("");    
     });
+    
+    it('should display a notification on data-update success', function(){
+        
+        $('form button.btn-primary').click().then(function(){
+            $('div.toast.toast-success').isDisplayed(function(displayed){
+                expect(displayed).toBe(true);    
+            });
+        });
+    });
+    
 });
