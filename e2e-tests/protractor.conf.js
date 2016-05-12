@@ -2,15 +2,15 @@ exports.config = {
     allScriptsTimeout: 11000,
 
     specs: [
-      'tbGridPager-scen.js',
-      'tbPageSizeSelector-scen.js',
-      'tbGridPagerInfo-scen.js',
-      'tbColumn-scen.js',
+    //   'tbGridPager-scen.js',
+    //   'tbPageSizeSelector-scen.js',
+    //   'tbGridPagerInfo-scen.js',
+    //   'tbColumn-scen.js',
       'tbFilters-scen.js'
     ],
 
     capabilities: {
-        'browserName': 'chrome'
+        'browserName': 'firefox'
     },
 
     baseUrl: 'http://localhost:8000/Unosquare.Tubular.WebTest/',

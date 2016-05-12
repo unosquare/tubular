@@ -317,8 +317,8 @@
             },
             template: '<div class="tubular-column-menu">' +
                 '<button class="btn btn-xs btn-default btn-popover" ' +
-                'uib-popover-template="$ctrl.templateName" popover-placement="bottom" popover-title="{{$ctrl.filterTitle}}" popover-is-open="$ctrl.isOpen" ' +
-                'popover-trigger="click outsideClick" ng-class="{ \'btn-success\': $ctrl.filter.HasFilter }">' +
+                'uib-popover-template="$ctrl.templateName" popover-placement="bottom" popover-title="{{$ctrl.filterTitle}}" popover-is-open="$ctrl.isOpen" '+
+                'popover-trigger="ousideClick" ng-class="{ \'btn-success\': $ctrl.filter.HasFilter }">' +
                 '<i class="fa fa-filter"></i></button>' +
                 '</div>',
             bindings: {

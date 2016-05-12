@@ -64,13 +64,13 @@ describe('Tubular Filters', function () {
             // Clear filters
             element(by.tagName('tb-grid-pager')).$('.pagination-first a').click()
                 .then(function () {
-                    filterBtn.click();
-                })
-                .then(function () {
-                    clearBtn.click();
-                })
-                .then(function () {
-                    loadData();
+                    element(by.tagName('tb-grid-pager')).$('.pagination-first a').click().then(function () {
+                        filterBtn.click().then(function () {
+                            clearBtn.click().then(function () {
+                                loadData();
+                            });
+                        });
+                    });
                 });
         });
 
@@ -78,13 +78,13 @@ describe('Tubular Filters', function () {
             // Clear filters
             element(by.tagName('tb-grid-pager')).$('.pagination-first a').click()
                 .then(function () {
-                    filterBtn.click();
-                })
-                .then(function () {
-                    clearBtn.click();
-                })
-                .then(function () {
-                    loadData();
+                    element(by.tagName('tb-grid-pager')).$('.pagination-first a').click().then(function () {
+                        filterBtn.click().then(function () {
+                            clearBtn.click().then(function () {
+                                loadData();
+                            });
+                        });
+                    });
                 });
         });
 
@@ -102,8 +102,9 @@ describe('Tubular Filters', function () {
                     filterBtn.click()
                         // Set filtering
                         .then(function () {
-                            filterSelect.$('[value="string:Equals"]').click();
-                            valueInput.sendKeys('Microsoft');
+                            filterSelect.$('[value="string:Equals"]').click().then(function () {
+                                valueInput.sendKeys('Microsoft');
+                            });
                         })
                         // Click another element
                         .then(function () {
@@ -116,66 +117,26 @@ describe('Tubular Filters', function () {
                         .then(function (modifiedText) {
                             equalData = (originalData.length == modifiedText.length) && originalData.every(function (element, index) {
                                 return element === modifiedText[index];
-                            });
-
+                            })
+                        })
+                        .then(function () {
                             expect(equalData).toBe(true);
                         });
                 });
         });
 
         it('should disable Value text-input for "None" filter', function () {
-            filterBtn.click();
-            filterSelect.$('[value="string:None"]').click();
-
-            expect(valueInput.getAttribute('disabled')).toBe('true');
+            filterBtn.click().then(function () {
+                filterSelect.$('[value="string:None"]').click().then(function () {
+                    expect(valueInput.getAttribute('disabled')).toBe('true');
+                });
+            });
         });
 
         it('should disable apply button for "None" filter', function () {
-            filterBtn.click();
-
-            filterSelect.$('[value="string:None"]').click();
-            expect(applyBtn.getAttribute('disabled')).toBe('true');
-        });
-
-        it('should clear filtering when clicking on apply button for "None" filter', function () {
-            var originalData;
-            var equalData;
-
-            dataRows.getText()
-                // Get original showing data
-                .then(function (oldText) {
-                    originalData = oldText;
-                })
-                // Set filter and apply <-- This is tested by other 'it' block
-                .then(function () {
-                    filterBtn.click();
-                    filterSelect.$('[value="string:Equals"]').click();
-                    valueInput.sendKeys('Microsoft');
-                    applyBtn.click()
-                        .then(function () {
-                            loadData();
-                        });
-                })
-                // Filter with "None" and apply
-                .then(function () {
-                    filterBtn.click();
-                    filterSelect.$('[value="string:None"]').click();
-                    applyBtn.click()
-                        .then(function () {
-                            loadData();
-                        });
-                })
-                // Compare data
-                .then(function () {
-                    dataRows.getText()
-                        .then(function (newText) {
-                            equalData = (originalData.length == newText.length) && originalData.every(function (element, index) {
-                                return element === newText[index];
-                            });
-
-                            expect(equalData).toBe(true);
-                        });
-                });
+            filterBtn.click().then(function () {
+                expect(applyBtn.getAttribute('disabled')).toBe('true');
+            });
         });
 
         it('should decorate popover button when showing data is being filtered for its column', function () {
@@ -399,13 +360,13 @@ describe('Tubular Filters', function () {
             // Clear filters
             element(by.tagName('tb-grid-pager')).$('.pagination-first a').click()
                 .then(function () {
-                    filterBtn.click();
-                })
-                .then(function () {
-                    clearBtn.click();
-                })
-                .then(function () {
-                    loadData();
+                    element(by.tagName('tb-grid-pager')).$('.pagination-first a').click().then(function () {
+                        filterBtn.click().then(function () {
+                            clearBtn.click().then(function () {
+                                loadData();
+                            });
+                        });
+                    });
                 });
         });
 
@@ -413,13 +374,13 @@ describe('Tubular Filters', function () {
             // Clear filters
             element(by.tagName('tb-grid-pager')).$('.pagination-first a').click()
                 .then(function () {
-                    filterBtn.click();
-                })
-                .then(function () {
-                    clearBtn.click();
-                })
-                .then(function () {
-                    loadData();
+                    element(by.tagName('tb-grid-pager')).$('.pagination-first a').click().then(function () {
+                        filterBtn.click().then(function () {
+                            clearBtn.click().then(function () {
+                                loadData();
+                            });
+                        });
+                    });
                 });
         });
 
@@ -530,63 +491,63 @@ describe('Tubular Filters', function () {
                 });
         });
 
-        /*********************************************************************************************** \
-        /* The following tests are commented because functionallity for 'Equals' and 'Not Equals' filters
-        /* on tbDateTimeColumnFilter is not yet ready.
-        /*********************************************************************************************** \
-          *
-          *
-        // it('should corretlly filter data for the "Equals" filtering option', function () {
-        //     var filterOk = true;
-        //     var filterMatcher = /0*1\/30\/2016\s.*/;
+            /*********************************************************************************************** \
+            /* The following tests are commented because functionallity for 'Equals' and 'Not Equals' filters
+            /* on tbDateTimeColumnFilter is not yet ready.
+            /*********************************************************************************************** \
+              *
+              *
+            // it('should corretlly filter data for the "Equals" filtering option', function () {
+            //     var filterOk = true;
+            //     var filterMatcher = /0*1\/30\/2016\s.*/;
 
-        //     // Set filter and apply it
-        //     filterBtn.click();
-        //     filterSelect.$('[value="string:Equals"]').click();
-        //     valueInput.sendKeys('01/30/2016');
-        //     applyBtn.click()
-        //         .then(function () {
-        //             // Verify filtering
-        //             dataRows.each(function (row, index) {
-        //                 row.$$('td').get(2).getText()
-        //                     .then(function (date) {                                                                
-        //                         filterOk = filterOk && (filterMatcher.test(date));
-        //                     });
-        //             }).then(function () {
-        //                 expect(filterOk).toBe(true);
-        //             });
-        //         });
-        // });
+            //     // Set filter and apply it
+            //     filterBtn.click();
+            //     filterSelect.$('[value="string:Equals"]').click();
+            //     valueInput.sendKeys('01/30/2016');
+            //     applyBtn.click()
+            //         .then(function () {
+            //             // Verify filtering
+            //             dataRows.each(function (row, index) {
+            //                 row.$$('td').get(2).getText()
+            //                     .then(function (date) {                                                                
+            //                         filterOk = filterOk && (filterMatcher.test(date));
+            //                     });
+            //             }).then(function () {
+            //                 expect(filterOk).toBe(true);
+            //             });
+            //         });
+            // });
 
-        // it('should corretlly filter data for the "Not Equals" filtering option', function () {
-        //     var filterOk = true;
-        //     var filterMatcher = /0*1\/30\/2016\s.*/;
+            // it('should corretlly filter data for the "Not Equals" filtering option', function () {
+            //     var filterOk = true;
+            //     var filterMatcher = /0*1\/30\/2016\s.*/;
 
-        //     // Set filter and apply it
-        //     filterBtn.click();
-        //     filterSelect.$('[value="string:NotEquals"]').click();
-        //     valueInput.sendKeys('01/30/2016');
-        //     applyBtn.click()
-        //         .then(function () {
-        //             // Verify filtering
-        //             dataRows.each(function (row, index) {
-        //                 row.$$('td').get(2).getText()
-        //                     .then(function (date) {
+            //     // Set filter and apply it
+            //     filterBtn.click();
+            //     filterSelect.$('[value="string:NotEquals"]').click();
+            //     valueInput.sendKeys('01/30/2016');
+            //     applyBtn.click()
+            //         .then(function () {
+            //             // Verify filtering
+            //             dataRows.each(function (row, index) {
+            //                 row.$$('td').get(2).getText()
+            //                     .then(function (date) {
 
-        //                         console.log('*************************** NOT EQUALS ****************************');
-        //                         console.log('           date: ' + date);
-        //                         console.log(filterMatcher.test(date));
+            //                         console.log('*************************** NOT EQUALS ****************************');
+            //                         console.log('           date: ' + date);
+            //                         console.log(filterMatcher.test(date));
 
-        //                         filterOk = !filterOk && !(filterMatcher.test(date));
+            //                         filterOk = !filterOk && !(filterMatcher.test(date));
 
-        //                         console.log('filterOk: ' + filterOk);
+            //                         console.log('filterOk: ' + filterOk);
 
-        //                     });
-        //             }).then(function () {
-        //                 expect(filterOk).toBe(true);
-        //             });
-        //         });
-        // });
+            //                     });
+            //             }).then(function () {
+            //                 expect(filterOk).toBe(true);
+            //             });
+            //         });
+            // });  
 
         it('should corretlly filter data for the "Between" filtering option', function () {
             var filterOk = true;
@@ -601,11 +562,13 @@ describe('Tubular Filters', function () {
             applyBtn.click()
                 .then(function () {
                     // Verify filtering
-                    dataRows.each(function (row, index) {
-                        row.$$('td').get(2).getText()
-                            .then(function (date) {
-                                filterOk = filterOk && (minDate <= new Date(date) <= maxDate);
-                            });
+                    loadData().then(function () {
+                        dataRows.each(function (row, index) {
+                            row.$$('td').get(2).getText()
+                                .then(function (date) {
+                                    filterOk = filterOk && (minDate <= new Date(date) <= maxDate);
+                                });
+                        });
                     }).then(function () {
                         expect(filterOk).toBe(true);
                     });
@@ -623,11 +586,13 @@ describe('Tubular Filters', function () {
             applyBtn.click()
                 .then(function () {
                     // Verify filtering
-                    dataRows.each(function (row, index) {
-                        row.$$('td').get(2).getText()
-                            .then(function (date) {
-                                filterOk = filterOk && (new Date(date) >= referenceDate);
-                            });
+                    loadData().then(function () {
+                        dataRows.each(function (row, index) {
+                            row.$$('td').get(2).getText()
+                                .then(function (date) {
+                                    filterOk = filterOk && (new Date(date) >= referenceDate);
+                                });
+                        });
                     }).then(function () {
                         expect(filterOk).toBe(true);
                     });
@@ -645,11 +610,13 @@ describe('Tubular Filters', function () {
             applyBtn.click()
                 .then(function () {
                     // Verify filtering
-                    dataRows.each(function (row, index) {
-                        row.$$('td').get(2).getText()
-                            .then(function (date) {
-                                filterOk = filterOk && (new Date(date) > referenceDate);
-                            });
+                    loadData().then(function () {
+                        dataRows.each(function (row, index) {
+                            row.$$('td').get(2).getText()
+                                .then(function (date) {
+                                    filterOk = filterOk && (new Date(date) > referenceDate);
+                                });
+                        });
                     }).then(function () {
                         expect(filterOk).toBe(true);
                     });
@@ -667,11 +634,13 @@ describe('Tubular Filters', function () {
             applyBtn.click()
                 .then(function () {
                     // Verify filtering
-                    dataRows.each(function (row, index) {
-                        row.$$('td').get(2).getText()
-                            .then(function (date) {
-                                filterOk = filterOk && (new Date(date) <= referenceDate);
-                            });
+                    loadData().then(function () {
+                        dataRows.each(function (row, index) {
+                            row.$$('td').get(2).getText()
+                                .then(function (date) {
+                                    filterOk = filterOk && (new Date(date) <= referenceDate);
+                                });
+                        });
                     }).then(function () {
                         expect(filterOk).toBe(true);
                     });
@@ -689,11 +658,13 @@ describe('Tubular Filters', function () {
             applyBtn.click()
                 .then(function () {
                     // Verify filtering
-                    dataRows.each(function (row, index) {
-                        row.$$('td').get(2).getText()
-                            .then(function (date) {
-                                filterOk = filterOk && (new Date(date) < referenceDate);
-                            });
+                    loadData().then(function () {
+                        dataRows.each(function (row, index) {
+                            row.$$('td').get(2).getText()
+                                .then(function (date) {
+                                    filterOk = filterOk && (new Date(date) < referenceDate);
+                                });
+                        });
                     }).then(function () {
                         expect(filterOk).toBe(true);
                     });
@@ -723,13 +694,13 @@ describe('Tubular Filters', function () {
             // Clear filters
             element(by.tagName('tb-grid-pager')).$('.pagination-first a').click()
                 .then(function () {
-                    filterBtn.click();
-                })
-                .then(function () {
-                    clearBtn.click();
-                })
-                .then(function () {
-                    loadData();
+                    element(by.tagName('tb-grid-pager')).$('.pagination-first a').click().then(function () {
+                        filterBtn.click().then(function () {
+                            clearBtn.click().then(function () {
+                                loadData();
+                            });
+                        });
+                    });
                 });
         });
 
@@ -737,13 +708,13 @@ describe('Tubular Filters', function () {
             // Clear filters
             element(by.tagName('tb-grid-pager')).$('.pagination-first a').click()
                 .then(function () {
-                    filterBtn.click();
-                })
-                .then(function () {
-                    clearBtn.click();
-                })
-                .then(function () {
-                    loadData();
+                    element(by.tagName('tb-grid-pager')).$('.pagination-first a').click().then(function () {
+                        filterBtn.click().then(function () {
+                            clearBtn.click().then(function () {
+                                loadData();
+                            });
+                        });
+                    });
                 });
         });
 

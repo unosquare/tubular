@@ -22,11 +22,11 @@
             function tubularPopupService($modal, $rootScope, tubularTemplateService) {
                 var me = this;
 
-                me.onSuccessForm = function(callback) {
+                me.onSuccessForm = function (callback) {
                     $rootScope.$on('tbForm_OnSuccessfulSave', callback);
                 };
 
-                me.onConnectionError = function(callback) {
+                me.onConnectionError = function (callback) {
                     $rootScope.$on('tbForm_OnConnectionError', callback);
                 };
 
@@ -38,7 +38,7 @@
                  * @param {string} size 
                  * @returns {object} The Popup instance
                  */
-                me.openDialog = function(template, model, gridScope, size) {
+                me.openDialog = function (template, model, gridScope, size) {
                     if (angular.isUndefined(template)) {
                         template = tubularTemplateService.generatePopup(model);
                     }
@@ -49,10 +49,10 @@
                         animation: false,
                         size: size,
                         controller: [
-                            '$scope', function($scope) {
+                            '$scope', function ($scope) {
                                 $scope.Model = model;
 
-                                $scope.savePopup = function(innerModel, forceUpdate) {
+                                $scope.savePopup = function (innerModel, forceUpdate) {
                                     innerModel = innerModel || $scope.Model;
 
                                     // If we have nothing to save and it's not a new record, just close
@@ -68,7 +68,7 @@
                                     }
 
                                     result.then(
-                                        function(data) {
+                                        function (data) {
                                             $scope.$emit('tbForm_OnSuccessfulSave', data);
                                             $rootScope.$broadcast('tbForm_OnSuccessfulSave', data);
                                             $scope.Model.$isLoading = false;
@@ -76,7 +76,7 @@
                                             dialog.close();
 
                                             return data;
-                                        }, function(error) {
+                                        }, function (error) {
                                             $scope.$emit('tbForm_OnConnectionError', error);
                                             $rootScope.$broadcast('tbForm_OnConnectionError', error);
                                             $scope.Model.$isLoading = false;
@@ -87,7 +87,7 @@
                                     return result;
                                 };
 
-                                $scope.closePopup = function() {
+                                $scope.closePopup = function () {
                                     if (angular.isDefined($scope.Model.revertChanges)) {
                                         $scope.Model.revertChanges();
                                     }
@@ -112,25 +112,25 @@
         .service('tubularGridExportService', function tubularGridExportService() {
             var me = this;
 
-            me.getColumns = function(gridScope) {
-                return gridScope.columns.map(function(c) { return c.Label; });
+            me.getColumns = function (gridScope) {
+                return gridScope.columns.map(function (c) { return c.Label; });
             };
 
-            me.getColumnsVisibility = function(gridScope) {
+            me.getColumnsVisibility = function (gridScope) {
                 return gridScope.columns
-                    .map(function(c) { return c.Visible; });
+                    .map(function (c) { return c.Visible; });
             };
 
-            me.exportAllGridToCsv = function(filename, gridScope) {
+            me.exportAllGridToCsv = function (filename, gridScope) {
                 var columns = me.getColumns(gridScope);
                 var visibility = me.getColumnsVisibility(gridScope);
 
-                gridScope.getFullDataSource(function(data) {
+                gridScope.getFullDataSource(function (data) {
                     me.exportToCsv(filename, columns, data, visibility);
                 });
             };
 
-            me.exportGridToCsv = function(filename, gridScope) {
+            me.exportGridToCsv = function (filename, gridScope) {
                 var columns = me.getColumns(gridScope);
                 var visibility = me.getColumnsVisibility(gridScope);
 
@@ -139,10 +139,10 @@
                 gridScope.currentRequest = null;
             };
 
-            me.exportToCsv = function(filename, header, rows, visibility) {
-                var processRow = function(row) {
+            me.exportToCsv = function (filename, header, rows, visibility) {
+                var processRow = function (row) {
                     if (typeof (row) === 'object') {
-                        row = Object.keys(row).map(function(key) { return row[key]; });
+                        row = Object.keys(row).map(function (key) { return row[key]; });
                     }
 
                     var finalVal = '';
@@ -201,7 +201,7 @@
                 /**
                 * Simple helper to generate a unique name for Tubular Forms
                 */
-                me.getUniqueTbFormName = function() {
+                me.getUniqueTbFormName = function () {
                     // TODO: Maybe move this to another service
                     window.tbFormCounter = window.tbFormCounter || (window.tbFormCounter = -1);
                     window.tbFormCounter++;
@@ -212,7 +212,7 @@
                  * Setups a new Editor, this functions is like a common class constructor to be used
                  * with all the tubularEditors.
                  */
-                me.setupScope = function(scope, defaultFormat, ctrl, setDirty) {
+                me.setupScope = function (scope, defaultFormat, ctrl, setDirty) {
                     if (angular.isUndefined(ctrl)) ctrl = scope;
 
                     ctrl.isEditing = angular.isUndefined(ctrl.isEditing) ? true : ctrl.isEditing;
@@ -224,7 +224,7 @@
                     ctrl.$valid = true;
 
                     // Get the field reference using the Angular way
-                    ctrl.getFormField = function() {
+                    ctrl.getFormField = function () {
                         var parent = scope.$parent;
 
                         while (true) {
@@ -239,14 +239,14 @@
                         }
                     };
 
-                    ctrl.$dirty = function() {
+                    ctrl.$dirty = function () {
                         // Just forward the property
                         var formField = ctrl.getFormField();
 
                         return formField == null ? true : formField.$dirty;
                     };
 
-                    ctrl.checkValid = function() {
+                    ctrl.checkValid = function () {
                         ctrl.$valid = true;
                         ctrl.state.$errors = [];
 
@@ -275,20 +275,20 @@
                         ctrl.validate();
                     };
 
-                    scope.$watch(function() {
+                    scope.$watch(function () {
                         return ctrl.value;
-                    }, function(newValue, oldValue) {
+                    }, function (newValue, oldValue) {
                         if (angular.isUndefined(oldValue) && angular.isUndefined(newValue)) {
                             return;
                         }
 
                         // This is the state API for every property in the Model
                         ctrl.state = {
-                            $valid: function() {
+                            $valid: function () {
                                 ctrl.checkValid();
                                 return this.$errors.length === 0;
                             },
-                            $dirty: function() {
+                            $dirty: function () {
                                 return ctrl.$dirty;
                             },
                             $errors: []
@@ -335,7 +335,7 @@
 
                             scope.Name = ctrl.name;
 
-                            ctrl.bindScope = function() {
+                            ctrl.bindScope = function () {
                                 scope.$parent.Model = parent.model;
 
                                 if (angular.equals(ctrl.value, parent.model[scope.Name]) === false) {
@@ -345,9 +345,9 @@
                                             parent.model[scope.Name];
                                     }
 
-                                    parent.$watch(function() {
+                                    parent.$watch(function () {
                                         return ctrl.value;
-                                    }, function(value) {
+                                    }, function (value) {
                                         parent.model[scope.Name] = value;
                                     });
                                 }
@@ -369,11 +369,11 @@
 
                                 // This is the state API for every property in the Model
                                 parent.model.$state[scope.Name] = {
-                                    $valid: function() {
+                                    $valid: function () {
                                         ctrl.checkValid();
                                         return this.$errors.length === 0;
                                     },
-                                    $dirty: function() {
+                                    $dirty: function () {
                                         return ctrl.$dirty();
                                     },
                                     $errors: []
@@ -397,6 +397,19 @@
                         parent = parent.$parent;
                     }
                 };
+
+                /**
+                 * True if browser has support for HTML5 date input.
+                 */
+                me.canUseHtml5Date = function () {
+                    var input = document.createElement('input');
+                    input.setAttribute('type', 'date');
+
+                    var notADateValue = 'not-a-date';
+                    input.setAttribute('value', notADateValue);
+
+                    return (input.value !== notADateValue);
+                }();
             }
         ]);
 })(window.angular);
