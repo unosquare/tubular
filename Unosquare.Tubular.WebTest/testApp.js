@@ -4,12 +4,12 @@
     // define console methods if not defined
     if (typeof console === "undefined") {
         window.console = {
-            log: function () { },
-            debug: function () { },
-            error: function () { },
-            assert: function () { },
-            info: function () { },
-            warn: function () { },
+            log: function() {},
+            debug: function() {},
+            error: function() {},
+            assert: function() {},
+            info: function() {},
+            warn: function() {},
         };
     }
 
@@ -32,6 +32,9 @@
                     .when('/tbFormTests', {
                         templateUrl: '/Unosquare.Tubular.WebTest/common/tbForm_tests.html',
                         title: 'Tubular Form Tests'
+                    }).when('/tbFormSavingTests', {
+                        templateUrl: '/Unosquare.Tubular.WebTest/common/tbFormSaving_tests.html',
+                        title: 'Tubular Form Saving Tests'
                     })
                     .otherwise({
                         redirectTo: '/'
@@ -40,12 +43,12 @@
                 $locationProvider.html5Mode(true);
             }
         ]).config([
-        '$httpProvider', function ($httpProvider) {
-            $httpProvider.interceptors.push('noCacheInterceptor');
-        }
-        ]).factory('noCacheInterceptor', function () {
+            '$httpProvider', function($httpProvider) {
+                //$httpProvider.interceptors.push('noCacheInterceptor');
+            }
+        ]).factory('noCacheInterceptor', function() {
             return {
-                request: function (config) {
+                request: function(config) {
                     if (config.method == 'GET' && config.url.indexOf('.htm') === -1 && config.url.indexOf('blob:') === -1) {
                         var separator = config.url.indexOf('?') === -1 ? '?' : '&';
                         config.url = config.url + separator + 'noCache=' + new Date().getTime();
@@ -54,10 +57,9 @@
                 }
             };
         })
-        .controller("tbFormCtrl",function($scope, $http){
-            $scope.model = {};
-            $http.get("http://tubular.azurewebsites.net/api/orders/53").then(function(response){
-                $scope.model = response.data;
+        .controller("tbFormCtrl", function($scope, $http) {
+            $scope.$on('tbForm_OnSuccessfulSave', function (event, data, form) {
+                toastr.success(data || "Updated");
             });
         });
 
@@ -65,7 +67,7 @@
         'tubular',
         'testApp.routes'
     ]).run([
-        'tubularTranslate', function (tubularTranslate) {
+        'tubularTranslate', function(tubularTranslate) {
             // Uncomment if you want to start with Spanish
             //tubularTranslate.setLanguage('es');
             // I need to check this
