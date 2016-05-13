@@ -41,7 +41,7 @@ describe("tbForm",function() {
         expect(customerNameEditor.getAttribute('value')).toBe("Microsoft");
         expect(shipperCityEditor.getAttribute('value')).toBe("Portland, OR, USA");
         expect(amountEditor.getAttribute('value')).toBe("362");
-        expect(shippedDateEditor.getAttribute('value')).toBe("2016-02-06");
+        expect(shippedDateEditor.getAttribute('value')).toBe("2016-02-08");
         expect(createdUserIdEditor.getAttribute('value')).toBe("mariodivece");
         expect(orderTypeEditor.getAttribute('value')).toBe("24");
         expect(isShippedEditor.getAttribute('checked')).toBe('true');
@@ -62,12 +62,15 @@ describe("tbForm",function() {
     });
     
     it('should display a notification on data-update success', function(){
-        
+        browser.get('index.html');
+        element(by.id('testsSelector')).click();
+        element(by.id('tbFormTest')).click();
+
         $('form button.btn-primary').click().then(function(){
             $('div.toast.toast-success').isDisplayed(function(displayed){
                 expect(displayed).toBe(true);    
             });
         });
     });
-    
+        
 });
