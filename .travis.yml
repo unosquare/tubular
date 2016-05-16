@@ -7,12 +7,12 @@ install:
 env:
   - TRAVIS_NODE_VERSION="4"
 before_script:
+  - touch /home/travis/build/unosquare/tubular/Unosquare.Tubular/Javascript/tubular-bundle.js
+  - touch /home/travis/build/unosquare/tubular/Unosquare.Tubular/Javascript/tubular-bundle.min.js
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
   - npm start > /dev/null &
   - sleep 1 # give server time to start
-  # - touch /home/travis/build/unosquare/tubular/Unosquare.Tubular/Javascript/tubular-bundle.js
-  # - touch /home/travis/build/unosquare/tubular/Unosquare.Tubular/Javascript/tubular-bundle.min.js
 script:
   - xbuild /p:Configuration=Release Unosquare.Tubular.Lib.sln
   - netstat -tulpn | grep :8000
