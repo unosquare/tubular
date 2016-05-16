@@ -9,7 +9,8 @@
   },
   "scripts": {
     "protractor": "protractor e2e-tests/protractor.conf.js",
-    "start": "http-server -a localhost -p 8000 -c-1"
+    "start": "http-server -a localhost -p 8000 -c-1",
+    "postinstall": "bower install"
   },
   "keywords": [
     "grid",
@@ -40,6 +41,7 @@
     "load-grunt-tasks": "^3.5.0"
   },
   "devDependencies": {
+    "bower": "^1.7.9",
     "grunt-contrib-connect": "^1.0.2",
     "grunt-string-replace": "^1.2.1",
     "http-server": "^0.9.0",

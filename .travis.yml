@@ -16,6 +16,5 @@ before_script:
   - touch /home/travis/build/unosquare/tubular/Unosquare.Tubular/Javascript/tubular-bundle.min.js
 script:
   - xbuild /p:Configuration=Release Unosquare.Tubular.Lib.sln
-  - npm run-script test-travis
   - cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
   - node_modules/.bin/protractor e2e-tests/protractor.conf.js --browser=chrome
