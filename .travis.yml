@@ -15,6 +15,6 @@ before_script:
   - sleep 1 # give server time to start
 script:
   - xbuild /p:Configuration=Release Unosquare.Tubular.Lib.sln
-  - netstat -tulpn | grep :8000
+  - ./node_modules/protractor/bin/webdriver-manager update
   - grunt test
   - cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
