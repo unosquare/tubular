@@ -25,7 +25,7 @@ describe('tbColumn', function () {
             .$('li.pagination-first a')
             .click();
         
-        // Select '10' on tbPageSizeSelector
+        // Select '100' on tbPageSizeSelector
         element(by.model('$ctrl.$component.pageSize'))
             .$('[value="number:100"]').click();
             
@@ -61,7 +61,7 @@ describe('tbColumn', function () {
             dataSetLowerCustomerName = 'Advanced Technology Systems',
             dataSetHigherCustomerName = 'Vesta',
             dataSetLowerDate = '1/28/16 2:17 AM',
-            dataSetHigherDate ='2/6/16 2:17 AM';
+            dataSetHigherDate ='2/8/16 8:17 AM';
         
         beforeEach(function(){
             // Clear possible sortings and start with default
