@@ -196,8 +196,8 @@
                         $ctrl.columns.push(item);
                     };
 
-                    $ctrl.newRow = function(template, popup, size) {
-                        $ctrl.tempRow = new TubularModel($scope, $ctrl, {}, $ctrl.dataService);
+                    $ctrl.newRow = function(template, popup, size, data) {
+                        $ctrl.tempRow = new TubularModel($scope, $ctrl, data || {}, $ctrl.dataService);
                         $ctrl.tempRow.$isNew = true;
                         $ctrl.tempRow.$isEditing = true;
                         $ctrl.tempRow.$component = $ctrl;
