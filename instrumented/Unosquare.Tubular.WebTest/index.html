@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ng="http://angularjs.org/" lang="en" ng-app="app">
+
+<head>
+    <base href="/">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="A set of AngularJS directives and C# classes designed to rapidly build modern web applications">
+    <meta name="keywords" content="application, html5, angularjs, responsive, web api">
+    <meta name="author" content="Unosquare Labs">
+
+    <!-- Favicons -->
+    <link rel="icon" href="../Unosquare.Tubular.Sample/ui/media/favicon.ico" />
+
+    <!-- CSS (from CDN) -->
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap/latest/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootswatch/latest/lumen/bootstrap.min.css" />
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/fontawesome/latest/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/toastr/latest/toastr.css" />
+
+    <link rel="stylesheet" href="../Unosquare.Tubular.Sample/ui/styles/tubular-bundle.css" />
+    <link rel="stylesheet" href="../Unosquare.Tubular.Sample/ui/styles/common.css" />
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+            <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
+            <script src="//cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    <script src="//cdn.jsdelivr.net/g/jquery@2.1.4,bootstrap,angularjs@1.5.0(angular.min.js+angular-animate.min.js+angular-route.min.js),toastr,angular.bootstrap@1.2.2(ui-bootstrap.min.js+ui-bootstrap-tpls.min.js),blob.js(Blob.js),filesaver.js,chart.js@1.0.1,highcharts"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular-local-storage/0.1.5/angular-local-storage.min.js"></script>
+
+    <!-- tubular angular application -->
+    <script src="/instrumented/dist/tubular-bundle.js"></script>
+    <script src="/instrumented/dist/node-module.js"></script>
+
+    <!-- test app -->
+    <script src="/instrumented/Unosquare.Tubular.WebTest/testApp.js"></script>
+</head>
+
+<body ng-cloak>
+    <div id="wrapper">
+        <header class="navbar navbar-static-top" id="top" role="banner">
+            <div class="container">
+                <div class="navbar-header">
+                    <a href="http://unosquare.github.io/tubular/" class="navbar-brand">
+                        <img src="../Unosquare.Tubular.Sample/ui/media/tubular.png" alt="tubular" style="height: 80px; margin-top: -30px;" />
+                    </a>
+                </div>
+                <nav class="collapse navbar-collapse bs-navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li class="dropdown">
+                            <a id="testsSelector" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">e2e tests <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a id="tbGridPagerTest" href="/tbGridPagerTests">Tubular Pager Test</a></li>
+                                <li><a id="tbPageSizeSelectorTest" href="/tbGridPagerTests">Tubular Page Size Selector Test</a></li>         
+                                <li><a id="tbGridPagerInfoTest" href="/tbGridPagerTests">Tubular Grid Pager Info Test</a></li>          
+                                <li><a id="tbColumnSortingTest" href="/tbColumnTests">Tubular Column Sorting Test</a></li>   
+                                <li><a id="tbFiltersTest" href="/tbFiltersTests">Tubular Filters Test</a></li>
+                                <li><a id="tbFormTest" href="/tbFormTests">Tubular Form Test</a></li>
+                                <li><a id="tbFormSavingTest" href="/tbFormSavingTests">Tubular Form Saving Test</a></li>
+                                <li><a id="tbTemplateServiceModelTest" href="#">tubularTemplateServiceModelTest (non e2e)</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </header>
+        <div class="content-body">
+            <div class="container">
+                <ng-view></ng-view>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
