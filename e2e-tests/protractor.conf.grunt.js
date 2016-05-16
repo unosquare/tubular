@@ -2,12 +2,11 @@ exports.config = {
     allScriptsTimeout: 11000,
 
     specs: [
-        // 'e2e-tests/*.js'
-       'e2e-tests/tbFilters-scen.js',
+        'e2e-tests/*.js'
     ],
 
     capabilities: {
-        'browserName': 'chrome'
+        'browserName': 'firefox'
     },
 
     framework: 'jasmine',
