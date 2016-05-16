@@ -25,7 +25,7 @@ describe('tbColumn', function () {
             .$('li.pagination-first a')
             .click();
         
-        // Select '10' on tbPageSizeSelector
+        // Select '100' on tbPageSizeSelector
         element(by.model('$ctrl.$component.pageSize'))
             .$('[value="number:100"]').click();
             
@@ -60,8 +60,8 @@ describe('tbColumn', function () {
             dataSetHigherID = '53',
             dataSetLowerCustomerName = 'Advanced Technology Systems',
             dataSetHigherCustomerName = 'Vesta',
-            dataSetLowerDate = '1/28/16 2:17 AM',
-            dataSetHigherDate ='2/6/16 2:17 AM';
+            dataSetLowerDate = /1\/28\/16 2:17.*/,
+            dataSetHigherDate = /2\/8\/16 8:17.*/
         
         beforeEach(function(){
             // Clear possible sortings and start with default
@@ -109,16 +109,16 @@ describe('tbColumn', function () {
         it('should order data in ascending order when click-sorting an unsorted date column', function(){                
             a_shippedDateSorting.click();
             
-            expect(firstDataRow.$$('td').get(2).getText()).toBe(dataSetLowerDate);
-            expect(lastDataRow.$$('td').get(2).getText()).toBe(dataSetHigherDate);            
+            expect(firstDataRow.$$('td').get(2).getText()).toMatch(dataSetLowerDate);
+            expect(lastDataRow.$$('td').get(2).getText()).toMatch(dataSetHigherDate);            
         });
         
         it('should order data in descending order when click-sorting an ascending-sorted date column', function(){                
             a_shippedDateSorting.click();
             a_shippedDateSorting.click();
             
-            expect(firstDataRow.$$('td').get(2).getText()).toBe(dataSetHigherDate);
-            expect(lastDataRow.$$('td').get(2).getText()).toBe(dataSetLowerDate);            
+            expect(firstDataRow.$$('td').get(2).getText()).toMatch(dataSetHigherDate);
+            expect(lastDataRow.$$('td').get(2).getText()).toMatch(dataSetLowerDate);            
         });
        
     });

@@ -1,0 +1,56 @@
+<!--
+    This template is used to test the following components:
+        - tbForm
+        - tbSimpleEditor
+        - tbNumericEditor
+        - tbDateEditor
+        - tbCheckboxField
+    -->
+
+<h1>This file tests: </h1>
+<ul>
+    <li>tbForm exist </li>
+    <li>tbSimpleEditor</li>
+    <li>tbNumericEditor</li>
+    <li>tbDateEditor</li>
+    <li>tbCheckboxField</li>
+</ul>
+<br />
+<div ng-controller="tbFormCtrl">
+    <tb-form server-url="http://tubular.azurewebsites.net/api/orders/"
+             server-save-url="http://tubular.azurewebsites.net/api/orders/save"
+             model-key="53"
+             server-save-method="POST"
+             require-authentication="false"
+             id="tbForm0">
+        <tb-numeric-editor name="OrderID"
+                           id="OrderID"
+                           show-label="true"
+                           required="true"
+                           value="model.OrderID"></tb-numeric-editor>
+        <tb-simple-editor name="CustomerName"
+                          show-label="true"
+                          value="model.CustomerName"></tb-simple-editor>
+        <tb-simple-editor name="ShipperCity"
+                          show-label="true"
+                          value="model.ShipperCity"></tb-simple-editor>
+        <tb-numeric-editor name="Amount"
+                           show-label="true"
+                           value="model.Amount"></tb-numeric-editor>
+        <tb-date-editor name="ShippedDate"
+                        show-label="true"
+                        value="model.ShippedDate"></tb-date-editor>
+        <tb-simple-editor name="CreatedUserId"
+                          show-label="true"
+                          value="model.CreatedUserId"></tb-simple-editor>
+        <tb-simple-editor name="OrderType"
+                          show-label="true"
+                          value="model.OrderType"></tb-simple-editor>
+        <tb-checkbox-field name="IsShipped"
+                           value="model.IsShipped"></tb-checkbox-field>
+        <div>
+            <button class="btn btn-primary" ng-click="$parent.save()" ng-disabled="!$parent.model.$valid()">Save</button>
+            <button id="btnCancel" class="btn btn-danger" ng-click="$parent.cancel()" formnovalidate>Cancel</button>
+        </div>
+    </tb-form>
+</div>
