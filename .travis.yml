@@ -11,8 +11,8 @@ before_script:
   - sh -e /etc/init.d/xvfb start
   - npm start > /dev/null &
   - sleep 1 # give server time to start
-  - touch /home/travis/build/unosquare/tubular/Unosquare.Tubular/Javascript/tubular-bundle.js
-  - touch /home/travis/build/unosquare/tubular/Unosquare.Tubular/Javascript/tubular-bundle.min.js
+  # - touch /home/travis/build/unosquare/tubular/Unosquare.Tubular/Javascript/tubular-bundle.js
+  # - touch /home/travis/build/unosquare/tubular/Unosquare.Tubular/Javascript/tubular-bundle.min.js
 script:
   - xbuild /p:Configuration=Release Unosquare.Tubular.Lib.sln
   - cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
