@@ -37,7 +37,7 @@ module.exports = function (grunt) {
         connect: {
             server: {
                 options: {
-                    port: 8000,
+                    port: 9000,
                     hostname: 'localhost',
                     base: ''
                 }
@@ -48,10 +48,10 @@ module.exports = function (grunt) {
                 configFile: "e2e-tests/protractor.conf.grunt.js",
                 keepAlive: true,
                 noColor: false,
-                collectorPort: 8001,
+                collectorPort: 9001,
                 coverageDir: 'coverage',
                 args: {
-                    baseUrl: 'http://localhost:8000/instrumented/Unosquare.Tubular.WebTest/'
+                    baseUrl: 'http://localhost:9000/instrumented/Unosquare.Tubular.WebTest/'
                 }
             },
             local: {
@@ -61,7 +61,7 @@ module.exports = function (grunt) {
             },
             travis: {
                 options: {
-                    configFile: 'path/to/protractor-travis.conf.js'
+                    configFile: 'e2e-tests/protractor.conf.grunt.js'
                 }
             }
         },

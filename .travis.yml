@@ -15,5 +15,6 @@ before_script:
   # - touch /home/travis/build/unosquare/tubular/Unosquare.Tubular/Javascript/tubular-bundle.min.js
 script:
   - xbuild /p:Configuration=Release Unosquare.Tubular.Lib.sln
+  - netstat -tulpn | grep :8000
   - grunt test
   - cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
