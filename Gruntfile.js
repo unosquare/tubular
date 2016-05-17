@@ -52,7 +52,7 @@ module.exports = function (grunt) {
                 collectorPort: 9001,
                 coverageDir: 'coverage',
                 args: {
-                    sauceUser: 'geovanni.perez@gmail.com',
+                    sauceUser: 'geoperez',
                     sauceKey: 'dd986cd7-696b-433a-941e-3820d83aa09a'
                 }
             },
