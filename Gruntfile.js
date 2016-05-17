@@ -14,7 +14,7 @@ module.exports = function (grunt) {
             }
         },
         instrument: {
-            files: ['dist/**/*.js'],
+            files: ['Unosquare.Tubular.WebTest/**/*.js', 'dist/**/*.js'],
             options: {
                 lazy: true,
                 basePath: "instrumented"
