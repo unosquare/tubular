@@ -17,4 +17,3 @@ script:
   - xbuild /p:Configuration=Release Unosquare.Tubular.Lib.sln
   - ./node_modules/protractor/bin/webdriver-manager update
   - grunt test
-  - cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
