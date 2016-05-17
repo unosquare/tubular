@@ -1,6 +1,7 @@
 module.exports = function (grunt) {
     // Load grunt tasks automatically
     require('load-grunt-tasks')(grunt);
+    grunt.loadNpmTasks('grunt-coveralls');
 
     // Project configuration.
     grunt.initConfig({
@@ -10,7 +11,7 @@ module.exports = function (grunt) {
                     src: ['Unosquare.Tubular.WebTest/**/*', '!Unosquare.Tubular.WebTest/**/*.js'],
                     dest: 'instrumented/'
                 }]
-            },
+            }
         },
         instrument: {
             files: ['Unosquare.Tubular.WebTest/**/*.js', 'dist/**/*.js'],
@@ -72,6 +73,14 @@ module.exports = function (grunt) {
                 dir: 'coverage',
                 print: 'detail'
             }
+        },
+        coveralls: {
+            options: {
+                force: true
+            },
+            local: {
+                src: 'coverage/*.json'
+            }
         }
     });
 
@@ -81,7 +90,8 @@ module.exports = function (grunt) {
         'string-replace',
         'connect:server',
         'protractor_coverage:local',
-        'makeReport'
+        'makeReport',
+        'coveralls:local'
     ]);
         
     grunt.registerTask('prepare', [
