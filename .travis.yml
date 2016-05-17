@@ -1,5 +1,9 @@
 language: csharp
 solution: Unosquare.Tubular.Lib.sln
+-addons:
+ -  sauce_connect:
+ -    username: "geoperez"
+ -    access_key: "dd986cd7-696b-433a-941e-3820d83aa09a"
 install:
   - nuget restore Unosquare.Tubular.Lib.sln
   - rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm && (cd ~/.nvm && git checkout `git describe --abbrev=0 --tags`) && source ~/.nvm/nvm.sh && nvm install $TRAVIS_NODE_VERSION
