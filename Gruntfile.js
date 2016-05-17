@@ -22,16 +22,16 @@ module.exports = function (grunt) {
         },
         'string-replace': {
             dist: {
-                files: {'instrumented/Unosquare.Tubular.WebTest/':'instrumented/Unosquare.Tubular.WebTest/**/*.html'},
+                files: { 'instrumented/Unosquare.Tubular.WebTest/': 'instrumented/Unosquare.Tubular.WebTest/**/*.html' },
                 options: {
                     replacements: [{
                         pattern: /"\/Unosquare\.Tubular\.WebTest\/testApp\.js/g,
                         replacement: '"/instrumented/Unosquare.Tubular.WebTest/testApp.js'
                     },
-                    {
-                        pattern: /\.\.\/dist/g,
-                        replacement: "/instrumented/dist"
-                    }]
+                        {
+                            pattern: /\.\.\/dist/g,
+                            replacement: "/instrumented/dist"
+                        }]
                 }
             }
         },
@@ -56,18 +56,18 @@ module.exports = function (grunt) {
                     sauceKey: 'dd986cd7-696b-433a-941e-3820d83aa09a'
                 },
                 webdriverManagerUpdate: "true"
-            },
-        //     local: {
-        //         options: {
-        //             configFile: 'e2e-tests/protractor.conf.grunt.js',
-        //         }
-        //     },
-        //     travis: {
-        //         options: {
-        //             configFile: 'e2e-tests/protractor.conf.grunt.js',
-        //         }
-        //     }
-        // },
+            } //,
+            //     local: {
+            //         options: {
+            //             configFile: 'e2e-tests/protractor.conf.grunt.js',
+            //         }
+            //     },
+            //     travis: {
+            //         options: {
+            //             configFile: 'e2e-tests/protractor.conf.grunt.js',
+            //         }
+            //     }
+        },
         makeReport: {
             src: 'coverage/*.json',
             options: {
@@ -95,7 +95,7 @@ module.exports = function (grunt) {
         // 'makeReport',
         // 'coveralls:local'
     ]);
-        
+
     grunt.registerTask('prepare', [
         'copy:instrument',
         'instrument',
