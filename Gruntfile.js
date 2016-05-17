@@ -14,7 +14,7 @@ module.exports = function (grunt) {
             }
         },
         instrument: {
-            files: ['Unosquare.Tubular.WebTest/**/*.js', 'dist/**/*.js'],
+            files: ['dist/**/*.js'],
             options: {
                 lazy: true,
                 basePath: "instrumented"
@@ -79,7 +79,7 @@ module.exports = function (grunt) {
                 force: true
             },
             local: {
-                src: 'coverage/*.json'
+                src: 'coverage/*.info'
             }
         }
     });
