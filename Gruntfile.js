@@ -49,8 +49,8 @@ module.exports = function (grunt) {
                 configFile: "e2e-tests/protractor.conf.grunt.js",
                 keepAlive: true,
                 noColor: false,
-                collectorPort: 9001,
-                coverageDir: 'coverage',
+                // collectorPort: 9001,
+                // coverageDir: 'coverage',
                 args: {
                     sauceUser: 'geoperez',
                     sauceKey: 'dd986cd7-696b-433a-941e-3820d83aa09a'
@@ -86,13 +86,13 @@ module.exports = function (grunt) {
     });
 
     grunt.registerTask('test', [
-        'copy:instrument',
-        'instrument',
-        'string-replace',
-        'connect:server',
-        'protractor_coverage:local',
-        'makeReport',
-        'coveralls:local'
+        // 'copy:instrument',
+        // 'instrument',
+        // 'string-replace',
+        // 'connect:server',
+        'protractor_coverage'//,
+        // 'makeReport',
+        // 'coveralls:local'
     ]);
         
     grunt.registerTask('prepare', [
