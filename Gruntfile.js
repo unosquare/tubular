@@ -52,7 +52,9 @@ module.exports = function (grunt) {
                 coverageDir: 'coverage',
                 args: {
                     baseUrl: 'http://localhost:9000/instrumented/Unosquare.Tubular.WebTest/'
-                }
+                },
+                sauceUser: 'geovanni.perez@gmail.com',
+                sauceKey: 'dd986cd7-696b-433a-941e-3820d83aa09a'
             },
             local: {
                 options: {
