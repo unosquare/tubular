@@ -55,18 +55,19 @@ module.exports = function (grunt) {
                     sauceUser: 'geoperez',
                     sauceKey: 'dd986cd7-696b-433a-941e-3820d83aa09a'
                 },
+                webdriverManagerUpdate: "true"
             },
-            local: {
-                options: {
-                    configFile: 'e2e-tests/protractor.conf.grunt.js',
-                }
-            },
-            travis: {
-                options: {
-                    configFile: 'e2e-tests/protractor.conf.grunt.js',
-                }
-            }
-        },
+        //     local: {
+        //         options: {
+        //             configFile: 'e2e-tests/protractor.conf.grunt.js',
+        //         }
+        //     },
+        //     travis: {
+        //         options: {
+        //             configFile: 'e2e-tests/protractor.conf.grunt.js',
+        //         }
+        //     }
+        // },
         makeReport: {
             src: 'coverage/*.json',
             options: {
