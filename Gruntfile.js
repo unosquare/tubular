@@ -59,15 +59,11 @@ module.exports = function (grunt) {
             local: {
                 options: {
                     configFile: 'e2e-tests/protractor.conf.grunt.js',
-                    sauceUser: 'geovanni.perez@gmail.com',
-                    sauceKey: 'dd986cd7-696b-433a-941e-3820d83aa09a'
                 }
             },
             travis: {
                 options: {
                     configFile: 'e2e-tests/protractor.conf.grunt.js',
-                    sauceUser: 'geovanni.perez@gmail.com',
-                    sauceKey: 'dd986cd7-696b-433a-941e-3820d83aa09a'
                 }
             }
         },

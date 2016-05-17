@@ -2,7 +2,7 @@ language: csharp
 solution: Unosquare.Tubular.Lib.sln
 -addons:
  -  sauce_connect:
- -    username: "geoperez"
+ -    username: "geovanni.perez@gmail.com"
  -    access_key: "dd986cd7-696b-433a-941e-3820d83aa09a"
 install:
   - nuget restore Unosquare.Tubular.Lib.sln
