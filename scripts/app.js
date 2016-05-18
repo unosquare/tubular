@@ -1,4 +1,4 @@
-(function() {
+(function(angular) {
     'use strict';
 
     angular.module('app.routes', ['ngRoute'])
@@ -6,21 +6,29 @@
             '$routeProvider', function($routeProvider) {
                 $routeProvider.
                     when('/', {
-                        templateUrl: 'assets/intro.html'
+                        templateUrl: 'assets/intro.html',
+                        key: 'Home'
                     }).when('/Basic', {
-                        templateUrl: 'assets/home.html'
+                        templateUrl: 'assets/home.html',
+                        key: 'Tubular Samples',
+                        desc: 'A little collection with samples from basic grid to more awesome.'
                     }).when('/Csharp', {
-                        templateUrl: 'assets/csharp.html'
+                        templateUrl: 'assets/csharp.html',
+                        key: 'Tubular C# Samples',
+                        desc: 'Grid samples connecting to a Web API service in Azure.'
                     }).when('/Charts', {
-                        templateUrl: 'assets/charts.html'
-                    }).when('/Reporting', {
-                        templateUrl: 'assets/reporting.html'
+                        templateUrl: 'assets/charts.html',
+                        key: 'Tubular Charts Samples',
+                        desc: 'Helpful components to create charts with ChartJS or Highcharts.'
                     }).when('/Generator', {
-                        templateUrl: 'assets/generator.html'
+                        templateUrl: 'assets/generator.html',
+                        key: 'Tubular Grid Generator'
                     }).when('/FormGenerator', {
-                        templateUrl: 'assets/formgenerator.html'
+                        templateUrl: 'assets/formgenerator.html',
+                        key: 'Tubular Form Generator'
                     }).when('/Documentation/:param?', {
-                        templateUrl: 'assets/documentation.html'
+                        templateUrl: 'assets/documentation.html',
+                        key: 'Tubular Documentation'
                     }).otherwise({
                         redirectTo: '/'
                     });
@@ -301,7 +309,7 @@
         .controller('tubularDocCtrl',
         [
             '$scope', '$http', '$anchorScroll', '$location', '$routeParams', '$templateCache',
-            function ($scope, $http, $anchorScroll, $location, $routeParams, $templateCache) {
+            function($scope, $http, $anchorScroll, $location, $routeParams, $templateCache) {
                 $scope.internalLink = function(url) {
                     var find = $scope.items.filter(function(el) { return el.name === url; });
 
@@ -310,7 +318,7 @@
                     }
                 };
 
-                $scope.getHtml = function (url) {
+                $scope.getHtml = function(url) {
                     var data = $templateCache.get(url);
                     return data;
                 };
@@ -342,7 +350,7 @@
                     $scope.items.push({ name: '$location', url: 'https://docs.angularjs.org/api/ng/service/$location', docType: 'external' });
                     $scope.items.push({ name: '$filter', url: 'https://docs.angularjs.org/api/ng/service/$filter', docType: 'external' });
                     $scope.items.push({ name: 'localStorageService', url: 'https://github.com/grevory/angular-local-storage', docType: 'external' });
-                    
+
                     // Load internal doc
                     $scope.items.push({ name: 'StartGrid', url: 'tutorial/grid.html', docType: 'external' });
                     $scope.items.push({ name: 'StartForm', url: 'tutorial/form.html', docType: 'external' });
@@ -357,6 +365,12 @@
                     }
                 });
             }
+        ]).controller('infoCtrl', [
+            '$route', '$routeParams', '$location', function($route, $routeParams, $location) {
+                this.$route = $route;
+                this.$location = $location;
+                this.$routeParams = $routeParams;
+            }
         ])
         .config([
             '$sceDelegateProvider', function($sceDelegateProvider) {
@@ -370,11 +384,9 @@
         'tubular',
         'tubular-chart.directives',
         'tubular-hchart.directives',
-        'tubular-reporting.directives',
         'app.routes',
-        'app.controllers',
-        'app.reporting'
+        'app.controllers'
     ]);
 
     ZeroClipboard.config({ swfPath: "//cdn.jsdelivr.net/zeroclipboard/2.2.0/ZeroClipboard.swf" });
-})();
+})(window.angular);

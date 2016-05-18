@@ -1,16 +1,6 @@
-<div class="jumbotron">
-    <div class="container">
-        <img src="assets/tubular.png" alt="Tubular" />
-        <p>
-            A set of <a href="https://angularjs.org/" target="_blank">AngularJS</a> directives and C# classes designed to rapidly build modern web applications.
-            The centerpiece of Tubular is its fully templateable grid with lots of features such as server-side pagination, multi-column sorting and filtering,
-            built-in export to CSV, and in-line editing of rows via templates.
-        </p>
-    </div>
-</div>
-<div class="container" ng-controller="tubularSampleCtrl">
+<div class="container content-show" ng-controller="tubularSampleCtrl">
     <div class="row">
-        <div class="col-md-9">
+        <div class="col-md-12">
             <h1 id="features">Features</h1>
 
             <p>Tubular provides a set of directives and services using AngularJS as framework, the main component is a grid with multiple options:</p>
@@ -25,95 +15,109 @@
                     any WebApi library.
                 </li>
             </ul>
-            <hr />
+            <hr/>
             <h1 id="nuget">NuGet Installation</h1>
 
             <h3>Package containing only the client-side stuff</h3>
 
-            <pre>PM> Install-Package Tubular</pre>
+            <div hljs>PM Install-Package Tubular</div>
 
             <h3>Package containing the server-side stuff (which also installs the client-side stuff)</h3>
 
-            <pre>PM> Install-Package Tubular.ServerSide</pre>
+            <div hljs>PM Install-Package Tubular.ServerSide</div>
 
-            <hr />
+            <hr/>
             <h1 id="bower">Bower Installation</h1>
 
-            <pre># install Tubular package and add it to bower.json
-$ bower install tubular --save
-</pre>
-            <hr />
-            <h1 id="npm">npm Installation</h1>
+            <div hljs># install Tubular package and add it to bower.json
+$ bower install tubular --save</div>
 
-            <p>
-                The npm package only contains the <b>Tubular Template Module</b>, if you want to use all of Tubular's features, please install the Bower package instead.
-            </p>
-            <pre># install Tubular package and add it to package.json
-$ npm install tubular --save</pre>
-            <hr />
-            <h1 id="dependencies">Dependencies</h1>
+                <hr />
+                <h1 id="npm">npm Installation</h1>
 
-            <p>
-                You will need to reference the following JS libraries in order to use Tubular in your HTML:
-            </p>
-            <ul>
-                <li><a href="http://jquery.com/">jQuery</a> - 2.1.4</li>
-                <li><a href="http://getbootstrap.com/">Twitter Bootstrap</a></li>
-                <li><a href="https://angularjs.org/">AngularJS (optionally Animate and Route)</a></li>
-                <li><a href="https://angular-ui.github.io/bootstrap/">AngularJS UI Bootstrap</a> - 1.5</li>
-                <li><a href="https://github.com/grevory/angular-local-storage">AngularJS Local Storage</a></li>
-                <li><a href="http://fortawesome.github.io/Font-Awesome/">Font Awesome</a></li>
-                <li><a href="https://github.com/eligrey/FileSaver.js">FileSaver.js</a> and <a href="https://github.com/eligrey/Blob.js/">Blob.js</a></li>
-            </ul>
+                <p>
+                    The npm package only contains the <b>Tubular Template Module</b>, if you want to use all of Tubular's features, please install the Bower package instead.
+                </p>
+            <div hljs># install Tubular package and add it to package.json
+$ npm install tubular --save</div>
 
-            <p>Also, if you use the Visual Studio you will need the excellent <a href="http://vswebessentials.com/download" target="_blank">Web Essentials</a> if you are running VS2013 or <a href="https://visualstudiogallery.msdn.microsoft.com/9ec27da7-e24b-4d56-8064-fd7e88ac1c40">Bundler &amp; Minifier</a> plug-in for VS2015 in order to generate the Tubular bundles.</p>
-            <h3>Charts</h3>
-            <p>An experimental support to chart is running with Tubular and you can choose between <a href="http://www.chartjs.org/">ChartJS</a> or <a href="http://www.highcharts.com/">Highcharts</a>. If you want to use any of them, be sure to load the library before Tubular and check <a href="https://github.com/unosquare/tubular/tree/master/Unosquare.Tubular.Sample">Tubular Sample</a> with easy to understand code on how to start using charts.</p>
-            <hr />
-            <h1 id="cdn">Using a CDN</h1>
-            <p>You can get all the dependencies using the following links in your master HTML page. <a href="http://www.jsdelivr.com/">jsDelivr</a> provides almost everything you need to import.</p>
-            <div hljs>
+                <hr />
+                <h1 id="dependencies">Dependencies</h1>
+
+                <p>
+                    You will need to reference the following JS libraries in order to use Tubular in your HTML:
+                </p>
+                <ul>
+                    <li><a href="http://jquery.com/">jQuery</a> - 2.1.4</li>
+                    <li><a href="http://getbootstrap.com/">Twitter Bootstrap</a></li>
+                    <li><a href="https://angularjs.org/">AngularJS (optionally Animate and Route)</a></li>
+                    <li><a href="https://angular-ui.github.io/bootstrap/">AngularJS UI Bootstrap</a> - 1.5</li>
+                    <li><a href="https://github.com/grevory/angular-local-storage">AngularJS Local Storage</a></li>
+                    <li><a href="http://fortawesome.github.io/Font-Awesome/">Font Awesome</a></li>
+                    <li><a href="https://github.com/eligrey/FileSaver.js">FileSaver.js</a> and <a href="https://github.com/eligrey/Blob.js/">Blob.js</a></li>
+                </ul>
+
+                <p>
+                    Also, if you use the Visual Studio you will need the excellent <a href="http://vswebessentials.com/download" target="_blank">Web Essentials</a> if you are running VS2013 or <a href="https://visualstudiogallery.msdn.microsoft.com/9ec27da7-e24b-4d56-8064-fd7e88ac1c40">Bundler &amp; Minifier</a> plug-in for VS2015 in order to generate the Tubular bundles.
+                </p>
+                <h3>Charts</h3>
+                <p>
+                    An experimental support to chart is running with Tubular and you can choose between <a href="http://www.chartjs.org/">ChartJS</a> or <a href="http://www.highcharts.com/">Highcharts</a>. If you want to use any of them, be sure to load the library before Tubular and check <a href="https://github.com/unosquare/tubular/tree/master/Unosquare.Tubular.Sample">Tubular Sample</a> with easy to understand code on how to start using charts.
+                </p>
+                <hr />
+                <h1 id="cdn">Using a CDN</h1>
+                <p>
+                    You can get all the dependencies using the following links in your master HTML page. <a href="http://www.jsdelivr.com/">jsDelivr</a> provides almost everything you need to import.
+                </p>
+                <div hljs>
 <link rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap/latest/css/bootstrap.min.css" />
 <link rel="stylesheet" href="//cdn.jsdelivr.net/fontawesome/latest/css/font-awesome.min.css" />
 
-<script src="//cdn.jsdelivr.net/g/jquery@2.1.4,bootstrap,angularjs@1.5.0(angular.min.js+angular-animate.min.js+angular-route.min.js),filesaver.js,angular.bootstrap(ui-bootstrap.min.js+ui-bootstrap-tpls.min.js),blob.js(Blob.js),filesaver.js"></script>
+<script src="//cdn.jsdelivr.net/g/angularjs@1.5.0(angular.min.js+angular-animate.min.js+angular-route.min.js),filesaver.js,angular.bootstrap(ui-bootstrap.min.js+ui-bootstrap-tpls.min.js),blob.js(Blob.js),filesaver.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/angular-local-storage/0.1.5/angular-local-storage.min.js"></script></div>
 
-            <p>Then you will need to either grab your own copy of Tubular or you use jsDelivr to reference Tubular CSS and JS files.</p>
+                <p>Then you will need to either grab your own copy of Tubular or you use jsDelivr to reference Tubular CSS and JS files.</p>
 
-            <div hljs>
+                <div hljs>
 <link rel="stylesheet" href="//cdn.jsdelivr.net/tubular/latest/tubular-bundle.min.css" />
 <script src="//cdn.jsdelivr.net/tubular/latest/tubular-bundle.min.js"></script></div>
 
-            <p>Finally update your modules to include Tubular, for example if your module is called <i>app</i>, then you will need to add Tubular as a dependency as follows:</p>
+                <p>
+                    Finally update your modules to include Tubular, for example if your module is called <i>app</i>, then you will need to add Tubular as a dependency as follows:
+                </p>
 
-            <div hljs>angular.module('app', ['ngRoute','tubular']);</div>
-            <hr />
-            <h1 id="settings">Global Settings</h1>
-            <p>You can access to global settings by using the static object <i>TubularDefaultSettings</i> and setup common behavior in Tubular. The settings included are:</p>
-            
-            <table class="table table-bordered table-striped table-condensed">
-                <tbody><tr><th>Setting</th><th>Default value</th><th>Notes</th></tr>
-                    <tr><th>AdjustTimezoneOffset</th><td><i>True</i></td><td>Determines if the DateTime from a Response should adjust the timezone offset send by within the Request.</td></tr>
+                <div hljs>angular.module('app', ['ngRoute','tubular']);</div>
+                <hr />
+                <h1 id="settings">Global Settings</h1>
+                <p>
+                    You can access to global settings by using the static object <i>TubularDefaultSettings</i> and setup common behavior in Tubular. The settings included are:
+                </p>
+
+            <table class="table table-bordered table-condensed">
+                <thead>
+                    <tr><th>Setting</th><th>Default value</th><th>Notes</th></tr>
+                </thead>
+                <tbody>
+                <tr><th>AdjustTimezoneOffset</th><td><i>True</i></td><td>Determines if the DateTime from a Response should adjust the timezone offset send by within the Request.</td></tr>
                 </tbody>
             </table>
-            <hr />
-            <h1 id="boilerplate">Boilerplate</h1>
-            <p>
-                We have a basic <a href="https://github.com/unosquare/tubular-boilerplate" target="_blank">Boilerplate</a> with everything that you need to start your own tubular project. We are already working on a <a href="http://yeoman.io/" taget="_blank">Yeoman Generator</a>. Check out the <a href="https://github.com/unosquare/generator-tubular" target="_blank">generator-tubular</a> repository to check out our progress.
-            </p>
+                <hr />
+                <h1 id="boilerplate">Boilerplate</h1>
+                <p>
+                    We have a basic <a href="https://github.com/unosquare/tubular-boilerplate" target="_blank">Boilerplate</a> with everything that you need to start your own tubular project. We are already working on a <a href="http://yeoman.io/" taget="_blank">Yeoman Generator</a>. Check out the <a href="https://github.com/unosquare/generator-tubular" target="_blank">generator-tubular</a> repository to check out our progress.
+                </p>
 
-            <hr />
-            <h1 id="code">Start coding</h1>
+                <hr />
+                <h1 id="code">Start coding</h1>
 
-            <p>
-                Browse to the <a href="/tubular/#Basic">Samples</a> and discover all the features in Tubular. If you feel lucky, you can go
-                directly to the <a href="/tubular/#Generator">Generator</a> and create your own Tubular Grid using a sample JSON from your
-                REST service or maybe just play a little bit.
-            </p>
+                <p>
+                    Browse to the <a href="/tubular/#Basic">Samples</a> and discover all the features in Tubular. If you feel lucky, you can go
+                    directly to the <a href="/tubular/#Generator">Generator</a> and create your own Tubular Grid using a sample JSON from your
+                    REST service or maybe just play a little bit.
+                </p>
 
-            <p>In the next snippet you can see how easy is to understand Tubular grid markup. You don't need to add anything else to your controller!</p>
-            <div hljs>
+                <p>In the next snippet you can see how easy is to understand Tubular grid markup. You don't need to add anything else to your controller!</p>
+                <div hljs>
 <div class="container">
     <tb-grid server-url="/data/customers.json" page-size="20" class="row">
         <div class="col-md-12">
@@ -144,25 +148,9 @@ $ npm install tubular --save</pre>
                 </tb-grid-table>
             </div>
         </div>
-    </tb-grid>
-</div>
-            </div>
-        <p>Tubular works directly with either your own OData service or a custom RESTful call. You can simplify your RESTful API significantly by using our .NET Tubular.ServerSide library which handles IQueryables easily.</p>
-        </div>
-        <div class="col-md-3 hidden-xs hidden-sm">
-            <div data-spy="affix" data-offset-top="60" data-offset-bottom="200">
-                <div class="list-group">
-                    <a ng-click="scrollTo('features')" class="list-group-item">Features</a>
-                    <a ng-click="scrollTo('nuget')" class="list-group-item">NuGet Installation</a>
-                    <a ng-click="scrollTo('bower')" class="list-group-item">Bower Installation</a>
-                    <a ng-click="scrollTo('npm')" class="list-group-item">npm Installation</a>
-                    <a ng-click="scrollTo('dependencies')" class="list-group-item">Dependencies</a>
-                    <a ng-click="scrollTo('cdn')" class="list-group-item">Using a CDN</a>
-                    <a ng-click="scrollTo('settings')" class="list-group-item">Global Settings</a>
-                    <a ng-click="scrollTo('boilerplate')" class="list-group-item">Boilerplate</a>
-                    <a ng-click="scrollTo('code')" class="list-group-item">Start Coding</a>
+    </tb-grid></div>
                 </div>
+                <p>Tubular works directly with either your own OData service or a custom RESTful call. You can simplify your RESTful API significantly by using our .NET Tubular.ServerSide library which handles IQueryables easily.</p>
             </div>
-        </div>
     </div>
 </div>

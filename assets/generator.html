@@ -1,69 +1,70 @@
 ﻿<div ng-controller="tubularGeneratorCtrl">
-    <div class="jumbotron">
-        <div class="container">
-            <h1><img src="assets/tubular-icon.png" alt="tubular" /> Tubular Grid Generator</h1>
-            <div ng-hide="step != 1">
-                <p ng-show="views.length == 0">
-                    First you need to paste a sample model, it could be any <b>JSON</b> or even you can use a <b>OData URL</b>.
-                    If you only want to play a little bit, give a try <a href="http://www.json-generator.com/">Json Generator</a>.
-                </p>
-                <p ng-show="views.length > 0">
-                    You can add more views to your project or just send your current work to Plunker.
-                </p>
-                <div class="pull-right">
-                    <div class="btn-group btn-group-md">
-                        <button class="btn btn-primary" ng-click="generateModel()" ng-disabled="basemodel.length == 0">
-                            <i class="fa fa-gear"></i>&nbsp;Generate
-                        </button>
-                        <button class="btn btn-default" ng-click="useSample()">
-                            <i class="fa fa-star"></i>&nbsp;Use Local Sample
-                        </button>
-                        <button class="btn btn-default" ng-click="useServerSample()">
-                            <i class="fa fa-globe"></i>&nbsp;Use Server Sample
-                        </button>
-                    </div>
-                </div>
-                <div class="clearfix"></div>
-            </div>
-            <div ng-hide="step != 2">
-                <p>Please setup anything you need before to continue.</p>
-                <div class="pull-right">
-                    <div class="btn-group">
-                        <button class="btn btn-warning btn-lg" ng-click="revert()">
-                            <i class="fa fa-arrow-left"></i>&nbsp;Start over
-                        </button>
-                        <button class="btn btn-primary btn-lg" ng-click="runGridTemplate()">
-                            <i class="fa fa-gear"></i>&nbsp;Continue
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div ng-hide="step != 3">
-                <p>
-                    If you wish send this grid to <b>Plunker</b> and you can start right now to customize it. The Tubular grid is located as <i>grid.html</i>.
-                    <br />
-                    <b>Save and Continue</b> will save this grid locally and allow to add more views to edit later.
-                </p>
-
-                <div class="pull-right">
-                    <div class="btn-group">
-                        <button class="btn btn-warning btn-lg" ng-click="revert()">
-                            <i class="fa fa-arrow-left"></i>&nbsp;Return to Setup
-                        </button>
-                        <button class="btn btn-success btn-lg" ng-click="cleanPlunker('grid')">
-                            <i class="fa fa-pencil"></i>&nbsp;Export to Plunker
-                        </button>
-                        <button class="btn btn-default btn-lg" ng-click="save('grid')">
-                            <i class="fa fa-plus"></i>&nbsp;Save and Continue
-                        </button>
-                    </div>
-                </div>
-                <div class="clearfix"></div>
-            </div>
-        </div>
-    </div>
 
     <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+
+
+                <div ng-hide="step != 1">
+                    <p ng-show="views.length == 0">
+                        First you need to paste a sample model, it could be any <b>JSON</b> or even you can use a <b>OData URL</b>.
+                        If you only want to play a little bit, give a try <a href="http://www.json-generator.com/">Json Generator</a>.
+                    </p>
+                    <p ng-show="views.length > 0">
+                        You can add more views to your project or just send your current work to Plunker.
+                    </p>
+                    <div class="pull-right">
+                        <div class="btn-group btn-group-md">
+                            <button class="btn btn-primary" ng-click="generateModel()" ng-disabled="basemodel.length == 0">
+                                <i class="fa fa-gear"></i>&nbsp;Generate
+                            </button>
+                            <button class="btn btn-default" ng-click="useSample()">
+                                <i class="fa fa-star"></i>&nbsp;Use Local Sample
+                            </button>
+                            <button class="btn btn-default" ng-click="useServerSample()">
+                                <i class="fa fa-globe"></i>&nbsp;Use Server Sample
+                            </button>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div ng-hide="step != 2">
+                    <p>Please setup anything you need before to continue.</p>
+                    <div class="pull-right">
+                        <div class="btn-group">
+                            <button class="btn btn-warning btn-lg" ng-click="revert()">
+                                <i class="fa fa-arrow-left"></i>&nbsp;Start over
+                            </button>
+                            <button class="btn btn-primary btn-lg" ng-click="runGridTemplate()">
+                                <i class="fa fa-gear"></i>&nbsp;Continue
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div ng-hide="step != 3">
+                    <p>
+                        If you wish send this grid to <b>Plunker</b> and you can start right now to customize it. The Tubular grid is located as <i>grid.html</i>.
+                        <br />
+                        <b>Save and Continue</b> will save this grid locally and allow to add more views to edit later.
+                    </p>
+
+                    <div class="pull-right">
+                        <div class="btn-group">
+                            <button class="btn btn-warning btn-lg" ng-click="revert()">
+                                <i class="fa fa-arrow-left"></i>&nbsp;Return to Setup
+                            </button>
+                            <button class="btn btn-success btn-lg" ng-click="cleanPlunker('grid')">
+                                <i class="fa fa-pencil"></i>&nbsp;Export to Plunker
+                            </button>
+                            <button class="btn btn-default btn-lg" ng-click="save('grid')">
+                                <i class="fa fa-plus"></i>&nbsp;Save and Continue
+                            </button>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+        </div>
         <div class="pull-right" ng-show="views.length > 0">
             <button class="btn btn-success" ng-click="plunker()">
                 <i class="fa fa-pencil"></i>&nbsp;Export All to Plunker
@@ -134,7 +135,7 @@
                             </td>
                             <td>
                                 <select class="form-control"
-                                        ng-model="row.SortDirection" 
+                                        ng-model="row.SortDirection"
                                         ng-disabled="row.Sortable == false || row.SortOrder <= 0">
                                     <option value="">- Not set -</option>
                                     <option value="Ascending">Ascending</option>
@@ -153,7 +154,7 @@
                 <hr />
                 <div class="row">
                     <h4>UI Options</h4>
-                   
+
                     <div class="col-xs-8">
                         <p>Please select which additional UI elements wants to show in your view.</p>
                         <div class="btn-group">

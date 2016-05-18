@@ -1,14 +1,6 @@
-﻿<div class="jumbotron">
-    <div class="container">
-        <h1><img src="assets/tubular-icon.png" alt="tubular" /> Tubular Charts</h1>
-        <p>
-            Tubular provides some helpful directives to create charts with <a href="http://www.chartjs.org/" target="_blank">ChartJS</a> or
-            <a href="http://www.highcharts.com/" target="_blank">Highcharts</a>. Also the Tubular .NET assembly contains helpers to create models
-            directly with your IQueryable sources like Entity Framework.
-        </p>
-    </div>
-</div>
-<div class="container" ng-controller="tubularSampleCtrl">
+﻿<div class="container" ng-controller="tubularSampleCtrl">
+    <p>The Tubular .NET assembly contains helpers to create models directly with your IQueryable sources like Entity Framework.</p>
+
     <div class="sample-content panel panel-default ng-cloak" ng-repeat="t in chartTutorial">
         <div class="panel-heading" id="{{t.key}}">
             {{t.title}}
