@@ -50,7 +50,10 @@ module.exports = function (grunt) {
                 keepAlive: true,
                 noColor: false,
                 collectorPort: 9001,
-                coverageDir: 'coverage'
+                coverageDir: 'coverage',
+                args: {
+                    baseUrl: 'http://localhost:9000/instrumented/Unosquare.Tubular.WebTest/'
+                }
             },
             local: {
                 options: {
