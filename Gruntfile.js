@@ -50,7 +50,6 @@ module.exports = function (grunt) {
                 keepAlive: true,
                 noColor: false,
                 args: {
-                    baseUrl: 'http://localhost:9000/Unosquare.Tubular.WebTest/',
                     sauceUser: 'geoperez',
                     sauceKey: 'dd986cd7-696b-433a-941e-3820d83aa09a'
                 }
@@ -76,7 +75,7 @@ module.exports = function (grunt) {
     });
 
     grunt.registerTask('test', [
-        'connect',
+        // 'connect',
         'protractor'
     ]);
 
