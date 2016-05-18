@@ -2,11 +2,11 @@ exports.config = {
     allScriptsTimeout: 11000,
 
     specs: [
-        'e2e-tests/tbGridPagerInfo-scen.js'
+        'tbGridPagerInfo-scen.js'
     ],
 
     capabilities: {
-        'browserName': 'firefox'
+        'browserName': 'chrome'
     },
 
     framework: 'jasmine',

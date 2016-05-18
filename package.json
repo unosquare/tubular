@@ -41,13 +41,14 @@
     "load-grunt-tasks": "^3.5.0"
   },
   "devDependencies": {
-    "coveralls": "^2.11.2",
     "bower": "^1.7.9",
+    "coveralls": "^2.11.2",
     "grunt-contrib-connect": "^1.0.2",
+    "grunt-coveralls": "^1.0.1",
+    "grunt-protractor-runner": "^3.2.0",
     "grunt-string-replace": "^1.2.1",
     "http-server": "^0.9.0",
     "protractor": "^3.3.0",
-    "grunt-coveralls": "^1.0.1",
     "selenium-chromedriver": "0.0.2",
     "selenium-standalone": "5.1.0"
   }
