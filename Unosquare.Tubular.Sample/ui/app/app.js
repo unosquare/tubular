@@ -32,9 +32,6 @@
                     }).when('/new/', {
                         templateUrl: '/ui/app/common/formnew.html',
                         title: 'Add a new ORDER NOW!'
-                    }).when('/reporting/', {
-                        templateUrl: '/ui/app/common/reporting.html',
-                        title: 'Create a custom Report'
                     }).when('/widget/', {
                         templateUrl: '/ui/app/common/widget.html',
                         title: 'Widgets',
@@ -149,12 +146,6 @@
                     toastr.success(event.point.name + ': ' + event.point.y);
                 };
             }
-        ]).controller("reportingCtrl", [
-            '$scope', 'toastr', function ($scope, toastr) {
-                $scope.$on('tbReporting_OnConnectionError', function (event, error) { toastr.error(error); });
-                $scope.$on('tbReporting_OnSuccessfulSave', function (event, message) { toastr.success(message); });
-                $scope.$on('tbReporting_OnRemoved', function (event, message) { toastr.success(message); });
-            }
         ]).controller("widgetCtrl", [
             '$scope', function ($scope) {
                 var grids = {};
@@ -178,7 +169,6 @@
         'tubular',
         'tubular-chart.directives',
         'tubular-hchart.directives',
-        'tubular-reporting.directives',
         'tubular-widget.directives',
         'toastr',
         'app.routes',

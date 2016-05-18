@@ -61,10 +61,6 @@ Also, if you use the Visual Studio you will need the excellent <a href="http://v
 
 An experimental support to chart is running with Tubular and you can choose between [ChartJS](http://www.chartjs.org/) or [Highcharts](http://www.highcharts.com/). If you want to use any of them, be sure to load the library before Tubular and check [Tubular Sample](https://github.com/unosquare/tubular/tree/master/Unosquare.Tubular.Sample) with easy to understand code on how to start using charts.
 
-### Reporting
-
-Tubular Reporting, another experimental module, enables to query and design in runtime any grid joining all your tables and allowing to aggregate data. All this using a .NET Proxy in your REST service. Check the Sample in code or the [online Reporting page](http://unosquare.github.io/tubular/#/Reporting) connecting to an Azure Website.
-
 ## Using a CDN
 
 You can get all the dependencies using the following links in your master HTML page. <a href="http://www.jsdelivr.com/">jsDelivr</a> provides almost everything you need to import.
