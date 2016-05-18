@@ -2,7 +2,6 @@ module.exports = function (grunt) {
     // Load grunt tasks automatically
     require('load-grunt-tasks')(grunt);
     grunt.loadNpmTasks('grunt-coveralls');
-    grunt.loadNpmTasks('grunt-wait');
 
     // Project configuration.
     grunt.initConfig({
@@ -54,8 +53,8 @@ module.exports = function (grunt) {
                 coverageDir: 'coverage',
                 args: {
                     baseUrl: 'http://localhost:9000/instrumented/Unosquare.Tubular.WebTest/'
-                    // sauceUser: 'geoperez',
-                    // sauceKey: 'dd986cd7-696b-433a-941e-3820d83aa09a'
+                    sauceUser: 'geoperez',
+                    sauceKey: 'dd986cd7-696b-433a-941e-3820d83aa09a'
                 }
             },
             all: {}
