@@ -168,7 +168,6 @@
                     });
 
                     $scope.$watch('$ctrl.requestedPage', function() {
-                        // TODO: we still need to inter-lock failed, initial and paged requests
                         if ($ctrl.hasColumnsDefinitions && $ctrl.requestCounter > 0) {
                             $ctrl.retrieveData();
                         }
@@ -579,8 +578,6 @@
          * All the attributes are used to generate a `ColumnModel`.
          * 
          * This directive is replace by a `th` HTML element.
-         * 
-         * @scope
          * 
          * @param {string} name Set the column name.
          * @param {string} label Set the column label, if empty column's name is used.
