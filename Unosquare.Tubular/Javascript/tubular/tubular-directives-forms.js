@@ -1,4 +1,4 @@
-﻿(function () {
+﻿(function (angular) {
     'use strict';
 
     angular.module('tubular.directives')
@@ -18,8 +18,6 @@
          * 
          * The `save` method can be forced to update a model against the REST service, otherwise if the Model
          * doesn't detect any change will ignore the save call.
-         * 
-         * @scope
          * 
          * @param {string} serverUrl Set the HTTP URL where the data comes.
          * @param {string} serverSaveUrl Set the HTTP URL where the data will be saved.
@@ -218,4 +216,4 @@
                 };
             }
         ]);
-})();
+})(window.angular);

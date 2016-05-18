@@ -11,6 +11,7 @@
          * The `tbTextSearch` is visual component to enable free-text search in a grid.
          * 
          * @param {number} minChars How many chars before to search, default 3.
+         * @param {string} placeholder The placeholder text, defaults `UI_SEARCH` i18n resource.
          */
         .component('tbTextSearch', {
             require: {
@@ -82,8 +83,8 @@
          * 
          * @param {object} model The row to remove.
          * @param {string} caption Set the caption to use in the button, default Remove.
-         * @param {string} cancelCaption Set the caption to use in the Cancel button, default Cancel.
-         * @param {string} legend Set the legend to warn user, default 'Do you want to delete this row?'.
+         * @param {string} cancelCaption Set the caption to use in the Cancel button, default `CAPTION_REMOVE` i18n resource.
+         * @param {string} legend Set the legend to warn user, default `UI_REMOVEROW` i18n resource.
          * @param {string} icon Set the CSS icon's class, the button can have only icon.
          */
         .component('tbRemoveButton', {
@@ -102,7 +103,7 @@
                 icon: '@'
             },
             controller: [
-               'tubularTemplateService', '$filter', function (tubularTemplateService, $filter) {
+               'tubularTemplateService', function (tubularTemplateService) {
                    var $ctrl = this;
 
                    $ctrl.showIcon = angular.isDefined($ctrl.icon);
@@ -289,11 +290,11 @@
             require: {
                 $component: '^tbGrid'
             },
-            template: '<div class="btn-group">' +
-                '<button class="btn btn-info btn-sm dropdown-toggle {{::$ctrl.css}}" data-toggle="dropdown" aria-expanded="false">' +
+            template: '<div class="btn-group" uib-dropdown>' +
+                '<button class="btn btn-info btn-sm {{::$ctrl.css}}" uib-dropdown-toggle>' +
                 '<span class="fa fa-download"></span>&nbsp;{{:: $ctrl.caption || (\'UI_EXPORTCSV\' | translate)}}&nbsp;<span class="caret"></span>' +
                 '</button>' +
-                '<ul class="dropdown-menu" role="menu">' +
+                '<ul class="dropdown-menu" uib-dropdown-menu>' +
                 '<li><a href="javascript:void(0)" ng-click="$ctrl.downloadCsv($parent)">{{:: $ctrl.captionMenuCurrent || (\'UI_CURRENTROWS\' | translate)}}</a></li>' +
                 '<li><a href="javascript:void(0)" ng-click="$ctrl.downloadAllCsv($parent)">{{:: $ctrl.captionMenuAll || (\'UI_ALLROWS\' | translate)}}</a></li>' +
                 '</ul>' +
