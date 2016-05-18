@@ -12,6 +12,7 @@ describe('tbGridPagerInfo', function () {
         tbPageSizeSelector;
 
     beforeAll(function () {
+        console.log("s5a2d9as9d9sadsa");
         browser.getCurrentUrl().then(function (url) {
             console.log(url);
         })
