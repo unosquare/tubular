@@ -12,34 +12,28 @@ describe('tbGridPagerInfo', function () {
         tbPageSizeSelector;
 
     beforeAll(function () {
-        console.log("s5a2d9as9d9sadsa");
-        browser.getCurrentUrl().then(function (url) {
-            console.log(url);
-        })
-            .then(function () {
-                // Go to test
-                browser.get('index.html');
-                element(by.id('testsSelector')).click();
-                element(by.id('tbGridPagerInfoTest')).click();
+        // Go to test
+        browser.get('index.html');
+        element(by.id('testsSelector')).click();
+        element(by.id('tbGridPagerInfoTest')).click();
 
-                /**********************/
-                // * Test variables * //
-                /**********************/
-                // Get the component
-                tbGridPagerInfo = element(by.tagName('tb-grid-pager-info'));
-                // Next page button
-                nextPageBtn = element(by.tagName('tb-grid-pager')).$('li.pagination-next a');
-                // Page size selector component
-                tbPageSizeSelector = element(by.model('$ctrl.$component.pageSize'));
+        /**********************/
+        // * Test variables * //
+        /**********************/
+        // Get the component
+        tbGridPagerInfo = element(by.tagName('tb-grid-pager-info'));
+        // Next page button
+        nextPageBtn = element(by.tagName('tb-grid-pager')).$('li.pagination-next a');
+        // Page size selector component
+        tbPageSizeSelector = element(by.model('$ctrl.$component.pageSize'));
 
-                // Go to first page if not there    
-                element(by.tagName('tb-grid-pager'))
-                    .$('li.pagination-first a')
-                    .click();
+        // Go to first page if not there    
+        element(by.tagName('tb-grid-pager'))
+            .$('li.pagination-first a')
+            .click();
 
-                // Select '10' on tbPageSizeSelector
-                tbPageSizeSelector.$('[value="number:10"]').click();
-            });
+        // Select '10' on tbPageSizeSelector
+        tbPageSizeSelector.$('[value="number:10"]').click();
     });
 
     it("should show text in accordance to numbered of filter rows and current results-page", function () {
