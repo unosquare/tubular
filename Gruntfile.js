@@ -50,11 +50,7 @@ module.exports = function (grunt) {
                 keepAlive: true,
                 noColor: false,
                 collectorPort: 9001,
-                coverageDir: 'coverage',
-                args: {
-                    sauceUser: 'geoperez',
-                    sauceKey: 'dd986cd7-696b-433a-941e-3820d83aa09a'
-                }
+                coverageDir: 'coverage'
             },
             local: {
                 options: {
