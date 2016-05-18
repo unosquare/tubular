@@ -44,29 +44,17 @@ module.exports = function (grunt) {
                 }
             }
         },
-        protractor_coverage: {
+        protractor: {
             options: {
                 configFile: "e2e-tests/protractor.conf.grunt.js",
                 keepAlive: true,
                 noColor: false,
-                // collectorPort: 9001,
-                // coverageDir: 'coverage',
                 args: {
                     sauceUser: 'geoperez',
                     sauceKey: 'dd986cd7-696b-433a-941e-3820d83aa09a'
                 },
-                webdriverManagerUpdate: "true"
-            } //,
-            //     local: {
-            //         options: {
-            //             configFile: 'e2e-tests/protractor.conf.grunt.js',
-            //         }
-            //     },
-            //     travis: {
-            //         options: {
-            //             configFile: 'e2e-tests/protractor.conf.grunt.js',
-            //         }
-            //     }
+                all: { }
+            }
         },
         makeReport: {
             src: 'coverage/*.json',
@@ -87,13 +75,7 @@ module.exports = function (grunt) {
     });
 
     grunt.registerTask('test', [
-        // 'copy:instrument',
-        // 'instrument',
-        // 'string-replace',
-        // 'connect:server',
-        'protractor_coverage'//,
-        // 'makeReport',
-        // 'coveralls:local'
+        'protractor'
     ]);
 
     grunt.registerTask('prepare', [
