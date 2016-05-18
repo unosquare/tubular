@@ -2,9 +2,34 @@ module.exports = function (grunt) {
     // Load grunt tasks automatically
     require('load-grunt-tasks')(grunt);
     grunt.loadNpmTasks('grunt-coveralls');
+    grunt.loadNpmTasks('grunt-wait');
 
     // Project configuration.
     grunt.initConfig({
+        wait: {
+            options: {
+                delay: 500000
+            },
+            pause: {
+                options: {
+                    before: function (options) {
+                        console.log('pausing %dms', options.delay);
+                    },
+                    after: function () {
+                        console.log('pause end');
+                    }
+                }
+            },
+            random: {
+                options: {
+                    delay: 10,
+                    after: function () {
+                        console.log('gamble');
+                        return Math.random() < 0.05 ? false : true;
+                    }
+                }
+            }
+        },
         copy: {
             instrument: {
                 files: [{
@@ -55,7 +80,7 @@ module.exports = function (grunt) {
                     sauceKey: 'dd986cd7-696b-433a-941e-3820d83aa09a'
                 }
             },
-            all: {}                
+            all: {}
         },
         makeReport: {
             src: 'coverage/*.json',
@@ -77,6 +102,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask('test', [
         'connect',
+        // 'wait',
         'protractor'
     ]);
 
