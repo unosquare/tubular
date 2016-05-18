@@ -1,8 +1,8 @@
 exports.config = {
-    allScriptsTimeout: 11000,
+    allScriptsTimeout: 11000000,
 
     specs: [
-        'tbGridPagerInfo-scen.js'
+        'e2e-tests/tbGridPagerInfo-scen.js'
     ],
 
     capabilities: {

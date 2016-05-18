@@ -6,30 +6,6 @@ module.exports = function (grunt) {
 
     // Project configuration.
     grunt.initConfig({
-        wait: {
-            options: {
-                delay: 500000
-            },
-            pause: {
-                options: {
-                    before: function (options) {
-                        console.log('pausing %dms', options.delay);
-                    },
-                    after: function () {
-                        console.log('pause end');
-                    }
-                }
-            },
-            random: {
-                options: {
-                    delay: 10,
-                    after: function () {
-                        console.log('gamble');
-                        return Math.random() < 0.05 ? false : true;
-                    }
-                }
-            }
-        },
         copy: {
             instrument: {
                 files: [{
@@ -69,15 +45,17 @@ module.exports = function (grunt) {
                 }
             }
         },
-        protractor: {
+        protractor_coverage: {
             options: {
                 configFile: "e2e-tests/protractor.conf.grunt.js",
                 keepAlive: true,
                 noColor: false,
+                collectorPort: 9001,
+                coverageDir: 'coverage',
                 args: {
-                    baseUrl: 'http://localhost:9000/Unosquare.Tubular.WebTest/',
-                    sauceUser: 'geoperez',
-                    sauceKey: 'dd986cd7-696b-433a-941e-3820d83aa09a'
+                    baseUrl: 'http://localhost:9000/instrumented/Unosquare.Tubular.WebTest/'
+                    // sauceUser: 'geoperez',
+                    // sauceKey: 'dd986cd7-696b-433a-941e-3820d83aa09a'
                 }
             },
             all: {}
@@ -101,9 +79,13 @@ module.exports = function (grunt) {
     });
 
     grunt.registerTask('test', [
-        'connect',
-        // 'wait',
-        'protractor'
+        'copy:instrument',
+        'instrument',
+        'string-replace',
+        'connect:server',
+        'protractor_coverage',
+        'makeReport',
+        'coveralls:local'
     ]);
 
     grunt.registerTask('prepare', [

@@ -47,6 +47,7 @@
     "grunt-coveralls": "^1.0.1",
     "grunt-protractor-runner": "^3.2.0",
     "grunt-string-replace": "^1.2.1",
+    "grunt-wait" : "0.1.0",
     "http-server": "^0.9.0",
     "protractor": "^3.3.0",
     "selenium-chromedriver": "0.0.2",
