@@ -52,7 +52,7 @@ module.exports = function (grunt) {
                 collectorPort: 9001,
                 coverageDir: 'coverage',
                 args: {
-                    baseUrl: 'http://localhost:9000/instrumented/Unosquare.Tubular.WebTest/'
+                    baseUrl: 'http://localhost:9000/instrumented/Unosquare.Tubular.WebTest/',
                     sauceUser: 'geoperez',
                     sauceKey: 'dd986cd7-696b-433a-941e-3820d83aa09a'
                 }
