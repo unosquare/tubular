@@ -854,8 +854,8 @@ try {
                                     var model = new TubularModel($scope, $ctrl, el, $ctrl.dataService);
                                     model.$component = $ctrl;
 
-                                    model.editPopup = function(template, size) {
-                                        tubularPopupService.openDialog(template, model, $ctrl, size);
+                                    model.editPopup = function (template, size) {
+                                        tubularPopupService.openDialog(template, new TubularModel($scope, $ctrl, el, $ctrl.dataService), $ctrl, size);
                                     };
 
                                     return model;

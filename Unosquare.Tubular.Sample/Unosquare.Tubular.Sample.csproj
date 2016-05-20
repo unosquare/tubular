@@ -148,9 +148,6 @@
     <Content Include="..\dist\tubular-highcharts-bundle.js">
       <Link>ui\tubular\tubular-highcharts-bundle.js</Link>
     </Content>
-    <Content Include="..\dist\tubular-reporting-bundle.js">
-      <Link>ui\tubular\tubular-reporting-bundle.js</Link>
-    </Content>
     <Content Include="..\dist\tubular-widget-bundle.js">
       <Link>ui\tubular\tubular-widget-bundle.js</Link>
     </Content>
