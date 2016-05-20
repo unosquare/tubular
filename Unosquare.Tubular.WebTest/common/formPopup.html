@@ -20,11 +20,13 @@
         help="Useless help" 
         format="C">
         </tb-numeric-editor>
-        <tb-date-editor name="ShippedDate" 
+        <tb-date-editor name="TestShippedDate" 
         required="true" 
         show-label="true" 
-        value="Model.ShippedDate"
-        min="08/28/1990" max="01/28/2016">
+        value="Model.ShippedDate" 
+        format="MM/dd/yyyy" 
+        help = "Date help"
+        min="'01/28/2016'" max="'05/10/2016'">
         </tb-date-editor>
         <tb-checkbox-field name="IsShipped" value="Model.IsShipped"></tb-checkbox-field>
         <div>
