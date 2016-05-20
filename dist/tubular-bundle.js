@@ -3993,6 +3993,7 @@ try {
                  * True if browser has support for HTML5 date input.
                  */
                 me.canUseHtml5Date = function () {
+                    // TODO: Remove dup!
                     var input = document.createElement('input');
                     input.setAttribute('type', 'date');
 
@@ -4770,7 +4771,7 @@ try {
             }
         ]);
 })();
-(function() {
+(function (angular) {
     'use strict';
 
     angular.module('tubular.services')
@@ -4889,7 +4890,7 @@ try {
                 };
             }
         ]);
-})();
+})(window.angular);
 (function (angular) {
     'use strict';
 

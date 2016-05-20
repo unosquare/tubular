@@ -24,11 +24,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "e2e-tests", "e2e-tests", "{8894759D-8938-4ABE-8BEB-D9C5F62D3296}"
 	ProjectSection(SolutionItems) = preProject
 		e2e-tests\protractor.conf.grunt.js = e2e-tests\protractor.conf.grunt.js
-		e2e-tests\protractor.conf.js = e2e-tests\protractor.conf.js
 		e2e-tests\tbColumn-scen.js = e2e-tests\tbColumn-scen.js
 		e2e-tests\tbFilters-scen.js = e2e-tests\tbFilters-scen.js
 		e2e-tests\tbForm-scen.js = e2e-tests\tbForm-scen.js
-		e2e-tests\tbFormSave-scen.js = e2e-tests\tbFormSave-scen.js
 		e2e-tests\tbGridPager-scen.js = e2e-tests\tbGridPager-scen.js
 		e2e-tests\tbGridPagerInfo-scen.js = e2e-tests\tbGridPagerInfo-scen.js
 		e2e-tests\tbPageSizeSelector-scen.js = e2e-tests\tbPageSizeSelector-scen.js
