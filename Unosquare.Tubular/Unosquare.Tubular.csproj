@@ -101,11 +101,6 @@
     <Content Include="Javascript\tubular-highcharts-bundle.min.js">
       <DependentUpon>tubular-highcharts-bundle.js</DependentUpon>
     </Content>
-    <Content Include="Javascript\tubular-reporting-bundle.js" />
-    <Content Include="Javascript\tubular-reporting-bundle.min.js">
-      <DependentUpon>tubular-reporting-bundle.js</DependentUpon>
-    </Content>
-    <Content Include="Javascript\tubular-reporting\tubular-directives-reporting.js" />
     <Content Include="Javascript\tubular-widget-bundle.js" />
     <Content Include="Javascript\tubular-widget-bundle.min.js">
       <DependentUpon>tubular-widget-bundle.js</DependentUpon>

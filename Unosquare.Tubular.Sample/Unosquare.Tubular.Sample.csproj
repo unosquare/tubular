@@ -148,9 +148,6 @@
     <Content Include="..\dist\tubular-highcharts-bundle.js">
       <Link>ui\tubular\tubular-highcharts-bundle.js</Link>
     </Content>
-    <Content Include="..\dist\tubular-reporting-bundle.js">
-      <Link>ui\tubular\tubular-reporting-bundle.js</Link>
-    </Content>
     <Content Include="..\dist\tubular-widget-bundle.js">
       <Link>ui\tubular\tubular-widget-bundle.js</Link>
     </Content>
@@ -160,7 +157,6 @@
     <Content Include="ui\app\common\formnew.html" />
     <Content Include="ui\app\common\login.html" />
     <Content Include="ui\app\common\popup.html" />
-    <Content Include="ui\app\common\reporting.html" />
     <Content Include="ui\app\common\view.html" />
     <Content Include="ui\app\common\viewformat.html" />
     <Content Include="ui\app\common\widget.html" />
