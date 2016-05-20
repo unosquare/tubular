@@ -102,12 +102,6 @@ module.exports = function (grunt) {
         'coveralls:local'
     ]);
 
-    grunt.registerTask('prepare', [
-        'copy:instrument',
-        'instrument',
-        'string-replace'
-    ]);
-
     grunt.registerTask('test-local', [
         'connect:server',
         'protractor_coverage:local'
