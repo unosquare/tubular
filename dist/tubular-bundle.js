@@ -854,7 +854,7 @@ try {
                                     var model = new TubularModel($scope, $ctrl, el, $ctrl.dataService);
                                     model.$component = $ctrl;
 
-                                    model.editPopup = function(template, size) {
+                                    model.editPopup = function (template, size) {
                                         tubularPopupService.openDialog(template, new TubularModel($scope, $ctrl, el, $ctrl.dataService), $ctrl, size);
                                     };
 
@@ -3471,7 +3471,7 @@ try {
 
                 if (angular.isDefined($ctrl.columns)) {
                     angular.forEach($ctrl.columns, function(col, key) {
-                        var value = data[key] || data[col.Name];
+                        var value = angular.isDefined(data[key]) ? data[key] : data[col.Name];
 
                         if (angular.isUndefined(value) && data[key] === 0) {
                             value = 0;
