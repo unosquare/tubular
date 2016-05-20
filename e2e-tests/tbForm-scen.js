@@ -1,15 +1,15 @@
 describe('tbForm related components ->', function () {
 
-        /**********************/
-        // *     Global     * //
-        /**********************/
+    /**********************/
+    // *     Global     * //
+    /**********************/
     var tbFormEditBtn,
         tbFormSaveBtn,
         tbFormCancelBtn;
 
-        /**********************/
-        // * tbSimpleEditor * //
-        /**********************/
+    /**********************/
+    // * tbSimpleEditor * //
+    /**********************/
     var tbSimpleEditor,
         tbSimpleEditor_input,
         tbSimpleEditor_label,
@@ -19,7 +19,7 @@ describe('tbForm related components ->', function () {
 
     var tbSimpleEditorRestore = function () {
         return browser.wait(function () {
-           return tbFormCancelBtn.isPresent().then(function (present) {
+            return tbFormCancelBtn.isPresent().then(function (present) {
                 if (present) {
                     tbFormCancelBtn.click();
                 }
@@ -45,10 +45,98 @@ describe('tbForm related components ->', function () {
         });
     }
 
+    /************************/
+    //  * tbNumericEditor * //
+    /************************/
+    var tbNumericEditor,
+        tbNumericEditor_input,
+        tbNumericEditor_label,
+        tbNumericEditor_helper,
+        tbNumericEditor_errorMessages,
+        originalNumericValue = '300';
+
+    var tbNumericEditorRestore = function () {
+        return browser.wait(function () {
+            return tbFormCancelBtn.isPresent().then(function (present) {
+                if (present) {
+                    tbFormCancelBtn.click();
+                }
+            })
+                .then(function () {
+                    return tbFormEditBtn.click().then(function () {
+                        return tbNumericEditor_input.getAttribute('value').then(function (val) {
+                            if (val != originalNumericValue) {
+                                return tbNumericEditor_input.clear().then(function () {
+                                    return tbNumericEditor_input.sendKeys(originalNumericValue).then(function () {
+                                        return tbFormSaveBtn.click().then(function () {
+                                            return true;
+                                        });
+                                    });
+                                });
+                            }
+                            else {
+                                return tbFormCancelBtn.click().then(function () {
+                                    return true;
+                                });
+                            }
+                        });
+                    });
+                });
+        });
+    }
+    
+    /**************************/
+    //  * tbTypeaheadEditor * //
+    /**************************/
+    var tbTypeaheadEditor,
+        tbTypeaheadEditor_input,
+        tbTypeaheadEditor_label,
+        tbTypeaheadEditor_helper,
+        tbTypeaheadEditor_errorMessages,
+        tbTypeaheadEditor_options,
+        originalCityValue = 'Guadalajara, JAL, Mexico',
+        originalCityValueMatcher = 'Guad';
+        
+    var tbTypeaheadEditorRestore = function () {
+        return browser.wait(function () {
+            return tbFormCancelBtn.isPresent().then(function (present) {
+                if (present) {
+                    tbFormCancelBtn.click();
+                }
+            })
+                .then(function () {
+                    return tbFormEditBtn.click().then(function() {
+                        return tbTypeaheadEditor_input.getAttribute('value').then(function(val) {
+                            if (val != originalCityValue) {
+                                return tbTypeaheadEditor_input.clear().then(function() {
+                                    return tbTypeaheadEditor_input.sendKeys(originalCityValueMatcher).then(function() {
+                                        return tbTypeaheadEditor_options.first().click().then(function() {
+                                            return tbFormSaveBtn.click().then(function() {
+                                                return true;
+                                            });
+                                        });
+                                    });
+                                });
+                            } 
+                            else {
+                                return tbFormCancelBtn.click().then(function () {
+                                    return true;
+                                });
+                            }
+                        });
+                    });
+                });
+        });
+    }
+
     beforeAll(function () {
         browser.get('index.html');
         element(by.id('testsSelector')).click();
-        element(by.id('tbFormTest')).click();
+        element(by.id('tbFormTest')).click().then(function () {
+            // Save and Cancel buttons
+            tbFormSaveBtn = $('div.modal-dialog form').$('#btnSave');
+            tbFormCancelBtn = $('div.modal-dialog form').$('#btnCancel');
+        });
     });
 
     beforeEach(function () {
@@ -58,6 +146,126 @@ describe('tbForm related components ->', function () {
     afterAll(function () {
         browser.executeScript('localStorage.clear()')
     });
+        
+    describe('tbTypeaheadEditor', function() {
+        beforeAll(function () {
+            //* Assign test variables *\\
+            // 2d element in list, should be: <OrderID = 2 , Customer Name = Super La Playa, Shipper City = Guadalajara ... >
+            tbFormEditBtn = element.all(by.repeater('row in $component.rows')).get(1).$$('td').first().$('button');
+            // tbSimpleEditor component and subcomponents
+            tbTypeaheadEditor = $('div.modal-dialog form').$('tb-typeahead-editor');
+            tbTypeaheadEditor_input = tbTypeaheadEditor.$('input');
+            tbTypeaheadEditor_label = tbTypeaheadEditor.$('label');
+            tbTypeaheadEditor_helper = $('div.modal-dialog form').$('tb-typeahead-editor').$$('span').filter(function (elem, index) {
+                return elem.getAttribute('ng-show').then(function (val) {
+                    return val != null ? val.indexOf('help') != -1 : false;
+                });
+            }).first();
+            tbTypeaheadEditor_errorMessages = tbTypeaheadEditor.all(by.repeater('error in state.$errors'));
+            tbTypeaheadEditor_options = tbTypeaheadEditor.all(by.repeater('match in matches track by $index'));
+
+            //* Restore default value and open form popup *\\
+            tbTypeaheadEditorRestore().then(function() {
+                tbFormEditBtn.click();
+            });
+        });
+
+        afterEach(function () {           
+            //* Restore default value and open form popup *\\
+            tbTypeaheadEditorRestore().then(function() {
+                tbFormEditBtn.click();
+            });
+        });
+        
+        it('should show an options list when there is an API-info/component entered-data', function() {
+            tbTypeaheadEditor_input.clear().then(function() {
+                expect(tbTypeaheadEditor_options.count()).toBe(0);
+            })
+            .then(function() {
+                tbTypeaheadEditor_input.sendKeys('l').then(function() {
+                    expect(tbTypeaheadEditor_options.count()).toBeGreaterThan(0);
+                });
+            });
+        });
+        
+        it('should select the option clicked', function() {
+            tbTypeaheadEditor_input.clear().then(function() {
+                tbTypeaheadEditor_input.sendKeys('la').then(function() {
+                    // Select second option, should be "Portrland..."
+                    tbTypeaheadEditor_options.get(1).click().then(function() {
+                        expect(tbTypeaheadEditor_input.getAttribute('value')).toMatch('Portland, OR, USA');
+                    });
+                });
+            });
+        });
+        
+        it('should show a "delete" button when an option/match is seleted, and delete the option if button is clicked', function() {
+           tbTypeaheadEditor_input.clear().then(function() {
+                tbTypeaheadEditor_input.sendKeys('guad').then(function() {
+                    tbTypeaheadEditor_options.first().click().then(function() {
+                        // Evaluate button appearence
+                        expect(tbTypeaheadEditor.$('span.input-group-btn button.btn-default i.fa.fa-times').isPresent())
+                        .toBe(true);
+                    })
+                    .then(function() {
+                        // Click button
+                        tbTypeaheadEditor.$('span.input-group-btn button.btn-default').click().then(function() {
+                            expect(tbTypeaheadEditor_input.getAttribute('value')).toBe('');
+                        });
+                    });
+                });
+            });
+        });
+                
+        it('should show a label value equal to the component name when "showLabel" attribue is true', function() {
+            expect(tbTypeaheadEditor_label.getText()).toMatch("Shipper City");
+        });
+        
+        it('should require a value when "require" attribute is true', function() {
+            var errorPresent = false;
+
+            tbTypeaheadEditor_input.clear().then(function () {
+                tbTypeaheadEditor_errorMessages.getText().then(function (errorsArray) {
+                    errorsArray.forEach(function (val) {
+                        if (val == 'The field is required.') {
+                            errorPresent = true;
+                        }
+                    });
+                    // Expect required error to display
+                    expect(errorPresent).toBe(true);
+                });
+            });
+        });
+        
+        it('should submit modifications to item/server when clicking form "Save"', function () {
+            tbTypeaheadEditor_input.clear().then(function () {
+                tbTypeaheadEditor_input.sendKeys('por').then(function () {
+                    tbTypeaheadEditor_options.first().click().then(function () {
+                        tbFormSaveBtn.click().then(function() {
+                            // Evaluate city was updated to Portland...
+                            expect(element.all(by.repeater('row in $component.rows')).get(1).$$('td').last().getText())
+                                .toMatch('Portland, OR, USA');
+                        });
+                    });
+                });
+            });
+        });
+
+        it('should NOT submit modifications to item/server when clicking form "Cancel"', function () {
+            tbTypeaheadEditor_input.clear().then(function () {
+                tbTypeaheadEditor_input.sendKeys('por').then(function () {
+                    tbTypeaheadEditor_options.first().click().then(function () {
+                        tbFormCancelBtn.click().then(function () {
+                            // Evaluate city was NOT updated
+                            expect(element.all(by.repeater('row in $component.rows')).get(1).$$('td').last().getText())
+                                .toMatch('Guadalajara, JAL, Mexico');
+                        });
+                    });
+                });
+            });
+        });
+        
+    });
 
     describe('tbSimpleEditor', function () {
 
@@ -65,9 +273,6 @@ describe('tbForm related components ->', function () {
             //* Assign test variables *\\
             // 3rd element in list, should be: <OrderID = 3 , Customer Name = Unosquare LLC ... >
             tbFormEditBtn = element.all(by.repeater('row in $component.rows')).get(2).$$('td').first().$('button');
-            // Save and Cancel buttons
-            tbFormSaveBtn = $('div.modal-dialog form').$('#btnSave');
-            tbFormCancelBtn = $('div.modal-dialog form').$('#btnCancel');
             // tbSimpleEditor component and subcomponents
             tbSimpleEditor = $('div.modal-dialog form').$('tb-simple-editor');
             tbSimpleEditor_input = $('div.modal-dialog form').$('tb-simple-editor').$('input');
@@ -79,7 +284,7 @@ describe('tbForm related components ->', function () {
                 });
             }).first();
 
-            //* Restore default value *\\
+            //* Restore default value and open form popup *\\
             tbSimpleEditorRestore().then(function () {
                 tbFormEditBtn.click();
             });
@@ -87,6 +292,7 @@ describe('tbForm related components ->', function () {
         });
 
         afterEach(function () {           
+            //* Restore default value and open form popup *\\    
             tbSimpleEditorRestore().then(function () {
                 tbFormEditBtn.click();
             });
@@ -145,7 +351,7 @@ describe('tbForm related components ->', function () {
 
         it('should validate the control using the "regex" attribute, if present', function () {
             var errorPresent = false;
-            
+
             tbSimpleEditor_input.clear().then(function() {
                 tbSimpleEditor_input.sendKeys('1Unos', function () {
                     tbSimpleEditor_errorMessages.getText().then(function (errorsArray) {
@@ -211,7 +417,136 @@ describe('tbForm related components ->', function () {
                 });
             });
         });
-        
+
+    });
+
+    describe('tbNumericEditor', function () {
+
+        beforeAll(function () {
+            //* Assign test variables *\\
+            // 1st element in list, should be: <OrderID = 1 , Customer Name = Unosquare LLC, Num Editor Test = 300 ... >
+            tbFormEditBtn = element.all(by.repeater('row in $component.rows')).first().$$('td').first().$('button');
+            // tbNumericEditor component and subcomponents
+            tbNumericEditor = $('div.modal-dialog form').$('tb-numeric-editor');
+            tbNumericEditor_input = tbNumericEditor.$('input');
+            tbNumericEditor_label = tbNumericEditor.$('label');
+            tbNumericEditor_helper = tbNumericEditor.$$('span').filter(function (elem, index) {
+                return elem.getAttribute('ng-show').then(function (val) {
+                    return val != null ? val.indexOf('$ctrl.help') != -1 : false;
+                });
+            }).first();
+            tbNumericEditor_errorMessages = tbNumericEditor.all(by.repeater('error in $ctrl.state.$errors'));
+
+            //* Restore default value and open form popup *\\
+            tbNumericEditorRestore().then(function () {
+                tbFormEditBtn.click();
+            });
+        });
+
+        afterEach(function () {
+            //* Restore default value and open form popup *\\
+            tbNumericEditorRestore().then(function () {
+                tbFormEditBtn.click();
+            });
+        });
+
+        it('should set initial component value to the value of "value" attribute when defined', function () {
+            expect(tbNumericEditor_input.getAttribute('value')).toMatch('300');
+        });
+
+        it('should be invalidated when the entered number is not in the range of "min" and "max" attributes', function () {
+            var errorPresent = false;
+            var messageCount;
+
+            tbNumericEditor_input.clear().then(function () {
+                // input '0'
+                tbNumericEditor_input.sendKeys('0').then(function () {
+                    tbNumericEditor_errorMessages.getText().then(function (errorsArray) {
+                        errorsArray.forEach(function (val) {
+                            if (val == 'The minimum number is 1.') {
+                                errorPresent = true;
+                            }
+                        });
+                        // Expect min chars error to be displayed
+                        expect(errorPresent).toBe(true);
+                    });
+                })
+                    .then(function () {
+                        tbNumericEditor_errorMessages.count().then(function (count) {
+                            messageCount = count;
+                        })
+                            .then(function () {
+                                tbNumericEditor_input.clear().then(function () {
+                                    tbNumericEditor_input.sendKeys('100').then(function () {
+                                        // Expect min value error to have been removed
+                                        expect(tbNumericEditor_errorMessages.count()).toBeLessThan(messageCount);
+                                    });
+                                });
+                            });
+                    })
+                    .then(function () {
+                        tbNumericEditor_input.sendKeys('0').then(function () {
+                            // Expect max value error to be displayed
+                            expect(tbNumericEditor_errorMessages.count()).toBe(messageCount);
+                        });
+                    });
+            });
+        });
+
+        it('should show the component name value in a label field when "showLabel" attribute is true', function () {
+            expect(tbNumericEditor_label.getText()).toMatch('Num Editor Test')
+        });
+
+        it('should show a help field equal to this attribute, is present', function () {
+            expect(tbNumericEditor_helper.getText()).toMatch("Useless help");
+        });
+
+        it('should require the field when the attribute "required" is true', function () {
+            var errorPresent = false;
+
+            tbNumericEditor_input.clear().then(function () {
+                tbNumericEditor_errorMessages.getText().then(function (errorsArray) {
+                    errorsArray.forEach(function (val) {
+                        if (val == 'The field is required.') {
+                            errorPresent = true;
+                        }
+                    });
+                    // Expect required error to display
+                    expect(errorPresent).toBe(true);
+                });
+            });
+        });
+
+        it('should submit modifications to item/server when clicking form "Save"', function () {
+            tbNumericEditor_input.clear().then(function () {
+                tbNumericEditor_input.sendKeys('100').then(function () {
+                    tbFormSaveBtn.click().then(function () {
+                        tbFormEditBtn.click().then(function () {
+                            tbNumericEditor_input.getAttribute('value').then(function (text) {
+                                expect(text).toMatch('100');
+                            });
+                        });
+                    });
+                });
+            });
+        });
+
+        it('should NOT submit modifications to item/server when clicking form "Cancel"', function () {
+            tbNumericEditor_input.getAttribute('value').then(function (val) {
+                expect(val).toMatch(originalNumericValue);
+            })
+                .then(function () {
+                    tbNumericEditor_input.sendKeys('220').then(function () {
+                        tbFormCancelBtn.click().then(function () {
+                            tbFormEditBtn.click().then(function () {
+                                tbNumericEditor_input.getAttribute('value').then(function (val) {
+                                    expect(val).toMatch(originalNumericValue);
+                                });
+                            });
+                        });
+                    });
+                });
+        });
     });
 
 });
