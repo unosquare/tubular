@@ -45,19 +45,33 @@ module.exports = function (grunt) {
             }
         },
         protractor_coverage: {
-            options: {
-                configFile: "e2e-tests/protractor.conf.grunt.js",
+            options: {                
                 keepAlive: true,
                 noColor: false,
                 collectorPort: 9001,
-                coverageDir: 'coverage',
-                args: {
-                    baseUrl: 'http://localhost:9000/instrumented/Unosquare.Tubular.WebTest/',
-                    sauceUser: 'geoperez',
-                    sauceKey: 'dd986cd7-696b-433a-941e-3820d83aa09a'
+                webdriverManagerUpdate: true,
+                configFile: "e2e-tests/protractor.conf.grunt.js"        
+            },
+            remote: {
+                options: {
+                    configFile: "e2e-tests/protractor.conf.grunt.js",
+                    coverageDir: 'coverage',
+                    args: {
+                        baseUrl: 'http://localhost:9000/instrumented/Unosquare.Tubular.WebTest/',
+                        sauceUser: 'geoperez',
+                        sauceKey: 'dd986cd7-696b-433a-941e-3820d83aa09a'
+                    }
                 }
             },
-            all: {}
+            local: {
+                options: {
+                    args: {
+                        baseUrl: "http://localhost:9000/Unosquare.Tubular.WebTest/",
+                        browser: "firefox",
+                        specs: ['e2e-tests/tbForm-scen.js']
+                    }
+                }
+            }
         },
         makeReport: {
             src: 'coverage/*.json',
@@ -82,7 +96,7 @@ module.exports = function (grunt) {
         'instrument',
         'string-replace',
         'connect:server',
-        'protractor_coverage',
+        'protractor_coverage:remote',
         'makeReport',
         'coveralls:local'
     ]);
@@ -91,5 +105,10 @@ module.exports = function (grunt) {
         'copy:instrument',
         'instrument',
         'string-replace'
+    ]);
+
+    grunt.registerTask('test-local', [
+        'connect:server',
+        'protractor_coverage:local'
     ]);
 };
