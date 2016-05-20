@@ -22,16 +22,16 @@ module.exports = function (grunt) {
         },
         'string-replace': {
             dist: {
-                files: {'instrumented/Unosquare.Tubular.WebTest/':'instrumented/Unosquare.Tubular.WebTest/**/*.html'},
+                files: { 'instrumented/Unosquare.Tubular.WebTest/': 'instrumented/Unosquare.Tubular.WebTest/**/*.html' },
                 options: {
                     replacements: [{
                         pattern: /"\/Unosquare\.Tubular\.WebTest\/testApp\.js/g,
                         replacement: '"/instrumented/Unosquare.Tubular.WebTest/testApp.js'
                     },
-                    {
-                        pattern: /\.\.\/dist/g,
-                        replacement: "/instrumented/dist"
-                    }]
+                        {
+                            pattern: /\.\.\/dist/g,
+                            replacement: "/instrumented/dist"
+                        }]
                 }
             }
         },
@@ -45,24 +45,32 @@ module.exports = function (grunt) {
             }
         },
         protractor_coverage: {
-            options: {
-                configFile: "e2e-tests/protractor.conf.grunt.js",
+            options: {                
                 keepAlive: true,
                 noColor: false,
                 collectorPort: 9001,
-                coverageDir: 'coverage',
-                args: {
-                    baseUrl: 'http://localhost:9000/instrumented/Unosquare.Tubular.WebTest/'
+                webdriverManagerUpdate: true,
+                configFile: "e2e-tests/protractor.conf.grunt.js"        
+            },
+            remote: {
+                options: {
+                    configFile: "e2e-tests/protractor.conf.grunt.js",
+                    coverageDir: 'coverage',
+                    args: {
+                        baseUrl: 'http://localhost:9000/instrumented/Unosquare.Tubular.WebTest/',
+                        browser: "firefox"
+                        // sauceUser: 'geoperez',
+                        // sauceKey: 'dd986cd7-696b-433a-941e-3820d83aa09a'
+                    }
                 }
             },
             local: {
                 options: {
-                    configFile: 'e2e-tests/protractor.conf.grunt.js'
-                }
-            },
-            travis: {
-                options: {
-                    configFile: 'e2e-tests/protractor.conf.grunt.js'
+                    args: {
+                        baseUrl: "http://localhost:9000/Unosquare.Tubular.WebTest/",
+                        browser: "firefox",
+                        specs: ['e2e-tests/tbForm-scen.js']
+                    }
                 }
             }
         },
@@ -89,14 +97,13 @@ module.exports = function (grunt) {
         'instrument',
         'string-replace',
         'connect:server',
-        'protractor_coverage:local',
+        'protractor_coverage:remote',
         'makeReport',
         'coveralls:local'
     ]);
-        
-    grunt.registerTask('prepare', [
-        'copy:instrument',
-        'instrument',
-        'string-replace'
+
+    grunt.registerTask('test-local', [
+        'connect:server',
+        'protractor_coverage:local'
     ]);
 };

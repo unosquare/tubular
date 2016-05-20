@@ -222,3 +222,4 @@ FakesAssemblies/
 /Unosquare.Tubular/Javascript/tubular-reporting-bundle.min.js
 /Unosquare.Tubular.Sample/ui/tubular/*.js
 /instrumented
+dist/tubular-bundle.min.js
