@@ -58,8 +58,9 @@ module.exports = function (grunt) {
                     coverageDir: 'coverage',
                     args: {
                         baseUrl: 'http://localhost:9000/instrumented/Unosquare.Tubular.WebTest/',
-                        sauceUser: 'geoperez',
-                        sauceKey: 'dd986cd7-696b-433a-941e-3820d83aa09a'
+                        browser: "firefox"
+                        // sauceUser: 'geoperez',
+                        // sauceKey: 'dd986cd7-696b-433a-941e-3820d83aa09a'
                     }
                 }
             },
