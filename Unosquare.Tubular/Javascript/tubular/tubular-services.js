@@ -402,6 +402,7 @@
                  * True if browser has support for HTML5 date input.
                  */
                 me.canUseHtml5Date = function () {
+                    // TODO: Remove dup!
                     var input = document.createElement('input');
                     input.setAttribute('type', 'date');
 

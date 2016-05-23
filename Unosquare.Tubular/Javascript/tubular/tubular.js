@@ -85,7 +85,7 @@
             "$filter", function($filter) {
                 return function(input, format) {
                     if (angular.isDefined(input) && typeof (input) === "object") {
-                        if (typeof moment == 'function') {
+                        if (typeof moment == 'function' && input !== null) {
                             return input.format(format);
                         } else {
                             return $filter('date')(input);

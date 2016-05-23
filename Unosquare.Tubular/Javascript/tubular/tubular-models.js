@@ -56,7 +56,7 @@
 
                 if (angular.isDefined($ctrl.columns)) {
                     angular.forEach($ctrl.columns, function(col, key) {
-                        var value = data[key] || data[col.Name];
+                        var value = angular.isDefined(data[key]) ? data[key] : data[col.Name];
 
                         if (angular.isUndefined(value) && data[key] === 0) {
                             value = 0;

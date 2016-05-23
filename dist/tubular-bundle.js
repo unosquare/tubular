@@ -499,7 +499,7 @@ try {
             "$filter", function($filter) {
                 return function(input, format) {
                     if (angular.isDefined(input) && typeof (input) === "object") {
-                        if (typeof moment == 'function') {
+                        if (typeof moment == 'function' && input !== null) {
                             return input.format(format);
                         } else {
                             return $filter('date')(input);
@@ -3469,7 +3469,7 @@ try {
 
                 if (angular.isDefined($ctrl.columns)) {
                     angular.forEach($ctrl.columns, function(col, key) {
-                        var value = data[key] || data[col.Name];
+                        var value = angular.isDefined(data[key]) ? data[key] : data[col.Name];
 
                         if (angular.isUndefined(value) && data[key] === 0) {
                             value = 0;
@@ -3991,6 +3991,7 @@ try {
                  * True if browser has support for HTML5 date input.
                  */
                 me.canUseHtml5Date = function () {
+                    // TODO: Remove dup!
                     var input = document.createElement('input');
                     input.setAttribute('type', 'date');
 
@@ -4768,7 +4769,7 @@ try {
             }
         ]);
 })();
-(function() {
+(function (angular) {
     'use strict';
 
     angular.module('tubular.services')
@@ -4887,7 +4888,7 @@ try {
                 };
             }
         ]);
-})();
+})(window.angular);
 (function (angular) {
     'use strict';
 
