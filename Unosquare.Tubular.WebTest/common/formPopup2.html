@@ -1,4 +1,4 @@
-<!--This popup uses tbDateEditor instead of tbDateTimeEditor-->
+<!--This template uses tbDateTime editor instread of tbDateEditor-->
 
 <div style="padding:20px">
     <tb-form model="Model" require-authentication="false">
@@ -22,14 +22,14 @@
         help="Useless help" 
         format="C">
         </tb-numeric-editor>
-        <tb-date-editor name="DateEditorDate" 
+        <tb-date-time-editor name="DateEditorDate" 
         required="true" 
         show-label="true" 
         value="Model.ShippedDate" 
         format="MM/dd/yyyy" 
         help = "Date help"
         min="'01/28/2016'" max="'05/10/2016'">
-        </tb-date-editor>
+        </tb-date-time-editor>
         <tb-checkbox-field name="IsShipped" value="Model.IsShipped"></tb-checkbox-field>
         <div>
             <button id="btnSave" class="btn btn-primary" ng-click="savePopup();">Save</button>

@@ -854,7 +854,7 @@ try {
                                     var model = new TubularModel($scope, $ctrl, el, $ctrl.dataService);
                                     model.$component = $ctrl;
 
-                                    model.editPopup = function(template, size) {
+                                    model.editPopup = function (template, size) {
                                         tubularPopupService.openDialog(template, new TubularModel($scope, $ctrl, el, $ctrl.dataService), $ctrl, size);
                                     };
 
@@ -1670,9 +1670,7 @@ try {
                     '<span class="input-group-btn">' +
                     '<button type="button" class="btn btn-default" ng-click="$ctrl.open = !$ctrl.open"><i class="fa fa-calendar"></i></button>' +
                     '</span>' +
-                    '</div>') +
-                '<input type="datetime-local" ng-show="$ctrl.isEditing" ng-model="$ctrl.value" class="form-control" ' +
-                'ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}" />' +
+                    '</div>') +                
                 '<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">' +
                 '{{error}}' +
                 '</span>' +

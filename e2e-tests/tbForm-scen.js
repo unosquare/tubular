@@ -264,7 +264,7 @@ describe('tbForm related components ->', function () {
         });
 
         it('should show the component name value in a label field when "showLabel" attribute is true', function () {
-            expect(tbDateEditor_label.getText()).toMatch('Test Shipped Date')
+            expect(tbDateEditor_label.getText()).toMatch('Date Editor Date')
         });
 
         it('should show a help field equal to this attribute, is present', function () {

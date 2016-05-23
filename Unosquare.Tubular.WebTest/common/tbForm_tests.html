@@ -22,7 +22,7 @@
                         <tb-column-definitions>
                             <tb-column class="text-center" style="display:table-cell">
                                 <div>
-                                    * Form *
+                                    * Form popups *
                                 </div>
                             </tb-column>
                             <tb-column name="OrderID" column-type="numeric">
@@ -54,7 +54,11 @@
                             <tb-row-template ng-repeat="row in $component.rows" row-model="row" selectable="false">
                                 <tb-cell-template class="text-center">
                                     <button ng-click="row.editPopup('/Unosquare.Tubular.WebTest/common/formPopup.html')" class="btn btn-default btn-xs">
-                                            Edit
+                                            Edit (popup 1)
+                                    </button>
+                                    - OR -
+                                    <button ng-click="row.editPopup('/Unosquare.Tubular.WebTest/common/formPopup2.html')" class="btn btn-default btn-xs">
+                                            Edit (popup 2)
                                     </button>
                                 </tb-cell-template>
                                 <tb-cell-template>
