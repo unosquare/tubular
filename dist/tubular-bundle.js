@@ -2060,7 +2060,7 @@ try {
                             '<span ng-hide="isEditing">{{ value }}</span>' +
                             '<label ng-show="showLabel">{{ label }}</label>' +
                             '<div class="input-group" ng-show="isEditing">' +
-                            '<input ng-model="value" placeholder="{{placeholder}}" title="{{tooltip}}" ' +
+                            '<input ng-model="value" placeholder="{{placeholder}}" title="{{tooltip}}" autocomplete="off" ' +
                             'class="form-control {{css}}" ng-readonly="readOnly || lastSet.indexOf(value) !== -1" uib-typeahead="' + scope.selectOptions + '" ' +
                             'ng-required="required" name="{{name}}" /> ' +
                             '<div class="input-group-addon" ng-hide="lastSet.indexOf(value) !== -1"><i class="fa fa-pencil"></i></div>' +
