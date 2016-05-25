@@ -499,7 +499,7 @@ try {
             "$filter", function($filter) {
                 return function(input, format) {
                     if (angular.isDefined(input) && typeof (input) === "object") {
-                        if (typeof moment == 'function' && input !== null) {
+                        if (typeof moment == 'function') {
                             return input.format(format);
                         } else {
                             return $filter('date')(input);
@@ -1670,7 +1670,12 @@ try {
                     '<span class="input-group-btn">' +
                     '<button type="button" class="btn btn-default" ng-click="$ctrl.open = !$ctrl.open"><i class="fa fa-calendar"></i></button>' +
                     '</span>' +
+<<<<<<< HEAD
+                    '</div>') +                
+                '<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">' +
+=======
                     '</div>') +
+>>>>>>> refs/remotes/unosquare/master
                 '{{error}}' +
                 '</span>' +
                 '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help">{{$ctrl.help}}</span>' +
@@ -3468,7 +3473,7 @@ try {
 
                 if (angular.isDefined($ctrl.columns)) {
                     angular.forEach($ctrl.columns, function(col, key) {
-                        var value = angular.isDefined(data[key]) ? data[key] : data[col.Name];
+                        var value = data[key] || data[col.Name];
 
                         if (angular.isUndefined(value) && data[key] === 0) {
                             value = 0;
@@ -3990,7 +3995,6 @@ try {
                  * True if browser has support for HTML5 date input.
                  */
                 me.canUseHtml5Date = function () {
-                    // TODO: Remove dup!
                     var input = document.createElement('input');
                     input.setAttribute('type', 'date');
 
@@ -4768,7 +4772,7 @@ try {
             }
         ]);
 })();
-(function (angular) {
+(function() {
     'use strict';
 
     angular.module('tubular.services')
@@ -4887,7 +4891,7 @@ try {
                 };
             }
         ]);
-})(window.angular);
+})();
 (function (angular) {
     'use strict';
 

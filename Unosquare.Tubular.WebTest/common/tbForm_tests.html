@@ -22,7 +22,7 @@
                         <tb-column-definitions>
                             <tb-column class="text-center" style="display:table-cell">
                                 <div>
-                                    * Form *
+                                    * Form popups *
                                 </div>
                             </tb-column>
                             <tb-column name="OrderID" column-type="numeric">
@@ -49,13 +49,21 @@
                                     <span>{{label}}</span>
                                 </tb-column-header>
                             </tb-column>
+                            <tb-column name="IsShipped" column-type="boolean" class="column-md" visible="toggleVisible">
+                                <tb-column-header>Shipped?</tb-column-header>
+                            </tb-column>
                         </tb-column-definitions>
                         <tb-row-set>
                             <tb-row-template ng-repeat="row in $component.rows" row-model="row" selectable="false">
                                 <tb-cell-template class="text-center">
-                                    <button ng-click="row.editPopup('/Unosquare.Tubular.WebTest/common/formPopup.html')" class="btn btn-default btn-xs">
-                                            Edit
-                                    </button>
+                                    <div>
+                                        <button ng-click="row.editPopup('/Unosquare.Tubular.WebTest/common/formPopup1.html')" class="btn btn-primary btn-xs">
+                                                Edit (form 1)
+                                        </button>
+                                        <button ng-click="row.editPopup('/Unosquare.Tubular.WebTest/common/formPopup2.html')" class="btn btn-success btn-xs">
+                                                Edit (form 2)
+                                        </button>
+                                    </div>
                                 </tb-cell-template>
                                 <tb-cell-template>
                                     {{row.OrderID}}
@@ -72,6 +80,9 @@
                                 </tb-cell-template>
                                 <tb-cell-template>
                                     {{row.ShipperCity}}
+                                </tb-cell-template>
+                                <tb-cell-template class="text-center" column-name="IsShipped">
+                                    <tb-checkbox-field name="IsShipped"></tb-checkbox-field>
                                 </tb-cell-template>
                             </tb-row-template>
                         </tb-row-set>
