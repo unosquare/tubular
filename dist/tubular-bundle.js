@@ -2857,6 +2857,9 @@ try {
 
                                             $scope.$emit('tbForm_OnSuccessfulSave', data, $scope);
                                             $scope.clear();
+
+                                            var formScope = $scope.getFormScope();
+                                            if (formScope) formScope.$setPristine();
                                         }, function (error) {
                                             $scope.$emit('tbForm_OnConnectionError', error, $scope);
                                         })
