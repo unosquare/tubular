@@ -2560,6 +2560,7 @@ try {
          * @param {string} text Set the search text.
          * @param {string} operator Set the initial operator, default depends on data type.
          * @param {object} argument Set the argument.
+         * @param {boolean} onlyContains Set if the operator selector should show, default false.
          */
         .component('tbColumnFilter', {
             require: {
@@ -2575,13 +2576,15 @@ try {
                 text: '@',
                 argument: '@',
                 operator: '@',
-                title: '@'
+                title: '@',
+                onlyContains: '=?'
             },
             controller: [
                 '$scope', '$element', '$compile', '$filter', 'tubularTemplateService', function ($scope, $element, $compile, $filter, tubularTemplateService) {
                     var $ctrl = this;
 
                     $ctrl.$onInit = function () {
+                        $ctrl.onlyContains = angular.isUndefined($ctrl.onlyContains) ? false : $ctrl.onlyContains;
                         $ctrl.templateName = tubularTemplateService.tbColumnFilterPopoverTemplateName;
                         setupFilter($scope, $element, $compile, $filter, $ctrl);
                     };
@@ -4800,7 +4803,8 @@ try {
                 if (!$templateCache.get(me.tbColumnFilterPopoverTemplateName)) {
                     me.tbColumnFilterPopoverTemplate = '<div>' +
                         '<form class="tubular-column-filter-form" onsubmit="return false;">' +
-                        '<select class="form-control" ng-options="key as value for (key , value) in $ctrl.filterOperators" ng-model="$ctrl.filter.Operator" ng-hide="$ctrl.dataType == \'boolean\'"></select>&nbsp;' +
+                        '<select class="form-control" ng-options="key as value for (key , value) in $ctrl.filterOperators" ng-model="$ctrl.filter.Operator" ' +
+                        'ng-hide="$ctrl.dataType == \'boolean\' || $ctrl.onlyContains"></select>&nbsp;' +
                         '<input class="form-control" type="search" ng-model="$ctrl.filter.Text" autofocus ng-keypress="$ctrl.checkEvent($event)" ng-hide="$ctrl.dataType == \'boolean\'"' +
                         'placeholder="{{\'CAPTION_VALUE\' | translate}}" ng-disabled="$ctrl.filter.Operator == \'None\'" />' +
                         '<div class="text-center" ng-show="$ctrl.dataType == \'boolean\'">' +

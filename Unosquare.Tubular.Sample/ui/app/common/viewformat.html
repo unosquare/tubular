@@ -53,7 +53,7 @@
     </div>
 
     <tb-grid server-url="/api/orders/pagedwithformat" require-authentication="false"
-             name="samplegrid" page-size="7" class="row" save-page-size="false">
+             name="samplegridformat" page-size="7" class="row" save-page-size="false">
 
         <!-- Main full-width container -->
         <div class="col-md-12">
@@ -81,7 +81,7 @@
                                     <tb-column-header>ID</tb-column-header>
                                 </tb-column>
                                 <tb-column name="CustomerName" label="Customer" searchable="true" sortable="true" aggregate="distinctcount">
-                                    <tb-column-filter title="Filter Customer" column-selector="true"></tb-column-filter>
+                                    <tb-column-filter only-contains="true"></tb-column-filter>
                                     <tb-column-header>
                                         <span>{{label}}</span>
                                     </tb-column-header>

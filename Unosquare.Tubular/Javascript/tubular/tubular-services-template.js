@@ -27,7 +27,8 @@
                 if (!$templateCache.get(me.tbColumnFilterPopoverTemplateName)) {
                     me.tbColumnFilterPopoverTemplate = '<div>' +
                         '<form class="tubular-column-filter-form" onsubmit="return false;">' +
-                        '<select class="form-control" ng-options="key as value for (key , value) in $ctrl.filterOperators" ng-model="$ctrl.filter.Operator" ng-hide="$ctrl.dataType == \'boolean\'"></select>&nbsp;' +
+                        '<select class="form-control" ng-options="key as value for (key , value) in $ctrl.filterOperators" ng-model="$ctrl.filter.Operator" ' +
+                        'ng-hide="$ctrl.dataType == \'boolean\' || $ctrl.onlyContains"></select>&nbsp;' +
                         '<input class="form-control" type="search" ng-model="$ctrl.filter.Text" autofocus ng-keypress="$ctrl.checkEvent($event)" ng-hide="$ctrl.dataType == \'boolean\'"' +
                         'placeholder="{{\'CAPTION_VALUE\' | translate}}" ng-disabled="$ctrl.filter.Operator == \'None\'" />' +
                         '<div class="text-center" ng-show="$ctrl.dataType == \'boolean\'">' +

@@ -268,6 +268,7 @@
          * @param {string} text Set the search text.
          * @param {string} operator Set the initial operator, default depends on data type.
          * @param {object} argument Set the argument.
+         * @param {boolean} onlyContains Set if the operator selector should show, default false.
          */
         .component('tbColumnFilter', {
             require: {
@@ -283,13 +284,15 @@
                 text: '@',
                 argument: '@',
                 operator: '@',
-                title: '@'
+                title: '@',
+                onlyContains: '=?'
             },
             controller: [
                 '$scope', '$element', '$compile', '$filter', 'tubularTemplateService', function ($scope, $element, $compile, $filter, tubularTemplateService) {
                     var $ctrl = this;
 
                     $ctrl.$onInit = function () {
+                        $ctrl.onlyContains = angular.isUndefined($ctrl.onlyContains) ? false : $ctrl.onlyContains;
                         $ctrl.templateName = tubularTemplateService.tbColumnFilterPopoverTemplateName;
                         setupFilter($scope, $element, $compile, $filter, $ctrl);
                     };
