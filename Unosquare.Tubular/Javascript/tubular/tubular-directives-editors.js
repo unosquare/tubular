@@ -355,7 +355,7 @@
                 '<span ng-hide="$ctrl.isEditing">{{ $ctrl.value }}</span>' +
                 '<label ng-show="$ctrl.showLabel">{{ $ctrl.label }}</label>' +
                 '<select ng-options="{{ $ctrl.selectOptions }}" ng-show="$ctrl.isEditing" ng-model="$ctrl.value" class="form-control" ' +
-                'ng-required="$ctrl.required" ng-disabled="$ctrl.readOnly" name="{{$ctrl.name}}" />' +
+                'ng-required="$ctrl.required" ng-disabled="$ctrl.readOnly" name="{{$ctrl.name}}" ng-change="onChange({value: value})" />' +
                 '<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">' +
                 '{{error}}' +
                 '</span>' +
@@ -377,7 +377,8 @@
                 optionsMethod: '@?',
                 optionLabel: '@?',
                 optionKey: '@?',
-                optionTrack: '@?'
+                optionTrack: '@?',
+                onChange: '&?'
             },
             controller: [
                 'tubularEditorService', '$scope', function(tubularEditorService, $scope) {
