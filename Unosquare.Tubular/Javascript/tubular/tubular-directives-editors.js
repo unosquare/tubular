@@ -175,20 +175,20 @@
             controller: [
                 'tubularEditorService', '$scope', '$filter', function (tubularEditorService, $scope, $filter) {
                     var $ctrl = this;
+
                     $ctrl.validate = function () {
                         if (angular.isDefined($ctrl.min) && angular.isDefined($ctrl.value) && $ctrl.value != null) {
                             $ctrl.$valid = $ctrl.value >= $ctrl.min;
+
                             if (!$ctrl.$valid) {
                                 $ctrl.state.$errors = [$filter('translate')('EDITOR_MIN_NUMBER', $ctrl.min)];
+                                return;
                             }
-                        }
-
-                        if (!$ctrl.$valid) {
-                            return;
                         }
 
                         if (angular.isDefined($ctrl.max) && angular.isDefined($ctrl.value) && $ctrl.value != null) {
                             $ctrl.$valid = $ctrl.value <= $ctrl.max;
+
                             if (!$ctrl.$valid) {
                                 $ctrl.state.$errors = [$filter('translate')('EDITOR_MAX_NUMBER', $ctrl.max)];
                             }
@@ -280,11 +280,8 @@
 
                             if (!$ctrl.$valid) {
                                 $ctrl.state.$errors = [$filter('translate')('EDITOR_MIN_DATE', $filter('date')($ctrl.min, $ctrl.format))];
+                                return;
                             }
-                        }
-
-                        if (!$ctrl.$valid) {
-                            return;
                         }
 
                         if (angular.isDefined($ctrl.max)) {
@@ -405,11 +402,8 @@
 
                            if (!$ctrl.$valid) {
                                $ctrl.state.$errors = [$filter('translate')('EDITOR_MIN_DATE', $filter('date')($ctrl.min, $ctrl.format))];
+                               return;
                            }
-                       }
-
-                       if (!$ctrl.$valid) {
-                           return;
                        }
 
                        if (angular.isDefined($ctrl.max)) {

@@ -20,7 +20,8 @@
                     .when('/tbFormTests', {
                         templateUrl: '/Unosquare.Tubular.WebTest/common/tbForm_tests.html',
                         title: 'Tubular Form Tests'
-                    }).when('/tbFormSavingTests', {
+                    })
+                    .when('/tbFormSavingTests', {
                         templateUrl: '/Unosquare.Tubular.WebTest/common/tbFormSaving_tests.html',
                         title: 'Tubular Form Saving Tests'
                     })
@@ -31,7 +32,7 @@
                 $locationProvider.html5Mode(true);
             }
         ]).controller("tbFormCtrl", function($scope, $http) {
-            $scope.$on('tbForm_OnSuccessfulSave', function (event, data, form) {
+            $scope.$on('tbForm_OnSuccessfulSave', function(event, data, form) {
                 toastr.success(data || "Updated");
             });
         });
