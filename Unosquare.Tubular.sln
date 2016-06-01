@@ -33,6 +33,18 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "e2e-tests", "e2e-tests", "{
 		e2e-tests\tbTemplateServiceModelSpec.js = e2e-tests\tbTemplateServiceModelSpec.js
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "webtest", "webtest", "{674DE81F-FF6A-49D0-BE4C-8EA7082A59B4}"
+	ProjectSection(SolutionItems) = preProject
+		Unosquare.Tubular.WebTest\common\formPopup1.html = Unosquare.Tubular.WebTest\common\formPopup1.html
+		Unosquare.Tubular.WebTest\common\formPopup2.html = Unosquare.Tubular.WebTest\common\formPopup2.html
+		Unosquare.Tubular.WebTest\index.html = Unosquare.Tubular.WebTest\index.html
+		Unosquare.Tubular.WebTest\common\tbColumn_tests.html = Unosquare.Tubular.WebTest\common\tbColumn_tests.html
+		Unosquare.Tubular.WebTest\common\tbFilters_tests.html = Unosquare.Tubular.WebTest\common\tbFilters_tests.html
+		Unosquare.Tubular.WebTest\common\tbForm_tests.html = Unosquare.Tubular.WebTest\common\tbForm_tests.html
+		Unosquare.Tubular.WebTest\common\tbGridPager_tests.html = Unosquare.Tubular.WebTest\common\tbGridPager_tests.html
+		Unosquare.Tubular.WebTest\testApp.js = Unosquare.Tubular.WebTest\testApp.js
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

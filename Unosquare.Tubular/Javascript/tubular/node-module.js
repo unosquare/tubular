@@ -345,7 +345,7 @@ var tubularTemplateServiceModule = {
         if (options.ExportCsv) {
             topToolbar += '\r\n\t<div class="col-md-3">' +
                 '\r\n\t\t<div class="btn-group">' +
-                '\r\n\t\t<tb-print-button title="Tubular" class="btn-sm"></tb-print-button>' +
+                '\r\n\t\t<tb-print-button title="Tubular"></tb-print-button>' +
                 '\r\n\t\t<tb-export-button filename="tubular.csv" css="btn-sm"></tb-export-button>' +
                 '\r\n\t\t</div>' +
                 '\r\n\t</div>';

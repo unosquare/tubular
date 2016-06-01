@@ -765,3 +765,8 @@ table.tubular-grid-table tbody tr td {
 li.pagination-first, li.pagination-prev, li.pagination-next, li.pagination-last {
     font-family: 'FontAwesome';
 }
+
+.btn-group > tb-print-button, .btn-group > tb-export-button, .btn-group > tb-column-selector {
+    position: relative;
+    float: left;
+}

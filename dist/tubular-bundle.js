@@ -345,7 +345,7 @@ var tubularTemplateServiceModule = {
         if (options.ExportCsv) {
             topToolbar += '\r\n\t<div class="col-md-3">' +
                 '\r\n\t\t<div class="btn-group">' +
-                '\r\n\t\t<tb-print-button title="Tubular" class="btn-sm"></tb-print-button>' +
+                '\r\n\t\t<tb-print-button title="Tubular"></tb-print-button>' +
                 '\r\n\t\t<tb-export-button filename="tubular.csv" css="btn-sm"></tb-export-button>' +
                 '\r\n\t\t</div>' +
                 '\r\n\t</div>';
@@ -1606,20 +1606,20 @@ try {
             controller: [
                 'tubularEditorService', '$scope', '$filter', function (tubularEditorService, $scope, $filter) {
                     var $ctrl = this;
+
                     $ctrl.validate = function () {
                         if (angular.isDefined($ctrl.min) && angular.isDefined($ctrl.value) && $ctrl.value != null) {
                             $ctrl.$valid = $ctrl.value >= $ctrl.min;
+
                             if (!$ctrl.$valid) {
                                 $ctrl.state.$errors = [$filter('translate')('EDITOR_MIN_NUMBER', $ctrl.min)];
+                                return;
                             }
-                        }
-
-                        if (!$ctrl.$valid) {
-                            return;
                         }
 
                         if (angular.isDefined($ctrl.max) && angular.isDefined($ctrl.value) && $ctrl.value != null) {
                             $ctrl.$valid = $ctrl.value <= $ctrl.max;
+
                             if (!$ctrl.$valid) {
                                 $ctrl.state.$errors = [$filter('translate')('EDITOR_MAX_NUMBER', $ctrl.max)];
                             }
@@ -1711,11 +1711,8 @@ try {
 
                             if (!$ctrl.$valid) {
                                 $ctrl.state.$errors = [$filter('translate')('EDITOR_MIN_DATE', $filter('date')($ctrl.min, $ctrl.format))];
+                                return;
                             }
-                        }
-
-                        if (!$ctrl.$valid) {
-                            return;
                         }
 
                         if (angular.isDefined($ctrl.max)) {
@@ -1836,11 +1833,8 @@ try {
 
                            if (!$ctrl.$valid) {
                                $ctrl.state.$errors = [$filter('translate')('EDITOR_MIN_DATE', $filter('date')($ctrl.min, $ctrl.format))];
+                               return;
                            }
-                       }
-
-                       if (!$ctrl.$valid) {
-                           return;
                        }
 
                        if (angular.isDefined($ctrl.max)) {
