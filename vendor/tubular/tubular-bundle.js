@@ -345,7 +345,7 @@ var tubularTemplateServiceModule = {
         if (options.ExportCsv) {
             topToolbar += '\r\n\t<div class="col-md-3">' +
                 '\r\n\t\t<div class="btn-group">' +
-                '\r\n\t\t<tb-print-button title="Tubular" class="btn-sm"></tb-print-button>' +
+                '\r\n\t\t<tb-print-button title="Tubular"></tb-print-button>' +
                 '\r\n\t\t<tb-export-button filename="tubular.csv" css="btn-sm"></tb-export-button>' +
                 '\r\n\t\t</div>' +
                 '\r\n\t</div>';
@@ -499,7 +499,7 @@ try {
             "$filter", function($filter) {
                 return function(input, format) {
                     if (angular.isDefined(input) && typeof (input) === "object") {
-                        if (typeof moment == 'function') {
+                        if (typeof moment == 'function' && input !== null) {
                             return input.format(format);
                         } else {
                             return $filter('date')(input);
@@ -681,7 +681,6 @@ try {
                     });
 
                     $scope.$watch('$ctrl.requestedPage', function() {
-                        // TODO: we still need to inter-lock failed, initial and paged requests
                         if ($ctrl.hasColumnsDefinitions && $ctrl.requestCounter > 0) {
                             $ctrl.retrieveData();
                         }
@@ -709,8 +708,8 @@ try {
                         $ctrl.columns.push(item);
                     };
 
-                    $ctrl.newRow = function(template, popup, size) {
-                        $ctrl.tempRow = new TubularModel($scope, $ctrl, {}, $ctrl.dataService);
+                    $ctrl.newRow = function(template, popup, size, data) {
+                        $ctrl.tempRow = new TubularModel($scope, $ctrl, data || {}, $ctrl.dataService);
                         $ctrl.tempRow.$isNew = true;
                         $ctrl.tempRow.$isEditing = true;
                         $ctrl.tempRow.$component = $ctrl;
@@ -855,8 +854,8 @@ try {
                                     var model = new TubularModel($scope, $ctrl, el, $ctrl.dataService);
                                     model.$component = $ctrl;
 
-                                    model.editPopup = function(template, size) {
-                                        tubularPopupService.openDialog(template, model, $ctrl, size);
+                                    model.editPopup = function (template, size) {
+                                        tubularPopupService.openDialog(template, new TubularModel($scope, $ctrl, el, $ctrl.dataService), $ctrl, size);
                                     };
 
                                     return model;
@@ -1092,8 +1091,6 @@ try {
          * All the attributes are used to generate a `ColumnModel`.
          * 
          * This directive is replace by a `th` HTML element.
-         * 
-         * @scope
          * 
          * @param {string} name Set the column name.
          * @param {string} label Set the column label, if empty column's name is used.
@@ -1609,20 +1606,20 @@ try {
             controller: [
                 'tubularEditorService', '$scope', '$filter', function (tubularEditorService, $scope, $filter) {
                     var $ctrl = this;
+
                     $ctrl.validate = function () {
                         if (angular.isDefined($ctrl.min) && angular.isDefined($ctrl.value) && $ctrl.value != null) {
                             $ctrl.$valid = $ctrl.value >= $ctrl.min;
+
                             if (!$ctrl.$valid) {
                                 $ctrl.state.$errors = [$filter('translate')('EDITOR_MIN_NUMBER', $ctrl.min)];
+                                return;
                             }
-                        }
-
-                        if (!$ctrl.$valid) {
-                            return;
                         }
 
                         if (angular.isDefined($ctrl.max) && angular.isDefined($ctrl.value) && $ctrl.value != null) {
                             $ctrl.$valid = $ctrl.value <= $ctrl.max;
+
                             if (!$ctrl.$valid) {
                                 $ctrl.state.$errors = [$filter('translate')('EDITOR_MAX_NUMBER', $ctrl.max)];
                             }
@@ -1674,9 +1671,6 @@ try {
                     '<button type="button" class="btn btn-default" ng-click="$ctrl.open = !$ctrl.open"><i class="fa fa-calendar"></i></button>' +
                     '</span>' +
                     '</div>') +
-                '<input type="datetime-local" ng-show="$ctrl.isEditing" ng-model="$ctrl.value" class="form-control" ' +
-                'ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}" />' +
-                '<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">' +
                 '{{error}}' +
                 '</span>' +
                 '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help">{{$ctrl.help}}</span>' +
@@ -1717,11 +1711,8 @@ try {
 
                             if (!$ctrl.$valid) {
                                 $ctrl.state.$errors = [$filter('translate')('EDITOR_MIN_DATE', $filter('date')($ctrl.min, $ctrl.format))];
+                                return;
                             }
-                        }
-
-                        if (!$ctrl.$valid) {
-                            return;
                         }
 
                         if (angular.isDefined($ctrl.max)) {
@@ -1842,11 +1833,8 @@ try {
 
                            if (!$ctrl.$valid) {
                                $ctrl.state.$errors = [$filter('translate')('EDITOR_MIN_DATE', $filter('date')($ctrl.min, $ctrl.format))];
+                               return;
                            }
-                       }
-
-                       if (!$ctrl.$valid) {
-                           return;
                        }
 
                        if (angular.isDefined($ctrl.max)) {
@@ -2066,7 +2054,7 @@ try {
                             '<span ng-hide="isEditing">{{ value }}</span>' +
                             '<label ng-show="showLabel">{{ label }}</label>' +
                             '<div class="input-group" ng-show="isEditing">' +
-                            '<input ng-model="value" placeholder="{{placeholder}}" title="{{tooltip}}" ' +
+                            '<input ng-model="value" placeholder="{{placeholder}}" title="{{tooltip}}" autocomplete="off" ' +
                             'class="form-control {{css}}" ng-readonly="readOnly || lastSet.indexOf(value) !== -1" uib-typeahead="' + scope.selectOptions + '" ' +
                             'ng-required="required" name="{{name}}" /> ' +
                             '<div class="input-group-addon" ng-hide="lastSet.indexOf(value) !== -1"><i class="fa fa-pencil"></i></div>' +
@@ -2296,180 +2284,11 @@ try {
             ]
         });
 })(window.angular);
-(function (angular) {
+(function(angular) {
     'use strict';
 
-    function setupFilter($scope, $element, $compile, $filter, $ctrl) {
-        var filterOperators = {
-            'string': {
-                'None': $filter('translate')('OP_NONE'),
-                'Equals': $filter('translate')('OP_EQUALS'),
-                'NotEquals': $filter('translate')('OP_NOTEQUALS'),
-                'Contains': $filter('translate')('OP_CONTAINS'),
-                'NotContains': $filter('translate')('OP_NOTCONTAINS'),
-                'StartsWith': $filter('translate')('OP_STARTSWITH'),
-                'NotStartsWith': $filter('translate')('OP_NOTSTARTSWITH'),
-                'EndsWith': $filter('translate')('OP_ENDSWITH'),
-                'NotEndsWith': $filter('translate')('OP_NOTENDSWITH')
-            },
-            'numeric': {
-                'None': $filter('translate')('OP_NONE'),
-                'Equals': $filter('translate')('OP_EQUALS'),
-                'Between': $filter('translate')('OP_BETWEEN'),
-                'Gte': '>=',
-                'Gt': '>',
-                'Lte': '<=',
-                'Lt': '<'
-            },
-            'date': {
-                'None': $filter('translate')('OP_NONE'),
-                'Equals': $filter('translate')('OP_EQUALS'),
-                'NotEquals': $filter('translate')('OP_NOTEQUALS'),
-                'Between': $filter('translate')('OP_BETWEEN'),
-                'Gte': '>=',
-                'Gt': '>',
-                'Lte': '<=',
-                'Lt': '<'
-            },
-            'datetime': {
-                'None': $filter('translate')('OP_NONE'),
-                'Equals': $filter('translate')('OP_EQUALS'),
-                'NotEquals': $filter('translate')('OP_NOTEQUALS'),
-                'Between': $filter('translate')('OP_BETWEEN'),
-                'Gte': '>=',
-                'Gt': '>',
-                'Lte': '<=',
-                'Lt': '<'
-            },
-            'datetimeutc': {
-                'None': $filter('translate')('OP_NONE'),
-                'Equals': $filter('translate')('OP_EQUALS'),
-                'NotEquals': $filter('translate')('OP_NOTEQUALS'),
-                'Between': $filter('translate')('OP_BETWEEN'),
-                'Gte': '>=',
-                'Gt': '>',
-                'Lte': '<=',
-                'Lt': '<'
-            },
-            'boolean': {
-                'None': $filter('translate')('OP_NONE'),
-                'Equals': $filter('translate')('OP_EQUALS'),
-                'NotEquals': $filter('translate')('OP_NOTEQUALS')
-            }
-        };
-
-        $ctrl.filter = {
-            Text: $ctrl.text || null,
-            Argument: $ctrl.argument ? [$ctrl.argument] : null,
-            Operator: $ctrl.operator || "Contains",
-            OptionsUrl: $ctrl.optionsUrl || null,
-            HasFilter: !($ctrl.text == null),
-            Name: $scope.$parent.$parent.column.Name
-        };
-
-        $ctrl.filterTitle = $ctrl.title || $filter('translate')('CAPTION_FILTER');
-
-        $scope.$watch(function() {
-            var columns = $ctrl.$component.columns.filter(function($element) {
-                return $element.Name === $ctrl.filter.Name;
-            });
-
-            return columns.length !== 0 ? columns[0] : null;
-        }, function(val) {
-            if (val && val != null) {
-                if ($ctrl.filter.HasFilter != val.Filter.HasFilter) {
-                    $ctrl.filter.HasFilter = val.Filter.HasFilter;
-                    $ctrl.filter.Text = val.Filter.Text;
-                    $ctrl.retrieveData();
-                }
-            }
-        }, true);
-
-        $ctrl.retrieveData = function() {
-            var columns = $ctrl.$component.columns.filter(function($element) {
-                return $element.Name === $ctrl.filter.Name;
-            });
-
-            if (columns.length !== 0) {
-                columns[0].Filter = $ctrl.filter;
-            }
-
-            $ctrl.$component.retrieveData();
-            $ctrl.close();
-        };
-
-        $ctrl.clearFilter = function() {
-            if ($ctrl.filter.Operator !== 'Multiple') {
-                $ctrl.filter.Operator = 'None';
-            }
-
-            $ctrl.filter.Text = '';
-            $ctrl.filter.Argument = [];
-            $ctrl.filter.HasFilter = false;
-            $ctrl.retrieveData();
-        };
-
-        $ctrl.applyFilter = function() {
-            $ctrl.filter.HasFilter = true;
-            $ctrl.retrieveData();
-        };
-
-        $ctrl.close = function() {
-            $ctrl.isOpen = false;
-        };
-
-        $ctrl.checkEvent = function(keyEvent) {
-            if (keyEvent.which === 13) {
-                $ctrl.applyFilter();
-                keyEvent.preventDefault();
-            }
-        };
-
-        var columns = $ctrl.$component.columns.filter(function($element) {
-            return $element.Name === $ctrl.filter.Name;
-        });
-
-        $scope.$watch('$ctrl.filter.Operator', function (val) {
-            if (val === 'None') $ctrl.filter.Text = '';
-        });
-
-        if (columns.length === 0) return;
-
-        $scope.$watch('$ctrl.filter', function (n) {
-            if (columns[0].Filter.Text !== n.Text) {
-                n.Text = columns[0].Filter.Text;
-
-                if (columns[0].Filter.Operator !== n.Operator) {
-                    n.Operator = columns[0].Filter.Operator;
-                }
-            }
-
-            $ctrl.filter.HasFilter = columns[0].Filter.HasFilter;
-        });
-
-        columns[0].Filter = $ctrl.filter;
-        $ctrl.dataType = columns[0].DataType;
-        $ctrl.filterOperators = filterOperators[$ctrl.dataType];
-
-        if ($ctrl.dataType === 'date' || $ctrl.dataType === 'datetime' || $ctrl.dataType === 'datetimeutc') {
-            $ctrl.filter.Argument = [new Date()];
-
-            if ($ctrl.filter.Operator === 'Contains') {
-                $ctrl.filter.Operator = 'Equals';
-            }
-        }
-
-        if ($ctrl.dataType === 'numeric' || $ctrl.dataType === 'boolean') {
-            $ctrl.filter.Argument = [1];
-
-            if ($ctrl.filter.Operator === 'Contains') {
-                $ctrl.filter.Operator = 'Equals';
-            }
-        }
-    };
-
     angular.module('tubular.directives')
-         /**
+        /**
          * @ngdoc component
          * @name tbColumnFilterButtons
          * @module tubular.directives
@@ -2484,12 +2303,13 @@ try {
                 $columnOptionsFilter: '^?tbColumnOptionsFilter'
             },
             template: '<div class="text-right">' +
-                      '<a class="btn btn-sm btn-success" ng-click="$ctrl.currentFilter.applyFilter()"' +
-                      'ng-disabled="$ctrl.currentFilter.filter.Operator == \'None\'">{{\'CAPTION_APPLY\' | translate}}</a>&nbsp;' +
-                      '<button class="btn btn-sm btn-danger" ng-click="$ctrl.currentFilter.clearFilter()">{{\'CAPTION_CLEAR\' | translate}}</button>' +
-                      '</div>',
-            controller: ['$scope',
-                function ($scope) {
+                '<a class="btn btn-sm btn-success" ng-click="$ctrl.currentFilter.applyFilter()"' +
+                'ng-disabled="$ctrl.currentFilter.filter.Operator == \'None\'">{{\'CAPTION_APPLY\' | translate}}</a>&nbsp;' +
+                '<button class="btn btn-sm btn-danger" ng-click="$ctrl.currentFilter.clearFilter()">{{\'CAPTION_CLEAR\' | translate}}</button>' +
+                '</div>',
+            controller: [
+                '$scope',
+                function($scope) {
                     var $ctrl = this;
 
                     $ctrl.$onInit = function() {
@@ -2513,10 +2333,10 @@ try {
             },
             template: '<button class="btn btn-sm btn-default" ng-click="$ctrl.openColumnsSelector()">{{\'CAPTION_SELECTCOLUMNS\' | translate}}</button></div>',
             controller: [
-                '$scope', '$uibModal', function ($scope, $modal) {
+                '$scope', '$uibModal', function($scope, $modal) {
                     var $ctrl = this;
 
-                    $ctrl.openColumnsSelector = function () {
+                    $ctrl.openColumnsSelector = function() {
                         var model = $ctrl.$component.columns;
 
                         var dialog = $modal.open({
@@ -2535,13 +2355,13 @@ try {
                             backdropClass: 'fullHeight',
                             animation: false,
                             controller: [
-                                '$scope', function ($innerScope) {
+                                '$scope', function($innerScope) {
                                     $innerScope.Model = model;
-                                    $innerScope.isInvalid = function () {
-                                        return $innerScope.Model.filter(function (el) { return el.Visible; }).length === 1;
+                                    $innerScope.isInvalid = function() {
+                                        return $innerScope.Model.filter(function(el) { return el.Visible; }).length === 1;
                                     }
 
-                                    $innerScope.closePopup = function () {
+                                    $innerScope.closePopup = function() {
                                         dialog.close();
                                     };
                                 }
@@ -2566,6 +2386,7 @@ try {
          * @param {string} text Set the search text.
          * @param {string} operator Set the initial operator, default depends on data type.
          * @param {object} argument Set the argument.
+         * @param {boolean} onlyContains Set if the operator selector should show, default false.
          */
         .component('tbColumnFilter', {
             require: {
@@ -2581,15 +2402,17 @@ try {
                 text: '@',
                 argument: '@',
                 operator: '@',
-                title: '@'
+                title: '@',
+                onlyContains: '=?'
             },
             controller: [
-                '$scope', '$element', '$compile', '$filter', 'tubularTemplateService', function ($scope, $element, $compile, $filter, tubularTemplateService) {
+                '$scope', '$element', '$compile', '$filter', 'tubularTemplateService', function($scope, $element, $compile, $filter, tubularTemplateService) {
                     var $ctrl = this;
 
-                    $ctrl.$onInit = function () {
+                    $ctrl.$onInit = function() {
+                        $ctrl.onlyContains = angular.isUndefined($ctrl.onlyContains) ? false : $ctrl.onlyContains;
                         $ctrl.templateName = tubularTemplateService.tbColumnFilterPopoverTemplateName;
-                        setupFilter($scope, $element, $compile, $filter, $ctrl);
+                        tubularTemplateService.setupFilter($scope, $element, $compile, $filter, $ctrl);
                     };
                 }
             ]
@@ -2605,6 +2428,7 @@ try {
          * 
          * The parent scope will provide information about the data type.
          * 
+         * @param {string} title Set the popover title.
          * @param {string} text Set the search text.
          * @param {object} argument Set the search object (if the search is text use text attribute).
          * @param {string} operator Set the initial operator, default depends on data type.
@@ -2616,7 +2440,7 @@ try {
             template: '<div class="tubular-column-menu">' +
                 '<button class="btn btn-xs btn-default btn-popover" ' +
                 'uib-popover-template="$ctrl.templateName" popover-placement="bottom" popover-title="{{$ctrl.filterTitle}}" popover-is-open="$ctrl.isOpen" ' +
-                'popover-trigger="click outsideClick" ng-class="{ \'btn-success\': $ctrl.filter.HasFilter }">' +
+                'popover-trigger="ousideClick" ng-class="{ \'btn-success\': $ctrl.filter.HasFilter }">' +
                 '<i class="fa fa-filter"></i></button>' +
                 '</div>',
             bindings: {
@@ -2626,12 +2450,12 @@ try {
                 title: '@'
             },
             controller: [
-                '$scope', '$element', '$compile', '$filter', 'tubularTemplateService', function ($scope, $element, $compile, $filter, tubularTemplateService) {
+                '$scope', '$element', '$compile', '$filter', 'tubularTemplateService', function($scope, $element, $compile, $filter, tubularTemplateService) {
                     var $ctrl = this;
 
-                    $ctrl.$onInit = function() {                       
+                    $ctrl.$onInit = function() {
                         $ctrl.templateName = tubularTemplateService.tbColumnDateTimeFilterPopoverTemplateName;
-                          setupFilter($scope, $element, $compile, $filter, $ctrl);
+                        tubularTemplateService.setupFilter($scope, $element, $compile, $filter, $ctrl);
                     };
                 }
             ]
@@ -2645,6 +2469,7 @@ try {
          * @description
          * The `tbColumnOptionsFilter` directive is a filter with an dropdown listing all the possible values to filter.
          * 
+         * @param {string} title Set the popover title.
          * @param {object} argument Set the search object.
          * @param {string} operator Set the initial operator, default depends on data type.
          * @param {string} optionsUrl Set the URL to retrieve options
@@ -2660,17 +2485,16 @@ try {
                 '<i class="fa fa-filter"></i></button>' +
                 '</div>',
             bindings: {
-                text: '@',
                 argument: '@',
                 operator: '@',
                 optionsUrl: '@',
                 title: '@'
             },
             controller: [
-                '$scope', '$element', '$compile', '$filter', 'tubularTemplateService', function ($scope, $element, $compile, $filter, tubularTemplateService) {
+                '$scope', '$element', '$compile', '$filter', 'tubularTemplateService', function($scope, $element, $compile, $filter, tubularTemplateService) {
                     var $ctrl = this;
 
-                    $ctrl.getOptionsFromUrl = function () {
+                    $ctrl.getOptionsFromUrl = function() {
                         if ($ctrl.dataIsLoaded) {
                             $scope.$apply();
                             return;
@@ -2682,10 +2506,10 @@ try {
                         });
 
                         currentRequest.promise.then(
-                            function (data) {
+                            function(data) {
                                 $ctrl.optionsItems = data;
                                 $ctrl.dataIsLoaded = true;
-                            }, function (error) {
+                            }, function(error) {
                                 $scope.$emit('tbGrid_OnConnectionError', error);
                             });
                     };
@@ -2693,7 +2517,7 @@ try {
                     $ctrl.$onInit = function() {
                         $ctrl.dataIsLoaded = false;
                         $ctrl.templateName = tubularTemplateService.tbColumnOptionsFilterPopoverTemplateName;
-                        setupFilter($scope, $element, $compile, $filter, $ctrl);
+                        tubularTemplateService.setupFilter($scope, $element, $compile, $filter, $ctrl);
                         $ctrl.getOptionsFromUrl();
 
                         $ctrl.filter.Operator = 'Multiple';
@@ -2702,7 +2526,7 @@ try {
             ]
         });
 })(window.angular);
-(function () {
+(function (angular) {
     'use strict';
 
     angular.module('tubular.directives')
@@ -2722,8 +2546,6 @@ try {
          * 
          * The `save` method can be forced to update a model against the REST service, otherwise if the Model
          * doesn't detect any change will ignore the save call.
-         * 
-         * @scope
          * 
          * @param {string} serverUrl Set the HTTP URL where the data comes.
          * @param {string} serverSaveUrl Set the HTTP URL where the data will be saved.
@@ -2865,6 +2687,9 @@ try {
 
                                             $scope.$emit('tbForm_OnSuccessfulSave', data, $scope);
                                             $scope.clear();
+
+                                            var formScope = $scope.getFormScope();
+                                            if (formScope) formScope.$setPristine();
                                         }, function (error) {
                                             $scope.$emit('tbForm_OnConnectionError', error, $scope);
                                         })
@@ -2922,7 +2747,7 @@ try {
                 };
             }
         ]);
-})();
+})(window.angular);
 (function(angular) {
     'use strict';
 
@@ -2936,6 +2761,7 @@ try {
          * The `tbTextSearch` is visual component to enable free-text search in a grid.
          * 
          * @param {number} minChars How many chars before to search, default 3.
+         * @param {string} placeholder The placeholder text, defaults `UI_SEARCH` i18n resource.
          */
         .component('tbTextSearch', {
             require: {
@@ -3007,8 +2833,8 @@ try {
          * 
          * @param {object} model The row to remove.
          * @param {string} caption Set the caption to use in the button, default Remove.
-         * @param {string} cancelCaption Set the caption to use in the Cancel button, default Cancel.
-         * @param {string} legend Set the legend to warn user, default 'Do you want to delete this row?'.
+         * @param {string} cancelCaption Set the caption to use in the Cancel button, default `CAPTION_REMOVE` i18n resource.
+         * @param {string} legend Set the legend to warn user, default `UI_REMOVEROW` i18n resource.
          * @param {string} icon Set the CSS icon's class, the button can have only icon.
          */
         .component('tbRemoveButton', {
@@ -3027,7 +2853,7 @@ try {
                 icon: '@'
             },
             controller: [
-               'tubularTemplateService', '$filter', function (tubularTemplateService, $filter) {
+               'tubularTemplateService', function (tubularTemplateService) {
                    var $ctrl = this;
 
                    $ctrl.showIcon = angular.isDefined($ctrl.icon);
@@ -3214,11 +3040,11 @@ try {
             require: {
                 $component: '^tbGrid'
             },
-            template: '<div class="btn-group">' +
-                '<button class="btn btn-info btn-sm dropdown-toggle {{::$ctrl.css}}" data-toggle="dropdown" aria-expanded="false">' +
+            template: '<div class="btn-group" uib-dropdown>' +
+                '<button class="btn btn-info btn-sm {{::$ctrl.css}}" uib-dropdown-toggle>' +
                 '<span class="fa fa-download"></span>&nbsp;{{:: $ctrl.caption || (\'UI_EXPORTCSV\' | translate)}}&nbsp;<span class="caret"></span>' +
                 '</button>' +
-                '<ul class="dropdown-menu" role="menu">' +
+                '<ul class="dropdown-menu" uib-dropdown-menu>' +
                 '<li><a href="javascript:void(0)" ng-click="$ctrl.downloadCsv($parent)">{{:: $ctrl.captionMenuCurrent || (\'UI_CURRENTROWS\' | translate)}}</a></li>' +
                 '<li><a href="javascript:void(0)" ng-click="$ctrl.downloadAllCsv($parent)">{{:: $ctrl.captionMenuAll || (\'UI_ALLROWS\' | translate)}}</a></li>' +
                 '</ul>' +
@@ -3475,7 +3301,7 @@ try {
 
                 if (angular.isDefined($ctrl.columns)) {
                     angular.forEach($ctrl.columns, function(col, key) {
-                        var value = data[key] || data[col.Name];
+                        var value = angular.isDefined(data[key]) ? data[key] : data[col.Name];
 
                         if (angular.isUndefined(value) && data[key] === 0) {
                             value = 0;
@@ -3617,11 +3443,11 @@ try {
             function tubularPopupService($modal, $rootScope, tubularTemplateService) {
                 var me = this;
 
-                me.onSuccessForm = function(callback) {
+                me.onSuccessForm = function (callback) {
                     $rootScope.$on('tbForm_OnSuccessfulSave', callback);
                 };
 
-                me.onConnectionError = function(callback) {
+                me.onConnectionError = function (callback) {
                     $rootScope.$on('tbForm_OnConnectionError', callback);
                 };
 
@@ -3633,7 +3459,7 @@ try {
                  * @param {string} size 
                  * @returns {object} The Popup instance
                  */
-                me.openDialog = function(template, model, gridScope, size) {
+                me.openDialog = function (template, model, gridScope, size) {
                     if (angular.isUndefined(template)) {
                         template = tubularTemplateService.generatePopup(model);
                     }
@@ -3644,10 +3470,10 @@ try {
                         animation: false,
                         size: size,
                         controller: [
-                            '$scope', function($scope) {
+                            '$scope', function ($scope) {
                                 $scope.Model = model;
 
-                                $scope.savePopup = function(innerModel, forceUpdate) {
+                                $scope.savePopup = function (innerModel, forceUpdate) {
                                     innerModel = innerModel || $scope.Model;
 
                                     // If we have nothing to save and it's not a new record, just close
@@ -3663,7 +3489,7 @@ try {
                                     }
 
                                     result.then(
-                                        function(data) {
+                                        function (data) {
                                             $scope.$emit('tbForm_OnSuccessfulSave', data);
                                             $rootScope.$broadcast('tbForm_OnSuccessfulSave', data);
                                             $scope.Model.$isLoading = false;
@@ -3671,7 +3497,7 @@ try {
                                             dialog.close();
 
                                             return data;
-                                        }, function(error) {
+                                        }, function (error) {
                                             $scope.$emit('tbForm_OnConnectionError', error);
                                             $rootScope.$broadcast('tbForm_OnConnectionError', error);
                                             $scope.Model.$isLoading = false;
@@ -3682,7 +3508,7 @@ try {
                                     return result;
                                 };
 
-                                $scope.closePopup = function() {
+                                $scope.closePopup = function () {
                                     if (angular.isDefined($scope.Model.revertChanges)) {
                                         $scope.Model.revertChanges();
                                     }
@@ -3707,25 +3533,25 @@ try {
         .service('tubularGridExportService', function tubularGridExportService() {
             var me = this;
 
-            me.getColumns = function(gridScope) {
-                return gridScope.columns.map(function(c) { return c.Label; });
+            me.getColumns = function (gridScope) {
+                return gridScope.columns.map(function (c) { return c.Label; });
             };
 
-            me.getColumnsVisibility = function(gridScope) {
+            me.getColumnsVisibility = function (gridScope) {
                 return gridScope.columns
-                    .map(function(c) { return c.Visible; });
+                    .map(function (c) { return c.Visible; });
             };
 
-            me.exportAllGridToCsv = function(filename, gridScope) {
+            me.exportAllGridToCsv = function (filename, gridScope) {
                 var columns = me.getColumns(gridScope);
                 var visibility = me.getColumnsVisibility(gridScope);
 
-                gridScope.getFullDataSource(function(data) {
+                gridScope.getFullDataSource(function (data) {
                     me.exportToCsv(filename, columns, data, visibility);
                 });
             };
 
-            me.exportGridToCsv = function(filename, gridScope) {
+            me.exportGridToCsv = function (filename, gridScope) {
                 var columns = me.getColumns(gridScope);
                 var visibility = me.getColumnsVisibility(gridScope);
 
@@ -3734,10 +3560,10 @@ try {
                 gridScope.currentRequest = null;
             };
 
-            me.exportToCsv = function(filename, header, rows, visibility) {
-                var processRow = function(row) {
+            me.exportToCsv = function (filename, header, rows, visibility) {
+                var processRow = function (row) {
                     if (typeof (row) === 'object') {
-                        row = Object.keys(row).map(function(key) { return row[key]; });
+                        row = Object.keys(row).map(function (key) { return row[key]; });
                     }
 
                     var finalVal = '';
@@ -3796,7 +3622,7 @@ try {
                 /**
                 * Simple helper to generate a unique name for Tubular Forms
                 */
-                me.getUniqueTbFormName = function() {
+                me.getUniqueTbFormName = function () {
                     // TODO: Maybe move this to another service
                     window.tbFormCounter = window.tbFormCounter || (window.tbFormCounter = -1);
                     window.tbFormCounter++;
@@ -3807,7 +3633,7 @@ try {
                  * Setups a new Editor, this functions is like a common class constructor to be used
                  * with all the tubularEditors.
                  */
-                me.setupScope = function(scope, defaultFormat, ctrl, setDirty) {
+                me.setupScope = function (scope, defaultFormat, ctrl, setDirty) {
                     if (angular.isUndefined(ctrl)) ctrl = scope;
 
                     ctrl.isEditing = angular.isUndefined(ctrl.isEditing) ? true : ctrl.isEditing;
@@ -3819,7 +3645,7 @@ try {
                     ctrl.$valid = true;
 
                     // Get the field reference using the Angular way
-                    ctrl.getFormField = function() {
+                    ctrl.getFormField = function () {
                         var parent = scope.$parent;
 
                         while (true) {
@@ -3834,14 +3660,14 @@ try {
                         }
                     };
 
-                    ctrl.$dirty = function() {
+                    ctrl.$dirty = function () {
                         // Just forward the property
                         var formField = ctrl.getFormField();
 
                         return formField == null ? true : formField.$dirty;
                     };
 
-                    ctrl.checkValid = function() {
+                    ctrl.checkValid = function () {
                         ctrl.$valid = true;
                         ctrl.state.$errors = [];
 
@@ -3870,20 +3696,20 @@ try {
                         ctrl.validate();
                     };
 
-                    scope.$watch(function() {
+                    scope.$watch(function () {
                         return ctrl.value;
-                    }, function(newValue, oldValue) {
+                    }, function (newValue, oldValue) {
                         if (angular.isUndefined(oldValue) && angular.isUndefined(newValue)) {
                             return;
                         }
 
                         // This is the state API for every property in the Model
                         ctrl.state = {
-                            $valid: function() {
+                            $valid: function () {
                                 ctrl.checkValid();
                                 return this.$errors.length === 0;
                             },
-                            $dirty: function() {
+                            $dirty: function () {
                                 return ctrl.$dirty;
                             },
                             $errors: []
@@ -3930,7 +3756,7 @@ try {
 
                             scope.Name = ctrl.name;
 
-                            ctrl.bindScope = function() {
+                            ctrl.bindScope = function () {
                                 scope.$parent.Model = parent.model;
 
                                 if (angular.equals(ctrl.value, parent.model[scope.Name]) === false) {
@@ -3940,9 +3766,9 @@ try {
                                             parent.model[scope.Name];
                                     }
 
-                                    parent.$watch(function() {
+                                    parent.$watch(function () {
                                         return ctrl.value;
-                                    }, function(value) {
+                                    }, function (value) {
                                         parent.model[scope.Name] = value;
                                     });
                                 }
@@ -3964,11 +3790,11 @@ try {
 
                                 // This is the state API for every property in the Model
                                 parent.model.$state[scope.Name] = {
-                                    $valid: function() {
+                                    $valid: function () {
                                         ctrl.checkValid();
                                         return this.$errors.length === 0;
                                     },
-                                    $dirty: function() {
+                                    $dirty: function () {
                                         return ctrl.$dirty();
                                     },
                                     $errors: []
@@ -3992,6 +3818,20 @@ try {
                         parent = parent.$parent;
                     }
                 };
+
+                /**
+                 * True if browser has support for HTML5 date input.
+                 */
+                me.canUseHtml5Date = function () {
+                    // TODO: Remove dup!
+                    var input = document.createElement('input');
+                    input.setAttribute('type', 'date');
+
+                    var notADateValue = 'not-a-date';
+                    input.setAttribute('value', notADateValue);
+
+                    return (input.value !== notADateValue);
+                }();
             }
         ]);
 })(window.angular);
@@ -4761,7 +4601,7 @@ try {
             }
         ]);
 })();
-(function() {
+(function(angular) {
     'use strict';
 
     angular.module('tubular.services')
@@ -4774,8 +4614,9 @@ try {
          * 
          * This service is just a facade to the node module expose like `tubularTemplateServiceModule`.
          */
-        .service('tubularTemplateService', ['$templateCache',
-            function tubularTemplateService($templateCache) {
+        .service('tubularTemplateService', [
+            '$templateCache', 'tubularEditorService',
+            function tubularTemplateService($templateCache, tubularEditorService) {
                 var me = this;
 
                 me.enums = tubularTemplateServiceModule.enums;
@@ -4790,7 +4631,8 @@ try {
                 if (!$templateCache.get(me.tbColumnFilterPopoverTemplateName)) {
                     me.tbColumnFilterPopoverTemplate = '<div>' +
                         '<form class="tubular-column-filter-form" onsubmit="return false;">' +
-                        '<select class="form-control" ng-options="key as value for (key , value) in $ctrl.filterOperators" ng-model="$ctrl.filter.Operator" ng-hide="$ctrl.dataType == \'boolean\'"></select>&nbsp;' +
+                        '<select class="form-control" ng-options="key as value for (key , value) in $ctrl.filterOperators" ng-model="$ctrl.filter.Operator" ' +
+                        'ng-hide="$ctrl.dataType == \'boolean\' || $ctrl.onlyContains"></select>&nbsp;' +
                         '<input class="form-control" type="search" ng-model="$ctrl.filter.Text" autofocus ng-keypress="$ctrl.checkEvent($event)" ng-hide="$ctrl.dataType == \'boolean\'"' +
                         'placeholder="{{\'CAPTION_VALUE\' | translate}}" ng-disabled="$ctrl.filter.Operator == \'None\'" />' +
                         '<div class="text-center" ng-show="$ctrl.dataType == \'boolean\'">' +
@@ -4806,13 +4648,23 @@ try {
                     $templateCache.put(me.tbColumnFilterPopoverTemplateName, me.tbColumnFilterPopoverTemplate);
                 }
 
-                if (!$templateCache.get(me.tbColumnDateTimeFilterPopoverTemplateName)) {
+                if ($templateCache.get(me.tbColumnDateTimeFilterPopoverTemplateName)) {
                     me.tbColumnDateTimeFilterPopoverTemplate = '<div>' +
                         '<form class="tubular-column-filter-form" onsubmit="return false;">' +
                         '<select class="form-control" ng-options="key as value for (key , value) in $ctrl.filterOperators" ng-model="$ctrl.filter.Operator" ng-hide="$ctrl.dataType == \'boolean\'"></select>&nbsp;' +
-                        '<input class="form-control" type="date" ng-model="$ctrl.filter.Text" autofocus ng-keypress="$ctrl.checkEvent($event)" '+
-                        'placeholder="{{\'CAPTION_VALUE\' | translate}}" ng-disabled="$ctrl.filter.Operator == \'None\'" />' +
-                        '<input type="date" class="form-control" ng-model="$ctrl.filter.Argument[0]" ng-keypress="$ctrl.checkEvent($event)" ng-show="$ctrl.filter.Operator == \'Between\'" />' +
+                        (tubularEditorService.canUseHtml5Date ?
+                                '<input class="form-control" type="date" ng-model="$ctrl.filter.Text" autofocus ng-keypress="$ctrl.checkEvent($event)" ' +
+                                'placeholder="{{\'CAPTION_VALUE\' | translate}}" ng-disabled="$ctrl.filter.Operator == \'None\'" />' +
+                                '<input type="date" class="form-control" ng-model="$ctrl.filter.Argument[0]" ng-keypress="$ctrl.checkEvent($event)" ng-show="$ctrl.filter.Operator == \'Between\'" />'
+                                :
+                                '<div class="input-group">' +
+                                '<input type="text" class="form-control" uib-datepicker-popup="MM/dd/yyyy" ng-model="$ctrl.filter.Text" autofocus ng-keypress="$ctrl.checkEvent($event)" ' +
+                                'placeholder="{{\'CAPTION_VALUE\' | translate}}" ng-disabled="$ctrl.filter.Operator == \'None\'" is-open="$ctrl.dateOpen" />' +
+                                '<span class="input-group-btn">' +
+                                '<button type="button" class="btn btn-default" ng-click="$ctrl.dateOpen = !$ctrl.dateOpen;"><i class="fa fa-calendar"></i></button>' +
+                                '</span>' +
+                                '</div>'
+                        ) +
                         '<hr />' +
                         '<tb-column-filter-buttons></tb-column-filter-buttons>' +
                         '</form></div>';
@@ -4866,9 +4718,183 @@ try {
                 me.generateGrid = function(columns, options) {
                     return tubularTemplateServiceModule.generateGrid(columns, options);
                 };
+
+                me.setupFilter = function($scope, $element, $compile, $filter, $ctrl) {
+                    var filterOperators = {
+                        'string': {
+                            'None': $filter('translate')('OP_NONE'),
+                            'Equals': $filter('translate')('OP_EQUALS'),
+                            'NotEquals': $filter('translate')('OP_NOTEQUALS'),
+                            'Contains': $filter('translate')('OP_CONTAINS'),
+                            'NotContains': $filter('translate')('OP_NOTCONTAINS'),
+                            'StartsWith': $filter('translate')('OP_STARTSWITH'),
+                            'NotStartsWith': $filter('translate')('OP_NOTSTARTSWITH'),
+                            'EndsWith': $filter('translate')('OP_ENDSWITH'),
+                            'NotEndsWith': $filter('translate')('OP_NOTENDSWITH')
+                        },
+                        'numeric': {
+                            'None': $filter('translate')('OP_NONE'),
+                            'Equals': $filter('translate')('OP_EQUALS'),
+                            'Between': $filter('translate')('OP_BETWEEN'),
+                            'Gte': '>=',
+                            'Gt': '>',
+                            'Lte': '<=',
+                            'Lt': '<'
+                        },
+                        'date': {
+                            'None': $filter('translate')('OP_NONE'),
+                            'Equals': $filter('translate')('OP_EQUALS'),
+                            'NotEquals': $filter('translate')('OP_NOTEQUALS'),
+                            'Between': $filter('translate')('OP_BETWEEN'),
+                            'Gte': '>=',
+                            'Gt': '>',
+                            'Lte': '<=',
+                            'Lt': '<'
+                        },
+                        'datetime': {
+                            'None': $filter('translate')('OP_NONE'),
+                            'Equals': $filter('translate')('OP_EQUALS'),
+                            'NotEquals': $filter('translate')('OP_NOTEQUALS'),
+                            'Between': $filter('translate')('OP_BETWEEN'),
+                            'Gte': '>=',
+                            'Gt': '>',
+                            'Lte': '<=',
+                            'Lt': '<'
+                        },
+                        'datetimeutc': {
+                            'None': $filter('translate')('OP_NONE'),
+                            'Equals': $filter('translate')('OP_EQUALS'),
+                            'NotEquals': $filter('translate')('OP_NOTEQUALS'),
+                            'Between': $filter('translate')('OP_BETWEEN'),
+                            'Gte': '>=',
+                            'Gt': '>',
+                            'Lte': '<=',
+                            'Lt': '<'
+                        },
+                        'boolean': {
+                            'None': $filter('translate')('OP_NONE'),
+                            'Equals': $filter('translate')('OP_EQUALS'),
+                            'NotEquals': $filter('translate')('OP_NOTEQUALS')
+                        }
+                    };
+
+                    $ctrl.filter = {
+                        Text: $ctrl.text || null,
+                        Argument: $ctrl.argument ? [$ctrl.argument] : null,
+                        Operator: $ctrl.operator || "Contains",
+                        OptionsUrl: $ctrl.optionsUrl || null,
+                        HasFilter: !($ctrl.text == null),
+                        Name: $scope.$parent.$parent.column.Name
+                    };
+
+                    $ctrl.filterTitle = $ctrl.title || $filter('translate')('CAPTION_FILTER');
+
+                    $scope.$watch(function() {
+                        var columns = $ctrl.$component.columns.filter(function($element) {
+                            return $element.Name === $ctrl.filter.Name;
+                        });
+
+                        return columns.length !== 0 ? columns[0] : null;
+                    }, function(val) {
+                        if (val && val != null) {
+                            if ($ctrl.filter.HasFilter != val.Filter.HasFilter) {
+                                $ctrl.filter.HasFilter = val.Filter.HasFilter;
+                                $ctrl.filter.Text = val.Filter.Text;
+                                $ctrl.retrieveData();
+                            }
+                        }
+                    }, true);
+
+                    $ctrl.retrieveData = function() {
+                        var columns = $ctrl.$component.columns.filter(function($element) {
+                            return $element.Name === $ctrl.filter.Name;
+                        });
+
+                        if (columns.length !== 0) {
+                            columns[0].Filter = $ctrl.filter;
+                        }
+
+                        $ctrl.$component.retrieveData();
+                        $ctrl.close();
+                    };
+
+                    $ctrl.clearFilter = function() {
+                        if ($ctrl.filter.Operator !== 'Multiple') {
+                            $ctrl.filter.Operator = 'None';
+                        }
+
+                        if (angular.isDefined($ctrl.onlyContains) && $ctrl.onlyContains) {
+                            $ctrl.filter.Operator = 'Contains';
+                        }
+
+                        $ctrl.filter.Text = '';
+                        $ctrl.filter.Argument = [];
+                        $ctrl.filter.HasFilter = false;
+                        $ctrl.retrieveData();
+                    };
+
+                    $ctrl.applyFilter = function() {
+                        $ctrl.filter.HasFilter = true;
+                        $ctrl.retrieveData();
+                    };
+
+                    $ctrl.close = function() {
+                        $ctrl.isOpen = false;
+                    };
+
+                    $ctrl.checkEvent = function(keyEvent) {
+                        if (keyEvent.which === 13) {
+                            $ctrl.applyFilter();
+                            keyEvent.preventDefault();
+                        }
+                    };
+
+                    var columns = $ctrl.$component.columns.filter(function($element) {
+                        return $element.Name === $ctrl.filter.Name;
+                    });
+
+                    $scope.$watch('$ctrl.filter.Operator', function(val) {
+                        if (val === 'None') $ctrl.filter.Text = '';
+                    });
+
+                    if (columns.length === 0) return;
+
+                    $scope.$watch('$ctrl.filter', function(n) {
+                        if (columns[0].Filter.Text !== n.Text) {
+                            n.Text = columns[0].Filter.Text;
+
+                            if (columns[0].Filter.Operator !== n.Operator) {
+                                n.Operator = columns[0].Filter.Operator;
+                            }
+                        }
+
+                        $ctrl.filter.HasFilter = columns[0].Filter.HasFilter;
+                    });
+
+                    columns[0].Filter = $ctrl.filter;
+                    $ctrl.dataType = columns[0].DataType;
+                    $ctrl.filterOperators = filterOperators[$ctrl.dataType];
+
+                    if ($ctrl.dataType === 'date' || $ctrl.dataType === 'datetime' || $ctrl.dataType === 'datetimeutc') {
+                        $ctrl.filter.Argument = [new Date()];
+
+                        if ($ctrl.filter.Operator === 'Contains') {
+                            $ctrl.filter.Operator = 'Equals';
+                        }
+                    }
+
+                    if ($ctrl.dataType === 'numeric' || $ctrl.dataType === 'boolean') {
+                        $ctrl.filter.Argument = [1];
+
+                        if ($ctrl.filter.Operator === 'Contains') {
+                            $ctrl.filter.Operator = 'Equals';
+                        }
+                    }
+                };
+
             }
         ]);
-})();
+})(window.angular);
 (function (angular) {
     'use strict';
 
