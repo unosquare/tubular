@@ -13,7 +13,7 @@
 
         public decimal Price { get; set; }
 
-        public int OrderID { get; set; }
+        public int OrderId { get; set; }
 
         public int ProductID { get; set; }
 

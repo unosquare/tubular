@@ -19,7 +19,7 @@
                 context.Configuration.LazyLoadingEnabled = false;
 
                 var orderId = int.Parse(id);
-                var order = await context.Orders.AsNoTracking().Where(o => o.OrderID == orderId).FirstOrDefaultAsync();
+                var order = await context.Orders.AsNoTracking().Where(o => o.OrderId == orderId).FirstOrDefaultAsync();
 
                 if (order == null) return NotFound();
 
@@ -69,7 +69,7 @@
                                             Amount = x.Amount.ToString(),
                                             CustomerName = x.CustomerName,
                                             IsShipped = x.IsShipped.ToString(),
-                                            OrderID = x.OrderID,
+                                            OrderId = x.OrderId,
                                             ShippedDate = x.ShippedDate.ToString(),
                                             ShipperCity = x.ShipperCity
                                         }), FormatOutput)));
@@ -81,7 +81,7 @@
         {
             using (var context = new SampleDbContext())
             {
-                var order = await context.Orders.Where(o => o.OrderID == request.Old.OrderID).FirstOrDefaultAsync();
+                var order = await context.Orders.Where(o => o.OrderId == request.Old.OrderId).FirstOrDefaultAsync();
 
                 if (order == null)
                     return NotFound();
@@ -125,7 +125,7 @@
             using (var context = new SampleDbContext())
             {
                 var orderId = int.Parse(id);
-                var orderDb = await context.Orders.Where(o => o.OrderID == orderId).FirstOrDefaultAsync();
+                var orderDb = await context.Orders.Where(o => o.OrderId == orderId).FirstOrDefaultAsync();
 
                 if (orderDb == null)
                     return NotFound();

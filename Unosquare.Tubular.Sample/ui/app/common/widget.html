@@ -8,7 +8,7 @@
             <tb-grid-table class="table tubular-grid-table table-bordered table-responsive table-striped table-hover responsive-mobile">
                 <!-- Columns Definition -->
                 <tb-column-definitions>
-                    <tb-column name="OrderID" label="Order ID" sortable="true" sort-order="1" class="column-sm"
+                    <tb-column name="OrderId" label="Order ID" sortable="true" sort-order="1" class="column-sm"
                                 sort-direction="Ascending" is-key="true">
                         <tb-column-header>ID</tb-column-header>
                     </tb-column>
@@ -34,8 +34,8 @@
                     </tb-row-template>
                     <!-- General rows -->
                     <tb-row-template ng-repeat="row in $component.rows" row-model="row" selectable="false">
-                        <tb-cell-template class="text-center" column-name="OrderID">
-                            <a href="/form/{{row.OrderID}}">{{row.OrderID}}</a>
+                        <tb-cell-template class="text-center" column-name="OrderId">
+                            <a href="/form/{{row.OrderId}}">{{row.OrderId}}</a>
                         </tb-cell-template>
                         <tb-cell-template column-name="CustomerName">
                             {{row.CustomerName}}
@@ -65,7 +65,7 @@
             <tb-grid-table class="table tubular-grid-table table-bordered table-responsive table-striped table-hover responsive-mobile">
                 <!-- Columns Definition -->
                 <tb-column-definitions>
-                    <tb-column name="OrderID" label="Order ID" sortable="true" sort-order="1" class="column-sm"
+                    <tb-column name="OrderId" label="Order ID" sortable="true" sort-order="1" class="column-sm"
                                 sort-direction="Ascending" is-key="true">
                         <tb-column-header>ID</tb-column-header>
                     </tb-column>
@@ -91,8 +91,8 @@
                     </tb-row-template>
                     <!-- General rows -->
                     <tb-row-template ng-repeat="row in $component.rows" row-model="row" selectable="false">
-                        <tb-cell-template class="text-center" column-name="OrderID">
-                            <a href="/form/{{row.OrderID}}">{{row.OrderID}}</a>
+                        <tb-cell-template class="text-center" column-name="OrderId">
+                            <a href="/form/{{row.OrderId}}">{{row.OrderId}}</a>
                         </tb-cell-template>
                         <tb-cell-template column-name="CustomerName">
                             {{row.CustomerName}}

@@ -36,7 +36,7 @@
                                     </a>
                                 </div>
                             </tb-column>
-                            <tb-column name="OrderID" label="Order ID" sortable="true" sort-order="1" class="column-sm" 
+                            <tb-column name="OrderId" label="Order ID" sortable="true" sort-order="1" class="column-sm" 
                                        sort-direction="Ascending" is-key="true">
                                 <tb-column-header>ID</tb-column-header>
                             </tb-column>
@@ -135,8 +135,8 @@
                                         </tb-remove-button>
                                     </div>
                                 </tb-cell-template>
-                                <tb-cell-template class="text-center" column-name="OrderID">
-                                    <a href="/form/{{row.OrderID}}">{{row.OrderID}}</a>
+                                <tb-cell-template class="text-center" column-name="OrderId">
+                                    <a href="/form/{{row.OrderId}}">{{row.OrderId}}</a>
                                 </tb-cell-template>
                                 <tb-cell-template column-name="CustomerName">
                                     <span ng-hide="row.$isEditing">{{row.CustomerName}}</span>

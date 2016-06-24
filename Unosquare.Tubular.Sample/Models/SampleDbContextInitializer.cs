@@ -67,18 +67,21 @@
             {
                 var order = new Order
                 {
-                    OrderID = 1000 + i,
+                    OrderId = 1000 + i,
                     CreatedUserId = users[rand.Next(users.Count - 1)].Id,
                     CustomerName = companies[rand.Next(companies.Length - 1)],
                     IsShipped = rand.Next(10) > 5,
                     ShipperCity = shipperCities[rand.Next(shipperCities.Length - 1)],
                     ShippedDate = DateTime.Now.AddDays(1 - rand.Next(10)),
-                    OrderType = rand.Next(30)
+                    OrderType = rand.Next(30),
+                    Address = "Address " + i,
+                    PostalCode = "500-" + i,
+                    PhoneNumber = "1-800-123-1" + i
                 };
 
                 if (rand.Next(3) == 1)
                 {
-                    order.WarehouseID = warehouses[rand.Next(warehouses.Length - 1)].WarehouseID;
+                    order.WarehouseId = warehouses[rand.Next(warehouses.Length - 1)].WarehouseID;
                 }
 
                 for (var k = 0; k < rand.Next(10); k++)
