@@ -1892,7 +1892,7 @@ try {
                 '<span ng-hide="$ctrl.isEditing">{{ $ctrl.value }}</span>' +
                 '<label ng-show="$ctrl.showLabel">{{ $ctrl.label }}</label>' +
                 '<select ng-options="{{ $ctrl.selectOptions }}" ng-show="$ctrl.isEditing" ng-model="$ctrl.value" class="form-control" ' +
-                'ng-required="$ctrl.required" ng-disabled="$ctrl.readOnly" name="{{$ctrl.name}}" />' +
+                'ng-required="$ctrl.required" ng-disabled="$ctrl.readOnly" name="{{$ctrl.name}}" ng-change="onChange({value: value})" />' +
                 '<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">' +
                 '{{error}}' +
                 '</span>' +
@@ -1913,7 +1913,8 @@ try {
                 optionsMethod: '@?',
                 optionLabel: '@?',
                 optionKey: '@?',
-                optionTrack: '@?'
+                optionTrack: '@?',
+                onChange: '&?'
             },
             controller: [
                 'tubularEditorService', '$scope', function(tubularEditorService, $scope) {
@@ -2733,6 +2734,22 @@ try {
                                 }, 0);
 
                                 $scope.$emit('tbForm_OnGreetParentController', $scope);
+
+                                $scope.$watch('model', function (val, prev) {
+                                    if (!prev) return;
+
+                                    angular.forEach(val, function(value, key) {
+                                        if (key[0] === '$') return;
+                                        if (value === prev[key]) return;
+
+                                        angular.forEach($scope.fields, function(field) {
+                                            if (key === field.name) {
+                                                field.value = value;
+                                            }
+                                        });
+                                    });
+                                }, true);
+
                                 $scope.$on('$destroy', function () { $timeout.cancel(timer); });
                             };
                         }

@@ -5,9 +5,11 @@
             <div class="col-md-10">
                 <h2>Edit Order <small>{{Model.OrderID}}</small></h2>
 
-                <tb-simple-editor min="3" show-label="true" 
+                <tb-simple-editor min="3" show-label="true"
                                   name="CustomerName" help="Please a good name">
                 </tb-simple-editor>
+
+                <button class="btn btn-warning" ng-click="Model.CustomerName = 'Unosquare'">Default name</button>
 
                 <tb-dropdown-editor name="ShipperCity" show-label="true" required="true"
                                     options-url="api/orders/cities">
@@ -30,6 +32,9 @@
                 <hr />
                 <button class="btn btn-primary" ng-click="$parent.save()" ng-disabled="!$parent.model.$valid()">Save</button>
                 <button class="btn btn-danger" ng-click="$parent.cancel()">Go Back</button>
+
+                <hr/>
+                <code>{{Model | json}}</code>
             </div>
         </div>
     </tb-form>
