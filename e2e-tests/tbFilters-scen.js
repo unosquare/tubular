@@ -593,7 +593,7 @@ describe('Tubular Filters', function () {
                 });
         });
 
-        xit('should corretlly filter data for the "Greater" filtering option', function () {
+        it('should corretlly filter data for the "Greater" filtering option', function () {
             var filterOk = true;
             var referenceDate = new Date('02/04/2016 00:00 AM');
 
