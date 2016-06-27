@@ -11,6 +11,7 @@
          * The `tbWidgetContainer` directive is a root node to attach widgets.
          * 
          * @param {string} container-name The container name
+         * @param {bool} fixed-widgets Set if the widgets are fixed
          */
         .directive('tbWidgetContainer', [
             function() {
@@ -180,8 +181,6 @@
          *
          * @description
          * The `tbWidget` directive to transclude your content in a panel with several options.
-         * 
-         * @scope
          * 
          * @param {string} title Set the widget title.
          * @param {string} widgetName Set the widget name.

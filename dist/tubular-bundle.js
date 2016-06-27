@@ -1020,8 +1020,6 @@ try {
          * `tbGridTable` requires a parent `tbGrid`.
          * 
          * This directive is replace by a `table` HTML element.
-         * 
-         * @scope
          */
         .directive('tbGridTable', [
             function() {
@@ -1051,8 +1049,6 @@ try {
          * The `tbColumnDefinitions` directive is a parent node to fill with `tbColumn`.
          * 
          * This directive is replace by a `thead` HTML element.
-         * 
-         * @scope
          */
         .directive('tbColumnDefinitions', [
             function() {
@@ -1197,8 +1193,6 @@ try {
          * This directive has functionality to sort the column, the `sortable` attribute is declared in the parent element.
          * 
          * This directive is replace by an `a` HTML element.
-         * 
-         * @scope
          */
         .directive('tbColumnHeader', [
             function() {
@@ -1246,8 +1240,6 @@ try {
          * The `tbRowSet` directive is used to handle any `tbRowTemplate`. You can define multiples `tbRowSet` for grouping.
          * 
          * This directive is replace by an `tbody` HTML element.
-         * 
-         * @scope
          */
         .directive('tbRowSet', [
             function() {
@@ -1278,8 +1270,6 @@ try {
          * The `tbFootSet` directive is to handle footer.
          * 
          * This directive is replace by an `tfoot` HTML element.
-         * 
-         * @scope
          */
         .directive('tbFootSet', [
             function() {
@@ -1310,8 +1300,6 @@ try {
          * The `tbRowTemplate` directive should be use with a `ngRepeat` to iterate all the rows or grouped rows in a rowset.
          * 
          * This directive is replace by an `tr` HTML element.
-         * 
-         * @scope
          * 
          * @param {object} rowModel Set the current row, if you are using a ngRepeat you must to use the current element variable here.
          * @param {bool} selectable Flag the rowset to allow user to select rows.
@@ -1388,8 +1376,6 @@ try {
          * 
          * This directive is replace by an `td` HTML element.
          * 
-         * @scope
-         * 
          * @param {string} columnName Setting the related column, by passing the name, the cell can share attributes (like visibility) with the column.
          */
         .directive('tbCellTemplate', [
@@ -1432,7 +1418,9 @@ try {
 (function (angular) {
     'use strict';
 
-    if (typeof moment == 'function') {
+    var hasMoment = typeof moment == 'function';
+
+    if (hasMoment) {
         moment.fn.toJSON = function() { return this.format(); }
     }
 
@@ -1795,18 +1783,18 @@ try {
             controller: [
                '$scope', '$element', 'tubularEditorService', '$filter', function ($scope, $element, tubularEditorService, $filter) {
                    var $ctrl = this;
-
+                   
                    $scope.$watch(function() {
                        return $ctrl.value;
                    }, function (val) {
                        if (angular.isUndefined(val)) return;
 
                        if (typeof (val) === 'string') {
-                           $ctrl.value = typeof moment == 'function' ? moment(val) : new Date(val);
+                           $ctrl.value = hasMoment ? moment(val) : new Date(val);
                        }
 
                        if (angular.isUndefined($ctrl.dateValue)) {
-                           if (typeof moment == 'function') {
+                           if (hasMoment) {
                                if ($ctrl.value) {
                                    var tmpDate = $ctrl.value.toObject();
                                    $ctrl.dateValue = new Date(tmpDate.years, tmpDate.months, tmpDate.date, tmpDate.hours, tmpDate.minutes, tmpDate.seconds);
@@ -1822,7 +1810,7 @@ try {
                                return $ctrl.dateValue;
                            }, function(val) {
                                if (angular.isDefined(val)) {
-                                   $ctrl.value = typeof moment == 'function' ? moment(val) : new Date(val);
+                                   $ctrl.value = hasMoment ? moment(val) : new Date(val);
                                }
                            });
                        }
@@ -1859,7 +1847,7 @@ try {
                         $ctrl.DataType = "date";
                         tubularEditorService.setupScope($scope, $ctrl.format, $ctrl);
 
-                        if (typeof moment == 'function' && angular.isUndefined($ctrl.format)) {
+                        if (hasMoment && angular.isUndefined($ctrl.format)) {
                            $ctrl.format = "MMM D, Y";
                        }
                    };
@@ -2017,8 +2005,6 @@ try {
          * from a object declared in the attributes.
          * 
          * It uses the `TubularModel` to retrieve column or field information.
-         * 
-         * @scope
          * 
          * @param {string} name Set the field name.
          * @param {object} value Set the value.
@@ -2896,8 +2882,6 @@ try {
          * @description
          * The `tbSaveButton` directive is visual helper to show a Save button and Cancel button.
          * 
-         * @scope
-         * 
          * @param {object} model The row to remove.
          * @param {boolean} isNew Set if the row is a new record.
          * @param {string} saveCaption Set the caption to use in Save the button, default Save.
@@ -3368,11 +3352,14 @@ try {
                 obj.$selected = false;
                 obj.$isNew = false;
 
-                obj.$valid = function() {
+                obj.$valid = function () {
                     var valid = true;
 
-                    angular.forEach(obj.$state, function(val) {
-                        if (angular.isUndefined(val) || !val.$valid() || !val.$dirty()) {
+                    angular.forEach(obj.$state, function (val) {
+                        if (angular.isUndefined(val)) return;
+                        if (val.$valid()) return;
+
+                        if (!val.$dirty()) {
                             valid = false;
                         }
                     });
@@ -3680,6 +3667,8 @@ try {
 
                             parent = parent.$parent;
                         }
+
+                        return null;
                     };
 
                     ctrl.$dirty = function () {

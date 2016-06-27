@@ -507,8 +507,6 @@
          * `tbGridTable` requires a parent `tbGrid`.
          * 
          * This directive is replace by a `table` HTML element.
-         * 
-         * @scope
          */
         .directive('tbGridTable', [
             function() {
@@ -538,8 +536,6 @@
          * The `tbColumnDefinitions` directive is a parent node to fill with `tbColumn`.
          * 
          * This directive is replace by a `thead` HTML element.
-         * 
-         * @scope
          */
         .directive('tbColumnDefinitions', [
             function() {
@@ -684,8 +680,6 @@
          * This directive has functionality to sort the column, the `sortable` attribute is declared in the parent element.
          * 
          * This directive is replace by an `a` HTML element.
-         * 
-         * @scope
          */
         .directive('tbColumnHeader', [
             function() {
@@ -733,8 +727,6 @@
          * The `tbRowSet` directive is used to handle any `tbRowTemplate`. You can define multiples `tbRowSet` for grouping.
          * 
          * This directive is replace by an `tbody` HTML element.
-         * 
-         * @scope
          */
         .directive('tbRowSet', [
             function() {
@@ -765,8 +757,6 @@
          * The `tbFootSet` directive is to handle footer.
          * 
          * This directive is replace by an `tfoot` HTML element.
-         * 
-         * @scope
          */
         .directive('tbFootSet', [
             function() {
@@ -797,8 +787,6 @@
          * The `tbRowTemplate` directive should be use with a `ngRepeat` to iterate all the rows or grouped rows in a rowset.
          * 
          * This directive is replace by an `tr` HTML element.
-         * 
-         * @scope
          * 
          * @param {object} rowModel Set the current row, if you are using a ngRepeat you must to use the current element variable here.
          * @param {bool} selectable Flag the rowset to allow user to select rows.
@@ -874,8 +862,6 @@
          * hold an in-line editor or a plain AngularJS expression related to the current element in the `ngRepeat`.
          * 
          * This directive is replace by an `td` HTML element.
-         * 
-         * @scope
          * 
          * @param {string} columnName Setting the related column, by passing the name, the cell can share attributes (like visibility) with the column.
          */

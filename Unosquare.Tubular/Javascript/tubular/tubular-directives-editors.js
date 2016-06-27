@@ -1,7 +1,9 @@
 (function (angular) {
     'use strict';
 
-    if (typeof moment == 'function') {
+    var hasMoment = typeof moment == 'function';
+
+    if (hasMoment) {
         moment.fn.toJSON = function() { return this.format(); }
     }
 
@@ -364,18 +366,18 @@
             controller: [
                '$scope', '$element', 'tubularEditorService', '$filter', function ($scope, $element, tubularEditorService, $filter) {
                    var $ctrl = this;
-
+                   
                    $scope.$watch(function() {
                        return $ctrl.value;
                    }, function (val) {
                        if (angular.isUndefined(val)) return;
 
                        if (typeof (val) === 'string') {
-                           $ctrl.value = typeof moment == 'function' ? moment(val) : new Date(val);
+                           $ctrl.value = hasMoment ? moment(val) : new Date(val);
                        }
 
                        if (angular.isUndefined($ctrl.dateValue)) {
-                           if (typeof moment == 'function') {
+                           if (hasMoment) {
                                if ($ctrl.value) {
                                    var tmpDate = $ctrl.value.toObject();
                                    $ctrl.dateValue = new Date(tmpDate.years, tmpDate.months, tmpDate.date, tmpDate.hours, tmpDate.minutes, tmpDate.seconds);
@@ -391,7 +393,7 @@
                                return $ctrl.dateValue;
                            }, function(val) {
                                if (angular.isDefined(val)) {
-                                   $ctrl.value = typeof moment == 'function' ? moment(val) : new Date(val);
+                                   $ctrl.value = hasMoment ? moment(val) : new Date(val);
                                }
                            });
                        }
@@ -428,7 +430,7 @@
                         $ctrl.DataType = "date";
                         tubularEditorService.setupScope($scope, $ctrl.format, $ctrl);
 
-                        if (typeof moment == 'function' && angular.isUndefined($ctrl.format)) {
+                        if (hasMoment && angular.isUndefined($ctrl.format)) {
                            $ctrl.format = "MMM D, Y";
                        }
                    };
@@ -586,8 +588,6 @@
          * from a object declared in the attributes.
          * 
          * It uses the `TubularModel` to retrieve column or field information.
-         * 
-         * @scope
          * 
          * @param {string} name Set the field name.
          * @param {object} value Set the value.

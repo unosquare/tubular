@@ -101,11 +101,14 @@
                 obj.$selected = false;
                 obj.$isNew = false;
 
-                obj.$valid = function() {
+                obj.$valid = function () {
                     var valid = true;
 
-                    angular.forEach(obj.$state, function(val) {
-                        if (angular.isUndefined(val) || !val.$valid() || !val.$dirty()) {
+                    angular.forEach(obj.$state, function (val) {
+                        if (angular.isUndefined(val)) return;
+                        if (val.$valid()) return;
+
+                        if (!val.$dirty()) {
                             valid = false;
                         }
                     });

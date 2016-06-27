@@ -237,6 +237,8 @@
 
                             parent = parent.$parent;
                         }
+
+                        return null;
                     };
 
                     ctrl.$dirty = function () {

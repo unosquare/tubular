@@ -124,8 +124,6 @@
          * @description
          * The `tbSaveButton` directive is visual helper to show a Save button and Cancel button.
          * 
-         * @scope
-         * 
          * @param {object} model The row to remove.
          * @param {boolean} isNew Set if the row is a new record.
          * @param {string} saveCaption Set the caption to use in Save the button, default Save.
