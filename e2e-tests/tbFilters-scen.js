@@ -56,7 +56,7 @@ describe('Tubular Filters', function () {
             valueInput = popoverForm.$('input:not(.ng-hide)');
             dataRows = element.all(by.repeater('row in $component.rows'));
 
-            // Always show 50 recods and go to first page
+            // Always show 50 records and go to first page
             loadData().then(setPagination);
         });
 
@@ -101,15 +101,15 @@ describe('Tubular Filters', function () {
                 .then(function () {
                     filterBtn.click()
                         // Set filtering
-                        .then(function () {
-                            filterSelect.$('[value="string:Equals"]').click().then(function () {
+                        .then(function() {
+                            filterSelect.$('[value="string:Equals"]').click().then(function() {
                                 valueInput.sendKeys('Microsoft');
                             });
                         })
                         // Click another element
-                        .then(function () {
+                        .then(function() {
                             element(by.tagName('tb-grid-pager')).$('li.pagination-first a').click();
-                        })
+                        });
                 })
                 // Compare data again
                 .then(function () {
@@ -156,7 +156,7 @@ describe('Tubular Filters', function () {
                 });
         });
 
-        it('should corretlly filter data for the "Equals" filtering option', function () {
+        it('should correctly filter data for the "Equals" filtering option', function () {
             var filterOk = true;
             var filteredCustomer = 'Microsoft';
 
@@ -178,7 +178,7 @@ describe('Tubular Filters', function () {
                 });
         });
 
-        it('should corretlly filter data for the "Not Equals" filtering option', function () {
+        it('should correctly filter data for the "Not Equals" filtering option', function () {
             var filterOk = true;
             var notShowingCustomer = 'Microsoft';
 
@@ -200,7 +200,7 @@ describe('Tubular Filters', function () {
                 });
         });
 
-        it('should corretlly filter data for the "Contains" filtering option', function () {
+        it('should correctly filter data for the "Contains" filtering option', function () {
             var filterOk = true;
             var containedString = 'La';
 
@@ -222,7 +222,7 @@ describe('Tubular Filters', function () {
                 });
         });
 
-        it('should corretlly filter data for the "Not Contains" filtering option', function () {
+        it('should correctly filter data for the "Not Contains" filtering option', function () {
             var filterOk = true;
             var notContainedString = 'La';
 
@@ -244,7 +244,7 @@ describe('Tubular Filters', function () {
                 });
         });
 
-        it('should corretlly filter data for the "Starts With" filtering option', function () {
+        it('should correctly filter data for the "Starts With" filtering option', function () {
             var filterOk = true;
             var startsWithString = 'Uno';
 
@@ -266,7 +266,7 @@ describe('Tubular Filters', function () {
                 });
         });
 
-        it('should corretlly filter data for the "Not Starts With" filtering option', function () {
+        it('should correctly filter data for the "Not Starts With" filtering option', function () {
             var filterOk = true;
             var notStartsWithString = 'Uno';
 
@@ -288,7 +288,7 @@ describe('Tubular Filters', function () {
                 });
         });
 
-        it('should corretlly filter data for the "Ends With" filtering option', function () {
+        it('should correctly filter data for the "Ends With" filtering option', function () {
             var filterOk = true;
             var endsWithString = 'xo';
 
@@ -312,7 +312,7 @@ describe('Tubular Filters', function () {
                 });
         });
 
-        it('should corretlly filter data for the "Not Ends With" filtering option', function () {
+        it('should correctly filter data for the "Not Ends With" filtering option', function () {
             var filterOk = true;
             var endsWithString = 'o';
 
@@ -352,46 +352,39 @@ describe('Tubular Filters', function () {
             secondValueInput = popoverForm.$$('input').last();
             dataRows = element.all(by.repeater('row in $component.rows'));
 
-            // Always show 50 recods and go to first page
+            // Always show 50 records and go to first page
             loadData().then(setPagination);
         });
 
-        /************************************************************************** */
-        /* Uncomment this when tbColumnDateTimeFilter code is up and ready...
-        /************************************************************************** */
-        // afterAll(function () {
-        //     // Clear filters
-        //     element(by.tagName('tb-grid-pager')).$('.pagination-first a').click()
-        //         .then(function () {
-        //             element(by.tagName('tb-grid-pager')).$('.pagination-first a').click().then(function () {
-        //                 filterBtn.click().then(function () {
-        //                     clearBtn.click().then(function () {
-        //                         loadData();
-        //                     });
-        //                 });
-        //             });
-        //         });
-        // });
+         afterAll(function () {
+             // Clear filters
+             element(by.tagName('tb-grid-pager')).$('.pagination-first a').click()
+                 .then(function () {
+                     element(by.tagName('tb-grid-pager')).$('.pagination-first a').click().then(function () {
+                         filterBtn.click().then(function () {
+                             clearBtn.click().then(function () {
+                                 loadData();
+                             });
+                         });
+                     });
+                 });
+         });
 
-        // beforeEach(function () {
-        //     // Clear filters
-        //     element(by.tagName('tb-grid-pager')).$('.pagination-first a').click()
-        //         .then(function () {
-        //             element(by.tagName('tb-grid-pager')).$('.pagination-first a').click().then(function () {
-        //                 filterBtn.click().then(function () {
-        //                     clearBtn.click().then(function () {
-        //                         loadData();
-        //                     });
-        //                 });
-        //             });
-        //         });
-        // });
-        /************************************************************************** */
-        /*             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-        /*             ||||||||||||||||||||||||||||||||||||||||||||||||
-        /************************************************************************** */
+         beforeEach(function () {
+             // Clear filters
+             element(by.tagName('tb-grid-pager')).$('.pagination-first a').click()
+                 .then(function () {
+                     element(by.tagName('tb-grid-pager')).$('.pagination-first a').click().then(function () {
+                         filterBtn.click().then(function () {
+                             clearBtn.click().then(function () {
+                                 loadData();
+                             });
+                         });
+                     });
+                 });
+         });
 
-        xit('should cancel filtering when clicking outside filter-popover', function () {
+        it('should cancel filtering when clicking outside filter-popover', function () {
             var originalData;
             var equalData;
 
@@ -426,21 +419,21 @@ describe('Tubular Filters', function () {
                 });
         });
 
-        xit('should disable Value text-input for "None" filter', function () {
+        it('should disable Value text-input for "None" filter', function () {
             filterBtn.click();
             filterSelect.$('[value="string:None"]').click();
 
             expect(valueInput.getAttribute('disabled')).toBe('true');
         });
 
-        xit('should disable apply button for "None" filter', function () {
+        it('should disable apply button for "None" filter', function () {
             filterBtn.click();
 
             filterSelect.$('[value="string:None"]').click();
             expect(applyBtn.getAttribute('disabled')).toBe('true');
         });
 
-        xit('should clear filtering when clicking on apply button for "None" filter', function () {
+        it('should clear filtering when clicking on apply button for "None" filter', function () {
             var originalData;
             var equalData;
 
@@ -481,7 +474,7 @@ describe('Tubular Filters', function () {
                 });
         });
 
-        xit('should decorate popover button when showing data is being filtered for its column', function () {
+        it('should decorate popover button when showing data is being filtered for its column', function () {
             // Verify button has no decorating-class
             expect(filterBtn.getAttribute('class')).not.toMatch(/btn-success/);
 
@@ -498,7 +491,7 @@ describe('Tubular Filters', function () {
                 });
         });
 
-        xit('should corretlly filter data for the "Equals" filtering option', function () {
+        it('should correctly filter data for the "Equals" filtering option', function () {
             var filterOk = true;
             var filterMatcher = /0*1\/30\/2016\s.*/;
 
@@ -520,7 +513,7 @@ describe('Tubular Filters', function () {
                 });
         });
 
-        xit('should corretlly filter data for the "Not Equals" filtering option', function () {
+        it('should correctly filter data for the "Not Equals" filtering option', function () {
             var filterOk = true;
             var filterMatcher = /0*1\/30\/2016\s.*/;
 
@@ -550,7 +543,7 @@ describe('Tubular Filters', function () {
                 });
         });  
 
-        xit('should corretlly filter data for the "Between" filtering option', function () {
+        it('should correctly filter data for the "Between" filtering option', function () {
             var filterOk = true;
             var minDate = new Date('02/04/2016 00:00 AM');
             var maxDate = new Date('02/05/2016 00:00 AM');
@@ -576,7 +569,7 @@ describe('Tubular Filters', function () {
                 });
         });
 
-        xit('should corretlly filter data for the "Greater-or-equal" filtering option', function () {
+        it('should correctly filter data for the "Greater-or-equal" filtering option', function () {
             var filterOk = true;
             var referenceDate = new Date('02/04/2016 00:00 AM');
 
@@ -624,7 +617,7 @@ describe('Tubular Filters', function () {
                 });
         });
 
-        xit('should corretlly filter data for the "Less-or-equal" filtering option', function () {
+        it('should correctly filter data for the "Less-or-equal" filtering option', function () {
             var filterOk = true;
             var referenceDate = new Date('02/04/2016 00:00 AM');
 
@@ -648,7 +641,7 @@ describe('Tubular Filters', function () {
                 });
         });
 
-        xit('should corretlly filter data for the "Less" filtering option', function () {
+        it('should correctly filter data for the "Less" filtering option', function () {
             var filterOk = true;
             var referenceDate = new Date('02/04/2016 00:00 AM');
 
@@ -671,7 +664,6 @@ describe('Tubular Filters', function () {
                     });
                 });
         });
-
     });
 
     describe('tbColumnOptionsFilter', function () {
@@ -948,5 +940,4 @@ describe('Tubular Filters', function () {
         });
 
     });
-
 });
