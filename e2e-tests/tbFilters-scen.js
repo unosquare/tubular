@@ -527,15 +527,7 @@ describe('Tubular Filters', function () {
                     dataRows.each(function (row, index) {
                         row.$$('td').get(2).getText()
                             .then(function (date) {
-
-                                console.log('*************************** NOT EQUALS ****************************');
-                                console.log('           date: ' + date);
-                                console.log(filterMatcher.test(date));
-
-                                filterOk = !filterOk && !(filterMatcher.test(date));
-
-                                console.log('filterOk: ' + filterOk);
-
+                                filterOk = filterOk && !(filterMatcher.test(date));
                             });
                     }).then(function () {
                         expect(filterOk).toBe(true);
