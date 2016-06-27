@@ -397,14 +397,14 @@ describe('Tubular Filters', function () {
                 .then(function () {
                     filterBtn.click()
                         // Set filtering
-                        .then(function () {
+                        .then(function() {
                             filterSelect.$('[value="string:Gt"]').click();
                             valueInput.sendKeys('02/05/2016');
                         })
                         // Click another element
-                        .then(function () {
+                        .then(function() {
                             element(by.tagName('tb-grid-pager')).$('li.pagination-first a').click();
-                        })
+                        });
                 })
                 // Compare data again
                 .then(function () {
@@ -840,6 +840,7 @@ describe('Tubular Filters', function () {
         it('min-chars is not set', function () {
             expect(tbTextSearch.getAttribute('min-chars')).toBe(null);
         });
+
 
         it('should filter data in searchable-column customer name to matching inputted text, starting from 3 characters', function () {
             var filterOk = true;
