@@ -15,6 +15,11 @@ describe('tbColumn', function () {
         a_shipperCitySorting;
 
     beforeAll(function () {
+        // Mock Timezone to match DEV environment
+        Date.prototype.getTimezoneOffset = function () {
+            return 300;
+        };
+
         // Go to test
         browser.get('index.html');
         element(by.id('testsSelector')).click();
