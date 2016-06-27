@@ -15,11 +15,6 @@ describe('tbColumn', function () {
         a_shipperCitySorting;
 
     beforeAll(function () {
-        // Mock Timezone to match DEV environment
-        Date.prototype.getTimezoneOffset = function () {
-            return 300;
-        };
-
         // Go to test
         browser.get('index.html');
         element(by.id('testsSelector')).click();
@@ -60,13 +55,13 @@ describe('tbColumn', function () {
     });
 
     describe('sorting', function () {
-        
+
         var dataSetLowerID = '1',
             dataSetHigherID = '53',
             dataSetLowerCustomerName = 'Advanced Technology Systems',
             dataSetHigherCustomerName = 'Vesta',
-            dataSetLowerDate = /1\/28\/16 2:17.*/,
-            dataSetHigherDate = /2\/8\/16 8:17.*/
+            dataSetLowerDate = /1\/28\/16 \d:17.*/,
+            dataSetHigherDate = /2\/8\/16 \d:17.*/;
         
         beforeEach(function(){
             // Clear possible sortings and start with default

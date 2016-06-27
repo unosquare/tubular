@@ -337,8 +337,6 @@ describe('tbForm related components ->', function () {
                     tbCheckboxField.click().then(function() {
                         tbFormSaveBtn.click().then(function() {
                             tbCheckboxField_onRow.getAttribute('class').then(function (val) {
-                                console.log(val);
-                                console.log(val.indexOf('ng-empty'));
                                 expect(val.indexOf('ng-empty')).toBe(-1);
                             });
                         });
@@ -590,7 +588,6 @@ describe('tbForm related components ->', function () {
         });
         
     });
-    
     
     describe('tbDateEditor', function() {
         
