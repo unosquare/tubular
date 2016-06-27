@@ -376,8 +376,13 @@
 
                        if (angular.isUndefined($ctrl.dateValue)) {
                            if (typeof moment == 'function') {
-                               var tmpDate = $ctrl.value.toObject();
-                               $ctrl.dateValue = new Date(tmpDate.years, tmpDate.months, tmpDate.date, tmpDate.hours, tmpDate.minutes, tmpDate.seconds);
+                               if ($ctrl.value) {
+                                   var tmpDate = $ctrl.value.toObject();
+                                   $ctrl.dateValue = new Date(tmpDate.years, tmpDate.months, tmpDate.date, tmpDate.hours, tmpDate.minutes, tmpDate.seconds);
+                               } else {
+                                   // NULL value
+                                   $ctrl.dateValue = $ctrl.value;
+                               }
                            } else {
                                $ctrl.dateValue = $ctrl.value;
                            }
@@ -495,10 +500,10 @@
                         $ctrl.selectOptions = "d for d in $ctrl.options";
 
                         if (angular.isDefined($ctrl.optionLabel)) {
-                            $ctrl.selectOptions = "d." + $ctrl.optionLabel + " for d in options";
+                            $ctrl.selectOptions = "d." + $ctrl.optionLabel + " for d in $ctrl.options";
 
                             if (angular.isDefined($ctrl.optionTrack)) {
-                                $ctrl.selectOptions = 'd as d.' + $ctrl.optionLabel + ' for d in options track by d.' + $ctrl.optionTrack;
+                                $ctrl.selectOptions = 'd as d.' + $ctrl.optionLabel + ' for d in $ctrl.options track by d.' + $ctrl.optionTrack;
                             }
                             else {
                                 if (angular.isDefined($ctrl.optionKey)) {
