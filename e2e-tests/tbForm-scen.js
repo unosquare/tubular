@@ -272,7 +272,7 @@ describe('tbForm related components ->', function () {
                 .then(function () {
                     return tbFormEditBtn2.click().then(function () {
                         return tbCheckboxField.getAttribute('class').then(function (val) {
-                            if (val.indexOf('gn-empty') == -1) {
+                            if (val.indexOf('ng-empty') == -1) {
                                 return tbCheckboxField.click().then(function () {
                                     return tbFormSaveBtn.click().then(function () {
                                         return true;
@@ -301,16 +301,14 @@ describe('tbForm related components ->', function () {
     });
 
     beforeEach(function () {
-        browser.executeScript('localStorage.clear()')
+        browser.executeScript('localStorage.clear()');
     });
 
     afterAll(function () {
-        browser.executeScript('localStorage.clear()')
+        browser.executeScript('localStorage.clear()');
     });    
 
     describe('tbCheckboxField', function() {
-        
-                
         beforeAll(function () {
             //* Assign test variables *\\
             // 2d element in list, should be: <OrderID = 2 , Customer Name = Super La Playa ... >
@@ -338,7 +336,9 @@ describe('tbForm related components ->', function () {
                 tbFormEditBtn2.click().then(function() {
                     tbCheckboxField.click().then(function() {
                         tbFormSaveBtn.click().then(function() {
-                            tbCheckboxField_onRow.getAttribute('class').then(function(val) {
+                            tbCheckboxField_onRow.getAttribute('class').then(function (val) {
+                                console.log(val);
+                                console.log(val.indexOf('ng-empty'));
                                 expect(val.indexOf('ng-empty')).toBe(-1);
                             });
                         });
@@ -349,7 +349,7 @@ describe('tbForm related components ->', function () {
         
         it('should discard changes on "CANCEL"', function() {
             // Ensure field is unckecked
-            tbCheckboxField_onRow.getAttribute('class').then(function(val) {
+            tbCheckboxField_onRow.getAttribute('class').then(function (val) {
                 expect(val.indexOf('ng-empty')).not.toBe(-1);
             })
             .then(function() {
