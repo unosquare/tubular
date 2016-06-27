@@ -61,7 +61,7 @@ describe('tbColumn', function () {
             dataSetLowerCustomerName = 'Advanced Technology Systems',
             dataSetHigherCustomerName = 'Vesta',
             dataSetLowerDate = /1\/28\/16 \d:17.*/,
-            dataSetHigherDate = /2\/8\/16 \d:17.*/;
+            dataSetHigherDate = /5\/11\/16 \d:00.*/;
         
         beforeEach(function(){
             // Clear possible sortings and start with default
