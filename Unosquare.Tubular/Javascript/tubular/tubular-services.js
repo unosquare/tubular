@@ -342,9 +342,14 @@
 
                                 if (angular.equals(ctrl.value, parent.model[scope.Name]) === false) {
                                     if (angular.isDefined(parent.model[scope.Name])) {
-                                        ctrl.value = (ctrl.DataType === 'date' && parent.model[ctrl.Name] != null) ?
-                                            new Date(parent.model[scope.Name]) :
-                                            parent.model[scope.Name];
+                                        if (ctrl.DataType === 'date' && parent.model[scope.Name] != null) {
+                                            // TODO: Include MomentJS
+                                            var timezone = new Date(Date.parse(parent.model[scope.Name])).toString().match(/([-\+][0-9]+)\s/)[1];
+                                            timezone = timezone.substr(0, timezone.length - 2) + ':' + timezone.substr(timezone.length - 2, 2);
+                                            ctrl.value = new Date(Date.parse(parent.model[scope.Name] + timezone));
+                                        } else {
+                                            ctrl.value = parent.model[scope.Name];
+                                        }
                                     }
 
                                     parent.$watch(function () {

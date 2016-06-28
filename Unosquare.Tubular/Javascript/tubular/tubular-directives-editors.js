@@ -378,7 +378,7 @@
 
                        if (angular.isUndefined($ctrl.dateValue)) {
                            if (hasMoment) {
-                               if ($ctrl.value) {
+                               if ($ctrl.value instanceof moment) {
                                    var tmpDate = $ctrl.value.toObject();
                                    $ctrl.dateValue = new Date(tmpDate.years, tmpDate.months, tmpDate.date, tmpDate.hours, tmpDate.minutes, tmpDate.seconds);
                                } else {

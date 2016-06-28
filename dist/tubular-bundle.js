@@ -499,7 +499,7 @@ try {
             "$filter", function($filter) {
                 return function(input, format) {
                     if (angular.isDefined(input) && typeof (input) === "object") {
-                        if (typeof moment == 'function' && input !== null) {
+                        if (typeof moment == 'function' && input !== null && input instanceof moment) {
                             return input.format(format);
                         } else {
                             return $filter('date')(input);
@@ -1795,7 +1795,7 @@ try {
 
                        if (angular.isUndefined($ctrl.dateValue)) {
                            if (hasMoment) {
-                               if ($ctrl.value) {
+                               if ($ctrl.value instanceof moment) {
                                    var tmpDate = $ctrl.value.toObject();
                                    $ctrl.dateValue = new Date(tmpDate.years, tmpDate.months, tmpDate.date, tmpDate.hours, tmpDate.minutes, tmpDate.seconds);
                                } else {
@@ -2594,10 +2594,10 @@ try {
                                 $scope.retrieveData();
                             });
 
-                            $scope.cloneModel = function (model) {
+                            $scope.cloneModel = function(model) {
                                 var data = {};
 
-                                angular.forEach(model, function (value, key) {
+                                angular.forEach(model, function(value, key) {
                                     if (key[0] === '$') return;
 
                                     data[key] = value;
@@ -2605,7 +2605,7 @@ try {
 
                                 $scope.model = new TubularModel($scope, $scope, data, $scope.dataService);
                                 $scope.bindFields();
-                            }
+                            };
 
                             $scope.bindFields = function () {
                                 angular.forEach($scope.fields, function (field) {
@@ -3323,7 +3323,7 @@ try {
                                     obj[col.Name] = moment(obj[col.Name]);
                                 }
                             } else {
-                                var timezone = new Date().toString().match(/([-\+][0-9]+)\s/)[1];
+                                var timezone = new Date(Date.parse(obj[col.Name])).toString().match(/([-\+][0-9]+)\s/)[1];
                                 timezone = timezone.substr(0, timezone.length - 2) + ':' + timezone.substr(timezone.length - 2, 2);
                                 var tempDate = new Date(Date.parse(obj[col.Name] + timezone));
 
@@ -3772,9 +3772,14 @@ try {
 
                                 if (angular.equals(ctrl.value, parent.model[scope.Name]) === false) {
                                     if (angular.isDefined(parent.model[scope.Name])) {
-                                        ctrl.value = (ctrl.DataType === 'date' && parent.model[ctrl.Name] != null) ?
-                                            new Date(parent.model[scope.Name]) :
-                                            parent.model[scope.Name];
+                                        if (ctrl.DataType === 'date' && parent.model[scope.Name] != null) {
+                                            // TODO: Include MomentJS
+                                            var timezone = new Date(Date.parse(parent.model[scope.Name])).toString().match(/([-\+][0-9]+)\s/)[1];
+                                            timezone = timezone.substr(0, timezone.length - 2) + ':' + timezone.substr(timezone.length - 2, 2);
+                                            ctrl.value = new Date(Date.parse(parent.model[scope.Name] + timezone));
+                                        } else {
+                                            ctrl.value = parent.model[scope.Name];
+                                        }
                                     }
 
                                     parent.$watch(function () {

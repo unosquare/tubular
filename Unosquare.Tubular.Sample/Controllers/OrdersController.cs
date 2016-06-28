@@ -93,7 +93,10 @@
                 order.IsShipped = request.New.IsShipped;
                 order.ShippedDate = request.New.ShippedDate.Date;
                 order.ShipperCity = request.New.ShipperCity;
-
+                order.OrderType = request.New.OrderType;
+                order.Comments = request.New.Comments;
+                order.CarrierName = request.New.CarrierName;
+                
                 await context.SaveChangesAsync();
 
                 return Ok(new

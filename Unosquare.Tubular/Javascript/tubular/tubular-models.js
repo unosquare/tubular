@@ -72,7 +72,7 @@
                                     obj[col.Name] = moment(obj[col.Name]);
                                 }
                             } else {
-                                var timezone = new Date().toString().match(/([-\+][0-9]+)\s/)[1];
+                                var timezone = new Date(Date.parse(obj[col.Name])).toString().match(/([-\+][0-9]+)\s/)[1];
                                 timezone = timezone.substr(0, timezone.length - 2) + ':' + timezone.substr(timezone.length - 2, 2);
                                 var tempDate = new Date(Date.parse(obj[col.Name] + timezone));
 

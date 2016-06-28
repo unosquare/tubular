@@ -129,5 +129,16 @@ describe('tbColumn', function() {
 
             expect(element(by.css('div.modal')).isDisplayed()).toBe(true);
         });
+
+        it('should print grid', function () {
+            element(by.tagName('tb-print-button')).click().then(function () {
+                browser.getAllWindowHandles().then(function (handles) {
+                    newWindowHandle = handles[1]; // this is your new window
+                    browser.switchTo().window(newWindowHandle).then(function () {
+                        expect(browser.getCurrentUrl()).toMatch(/about/);
+                    });
+                });
+            });
+        });
     });
 });
