@@ -125,13 +125,17 @@ describe('tbColumn', function() {
 
     describe('Grid Components', function() {
         it('should print grid', function () {
-            element(by.tagName('tb-print-button')).click().then(function () {
-                browser.getAllWindowHandles().then(function (handles) {
-                    console.log(handles);
-
-                    newWindowHandle = handles[1]; // this is your new window
-                    browser.switchTo().window(newWindowHandle).then(function () {
-                        expect(browser.getCurrentUrl()).toMatch(/about/);
+            var mainWindow;
+            browser.getAllWindowHandles().then(function(handles) {
+                mainWindow = handles[0]; //at this point there should be only 1 window
+            }).then(function() {
+                element(by.tagName('tb-print-button')).click().then(function () {
+                    browser.getAllWindowHandles().then(function (handles) {
+                        handles.forEach(function(handle) {
+                            if (handle !== mainWindow) {
+                                browser.switchTo().window(handle).then(function () { expect(browser.getCurrentUrl()).toMatch(/about/);  });
+                            }
+                        });
                     });
                 });
             });
