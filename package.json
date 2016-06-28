@@ -44,7 +44,6 @@
     "grunt-string-replace": "^1.2.1",
     "http-server": "^0.9.0",
     "protractor": "^3.3.0",
-    "selenium-chromedriver": "0.0.2",
     "selenium-standalone": "5.1.1"
   }
 }

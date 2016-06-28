@@ -74,10 +74,10 @@
                                 $scope.retrieveData();
                             });
 
-                            $scope.cloneModel = function (model) {
+                            $scope.cloneModel = function(model) {
                                 var data = {};
 
-                                angular.forEach(model, function (value, key) {
+                                angular.forEach(model, function(value, key) {
                                     if (key[0] === '$') return;
 
                                     data[key] = value;
@@ -85,7 +85,7 @@
 
                                 $scope.model = new TubularModel($scope, $scope, data, $scope.dataService);
                                 $scope.bindFields();
-                            }
+                            };
 
                             $scope.bindFields = function () {
                                 angular.forEach($scope.fields, function (field) {
