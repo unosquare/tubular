@@ -141,7 +141,7 @@ describe('tbColumn', function() {
             expect(element(by.css('div.modal')).isDisplayed()).toBe(true);
 
             // Send escape to close
-            element(by.css('div.modal').sendKeys('\uE00C');
+            element(by.css('div.modal')).sendKeys('\uE00C');
 
         });
     });
