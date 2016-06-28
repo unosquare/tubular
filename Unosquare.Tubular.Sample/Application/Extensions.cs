@@ -1,9 +1,10 @@
 ﻿namespace Unosquare.Tubular.Sample.Application
 {
+    using EntityFramework.MappingAPI.Extensions;
     using System;
     using System.Data.Entity;
     using System.Linq;
-    using EntityFramework.MappingAPI.Extensions;
+    using System.Reflection;
     using Unosquare.Tubular.ObjectModel;
 
     public static class Extensions
@@ -18,7 +19,7 @@
         {
             var repo = new DataSourceRepository();
 
-            var dbsets = context.GetType().GetProperties().Where(p => p.PropertyType.IsGenericType
+            var dbsets = context.GetType().GetProperties().Where(p => p.PropertyType.GetTypeInfo().IsGenericType
                                                                       &&
                                                                       p.PropertyType.GetGenericTypeDefinition() ==
                                                                       typeof (DbSet<>))

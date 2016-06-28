@@ -340,7 +340,7 @@
 
         private static IQueryable FilterResponse(GridDataRequest request, IQueryable subset, GridDataResponse response)
         {
-            var isDbQuery = subset.GetType().IsGenericType &&
+            var isDbQuery = subset.GetType().GetTypeInfo().IsGenericType &&
                             subset.GetType().GetInterfaces().Any(y => y == typeof (IListSource));
 
             // Perform Searching
