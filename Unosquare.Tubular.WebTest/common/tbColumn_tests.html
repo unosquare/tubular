@@ -14,8 +14,15 @@
     <div class="col-md-12">
         <div class="row">
             <tb-grid-pager class="col-md-6 col-xs-12"></tb-grid-pager>
-            <tb-page-size-selector class="col-md-3 col-xs-6" selectorcss="input-sm"></tb-page-size-selector>
-            <tb-column-selector></tb-column-selector>
+            <div class="col-md-4 col-xs-6">
+                <div class="btn-group btn-group-sm">
+                    <tb-export-button filename="data.csv" class="btn-group"></tb-export-button>
+                    <tb-print-button title="Sample" class="btn-group"></tb-print-button>
+                    <tb-column-selector></tb-column-selector>
+                </div>
+            </div>
+            <tb-page-size-selector class="col-md-3 col-xs-6" selectorcss="input-sm">
+            </tb-page-size-selector>
         </div>
         <div class="row">
             <div class="col-md-12">
