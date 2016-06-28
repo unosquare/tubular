@@ -11,7 +11,7 @@
         <tb-date-time-editor name="DateEditorDate" required="true" show-label="true" 
                              value="Model.ShippedDate" format="MM/dd/yyyy"
                              help="DateTime help" min="'01/28/2016'" 
-                             }max="'05/10/2016'">
+                             max="'05/10/2016'">
         </tb-date-time-editor>
         <tb-dropdown-editor value="Model.ShipperCity" default-value="Model.ShipperCity" 
                             name="ShipperCity" show-label="true" help="dropdown help" required="true" 
@@ -28,6 +28,7 @@
             <button id="btnCancel" class="btn btn-danger" ng-click="closePopup()" formnovalidate>
                 Cancel
             </button>
+            <button class="btn btn-warning" ng-click="cloneModel(Model)">Clone Model</button>
         </div>
     </tb-form>
 </div>
