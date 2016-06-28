@@ -1,4 +1,4 @@
-// This protractor scen file tests tbColumn component.
+// This protractor scen file tests tbColumn and tbGrid components.
 
 // It is assumed throughout the test that the data received for the main tbGrid
 // component at the related HTML file (tbColumn_tests.html) is static and constrained
@@ -156,7 +156,6 @@ describe('tbColumn', function() {
 
             // Send escape to close
             element(by.css('div.modal')).sendKeys('\uE00C');
-
         });
     });
 });

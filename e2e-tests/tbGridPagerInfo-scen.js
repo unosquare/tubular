@@ -55,6 +55,6 @@ describe('tbGridPagerInfo', function () {
 
 
     it("should show count in footer", function() {
-        expect(element(by.id('count')).getText()).toBe('10');
+        expect(element(by.id('count')).getText()).toBe('53');
     });
 });
