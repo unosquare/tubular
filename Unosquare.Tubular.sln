@@ -29,20 +29,29 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "e2e-tests", "e2e-tests", "{
 		e2e-tests\tbForm-scen.js = e2e-tests\tbForm-scen.js
 		e2e-tests\tbGridPager-scen.js = e2e-tests\tbGridPager-scen.js
 		e2e-tests\tbGridPagerInfo-scen.js = e2e-tests\tbGridPagerInfo-scen.js
+		e2e-tests\tbHttpSpec.js = e2e-tests\tbHttpSpec.js
 		e2e-tests\tbPageSizeSelector-scen.js = e2e-tests\tbPageSizeSelector-scen.js
 		e2e-tests\tbTemplateServiceModelSpec.js = e2e-tests\tbTemplateServiceModelSpec.js
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "webtest", "webtest", "{674DE81F-FF6A-49D0-BE4C-8EA7082A59B4}"
-	ProjectSection(SolutionItems) = preProject
-		Unosquare.Tubular.WebTest\common\formPopup1.html = Unosquare.Tubular.WebTest\common\formPopup1.html
-		Unosquare.Tubular.WebTest\common\formPopup2.html = Unosquare.Tubular.WebTest\common\formPopup2.html
-		Unosquare.Tubular.WebTest\index.html = Unosquare.Tubular.WebTest\index.html
-		Unosquare.Tubular.WebTest\common\tbColumn_tests.html = Unosquare.Tubular.WebTest\common\tbColumn_tests.html
-		Unosquare.Tubular.WebTest\common\tbFilters_tests.html = Unosquare.Tubular.WebTest\common\tbFilters_tests.html
-		Unosquare.Tubular.WebTest\common\tbForm_tests.html = Unosquare.Tubular.WebTest\common\tbForm_tests.html
-		Unosquare.Tubular.WebTest\common\tbGridPager_tests.html = Unosquare.Tubular.WebTest\common\tbGridPager_tests.html
-		Unosquare.Tubular.WebTest\testApp.js = Unosquare.Tubular.WebTest\testApp.js
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Unosquare.Tubular.WebTest", "Unosquare.Tubular.WebTest\", "{541E3FFC-0E2F-42B0-87F1-9C2A33E44ADE}"
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_60649"
+		Debug.AspNetCompiler.PhysicalPath = "Unosquare.Tubular.WebTest\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_60649\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_60649"
+		Release.AspNetCompiler.PhysicalPath = "Unosquare.Tubular.WebTest\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_60649\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "60649"
 	EndProjectSection
 EndProject
 Global
@@ -67,6 +76,10 @@ Global
 		{2B9D1173-BB0F-4B39-8E65-17C08F69C4BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2B9D1173-BB0F-4B39-8E65-17C08F69C4BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2B9D1173-BB0F-4B39-8E65-17C08F69C4BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{541E3FFC-0E2F-42B0-87F1-9C2A33E44ADE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{541E3FFC-0E2F-42B0-87F1-9C2A33E44ADE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{541E3FFC-0E2F-42B0-87F1-9C2A33E44ADE}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{541E3FFC-0E2F-42B0-87F1-9C2A33E44ADE}.Release|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

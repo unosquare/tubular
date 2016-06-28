@@ -465,7 +465,9 @@ describe('Tubular Filters', function () {
                 .then(function () {
                     dataRows.getText()
                         .then(function (newText) {
-                            equalData = (originalData.length == newText.length) && originalData.every(function (element, index) {
+                            console.log(originalData.length, newText.length);
+                            equalData = (originalData.length === newText.length) && originalData.every(function (element, index) {
+                                console.log(element, newText[index]);
                                 return element === newText[index];
                             });
 

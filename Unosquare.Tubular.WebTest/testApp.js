@@ -25,17 +25,41 @@
                         templateUrl: '/Unosquare.Tubular.WebTest/common/tbFormSaving_tests.html',
                         title: 'Tubular Form Saving Tests'
                     })
+                    .when('/Login', {
+                        templateUrl: '/Unosquare.Tubular.WebTest/common/login.html',
+                        title: 'Login'
+                    })
                     .otherwise({
                         redirectTo: '/'
                     });
 
                 $locationProvider.html5Mode(true);
             }
-        ]).controller("tbFormCtrl", function($scope, $http) {
+        ]).controller("tbFormCtrl", function($scope) {
             $scope.$on('tbForm_OnSuccessfulSave', function(event, data, form) {
                 toastr.success(data || "Updated");
             });
-        });
+        }).controller('LoginCtrl', ['$scope', '$location', 'tubularHttp', function ($scope, $location, tubularHttp) {
+            $scope.loading = false;
+            tubularHttp.tokenUrl = '/token';
+
+            $scope.submitForm = function (valid) {
+                if (valid == false) {
+                    toastr.error("Please complete form");
+                }
+
+                $scope.loading = true;
+
+                tubularHttp.authenticate($scope.username, $scope.password, $scope.redirectHome, function (error) {
+                    $scope.loading = false;
+                    toastr.error(error);
+                }, true);
+            };
+
+            $scope.redirectHome = function () {
+                $location.path("/");
+            };
+        }]);;
 
     angular.module('app', [
         'tubular',

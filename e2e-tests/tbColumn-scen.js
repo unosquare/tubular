@@ -61,7 +61,7 @@ describe('tbColumn', function() {
             dataSetLowerCustomerName = 'Advanced Technology Systems',
             dataSetHigherCustomerName = 'Vesta',
             dataSetLowerDate = /1\/28\/16 \d:17.*/,
-            dataSetHigherDate = /5\/11\/16 \d:00.*/;
+            dataSetHigherDate = /5\/14\/16 \d:00.*/;
 
         beforeEach(function() {
             // Clear possible sortings and start with default
@@ -126,6 +126,7 @@ describe('tbColumn', function() {
     describe('Grid Components', function() {
         it('should print grid', function () {
             element(by.tagName('tb-print-button')).click().then(function () {
+                browser.sleep(5000);
                 browser.getAllWindowHandles().then(function (handles) {
                     newWindowHandle = handles[1]; // this is your new window
                     browser.switchTo().window(newWindowHandle).then(function () {
