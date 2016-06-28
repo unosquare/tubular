@@ -465,7 +465,7 @@ describe('Tubular Filters', function () {
                 .then(function () {
                     dataRows.getText()
                         .then(function (newText) {
-                            console.log(originalData.length, newText.length);
+                            // TODO: Fix Failing with 50 3
                             equalData = (originalData.length === newText.length) && originalData.every(function (element, index) {
                                 console.log(element, newText[index]);
                                 return element === newText[index];

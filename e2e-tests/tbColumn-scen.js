@@ -127,10 +127,20 @@ describe('tbColumn', function() {
         it('should print grid', function () {
             element(by.tagName('tb-print-button')).click().then(function () {
                 browser.getAllWindowHandles().then(function (handles) {
+                    console.log(handles);
+
                     newWindowHandle = handles[1]; // this is your new window
                     browser.switchTo().window(newWindowHandle).then(function () {
                         expect(browser.getCurrentUrl()).toMatch(/about/);
                     });
+                });
+            });
+        });
+
+        it('should export grid', function() {
+            element(by.tagName('tb-export-button')).click().then(function() {
+                element(by.tagName('tb-export-button')).$$('a').first().click().then(function() {
+                    // TODO: Check FS? http://stackoverflow.com/questions/21935696/protractor-e2e-test-case-for-downloading-pdf-file
                 });
             });
         });

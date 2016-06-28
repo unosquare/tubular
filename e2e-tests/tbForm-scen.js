@@ -621,8 +621,7 @@ describe('tbForm related components ->', function () {
         });
 
         it('should set initial date value to the value of "value" attribute when defined', function () {
-            // TODO: here a have an issue with the date but I cant reproduce
-            expect(tbDateEditor_input.getAttribute('value')).toMatch('02/03/2016');
+            expect(tbDateEditor_input.getAttribute('value')).toMatch(tbDateEditorDate_original);
         });
 
         it('should be invalidated when the date is not in the range of "min" and "max" attributes', function () {
