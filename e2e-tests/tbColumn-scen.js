@@ -124,12 +124,6 @@ describe('tbColumn', function() {
     });
 
     describe('Grid Components', function() {
-        it('should show column selector', function() {
-            element(by.tagName('tb-column-selector')).click();
-
-            expect(element(by.css('div.modal')).isDisplayed()).toBe(true);
-        });
-
         it('should print grid', function () {
             element(by.tagName('tb-print-button')).click().then(function () {
                 browser.getAllWindowHandles().then(function (handles) {
@@ -139,6 +133,16 @@ describe('tbColumn', function() {
                     });
                 });
             });
+        });
+
+        it('should show column selector', function () {
+            element(by.tagName('tb-column-selector')).click();
+
+            expect(element(by.css('div.modal')).isDisplayed()).toBe(true);
+
+            // Send escape to close
+            element(by.css('div.modal').sendKeys('\uE00C');
+
         });
     });
 });

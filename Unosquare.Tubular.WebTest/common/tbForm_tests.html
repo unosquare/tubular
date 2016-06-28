@@ -25,12 +25,12 @@
                                     * Form popups *
                                 </div>
                             </tb-column>
-                            <tb-column name="OrderID" column-type="numeric">
+                            <tb-column name="OrderID" column-type="numeric" sort-order="1" sort-direction="Ascending">
                                 <tb-column-header>
                                     <span>{{label}}</span>
                                 </tb-column-header>
                             </tb-column>
-                            <tb-column name="CustomerName">
+                            <tb-column name="CustomerName" sort-order="2">
                                 <tb-column-header>
                                     <span>{{label}}</span>
                                 </tb-column-header>
@@ -38,7 +38,6 @@
                             <tb-column name="Amount" column-type="numeric" aggregate="sum">
                                 <tb-column-header>{{label}}</tb-column-header>
                             </tb-column>
-
                             <tb-column name="ShippedDate" column-type="datetimeutc">
                                 <tb-column-header>
                                     <span>{{label}}</span>
