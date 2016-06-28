@@ -53,4 +53,8 @@ describe('tbGridPagerInfo', function () {
         expect(tbGridPagerInfo.getText()).toBe('Showing 41 to 53 of 53 records');
     });
 
+
+    it("should show count in footer", function() {
+        expect(element(by.id('count')).getText()).toBe('10');
+    });
 });

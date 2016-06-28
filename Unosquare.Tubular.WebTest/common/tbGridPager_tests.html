@@ -41,7 +41,7 @@
                                 <span>{{label}}</span>
                             </tb-column-header>
                         </tb-column>
-                        <tb-column name="ShipperCity">
+                        <tb-column name="ShipperCity" aggregate="count">
                             <tb-column-header>
                                 <span>{{label}}</span>
                             </tb-column-header>
@@ -64,6 +64,16 @@
                             </tb-cell-template>
                         </tb-row-template>
                     </tb-row-set>
+                    <tb-foot-set>
+                        <tb-row-template class="bg-info">
+                            <tb-cell-template></tb-cell-template>
+                            <tb-cell-template></tb-cell-template>
+                            <tb-cell-template></tb-cell-template>
+                            <tb-cell-template>
+                                    <b>COUNT <span id="count">{{$component.aggregationFunctions.ShipperCity}}</span></b>
+                            </tb-cell-template>
+                        </tb-row-template>
+                    </tb-foot-set>
                 </tb-grid-table>
             </div>
         </div>
