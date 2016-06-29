@@ -68,8 +68,8 @@ module.exports = function (grunt) {
                 options: {
                     args: {
                         baseUrl: "http://localhost:9000/Unosquare.Tubular.WebTest/",
-                        browser: "firefox",
-                        specs: ['e2e-tests/tbForm-scen.js']
+                        browser: "chrome",
+                        specs: ['e2e-tests/tbFilters-scen.js']
                     }
                 }
             }

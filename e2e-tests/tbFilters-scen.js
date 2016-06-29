@@ -420,11 +420,11 @@ describe('Tubular Filters', function () {
         });
 
         it('should disable Value text-input for "None" filter', function () {
-            filterBtn.click();
-            filterSelect.$('[value="stringy' +
-                ':None"]').click();
-
-            expect(valueInput.getAttribute('disabled')).toBe('true');
+            filterBtn.click().then(function () {
+                filterSelect.$('[value="string:None"]').click().then(function () {
+                    expect(valueInput.getAttribute('disabled')).toBe('true');
+                });
+            });
         });
 
         it('should disable apply button for "None" filter', function () {
@@ -455,6 +455,7 @@ describe('Tubular Filters', function () {
                 })
                 // Filter with "None" and apply
                 .then(function () {
+                    filterBtn.click();
                     clearBtn.click()
                         .then(function () {
                             loadData();
@@ -464,9 +465,7 @@ describe('Tubular Filters', function () {
                 .then(function () {
                     dataRows.getText()
                         .then(function (newText) {
-                            // TODO: Fix Failing with 50 3
                             equalData = (originalData.length === newText.length) && originalData.every(function (element, index) {
-                                console.log(element, newText[index]);
                                 return element === newText[index];
                             });
 
