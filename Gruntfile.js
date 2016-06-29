@@ -14,7 +14,7 @@ module.exports = function (grunt) {
             }
         },
         instrument: {
-            files: ['Unosquare.Tubular.WebTest/**/*.js', 'dist/**/*.js'],
+            files: ['Unosquare.Tubular.WebTest/**/*.js', 'Unosquare.Tubular/Javascript/tubular/**/*.js'],
             options: {
                 lazy: true,
                 basePath: "instrumented"
@@ -24,14 +24,16 @@ module.exports = function (grunt) {
             dist: {
                 files: { 'instrumented/Unosquare.Tubular.WebTest/': 'instrumented/Unosquare.Tubular.WebTest/**/*.html' },
                 options: {
-                    replacements: [{
-                        pattern: /"\/Unosquare\.Tubular\.WebTest\/testApp\.js/g,
-                        replacement: '"/instrumented/Unosquare.Tubular.WebTest/testApp.js'
-                    },
+                    replacements: [
                         {
-                            pattern: /\.\.\/dist/g,
-                            replacement: "/instrumented/dist"
-                        }]
+                            pattern: /"\/Unosquare\.Tubular\.WebTest\/testApp\.js/g,
+                            replacement: '"/instrumented/Unosquare.Tubular.WebTest/testApp.js'
+                        },
+                        {
+                            pattern: /\.\.\/Unosquare\.Tubular\/Javascript\/tubular/g,
+                            replacement: "/instrumented/Unosquare.Tubular/Javascript/tubular"
+                        }
+                    ]
                 }
             }
         },
