@@ -13,6 +13,8 @@ Please visit the <a href="http://unosquare.github.io/tubular" target="_blank">Tu
 
 ## NuGet Installation [![NuGet version](https://badge.fury.io/nu/tubular.svg)](http://badge.fury.io/nu/tubular)
 
+<b>Important Note</b> - ServerSide Nuget users must update to version 1.0 because previous LINQ Dynamic library was removed from Nuget.
+
 ### Package containing only the client-side stuff
 
 <pre>
