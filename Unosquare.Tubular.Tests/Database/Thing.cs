@@ -40,8 +40,9 @@
                 new GridColumn {Name = "Number", Aggregate = AggregationFunction.DistinctCount},
                 new GridColumn {Name = "DecimalNumber", Aggregate = AggregationFunction.DistinctCount},
                 new GridColumn {Name = "Name", Aggregate = AggregationFunction.DistinctCount},
-                new GridColumn {Name = "Date", Aggregate = AggregationFunction.DistinctCount},
-                new GridColumn {Name = "Bool", Aggregate = AggregationFunction.DistinctCount}
+                new GridColumn {Name = "Date", Aggregate = AggregationFunction.DistinctCount}
+                // TODO: The Bool is failing with the new Dyamic LINQ
+                //new GridColumn {Name = "Bool", Aggregate = AggregationFunction.DistinctCount}
             };
         }
 

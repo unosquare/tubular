@@ -172,7 +172,6 @@
   <ItemGroup>
     <Compile Include="ApiModels\OrderDto.cs" />
     <Compile Include="Application\BasicOAuthAuthorizationProvider.cs" />
-    <Compile Include="Application\Extensions.cs" />
     <Compile Include="Application\Startup.cs" />
     <Compile Include="Application\UserAuthenticationResult.cs" />
     <Compile Include="Controllers\OrdersController.cs" />

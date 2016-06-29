@@ -44,8 +44,8 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Linq.Dynamic, Version=1.1.14.15853, Culture=neutral, PublicKeyToken=b72be0322d1b32a8, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Linq.Dynamic.Library.1.1.14\lib\net40\System.Linq.Dynamic.dll</HintPath>
+    <Reference Include="System.Linq.Dynamic.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Linq.Dynamic.Core.1.0.4.0\lib\net461\System.Linq.Dynamic.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Net.Http" />
@@ -54,13 +54,8 @@
     <Compile Include="ChartsExtension.cs" />
     <Compile Include="CodeGenerator.cs" />
     <Compile Include="Common.cs" />
-    <Compile Include="DataSourceRepository.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="FluentExtension.cs" />
-    <Compile Include="ObjectModel\DataSourceConfig.cs" />
-    <Compile Include="ObjectModel\DataSourceItemModel.cs" />
-    <Compile Include="ObjectModel\DataSourceJoinConfig.cs" />
-    <Compile Include="ObjectModel\DataSourceMetadata.cs" />
     <Compile Include="ObjectModel\Filter.cs" />
     <Compile Include="ObjectModel\FormOptions.cs" />
     <Compile Include="ObjectModel\GridColumn.cs" />

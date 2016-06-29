@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Linq;
-    using System.Linq.Dynamic;
+    using System.Linq.Dynamic.Core;
     using System.Net.Http;
     using System.Reflection;
     using System.Runtime.CompilerServices;
@@ -17,7 +17,7 @@
     /// </summary>
     public static class Extensions
     {
-        private static Regex _timezoneOffset = new Regex(@"timezoneOffset=(\d[^&]*)");
+        private static readonly Regex TimezoneOffset = new Regex(@"timezoneOffset=(\d[^&]*)");
 
         private static readonly object SyncRoot = new object();
 
@@ -129,7 +129,7 @@
 
             if (string.IsNullOrWhiteSpace(query)) return data;
 
-            var match = _timezoneOffset.Match(query);
+            var match = TimezoneOffset.Match(query);
 
             if (!match.Success) return data;
             var timeDiff = int.Parse(match.Groups[1].Value);
@@ -317,6 +317,7 @@
             return response;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static string GetSqlOperator(CompareOperators op)
         {
             switch (op)
@@ -550,7 +551,7 @@
         /// <returns>The filtered IQueryable</returns>
         public static IQueryable CreateDynamicFilteredSet(this IQueryable dataSource, string fieldName, string filter)
         {
-            return dataSource.Where(string.Format("{0}.Contains(@0)", fieldName), new[] {filter});
+            return dataSource.Where($"{fieldName}.Contains(@0)", new[] {filter});
         }
 
         /// <summary>
@@ -566,7 +567,7 @@
         {
             // TODO: I need to connect this to a better platform
             return (dataSource.CreateDynamicFilteredSet(fieldName, filter)
-                .Select(fieldName + ".ToString()") as IQueryable<string>)
+                .Select($"{fieldName}.ToString()") as IQueryable<string>)
                 .Distinct()
                 .Take(records);
         }
@@ -582,7 +583,7 @@
             int records = 8)
         {
             var stringDatasource = (dataSource
-                .Select(fieldName + ".ToString()") as IQueryable<string>)
+                .Select($"{fieldName}.ToString()") as IQueryable<string>)
                 .Distinct();
 
             return (records > 0 ? stringDatasource.Take(records) : stringDatasource);
