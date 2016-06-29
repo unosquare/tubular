@@ -1,10 +1,21 @@
 
-// This protractor scen file tests the tbGridPagerInfo component.
-
-// It is assumed throughout the test that the data received for the main tbGrid
-// component at the related HTML file (tbPager_test.html) is static and constrained
-// to 53 records with consecutive ID's.
+// This protractor scen file tests the tubularHttp.
 
 describe('tbHttp', function () {
 
+    beforeAll(function() {
+        // Go to test
+        browser.get('index.html');
+        element(by.id('tbLogin')).click();
+    });
+
+    
+    it('should perform login', function () {
+        element(by.model('username')).sendKeys('admin');
+        element(by.model('password')).sendKeys('pass.word');
+
+        element(by.id('submitBtn')).click().then(function() {
+
+        });
+    });
 });
