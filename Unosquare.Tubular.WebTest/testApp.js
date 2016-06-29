@@ -25,6 +25,10 @@
                         templateUrl: '/Unosquare.Tubular.WebTest/common/tbFormSaving_tests.html',
                         title: 'Tubular Form Saving Tests'
                     })
+                    .when('/tbGridComponentsTests', {
+                        templateUrl: '/Unosquare.Tubular.WebTest/common/tbGridComponent_tests.html',
+                        title: 'Tubular Grid Components Tests'
+                    })
                     .when('/Login', {
                         templateUrl: '/Unosquare.Tubular.WebTest/common/login.html',
                         title: 'Login'
@@ -59,7 +63,9 @@
             $scope.redirectHome = function () {
                 $location.path("/");
             };
-        }]);;
+        }]).controller("navCtrl", function($scope) {
+            // TODO: Check login info
+        });
 
     angular.module('app', [
         'tubular',

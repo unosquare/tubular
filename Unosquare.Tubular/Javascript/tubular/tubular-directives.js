@@ -206,7 +206,8 @@
                         }
                     };
 
-                    $ctrl.deleteRow = function(row) {
+                    $ctrl.deleteRow = function (row) {
+                        // TODO: Should I move this behaviour to model?
                         var urlparts = $ctrl.serverDeleteUrl.split('?');
                         var url = urlparts[0] + "/" + row.$key;
 
@@ -652,7 +653,7 @@
                                     return 'None';
                                 }();
 
-                                this.IsKey = $scope.isKey === "true";
+                                this.IsKey = angular.isDefined($scope.isKey) ? $scope.isKey : false;
                                 this.Searchable = angular.isDefined($scope.searchable) ? $scope.searchable : false;
                                 this.Visible = $scope.visible === "false" ? false : true;
                                 this.Filter = null;

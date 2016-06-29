@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unosquare.Tubular", "Unosquare.Tubular\Unosquare.Tubular.csproj", "{1A8F5423-F375-4ADD-82A7-5B93182219FF}"
 EndProject
@@ -27,6 +27,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "e2e-tests", "e2e-tests", "{
 		e2e-tests\tbColumn-scen.js = e2e-tests\tbColumn-scen.js
 		e2e-tests\tbFilters-scen.js = e2e-tests\tbFilters-scen.js
 		e2e-tests\tbForm-scen.js = e2e-tests\tbForm-scen.js
+		e2e-tests\tbGridComponent-scen.js = e2e-tests\tbGridComponent-scen.js
 		e2e-tests\tbGridPager-scen.js = e2e-tests\tbGridPager-scen.js
 		e2e-tests\tbGridPagerInfo-scen.js = e2e-tests\tbGridPagerInfo-scen.js
 		e2e-tests\tbHttpSpec.js = e2e-tests\tbHttpSpec.js

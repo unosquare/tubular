@@ -15,7 +15,7 @@ describe('tbHttp', function () {
         element(by.model('password')).sendKeys('pass.word');
 
         element(by.id('submitBtn')).click().then(function() {
-
+            // TODO: Complete
         });
     });
 });

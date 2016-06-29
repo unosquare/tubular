@@ -36,11 +36,14 @@
                 <nav class="collapse navbar-collapse bs-navbar-collapse">
                     <ul class="nav navbar-nav">
                         <li class="dropdown">
-                            <a id="testsSelector" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">e2e tests<span class="caret"></span></a>
+                            <a id="testsSelector" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                e2e tests<span class="caret"></span>
+                            </a>
                             <ul class="dropdown-menu">
                                 <li><a id="tbGridPagerTest" href="/tbGridPagerTests">Tubular Pager Test</a></li>
                                 <li><a id="tbPageSizeSelectorTest" href="/tbGridPagerTests">Tubular Page Size Selector Test</a></li>
                                 <li><a id="tbGridPagerInfoTest" href="/tbGridPagerTests">Tubular Grid Pager Info Test</a></li>
+                                <li><a id="tbGridComponentsTest" href="/tbGridComponentsTests">Tubular Grid Components Test</a></li>
                                 <li><a id="tbColumnSortingTest" href="/tbColumnTests">Tubular Column Sorting Test</a></li>
                                 <li><a id="tbFiltersTest" href="/tbFiltersTests">Tubular Filters Test</a></li>
                                 <li><a id="tbFormTest" href="/tbFormTests">Tubular Form Test</a></li>
@@ -48,7 +51,7 @@
                             </ul>
                         </li>
                     </ul>
-                    <ul class="nav navbar-nav navbar-right">
+                    <ul class="nav navbar-nav navbar-right" ng-controller="navCtrl">
                         <li><a id="tbLogin" href="/Login">Login</a></li>
                     </ul>
                 </nav>
