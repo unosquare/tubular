@@ -39,27 +39,29 @@ describe('tbGridComponents', function () {
 
     it('should update item with tbSaveButton', function () {
         var lastItem = element.all(by.repeater('row in $component.rows')).last();
-        var originalValue = lastItem.$$('td').last().getText();
-        console.log(originalValue);
+        lastItem.$$('td').last().getText().then(function(originalValue) {
+            console.log(originalValue);
 
-        lastItem.$$('button').first().click().then(function () {
-            console.log("Showing");
-            lastItem.$('input').sendKeys('TEST');
+            lastItem.$$('button').first().click().then(function() {
+                console.log("Showing");
+                lastItem.$('input').sendKeys('TEST');
+            });
         });
     });
 
     it('should update item with tbSaveButton and cancel action', function () {
         var lastItem = element.all(by.repeater('row in $component.rows')).last();
-        var originalValue = lastItem.$$('td').last().getText();
-        console.log(originalValue);
+        lastItem.$$('td').last().getText().then(function(originalValue) {
+            console.log(originalValue);
 
-        lastItem.$$('button').first().click().then(function () {
-            console.log("Showing");
-            lastItem.$('input').sendKeys('TEST');
+            lastItem.$$('button').first().click().then(function() {
+                console.log("Showing");
+                lastItem.$('input').sendKeys('TEST');
 
-            lastItem.$$('button').last().click().then(function () {
+                lastItem.$$('button').last().click().then(function() {
 
-                expect(lastItem.$$('td').last().getText()).not.toBe(originalValue);
+                    expect(lastItem.$$('td').last().getText()).not.toBe(originalValue);
+                });
             });
         });
     });
