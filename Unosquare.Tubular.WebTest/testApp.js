@@ -29,6 +29,10 @@
                         templateUrl: '/Unosquare.Tubular.WebTest/common/tbGridComponent_tests.html',
                         title: 'Tubular Grid Components Tests'
                     })
+                    .when('/tbODataTests', {
+                        templateUrl: '/Unosquare.Tubular.WebTest/common/tbOData_tests.html',
+                        title: 'Tubular Grid OData Tests'
+                    })
                     .when('/Login', {
                         templateUrl: '/Unosquare.Tubular.WebTest/common/login.html',
                         title: 'Login'

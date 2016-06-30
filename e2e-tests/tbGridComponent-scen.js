@@ -16,6 +16,7 @@ describe('tbGridComponents', function () {
         element(by.id('newButton')).click().then(function() {
             var newRow = $('tr[ng-show]');
             expect(newRow.isDisplayed()).toBe(true);
+            newRow.$('input').sendKeys('DEMO');
 
             newRow.$$('button').first().click().then(function() {
                 var newLastItem = element.all(by.repeater('row in $component.rows')).last().getText();
@@ -41,6 +42,7 @@ describe('tbGridComponents', function () {
         var originalValue = lastItem.$$('td').last().getText();
 
         lastItem.$$('button').first().click().then(function () {
+            console.log("Showing");
             lastItem.$('input').sendKeys('TEST');
         });
     });
@@ -50,6 +52,7 @@ describe('tbGridComponents', function () {
         var originalValue = lastItem.$$('td').last().getText();
 
         lastItem.$$('button').first().click().then(function () {
+            console.log("Showing");
             lastItem.$('input').sendKeys('TEST');
 
             lastItem.$$('button').last().click().then(function () {
@@ -60,10 +63,31 @@ describe('tbGridComponents', function () {
     });
 
     it('should remove item with tbRemoveButton', function () {
+        var originalCount = element.all(by.repeater('row in $component.rows')).count();
         var lastItem = element.all(by.repeater('row in $component.rows')).last();
 
         lastItem.$('tb-remove-button').click().then(function () {
-            // TODO: Complete
+            expect($('div.popover').isDisplayed()).toBe(false);
+
+            $('div.popover').$$('button').first().click().then(function() {
+                element.all(by.repeater('row in $component.rows')).count().then(function (count) {
+                    expect(count).not.toBe(originalCount);
+                });
+            });
+        });
+    });
+
+    it('should remove item with tbRemoveButton and cancel action', function () {
+        var lastItem = element.all(by.repeater('row in $component.rows')).last();
+
+        lastItem.$('tb-remove-button').click().then(function () {
+            expect($('div.popover').isDisplayed()).toBe(false);
+
+            $('div.popover').$$('button').last().click().then(function () {
+                element.all($('div.popover')).count().then(function (count) {
+                    expect(count).toBe(0);
+                });
+            });
         });
     });
 });
