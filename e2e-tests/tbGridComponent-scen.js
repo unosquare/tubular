@@ -40,7 +40,7 @@ describe('tbGridComponents', function () {
     it('should update item with tbSaveButton', function () {
         var lastItem = element.all(by.repeater('row in $component.rows')).last();
         var originalValue = lastItem.$$('td').last().getText();
-        console.log(lastItem);
+        console.log(originalValue);
 
         lastItem.$$('button').first().click().then(function () {
             console.log("Showing");
@@ -51,7 +51,7 @@ describe('tbGridComponents', function () {
     it('should update item with tbSaveButton and cancel action', function () {
         var lastItem = element.all(by.repeater('row in $component.rows')).last();
         var originalValue = lastItem.$$('td').last().getText();
-        console.log(lastItem);
+        console.log(originalValue);
 
         lastItem.$$('button').first().click().then(function () {
             console.log("Showing");
