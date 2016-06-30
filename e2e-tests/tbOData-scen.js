@@ -9,6 +9,14 @@ describe('OData', function() {
         lastDataRow,
         i_sortIcon,
         a_orderIdSorting,
+        filterBtn,
+        tbColumnFilter,
+        popoverForm,
+        applyBtn,
+        clearBtn,
+        filterSelect,
+        valueInput,
+        dataRows,
         a_customerNameSorting,
         a_shippedDateSorting;
 
@@ -16,7 +24,7 @@ describe('OData', function() {
         // Go to test
         browser.get('index.html');
         element(by.id('testsSelector')).click();
-        element(by.id('tbODataTests')).click();
+        element(by.id('tbODataTest')).click();
 
         // Go to first page if not there    
         element(by.tagName('tb-grid-pager'))
@@ -54,6 +62,18 @@ describe('OData', function() {
 
     describe('Grid OData Sorting', function() {
 
+        beforeAll(function () {
+            // Set test variables
+            tbColumnFilter = element(by.tagName('tb-column-filter'));
+            filterBtn = tbColumnFilter.$('.btn-popover');
+            popoverForm = $('tb-column-filter form.tubular-column-filter-form');
+            applyBtn = popoverForm.$('tb-column-filter-buttons').$('.btn-success');
+            clearBtn = popoverForm.$('tb-column-filter-buttons').$('.btn-danger');
+            filterSelect = popoverForm.$('select');
+            valueInput = popoverForm.$('input:not(.ng-hide)');
+            dataRows = element.all(by.repeater('row in $component.rows'));
+        });
+
         var dataSetLowerID = '10248',
             dataSetHigherID = '11077',
             dataSetLowerCustomerName = 'ALFKI',
@@ -69,6 +89,7 @@ describe('OData', function() {
                     if (sortIconClass.indexOf('arrow-up') != -1) {
                         a_orderIdSorting.click();
                     }
+
                     a_orderIdSorting.click();
                 }
             });
@@ -117,6 +138,28 @@ describe('OData', function() {
 
             expect(firstDataRow.$$('td').get(2).getText()).toMatch(dataSetHigherDate);
             expect(lastDataRow.$$('td').get(2).getText()).toMatch(dataSetLowerDate);
+        });
+
+        it('should correctly filter data for the "Contains" filtering option', function () {
+            var filterOk = true;
+            var containedString = 'KI';
+
+            // Set filter and apply it
+            filterBtn.click();
+            filterSelect.$('[value="string:Contains"]').click();
+            valueInput.sendKeys(containedString);
+            applyBtn.click()
+                .then(function () {
+                    // Verify filtering
+                    dataRows.each(function (row, index) {
+                        row.$$('td').get(1).getText()
+                            .then(function (customer) {
+                                filterOk = filterOk && (customer.indexOf(containedString) != -1);
+                            });
+                    }).then(function () {
+                        expect(filterOk).toBe(true);
+                    });
+                });
         });
     });
 });

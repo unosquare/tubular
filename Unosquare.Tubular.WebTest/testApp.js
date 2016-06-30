@@ -33,6 +33,10 @@
                         templateUrl: '/Unosquare.Tubular.WebTest/common/tbOData_tests.html',
                         title: 'Tubular Grid OData Tests'
                     })
+                    .when('/tbSingleFormTests', {
+                        templateUrl: '/Unosquare.Tubular.WebTest/common/tbSingleForm_tests.html',
+                        title: 'Tubular Single Form Tests'
+                    })
                     .when('/Login', {
                         templateUrl: '/Unosquare.Tubular.WebTest/common/login.html',
                         title: 'Login'

@@ -207,7 +207,7 @@ describe('Tubular Filters', function () {
             // Set filter and apply it
             filterBtn.click();
             filterSelect.$('[value="string:Contains"]').click();
-            valueInput.sendKeys('La');
+            valueInput.sendKeys(containedString);
             applyBtn.click()
                 .then(function () {
                     // Verify filtering

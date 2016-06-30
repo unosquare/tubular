@@ -40,6 +40,7 @@ describe('tbGridComponents', function () {
     it('should update item with tbSaveButton', function () {
         var lastItem = element.all(by.repeater('row in $component.rows')).last();
         var originalValue = lastItem.$$('td').last().getText();
+        console.log(lastItem);
 
         lastItem.$$('button').first().click().then(function () {
             console.log("Showing");
@@ -50,6 +51,7 @@ describe('tbGridComponents', function () {
     it('should update item with tbSaveButton and cancel action', function () {
         var lastItem = element.all(by.repeater('row in $component.rows')).last();
         var originalValue = lastItem.$$('td').last().getText();
+        console.log(lastItem);
 
         lastItem.$$('button').first().click().then(function () {
             console.log("Showing");
@@ -67,7 +69,7 @@ describe('tbGridComponents', function () {
         var lastItem = element.all(by.repeater('row in $component.rows')).last();
 
         lastItem.$('tb-remove-button').click().then(function () {
-            expect($('div.popover').isDisplayed()).toBe(false);
+            expect($('div.popover').isDisplayed()).toBe(true);
 
             $('div.popover').$$('button').first().click().then(function() {
                 element.all(by.repeater('row in $component.rows')).count().then(function (count) {
@@ -81,7 +83,7 @@ describe('tbGridComponents', function () {
         var lastItem = element.all(by.repeater('row in $component.rows')).last();
 
         lastItem.$('tb-remove-button').click().then(function () {
-            expect($('div.popover').isDisplayed()).toBe(false);
+            expect($('div.popover').isDisplayed()).toBe(true);
 
             $('div.popover').$$('button').last().click().then(function () {
                 element.all($('div.popover')).count().then(function (count) {
