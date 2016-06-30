@@ -14,7 +14,7 @@
          */
         .service('tubularHttp', [
             '$http', '$timeout', '$q', '$cacheFactory', 'localStorageService', '$filter',
-            function tubularHttp($http, $timeout, $q, $cacheFactory, localStorageService, $filter) {
+            function($http, $timeout, $q, $cacheFactory, localStorageService, $filter) {
                 var me = this;
 
                 function isAuthenticationExpired(expirationDate) {

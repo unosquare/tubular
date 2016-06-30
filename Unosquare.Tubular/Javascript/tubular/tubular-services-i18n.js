@@ -9,8 +9,7 @@
          * @description
          * Use `tubularTranslate` to translate strings.
          */
-        .service('tubularTranslate', [
-            function tubularTranslate() {
+        .service('tubularTranslate', [function () {
                 var me = this;
 
                 me.currentLanguage = 'en';

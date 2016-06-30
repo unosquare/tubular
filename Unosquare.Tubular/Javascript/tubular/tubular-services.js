@@ -19,7 +19,7 @@
          */
         .service('tubularPopupService', [
             '$uibModal', '$rootScope', 'tubularTemplateService',
-            function tubularPopupService($modal, $rootScope, tubularTemplateService) {
+            function($modal, $rootScope, tubularTemplateService) {
                 var me = this;
 
                 me.onSuccessForm = function (callback) {
@@ -32,6 +32,7 @@
 
                 /**
                  * Opens a new Popup
+                 * 
                  * @param {string} template 
                  * @param {object} model 
                  * @param {object} gridScope 
@@ -109,7 +110,7 @@
          * @description
          * Use `tubularGridExportService` to export your `tbGrid` to a CSV file.
          */
-        .service('tubularGridExportService', function tubularGridExportService() {
+        .service('tubularGridExportService', function() {
             var me = this;
 
             me.getColumns = function (gridScope) {
@@ -194,8 +195,7 @@
          * @description
          * The `tubularEditorService` service is a internal helper to setup any `TubularModel` with a UI.
          */
-        .service('tubularEditorService', [
-            '$filter', function tubularEditorService($filter) {
+        .service('tubularEditorService', ['$filter', function($filter) {
                 var me = this;
 
                 /**
@@ -355,9 +355,19 @@
                                     parent.$watch(function () {
                                         return ctrl.value;
                                     }, function (value) {
+                                        if (value === parent.model[scope.Name]) return;
+
                                         parent.model[scope.Name] = value;
                                     });
                                 }
+
+                                scope.$watch(function () {
+                                    return parent.model[scope.Name];
+                                }, function (value) {
+                                    if (value === ctrl.value) return;
+
+                                    ctrl.value = value;
+                                }, true);
 
                                 if ((!ctrl.value || ctrl.value == null) && (ctrl.defaultValue && ctrl.defaultValue != null)) {
                                     if (ctrl.DataType === 'date' && ctrl.defaultValue != null) {

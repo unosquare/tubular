@@ -40,7 +40,7 @@ describe('tbGridComponents', function () {
         var lastItem = element.all(by.repeater('row in $component.rows')).last();
         var originalValue = lastItem.$$('td').last().getText();
 
-        lastItem.$('tb-edit-button').click().then(function () {
+        lastItem.$$('button').first().click().then(function () {
             lastItem.$('input').sendKeys('TEST');
         });
     });
@@ -49,7 +49,7 @@ describe('tbGridComponents', function () {
         var lastItem = element.all(by.repeater('row in $component.rows')).last();
         var originalValue = lastItem.$$('td').last().getText();
 
-        lastItem.$('tb-edit-button').click().then(function () {
+        lastItem.$$('button').first().click().then(function () {
             lastItem.$('input').sendKeys('TEST');
 
             lastItem.$$('button').last().click().then(function () {

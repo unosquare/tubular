@@ -12,8 +12,7 @@
          * This service is just a facade to the node module expose like `tubularTemplateServiceModule`.
          */
         .service('tubularTemplateService', [
-            '$templateCache', 'tubularEditorService',
-            function tubularTemplateService($templateCache, tubularEditorService) {
+            '$templateCache', 'tubularEditorService', function($templateCache, tubularEditorService) {
                 var me = this;
 
                 me.enums = tubularTemplateServiceModule.enums;

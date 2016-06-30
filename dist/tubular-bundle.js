@@ -2727,21 +2727,6 @@ try {
 
                                 $scope.$emit('tbForm_OnGreetParentController', $scope);
 
-                                $scope.$watch('model', function (val, prev) {
-                                    if (!prev) return;
-
-                                    angular.forEach(val, function(value, key) {
-                                        if (key[0] === '$') return;
-                                        if (value === prev[key]) return;
-
-                                        angular.forEach($scope.fields, function(field) {
-                                            if (key === field.name) {
-                                                field.value = value;
-                                            }
-                                        });
-                                    });
-                                }, true);
-
                                 $scope.$on('$destroy', function () { $timeout.cancel(timer); });
                             };
                         }
@@ -3450,7 +3435,7 @@ try {
          */
         .service('tubularPopupService', [
             '$uibModal', '$rootScope', 'tubularTemplateService',
-            function tubularPopupService($modal, $rootScope, tubularTemplateService) {
+            function($modal, $rootScope, tubularTemplateService) {
                 var me = this;
 
                 me.onSuccessForm = function (callback) {
@@ -3463,6 +3448,7 @@ try {
 
                 /**
                  * Opens a new Popup
+                 * 
                  * @param {string} template 
                  * @param {object} model 
                  * @param {object} gridScope 
@@ -3540,7 +3526,7 @@ try {
          * @description
          * Use `tubularGridExportService` to export your `tbGrid` to a CSV file.
          */
-        .service('tubularGridExportService', function tubularGridExportService() {
+        .service('tubularGridExportService', function() {
             var me = this;
 
             me.getColumns = function (gridScope) {
@@ -3625,8 +3611,7 @@ try {
          * @description
          * The `tubularEditorService` service is a internal helper to setup any `TubularModel` with a UI.
          */
-        .service('tubularEditorService', [
-            '$filter', function tubularEditorService($filter) {
+        .service('tubularEditorService', ['$filter', function($filter) {
                 var me = this;
 
                 /**
@@ -3786,9 +3771,19 @@ try {
                                     parent.$watch(function () {
                                         return ctrl.value;
                                     }, function (value) {
+                                        if (value === parent.model[scope.Name]) return;
+
                                         parent.model[scope.Name] = value;
                                     });
                                 }
+
+                                scope.$watch(function () {
+                                    return parent.model[scope.Name];
+                                }, function (value) {
+                                    if (value === ctrl.value) return;
+
+                                    ctrl.value = value;
+                                }, true);
 
                                 if ((!ctrl.value || ctrl.value == null) && (ctrl.defaultValue && ctrl.defaultValue != null)) {
                                     if (ctrl.DataType === 'date' && ctrl.defaultValue != null) {
@@ -3868,7 +3863,7 @@ try {
          */
         .service('tubularHttp', [
             '$http', '$timeout', '$q', '$cacheFactory', 'localStorageService', '$filter',
-            function tubularHttp($http, $timeout, $q, $cacheFactory, localStorageService, $filter) {
+            function($http, $timeout, $q, $cacheFactory, localStorageService, $filter) {
                 var me = this;
 
                 function isAuthenticationExpired(expirationDate) {
@@ -4295,8 +4290,7 @@ try {
          * Use `tubularLocalData` to connect a grid or a form to a local
          * JSON database.
          */
-        .service('tubularLocalData', [
-            'tubularHttp', '$q', '$filter', function tubularLocalData(tubularHttp, $q, $filter) {
+        .service('tubularLocalData', ['tubularHttp', '$q', '$filter', function(tubularHttp, $q, $filter) {
                 var me = this;
 
                 me.retrieveDataAsync = function(request) {
@@ -4475,8 +4469,7 @@ try {
          * 
          * This service provides authentication using bearer-tokens, if you require any other you need to provide it.
          */
-        .service('tubularOData', [
-            'tubularHttp', function tubularOData(tubularHttp) {
+        .service('tubularOData', ['tubularHttp', function(tubularHttp) {
                 var me = this;
 
                 // {0} represents column name and {1} represents filter value
@@ -4632,8 +4625,7 @@ try {
          * This service is just a facade to the node module expose like `tubularTemplateServiceModule`.
          */
         .service('tubularTemplateService', [
-            '$templateCache', 'tubularEditorService',
-            function tubularTemplateService($templateCache, tubularEditorService) {
+            '$templateCache', 'tubularEditorService', function($templateCache, tubularEditorService) {
                 var me = this;
 
                 me.enums = tubularTemplateServiceModule.enums;
@@ -4924,8 +4916,7 @@ try {
          * @description
          * Use `tubularTranslate` to translate strings.
          */
-        .service('tubularTranslate', [
-            function tubularTranslate() {
+        .service('tubularTranslate', [function () {
                 var me = this;
 
                 me.currentLanguage = 'en';

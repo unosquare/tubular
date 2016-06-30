@@ -12,8 +12,7 @@
          * 
          * This service provides authentication using bearer-tokens, if you require any other you need to provide it.
          */
-        .service('tubularOData', [
-            'tubularHttp', function tubularOData(tubularHttp) {
+        .service('tubularOData', ['tubularHttp', function(tubularHttp) {
                 var me = this;
 
                 // {0} represents column name and {1} represents filter value

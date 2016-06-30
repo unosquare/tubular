@@ -206,21 +206,6 @@
 
                                 $scope.$emit('tbForm_OnGreetParentController', $scope);
 
-                                $scope.$watch('model', function (val, prev) {
-                                    if (!prev) return;
-
-                                    angular.forEach(val, function(value, key) {
-                                        if (key[0] === '$') return;
-                                        if (value === prev[key]) return;
-
-                                        angular.forEach($scope.fields, function(field) {
-                                            if (key === field.name) {
-                                                field.value = value;
-                                            }
-                                        });
-                                    });
-                                }, true);
-
                                 $scope.$on('$destroy', function () { $timeout.cancel(timer); });
                             };
                         }

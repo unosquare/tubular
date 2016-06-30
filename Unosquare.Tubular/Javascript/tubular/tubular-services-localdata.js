@@ -10,8 +10,7 @@
          * Use `tubularLocalData` to connect a grid or a form to a local
          * JSON database.
          */
-        .service('tubularLocalData', [
-            'tubularHttp', '$q', '$filter', function tubularLocalData(tubularHttp, $q, $filter) {
+        .service('tubularLocalData', ['tubularHttp', '$q', '$filter', function(tubularHttp, $q, $filter) {
                 var me = this;
 
                 me.retrieveDataAsync = function(request) {
