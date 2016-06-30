@@ -94,16 +94,16 @@ describe('LocalData', function() {
         it('should order data in ascending order when click-sorting an unsorted text column', function() {
             a_customerNameSorting.click();
 
-            expect(firstDataRow.$$('td').get(1).getText()).toBe(dataSetLowerCustomerName);
-            expect(lastDataRow.$$('td').get(1).getText()).toBe(dataSetHigherCustomerName);
+            expect(firstDataRow.$$('td').get(0).getText()).toBe(dataSetLowerCustomerName);
+            expect(lastDataRow.$$('td').get(0).getText()).toBe(dataSetHigherCustomerName);
         });
 
         it('should order data in descending order when click-sorting an ascending-sorted text column', function() {
             a_customerNameSorting.click();
             a_customerNameSorting.click();
 
-            expect(firstDataRow.$$('td').get(1).getText()).toBe(dataSetHigherCustomerName);
-            expect(lastDataRow.$$('td').get(1).getText()).toBe(dataSetLowerCustomerName);
+            expect(firstDataRow.$$('td').get(0).getText()).toBe(dataSetHigherCustomerName);
+            expect(lastDataRow.$$('td').get(0).getText()).toBe(dataSetLowerCustomerName);
         });
 
         it('should correctly filter data for the "Contains" filtering option', function () {
