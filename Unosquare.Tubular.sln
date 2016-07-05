@@ -31,7 +31,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "e2e-tests", "e2e-tests", "{
 		e2e-tests\tbGridPager-scen.js = e2e-tests\tbGridPager-scen.js
 		e2e-tests\tbGridPagerInfo-scen.js = e2e-tests\tbGridPagerInfo-scen.js
 		e2e-tests\tbHttpSpec.js = e2e-tests\tbHttpSpec.js
+		e2e-tests\tbLocalData-scen.js = e2e-tests\tbLocalData-scen.js
+		e2e-tests\tbOData-scen.js = e2e-tests\tbOData-scen.js
 		e2e-tests\tbPageSizeSelector-scen.js = e2e-tests\tbPageSizeSelector-scen.js
+		e2e-tests\tbSingleForm-scen.js = e2e-tests\tbSingleForm-scen.js
 		e2e-tests\tbTemplateServiceModelSpec.js = e2e-tests\tbTemplateServiceModelSpec.js
 	EndProjectSection
 EndProject

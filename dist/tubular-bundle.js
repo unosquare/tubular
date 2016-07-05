@@ -2836,7 +2836,7 @@ try {
             template: '<button class="btn btn-danger btn-xs btn-popover" uib-popover-template="$ctrl.templateName" popover-placement="right" ' +
                 'popover-title="{{ $ctrl.legend || (\'UI_REMOVEROW\' | translate) }}" popover-is-open="$ctrl.isOpen" popover-trigger="click outsideClick" ' +
                 'ng-hide="$ctrl.model.$isEditing">' +
-                '<span ng-show="$ctrl.showIcon" class="{{::icon}}"></span>' +
+                '<span ng-show="$ctrl.showIcon" class="{{::$ctrl.icon}}"></span>' +
                 '<span ng-show="$ctrl.showCaption">{{:: $ctrl.caption || (\'CAPTION_REMOVE\' | translate) }}</span>' +
                 '</button>',
             bindings: {
