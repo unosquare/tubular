@@ -8,7 +8,9 @@ exports.config = {
       'tbColumn-scen.js',
       'tbFilters-scen.js',
       'tbForm-scen.js',
-      'tbFormSave-scen.js'
+      'tbFormSave-scen.js',
+      'tbFormConnErrorNoModelKey-scen.js',
+      'tbFormConnErrorNoServerUrl-scen.js'
     ],
 
     capabilities: {
