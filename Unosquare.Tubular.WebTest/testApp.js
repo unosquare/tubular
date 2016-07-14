@@ -45,6 +45,14 @@
                         templateUrl: '/Unosquare.Tubular.WebTest/common/login.html',
                         title: 'Login'
                     })
+                    .when('/tbFormConnErrorNoModelKeyTests', {
+                        templateUrl: '/Unosquare.Tubular.WebTest/common/tbFormConnErrorNoModelKey_tests.html',
+                        title: 'Tubular Form Loading Test'
+                    })
+                    .when('/tbFormConnErrorNoServerUrlTests', {
+                        templateUrl: '/Unosquare.Tubular.WebTest/common/tbFormConnErrorNoServerUrl_tests.html',
+                        title: 'Tubular Form Loading Test'
+                    })
                     .otherwise({
                         redirectTo: '/'
                     });
@@ -54,6 +62,10 @@
         ]).controller("tbFormCtrl", function($scope) {
             $scope.$on('tbForm_OnSuccessfulSave', function(event, data, form) {
                 toastr.success(data || "Updated");
+            });
+            $scope.$on('tbForm_OnConnectionError', function(event, data) {
+                $scope.Error = "No data found";
+                toastr.error('No data found');
             });
         }).controller('LoginCtrl', ['$scope', '$location', 'tubularHttp', function ($scope, $location, tubularHttp) {
             $scope.loading = false;
