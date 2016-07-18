@@ -42,9 +42,14 @@ describe('tbGridComponents', function () {
         lastItem.$$('td').last().getText().then(function(originalValue) {
             console.log(originalValue);
 
-            lastItem.$$('button').first().click().then(function() {
+            lastItem.$$('button').get(2).click().then(function() {
                 console.log("Showing");
-                lastItem.$('input').sendKeys('TEST');
+                lastItem.$$('input').sendKeys('TEST').then(function(){
+                    lastItem.$$('button').first().click().then(function(){
+                        expect(lastItem.$$('td').last().getText()).toBe("DEMOTEST");
+                        
+                    });
+                });
             });
         });
     });
@@ -54,13 +59,12 @@ describe('tbGridComponents', function () {
         lastItem.$$('td').last().getText().then(function(originalValue) {
             console.log(originalValue);
 
-            lastItem.$$('button').first().click().then(function() {
+            lastItem.$$('button').get(2).click().then(function() {
                 console.log("Showing");
                 lastItem.$('input').sendKeys('TEST');
 
-                lastItem.$$('button').last().click().then(function() {
-
-                    expect(lastItem.$$('td').last().getText()).not.toBe(originalValue);
+                lastItem.$$('button').get(1).click().then(function() {
+                    expect(lastItem.$$('td').last().getText()).toBe(originalValue);
                 });
             });
         });
@@ -88,10 +92,11 @@ describe('tbGridComponents', function () {
             expect($('div.popover').isDisplayed()).toBe(true);
 
             $('div.popover').$$('button').last().click().then(function () {
-                element.all($('div.popover')).count().then(function (count) {
+                element.all(by.css('popover')).count().then(function (count) {
                     expect(count).toBe(0);
                 });
             });
         });
     });
+    
 });
