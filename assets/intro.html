@@ -86,7 +86,10 @@ $ npm install tubular --save</div>
                     Finally update your modules to include Tubular, for example if your module is called <i>app</i>, then you will need to add Tubular as a dependency as follows:
                 </p>
 
-                <div hljs>angular.module('app', ['ngRoute','tubular']);</div>
+                <div hljs>angular.module('app', [tubular']);</div>
+
+                <p>If you want to use OData or LocalData connectors to populate tbGrid, you must include the separated files. Previous to version 1.0.0 those services where in the main bundle.</p>
+                
                 <hr />
                 <h1 id="settings">Global Settings</h1>
                 <p>
