@@ -223,3 +223,9 @@ FakesAssemblies/
 /Unosquare.Tubular.Sample/ui/tubular/*.js
 /instrumented
 dist/tubular-bundle.min.js
+/Unosquare.Tubular/Javascript/tubular-localdata-bundle.js
+/Unosquare.Tubular/Javascript/tubular-localdata-bundle.min.js
+/Unosquare.Tubular/Javascript/tubular-odata-bundle.js
+/Unosquare.Tubular/Javascript/tubular-odata-bundle.min.js
+/Unosquare.Tubular/Javascript/tubular-widget-bundle.min.js
+/Unosquare.Tubular/Javascript/tubular-widget-bundle.js

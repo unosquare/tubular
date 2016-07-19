@@ -85,7 +85,7 @@ Then you will need to either grab your own copy of Tubular or you use jsDelivr t
 Finally update your modules to include Tubular, for example if your module is called <i>app</i>, then you will need to add Tubular as a dependency as follows:
 
 ```javascript
-angular.module('app', ['ngRoute','tubular']);
+angular.module('app', ['tubular']);
 ```
 
 ## Global Settings

@@ -42,8 +42,7 @@
 
                 $locationProvider.html5Mode(true);
             }
-        ]).config([
-        '$httpProvider', function ($httpProvider) {
+        ]).config(['$httpProvider', function ($httpProvider) {
             $httpProvider.interceptors.push('noCacheInterceptor');
         }
         ]).factory('noCacheInterceptor', function () {

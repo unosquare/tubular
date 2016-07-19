@@ -16,14 +16,6 @@
                 localStorageServiceProvider.setPrefix('tubular');
             }
         ])
-        .run([
-            'tubularHttp', 'tubularOData', 'tubularLocalData',
-            function(tubularHttp, tubularOData, tubularLocalData) {
-                // register data services
-                tubularHttp.registerService('odata', tubularOData);
-                tubularHttp.registerService('local', tubularLocalData);
-            }
-        ])
         /**
          * @ngdoc filter
          * @name errormessage

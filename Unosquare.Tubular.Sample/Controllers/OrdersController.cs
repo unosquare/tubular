@@ -3,6 +3,7 @@
     using System.Data.Entity;
     using System.Linq;
     using System.Threading.Tasks;
+    using System.Collections.Generic;
     using System.Web.Http;
     using Unosquare.Tubular.Sample.ApiModels;
     using Unosquare.Tubular.ObjectModel;
@@ -28,29 +29,33 @@
         }
 
         [HttpPost, Route("paged")]
-        public async Task<IHttpActionResult> GridData([FromBody] GridDataRequest request)
+        public IHttpActionResult GridData([FromBody] GridDataRequest request)
         {
             using (var context = new SampleDbContext())
             {
-                return Ok(await Task.Run(() => request.CreateGridDataResponse(context.Orders.AsNoTracking())));
+                return Ok(request.CreateGridDataResponse(context.Orders));
             }
         }
 
         private static IQueryable FormatOutput(IQueryable q)
         {
-            var subset = (q as IQueryable<OrderDto>).ToArray();
+            var list = new List<OrderDto>();
 
-            foreach (var item in subset)
+            foreach (var i in q)
             {
+                var item = i as OrderDto;
+
                 if (item.CustomerName == "Super La Playa")
                 {
                     item.ShippedDate = "Blocked";
                     item.ShipperCity = "Blocked";
                     item.Amount = "Blocked";
                 }
+
+                list.Add(item);
             }
 
-            return subset.AsQueryable();
+            return list.AsQueryable();
         }
 
         [HttpPost, Route("pagedwithformat")]

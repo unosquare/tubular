@@ -41,7 +41,7 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Linq.Dynamic.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Linq.Dynamic.Core.1.0.5.0\lib\net461\System.Linq.Dynamic.Core.dll</HintPath>
+      <HintPath>..\packages\System.Linq.Dynamic.Core.1.0.5.1\lib\net461\System.Linq.Dynamic.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Net.Http" />
@@ -91,6 +91,14 @@
     <Content Include="Javascript\tubular-highcharts-bundle.js" />
     <Content Include="Javascript\tubular-highcharts-bundle.min.js">
       <DependentUpon>tubular-highcharts-bundle.js</DependentUpon>
+    </Content>
+    <Content Include="Javascript\tubular-localdata-bundle.js" />
+    <Content Include="Javascript\tubular-localdata-bundle.min.js">
+      <DependentUpon>tubular-localdata-bundle.js</DependentUpon>
+    </Content>
+    <Content Include="Javascript\tubular-odata-bundle.js" />
+    <Content Include="Javascript\tubular-odata-bundle.min.js">
+      <DependentUpon>tubular-odata-bundle.js</DependentUpon>
     </Content>
     <Content Include="Javascript\tubular-widget-bundle.js" />
     <Content Include="Javascript\tubular-widget-bundle.min.js">

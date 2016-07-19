@@ -7,7 +7,7 @@
      * 
      * @description
      * Tubular Services module. 
-     * It contains common services like Http and OData clients, and filtering and printing services.
+     * It contains common services like HTTP client, filtering and printing services.
      */
     angular.module('tubular.services', ['ui.bootstrap'])
         /**
