@@ -88,6 +88,8 @@ Finally update your modules to include Tubular, for example if your module is ca
 angular.module('app', ['tubular']);
 ```
 
+If you want to use OData or LocalData connectors to populate tbGrid, you must include the separated files. Previous to version 1.0.0 those services where in the main bundle.
+
 ## Global Settings
 
 You can access to global settings by using the static object <i>TubularDefaultSettings</i> and setup common behavior in Tubular. The settings included are:
