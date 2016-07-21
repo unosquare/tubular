@@ -152,7 +152,7 @@
         /// <param name="dataSource">The IQueryable source</param>
         /// <returns></returns>
         public static GridDataResponse CreateGridDataResponse(this GridDataRequest request, IQueryable dataSource)
-        {
+          {
             return CreateGridDataResponse(request, dataSource, null);
         }
 
@@ -180,6 +180,7 @@
             var columnMap = MapColumnsToProperties(request.Columns, properties);
 
             var subset = FilterResponse(request, dataSource, response);
+            
 
             // Perform Sorting
             var orderingExpression = string.Empty;
@@ -291,7 +292,7 @@
                 {
                     response.CurrentPage = 1 +
                                            (int)
-                                               Math.Round((request.Skip/(float) response.FilteredRecordCount)*
+                                               Math.Truncate((request.Skip/(float) response.FilteredRecordCount)*
                                                           response.TotalPages);
 
                     if (response.CurrentPage > response.TotalPages)
@@ -313,7 +314,6 @@
                 subset = preProcessSubset(subset);
 
             response.Payload = CreateGridPayload(subset, columnMap, pageSize, request.TimezoneOffset);
-
             return response;
         }
 
