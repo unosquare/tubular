@@ -194,7 +194,7 @@ namespace Unosquare.Tubular.Tests
             var request = new GridDataRequest()
             {
                 Take = PageSize,
-                Skip = 0,
+                Skip = 30,
                 Search = new Filter()
                 {
                     Operator = CompareOperators.Auto,
@@ -203,12 +203,45 @@ namespace Unosquare.Tubular.Tests
                 Columns = Thing.GetColumns()
             };
 
-            var response = request.CreateGridDataResponse(dataSource.AsQueryable());
+
+            var response = request.CreateGridDataResponse(_context.Things.AsQueryable());
 
             Assert.AreEqual(data.Count, response.Payload.Count, "Same length");
             Assert.AreEqual(data.First().Id, response.Payload.First().First(), "Same first item");
+            Assert.AreEqual(dataSource.Where(x => x.Name.ToLowerInvariant().Contains(SearchText.ToLowerInvariant())), response.FilteredRecordCount, "Total filtered rows matching");
+        }
 
-            Assert.AreEqual(dataSource.Count(x => x.Name.ToLowerInvariant().Contains(SearchText.ToLowerInvariant())), response.FilteredRecordCount, "Total filtered rows matching");
+        [Test]
+        public void TestSimpleSearch2() {
+            //var data = _context.Things.Where(c => c.Color.);
+            var dataSource = new List<Thing>();
+           
+             for (var i = 0; i < 422; i++)
+             {
+                dataSource.Add(new Thing { Color = "red" });
+                dataSource.Add(new Thing { Color = "blue" });
+                dataSource.Add(new Thing { Color = "yellow" });
+             }
+
+            var columns = new GridColumn[] {
+                new GridColumn { Name = "Color", Sortable = true, Searchable = true, DataType = DataType.String, SortOrder=2},
+                new GridColumn {Name = "Id"}
+            };
+            var request = new GridDataRequest()
+            {
+                Columns = columns,
+                TimezoneOffset = 300,
+                Take = 100,
+                Skip = 300,
+                Search = new Filter()
+                {
+                    Operator = CompareOperators.Auto,
+                    Text = "red"
+                }
+                
+            };
+            var response = request.CreateGridDataResponse(dataSource.AsQueryable());
+            Assert.AreEqual(4, response.CurrentPage);
         }
 
         [Test]
