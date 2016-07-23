@@ -53,6 +53,10 @@
                         templateUrl: '/Unosquare.Tubular.WebTest/common/tbFormConnErrorNoServerUrl_tests.html',
                         title: 'Tubular Form Loading Test'
                     })
+                    .when('/tbFormConnErrorNoServerUrlTests2',{
+                        templateUrl: '/Unosquare.Tubular.WebTest/common/tbFormConnErrorNoServerUrl_tests2.html',
+                        title: 'Tubular Form Loading Test 2'
+                    })
                     .otherwise({
                         redirectTo: '/'
                     });
