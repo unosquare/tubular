@@ -66,6 +66,7 @@
         ]).controller("tbFormCtrl", function($scope) {
             $scope.$on('tbForm_OnSuccessfulSave', function(event, data, form) {
                 toastr.success(data || "Updated");
+                alert("saved");
             });
             $scope.$on('tbForm_OnConnectionError', function(event, data) {
                 $scope.Error = "No data found";
@@ -93,6 +94,10 @@
             };
         }]).controller("navCtrl", function($scope) {
             // TODO: Check login info
+        }).controller('onSaved',function($scope){
+        $scope.$on('tbForm_OnSuccessfulSave', function(event, data, form) {
+                $scope.svText = "Saved";
+            });
         });
 
     angular.module('app', [

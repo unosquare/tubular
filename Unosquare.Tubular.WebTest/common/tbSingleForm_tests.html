@@ -1,4 +1,5 @@
-﻿<tb-form server-url="http://tubular.azurewebsites.net/api/orders/" require-authentication="false" model-key="1"
+<div ng-controller="onSaved">
+<tb-form server-url="http://tubular.azurewebsites.net/api/orders/" require-authentication="false" model-key="1"
          server-save-url="http://tubular.azurewebsites.net/api/orders/save">
     <div class="row">
         <h2>
@@ -10,7 +11,7 @@
             </tb-simple-editor>
         </div>
         <div class="col-md-4">
-            <button class="btn btn-warning" ng-click="Model.CustomerName = 'Unosquare'">Default name</button>
+            <button id="btnDefault" class="btn btn-warning" ng-click="Model.CustomerName = 'Unosquare'">Default name</button>
         </div>
     </div>
     <div class="row">
@@ -23,11 +24,12 @@
     <div class="row">
         <div class="col-md-12">
             <hr />
-            <button class="btn btn-primary" ng-click="$parent.save()" ng-disabled="!$parent.model.$valid()">Save</button>
+            <button id="btnSave"class="btn btn-primary" ng-click="$parent.save()" ng-disabled="!$parent.model.$valid()">Save</button>
             <button class="btn btn-danger" ng-click="$parent.cancel()">Go Back</button>
-
+            <br><span id="textSpan">{{svText}}</span>
             <hr />
             <code>{{Model | json}}</code>
         </div>
     </div>
 </tb-form>
+</div>

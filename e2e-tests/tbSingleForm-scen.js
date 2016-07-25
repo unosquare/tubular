@@ -18,11 +18,16 @@ describe('tbSingleForm', function() {
         it('should change customer name', function () {
             $('#btnDefault').click().then(function() {
                 expect($('input').getAttribute('value')).toBe('Unosquare');
-            });     
+            });
+            $('input').clear().then(function(){
+                $('input').sendKeys = "Microsoft";
+            });
         });
         
         it('should save it', function(){
-            
+            $('#btnSave').click().then(function(){
+                 expect($('#textSpan').getText()).toBe("Saved");
+            });           
         });
 
         
