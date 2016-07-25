@@ -9,16 +9,22 @@ describe('tbSingleForm', function() {
         element(by.id('tbSingleFormTest')).click();
 
     });
-
-    describe('Form fields', function() {
+    
+    describe('Form fields', function() {        
         it('should load correct info', function() {
-            expect($('input').getText()).toBe('Microsoft');
+             expect($('input').getAttribute('value')).toBe('Microsoft');
         });
 
         it('should change customer name', function () {
-            $('button[class=btn-warning]').click().then(function() {
-                expect($('input').getText()).toBe('Unosquare');
-            });
+            $('#btnDefault').click().then(function() {
+                expect($('input').getAttribute('value')).toBe('Unosquare');
+            });     
         });
+        
+        it('should save it', function(){
+            
+        });
+
+        
     });
 });
