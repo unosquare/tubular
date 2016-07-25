@@ -94,10 +94,12 @@
             };
         }]).controller("navCtrl", function($scope) {
             // TODO: Check login info
+
         }).controller('onSaved',function($scope){
         $scope.$on('tbForm_OnSuccessfulSave', function(event, data, form) {
-                $scope.svText = "Saved";
+                $scope.textSave = "Saved";
             });
+
         });
 
     angular.module('app', [
