@@ -62,5 +62,15 @@ describe('tbSingleForm', function() {
                 expect($('select').$('option:checked').getText()).toEqual('');
             });
         });
+        
+        it('should not save if not Changes', function(){
+            browser.get('index.html');
+            element(by.id('testsSelector')).click();
+            element(by.id('tbSingleFormTest')).click();
+            var text = $('input').getAttribute('value');
+            $('#btnSave').click().then(function(){
+                expect($('input').getAttribute('value')).toEqual(text);
+            });
+        });
     });
 });

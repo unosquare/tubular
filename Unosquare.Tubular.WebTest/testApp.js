@@ -57,6 +57,10 @@
                         templateUrl: '/Unosquare.Tubular.WebTest/common/tbFormConnErrorNoServerUrl_tests2.html',
                         title: 'Tubular Form Loading Test 2'
                     })
+                    .when('/expirationDate',{
+                        templateUrl: '/Unosquare.Tubular.WebTest/common/expiration.html',
+                        title:'expiration test'
+                    })
                     .otherwise({
                         redirectTo: '/'
                     });
@@ -74,23 +78,26 @@
             });
         }).controller('LoginCtrl', ['$scope', '$location', 'tubularHttp', function ($scope, $location, tubularHttp) {
             $scope.loading = false;
-            tubularHttp.tokenUrl = '/token';
-
+            tubularHttp.tokenUrl = 'http://tubular.azurewebsites.net/token';
             $scope.submitForm = function (valid) {
                 if (valid == false) {
                     toastr.error("Please complete form");
                 }
 
-                $scope.loading = true;
-
+                $scope.loading = true;    
                 tubularHttp.authenticate($scope.username, $scope.password, $scope.redirectHome, function (error) {
-                    $scope.loading = false;
+                    var resul = tubularHttp.isAuthenticated();
+                    $scope.isAuth = resul;
+                    $scope.loading = false;                    
                     toastr.error(error);
                 }, true);
             };
-
-            $scope.redirectHome = function () {
-                $location.path("/");
+           
+            $scope.redirectHome = function () {                
+                $location.path("/expirationDate");
+                //$scope.Login = 'Login';
+                //var resul = tubularHttp.isAuthenticated();
+                //$scope.isAuth = resul;
             };
         }]).controller("navCtrl", function($scope) {
             // TODO: Check login info
@@ -100,7 +107,21 @@
                 $scope.textSave = "Saved";
             });
 
-        });
+        }).controller('expDate',['$scope', 'tubularHttp', 'localStorageService','$location', function($scope, tubularHttp, localStorageService, $location){
+            $scope.changeExpirationDate = function(){
+                localStorageService.clearAll();
+                tubularHttp.setRequireAuthentication(true);
+                tubularHttp.userData.expirationDate = null;
+                $location.path("/expirationDate");
+                if(tubularHttp.isAuthenticated()){
+                    $scope.redirected = "Authenticated";
+                }
+                else
+                {
+                    $scope.redirected = "Not Authenticated";
+                }
+            };
+        }]);
 
     angular.module('app', [
         'tubular',
