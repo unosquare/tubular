@@ -95,9 +95,6 @@
            
             $scope.redirectHome = function () {                
                 $location.path("/expirationDate");
-                //$scope.Login = 'Login';
-                //var resul = tubularHttp.isAuthenticated();
-                //$scope.isAuth = resul;
             };
         }]).controller("navCtrl", function($scope) {
             // TODO: Check login info
@@ -108,6 +105,17 @@
             });
 
         }).controller('expDate',['$scope', 'tubularHttp', 'localStorageService','$location', function($scope, tubularHttp, localStorageService, $location){
+            $scope.isAuthenticated = function(){
+              if(tubularHttp.isAuthenticated()){
+                  $scope.isAuth = "is Authenticated!";
+                  return true;
+              }
+              else
+              {
+                $scope.isAuth = "is not Authenticated :(";
+                  return false;
+              }
+            };
             $scope.changeExpirationDate = function(){
                 localStorageService.clearAll();
                 tubularHttp.setRequireAuthentication(true);
