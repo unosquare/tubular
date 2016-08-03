@@ -2,9 +2,16 @@
     <button id="btnExp" ng-click="changeExpirationDate()" class="btn btn-success">
         <i class="fa fa-check-circle"></i>&nbsp;change expDay
     </button>
+    <label id="expAuth">{{redirected}}</label>
+    <br/>
     <button id="btnAuth" ng-click="isAuthenticated()" class="btn btn-success">
         <i class="fa fa-check-circle"></i>&nbsp;is Authenticated?
     </button>
     <label id="isAuth">{{isAuth}}</label>
-    <label id="expAuth">{{redirected}}</label>
+    <br/>
+    <button id="btnRetData" ng-click="retrieveData()" class="btn btn-success">
+        <i class="fa fa-check-circle"></i>&nbsp;Retrieve Saved Data
+    </button>
+    <label id="lbRet">{{retSavData}}</label>
+    
 </div>

@@ -129,6 +129,13 @@
                     $scope.redirected = "Not Authenticated";
                 }
             };
+            $scope.retrieveData = function () {
+                var retData = tubularHttp.userData;
+                var savedDat = localStorageService.get('auth_data');
+                if(retData.username == savedDat.username){
+                    $scope.retSavData = true;
+                }
+            };
         }]);
 
     angular.module('app', [
