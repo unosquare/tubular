@@ -16,12 +16,17 @@ describe('tbHttp', function () {
             expect($('#log').getText()).toBe('Login');
         });
     });
-    
+    */
     it('should be authenticated', function(){
-        expect($('#isAuth').getText()).toBe('true');
+        element(by.model('username')).sendKeys('admin');
+        element(by.model('password')).sendKeys('pass.word');
+        element(by.id('submitBtn')).click();
+        element(by.id('btnAuth')).click().then(function(){
+            expect($('#isAuth').getText()).toBe('is Authenticated!');
+        }); 
     });
     
-    it('should not be authenticated', function(){
+    it('should not login bad credentials', function(){
         browser.get('index.html');
         element(by.id('tbLogin')).click();
         element(by.model('username')).sendKeys('admin');
@@ -30,8 +35,10 @@ describe('tbHttp', function () {
             expect($('#isAuth').getText()).toBe('false');
         });
     });
-    */
+   
     it('should expirated', function(){
+        browser.get('index.html');
+        element(by.id('tbLogin')).click();
         element(by.model('username')).sendKeys('admin');
         element(by.model('password')).sendKeys('pass.word');
         element(by.id('submitBtn')).click();

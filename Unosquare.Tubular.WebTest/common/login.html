@@ -1,4 +1,4 @@
-﻿﻿<div class="container" ng-controller="LoginCtrl">
+<div class="container" ng-controller="LoginCtrl">
     <div class="row">
         <div class="col-lg-4 col-md-3 col-xs-1">&nbsp;</div>
         <div class="col-lg-4 col-md-6 col-xs-10">
@@ -41,6 +41,7 @@
                                     ng-disabled="loginForm.$invalid">
                                 <i class="fa fa-check-circle"></i>&nbsp;Login
                             </button>
+                            <label id="isAuth">{{isAuth}}</label>
                         </div>
                         <div class="clearfix"></div>
                     </div>
