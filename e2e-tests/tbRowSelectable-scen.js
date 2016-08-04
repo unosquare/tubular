@@ -8,8 +8,14 @@ describe('tbRowSelectable', function () {
         
     it('selected rows', function () {
         element.all(by.repeater('row in $component.rows')).click();
+        var rows = element.all(by.repeater('row in $component.rows')); 
+        var countRows = rows.count();
         element(by.id('btnRows')).click();
-        expect($('#lbRows').getText()).toBe('10');          
+        $('#lbRows').getText().then(function(count){
+            countRows.then(function(result){
+                expect(parseInt(count)).toEqual(result);
+            }); 
+        });
     });
     
     it('unselected rows', function () {
