@@ -140,6 +140,12 @@
                     $scope.retSavData = true;
                 }
             };
+            $scope.getTest = function(){
+                var getObject = tubularHttp.get('http://tubular.azurewebsites.net/api/orders/53');
+                if(getObject.cancel != null){
+                    $scope.getLog = getObject.cancel.name;
+                }
+            };
         }]).controller('rwController', ['$scope', 'localStorageService', function($scope, localStorageService){
             $scope.selectRows = function (){
                 var count = 0;
@@ -149,7 +155,7 @@
                 }
                 else{
                     for(var i=0; i<rows.length ;i++){
-                    count++;
+                        count++;
                     }
                     $scope.rows= count;
                 }

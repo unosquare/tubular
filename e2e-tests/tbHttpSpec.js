@@ -41,4 +41,15 @@ describe('tbHttp', function () {
             expect($('#expAuth').getText()).toBe('Not Authenticated');
         });         
     });
+    
+    it('get method-Is not authenticated', function(){
+        element(by.model('username')).sendKeys('admin');
+        element(by.model('password')).sendKeys('pass.word');
+        element(by.id('submitBtn')).click();
+        element(by.id('btnExp')).click();
+        element(by.id('btnGet')).click().then(function(){
+            expect($('#lbGet').getText()).toBe('cancel');
+        });
+        
+    });
 });
