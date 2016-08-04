@@ -146,6 +146,17 @@
                     $scope.getLog = getObject.cancel.name;
                 }
             };
+            $scope.postTest = function(){
+                tubularHttp.post('http://tubular.azurewebsites.net/api/orders/53',{'ShipperCity':'California'}).promise.then(function(data){
+                    if(data == null){
+                        $scope.postLog = 'null';
+                    }
+                    else
+                    {
+                        $scope.postLog = data;
+                    }
+                });
+            };
         }]).controller('rwController', ['$scope', 'localStorageService', function($scope, localStorageService){
             $scope.selectRows = function (){
                 var count = 0;
