@@ -71,7 +71,7 @@ module.exports = function (grunt) {
                     args: {
                         baseUrl: "http://localhost:9000/Unosquare.Tubular.WebTest/",
                         browser: "chrome",
-                        specs: ['e2e-tests/tbGridComponent-scen.js']
+                        specs: ['e2e-tests/tbHttpSpec-scen.js']
                     }
                 }
             }
