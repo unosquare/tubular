@@ -48,9 +48,9 @@ describe('tbHttp', function () {
         element(by.id('submitBtn')).click();
         element(by.id('btnExp')).click();
         element(by.id('btnGet')).click().then(function(){
-            expect($('#lbGet').isDisplayed()).toBeTruthy().then(function(){
+            if($('#lbGet').isDisplayed()){
                 expect($('#lbGet').getText()).toBe('cancel');
-            });
+            }
         });        
     });
     
