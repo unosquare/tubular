@@ -22,5 +22,6 @@ describe('tbRowSelectable', function () {
         element.all(by.repeater('row in $component.rows')).click();
         element(by.id('btnRows')).click();
         expect($('#lbRows').getText()).toBe('[Empty]');
+        
     });
 });
