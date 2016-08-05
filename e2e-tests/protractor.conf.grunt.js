@@ -2,7 +2,7 @@ exports.config = {
     allScriptsTimeout: 11000000,
 
     specs: [
-        'e2e-tests/*.js'
+        'e2e-tests/tbHttpSpec.js'
     ],
 
     capabilities: {
