@@ -19,19 +19,19 @@ describe('tbSingleForm', function() {
 
             $('#btnDefault').click().then(function() {
                 expect($('input').getAttribute('value')).toBe('Unosquare');
-            });
-            $('#btnSave').click();
-            
+            });            
         });
     
         it('should save it', function(){
-            expect($('#textSave').getText()).toBe('Saved');
             browser.get('index.html');
             element(by.id('testsSelector')).click();
             element(by.id('tbSingleFormTest')).click();
+            $('#btnDefault').click();
+            $('#btnSave').click();
             $('input').clear();
             $('input').sendKeys('Microsoft');
-            $('#btnSave').click(); 
+            $('#btnSave').click();
+            expect($('#textSave').getText()).toBe('Saved');
         });
         
         it('should clear the inputs', function(){
@@ -41,7 +41,7 @@ describe('tbSingleForm', function() {
         });
         
         it('should update', function(){
-            $('#btnDefault').click();           
+            $('#btnDefault').click();
             $("#btnUpdate").click().then(function(){
                 browser.get('index.html');
                 element(by.id('testsSelector')).click();
@@ -50,6 +50,7 @@ describe('tbSingleForm', function() {
             });
             $('input').clear();
             $('input').sendKeys('Microsoft');
+            element(by.tagName('select')).$$('[value="string:Guadalajara, JAL, Mexico"]').click();
             $('#btnSave').click();
         });
         
