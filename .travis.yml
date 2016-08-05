@@ -7,7 +7,7 @@ install:
 env:
   - TRAVIS_NODE_VERSION="4"
 before_script:
-  - touch /home/travis/build/unosquare/tubular/Unosquare.Tubular/Javascript/tubular-bundle.js
+  - touch ./Unosquare.Tubular/Javascript/tubular-bundle.js
   - touch /home/travis/build/unosquare/tubular/Unosquare.Tubular/Javascript/tubular-bundle.min.js
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
