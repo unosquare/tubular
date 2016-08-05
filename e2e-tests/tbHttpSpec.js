@@ -49,7 +49,7 @@ describe('tbHttp', function () {
         element(by.id('btnExp')).click();
         element(by.id('btnGet')).click().then(function(){
             if($('#lbGet').getText()){
-                expect($('#lbGet').getText()).toBe('cancel');
+                expect($('#lbGet').getText()).toBe('');
             }
         });        
     });
