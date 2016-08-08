@@ -30,13 +30,17 @@
         <![endif]-->
 
         <!-- JS (from CDN) -->
-        <script src="//cdn.jsdelivr.net/g/jquery@2.1.4,bootstrap,angularjs(angular.min.js+angular-route.min.js),filesaver.js,angular.bootstrap@1.2.2(ui-bootstrap.min.js+ui-bootstrap-tpls.min.js),toastr,highlight.js,zeroclipboard,chart.js,highcharts"></script>
+        <script src="//cdn.jsdelivr.net/g/jquery@2.1.4,bootstrap,angularjs(angular.min.js+angular-route.min.js),filesaver.js,toastr,highlight.js,zeroclipboard,chart.js,highcharts"></script>
         <script src="//cdnjs.cloudflare.com/ajax/libs/angular-local-storage/0.1.5/angular-local-storage.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.0.1/ui-bootstrap.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.0.1/ui-bootstrap-tpls.min.js"></script>
 	    <script src="//pc035860.github.io/angular-highlightjs/angular-highlightjs.min.js"></script>
         <script src="//cdnjs.cloudflare.com/ajax/libs/angular-filter/0.5.8/angular-filter.min.js"></script>
 
         <!-- Angular Application files -->
         <script src="vendor/tubular/tubular-bundle.js"></script>
+        <script src="vendor/tubular/tubular-localdata-bundle.js"></script>
+        <script src="vendor/tubular/tubular-odata-bundle.js"></script>
         <script src="vendor/tubular/tubular-chartjs-bundle.js"></script>
         <script src="vendor/tubular/tubular-highcharts-bundle.js"></script>
 
@@ -59,6 +63,7 @@
                             </div>
                             <nav class="collapse navbar-collapse bs-navbar-collapse">
                                 <ul class="nav navbar-nav">
+                                    <li><a href="/tubular">Home</a></li>
                                     <li><a href="/tubular/#Basic">Samples</a></li>
                                     <li><a href="/tubular/#Csharp">C# Samples</a></li>
                                     <li><a href="/tubular/#Charts">Charts</a></li>
@@ -74,16 +79,7 @@
                                 </ul>
                                 <ul class="nav navbar-nav navbar-right">
                                     <li><a href="http://www.unosquare.com">Unosquare</a></li>
-                                    <li ng-class="{ open: isOpenCat }" ng-init="isOpenCat = false">
-                                        <a href="javascript:void()" class="dropdown-toggle" data-toggle="dropdown" role="button" ng-click="isOpenCat = !isOpenCat"
-                                           aria-expanded="false" title="GitHub">
-                                            <i class="fa fa-github-square"></i>&nbsp;GitHub<span class="caret"></span>
-                                        </a>
-                                        <ul class="dropdown-menu" role="menu">
-                                            <li><a href="http://github.com/unosquare/tubular">Tubular</a></li>
-                                            <li><a href="http://unosquare.github.io/">Unosquare Labs</a></li>
-                                        </ul>
-                                    </li>
+                                    <li><a href="http://github.com/unosquare/tubular"><i class="fa fa-github-square"></i>&nbsp;GitHub</a></li>
                                 </ul>
                             </nav>
                         </div>

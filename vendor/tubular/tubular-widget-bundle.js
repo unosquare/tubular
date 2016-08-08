@@ -10,9 +10,8 @@
          * @description
          * The `tbWidgetContainer` directive is a root node to attach widgets.
          * 
-         * @scope
-         * 
          * @param {string} container-name The container name
+         * @param {bool} fixed-widgets Set if the widgets are fixed
          */
         .directive('tbWidgetContainer', [
             function() {
@@ -183,8 +182,6 @@
          * @description
          * The `tbWidget` directive to transclude your content in a panel with several options.
          * 
-         * @scope
-         * 
          * @param {string} title Set the widget title.
          * @param {string} widgetName Set the widget name.
          */
@@ -274,9 +271,7 @@
          * @description
          * The `tbWidgetActios` directive to transclude your content in a header panel with several options.
          * 
-         * Actions will need to be sent to the $parent scope
-         *
-         * @scope
+         * Actions will need to be sent to the $parent scope.
          */
         .directive('tbWidgetActions', [
             function() {
@@ -291,7 +286,8 @@
                             $scope.$widget = $scope.$parent.$parent.$parent;
                         }
                     ],
-                    link: function(scope, iElement) {
+                    link: function (scope, iElement) {
+                        // TODO: Remove jQuery dependency
                         var header = iElement.parents('.panel').find('.panel-heading');
                         header.append(iElement);
                     }
