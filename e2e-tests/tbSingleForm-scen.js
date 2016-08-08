@@ -42,12 +42,13 @@ describe('tbSingleForm', function() {
         
         it('should update', function(){
             $('#btnDefault').click();
-            $("#btnUpdate").click().then(function(){
+            if($('#textSave').getText() === ''){
+                $('#btnUpdate').click();
                 browser.get('index.html');
                 element(by.id('testsSelector')).click();
                 element(by.id('tbSingleFormTest')).click();
-                expect($('input').getAttribute('value')).toBe('Unosquare');                 
-            });
+            }
+            expect($('input').getAttribute('value')).toBe('Unosquare');                            
             $('input').clear();
             $('input').sendKeys('Microsoft');
             element(by.tagName('select')).$$('[value="string:Guadalajara, JAL, Mexico"]').click();
