@@ -63,7 +63,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChartFixture.cs" />
-    <Compile Include="CodeGeneratorFixture.cs" />
     <Compile Include="Database\SampleEntities.cs" />
     <Compile Include="TestHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

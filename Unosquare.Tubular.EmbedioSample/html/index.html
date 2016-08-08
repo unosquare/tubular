@@ -11,11 +11,7 @@
 
         <title>Unosquare - Tubular + EmbedIO Sample</title>
 
-        <!-- Favicons -->
-        <link rel="icon" href="favicon.ico" />
-
         <!-- CSS (from CDN) -->
-        <link rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap/latest/css/bootstrap.min.css" />
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootswatch/latest/lumen/bootstrap.min.css" />
         <link rel="stylesheet" href="//cdn.jsdelivr.net/fontawesome/latest/css/font-awesome.min.css" />
         <link rel="stylesheet" href="//cdn.jsdelivr.net/toastr/2.0.1/toastr.css" />
@@ -28,11 +24,14 @@
             <script src="//cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js"></script>
         <![endif]-->
 
-        <script src="//cdn.jsdelivr.net/g/jquery@2.1.4,bootstrap,angularjs@1.5.0(angular.min.js+angular-animate.min.js+angular-route.min.js),toastr,angular.bootstrap@1.2.2(ui-bootstrap.min.js+ui-bootstrap-tpls.min.js),blob.js(Blob.js),filesaver.js,chart.js@1.0.1,highcharts"></script>
+        <script src="//cdn.jsdelivr.net/g/angularjs@1.5.0(angular.min.js+angular-animate.min.js+angular-route.min.js),toastr,blob.js(Blob.js),filesaver.js,chart.js@1.0.1,highcharts"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.0.1/ui-bootstrap.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.0.1/ui-bootstrap-tpls.min.js"></script>
         <script src="//cdnjs.cloudflare.com/ajax/libs/angular-local-storage/0.1.5/angular-local-storage.min.js"></script>
 
         <!-- Angular Application files -->
         <script src="/vendor/tubular/tubular-bundle.js"></script>
+        <script src="/vendor/tubular/tubular-localdata-bundle.js"></script>
         <script src="/scripts/app.js"></script>
     </head>
 
@@ -68,7 +67,7 @@
 
             <h3>Using EmbedIO Web API</h3>
 
-            <tb-grid server-url="/api/people" page-size="10">
+            <tb-grid server-url="/api/people" page-size="10" require-authentication="false">
                 <div class="row">
                     <tb-grid-pager class="col-md-8 col-xs-12"></tb-grid-pager>
                 </div>
@@ -135,7 +134,7 @@
             <h3>Using Local JSON</h3>
 
             <tb-grid server-url="/data/database.json" page-size="10" service-name="local"
-                     request-method="GET">
+                     request-method="GET" require-authentication="false">
                 <div class="row">
                     <tb-grid-pager class="col-md-8 col-xs-12"></tb-grid-pager>
                 </div>
@@ -183,25 +182,24 @@
                                     </tb-column>
                                 </tb-column-definitions>
                                 <tb-row-set>
-                                    <tb-row-template ng-repeat="cells in $component.rows"
-                                                     row-model="cells" selectable="false">
+                                    <tb-row-template ng-repeat="row in $component.rows" row-model="row" selectable="false">
                                         <tb-cell-template column-name="Id">
-                                            {{cells.Id}}
+                                            {{row.Id}}
                                         </tb-cell-template>
                                         <tb-cell-template column-name="Name">
-                                            {{cells.Name}}
+                                            {{row.Name}}
                                         </tb-cell-template>
                                         <tb-cell-template column-name="Company">
-                                            {{cells.Company}}
+                                            {{row.Company}}
                                         </tb-cell-template>
                                         <tb-cell-template column-name="Email">
-                                            {{cells.Email}}
+                                            {{row.Email}}
                                         </tb-cell-template>
                                         <tb-cell-template column-name="PhoneNumber">
-                                            {{cells.PhoneNumber}}
+                                            {{row.PhoneNumber}}
                                         </tb-cell-template>
                                         <tb-cell-template column-name="Birthdays">
-                                            {{cells.Birthdays | date}}
+                                            {{row.Birthdays | date}}
                                         </tb-cell-template>
                                     </tb-row-template>
                                 </tb-row-set>
