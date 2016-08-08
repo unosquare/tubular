@@ -48,7 +48,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChartsExtension.cs" />
-    <Compile Include="CodeGenerator.cs" />
     <Compile Include="Common.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="FluentExtension.cs" />

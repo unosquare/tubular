@@ -50,7 +50,7 @@ You will need to reference the following JS libraries in order to use Tubular in
 * <s>[jQuery](http://jquery.com/) - 2.1.4</s> jQuery is only needed in Tubular < 1.0.0
 * <s>[Twitter Bootstrap](http://getbootstrap.com/)</s> Bootstrap is only needed in Tubular < 1.0.0
 * [AngularJS (optionally Animate and Route)](https://angularjs.org/) - 1.5
-* [AngularJS UI Bootstrap](https://angular-ui.github.io/bootstrap/) - 1.3 with the Bootstrap CSS
+* [AngularJS UI Bootstrap](https://angular-ui.github.io/bootstrap/) - 2.0 with the Bootstrap CSS
 * [Moment.js](http://momentjs.com/) - This is optional, but we encourage to use it
 * [AngularJS Local Storage](https://github.com/grevory/angular-local-storage)
 * [Font Awesome](http://fortawesome.github.io/Font-Awesome/)
@@ -71,7 +71,9 @@ You can get all the dependencies using the following links in your master HTML p
 <link rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap/latest/css/bootstrap.min.css" />
 <link rel="stylesheet" href="//cdn.jsdelivr.net/fontawesome/latest/css/font-awesome.min.css" />
 
-<script src="//cdn.jsdelivr.net/g/angularjs@1.5.0(angular.min.js+angular-animate.min.js+angular-route.min.js),filesaver.js,angular.bootstrap@1.3(ui-bootstrap.min.js+ui-bootstrap-tpls.min.js),blob.js(Blob.js),filesaver.js"></script>
+<script src="//cdn.jsdelivr.net/g/angularjs@1.5.0(angular.min.js+angular-animate.min.js+angular-route.min.js),filesaver.js,blob.js(Blob.js),filesaver.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.0.1/ui-bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.0.1/ui-bootstrap-tpls.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/angular-local-storage/0.1.5/angular-local-storage.min.js"></script>
 ```
 

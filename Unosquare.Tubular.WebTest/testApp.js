@@ -53,17 +53,17 @@
                         templateUrl: '/Unosquare.Tubular.WebTest/common/tbFormConnErrorNoServerUrl_tests.html',
                         title: 'Tubular Form Loading Test'
                     })
-                    .when('/tbFormConnErrorNoServerUrlTests2',{
+                    .when('/tbFormConnErrorNoServerUrlTests2', {
                         templateUrl: '/Unosquare.Tubular.WebTest/common/tbFormConnErrorNoServerUrl_tests2.html',
                         title: 'Tubular Form Loading Test 2'
                     })
-                    .when('/expirationDate',{
+                    .when('/expirationDate', {
                         templateUrl: '/Unosquare.Tubular.WebTest/common/expiration.html',
-                        title:'expiration test'
+                        title: 'expiration test'
                     })
-                    .when('/tbRowSelectable',{
+                    .when('/tbRowSelectable', {
                         templateUrl: '/Unosquare.Tubular.WebTest/common/tbRowSelectable.html',
-                        title:'selectedRows clearSelection isEmptySelection'
+                        title: 'selectedRows clearSelection isEmptySelection'
                     })
                     .otherwise({
                         redirectTo: '/'
@@ -80,98 +80,96 @@
                 $scope.Error = "No data found";
                 toastr.error('No data found');
             });
-        }).controller('LoginCtrl', ['$scope', '$location', 'tubularHttp', function ($scope, $location, tubularHttp) {
-            $scope.loading = false;
-            tubularHttp.tokenUrl = 'http://tubular.azurewebsites.net/token';
-            $scope.submitForm = function (valid) {
-                if (valid == false) {
-                    toastr.error("Please complete form");
-                }
+        }).controller('LoginCtrl', [
+            '$scope', '$location', 'tubularHttp', function($scope, $location, tubularHttp) {
+                $scope.loading = false;
+                tubularHttp.tokenUrl = 'http://tubular.azurewebsites.net/token';
+                $scope.submitForm = function(valid) {
+                    if (valid == false) {
+                        toastr.error("Please complete form");
+                    }
 
-                $scope.loading = true;    
-                tubularHttp.authenticate($scope.username, $scope.password, $scope.redirectHome, function (error) {
-                    var resul = tubularHttp.isAuthenticated();
-                    $scope.isAuth = resul;
-                    $scope.loading = false;                    
-                    toastr.error(error);
-                }, true);
-            };
-           
-            $scope.redirectHome = function () {                
-                $location.path("/expirationDate");
-            };
-        }]).controller("navCtrl", function($scope) {
+                    $scope.loading = true;
+
+                    tubularHttp.authenticate($scope.username, $scope.password, $scope.redirectHome, function(error) {
+                        var resul = tubularHttp.isAuthenticated();
+                        $scope.isAuth = resul;
+                        $scope.loading = false;
+                        toastr.error(error);
+                    }, true);
+                };
+
+                $scope.redirectHome = function() {
+                    $location.path("/expirationDate");
+                };
+            }
+        ]).controller("navCtrl", function($scope) {
             // TODO: Check login info
-
-        }).controller('onSaved',function($scope){
-        $scope.$on('tbForm_OnSuccessfulSave', function(event, data, form) {
+        }).controller('onSaved', function($scope) {
+            $scope.$on('tbForm_OnSuccessfulSave', function() {
                 $scope.textSave = "Saved";
             });
 
-        }).controller('expDate',['$scope', 'tubularHttp', 'localStorageService','$location', function($scope, tubularHttp, localStorageService, $location){
-            $scope.isAuthenticated = function(){
-              if(tubularHttp.isAuthenticated()){
-                  $scope.isAuth = "is Authenticated!";
-                  return true;
-              }
-              else
-              {
-                $scope.isAuth = "is not Authenticated :(";
-                  return false;
-              }
-            };
-            $scope.changeExpirationDate = function(){
-                localStorageService.clearAll();
-                tubularHttp.setRequireAuthentication(true);
-                tubularHttp.userData.expirationDate = null;
-                $location.path("/expirationDate");
-                if(tubularHttp.isAuthenticated()){
-                    $scope.redirected = "Authenticated";
-                }
-                else
-                {
-                    $scope.redirected = "Not Authenticated";
-                }
-            };
-            $scope.retrieveData = function () {
-                var retData = tubularHttp.userData;
-                var savedDat = localStorageService.get('auth_data');
-                if(retData.username == savedDat.username){
-                    $scope.retSavData = true;
-                }
-            };
-            $scope.getTest = function(){
-                var getObject = tubularHttp.get('http://tubular.azurewebsites.net/api/orders/53');
-                if(getObject.cancel != null){
-                    $scope.getLog = getObject.cancel.name;
-                }
-            };
-            $scope.postTest = function(){
-                tubularHttp.post('http://tubular.azurewebsites.net/api/orders/53',{'ShipperCity':'California'}).promise.then(function(data){
-                    if(data == null){
-                        $scope.postLog = 'null';
+        }).controller('expDate', [
+            '$scope', 'tubularHttp', 'localStorageService', '$location', function($scope, tubularHttp, localStorageService, $location) {
+                $scope.isAuthenticated = function() {
+                    if (tubularHttp.isAuthenticated()) {
+                        $scope.isAuth = "is Authenticated!";
+                        return true;
+                    } else {
+                        $scope.isAuth = "is not Authenticated :(";
+                        return false;
                     }
-                    else
-                    {
-                        $scope.postLog = data;
+                };
+                $scope.changeExpirationDate = function() {
+                    localStorageService.clearAll();
+                    tubularHttp.setRequireAuthentication(true);
+                    tubularHttp.userData.expirationDate = null;
+                    $location.path("/expirationDate");
+
+                    if (tubularHttp.isAuthenticated()) {
+                        $scope.redirected = "Authenticated";
+                    } else {
+                        $scope.redirected = "Not Authenticated";
                     }
-                });
-            };
-        }]).controller('rwController', ['$scope', 'localStorageService', function($scope, localStorageService){
-            $scope.selectRows = function (){
-                var count = 0;
-                var rows = localStorageService.get('sampleshap1_rows');
-                if(rows.length == 0){
-                    $scope.rows='[Empty]';
-                }
-                else{
-                    for(var i=0; i<rows.length ;i++){
-                        count++;
+                };
+                $scope.retrieveData = function() {
+                    var retData = tubularHttp.userData;
+                    var savedDat = localStorageService.get('auth_data');
+                    $scope.retSavData = retData.username === savedDat.username;
+                };
+                $scope.getTest = function() {
+                    var getObject = tubularHttp.get('http://tubular.azurewebsites.net/api/orders/53');
+                    if (getObject.cancel != null) {
+                        $scope.getLog = "cancel";
                     }
-                    $scope.rows= count;
-                }
-            };
-        }]);
+                };
+                $scope.postTest = function() {
+                    tubularHttp.post('http://tubular.azurewebsites.net/api/orders/53', { 'ShipperCity': 'California' }).promise.then(function(data) {
+                        if (data == null) {
+                            $scope.postLog = 'null';
+                        } else {
+                            $scope.postLog = data;
+                        }
+                    });
+                };
+            }
+        ]).controller('rwController', [
+            '$scope', 'localStorageService', function($scope, localStorageService) {
+                $scope.selectRows = function() {
+                    var count = 0;
+                    var rows = localStorageService.get('sampleshap1_rows');
+                    if (rows.length == 0) {
+                        $scope.rows = '[Empty]';
+                    } else {
+                        for (var i = 0; i < rows.length; i++) {
+                            count++;
+                        }
+                        $scope.rows = count;
+                    }
+                };
+            }
+        ]);
 
     angular.module('app', [
         'tubular',

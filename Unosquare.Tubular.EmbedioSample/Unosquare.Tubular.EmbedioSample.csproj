@@ -63,6 +63,10 @@
       <Link>html\vendor\tubular\tubular-bundle.min.css</Link>
       <DependentUpon>tubular-bundle.css</DependentUpon>
     </Content>
+    <Content Include="..\dist\tubular-localdata-bundle.js">
+      <Link>html\vendor\tubular\tubular-localdata-bundle.js</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="html\data\database.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

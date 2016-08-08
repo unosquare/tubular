@@ -16,11 +16,11 @@
             },
             template:
                 '<div class="tubular-pager">' +
-                    '<uib-pagination ng-disabled="$ctrl.$component.isEmpty" direction-links="true" ' +
+                    '<ul uib-pagination ng-disabled="$ctrl.$component.isEmpty" direction-links="true" ' +
                     'first-text="&#xf049;" previous-text="&#xf04a;" next-text="&#xf04e;" last-text="&#xf050;"' +
                     'boundary-links="true" total-items="$ctrl.$component.filteredRecordCount" ' +
                     'items-per-page="$ctrl.$component.pageSize" max-size="5" ng-model="$ctrl.$component.currentPage" ng-change="$ctrl.pagerPageChanged()">' +
-                    '</uib-pagination>' +
+                    '</ul>' +
                     '<div>',
             scope: true,
             terminal: false,

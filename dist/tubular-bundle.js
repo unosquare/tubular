@@ -2380,7 +2380,7 @@ try {
             template: '<div class="tubular-column-menu">' +
                 '<button class="btn btn-xs btn-default btn-popover" ' +
                 'uib-popover-template="$ctrl.templateName" popover-placement="bottom" popover-title="{{$ctrl.filterTitle}}" popover-is-open="$ctrl.isOpen"' +
-                ' popover-trigger="click outsideClick" ng-class="{ \'btn-success\': $ctrl.filter.HasFilter }">' +
+                ' popover-trigger="\'click outsideClick\'" ng-class="{ \'btn-success\': $ctrl.filter.HasFilter }">' +
                 '<i class="fa fa-filter"></i></button>' +
                 '</div>',
             bindings: {
@@ -2425,7 +2425,7 @@ try {
             template: '<div class="tubular-column-menu">' +
                 '<button class="btn btn-xs btn-default btn-popover" ' +
                 'uib-popover-template="$ctrl.templateName" popover-placement="bottom" popover-title="{{$ctrl.filterTitle}}" popover-is-open="$ctrl.isOpen" ' +
-                'popover-trigger="outsideClick" ng-class="{ \'btn-success\': $ctrl.filter.HasFilter }">' +
+                'popover-trigger="\'outsideClick\'" ng-class="{ \'btn-success\': $ctrl.filter.HasFilter }">' +
                 '<i class="fa fa-filter"></i></button>' +
                 '</div>',
             bindings: {
@@ -2465,7 +2465,7 @@ try {
             },
             template: '<div class="tubular-column-menu">' +
                 '<button class="btn btn-xs btn-default btn-popover" uib-popover-template="$ctrl.templateName" popover-placement="bottom" ' +
-                'popover-title="{{$ctrl.filterTitle}}" popover-is-open="$ctrl.isOpen" popover-trigger="click outsideClick" ' +
+                'popover-title="{{$ctrl.filterTitle}}" popover-is-open="$ctrl.isOpen" popover-trigger="\'click outsideClick\'" ' +
                 'ng-class="{ \'btn-success\': $ctrl.filter.HasFilter }">' +
                 '<i class="fa fa-filter"></i></button>' +
                 '</div>',
@@ -2779,7 +2779,7 @@ try {
                         $ctrl.lastSearch = $ctrl.$component.search.Text;
                     };
 
-                    $scope.$watch("$ctrl.$component.search.Text", function (val, prev) {
+                    $scope.$watch("$ctrl.$component.search.Text", function(val, prev) {
                         if (angular.isUndefined(val) || val === prev) {
                             return;
                         }
@@ -2826,7 +2826,7 @@ try {
         .component('tbRemoveButton', {
             require: '^tbGrid',
             template: '<button class="btn btn-danger btn-xs btn-popover" uib-popover-template="$ctrl.templateName" popover-placement="right" ' +
-                'popover-title="{{ $ctrl.legend || (\'UI_REMOVEROW\' | translate) }}" popover-is-open="$ctrl.isOpen" popover-trigger="click outsideClick" ' +
+                'popover-title="{{ $ctrl.legend || (\'UI_REMOVEROW\' | translate) }}" popover-is-open="$ctrl.isOpen" popover-trigger="\'click outsideClick\'" ' +
                 'ng-hide="$ctrl.model.$isEditing">' +
                 '<span ng-show="$ctrl.showIcon" class="{{::$ctrl.icon}}"></span>' +
                 '<span ng-show="$ctrl.showCaption">{{:: $ctrl.caption || (\'CAPTION_REMOVE\' | translate) }}</span>' +
@@ -2839,16 +2839,16 @@ try {
                 icon: '@'
             },
             controller: [
-               'tubularTemplateService', function (tubularTemplateService) {
-                   var $ctrl = this;
+                'tubularTemplateService', function(tubularTemplateService) {
+                    var $ctrl = this;
 
-                   $ctrl.showIcon = angular.isDefined($ctrl.icon);
-                   $ctrl.showCaption = !($ctrl.showIcon && angular.isUndefined($ctrl.caption));
+                    $ctrl.showIcon = angular.isDefined($ctrl.icon);
+                    $ctrl.showCaption = !($ctrl.showIcon && angular.isUndefined($ctrl.caption));
 
-                   $ctrl.$onInit = function () {
-                       $ctrl.templateName = tubularTemplateService.tbRemoveButtonrPopoverTemplateName;
-                   }
-               }
+                    $ctrl.$onInit = function() {
+                        $ctrl.templateName = tubularTemplateService.tbRemoveButtonrPopoverTemplateName;
+                    }
+                }
             ]
         })
         /**
@@ -2955,19 +2955,17 @@ try {
                 model: '=',
                 caption: '@'
             },
-            controller: [
-                '$scope', function($scope) {
-                    var $ctrl = this;
+            controller: function() {
+                var $ctrl = this;
 
-                    $ctrl.edit = function() {
-                        if ($ctrl.$component.editorMode === 'popup') {
-                            $ctrl.model.editPopup();
-                        } else {
-                            $ctrl.model.edit();
-                        }
-                    };
-                }
-            ]
+                $ctrl.edit = function() {
+                    if ($ctrl.$component.editorMode === 'popup') {
+                        $ctrl.model.editPopup();
+                    } else {
+                        $ctrl.model.edit();
+                    }
+                };
+            }
         })
         /**
          * @ngdoc component
@@ -3041,14 +3039,14 @@ try {
                 captionMenuAll: '@'
             },
             controller: [
-                '$scope', 'tubularGridExportService', function ($scope, tubularGridExportService) {
+                '$scope', 'tubularGridExportService', function($scope, tubularGridExportService) {
                     var $ctrl = this;
 
-                    $ctrl.downloadCsv = function () {
+                    $ctrl.downloadCsv = function() {
                         tubularGridExportService.exportGridToCsv($ctrl.filename, $ctrl.$component);
                     };
 
-                    $ctrl.downloadAllCsv = function () {
+                    $ctrl.downloadAllCsv = function() {
                         tubularGridExportService.exportAllGridToCsv($ctrl.filename, $ctrl.$component);
                     };
                 }
@@ -3093,7 +3091,7 @@ try {
                             + "<tbody>"
                             + data.map(function(row) {
                                 if (typeof (row) === 'object') {
-                                    row = Object.keys(row).map(function (key) { return row[key] });
+                                    row = Object.keys(row).map(function(key) { return row[key] });
                                 }
 
                                 return "<tr>" + row.map(function(cell, index) {
@@ -3143,11 +3141,11 @@ try {
             },
             template:
                 '<div class="tubular-pager">' +
-                    '<uib-pagination ng-disabled="$ctrl.$component.isEmpty" direction-links="true" ' +
+                    '<ul uib-pagination ng-disabled="$ctrl.$component.isEmpty" direction-links="true" ' +
                     'first-text="&#xf049;" previous-text="&#xf04a;" next-text="&#xf04e;" last-text="&#xf050;"' +
                     'boundary-links="true" total-items="$ctrl.$component.filteredRecordCount" ' +
                     'items-per-page="$ctrl.$component.pageSize" max-size="5" ng-model="$ctrl.$component.currentPage" ng-change="$ctrl.pagerPageChanged()">' +
-                    '</uib-pagination>' +
+                    '</ul>' +
                     '<div>',
             scope: true,
             terminal: false,
