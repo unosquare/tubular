@@ -12,15 +12,16 @@ describe('tbGridComponents', function () {
 
     it('should add item with newRow method', function () {
         var lastItem = element.all(by.repeater('row in $component.rows')).last().getText();
-
         element(by.id('newButton')).click().then(function() {
             var newRow = $('tr[ng-show]');
             expect(newRow.isDisplayed()).toBe(true);
-            newRow.$('input').sendKeys('DEMO');
-
+            if(element.all(by.repeater('row in $component.rows')).last().getText() === 'DEMO'){
+                newRow.$('input').sendKeys('DEMOTEST');
+            }else{
+                newRow.$('input').sendKeys('DEMO');
+            }
             newRow.$$('button').first().click().then(function() {
                 var newLastItem = element.all(by.repeater('row in $component.rows')).last().getText();
-
                 expect(lastItem).not.toBe(newLastItem);
             });
         });
