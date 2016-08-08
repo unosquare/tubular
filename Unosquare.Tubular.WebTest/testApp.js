@@ -157,16 +157,8 @@
         ]).controller('rwController', [
             '$scope', 'localStorageService', function($scope, localStorageService) {
                 $scope.selectRows = function() {
-                    var count = 0;
                     var rows = localStorageService.get('sampleshap1_rows');
-                    if (rows.length == 0) {
-                        $scope.rows = '[Empty]';
-                    } else {
-                        for (var i = 0; i < rows.length; i++) {
-                            count++;
-                        }
-                        $scope.rows = count;
-                    }
+                        $scope.rows = rows.length;
                 };
             }
         ]);
