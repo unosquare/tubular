@@ -6,6 +6,7 @@ describe('tbGridComponents', function () {
     beforeAll(function () {
         // Go to test
         browser.get('index.html');
+        browser.driver.manage().window().maximize();
         element(by.id('testsSelector')).click();
         element(by.id('tbGridComponentsTest')).click();
     });
