@@ -48,13 +48,15 @@ $ npm install tubular --save</div>
                     You will need to reference the following JS libraries in order to use Tubular in your HTML:
                 </p>
                 <ul>
-                    <li><a href="http://jquery.com/">jQuery</a> - 2.1.4</li>
-                    <li><a href="http://getbootstrap.com/">Twitter Bootstrap</a></li>
-                    <li><a href="https://angularjs.org/">AngularJS (optionally Animate and Route)</a></li>
-                    <li><a href="https://angular-ui.github.io/bootstrap/">AngularJS UI Bootstrap</a> - 1.5</li>
+                    <li><s><a href="http://jquery.com/">jQuery</a> - 2.1.4</s> jQuery is only needed in Tubular &lt; 1.0.0</li>
+                    <li><s><a href="http://getbootstrap.com/">Twitter Bootstrap</a></s> Bootstrap is only needed in Tubular &lt; 1.0.0</li>
+                    <li><a href="https://angularjs.org/">AngularJS (optionally Animate and Route)</a> - 1.5</li>
+                    <li><a href="https://angular-ui.github.io/bootstrap/">AngularJS UI Bootstrap</a> - 2.0 with the Bootstrap CSS</li>
+                    <li><a href="http://momentjs.com/">Moment.js</a> - This is optional, but we encourage to use it</li>
                     <li><a href="https://github.com/grevory/angular-local-storage">AngularJS Local Storage</a></li>
                     <li><a href="http://fortawesome.github.io/Font-Awesome/">Font Awesome</a></li>
                     <li><a href="https://github.com/eligrey/FileSaver.js">FileSaver.js</a> and <a href="https://github.com/eligrey/Blob.js/">Blob.js</a></li>
+                    <li><a href="https://github.com/a8m/angular-filter">Angular-filter</a> - Only if you need to use groupBy filter in tbGrid.</li>
                 </ul>
 
                 <p>
@@ -73,7 +75,9 @@ $ npm install tubular --save</div>
 <link rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap/latest/css/bootstrap.min.css" />
 <link rel="stylesheet" href="//cdn.jsdelivr.net/fontawesome/latest/css/font-awesome.min.css" />
 
-<script src="//cdn.jsdelivr.net/g/angularjs@1.5.0(angular.min.js+angular-animate.min.js+angular-route.min.js),filesaver.js,angular.bootstrap(ui-bootstrap.min.js+ui-bootstrap-tpls.min.js),blob.js(Blob.js),filesaver.js"></script>
+<script src="//cdn.jsdelivr.net/g/angularjs@1.5.0(angular.min.js+angular-animate.min.js+angular-route.min.js),filesaver.js,blob.js(Blob.js),filesaver.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.0.1/ui-bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.0.1/ui-bootstrap-tpls.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/angular-local-storage/0.1.5/angular-local-storage.min.js"></script></div>
 
                 <p>Then you will need to either grab your own copy of Tubular or you use jsDelivr to reference Tubular CSS and JS files.</p>
@@ -153,7 +157,8 @@ $ npm install tubular --save</div>
         </div>
     </tb-grid></div>
                 </div>
-                <p>Tubular works directly with either your own OData service or a custom RESTful call. You can simplify your RESTful API significantly by using our .NET Tubular.ServerSide library which handles IQueryables easily.</p>
+            <p>Tubular works directly with either your own OData service or a custom RESTful call. You can simplify 
+            your RESTful API significantly by using our .NET library which handles <code>IQueryable</code> easily.</p>
             </div>
     </div>
 </div>
