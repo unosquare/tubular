@@ -1,19 +1,21 @@
 <h1>Tubular Grids with .NET assembly</h1>
 
 <p>
-    Tubular provides a .NET library to easily create responses in WebApi (or WCF) for your Tubular grids. This helpers and extension methods provide sorting, filtering and pagination using <a href="https://dynamiclinq.codeplex.com/">System.Linq.Dynamic</a>.
+    Tubular provides a .NET library to easily create responses in WebApi (or WCF) for your Tubular grids. This helpers and extension methods provide sorting,
+    filtering and pagination using <a href="https://dynamiclinq.codeplex.com/">System.Linq.Dynamic</a>.
 </p>
 
 <p>
     You first need to setup your ApiController. All the request made by Tubular Grid are using HTTP POST method, in order to send a
     <a href="https://github.com/unosquare/tubular/blob/master/Unosquare.Tubular/ObjectModel/GridDataRequest.cs">GridDataRequest</a> model.
     This model provides an extension method to generate a payload using any <code>IQueryable</code> data source like
-    an EntityFramework query.
+    an Entity Framework query.
 </p>
 <p>
     The internal helper will deliver a
     <a href="https://github.com/unosquare/tubular/blob/master/Unosquare.Tubular/ObjectModel/GridDataResponse.cs">GridDataResponse</a> model.
-    This model is the expected payload for Tubular Grid.
+    This model is the expected payload for Tubular Grid. You need to use both classes in order to use Tubular Grid properly, if you only return
+    a simple <code>IQueryable</code> or <code>List&lt;T&gt;</code> the Tubular component won't be able to populate.
 </p>
 <div class="alert alert-warning">
     <i class="fa fa-bell"></i>
@@ -28,12 +30,53 @@
         public IHttpActionResult GridData([FromBody] GridDataRequest request)
         {
             using (var context = new SampleDbContext(false)) {
-            return Ok(request.CreateGridDataResponse(context.SystemUsers));
+                return Ok(request.CreateGridDataResponse(context.SystemUsers));
             }
         }
     }
 </div>
 
 <p>
-    Since you pass a IQueryable as parameter, you can filter or apply any security level control before to call the CreateGridDataResponse.
+    Since you pass a IQueryable as parameter, you can filter or apply any security level control before to call the <code>CreateGridDataResponse</code>. If you require to
+    apply any transformation that you can't perform in, for example, Entity Framework like convert date to a specific string format you can use a final output
+    process (<code>ProcessResponseSubset</code> function argument).
+</p>
+
+<div hljs language="cs">
+    [RoutePrefix("api/users")]
+    public class UsersController : ApiController
+    {
+        private static IQueryable FormatOutput(IQueryable q)
+        {
+            var list = new List<SystemUser>();
+
+            foreach (var i in q)
+            {
+                var item = i as SystemUser;
+                item.Password = "*****";
+                list.Add(item);
+            }
+
+            return list.AsQueryable();
+        }
+
+        [HttpPost, Route("paged")]
+        public IHttpActionResult GridData([FromBody] GridDataRequest request)
+        {
+            using (var context = new SampleDbContext(false)) {
+                return Ok(request.CreateGridDataResponse(context.SystemUsers, FormatOutput));
+            }
+        }
+    }
+</div>
+
+<p>
+    From the previous sample, the second argument in <code>CreateGridDataResponse</code> function is a static function where the input parameter is anonymous <code>IQueryable</code>
+    and returns another anonymous <code>IQueryable</code>. You need to cast the inner list in order to materialize from Entity Framework IQueryable. Using a second IQueryable to return
+    is recommended instead to modify the incoming <code>IQueryable</code>.
+</p>
+
+<p>
+    It's important to use the <code>ProcessResponseSubset</code> parameter to perform any transformation to improve performance because if you materialize your Entity Framework
+    <code>IQueryable</code> before to pass it to Tubular, all the paging and filtering will apply to the complete dataset.
 </p>
