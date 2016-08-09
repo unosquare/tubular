@@ -61,10 +61,13 @@ describe('tbColumn', function() {
             dataSetLowerCustomerName = 'Advanced Technology Systems',
             dataSetHigherCustomerName = 'Vesta',
             dataSetLowerDate = /1\/28\/16 \d:17.*/,
-            dataSetHigherDate = /5\/23\/16 \d:00.*/;
+            dataSetHigherDate;
 
         beforeEach(function() {
             // Clear possible sortings and start with default
+            a_shippedDateSorting.click();
+            a_shippedDateSorting.click();
+            dataSetHigherDate = firstDataRow.$$('td').first().getText();
             a_orderIdSorting.click();
             i_sortIcon.getAttribute('class').then(function(sortIconClass) {
                 if (sortIconClass.indexOf('arrow') != -1) {
