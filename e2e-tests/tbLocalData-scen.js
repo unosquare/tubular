@@ -121,5 +121,28 @@ describe('LocalData', function() {
                     });
                 });
         });
+        
+        it('should correctly filter data for the "Contains" with ENTER key', function () {
+            var filterOk = true;
+            var containedString = 'pp';
+
+            // Set filter and apply it
+            filterBtn.click();
+            filterSelect.$('[value="string:Contains"]').click();
+            valueInput.clear();
+            valueInput.sendKeys(containedString);
+            valueInput.sendKeys(protractor.Key.ENTER)
+                .then(function () {
+                    // Verify filtering
+                    dataRows.each(function (row, index) {
+                        row.$$('td').first().getText()
+                            .then(function (customer) {
+                                filterOk = filterOk && (customer.indexOf(containedString) != -1);
+                            });
+                    }).then(function () {
+                        expect(filterOk).toBe(true);
+                    });
+                });
+        });
     });
 });
