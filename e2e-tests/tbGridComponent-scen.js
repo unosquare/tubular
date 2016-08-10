@@ -6,7 +6,6 @@ describe('tbGridComponents', function () {
     beforeAll(function () {
         // Go to test
         browser.get('index.html');
-        browser.driver.manage().window().maximize();
         element(by.id('testsSelector')).click();
         element(by.id('tbGridComponentsTest')).click();
     });
@@ -42,14 +41,10 @@ describe('tbGridComponents', function () {
     it('should update item with tbSaveButton', function () {
         var lastItem = element.all(by.repeater('row in $component.rows')).last();
         lastItem.$$('td').last().getText().then(function(originalValue) {
-            console.log(originalValue);
-
             lastItem.$$('button').get(2).click().then(function() {
-                console.log("Showing");
                 lastItem.$$('input').sendKeys('TEST').then(function(){
                     lastItem.$$('button').first().click().then(function(){
-                        expect(lastItem.$$('td').last().getText()).toBe("DEMOTEST");
-                        
+                        expect(lastItem.$$('td').last().getText()).toBe("DEMOTEST");                        
                     });
                 });
             });
@@ -59,12 +54,8 @@ describe('tbGridComponents', function () {
     it('should update item with tbSaveButton and cancel action', function () {
         var lastItem = element.all(by.repeater('row in $component.rows')).last();
         lastItem.$$('td').last().getText().then(function(originalValue) {
-            console.log(originalValue);
-
             lastItem.$$('button').get(2).click().then(function() {
-                console.log("Showing");
                 lastItem.$('input').sendKeys('TEST');
-
                 lastItem.$$('button').get(1).click().then(function() {
                     expect(lastItem.$$('td').last().getText()).toBe(originalValue);
                 });
@@ -75,10 +66,8 @@ describe('tbGridComponents', function () {
     it('should remove item with tbRemoveButton', function () {
         var originalCount = element.all(by.repeater('row in $component.rows')).count();
         var lastItem = element.all(by.repeater('row in $component.rows')).last();
-
         lastItem.$('tb-remove-button').click().then(function () {
             expect($('div.popover').isDisplayed()).toBe(true);
-
             $('div.popover').$$('button').first().click().then(function() {
                 element.all(by.repeater('row in $component.rows')).count().then(function (count) {
                     expect(count).not.toBe(originalCount);
