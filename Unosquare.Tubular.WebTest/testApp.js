@@ -41,6 +41,10 @@
                         templateUrl: '/Unosquare.Tubular.WebTest/common/tbSingleForm_tests.html',
                         title: 'Tubular Single Form Tests'
                     })
+                    .when('/tbEmptyFormTests', {
+                        templateUrl: '/Unosquare.Tubular.WebTest/common/tbEmptyForm_tests.html',
+                        title: 'Tubular Empty Form Tests'
+                    })
                     .when('/Login', {
                         templateUrl: '/Unosquare.Tubular.WebTest/common/login.html',
                         title: 'Login'
