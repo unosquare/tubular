@@ -19,11 +19,11 @@
         * @description
         * The `tubularModel` factory is the base to generate a row model to use with `tbGrid` and `tbForm`.
         */
-        .factory('tubularModel', function() {
-            return function($scope, $ctrl, data, dataService) {
+        .factory('tubularModel', function () {
+            return function ($scope, $ctrl, data, dataService) {
                 var obj = {
                     $key: "",
-                    $addField: function(key, value, ignoreOriginal) {
+                    $addField: function (key, value, ignoreOriginal) {
                         this[key] = value;
                         if (angular.isUndefined(this.$original)) {
                             this.$original = {};
@@ -39,9 +39,9 @@
                             this.$state = {};
                         }
 
-                        $scope.$watch(function() {
+                        $scope.$watch(function () {
                             return obj[key];
-                        }, function(newValue, oldValue) {
+                        }, function (newValue, oldValue) {
                             if (newValue === oldValue) return;
                             obj.$hasChanges = obj[key] !== obj.$original[key];
                         });
@@ -49,13 +49,13 @@
                 };
 
                 if (angular.isArray(data) === false) {
-                    angular.forEach(Object.keys(data), function(name) {
+                    angular.forEach(Object.keys(data), function (name) {
                         obj.$addField(name, data[name]);
                     });
                 }
 
                 if (angular.isDefined($ctrl.columns)) {
-                    angular.forEach($ctrl.columns, function(col, key) {
+                    angular.forEach($ctrl.columns, function (col, key) {
                         var value = angular.isDefined(data[key]) ? data[key] : data[col.Name];
 
                         if (angular.isUndefined(value) && data[key] === 0) {
@@ -108,16 +108,14 @@
                         if (angular.isUndefined(val)) return;
                         if (val.$valid()) return;
 
-                        if (!val.$dirty()) {
-                            valid = false;
-                        }
+                        valid = false;
                     });
 
                     return valid;
                 };
 
                 // Returns a save promise
-                obj.save = function(forceUpdate) {
+                obj.save = function (forceUpdate) {
                     if (angular.isUndefined(dataService) || dataService == null) {
                         throw 'Define DataService to your model.';
                     }
@@ -138,7 +136,7 @@
                     }).promise;
                 };
 
-                obj.edit = function() {
+                obj.edit = function () {
                     if (obj.$isEditing && obj.$hasChanges) {
                         obj.save();
                     }
@@ -146,11 +144,11 @@
                     obj.$isEditing = !obj.$isEditing;
                 };
 
-                obj.delete = function() {
+                obj.delete = function () {
                     $ctrl.deleteRow(obj);
                 };
 
-                obj.resetOriginal = function() {
+                obj.resetOriginal = function () {
                     for (var k in obj.$original) {
                         if (obj.$original.hasOwnProperty(k)) {
                             obj.$original[k] = obj[k];
@@ -158,7 +156,7 @@
                     }
                 };
 
-                obj.revertChanges = function() {
+                obj.revertChanges = function () {
                     for (var k in obj) {
                         if (obj.hasOwnProperty(k)) {
                             if (k[0] === '$' || angular.isUndefined(obj.$original[k])) {
