@@ -330,9 +330,6 @@
                     }
 
                     $scope.doc = url.indexOf('tutorial') == 0 ? url : 'docs/build/' + url;
-                    // TODO Test
-                    //$location.hash('top');
-                    //$anchorScroll();
                 };
 
                 $http.get('data/documentation.json').then(function(data) {
