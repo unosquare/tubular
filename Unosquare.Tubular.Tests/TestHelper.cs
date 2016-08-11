@@ -11,8 +11,8 @@ namespace Unosquare.Tubular.Tests
     public class TestHelper
     {
         private SampleEntities _context;
-        const int PageSize = 10;
-        const string SearchText = "Name - 1";
+        private const int PageSize = 10;
+        private const string SearchText = "Name - 1";
 
         [SetUp]
         public void SetUp()
@@ -122,8 +122,8 @@ namespace Unosquare.Tubular.Tests
                 Skip = 0,
                 Search = new Filter()
                 {
-                  Operator = CompareOperators.Auto,
-                  Text = SearchText
+                    Operator = CompareOperators.Auto,
+                    Text = SearchText
                 },
                 Columns = Thing.GetColumns()
             };
@@ -133,7 +133,8 @@ namespace Unosquare.Tubular.Tests
             Assert.AreEqual(data.Count, response.Payload.Count, "Same length");
             Assert.AreEqual(data.First().Id, response.Payload.First().First(), "Same first item");
 
-            Assert.AreEqual(dataSource.Count(x => x.Name.Contains(SearchText)), response.FilteredRecordCount, "Total filtered rows matching");
+            Assert.AreEqual(dataSource.Count(x => x.Name.Contains(SearchText)), response.FilteredRecordCount,
+                "Total filtered rows matching");
         }
 
         [Test]
@@ -170,7 +171,12 @@ namespace Unosquare.Tubular.Tests
             Assert.AreEqual(data.Count, tubularData.Count(), "Same length");
             Assert.AreEqual(data.First(), tubularData.First(), "Same first item");
 
-            var dataFiltered = dataSource.Where(x => x.Name.Contains(SearchText)).Select(x => x.Name).Distinct().Take(elementsCount).ToList();
+            var dataFiltered =
+                dataSource.Where(x => x.Name.Contains(SearchText))
+                    .Select(x => x.Name)
+                    .Distinct()
+                    .Take(elementsCount)
+                    .ToList();
             var tubularDataFiltered = dataSource.CreateTypeAheadList("Name", SearchText, elementsCount);
 
             Assert.AreEqual(dataFiltered.Count, tubularDataFiltered.Count(), "Same length");
@@ -182,14 +188,17 @@ namespace Unosquare.Tubular.Tests
         {
             var dataSource = new List<Thing>
             {
-                new Thing { Name= SearchText + "1" },
-                new Thing { Name= SearchText.ToLower() + "2" },
-                new Thing { Name= SearchText.ToUpper() + "3" },
-                new Thing { Name= SearchText + "4" },
-                new Thing { Name= "ODOR" }
+                new Thing {Name = SearchText + "1"},
+                new Thing {Name = SearchText.ToLower() + "2"},
+                new Thing {Name = SearchText.ToUpper() + "3"},
+                new Thing {Name = SearchText + "4"},
+                new Thing {Name = "ODOR"}
             };
 
-            var data = dataSource.Where(x => x.Name.ToLowerInvariant().Contains(SearchText.ToLowerInvariant())).Take(PageSize).ToList();
+            var data =
+                dataSource.Where(x => x.Name.ToLowerInvariant().Contains(SearchText.ToLowerInvariant()))
+                    .Take(PageSize)
+                    .ToList();
 
             var request = new GridDataRequest()
             {
@@ -204,27 +213,35 @@ namespace Unosquare.Tubular.Tests
             };
 
 
-            var response = request.CreateGridDataResponse(_context.Things.AsQueryable());
+            var response = request.CreateGridDataResponse(dataSource.AsQueryable());
 
-            Assert.AreEqual(data.Count, response.Payload.Count, "Same length");
+            Assert.AreEqual(dataSource.Count, response.TotalRecordCount, "Same length");
             Assert.AreEqual(data.First().Id, response.Payload.First().First(), "Same first item");
-            Assert.AreEqual(dataSource.Where(x => x.Name.ToLowerInvariant().Contains(SearchText.ToLowerInvariant())), response.FilteredRecordCount, "Total filtered rows matching");
+            Assert.AreEqual(data.Count, response.FilteredRecordCount, "Total filtered rows matching");
         }
 
         [Test]
-        public void TestSimpleSearch2() {
-            //var data = _context.Things.Where(c => c.Color.);
+        public void TestSimpleSearch2()
+        {
             var dataSource = new List<Thing>();
-           
-             for (var i = 0; i < 422; i++)
-             {
-                dataSource.Add(new Thing { Color = "red" });
-                dataSource.Add(new Thing { Color = "blue" });
-                dataSource.Add(new Thing { Color = "yellow" });
-             }
 
-            var columns = new GridColumn[] {
-                new GridColumn { Name = "Color", Sortable = true, Searchable = true, DataType = DataType.String, SortOrder=2},
+            for (var i = 0; i < 422; i++)
+            {
+                dataSource.Add(new Thing {Color = "red"});
+                dataSource.Add(new Thing {Color = "blue"});
+                dataSource.Add(new Thing {Color = "yellow"});
+            }
+
+            var columns = new GridColumn[]
+            {
+                new GridColumn
+                {
+                    Name = "Color",
+                    Sortable = true,
+                    Searchable = true,
+                    DataType = DataType.String,
+                    SortOrder = 2
+                },
                 new GridColumn {Name = "Id"}
             };
             var request = new GridDataRequest()
@@ -238,7 +255,7 @@ namespace Unosquare.Tubular.Tests
                     Operator = CompareOperators.Auto,
                     Text = "red"
                 }
-                
+
             };
             var response = request.CreateGridDataResponse(dataSource.AsQueryable());
             Assert.AreEqual(4, response.CurrentPage);
@@ -249,14 +266,17 @@ namespace Unosquare.Tubular.Tests
         {
             var dataSource = new[]
             {
-                new Thing { Name= SearchText + "1" },
-                new Thing { Name= SearchText.ToLower() + "2" },
-                new Thing { Name= SearchText.ToUpper() + "3" },
-                new Thing { Name= SearchText + "4" },
-                new Thing { Name= "ODOR" }
+                new Thing {Name = SearchText + "1"},
+                new Thing {Name = SearchText.ToLower() + "2"},
+                new Thing {Name = SearchText.ToUpper() + "3"},
+                new Thing {Name = SearchText + "4"},
+                new Thing {Name = "ODOR"}
             };
 
-            var data = dataSource.Where(x => x.Name.ToLowerInvariant().Contains(SearchText.ToLowerInvariant())).Take(PageSize).ToList();
+            var data =
+                dataSource.Where(x => x.Name.ToLowerInvariant().Contains(SearchText.ToLowerInvariant()))
+                    .Take(PageSize)
+                    .ToList();
 
             var request = new GridDataRequest()
             {
@@ -275,61 +295,10 @@ namespace Unosquare.Tubular.Tests
             Assert.AreEqual(data.Count, response.Payload.Count, "Same length");
             Assert.AreEqual(data.First().Id, response.Payload.First().First(), "Same first item");
 
-            Assert.AreEqual(dataSource.Count(x => x.Name.ToLowerInvariant().Contains(SearchText.ToLowerInvariant())), response.FilteredRecordCount, "Total filtered rows matching");
+            Assert.AreEqual(dataSource.Count(x => x.Name.ToLowerInvariant().Contains(SearchText.ToLowerInvariant())),
+                response.FilteredRecordCount, "Total filtered rows matching");
         }
-
-
-        [Test]
-        public void TestDataTableSimpleSearch()
-        {
-            // INFO:
-            // I was trying to test another IListSource source like DataTable,
-            // but somewhere between GetList() to AsQueryable this is failing
-            // and also the Filtering against DataRow is crashing
-
-            // I find useless to support DataTables, but I just want to let this sample
-
-            //var dataTable = new DataTable();
-            //dataTable.Columns.Add(new DataColumn("Name", typeof (string)));
-            
-            //var tempData = new[]
-            //{
-            //    new Thing { Name= SearchText + "1" },
-            //    new Thing { Name= SearchText.ToLower() + "2" },
-            //    new Thing { Name= SearchText.ToUpper() + "3" },
-            //    new Thing { Name= SearchText + "4" },
-            //    new Thing { Name= "ODOR" }
-            //};
-
-            //foreach (var tempItem in tempData)
-            //{
-            //    var dr = dataTable.NewRow();
-            //    dr["Name"] = tempItem.Name;
-            //    dataTable.Rows.Add(dr);
-            //}
-
-            //var request = new GridDataRequest()
-            //{
-            //    Take = PageSize,
-            //    Skip = 0,
-            //    Search = new Filter()
-            //    {
-            //        Operator = CompareOperators.Auto,
-            //        Text = SearchText
-            //    },
-            //    Columns = Thing.GetColumns()
-            //};
-
-            //var dataView = new DataView(dataTable) {RowFilter = "Name LIKE '%" + SearchText + "%'"};
-
-            //var response = request.CreateGridDataResponse(((IListSource) dataTable).GetList().AsQueryable());
-
-            //Assert.AreEqual(dataView.Count, response.Payload.Count, "Same length");
-            //Assert.AreEqual(dataView[0][0], response.Payload.First().First(), "Same first item");
-
-            //Assert.AreEqual(dataView.Count, response.FilteredRecordCount, "Total filtered rows matching");
-        }
-
+        
         [Test]
         public void TestSimpleAggregate()
         {
@@ -351,8 +320,10 @@ namespace Unosquare.Tubular.Tests
             Assert.AreEqual(data.Count, response.Payload.Count, "Same length");
             Assert.AreEqual(data.First().Id, response.Payload.First().First(), "Same first item");
 
-            Assert.AreEqual(dataSource.Sum(x => x.Number), (double)response.AggregationPayload["Number"], "Same average number");
-            Assert.AreEqual(dataSource.Sum(x => x.DecimalNumber), (decimal)response.AggregationPayload["DecimalNumber"], "Same average decimal number");
+            Assert.AreEqual(dataSource.Sum(x => x.Number), (double) response.AggregationPayload["Number"],
+                "Same average number");
+            Assert.AreEqual(dataSource.Sum(x => x.DecimalNumber), (decimal) response.AggregationPayload["DecimalNumber"],
+                "Same average decimal number");
         }
 
         [Test]
@@ -376,12 +347,16 @@ namespace Unosquare.Tubular.Tests
             Assert.AreEqual(data.Count, response.Payload.Count, "Same length");
             Assert.AreEqual(data.First().Id, response.Payload.First().First(), "Same first item");
 
-            Assert.AreEqual(dataSource.Select(x => x.Id).Distinct().Count(), (int)response.AggregationPayload["Id"], "Id same distinct count");
-            Assert.AreEqual(dataSource.Select(x => x.Number).Distinct().Count(), (int)response.AggregationPayload["Number"], "Number same distinct count");
-            Assert.AreEqual(dataSource.Select(x => x.DecimalNumber).Distinct().Count(), (int)response.AggregationPayload["DecimalNumber"], "DecimalNumber same distinct count");
-            Assert.AreEqual(dataSource.Select(x => x.Name).Distinct().Count(), (int)response.AggregationPayload["Name"], "Name same distinct count");
-            Assert.AreEqual(dataSource.Select(x => x.Date).Distinct().Count(), (int)response.AggregationPayload["Date"], "Date same distinct count");
-            //Assert.AreEqual(dataSource.Select(x => x.Bool).Distinct().Count(), (int)response.AggregationPayload["Bool"], "Bool same distinct count");
+            Assert.AreEqual(dataSource.Select(x => x.Id).Distinct().Count(), (int) response.AggregationPayload["Id"],
+                "Id same distinct count");
+            Assert.AreEqual(dataSource.Select(x => x.Number).Distinct().Count(),
+                (int) response.AggregationPayload["Number"], "Number same distinct count");
+            Assert.AreEqual(dataSource.Select(x => x.DecimalNumber).Distinct().Count(),
+                (int) response.AggregationPayload["DecimalNumber"], "DecimalNumber same distinct count");
+            Assert.AreEqual(dataSource.Select(x => x.Name).Distinct().Count(), (int) response.AggregationPayload["Name"],
+                "Name same distinct count");
+            Assert.AreEqual(dataSource.Select(x => x.Date).Distinct().Count(), (int) response.AggregationPayload["Date"],
+                "Date same distinct count");
         }
     }
 }
