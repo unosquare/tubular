@@ -75,4 +75,17 @@ describe('tbSingleForm', function() {
             });
         });
     });
+
+    describe("Form validations", function(){
+        it('should load correct info', function() {
+            expect($('input').getAttribute('value')).toBe('Microsoft');
+        });
+
+        it('should not be able to click on save', function() {
+            $('#btnCancel').click().then(function(){
+                expect($('#btnSave').getAttribute('disabled')).not.toBeNull(null);
+                expect($('#btnSave').getAttribute('disabled')).not.toBe('');
+            });
+        });
+    })
 });
