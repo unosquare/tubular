@@ -58,8 +58,8 @@
         /// </exception>
         public static UserAuthenticationResult CreateAuthorizedResult(IUser user, IRole[] roles)
         {
-            if (user == null) throw new ArgumentException("Object cannot be null", "user");
-            if (roles == null) throw new ArgumentException("Object cannot be null", "roles");
+            if (user == null) throw new ArgumentException("Object cannot be null", nameof(user));
+            if (roles == null) throw new ArgumentException("Object cannot be null", nameof(roles));
 
             var result = new UserAuthenticationResult()
             {

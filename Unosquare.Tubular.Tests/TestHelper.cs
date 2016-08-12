@@ -166,7 +166,7 @@ namespace Unosquare.Tubular.Tests
             var dataSource = _context.Things;
 
             var data = dataSource.Select(x => x.Number.ToString()).Distinct().Take(elementsCount).ToList();
-            var tubularData = dataSource.CreateTypeAheadList("Number", elementsCount);
+            var tubularData = dataSource.CreateTypeAheadList("Number");
 
             Assert.AreEqual(data.Count, tubularData.Count(), "Same length");
             Assert.AreEqual(data.First(), tubularData.First(), "Same first item");
@@ -177,7 +177,7 @@ namespace Unosquare.Tubular.Tests
                     .Distinct()
                     .Take(elementsCount)
                     .ToList();
-            var tubularDataFiltered = dataSource.CreateTypeAheadList("Name", SearchText, elementsCount);
+            var tubularDataFiltered = dataSource.CreateTypeAheadList("Name", SearchText);
 
             Assert.AreEqual(dataFiltered.Count, tubularDataFiltered.Count(), "Same length");
             Assert.AreEqual(dataFiltered.First(), tubularDataFiltered.First(), "Same first item");
@@ -232,7 +232,7 @@ namespace Unosquare.Tubular.Tests
                 dataSource.Add(new Thing {Color = "yellow"});
             }
 
-            var columns = new GridColumn[]
+            var columns = new[]
             {
                 new GridColumn
                 {

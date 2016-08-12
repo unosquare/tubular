@@ -401,7 +401,7 @@ describe('tbForm related components ->', function () {
         });
 
         it('should show the component name value in a label field when "showLabel" attribute is true', function () {
-            expect(tbDropDownEditor_label.getText()).toMatch('Shipper City')
+            expect(tbDropDownEditor_label.getText()).toMatch('Shipper City');
         });
 
         it('should show a help field equal to this attribute, is present', function () {
@@ -460,7 +460,6 @@ describe('tbForm related components ->', function () {
             tbTextAreaRestore().then(function () {
                 tbFormEditBtn2.click();
             });
-
         });
 
         afterEach(function () {
@@ -666,7 +665,7 @@ describe('tbForm related components ->', function () {
         });
 
         it('should show the component name value in a label field when "showLabel" attribute is true', function () {
-            expect(tbDateEditor_label.getText()).toMatch('Date Editor Date')
+            expect(tbDateEditor_label.getText()).toMatch('Date Editor Date');
         });
 
         it('should show a help field equal to this attribute, is present', function () {
@@ -898,7 +897,7 @@ describe('tbForm related components ->', function () {
         });
 
         it('should show the component name value in a label field when "showLabel" attribute is true', function () {
-            expect(tbSimpleEditor_label.getText()).toMatch('Customer Name')
+            expect(tbSimpleEditor_label.getText()).toMatch('Customer Name');
         });
 
         it('should set input placeholder to the value of "placeholder" attribute', function () {
@@ -1052,7 +1051,7 @@ describe('tbForm related components ->', function () {
         });
 
         it('should show the component name value in a label field when "showLabel" attribute is true', function () {
-            expect(tbNumericEditor_label.getText()).toMatch('Num Editor Test')
+            expect(tbNumericEditor_label.getText()).toMatch('Num Editor Test');
         });
 
         it('should show a help field equal to this attribute, is present', function () {
