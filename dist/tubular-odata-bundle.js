@@ -1,4 +1,4 @@
-(function() {
+(function (angular) {
     'use strict';
 
     angular.module('tubular.services')
@@ -160,4 +160,4 @@
                 tubularHttp.registerService('odata', tubularOData);
             }
         ]);
-})();
+})(window.angular);

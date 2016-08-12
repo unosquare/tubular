@@ -23,14 +23,13 @@
         /// </summary>
         /// <param name="authenticateFunction">The Authenticate function</param>
         public BasicOAuthAuthorizationProvider(Func<OAuthGrantResourceOwnerCredentialsContext, Task<UserAuthenticationResult>> authenticateFunction)
-            : base()
         {
             if (authenticateFunction == null)
                 throw new ArgumentException("An authentication function must be provided", nameof(authenticateFunction));
 
-            this.AuthenticateAsync = authenticateFunction;
+            AuthenticateAsync = authenticateFunction;
 
-            OnValidateClientAuthentication = (context) =>
+            OnValidateClientAuthentication = context =>
             {
                 string clientId;
                 string clientSecret;
@@ -43,7 +42,7 @@
                 return Task.FromResult<object>(null);
             };
 
-            OnGrantResourceOwnerCredentials = async (context) =>
+            OnGrantResourceOwnerCredentials = async context =>
             {
                 context.OwinContext.Response.Headers.Add(OAuthAllowOriginHeader, new[] { "*" });
                 var authenticateResult = await AuthenticateAsync(context);

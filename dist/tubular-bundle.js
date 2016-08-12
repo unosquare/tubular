@@ -148,7 +148,7 @@ var tubularTemplateServiceModule = {
                     continue;
                 }
 
-                if (typeof value === 'number' || parseFloat(value).toString() == value) {
+                if (typeof value === 'number' || parseFloat(value).toString() === value) {
                     columns.push({ Name: prop, DataType: 'numeric', Template: '{{row.' + prop + ' | number}}' });
                 } else if (toString.call(value) === '[object Date]' || isNaN((new Date(value)).getTime()) === false) {
                     columns.push({ Name: prop, DataType: 'date', Template: '{{row.' + prop + ' | date}}' });
@@ -212,7 +212,7 @@ var tubularTemplateServiceModule = {
         return columns.map(function(el) {
             var editorTag = el.EditorType.replace(/([A-Z])/g, function($1) { return "-" + $1.toLowerCase(); });
             var defaults = tubularTemplateServiceModule.defaults.fieldsSettings[el.EditorType];
-            
+
             return '\r\n\t<' + editorTag + ' name="' + el.Name + '"' +
                 (defaults.EditorType ? '\r\n\t\teditor-type="' + el.DataType + '" ' : '') +
                 (defaults.ShowLabel ? '\r\n\t\tlabel="' + el.Label + '" show-label="' + el.ShowLabel + '"' : '') +
@@ -273,24 +273,24 @@ var tubularTemplateServiceModule = {
     generateForm: function(fields, options) {
         var layout = options.Layout === 'Simple' ? '' : options.Layout.toLowerCase();
         var fieldsArray = this.generateFieldsArray(fields);
-        var fieldsMarkup = '';
+        var fieldsMarkup;
 
-        if (layout == '') {
+        if (layout === '') {
             fieldsMarkup = fieldsArray.join('');
         } else {
             fieldsMarkup = "\r\n\t<div class='row'>" +
-                (layout == 'two-columns' ?
+                (layout === 'two-columns' ?
                     "\r\n\t<div class='col-md-6'>" +
-                    fieldsArray.filter(function(i, e) { return (e % 2) == 0; }).join('') +
+                    fieldsArray.filter(function(i, e) { return (e % 2) === 0; }).join('') +
                     "\r\n\t</div>\r\n\t<div class='col-md-6'>" +
-                    fieldsArray.filter(function(i, e) { return (e % 2) == 1; }).join('') +
+                    fieldsArray.filter(function(i, e) { return (e % 2) === 1; }).join('') +
                     "</div>" :
                     "\r\n\t<div class='col-md-4'>" +
-                    fieldsArray.filter(function(i, e) { return (e % 3) == 0; }).join('') +
+                    fieldsArray.filter(function(i, e) { return (e % 3) === 0; }).join('') +
                     "\r\n\t</div>\r\n\t<div class='col-md-4'>" +
-                    fieldsArray.filter(function(i, e) { return (e % 3) == 1; }).join('') +
+                    fieldsArray.filter(function(i, e) { return (e % 3) === 1; }).join('') +
                     "\r\n\t</div>\r\n\t<div class='col-md-4'>" +
-                    fieldsArray.filter(function(i, e) { return (e % 3) == 2; }).join('') +
+                    fieldsArray.filter(function(i, e) { return (e % 3) === 2; }).join('') +
                     "\r\n\t</div>") +
                 "\r\n\t</div>";
         }
@@ -319,10 +319,10 @@ var tubularTemplateServiceModule = {
 
             return '\r\n\t\t<tb-cell-template column-name="' + el.Name + '">' +
                 '\r\n\t\t\t' +
-                (mode == 'Inline' ?
+                (mode === 'Inline' ?
                     '<' + editorTag + ' is-editing="row.$isEditing" value="row.' + el.Name + '">' +
                     '</' + editorTag + '>' :
-                     el.Template) +
+                    el.Template) +
                 '\r\n\t\t</tb-cell-template>';
         }).join('');
     },
@@ -391,7 +391,7 @@ var tubularTemplateServiceModule = {
             '\r\n\t<tb-row-set>' +
             '\r\n\t<tb-row-template ng-repeat="row in $component.rows" row-model="row">' +
             (options.Mode != 'Read-Only' ? '\r\n\t\t<tb-cell-template>' +
-                (options.Mode == 'Inline' ? '\r\n\t\t\t<tb-save-button model="row"></tb-save-button>' : '') +
+                (options.Mode === 'Inline' ? '\r\n\t\t\t<tb-save-button model="row"></tb-save-button>' : '') +
                 '\r\n\t\t\t<tb-edit-button model="row"></tb-edit-button>' +
                 '\r\n\t\t</tb-cell-template>' : '') +
             this.generateCells(columns, options.Mode) +
@@ -593,7 +593,7 @@ try {
                         $ctrl.requestCounter = 0;
                         $ctrl.requestMethod = $ctrl.requestMethod || 'POST';
                         $ctrl.serverSaveMethod = $ctrl.serverSaveMethod || 'POST';
-                        $ctrl.requestTimeout = 15000;
+                        $ctrl.requestTimeout = 20000;
                         $ctrl.currentRequest = null;
                         $ctrl.autoSearch = $routeParams.param || ($ctrl.saveSearch ? (localStorageService.get($ctrl.name + "_search") || '') : '');
                         $ctrl.search = {
@@ -752,7 +752,7 @@ try {
                         for (var index in columns) {
                             if (columns.hasOwnProperty(index)) {
                                 var columnName = columns[index].Name;
-                                var filtered = $ctrl.columns.filter(function(el) { return el.Name == columnName; });
+                                var filtered = $ctrl.columns.filter(function(el) { return el.Name === columnName; });
 
                                 if (filtered.length === 0) {
                                     continue;

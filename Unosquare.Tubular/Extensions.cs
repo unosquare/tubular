@@ -1,17 +1,17 @@
-﻿namespace Unosquare.Tubular
-{
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Linq;
-    using System.Linq.Dynamic.Core;
-    using System.Net.Http;
-    using System.Reflection;
-    using System.Runtime.CompilerServices;
-    using System.Text;
-    using System.Text.RegularExpressions;
-    using Unosquare.Tubular.ObjectModel;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Linq.Dynamic.Core;
+using System.Net.Http;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Text;
+using System.Text.RegularExpressions;
+using Unosquare.Tubular.ObjectModel;
 
+namespace Unosquare.Tubular
+{
     /// <summary>
     /// Extensions methods
     /// </summary>
@@ -152,7 +152,7 @@
         /// <param name="dataSource">The IQueryable source</param>
         /// <returns></returns>
         public static GridDataResponse CreateGridDataResponse(this GridDataRequest request, IQueryable dataSource)
-          {
+        {
             return CreateGridDataResponse(request, dataSource, null);
         }
 
@@ -180,31 +180,25 @@
             var columnMap = MapColumnsToProperties(request.Columns, properties);
 
             var subset = FilterResponse(request, dataSource, response);
-            
+
 
             // Perform Sorting
-            var orderingExpression = string.Empty;
-            foreach (var column in request.Columns.Where(x => x.SortOrder > 0).OrderBy(x => x.SortOrder))
-            {
-                orderingExpression += column.Name + " " +
-                                      (column.SortDirection == SortDirection.Ascending ? "ASC" : "DESC") + ", ";
-            }
+            var orderingExpression = request.Columns.Where(x => x.SortOrder > 0).OrderBy(x => x.SortOrder)
+                .Aggregate(string.Empty,
+                    (current, column) =>
+                        current +
+                        (column.Name + " " + (column.SortDirection == SortDirection.Ascending ? "ASC" : "DESC") + ", "));
 
             // Apply the sorting expression if supplied
-            if (!string.IsNullOrWhiteSpace(orderingExpression))
-            {
-                subset = subset.OrderBy(orderingExpression.Substring(0, orderingExpression.Length - 2));
-            }
-            else
-            {
-                subset = subset.OrderBy(request.Columns.First().Name + " ASC");
-            }
+            subset = !string.IsNullOrWhiteSpace(orderingExpression)
+                ? subset.OrderBy(orderingExpression.Substring(0, orderingExpression.Length - 2))
+                : subset.OrderBy(request.Columns.First().Name + " ASC");
 
             // Check aggregations before paging
             // Should it aggregate before filtering too?
             response.AggregationPayload = new Dictionary<string, object>();
 
-            foreach (var column in request.Columns.Where(x => x.Aggregate != AggregationFunction.None))
+            foreach (var column in request.Columns)
             {
                 switch (column.Aggregate)
                 {
@@ -268,6 +262,8 @@
                         response.AggregationPayload.Add(column.Name,
                             subset.Select(column.Name).Cast<string>().Distinct().Count());
                         break;
+                    case AggregationFunction.None:
+                        break;
                     default:
                         response.AggregationPayload.Add(column.Name, 0);
                         break;
@@ -293,7 +289,7 @@
                     response.CurrentPage = 1 +
                                            (int)
                                                Math.Truncate((request.Skip/(float) response.FilteredRecordCount)*
-                                                          response.TotalPages);
+                                                             response.TotalPages);
 
                     if (response.CurrentPage > response.TotalPages)
                     {
@@ -377,11 +373,12 @@
             }
 
             // Perform Filtering
-            foreach (var column in request.Columns.Where(x => x.Filter != null))
+            foreach (
+                var column in
+                    request.Columns.Where(x => x.Filter != null)
+                        .Where(
+                            column => !string.IsNullOrWhiteSpace(column.Filter.Text) || column.Filter.Argument != null))
             {
-                if (string.IsNullOrWhiteSpace(column.Filter.Text) && column.Filter.Argument == null)
-                    continue; // TODO: Handle null?
-
                 column.Filter.HasFilter = true;
 
                 switch (column.Filter.Operator)
@@ -404,26 +401,25 @@
                                 GetSqlOperator(column.Filter.Operator));
                         }
 
-                        if (column.DataType == DataType.Numeric)
+                        switch (column.DataType)
                         {
-                            searchParamArgs.Add(decimal.Parse(column.Filter.Text));
-                        }
-                        else if (column.DataType == DataType.DateTime || column.DataType == DataType.DateTimeUtc)
-                        {
-                            searchParamArgs.Add(DateTime.Parse(column.Filter.Text));
-                        }
-                        else if (column.DataType == DataType.Date)
-                        {
-                            searchParamArgs.Add(DateTime.Parse(column.Filter.Text).Date);
-                            searchParamArgs.Add(DateTime.Parse(column.Filter.Text).Date.AddDays(1).AddMinutes(-1));
-                        }
-                        else if (column.DataType == DataType.Boolean)
-                        {
-                            searchParamArgs.Add(bool.Parse(column.Filter.Text));
-                        }
-                        else
-                        {
-                            searchParamArgs.Add(column.Filter.Text);
+                            case DataType.Numeric:
+                                searchParamArgs.Add(decimal.Parse(column.Filter.Text));
+                                break;
+                            case DataType.DateTime:
+                            case DataType.DateTimeUtc:
+                                searchParamArgs.Add(DateTime.Parse(column.Filter.Text));
+                                break;
+                            case DataType.Date:
+                                searchParamArgs.Add(DateTime.Parse(column.Filter.Text).Date);
+                                searchParamArgs.Add(DateTime.Parse(column.Filter.Text).Date.AddDays(1).AddMinutes(-1));
+                                break;
+                            case DataType.Boolean:
+                                searchParamArgs.Add(bool.Parse(column.Filter.Text));
+                                break;
+                            default:
+                                searchParamArgs.Add(column.Filter.Text);
+                                break;
                         }
 
                         break;
@@ -500,7 +496,7 @@
                         var filterString = "(";
                         foreach (var filter in column.Filter.Argument)
                         {
-                            filterString += string.Format(" {0} == @{1} ||", column.Name, searchParamArgs.Count);
+                            filterString += $" {column.Name} == @{searchParamArgs.Count} ||";
                             searchParamArgs.Add(filter);
                         }
 
@@ -530,14 +526,13 @@
                 }
             }
 
-            if (searchLambda.Length > 0)
-            {
-                subset = subset.Where(searchLambda.Remove(searchLambda.Length - 3, 3).ToString(),
-                    searchParamArgs.ToArray());
+            if (searchLambda.Length <= 0) return subset;
 
-                if (subset != null)
-                    response.FilteredRecordCount = subset.Count();
-            }
+            subset = subset.Where(searchLambda.Remove(searchLambda.Length - 3, 3).ToString(),
+                searchParamArgs.ToArray());
+
+            if (subset != null)
+                response.FilteredRecordCount = subset.Count();
 
             return subset;
         }
@@ -551,7 +546,7 @@
         /// <returns>The filtered IQueryable</returns>
         public static IQueryable CreateDynamicFilteredSet(this IQueryable dataSource, string fieldName, string filter)
         {
-            return dataSource.Where($"{fieldName}.Contains(@0)", new[] {filter});
+            return dataSource.Where($"{fieldName}.Contains(@0)", filter);
         }
 
         /// <summary>

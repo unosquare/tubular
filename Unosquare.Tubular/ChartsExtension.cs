@@ -1,6 +1,7 @@
 ﻿namespace Unosquare.Tubular
 {
     using System;
+    using System.Runtime.CompilerServices;
     using System.Collections.Generic;
     using System.Linq;
     using System.Linq.Dynamic.Core;
@@ -16,15 +17,15 @@
         /// Creates a single serie chart from a IQueryable
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <typeparam name="R"></typeparam>
+        /// <typeparam name="TR"></typeparam>
         /// <param name="datasource"></param>
         /// <param name="label"></param>
         /// <param name="value"></param>
         /// <param name="serieName"></param>
         /// <param name="aggregation"></param>
         /// <returns></returns>
-        public static SingleSerieChartResponse<R> ProvideSingleSerieChartResponse<T, R>(this IQueryable<T> datasource,
-            Expression<Func<T, string>> label, Expression<Func<T, R>> value, string serieName = null,
+        public static SingleSerieChartResponse<TR> ProvideSingleSerieChartResponse<T, TR>(this IQueryable<T> datasource,
+            Expression<Func<T, string>> label, Expression<Func<T, TR>> value, string serieName = null,
             AggregationFunction aggregation = AggregationFunction.Sum)
         {
             var labelExpression = label.Body is MemberExpression
@@ -39,48 +40,42 @@
 
             var data =
                 datasource.GroupBy(labelExpression.Member.Name, "it")
-                    .Select(string.Format("new (it.Key as Label, {0} as Data)", dataSelector));
+                    .Select($"new (it.Key as Label, {dataSelector} as Data)");
 
-            return new SingleSerieChartResponse<R>
+            return new SingleSerieChartResponse<TR>
             {
-                Data = data.Select("Data").Cast<R>().ToArray(),
+                Data = data.Select("Data").Cast<TR>().ToArray(),
                 SerieName = serieName,
                 Labels = data.Select("Label").Cast<string>().ToArray(),
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static string GenerateDataSelector(AggregationFunction aggregation, MemberExpression valueExpression)
         {
-            var dataSelector = string.Empty;
-
             if (aggregation == AggregationFunction.Count || aggregation == AggregationFunction.DistinctCount)
             {
                 // TODO: DISTINCT is tricky and Ricky is a friend of mine
-                dataSelector = "COUNT()";
-            }
-            else
-            {
-                dataSelector = string.Format("{0}(it.{1})", aggregation.ToString().ToUpper(),
-                    valueExpression.Member.Name);
+                return "COUNT()";
             }
 
-            return dataSelector;
+            return $"{aggregation.ToString().ToUpper()}(it.{valueExpression.Member.Name})";
         }
 
         /// <summary>
         /// Creates a multiple series chart from a IQueryable
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <typeparam name="R"></typeparam>
+        /// <typeparam name="TR"></typeparam>
         /// <param name="datasource"></param>
         /// <param name="label"></param>
         /// <param name="serie"></param>
         /// <param name="value"></param>
         /// <param name="aggregation"></param>
         /// <returns></returns>
-        public static MultipleSerieChartResponse<R> ProvideMultipleSerieChartResponse<T, R>(
+        public static MultipleSerieChartResponse<TR> ProvideMultipleSerieChartResponse<T, TR>(
             this IQueryable<T> datasource, Expression<Func<T, string>> label, Expression<Func<T, string>> serie,
-            Expression<Func<T, R>> value, AggregationFunction aggregation = AggregationFunction.Sum)
+            Expression<Func<T, TR>> value, AggregationFunction aggregation = AggregationFunction.Sum)
         {
             // Series are filters
 
@@ -114,9 +109,9 @@
 
             foreach (var serieValue in series)
             {
-                var subset = datasource.Where(string.Format("{0} == @0", serieExpression.Member.Name), serieValue)
+                var subset = datasource.Where($"{serieExpression.Member.Name} == @0", serieValue)
                     .GroupBy(labelExpression.Member.Name, "it")
-                    .Select(string.Format("new (it.Key as Label, {0} as Data)", dataSelector));
+                    .Select($"new (it.Key as Label, {dataSelector} as Data)");
 
                 var tempData = subset.Select("Data").Cast<decimal>().ToList();
                 var subsetLabels = subset.Select("Label").Cast<string>().ToList();
@@ -132,9 +127,9 @@
                 data.Add(tempData);
             }
 
-            return new MultipleSerieChartResponse<R>
+            return new MultipleSerieChartResponse<TR>
             {
-                Data = data.Select(x => x.Cast<R>().ToArray()).ToArray(),
+                Data = data.Select(x => x.Cast<TR>().ToArray()).ToArray(),
                 Labels = labels.ToArray(),
                 Series = series.ToArray()
             };

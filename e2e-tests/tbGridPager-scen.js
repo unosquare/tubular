@@ -115,10 +115,10 @@ describe('tbGridPager', function () {
 
     describe('page navigation', function () {
 
-        beforeEach(function () {
+        beforeEach(function() {
             // Go to first page
             firstNavBtn.$('a').click();
-        })
+        });
 
         it('should go to next results page when clicking on next navigation button', function () {
             nextNavBtn.$('a').click();

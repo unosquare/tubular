@@ -88,7 +88,7 @@
                         $ctrl.requestCounter = 0;
                         $ctrl.requestMethod = $ctrl.requestMethod || 'POST';
                         $ctrl.serverSaveMethod = $ctrl.serverSaveMethod || 'POST';
-                        $ctrl.requestTimeout = 15000;
+                        $ctrl.requestTimeout = 20000;
                         $ctrl.currentRequest = null;
                         $ctrl.autoSearch = $routeParams.param || ($ctrl.saveSearch ? (localStorageService.get($ctrl.name + "_search") || '') : '');
                         $ctrl.search = {
@@ -247,7 +247,7 @@
                         for (var index in columns) {
                             if (columns.hasOwnProperty(index)) {
                                 var columnName = columns[index].Name;
-                                var filtered = $ctrl.columns.filter(function(el) { return el.Name == columnName; });
+                                var filtered = $ctrl.columns.filter(function(el) { return el.Name === columnName; });
 
                                 if (filtered.length === 0) {
                                     continue;

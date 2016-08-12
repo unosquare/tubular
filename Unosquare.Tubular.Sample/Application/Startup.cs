@@ -29,7 +29,7 @@ namespace Unosquare.Tubular.Sample.Application
             public static void Configure(IAppBuilder app)
             {
                 var authFunc =
-                    new Func<OAuthGrantResourceOwnerCredentialsContext, Task<UserAuthenticationResult>>((c) =>
+                    new Func<OAuthGrantResourceOwnerCredentialsContext, Task<UserAuthenticationResult>>(c =>
                     {
                         var task = new Task<UserAuthenticationResult>(() =>
                         {

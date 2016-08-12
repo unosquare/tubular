@@ -1,4 +1,4 @@
-﻿(function() {
+﻿(function(angular) {
     'use strict';
 
     angular.module('app', [
@@ -8,7 +8,7 @@
             '$scope', '$route', function($scope, $route) {
                 var me = this;
                 me.content = "Home";
-                $scope.$on('$routeChangeSuccess', function(currentRoute, previousRoute) {
+                $scope.$on('$routeChangeSuccess', function() {
                     me.content = $route.current.title;
                 });
             }
@@ -24,4 +24,4 @@
                 });
             }
         ]);
-})();
+})(window.angular);
