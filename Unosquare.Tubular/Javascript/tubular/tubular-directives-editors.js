@@ -325,7 +325,6 @@
                     };
 
                     $ctrl.$onInit = function () {
-                        $ctrl.value = new Date(moment($ctrl.value).format());
                         $ctrl.DataType = "date";
                         tubularEditorService.setupScope($scope, $ctrl.format, $ctrl);
                         if (hasMoment && angular.isUndefined($ctrl.format)) {
