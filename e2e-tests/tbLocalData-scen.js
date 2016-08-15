@@ -8,7 +8,6 @@ describe('LocalData', function() {
     var firstDataRow,
         lastDataRow,
         i_sortIcon,
-        a_orderIdSorting,
         filterBtn,
         tbColumnFilter,
         popoverForm,
@@ -144,5 +143,9 @@ describe('LocalData', function() {
                     });
                 });
         });
+    });
+
+    describe('Grid Local Data tbTextSearch', function () {
+        // TODO: Nestor
     });
 });

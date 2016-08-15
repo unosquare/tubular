@@ -10,10 +10,7 @@ describe('tbPageSizeSelctor', function(){
     var dataRowsCollection,
         firstDataRow,
         lastDataRow,
-        tbGridPager,
-        li_tbGridPager_elems,
         firstPageBtn,
-        prevPageBtn,
         nextPageBtn;
         
     beforeAll(function(){        

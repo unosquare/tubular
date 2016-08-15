@@ -127,30 +127,6 @@
                         cancel: response.cancel
                     };
                 };
-
-                me.saveDataAsync = function (model, request) {
-                    return tubularHttp.saveDataAsync(model, request); //TODO: Check how to handle
-                };
-
-                me.get = function (url) {
-                    return tubularHttp.get(url);
-                };
-
-                me.delete = function (url) {
-                    return tubularHttp.delete(url);
-                };
-
-                me.post = function (url, data) {
-                    return tubularHttp.post(url, data);
-                };
-
-                me.put = function (url, data) {
-                    return tubularHttp.put(url, data);
-                };
-
-                me.getByKey = function (url, key) {
-                    return tubularHttp.get(url + "(" + key + ")");
-                };
             }
         ])
         .run([

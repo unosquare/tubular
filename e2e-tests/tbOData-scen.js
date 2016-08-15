@@ -158,7 +158,7 @@ describe('OData', function() {
             applyBtn.click()
                 .then(function () {
                     // Verify filtering
-                    dataRows.each(function (row, index) {
+                    dataRows.each(function (row) {
                         row.$$('td').get(1).getText()
                             .then(function (customer) {
                                 filterOk = filterOk && (customer.indexOf(containedString) != -1);

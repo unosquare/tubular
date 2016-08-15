@@ -1,6 +1,14 @@
 (function(angular) {
     'use strict';
 
+    /**
+     * @ngdoc module
+     * @name tubular-widget.directives
+     * @module tubular-widget.directives
+     * 
+     * @description 
+     * Tubular Widgets Directives. You require jQuery to run this directives.
+     */
     angular.module('tubular-widget.directives', ['tubular.services'])
         /**
          * @ngdoc directive

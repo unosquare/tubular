@@ -146,12 +146,14 @@
                     var savedDat = localStorageService.get('auth_data');
                     $scope.retSavData = retData.username === savedDat.username;
                 };
+
                 $scope.getTest = function() {
                     var getObject = tubularHttp.get('http://tubular.azurewebsites.net/api/orders/53');
                     if (getObject.cancel != null) {
                         $scope.getLog = "cancel";
                     }
                 };
+
                 $scope.postTest = function() {
                     tubularHttp.post('http://tubular.azurewebsites.net/api/orders/53', { 'ShipperCity': 'California' }).promise.then(function(data) {
                         if (data == null) {

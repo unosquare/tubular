@@ -115,9 +115,9 @@ describe('Tubular Filters', function () {
                 .then(function () {
                     dataRows.getText()
                         .then(function (modifiedText) {
-                            equalData = (originalData.length == modifiedText.length) && originalData.every(function (element, index) {
+                            equalData = (originalData.length == modifiedText.length) && originalData.every(function(element, index) {
                                 return element === modifiedText[index];
-                            })
+                            });
                         })
                         .then(function () {
                             expect(equalData).toBe(true);
@@ -167,7 +167,7 @@ describe('Tubular Filters', function () {
             applyBtn.click()
                 .then(function () {
                     // Verify filtering
-                    dataRows.each(function (row, index) {
+                    dataRows.each(function (row) {
                         row.$$('td').get(1).getText()
                             .then(function (customer) {
                                 filterOk = filterOk && (customer == filteredCustomer);
@@ -189,7 +189,7 @@ describe('Tubular Filters', function () {
             applyBtn.click()
                 .then(function () {
                     // Verify filtering
-                    dataRows.each(function (row, index) {
+                    dataRows.each(function (row) {
                         row.$$('td').get(1).getText()
                             .then(function (customer) {
                                 filterOk = filterOk && (customer != notShowingCustomer);
@@ -211,7 +211,7 @@ describe('Tubular Filters', function () {
             applyBtn.click()
                 .then(function () {
                     // Verify filtering
-                    dataRows.each(function (row, index) {
+                    dataRows.each(function (row) {
                         row.$$('td').get(1).getText()
                             .then(function (customer) {
                                 filterOk = filterOk && (customer.indexOf(containedString) != -1);
@@ -233,7 +233,7 @@ describe('Tubular Filters', function () {
             applyBtn.click()
                 .then(function () {
                     // Verify filtering
-                    dataRows.each(function (row, index) {
+                    dataRows.each(function (row) {
                         row.$$('td').get(1).getText()
                             .then(function (customer) {
                                 filterOk = filterOk && (customer.indexOf(notContainedString) == -1);
@@ -549,7 +549,7 @@ describe('Tubular Filters', function () {
                 .then(function () {
                     // Verify filtering
                     loadData().then(function () {
-                        dataRows.each(function (row, index) {
+                        dataRows.each(function (row) {
                             row.$$('td').get(2).getText()
                                 .then(function (date) {
                                     filterOk = filterOk && (minDate <= new Date(date) <= maxDate);
@@ -716,13 +716,13 @@ describe('Tubular Filters', function () {
                 .then(function () {
                     filterBtn.click()
                         // Set filtering
-                        .then(function () {
-                            filterSelect.$$('option').first().click()
+                        .then(function() {
+                            filterSelect.$$('option').first().click();
                         })
                         // Click another element
-                        .then(function () {
+                        .then(function() {
                             element(by.tagName('tb-grid-pager')).$('li.pagination-first a').click();
-                        })
+                        });
                 })
                 // Compare data again
                 .then(function () {
@@ -743,7 +743,7 @@ describe('Tubular Filters', function () {
 
             // Set filter and apply it
             filterBtn.click();
-            filterSelect.$$('option').first().click()
+            filterSelect.$$('option').first().click();
             applyBtn.click()
                 .then(function () {
                     loadData().
@@ -763,29 +763,29 @@ describe('Tubular Filters', function () {
                 options = text;
             })
                 .then(function () {
-                    options.forEach(function (option, index) {
-                        filterSelect.$$('option').get(index).click().then(function () {
-                            applyBtn.click();
-                            loadData().then(function () {
+                    options.forEach(function(option, index) {
+                        filterSelect.$$('option').get(index).click().then(function() {
+                                applyBtn.click();
+                                loadData().then(function() {
 
-                                dataRows.each(function (row) {
-                                    row.$$('td').get(3).getText().then(function (data) {
-                                        filterOk = filterOk && (data == option);
+                                    dataRows.each(function(row) {
+                                        row.$$('td').get(3).getText().then(function(data) {
+                                            filterOk = filterOk && (data == option);
+                                        });
                                     });
-                                });
 
-                            });
-                        })
-                            .then(function () {
-                                filterBtn.click().then(function () {
-                                    clearBtn.click().then(function () {
-                                        loadData().then(function () {
+                                });
+                            })
+                            .then(function() {
+                                filterBtn.click().then(function() {
+                                    clearBtn.click().then(function() {
+                                        loadData().then(function() {
                                             filterBtn.click();
                                         });
                                     });
                                 });
                             });
-                    })
+                    });
                 })
                 .then(function () {
                     expect(filterOk).toBe(true);
@@ -877,7 +877,7 @@ describe('Tubular Filters', function () {
             tbTextSearchInput.sendKeys('lo');
 
             // Expect rows not to be filtered
-            dataRows.each(function (row, index) {
+            dataRows.each(function (row) {
                 row.$$('td').get(3).getText()
                     .then(function (customer) {
                         filterOk = filterOk && (customer == filteredCity);

@@ -7,8 +7,8 @@
          * @name tubularLocalData
          *
          * @description
-         * Use `tubularLocalData` to connect a grid or a form to a local
-         * JSON file. This file can be stored in a BLOB.
+         * Use `tubularLocalData` to connect a grid or a form to a local JSON file. This file can be 
+         * stored in a BLOB as a BASE64 string.
          */
         .service('tubularLocalData', ['tubularHttp', '$q', '$filter', function(tubularHttp, $q, $filter) {
                 var me = this;
@@ -35,7 +35,7 @@
 
                     // If database is null, retrieve it
                     return {
-                        promise: $q(function(resolve, reject) {
+                        promise: $q(function(resolve) {
                             resolve(tubularHttp.retrieveDataAsync(request).promise.then(function(data) {
                                 // TODO: Maybe check dataset and convert DATES
                                 return me.pageRequest(request.data, data);
@@ -114,7 +114,7 @@
                             });
 
                         if (searchables.length > 0) {
-                            set = $filter('filter')(set, function(value, index, array) {
+                            set = $filter('filter')(set, function(value) {
                                 var filters = reduceFilterArray(searchables);
                                 var result = false;
                                 angular.forEach(filters, function(filter, column) {
@@ -142,35 +142,6 @@
                     }
 
                     return response;
-                };
-
-                me.saveDataAsync = function(model, request) {
-                    // TODO: Complete
-                };
-
-                me.get = function(url) {
-                    // Just pass the URL to TubularHttp for now
-                    tubularHttp.get(url);
-                };
-
-                me.delete = function(url) {
-                    // Just pass the URL to TubularHttp for now
-                    tubularHttp.delete(url);
-                };
-
-                me.post = function(url, data) {
-                    // Just pass the URL to TubularHttp for now
-                    tubularHttp.post(url, data);
-                };
-
-                me.put = function(url, data) {
-                    // Just pass the URL to TubularHttp for now
-                    tubularHttp.put(url, data);
-                };
-
-                me.getByKey = function(url, key) {
-                    // Just pass the URL to TubularHttp for now
-                    tubularHttp.getByKey(url, key);
                 };
             }
         ])

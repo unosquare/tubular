@@ -221,7 +221,7 @@ describe('tbForm related components ->', function () {
         tbDropDownEditorCity_original = 'string:Guadalajara, JAL, Mexico';
         
     function selectDropDownOption(filterText) {
-        return tbDropDownEditor.$$('option').filter(function (elem, index) {
+        return tbDropDownEditor.$$('option').filter(function (elem) {
             return elem.getText().then(function (text) {
                 return text.indexOf(filterText) != -1;
             });
@@ -511,7 +511,7 @@ describe('tbForm related components ->', function () {
         });
 
         it('should show the component name value in a label field when "showLabel" attribute is true', function () {
-            expect(tbTextArea_label.getText()).toMatch('Customer Name')
+            expect(tbTextArea_label.getText()).toMatch('Customer Name');
         });
 
         it('should show a help field equal to this attribute, is present', function () {
