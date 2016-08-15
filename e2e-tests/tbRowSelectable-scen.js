@@ -20,7 +20,6 @@ describe('tbRowSelectable', function () {
     
     it('unselected rows', function () {
         element.all(by.repeater('row in $component.rows')).click();
-        var rows = element.all(by.repeater('row in $component.rows'));
         element(by.id('btnRows')).click();
         expect($('#lbRows').getText()).toBe('0');
     });

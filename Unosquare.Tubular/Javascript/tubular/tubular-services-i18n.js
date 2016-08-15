@@ -145,10 +145,6 @@
 
                     return languageTable[key] || key;
                 };
-
-                me.reverseTranslate = function(value) {
-                    // TODO: Find value
-                };
             }
         ])
         /**

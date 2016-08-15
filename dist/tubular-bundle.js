@@ -1651,7 +1651,8 @@ try {
                     '<span class="input-group-btn">' +
                     '<button type="button" class="btn btn-default" ng-click="$ctrl.open = !$ctrl.open"><i class="fa fa-calendar"></i></button>' +
                     '</span>' +
-                    '</div>') +
+                    '</div>'+
+                    '<div uib-timepicker ng-model="$ctrl.value"  show-seconds="true" show-meridian="false"></div>') +
                 '{{error}}' +
                 '</span>' +
                 '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help">{{$ctrl.help}}</span>' +
@@ -1674,13 +1675,38 @@ try {
                     var $ctrl = this;
 
                     // This could be $onChange??
-                    $scope.$watch(function () {
-                        return $ctrl.value;
-                    }, function (val) {
-                        if (typeof (val) === 'string') {
-                            $ctrl.value = new Date(val);
-                        }
-                    });
+                    $scope.$watch(function() {
+                       return $ctrl.value;
+                   }, function (val) {
+                       if (angular.isUndefined(val)) return;
+
+                       if (typeof (val) === 'string') {
+                           $ctrl.value = hasMoment ? moment(val) : new Date(val);
+                       }
+
+                       if (angular.isUndefined($ctrl.dateValue)) {
+                           if (hasMoment) {
+                               if ($ctrl.value instanceof moment) {
+                                   var tmpDate = $ctrl.value.toObject();
+                                   $ctrl.dateValue = new Date(tmpDate.years, tmpDate.months, tmpDate.date, tmpDate.hours, tmpDate.minutes, tmpDate.seconds);
+                                   return $ctrl.dateValue;
+                               } else {
+                                   // NULL value
+                                   $ctrl.dateValue = $ctrl.value;
+                               }
+                           } else {
+                               $ctrl.dateValue = $ctrl.value;
+                           }
+
+                           $scope.$watch(function() {
+                               return $ctrl.dateValue;
+                           }, function(val) {
+                               if (angular.isDefined(val)) {
+                                   $ctrl.value = hasMoment ? moment(val) : new Date(val);
+                               }
+                           });
+                       }
+                   });
 
                     $ctrl.validate = function () {
                         if (angular.isDefined($ctrl.min)) {
@@ -1712,6 +1738,9 @@ try {
                     $ctrl.$onInit = function () {
                         $ctrl.DataType = "date";
                         tubularEditorService.setupScope($scope, $ctrl.format, $ctrl);
+                        if (hasMoment && angular.isUndefined($ctrl.format)) {
+                           $ctrl.format = "MMM D, Y";
+                       }
                     };
                 }
             ]
@@ -4701,10 +4730,6 @@ try {
                     var languageTable = me.translationTable[me.currentLanguage] || me.translationTable[me.defaultLanguage];
 
                     return languageTable[key] || key;
-                };
-
-                me.reverseTranslate = function(value) {
-                    // TODO: Find value
                 };
             }
         ])

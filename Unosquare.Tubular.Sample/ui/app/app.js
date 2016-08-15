@@ -63,7 +63,7 @@
                 var me = this;
                 me.content = "Home";
 
-                $scope.$on('$routeChangeSuccess', function (currentRoute, previousRoute) {
+                $scope.$on('$routeChangeSuccess', function () {
                     me.content = $route.current.title;
                 });
             }

@@ -11,8 +11,7 @@ describe('tbColumn', function() {
         i_sortIcon,
         a_orderIdSorting,
         a_customerNameSorting,
-        a_shippedDateSorting,
-        a_shipperCitySorting;
+        a_shippedDateSorting;
 
     beforeAll(function() {
         // Go to test
