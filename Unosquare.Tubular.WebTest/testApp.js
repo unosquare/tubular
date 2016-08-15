@@ -69,10 +69,6 @@
                         templateUrl: '/Unosquare.Tubular.WebTest/common/tbRowSelectable.html',
                         title: 'selectedRows clearSelection isEmptySelection'
                     })
-                    .when('/tbFormMoment',{
-                        templateUrl: '/Unosquare.Tubular.WebTest/common/tbFormMoment.html',
-                        title: 'Date Moment'
-                    })
                     .otherwise({
                         redirectTo: '/'
                     });
