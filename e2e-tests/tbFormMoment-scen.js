@@ -39,7 +39,7 @@ describe('tb Form Date Editor', function(){
     beforeAll(function(){
          browser.get('indexMoment.html');
         element(by.id('testsSelector')).click();
-        element(by.id('tbFormMoment')).click().then(function () {
+        element(by.id('tbFormTest')).click().then(function () {
             // Save and Cancel buttons
             tbFormSaveBtn = $('div.modal-dialog form').$('#btnSave');
             tbFormCancelBtn = $('div.modal-dialog form').$('#btnCancel');
