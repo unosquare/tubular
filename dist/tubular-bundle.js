@@ -1643,16 +1643,16 @@ try {
                 '<span ng-hide="$ctrl.isEditing">{{ $ctrl.value | date: format }}</span>' +
                 '<label ng-show="$ctrl.showLabel">{{ $ctrl.label }}</label>' +
                 (canUseHtml5Date ?
-                    '<input type="datetime-local" ng-show="$ctrl.isEditing" ng-model="$ctrl.value" class="form-control" ' +
+                    '<input type="datetime-local" ng-show="$ctrl.isEditing" ng-model="$ctrl.dateValue" class="form-control" ' +
                     'ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}"/>' :
                     '<div class="input-group" ng-show="$ctrl.isEditing">' +
-                    '<input type="text" uib-datepicker-popup="{{$ctrl.format}}" ng-model="$ctrl.value" class="form-control" ' +
+                    '<input type="text" uib-datepicker-popup="{{$ctrl.format}}" ng-model="$ctrl.dateValue" class="form-control" ' +
                     'ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}" is-open="$ctrl.open" />' +
                     '<span class="input-group-btn">' +
                     '<button type="button" class="btn btn-default" ng-click="$ctrl.open = !$ctrl.open"><i class="fa fa-calendar"></i></button>' +
                     '</span>' +
                     '</div>'+
-                    '<div uib-timepicker ng-model="$ctrl.value"  show-seconds="true" show-meridian="false"></div>') +
+                    '<div uib-timepicker ng-model="$ctrl.dateValue"  show-seconds="true" show-meridian="false"></div>') +
                 '{{error}}' +
                 '</span>' +
                 '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help">{{$ctrl.help}}</span>' +
@@ -1689,7 +1689,6 @@ try {
                                if ($ctrl.value instanceof moment) {
                                    var tmpDate = $ctrl.value.toObject();
                                    $ctrl.dateValue = new Date(tmpDate.years, tmpDate.months, tmpDate.date, tmpDate.hours, tmpDate.minutes, tmpDate.seconds);
-                                   return $ctrl.dateValue;
                                } else {
                                    // NULL value
                                    $ctrl.dateValue = $ctrl.value;
@@ -1740,7 +1739,7 @@ try {
                         tubularEditorService.setupScope($scope, $ctrl.format, $ctrl);
                         if (hasMoment && angular.isUndefined($ctrl.format)) {
                            $ctrl.format = "MMM D, Y";
-                       }
+                        }
                     };
                 }
             ]
