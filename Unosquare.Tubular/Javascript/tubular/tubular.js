@@ -1,4 +1,4 @@
-﻿(function(angular) {
+﻿(function(angular, moment) {
     'use strict';
 
     /**
@@ -49,10 +49,10 @@
         .filter("numberorcurrency", [
             "$filter", function($filter) {
                 return function(input, format, symbol, fractionSize) {
-                    symbol = symbol || "$";
                     fractionSize = fractionSize || 2;
 
                     if (format === "C") {
+                        symbol = symbol || "$";
                         return $filter("currency")(input, symbol, fractionSize);
                     }
 
@@ -88,4 +88,4 @@
                 };
             }
         ]);
-})(window.angular);
+})(window.angular, window.moment || null);

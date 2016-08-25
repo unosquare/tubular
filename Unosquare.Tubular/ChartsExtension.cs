@@ -28,13 +28,10 @@
             Expression<Func<T, string>> label, Expression<Func<T, TR>> value, string serieName = null,
             AggregationFunction aggregation = AggregationFunction.Sum)
         {
-            var labelExpression = label.Body is MemberExpression
-                ? (MemberExpression) label.Body
-                : ((MemberExpression) ((UnaryExpression) label.Body).Operand);
-
-            var valueExpression = value.Body is MemberExpression
-                ? (MemberExpression) value.Body
-                : ((MemberExpression) ((UnaryExpression) value.Body).Operand);
+            var labelExpression = (label.Body as MemberExpression) ??
+                                  ((MemberExpression) ((UnaryExpression) label.Body).Operand);
+            var valueExpression = (value.Body as MemberExpression) ??
+                                  ((MemberExpression) ((UnaryExpression) value.Body).Operand);
 
             var dataSelector = GenerateDataSelector(aggregation, valueExpression);
 
@@ -78,18 +75,14 @@
             Expression<Func<T, TR>> value, AggregationFunction aggregation = AggregationFunction.Sum)
         {
             // Series are filters
+            var labelExpression = (label.Body as MemberExpression) ??
+                                  ((MemberExpression) ((UnaryExpression) label.Body).Operand);
 
-            var labelExpression = label.Body is MemberExpression
-                ? (MemberExpression) label.Body
-                : ((MemberExpression) ((UnaryExpression) label.Body).Operand);
+            var serieExpression = (serie.Body as MemberExpression) ??
+                                  ((MemberExpression) ((UnaryExpression) serie.Body).Operand);
 
-            var serieExpression = serie.Body is MemberExpression
-                ? (MemberExpression) serie.Body
-                : ((MemberExpression) ((UnaryExpression) serie.Body).Operand);
-
-            var valueExpression = value.Body is MemberExpression
-                ? (MemberExpression) value.Body
-                : ((MemberExpression) ((UnaryExpression) value.Body).Operand);
+            var valueExpression = (value.Body as MemberExpression) ??
+                                  ((MemberExpression) ((UnaryExpression) value.Body).Operand);
 
             var dataSelector = GenerateDataSelector(aggregation, valueExpression);
 
@@ -105,6 +98,7 @@
                     .Cast<string>()
                     .Distinct()
                     .ToList();
+
             var data = new List<List<decimal>>();
 
             foreach (var serieValue in series)
@@ -118,9 +112,8 @@
 
                 var unkwnownLabels = labels.Except(subsetLabels);
 
-                foreach (var item in unkwnownLabels)
+                foreach (var index in unkwnownLabels.Select(item => labels.IndexOf(item)))
                 {
-                    var index = labels.IndexOf(item);
                     tempData.Insert(index, 0);
                 }
 

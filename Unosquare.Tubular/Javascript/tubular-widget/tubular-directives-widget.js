@@ -83,7 +83,7 @@
                                     widget.canDown = false;
                                 });
                                 angular.forEach($scope.widgetsAsRows, function(row) {
-                                    if (row.length == 1) {
+                                    if (row.length === 1) {
                                         row[0].canRight = false;
                                         row[0].canLeft = false;
                                     } else {
@@ -97,26 +97,26 @@
 
                             $scope.move = function(widget, direction) {
                                 var rowNumber = widget.row;
-                                var targetRowNumber = direction == 'up' ? rowNumber - 1 : direction == 'down' ? rowNumber + 1 : rowNumber;
+                                var targetRowNumber = direction == 'up' ? rowNumber - 1 : direction === 'down' ? rowNumber + 1 : rowNumber;
                                 var widgetRow = $scope.widgetsAsRows[rowNumber];
                                 var targetRow = $scope.widgetsAsRows[targetRowNumber];
                                 switch (direction) {
                                 case 'up':
                                 case 'down':
                                     if (widgetRow[0].fullWidth || targetRow[0].fullWidth) {
-                                        var tmp = $scope.widgetsAsRows[rowNumber];
+                                        var tmp1 = $scope.widgetsAsRows[rowNumber];
                                         $scope.widgetsAsRows[rowNumber] = $scope.widgetsAsRows[targetRowNumber];
-                                        $scope.widgetsAsRows[targetRowNumber] = tmp;
+                                        $scope.widgetsAsRows[targetRowNumber] = tmp1;
                                     } else {
                                         if (widget.canLeft) {
                                             var swapWithIndex = $scope.widgetsAsRows[targetRowNumber].length == 2 ? 1 : 0;
-                                            var tmp = $scope.widgetsAsRows[rowNumber][1];
+                                            var tmp2 = $scope.widgetsAsRows[rowNumber][1];
                                             $scope.widgetsAsRows[rowNumber][1] = $scope.widgetsAsRows[targetRowNumber][swapWithIndex];
-                                            $scope.widgetsAsRows[targetRowNumber][swapWithIndex] = tmp;
+                                            $scope.widgetsAsRows[targetRowNumber][swapWithIndex] = tmp2;
                                         } else {
-                                            var tmp = $scope.widgetsAsRows[rowNumber][0];
+                                            var tmp3 = $scope.widgetsAsRows[rowNumber][0];
                                             $scope.widgetsAsRows[rowNumber][0] = $scope.widgetsAsRows[targetRowNumber][0];
-                                            $scope.widgetsAsRows[targetRowNumber][0] = tmp;
+                                            $scope.widgetsAsRows[targetRowNumber][0] = tmp3;
                                         }
                                     }
                                     break;
@@ -156,7 +156,7 @@
                             };
                         }
                     ],
-                    compile: function compile() {
+                    compile: function() {
                         return {
                             post: function(scope) {
                                 if (!scope.fixedWidgets && scope.settings) {

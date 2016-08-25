@@ -28,15 +28,9 @@
          * @param {string} serviceName Define Data service (name) to retrieve data, defaults `tubularHttp`.
          * @param {bool} requireAuthentication Set if authentication check must be executed, default true.
          */
-        .directive('tbForm', ['tubularEditorService',
-            function (tubularEditorService) {
+        .directive('tbForm', [function () {
                 return {
-                    template: function (element, attrs) {
-                        // Angular Form requires a name for the form
-                        // use the provided one or create a unique id for it
-                        var name = attrs.name || tubularEditorService.getUniqueTbFormName();
-                        return '<form ng-transclude name="' + name + '"></form>';
-                    },
+                    template: '<form ng-transclude name="{{name}}"></form>',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
@@ -51,13 +45,14 @@
                         name: '@?formName'
                     },
                     controller: [
-                        '$scope', '$routeParams', 'tubularModel', 'tubularHttp', '$timeout', '$element',
-                        function ($scope, $routeParams, TubularModel, tubularHttp, $timeout, $element) {
+                        '$scope', '$routeParams', 'tubularModel', 'tubularHttp', '$timeout', '$element', 'tubularEditorService',
+                        function ($scope, $routeParams, TubularModel, tubularHttp, $timeout, $element, tubular) {
                             $scope.tubularDirective = 'tubular-form';
                             $scope.serverSaveMethod = $scope.serverSaveMethod || 'POST';
                             $scope.fields = [];
                             $scope.hasFieldsDefinitions = false;
                             $scope.dataService = tubularHttp.getDataService($scope.dataServiceName);
+                            $scope.name = $scope.name || tubular.getUniqueTbFormName();
 
                             // This method is meant to provide a reference to the Angular Form
                             // so we can get information about: $pristine, $dirty, $submitted, etc.
@@ -210,7 +205,7 @@
                             };
                         }
                     ],
-                    compile: function compile() {
+                    compile: function() {
                         return {
                             post: function (scope) {
                                 scope.finishDefinition();

@@ -81,21 +81,14 @@
                     };
 
                     $scope.$watch('$ctrl.$component.filteredRecordCount', function () {
-                        $ctrl.filtered = $ctrl.$component.totalRecordCount != $ctrl.$component.filteredRecordCount;
+                        $ctrl.filtered = $ctrl.$component.totalRecordCount !== $ctrl.$component.filteredRecordCount;
                         $ctrl.fixCurrentTop();
                     });
 
-                    $scope.$watch('$ctrl.$component.currentPage', function () {
-                        $ctrl.fixCurrentTop();
-                    });
+                    $scope.$watch('$ctrl.$component.currentPage', $ctrl.fixCurrentTop);
+                    $scope.$watch('$ctrl.$component.pageSize', $ctrl.fixCurrentTop);
 
-                    $scope.$watch('$ctrl.$component.pageSize', function () {
-                        $ctrl.fixCurrentTop();
-                    });
-
-                    $ctrl.$onInit = function () {
-                        $ctrl.fixCurrentTop();
-                    };
+                    $ctrl.$onInit = $ctrl.fixCurrentTop;
                 }
             ]
         });

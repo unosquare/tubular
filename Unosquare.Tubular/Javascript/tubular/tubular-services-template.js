@@ -9,14 +9,14 @@
          * @description
          * Use `tubularTemplateService` to generate `tbGrid` and `tbForm` templates.
          * 
-         * This service is just a facade to the node module expose like `tubularTemplateServiceModule`.
+         * This service is just a facade to the node module expose like `tubularTemplate`.
          */
         .service('tubularTemplateService', [
-            '$templateCache', 'tubularEditorService', function($templateCache, tubularEditorService) {
+            '$templateCache', function($templateCache) {
                 var me = this;
 
-                me.enums = tubularTemplateServiceModule.enums;
-                me.defaults = tubularTemplateServiceModule.defaults;
+                me.enums = tubularTemplate.enums;
+                me.defaults = tubularTemplate.defaults;
 
                 // Loading popovers templates
                 me.tbColumnFilterPopoverTemplateName = 'tbColumnFilterPopoverTemplate.html';
@@ -60,7 +60,7 @@
                     me.tbColumnDateTimeFilterPopoverTemplate = '<div>' +
                         '<form class="tubular-column-filter-form" onsubmit="return false;">' +
                         '<select class="form-control" ng-options="key as value for (key , value) in $ctrl.filterOperators" ng-model="$ctrl.filter.Operator" ng-hide="$ctrl.dataType == \'boolean\'"></select>&nbsp;' +
-                        (tubularEditorService.canUseHtml5Date ? htmlDateSelector : bootstrapDateSelector) +
+                        (tubularTemplate.canUseHtml5Date ? htmlDateSelector : bootstrapDateSelector) +
                         '<hr />' +
                         '<tb-column-filter-buttons></tb-column-filter-buttons>' +
                         '</form>' +
@@ -97,24 +97,18 @@
 
                 me.generatePopup = function(model, title) {
                     var templateName = 'temp' + (new Date().getTime()) + '.html';
-                    var template = tubularTemplateServiceModule.generatePopup(model, title);
+                    var template = tubularTemplate.generatePopup(model, title);
 
                     $templateCache.put(templateName, template);
 
                     return templateName;
                 };
 
-                me.createColumns = function(model) {
-                    return tubularTemplateServiceModule.createColumns(model);
-                };
+                me.createColumns = tubularTemplate.createColumns;
 
-                me.generateForm = function(fields, options) {
-                    return tubularTemplateServiceModule.generateForm(fields, options);
-                };
+                me.generateForm = tubularTemplate.generateForm;
 
-                me.generateGrid = function(columns, options) {
-                    return tubularTemplateServiceModule.generateGrid(columns, options);
-                };
+                me.generateGrid = tubularTemplate.generateGrid;
 
                 me.setupFilter = function($scope, $element, $compile, $filter, $ctrl) {
                     var filterOperators = {
@@ -187,25 +181,21 @@
                     $ctrl.filterTitle = $ctrl.title || $filter('translate')('CAPTION_FILTER');
 
                     $scope.$watch(function() {
-                        var columns = $ctrl.$component.columns.filter(function($element) {
-                            return $element.Name === $ctrl.filter.Name;
-                        });
+                        var columns = $ctrl.$component.columns.filter(function(e) { return e.Name === $ctrl.filter.Name; });
 
                         return columns.length !== 0 ? columns[0] : null;
                     }, function(val) {
-                        if (val && val != null) {
-                            if ($ctrl.filter.HasFilter != val.Filter.HasFilter) {
-                                $ctrl.filter.HasFilter = val.Filter.HasFilter;
-                                $ctrl.filter.Text = val.Filter.Text;
-                                $ctrl.retrieveData();
-                            }
+                        if (!val) return;
+
+                        if ($ctrl.filter.HasFilter !== val.Filter.HasFilter) {
+                            $ctrl.filter.HasFilter = val.Filter.HasFilter;
+                            $ctrl.filter.Text = val.Filter.Text;
+                            $ctrl.retrieveData();
                         }
                     }, true);
 
                     $ctrl.retrieveData = function() {
-                        var columns = $ctrl.$component.columns.filter(function($element) {
-                            return $element.Name === $ctrl.filter.Name;
-                        });
+                        var columns = $ctrl.$component.columns.filter(function(e) { return e.Name === $ctrl.filter.Name; });
 
                         if (columns.length !== 0) {
                             columns[0].Filter = $ctrl.filter;
@@ -246,9 +236,7 @@
                         }
                     };
 
-                    var columns = $ctrl.$component.columns.filter(function($element) {
-                        return $element.Name === $ctrl.filter.Name;
-                    });
+                    var columns = $ctrl.$component.columns.filter(function(e) { return e.Name === $ctrl.filter.Name; });
 
                     $scope.$watch('$ctrl.filter.Operator', function(val) {
                         if (val === 'None') $ctrl.filter.Text = '';

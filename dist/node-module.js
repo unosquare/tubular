@@ -3,9 +3,9 @@
 
 /*
  * Tubular Template engine module
- * @module TubularTemplateServiceModule
+ * @module tubular
  */
-var tubularTemplateServiceModule = {
+var tubularTemplate = {
     enums: {
         dataTypes: ['numeric', 'date', 'boolean', 'string'],
         editorTypes: [
@@ -125,6 +125,16 @@ var tubularTemplateServiceModule = {
         }
     },
 
+    canUseHtml5Date : function() {
+        var input = document.createElement('input');
+        input.setAttribute('type', 'date');
+
+        var notADateValue = 'not-a-date';
+        input.setAttribute('value', notADateValue);
+
+        return (input.value !== notADateValue);
+    }(),
+
     /*
      * Create a columns array using a model.
      * 
@@ -211,7 +221,7 @@ var tubularTemplateServiceModule = {
     generateFieldsArray: function(columns) {
         return columns.map(function(el) {
             var editorTag = el.EditorType.replace(/([A-Z])/g, function($1) { return "-" + $1.toLowerCase(); });
-            var defaults = tubularTemplateServiceModule.defaults.fieldsSettings[el.EditorType];
+            var defaults = tubularTemplate.defaults.fieldsSettings[el.EditorType];
 
             return '\r\n\t<' + editorTag + ' name="' + el.Name + '"' +
                 (defaults.EditorType ? '\r\n\t\teditor-type="' + el.DataType + '" ' : '') +
@@ -298,7 +308,7 @@ var tubularTemplateServiceModule = {
         return '<tb-form server-save-method="' + options.SaveMethod + '" ' +
             'model-key="' + options.ModelKey + '" require-authentication="' + options.RequireAuthentication + '" ' +
             'server-url="' + options.dataUrl + '" server-save-url="' + options.SaveUrl + '"' +
-            (options.ServiceName != '' ? ' service-name="' + options.ServiceName + '"' : '') + '>' +
+            (options.ServiceName !== '' ? ' service-name="' + options.ServiceName + '"' : '') + '>' +
             '\r\n\t' + fieldsMarkup +
             '\r\n\t<div>' +
             '\r\n\t\t<button class="btn btn-primary" ng-click="$parent.save()" ng-disabled="!$parent.model.$valid()">Save</button>' +
@@ -369,15 +379,15 @@ var tubularTemplateServiceModule = {
         return '<div class="container">' +
             '\r\n<tb-grid server-url="' + options.dataUrl + '" request-method="' + options.RequestMethod + '" class="row" ' +
             'page-size="10" require-authentication="' + options.RequireAuthentication + '" ' +
-            (options.ServiceName != '' ? ' service-name="' + options.ServiceName + '"' : '') +
-            (options.Mode != 'Read-Only' ? ' editor-mode="' + options.Mode.toLowerCase() + '"' : '') + '>' +
+            (options.ServiceName !== '' ? ' service-name="' + options.ServiceName + '"' : '') +
+            (options.Mode !== 'Read-Only' ? ' editor-mode="' + options.Mode.toLowerCase() + '"' : '') + '>' +
             (topToolbar === '' ? '' : '\r\n\t<div class="row">' + topToolbar + '\r\n\t</div>') +
             '\r\n\t<div class="row">' +
             '\r\n\t<div class="col-md-12">' +
             '\r\n\t<div class="panel panel-default panel-rounded">' +
             '\r\n\t<tb-grid-table class="table-bordered">' +
             '\r\n\t<tb-column-definitions>' +
-            (options.Mode != 'Read-Only' ? '\r\n\t\t<tb-column label="Actions"><tb-column-header>{{label}}</tb-column-header></tb-column>' : '') +
+            (options.Mode !== 'Read-Only' ? '\r\n\t\t<tb-column label="Actions"><tb-column-header>{{label}}</tb-column-header></tb-column>' : '') +
             columns.map(function(el) {
                 return '\r\n\t\t<tb-column name="' + el.Name + '" label="' + el.Label + '" column-type="' + el.DataType + '" sortable="' + el.Sortable + '" ' +
                     '\r\n\t\t\tis-key="' + el.IsKey + '" searchable="' + el.Searchable + '" ' +
@@ -390,7 +400,7 @@ var tubularTemplateServiceModule = {
             '\r\n\t</tb-column-definitions>' +
             '\r\n\t<tb-row-set>' +
             '\r\n\t<tb-row-template ng-repeat="row in $component.rows" row-model="row">' +
-            (options.Mode != 'Read-Only' ? '\r\n\t\t<tb-cell-template>' +
+            (options.Mode !== 'Read-Only' ? '\r\n\t\t<tb-cell-template>' +
                 (options.Mode === 'Inline' ? '\r\n\t\t\t<tb-save-button model="row"></tb-save-button>' : '') +
                 '\r\n\t\t\t<tb-edit-button model="row"></tb-edit-button>' +
                 '\r\n\t\t</tb-cell-template>' : '') +
@@ -408,7 +418,7 @@ var tubularTemplateServiceModule = {
 };
 
 try {
-    module.exports = tubularTemplateServiceModule;
+    module.exports = tubularTemplate;
 } catch (e) {
     // Ignore
 }

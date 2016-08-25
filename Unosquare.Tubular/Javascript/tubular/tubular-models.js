@@ -1,4 +1,4 @@
-﻿(function (angular) {
+﻿(function (angular, moment) {
     'use strict';
 
     /**                                           
@@ -96,8 +96,7 @@
                     obj.$key = obj.$key.substring(0, obj.$key.length - 1);
                 }
 
-                obj.$isEditing = false;
-                obj.$hasChanges = false;
+                obj.$hasChanges = obj.$isEditing = false;
                 obj.$selected = false;
                 obj.$isNew = false;
 
@@ -167,11 +166,10 @@
                         }
                     }
 
-                    obj.$isEditing = false;
-                    obj.$hasChanges = false;
+                    obj.$hasChanges = obj.$isEditing = false;
                 };
 
                 return obj;
             };
         });
-})(window.angular);
+})(window.angular, window.moment || null);

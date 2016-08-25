@@ -57,11 +57,7 @@
                             return;
                         }
 
-                        if (val === "" || val.length < $ctrl.minChars) {
-                            return;
-                        }
-
-                        if (val === $ctrl.lastSearch) {
+                        if (val === "" || val.length < $ctrl.minChars || val === $ctrl.lastSearch) {
                             return;
                         }
 
@@ -106,10 +102,10 @@
                 'tubularTemplateService', function(tubularTemplateService) {
                     var $ctrl = this;
 
-                    $ctrl.showIcon = angular.isDefined($ctrl.icon);
-                    $ctrl.showCaption = !($ctrl.showIcon && angular.isUndefined($ctrl.caption));
+                    $ctrl.$onInit = function () {
+                        $ctrl.showIcon = angular.isDefined($ctrl.icon);
+                        $ctrl.showCaption = !($ctrl.showIcon && angular.isUndefined($ctrl.caption));
 
-                    $ctrl.$onInit = function() {
                         $ctrl.templateName = tubularTemplateService.tbRemoveButtonrPopoverTemplateName;
                     }
                 }
@@ -302,16 +298,15 @@
                 captionMenuCurrent: '@',
                 captionMenuAll: '@'
             },
-            controller: [
-                '$scope', 'tubularGridExportService', function($scope, tubularGridExportService) {
+            controller: ['tubularGridExportService', function(tubular) {
                     var $ctrl = this;
 
                     $ctrl.downloadCsv = function() {
-                        tubularGridExportService.exportGridToCsv($ctrl.filename, $ctrl.$component);
+                        tubular.exportGridToCsv($ctrl.filename, $ctrl.$component);
                     };
 
                     $ctrl.downloadAllCsv = function() {
-                        tubularGridExportService.exportAllGridToCsv($ctrl.filename, $ctrl.$component);
+                        tubular.exportAllGridToCsv($ctrl.filename, $ctrl.$component);
                     };
                 }
             ]
@@ -333,7 +328,7 @@
                 $component: '^tbGrid'
             },
             template: '<button class="btn btn-default btn-sm" ng-click="$ctrl.printGrid()">' +
-                '<span class="fa fa-print"></span>&nbsp;{{$ctrl.caption || (\'CAPTION_PRINT\' | translate)}}' +
+                '<span class="fa fa-print"></span>&nbsp;{{:: $ctrl.caption || (\'CAPTION_PRINT\' | translate)}}' +
                 '</button>',
             bindings: {
                 title: '@',

@@ -93,7 +93,7 @@
                         $ctrl.autoSearch = $routeParams.param || ($ctrl.saveSearch ? (localStorageService.get($ctrl.name + "_search") || '') : '');
                         $ctrl.search = {
                             Text: $ctrl.autoSearch,
-                            Operator: $ctrl.autoSearch == '' ? 'None' : 'Auto'
+                            Operator: $ctrl.autoSearch === '' ? 'None' : 'Auto'
                         };
 
                         $ctrl.isEmpty = false;
@@ -148,7 +148,7 @@
                         });
 
                         angular.forEach($ctrl.columns, function(column) {
-                            if ($ctrl.groupBy == column.Name) return;
+                            if ($ctrl.groupBy === column.Name) return;
 
                             if (column.Sortable && column.SortOrder > 0) {
                                 column.SortOrder++;
@@ -184,9 +184,7 @@
                     };
 
                     $ctrl.addColumn = function(item) {
-                        if (item.Name == null) {
-                            return;
-                        }
+                        if (item.Name == null) return;
 
                         if ($ctrl.hasColumnsDefinitions !== false) {
                             throw 'Cannot define more columns. Column definitions have been sealed';
@@ -207,7 +205,7 @@
                     };
 
                     $ctrl.deleteRow = function (row) {
-                        // TODO: Should I move this behaviour to model?
+                        // TODO: Should I move this behavior to model?
                         var urlparts = $ctrl.serverDeleteUrl.split('?');
                         var url = urlparts[0] + "/" + row.$key;
 
@@ -244,42 +242,35 @@
                             return;
                         }
 
-                        for (var index in columns) {
-                            if (columns.hasOwnProperty(index)) {
-                                var columnName = columns[index].Name;
-                                var filtered = $ctrl.columns.filter(function(el) { return el.Name === columnName; });
+                        angular.forEach(columns, function(column) {
+                            var filtered = $ctrl.columns.filter(function(el) { return el.Name === column.Name; });
 
-                                if (filtered.length === 0) {
-                                    continue;
-                                }
+                            if (filtered.length === 0) return;
 
-                                var current = filtered[0];
-                                // Updates visibility by now
-                                current.Visible = columns[index].Visible;
+                            var current = filtered[0];
+                            // Updates visibility by now
+                            current.Visible = column.Visible;
 
-                                // Update sorting
-                                if ($ctrl.requestCounter < 1) {
-                                    current.SortOrder = columns[index].SortOrder;
-                                    current.SortDirection = columns[index].SortDirection;
-                                }
-
-                                // Update Filters
-                                if (current.Filter != null && current.Filter.Text != null) {
-                                    continue;
-                                }
-
-                                if (columns[index].Filter != null && columns[index].Filter.Text != null && columns[index].Filter.Operator != 'None') {
-                                    current.Filter = columns[index].Filter;
-                                }
+                            // Update sorting
+                            if ($ctrl.requestCounter < 1) {
+                                current.SortOrder = column.SortOrder;
+                                current.SortDirection = column.SortDirection;
                             }
-                        }
+
+                            // Update Filters
+                            if (current.Filter != null && current.Filter.Text != null) {
+                                return;
+                            }
+
+                            if (column.Filter != null && column.Filter.Text != null && column.Filter.Operator !== 'None') {
+                                current.Filter = column.Filter;
+                            }
+                        });
                     };
 
                     $ctrl.retrieveData = function() {
                         // If the ServerUrl is empty skip data load
-                        if ($ctrl.serverUrl == '') {
-                            return;
-                        }
+                        if (!$ctrl.serverUrl) return;
 
                         $ctrl.canSaveState = true;
                         $ctrl.verifyColumns();
@@ -323,8 +314,7 @@
 
                         $ctrl.currentRequest = $ctrl.dataService.retrieveDataAsync(request);
 
-                        $ctrl.currentRequest.promise.then(
-                            function(data) {
+                        $ctrl.currentRequest.promise.then(function(data) {
                                 $ctrl.requestCounter += 1;
 
                                 if (angular.isUndefined(data) || data == null) {
@@ -401,14 +391,14 @@
                             });
                         }
 
-                        // take the columns that actually need to be sorted in order to reindex them
+                        // take the columns that actually need to be sorted in order to re-index them
                         var currentlySortedColumns = $ctrl.columns.filter(function(col) {
                             return col.SortOrder > 0;
                         });
 
-                        // reindex the sort order
+                        // re-index the sort order
                         currentlySortedColumns.sort(function(a, b) {
-                            return a.SortOrder == b.SortOrder ? 0 : a.SortOrder > b.SortOrder;
+                            return a.SortOrder === b.SortOrder ? 0 : a.SortOrder > b.SortOrder;
                         });
 
                         currentlySortedColumns.forEach(function(col, index) {
@@ -416,17 +406,11 @@
                         });
 
                         $scope.$broadcast('tbGrid_OnColumnSorted');
-
                         $ctrl.retrieveData();
                     };
 
                     $ctrl.selectedRows = function() {
-                        var rows = localStorageService.get($ctrl.name + "_rows");
-                        if (rows == null || rows === "") {
-                            rows = [];
-                        }
-
-                        return rows;
+                        return localStorageService.get($ctrl.name + "_rows") || [];
                     };
 
                     $ctrl.clearSelection = function() {
@@ -554,7 +538,7 @@
                             $scope.tubularDirective = 'tubular-column-definitions';
                         }
                     ],
-                    compile: function compile() {
+                    compile: function() {
                         return {
                             post: function(scope) {
                                 scope.$component.hasColumnsDefinitions = true;
@@ -796,8 +780,7 @@
             function() {
 
                 return {
-                    template: '<tr ng-transclude' +
-                        ' ng-class="{\'info\': selectableBool && model.$selected}"' +
+                    template: '<tr ng-transclude ng-class="{\'info\': selectableBool && model.$selected}"' +
                         ' ng-click="changeSelection(model)"></tr>',
                     restrict: 'E',
                     replace: true,
@@ -811,7 +794,7 @@
                             $scope.tubularDirective = 'tubular-rowset';
                             $scope.fields = [];
                             $scope.hasFieldsDefinitions = false;
-                            $scope.selectableBool = $scope.selectable == "true";
+                            $scope.selectableBool = $scope.selectable === "true";
                             $scope.$component = $scope.$parent.$parent.$parent.$component;
 
                             $scope.$watch('hasFieldsDefinitions', function(newVal) {
@@ -841,7 +824,7 @@
                             };
                         }
                     ],
-                    compile: function compile() {
+                    compile: function() {
                         return {
                             post: function(scope) {
                                 scope.hasFieldsDefinitions = true;

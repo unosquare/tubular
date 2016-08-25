@@ -18,12 +18,10 @@
             },
             template: '<div class="text-right">' +
                 '<a class="btn btn-sm btn-success" ng-click="$ctrl.currentFilter.applyFilter()"' +
-                'ng-disabled="$ctrl.currentFilter.filter.Operator == \'None\'">{{\'CAPTION_APPLY\' | translate}}</a>&nbsp;' +
-                '<button class="btn btn-sm btn-danger" ng-click="$ctrl.currentFilter.clearFilter()">{{\'CAPTION_CLEAR\' | translate}}</button>' +
+                'ng-disabled="$ctrl.currentFilter.filter.Operator == \'None\'">{{::\'CAPTION_APPLY\' | translate}}</a>&nbsp;' +
+                '<button class="btn btn-sm btn-danger" ng-click="$ctrl.currentFilter.clearFilter()">{{::\'CAPTION_CLEAR\' | translate}}</button>' +
                 '</div>',
-            controller: [
-                '$scope',
-                function($scope) {
+            controller: ['$scope', function($scope) {
                     var $ctrl = this;
 
                     $ctrl.$onInit = function() {
@@ -45,9 +43,8 @@
             require: {
                 $component: '^tbGrid'
             },
-            template: '<button class="btn btn-sm btn-default" ng-click="$ctrl.openColumnsSelector()">{{\'CAPTION_SELECTCOLUMNS\' | translate}}</button></div>',
-            controller: [
-                '$scope', '$uibModal', function($scope, $modal) {
+            template: '<button class="btn btn-sm btn-default" ng-click="$ctrl.openColumnsSelector()">{{::\'CAPTION_SELECTCOLUMNS\' | translate}}</button></div>',
+            controller: ['$uibModal', function($modal) {
                     var $ctrl = this;
 
                     $ctrl.openColumnsSelector = function() {
@@ -55,7 +52,7 @@
 
                         var dialog = $modal.open({
                             template: '<div class="modal-header">' +
-                                '<h3 class="modal-title">{{\'CAPTION_SELECTCOLUMNS\' | translate}}</h3>' +
+                                '<h3 class="modal-title">{{::\'CAPTION_SELECTCOLUMNS\' | translate}}</h3>' +
                                 '</div>' +
                                 '<div class="modal-body">' +
                                 '<table class="table table-bordered table-responsive table-striped table-hover table-condensed">' +
@@ -65,7 +62,7 @@
                                 '<td>{{col.Label}}</td>' +
                                 '</tr></tbody></table></div>' +
                                 '</div>' +
-                                '<div class="modal-footer"><button class="btn btn-warning" ng-click="closePopup()">{{\'CAPTION_CLOSE\' | translate}}</button></div>',
+                                '<div class="modal-footer"><button class="btn btn-warning" ng-click="closePopup()">{{::\'CAPTION_CLOSE\' | translate}}</button></div>',
                             backdropClass: 'fullHeight',
                             animation: false,
                             controller: [
@@ -75,9 +72,7 @@
                                         return $innerScope.Model.filter(function(el) { return el.Visible; }).length === 1;
                                     }
 
-                                    $innerScope.closePopup = function() {
-                                        dialog.close();
-                                    };
+                                    $innerScope.closePopup = dialog.close;
                                 }
                             ]
                         });
@@ -120,13 +115,13 @@
                 onlyContains: '=?'
             },
             controller: [
-                '$scope', '$element', '$compile', '$filter', 'tubularTemplateService', function($scope, $element, $compile, $filter, tubularTemplateService) {
+                '$scope', '$element', '$compile', '$filter', 'tubularTemplateService', function($scope, $element, $compile, $filter, tubular) {
                     var $ctrl = this;
 
                     $ctrl.$onInit = function() {
                         $ctrl.onlyContains = angular.isUndefined($ctrl.onlyContains) ? false : $ctrl.onlyContains;
-                        $ctrl.templateName = tubularTemplateService.tbColumnFilterPopoverTemplateName;
-                        tubularTemplateService.setupFilter($scope, $element, $compile, $filter, $ctrl);
+                        $ctrl.templateName = tubular.tbColumnFilterPopoverTemplateName;
+                        tubular.setupFilter($scope, $element, $compile, $filter, $ctrl);
                     };
                 }
             ]
@@ -164,12 +159,12 @@
                 title: '@'
             },
             controller: [
-                '$scope', '$element', '$compile', '$filter', 'tubularTemplateService', function($scope, $element, $compile, $filter, tubularTemplateService) {
+                '$scope', '$element', '$compile', '$filter', 'tubularTemplateService', function($scope, $element, $compile, $filter, tubular) {
                     var $ctrl = this;
 
                     $ctrl.$onInit = function() {
-                        $ctrl.templateName = tubularTemplateService.tbColumnDateTimeFilterPopoverTemplateName;
-                        tubularTemplateService.setupFilter($scope, $element, $compile, $filter, $ctrl);
+                        $ctrl.templateName = tubular.tbColumnDateTimeFilterPopoverTemplateName;
+                        tubular.setupFilter($scope, $element, $compile, $filter, $ctrl);
                     };
                 }
             ]
@@ -205,7 +200,7 @@
                 title: '@'
             },
             controller: [
-                '$scope', '$element', '$compile', '$filter', 'tubularTemplateService', function($scope, $element, $compile, $filter, tubularTemplateService) {
+                '$scope', '$element', '$compile', '$filter', 'tubularTemplateService', function ($scope, $element, $compile, $filter, tubular) {
                     var $ctrl = this;
 
                     $ctrl.getOptionsFromUrl = function() {
@@ -230,8 +225,8 @@
 
                     $ctrl.$onInit = function() {
                         $ctrl.dataIsLoaded = false;
-                        $ctrl.templateName = tubularTemplateService.tbColumnOptionsFilterPopoverTemplateName;
-                        tubularTemplateService.setupFilter($scope, $element, $compile, $filter, $ctrl);
+                        $ctrl.templateName = tubular.tbColumnOptionsFilterPopoverTemplateName;
+                        tubular.setupFilter($scope, $element, $compile, $filter, $ctrl);
                         $ctrl.getOptionsFromUrl();
 
                         $ctrl.filter.Operator = 'Multiple';
