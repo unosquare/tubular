@@ -88,8 +88,9 @@
     var tbNumericEditorCtrl = ['tubularEditorService', '$scope', '$filter', function(tubular, $scope, $filter) {
             var $ctrl = this;
 
-            $ctrl.validate = function() {
-                if (tubular.isValid($ctrl.min) && tubular.isValid($ctrl.value)) {
+            $ctrl.validate = function () {
+                console.log($ctrl.min);
+                if (angular.isDefined($ctrl.min) && $ctrl.min != null && angular.isDefined($ctrl.value) && $ctrl.value != null) {
                     $ctrl.$valid = $ctrl.value >= $ctrl.min;
 
                     if (!$ctrl.$valid) {
@@ -98,7 +99,7 @@
                     }
                 }
 
-                if (tubular.isValid($ctrl.max) && tubular.isValid($ctrl.value)) {
+                if (angular.isDefined($ctrl.max) && $ctrl.max != null && angular.isDefined($ctrl.value) && $ctrl.value != null) {
                     $ctrl.$valid = $ctrl.value <= $ctrl.max;
 
                     if (!$ctrl.$valid) {

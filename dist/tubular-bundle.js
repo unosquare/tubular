@@ -1491,8 +1491,9 @@ try {
     var tbNumericEditorCtrl = ['tubularEditorService', '$scope', '$filter', function(tubular, $scope, $filter) {
             var $ctrl = this;
 
-            $ctrl.validate = function() {
-                if (tubular.isValid($ctrl.min) && tubular.isValid($ctrl.value)) {
+            $ctrl.validate = function () {
+                console.log($ctrl.min);
+                if (angular.isDefined($ctrl.min) && $ctrl.min != null && angular.isDefined($ctrl.value) && $ctrl.value != null) {
                     $ctrl.$valid = $ctrl.value >= $ctrl.min;
 
                     if (!$ctrl.$valid) {
@@ -1501,7 +1502,7 @@ try {
                     }
                 }
 
-                if (tubular.isValid($ctrl.max) && tubular.isValid($ctrl.value)) {
+                if (angular.isDefined($ctrl.max) && $ctrl.max != null && angular.isDefined($ctrl.value) && $ctrl.value != null) {
                     $ctrl.$valid = $ctrl.value <= $ctrl.max;
 
                     if (!$ctrl.$valid) {
@@ -4243,7 +4244,7 @@ try {
                     me.tbColumnDateTimeFilterPopoverTemplate = '<div>' +
                         '<form class="tubular-column-filter-form" onsubmit="return false;">' +
                         '<select class="form-control" ng-options="key as value for (key , value) in $ctrl.filterOperators" ng-model="$ctrl.filter.Operator" ng-hide="$ctrl.dataType == \'boolean\'"></select>&nbsp;' +
-                        (tubularTemplate.canUseHtml5Date ? htmlDateSelector : bootstrapDateSelector) +
+                        (tubularTemplate.canUseHtml5Date() ? htmlDateSelector : bootstrapDateSelector) +
                         '<hr />' +
                         '<tb-column-filter-buttons></tb-column-filter-buttons>' +
                         '</form>' +
