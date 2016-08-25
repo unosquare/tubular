@@ -60,7 +60,7 @@
                     me.tbColumnDateTimeFilterPopoverTemplate = '<div>' +
                         '<form class="tubular-column-filter-form" onsubmit="return false;">' +
                         '<select class="form-control" ng-options="key as value for (key , value) in $ctrl.filterOperators" ng-model="$ctrl.filter.Operator" ng-hide="$ctrl.dataType == \'boolean\'"></select>&nbsp;' +
-                        (tubularTemplate.canUseHtml5Date ? htmlDateSelector : bootstrapDateSelector) +
+                        (tubularTemplate.canUseHtml5Date() ? htmlDateSelector : bootstrapDateSelector) +
                         '<hr />' +
                         '<tb-column-filter-buttons></tb-column-filter-buttons>' +
                         '</form>' +

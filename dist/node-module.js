@@ -133,7 +133,7 @@ var tubularTemplate = {
         input.setAttribute('value', notADateValue);
 
         return (input.value !== notADateValue);
-    }(),
+    },
 
     /*
      * Create a columns array using a model.

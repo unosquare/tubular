@@ -425,7 +425,7 @@
             template: '<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">' +
                 '<span ng-hide="$ctrl.isEditing">{{ $ctrl.value | date: format }}</span>' +
                 '<label ng-show="$ctrl.showLabel" ng-bind="$ctrl.label"></label>' +
-                (tubularTemplate.canUseHtml5Date ?
+                (tubularTemplate.canUseHtml5Date() ?
                     '<input type="datetime-local" ng-show="$ctrl.isEditing" ng-model="$ctrl.dateValue" class="form-control" ' +
                     'ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}"/>' :
                     '<div class="input-group" ng-show="$ctrl.isEditing">' +
@@ -484,7 +484,7 @@
             template: '<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">' +
                 '<span ng-hide="$ctrl.isEditing">{{ $ctrl.value | moment: $ctrl.format }}</span>' +
                 '<label ng-show="$ctrl.showLabel" ng-bind="$ctrl.label"></label>' +
-                (tubularTemplate.canUseHtml5Date ?
+                (tubularTemplate.canUseHtml5Date() ?
                     '<input type="date" ng-show="$ctrl.isEditing" ng-model="$ctrl.dateValue" class="form-control" ' +
                     'ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}"/>' : 
                     '<div class="input-group" ng-show="$ctrl.isEditing">' +
