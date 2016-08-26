@@ -1492,7 +1492,6 @@ try {
             var $ctrl = this;
 
             $ctrl.validate = function () {
-                console.log($ctrl.min);
                 if (angular.isDefined($ctrl.min) && $ctrl.min != null && angular.isDefined($ctrl.value) && $ctrl.value != null) {
                     $ctrl.$valid = $ctrl.value >= $ctrl.min;
 
