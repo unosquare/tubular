@@ -21,7 +21,9 @@ Please visit the <a href="http://unosquare.github.io/tubular" target="_blank">Tu
 PM> Install-Package Tubular
 </pre>
 
-### Package containing the server-side stuff (which also installs the client-side stuff)
+### Package containing only the server-side stuff
+
+The same Nuget contains .NET46 and .NETCoreApp1.0 versions.
 
 <pre>
 PM> Install-Package Tubular.ServerSide
