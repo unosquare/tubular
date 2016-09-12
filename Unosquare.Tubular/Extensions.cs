@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -21,31 +22,22 @@ namespace Unosquare.Tubular
 
         private static readonly object SyncRoot = new object();
 
-        private static readonly Dictionary<Type, Dictionary<string, PropertyInfo>> TypePropertyCache =
-            new Dictionary<Type, Dictionary<string, PropertyInfo>>();
+        private static readonly ConcurrentDictionary<Type, Dictionary<string, PropertyInfo>> TypePropertyCache = new ConcurrentDictionary<Type, Dictionary<string, PropertyInfo>>();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static Dictionary<string, PropertyInfo> ExtractProperties(Type t)
         {
-            Dictionary<string, PropertyInfo> properties;
-            lock (SyncRoot)
-            {
-                if (TypePropertyCache.ContainsKey(t))
-                {
-                    properties = TypePropertyCache[t];
-                }
-                else
-                {
-                    properties = t.GetProperties()
-                        .Where(p => Common.PrimitiveTypes.Contains(p.PropertyType) && p.CanRead)
-                        .ToDictionary(k => k.Name, v => v);
-
-                    TypePropertyCache[t] = properties;
-                }
-            }
-
-            return properties;
+            return TypePropertyCache.GetOrAdd(t, GetTypeProperties);
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static Dictionary<string, PropertyInfo> GetTypeProperties(Type t)
+        {
+            return t.GetProperties()
+                    .Where(p => Common.PrimitiveTypes.Contains(p.PropertyType) && p.CanRead)
+                    .ToDictionary(k => k.Name, v => v);
+        }
+
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static Dictionary<GridColumn, PropertyInfo> MapColumnsToProperties(GridColumn[] columns,
