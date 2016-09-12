@@ -20,8 +20,6 @@ namespace Unosquare.Tubular
     {
         private static readonly Regex TimezoneOffset = new Regex(@"timezoneOffset=(\d[^&]*)");
 
-        private static readonly object SyncRoot = new object();
-
         private static readonly ConcurrentDictionary<Type, Dictionary<string, PropertyInfo>> TypePropertyCache = new ConcurrentDictionary<Type, Dictionary<string, PropertyInfo>>();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
