@@ -1,38 +1,55 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Effort;
-using NUnit.Framework;
-using Unosquare.Tubular.Tests.Database;
-
-namespace Unosquare.Tubular.Tests
+﻿namespace Unosquare.Tubular.Tests
 {
+    using System.Linq;
+    using NUnit.Framework;
+    using Database;
+
     [TestFixture]
     public class ChartFixture
     {
-        private SampleEntities _context;
+        IQueryable<Thing> sut;
         private const string ColorTest = "red";
 
         [SetUp]
         public void SetUp()
         {
-            Effort.Provider.EffortProviderConfiguration.RegisterProvider();
-
-            var connection = DbConnectionFactory.CreateTransient();
-            _context = new SampleEntities(connection);
-            _context.Fill();
+            sut = SampleEntities.GenerateData().AsQueryable();
         }
+
+        //[Test]
+        //public void GetSingleSerieChart()
+        //{
+        //    Effort.Provider.EffortProviderConfiguration.RegisterProvider();
+
+        //    var connection = DbConnectionFactory.CreateTransient();
+        //    _context = new SampleEntities(connection);
+        //    _context.Fill();
+        //    var chartObj = _context.Things.ProvideSingleSerieChartResponse(
+        //        label: x => x.Color,
+        //        value: x => x.DecimalNumber);
+
+        //    var query = _context.Things.Where(x => x.Color == ColorTest).Sum(x => x.DecimalNumber);
+
+        //    Assert.IsNotNull(chartObj);
+
+        //    var colorIndex = chartObj.Labels.ToList().IndexOf(ColorTest);
+
+        //    Assert.IsTrue(colorIndex >= 0);
+
+        //    var value = chartObj.Data[colorIndex];
+
+        //    Assert.AreEqual(value, query);
+        //}
 
         [Test]
         public void GetSingleSerieChart()
         {
-            var chartObj = _context.Things.ProvideSingleSerieChartResponse(
+            
+            var chartObj = sut.ProvideSingleSerieChartResponse(
                 label: x => x.Color,
                 value: x => x.DecimalNumber);
 
-            var query = _context.Things.Where(x => x.Color == ColorTest).Sum(x => x.DecimalNumber);
+            var query = sut.Where(x => x.Color == ColorTest).Sum(x => x.DecimalNumber);
 
             Assert.IsNotNull(chartObj);
 
