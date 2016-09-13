@@ -250,7 +250,7 @@ namespace Unosquare.Tubular
                         break;
                     case AggregationFunction.DistinctCount:
                         response.AggregationPayload.Add(column.Name,
-                            subset.Select(column.Name).Cast<string>().Distinct().Count());
+                            subset.Select(column.Name).Distinct().Count());
                         break;
                     case AggregationFunction.None:
                         break;
