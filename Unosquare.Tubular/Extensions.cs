@@ -197,79 +197,7 @@ namespace Unosquare.Tubular
 
             // Check aggregations before paging
             // Should it aggregate before filtering too?
-            response.AggregationPayload = new Dictionary<string, object>();
-
-            foreach (var column in request.Columns)
-            {
-                switch (column.Aggregate)
-                {
-                    case AggregationFunction.Sum:
-                        // we try to select the column as decimal? and sum it
-                        if (subset.ElementType.GetProperty(column.Name).PropertyType == typeof (double))
-                        {
-                            response.AggregationPayload.Add(column.Name,
-                                subset.Select(column.Name).Cast<double?>().Sum());
-                        }
-                        else
-                        {
-                            response.AggregationPayload.Add(column.Name,
-                                subset.Select(column.Name).Cast<decimal?>().Sum());
-                        }
-
-                        break;
-                    case AggregationFunction.Average:
-                        if (subset.ElementType.GetProperty(column.Name).PropertyType == typeof (double))
-                        {
-                            response.AggregationPayload.Add(column.Name,
-                                subset.Select(column.Name).Cast<double?>().Average());
-                        }
-                        else
-                        {
-                            response.AggregationPayload.Add(column.Name,
-                                subset.Select(column.Name).Cast<decimal?>().Average());
-                        }
-
-                        break;
-                    case AggregationFunction.Max:
-                        if (subset.ElementType.GetProperty(column.Name).PropertyType == typeof (double))
-                        {
-                            response.AggregationPayload.Add(column.Name,
-                                subset.Select(column.Name).Cast<double?>().Max());
-                        }
-                        else
-                        {
-                            response.AggregationPayload.Add(column.Name,
-                                subset.Select(column.Name).Cast<decimal?>().Max());
-                        }
-
-                        break;
-                    case AggregationFunction.Min:
-                        if (subset.ElementType.GetProperty(column.Name).PropertyType == typeof (double))
-                        {
-                            response.AggregationPayload.Add(column.Name,
-                                subset.Select(column.Name).Cast<double?>().Min());
-                        }
-                        else
-                        {
-                            response.AggregationPayload.Add(column.Name,
-                                subset.Select(column.Name).Cast<decimal?>().Min());
-                        }
-
-                        break;
-                    case AggregationFunction.Count:
-                        response.AggregationPayload.Add(column.Name, subset.Select(column.Name).Cast<string>().Count());
-                        break;
-                    case AggregationFunction.DistinctCount:
-                        response.AggregationPayload.Add(column.Name,
-                            subset.Select(column.Name).Distinct().Count());
-                        break;
-                    case AggregationFunction.None:
-                        break;
-                    default:
-                        response.AggregationPayload.Add(column.Name, 0);
-                        break;
-                }
-            }
+            response.AggregationPayload = AggregateSubset(request.Columns, subset);
 
             var pageSize = request.Take;
 
@@ -283,27 +211,26 @@ namespace Unosquare.Tubular
             }
             else
             {
-                response.TotalPages = (response.FilteredRecordCount + pageSize - 1)/pageSize;
+                var filteredCount = subset.Count();
+                var totalPages = response.TotalPages = (filteredCount + pageSize - 1) / pageSize;
+                var currentPage = 0;
+                var skip = request.Skip;
 
-                if (response.TotalPages > 0)
+                if (totalPages > 0)
                 {
-                    response.CurrentPage = 1 +
-                                           (int)
-                                               Math.Truncate((request.Skip/(float) response.FilteredRecordCount)*
-                                                             response.TotalPages);
+                    currentPage = 1 + (int)Math.Truncate((skip / (float)filteredCount) * totalPages);
 
-                    if (response.CurrentPage > response.TotalPages)
+                    if (currentPage > totalPages)
                     {
-                        response.CurrentPage = response.TotalPages;
-                        request.Skip = (response.CurrentPage - 1)*request.Take;
+                        currentPage = totalPages;
+                        skip = (currentPage - 1) * pageSize;
                     }
 
-                    if (request.Skip < 0) request.Skip = 0;
-
-                    subset = subset.Skip(request.Skip);
+                    if (skip > 0) 
+                        subset = subset.Skip(skip);
                 }
-
-                subset = subset.Take(request.Take);
+                response.CurrentPage = currentPage;
+                subset = subset.Take(pageSize);
             }
 
             // Generate the response data in a suitable format
@@ -312,6 +239,61 @@ namespace Unosquare.Tubular
 
             response.Payload = CreateGridPayload(subset, columnMap, pageSize, request.TimezoneOffset);
             return response;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static Dictionary<string, object> AggregateSubset(GridColumn[] columns, IQueryable subset)
+        {
+            var aggregateColumns = columns.Where(c => c.Aggregate != AggregationFunction.None);
+            var payload = new Dictionary<string, object>(aggregateColumns.Count());
+
+            Action<GridColumn, Func<IQueryable<double?>, double?>, Func<IQueryable<decimal?>, decimal?>> aggregate = (column, doubleF, decimalF) => {
+                if (subset.ElementType.GetProperty(column.Name).PropertyType == typeof(double))
+                {
+                    payload.Add(column.Name,
+                        doubleF(subset.Select(column.Name).Cast<double?>()));
+                }
+                else
+                {
+                    payload.Add(column.Name,
+                        decimalF(subset.Select(column.Name).Cast<decimal?>()));
+                }
+            };
+
+            foreach (var column in aggregateColumns)
+            {
+                switch (column.Aggregate)
+                {
+                    case AggregationFunction.Sum:
+                        aggregate(column, x => x.Sum(), x => x.Sum());
+
+                        break;
+                    case AggregationFunction.Average:
+                        aggregate(column, x => x.Average(), x => x.Average());
+
+                        break;
+                    case AggregationFunction.Max:
+                        aggregate(column, x => x.Max(), x => x.Max());
+                       
+                        break;
+                    case AggregationFunction.Min:
+                        aggregate(column, x => x.Min(), x => x.Min());
+
+                        break;
+                    case AggregationFunction.Count:
+                        payload.Add(column.Name, subset.Select(column.Name).Count());
+                        break;
+                    case AggregationFunction.DistinctCount:
+                        payload.Add(column.Name,
+                            subset.Select(column.Name).Distinct().Count());
+                        break;
+                    
+                    default:
+                        payload.Add(column.Name, 0);
+                        break;
+                }
+            }
+            return payload;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
