@@ -33,6 +33,7 @@
                 data.Add(new Thing()
                 {
                     Date = DateTime.UtcNow.AddDays(-i),
+                    NullableDate = (i % 2) == 0 ? (DateTime?)null : DateTime.UtcNow.AddDays(-i),
                     Id = i,
                     Name = "Name - " + i,
                     Bool = (i % 2) == 0,
