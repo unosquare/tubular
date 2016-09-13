@@ -92,12 +92,10 @@ namespace Unosquare.Tubular
         /// <returns></returns>
         public static object AdjustTimeZone(object data, int timezoneOffset)
         {
-            var properties = data.GetType().GetProperties().Where(x => x.PropertyType == typeof (DateTime));
+            var dateTimeProperties = data.GetType().GetProperties().Where(x => x.PropertyType == typeof (DateTime));
 
-            foreach (var prop in properties)
+            foreach (var prop in dateTimeProperties)
             {
-                if (!(prop.GetValue(data) is DateTime)) continue;
-
                 var value = (DateTime) prop.GetValue(data);
                 value = value.AddMinutes(-timezoneOffset);
                 prop.SetValue(data, value);
