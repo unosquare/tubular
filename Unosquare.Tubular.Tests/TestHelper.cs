@@ -5,6 +5,7 @@
     using System.Linq;
     using ObjectModel;
     using Database;
+    using System;
 
     [TestFixture]
     public class TestHelper
@@ -39,6 +40,8 @@
 
             Assert.AreEqual(ignoreTimezone ? data.First().Date : data.First().Date.AddMinutes(-timezoneOffset),
                 response.Payload.First()[2], "Same date at first item");
+
+           
 
             Assert.AreEqual(dataSource.Count(), response.TotalRecordCount, "Total rows matching");
         }
@@ -174,6 +177,8 @@
             Assert.AreEqual(dataFiltered.First(), tubularDataFiltered.First(), "Same first item");
         }
 
+
+       
         [Test]
         public void TestListSimpleSearch()
         {
@@ -348,6 +353,29 @@
                 "Name same distinct count");
             Assert.AreEqual(dataSource.Select(x => x.Date).Distinct().Count(), (int) response.AggregationPayload["Date"],
                 "Date same distinct count");
+        }
+
+
+        class MyDateClass {
+            public DateTime Date { get; set; }
+
+            public DateTime? NullableDate { get; set; }
+        }
+        [Test]
+        public void NullableDateAdjustTimeZone()
+        {
+            const int offset = 30;
+            var now = DateTime.Now;
+            var date = new MyDateClass { Date = now, NullableDate = now };
+            var actual = (MyDateClass)Extensions.AdjustTimeZone(date, offset);
+
+            Assert.AreEqual(now.AddMinutes(-offset), actual.Date, "Non-nullable date adjusted");
+            Assert.AreEqual(now.AddMinutes(-offset), actual.NullableDate.Value, "Nullable date with value adjusted");
+
+            date = new MyDateClass { Date = now, NullableDate = null };
+            actual = (MyDateClass)Extensions.AdjustTimeZone(date, offset);
+
+            Assert.IsNull(actual.NullableDate, "Nullable date adjusted");
         }
     }
 }
