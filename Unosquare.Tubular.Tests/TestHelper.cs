@@ -1,33 +1,23 @@
-﻿using Effort;
-using NUnit.Framework;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using Unosquare.Tubular.ObjectModel;
-using Unosquare.Tubular.Tests.Database;
-
-namespace Unosquare.Tubular.Tests
+﻿namespace Unosquare.Tubular.Tests
 {
+    using NUnit.Framework;
+    using System.Collections.Generic;
+    using System.Linq;
+    using ObjectModel;
+    using Database;
+
     [TestFixture]
     public class TestHelper
     {
-        private SampleEntities _context;
+        
         private const int PageSize = 10;
         private const string SearchText = "Name - 1";
 
-        [SetUp]
-        public void SetUp()
-        {
-            Effort.Provider.EffortProviderConfiguration.RegisterProvider();
-
-            var connection = DbConnectionFactory.CreateTransient();
-            _context = new SampleEntities(connection);
-            _context.Fill();
-        }
+        
 
         private void SimpleListTest(bool ignoreTimezone)
         {
-            var dataSource = _context.Things;
+            var dataSource = SampleEntities.GenerateData().AsQueryable();// _context.Things;
             var data = dataSource.Take(PageSize).ToList();
             var timezoneOffset = 300;
 
@@ -71,7 +61,7 @@ namespace Unosquare.Tubular.Tests
         [Test]
         public void SimpleFilter()
         {
-            var dataSource = _context.Things.Where(x => x.Id > 95);
+            var dataSource = SampleEntities.GenerateData().AsQueryable().Where(x => x.Id > 95);
             var data = dataSource.Take(PageSize).ToList();
 
             var request = new GridDataRequest()
@@ -92,7 +82,7 @@ namespace Unosquare.Tubular.Tests
         [Test]
         public void SimpleSort()
         {
-            var dataSource = _context.Things.OrderBy(x => x.Date);
+            var dataSource = SampleEntities.GenerateData().AsQueryable().OrderBy(x => x.Date);
             var data = dataSource.Take(PageSize).ToList();
 
             var request = new GridDataRequest()
@@ -114,7 +104,7 @@ namespace Unosquare.Tubular.Tests
         [Test]
         public void SimpleSearch()
         {
-            var dataSource = _context.Things;
+            var dataSource = SampleEntities.GenerateData().AsQueryable(); 
             var data = dataSource.Where(x => x.Name.Contains(SearchText)).Take(PageSize).ToList();
 
             var request = new GridDataRequest()
@@ -141,7 +131,7 @@ namespace Unosquare.Tubular.Tests
         [Test]
         public void TakeAll()
         {
-            var dataSource = _context.Things;
+            var dataSource = SampleEntities.GenerateData().AsQueryable();
             var data = dataSource.ToList();
 
             var request = new GridDataRequest()
@@ -164,7 +154,7 @@ namespace Unosquare.Tubular.Tests
         public void TestCreateCreateTypeAheadList()
         {
             const int elementsCount = 8;
-            var dataSource = _context.Things;
+            var dataSource = SampleEntities.GenerateData().AsQueryable();
 
             var data = dataSource.Select(x => x.Number.ToString()).Distinct().Take(elementsCount).ToList();
             var tubularData = dataSource.CreateTypeAheadList("Number");
@@ -303,7 +293,7 @@ namespace Unosquare.Tubular.Tests
         [Test]
         public void TestSimpleAggregate()
         {
-            var dataSource = _context.Things;
+            var dataSource = SampleEntities.GenerateData().AsQueryable();
             var data = dataSource.Take(PageSize).ToList();
 
             Assert.AreEqual(PageSize, data.Count, "Set has 10 items");
@@ -330,7 +320,7 @@ namespace Unosquare.Tubular.Tests
         [Test]
         public void TestMultipleAggregate()
         {
-            var dataSource = _context.Things;
+            var dataSource = SampleEntities.GenerateData().AsQueryable();
             var data = dataSource.Take(PageSize).ToList();
 
             Assert.AreEqual(PageSize, data.Count, "Set has 10 items");
