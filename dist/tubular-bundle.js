@@ -3877,13 +3877,13 @@ try {
                         },
                         data: 'grant_type=password&username=' + username + '&password=' + password
                     }).success(function(data) {
-                        me.handleSuccessCallback(userDataCallback, successCallback, persistData, data);
+                        me.handleSuccessCallback(userDataCallback, successCallback, persistData, data, username);
                     }).error(function(data) {
                         me.handleErrorCallback(errorCallback, data);
                     });
                 };
 
-                me.handleSuccessCallback = function(userDataCallback, successCallback, persistData, data) {
+                me.handleSuccessCallback = function (userDataCallback, successCallback, persistData, data, username) {
                     me.userData.isAuthenticated = true;
                     me.userData.username = data.userName || username;
                     me.userData.bearerToken = data.access_token;
