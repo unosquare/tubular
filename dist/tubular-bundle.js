@@ -1430,14 +1430,6 @@ try {
                 } else {
                     $ctrl.dateValue = $ctrl.value;
                 }
-
-                $scope.$watch(function() {
-                    return $ctrl.dateValue;
-                }, function(val) {
-                    if (angular.isDefined(val)) {
-                        $ctrl.value = hasMoment ? moment(val) : new Date(val);
-                    }
-                });
             }
         };
     };
@@ -1524,6 +1516,14 @@ try {
             // This could be $onChange??
             $scope.$watch(function() { return $ctrl.value; }, changeValueFn($ctrl, $scope));
 
+            $scope.$watch(function () {
+                return $ctrl.dateValue;
+            }, function (val) {
+                if (angular.isDefined(val)) {
+                    $ctrl.value = hasMoment ? moment(val) : new Date(val);
+                }
+            });
+
             $ctrl.validate = function() {
                 if (tubular.isValid($ctrl.min)) {
                     if (Object.prototype.toString.call($ctrl.min) !== "[object Date]") {
@@ -1567,6 +1567,14 @@ try {
             var $ctrl = this;
             
             $scope.$watch(function () { return $ctrl.value; }, changeValueFn($ctrl, $scope));
+
+            $scope.$watch(function () {
+                return $ctrl.dateValue;
+            }, function (val) {
+                if (angular.isDefined(val)) {
+                    $ctrl.value = hasMoment ? moment(val) : new Date(val);
+                }
+            });
 
             $ctrl.validate = function() {
                 if (angular.isDefined($ctrl.min)) {
