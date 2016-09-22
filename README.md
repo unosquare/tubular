@@ -103,7 +103,11 @@ You can access to global settings by using the static object <i>TubularDefaultSe
 
 ##Boilerplate
 
-We have a basic <a href="https://github.com/unosquare/tubular-boilerplate" target="_blank">Boilerplate</a> with everything that you need to start your own tubular project. If you are working with .NET WebAPI you can check our [C# Boilerplate](https://github.com/unosquare/tubular-boilerplate-csharp) too.
+We have 3 boilerplates ready to seed your project:
+
+* <a href="https://github.com/unosquare/tubular-boilerplate" target="_blank">Simple Boilerplate</a> without server-side. 
+* [ASP.NET 4.6 Boilerplate](https://github.com/unosquare/tubular-boilerplate-csharp).
+* [ASP.NET Core Boilerplate](https://github.com/unosquare/tubular-aspnet-core-boilerplate)
 
 A <a href="http://yeoman.io/" taget="_blank">Yeoman Generator</a> can be found at <a href="https://github.com/unosquare/generator-tubular" target="_blank">generator-tubular</a> but it's not longer in maintenance.
 
