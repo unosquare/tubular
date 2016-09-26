@@ -3764,9 +3764,7 @@ try {
                                         ctrl.checkValid();
                                         return this.$errors.length === 0;
                                     },
-                                    $dirty: function() {
-                                        return ctrl.$dirty();
-                                    },
+                                    $dirty: ctrl.$dirty,
                                     $errors: []
                                 };
 
