@@ -174,12 +174,16 @@
                         };
                     }
 
-                    return me.retrieveDataAsync(request).promise.then(function(data) {
+                    var dataRequest = me.retrieveDataAsync(request);
+
+                    dataRequest.promise.then(function (data) {
                         model.$hasChanges = false;
                         model.resetOriginal();
 
                         return data;
                     });
+
+                    return dataRequest;
                 };
 
                 me.getExpirationDate = function() {
