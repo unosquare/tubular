@@ -108,8 +108,7 @@
                     var valid = true;
 
                     angular.forEach(obj.$state, function (val) {
-                        if (angular.isUndefined(val)) return;
-                        if (val.$valid()) return;
+                        if (angular.isUndefined(val) || val.$valid()) return;
 
                         valid = false;
                     });

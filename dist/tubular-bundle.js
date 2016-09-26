@@ -476,8 +476,7 @@ try {
                     fractionSize = fractionSize || 2;
 
                     if (format === "C") {
-                        symbol = symbol || "$";
-                        return $filter("currency")(input, symbol, fractionSize);
+                        return $filter("currency")(input, symbol || "$", fractionSize);
                     }
 
                     if (format === "I") {
@@ -816,8 +815,6 @@ try {
                         };
 
                         if ($ctrl.currentRequest !== null) {
-                            // This message is annoying when you connect errors to toastr
-                            //$ctrl.currentRequest.cancel('tubularGrid(' + $ctrl.$id + '): new request coming.');
                             return;
                         }
 
@@ -842,6 +839,14 @@ try {
                                 }
 
                                 $ctrl.dataSource = data;
+
+                                if (!data.Payload)
+                                {
+                                    var errorMsg = 'tubularGrid(' + $ctrl.$id + '): response is invalid.';
+                                    $ctrl.currentRequest.cancel(errorMsg);
+                                    $scope.$emit('tbGrid_OnConnectionError', errorMsg);
+                                    return;
+                                }
 
                                 $ctrl.rows = data.Payload.map(function(el) {
                                     var model = new TubularModel($scope, $ctrl, el, $ctrl.dataService);
@@ -3302,8 +3307,7 @@ try {
                     var valid = true;
 
                     angular.forEach(obj.$state, function (val) {
-                        if (angular.isUndefined(val)) return;
-                        if (val.$valid()) return;
+                        if (angular.isUndefined(val) || val.$valid()) return;
 
                         valid = false;
                     });
@@ -3712,7 +3716,7 @@ try {
 
                                 if (angular.equals(ctrl.value, parent.model[scope.Name]) === false) {
                                     if (angular.isDefined(parent.model[scope.Name])) {
-                                        if (ctrl.DataType === 'date' && parent.model[scope.Name] != null) {
+                                        if (ctrl.DataType === 'date' && parent.model[scope.Name] != null && typeof parent.model[scope.Name] === 'string') {
                                             // TODO: Include MomentJS
                                             var timezone = new Date(Date.parse(parent.model[scope.Name])).toString().match(/([-\+][0-9]+)\s/)[1];
                                             timezone = timezone.substr(0, timezone.length - 2) + ':' + timezone.substr(timezone.length - 2, 2);
@@ -3854,7 +3858,7 @@ try {
                 };
 
                 me.cache = $cacheFactory('tubularHttpCache');
-                me.useCache = true;
+                me.useCache = false;
                 me.requireAuthentication = true;
                 me.refreshTokenUrl = me.tokenUrl = '/api/token';
                 me.setTokenUrl = function(val) { me.tokenUrl = val; };
@@ -3963,16 +3967,12 @@ try {
                         };
                     }
 
-                    var dataRequest = me.retrieveDataAsync(request);
-
-                    dataRequest.promise.then(function(data) {
+                    return me.retrieveDataAsync(request).promise.then(function(data) {
                         model.$hasChanges = false;
                         model.resetOriginal();
 
                         return data;
                     });
-
-                    return dataRequest;
                 };
 
                 me.getExpirationDate = function() {
@@ -4130,7 +4130,7 @@ try {
                     var canceller = $q.defer();
                     var cancel = me.getCancel(canceller);
 
-                    if (me.requireAuthentication && me.isAuthenticated() === false) {
+                    if (me.requireAuthentication && !me.isAuthenticated()) {
                         // Return empty dataset
                         return {
                             promise: $q(function(resolve) {

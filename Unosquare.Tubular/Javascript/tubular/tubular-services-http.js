@@ -65,7 +65,7 @@
                 };
 
                 me.cache = $cacheFactory('tubularHttpCache');
-                me.useCache = true;
+                me.useCache = false;
                 me.requireAuthentication = true;
                 me.refreshTokenUrl = me.tokenUrl = '/api/token';
                 me.setTokenUrl = function(val) { me.tokenUrl = val; };
@@ -174,16 +174,12 @@
                         };
                     }
 
-                    var dataRequest = me.retrieveDataAsync(request);
-
-                    dataRequest.promise.then(function(data) {
+                    return me.retrieveDataAsync(request).promise.then(function(data) {
                         model.$hasChanges = false;
                         model.resetOriginal();
 
                         return data;
                     });
-
-                    return dataRequest;
                 };
 
                 me.getExpirationDate = function() {
@@ -341,7 +337,7 @@
                     var canceller = $q.defer();
                     var cancel = me.getCancel(canceller);
 
-                    if (me.requireAuthentication && me.isAuthenticated() === false) {
+                    if (me.requireAuthentication && !me.isAuthenticated()) {
                         // Return empty dataset
                         return {
                             promise: $q(function(resolve) {
