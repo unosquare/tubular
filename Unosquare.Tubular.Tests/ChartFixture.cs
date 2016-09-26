@@ -15,13 +15,10 @@
         {
             sut = SampleEntities.GenerateData().AsQueryable();
         }
-
         
-
         [Test]
         public void GetSingleSerieChart()
         {
-            
             var chartObj = sut.ProvideSingleSerieChartResponse(
                 label: x => x.Color,
                 value: x => x.DecimalNumber);

@@ -56,7 +56,7 @@ You will need to reference the following JS libraries in order to use Tubular in
 * [Moment.js](http://momentjs.com/) - This is optional, but we encourage to use it
 * [AngularJS Local Storage](https://github.com/grevory/angular-local-storage)
 * [Font Awesome](http://fortawesome.github.io/Font-Awesome/)
-* [FileSaver.js and Blob.js](https://github.com/eligrey/FileSaver.js)
+* [FileSaver.js](https://github.com/eligrey/FileSaver.js)
 * [Angular-filter](https://github.com/a8m/angular-filter) - Only if you need to use groupBy filter in tbGrid.
 
 Also, if you use the Visual Studio you will need the excellent <a href="http://vswebessentials.com/download" target="_blank">Web Essentials</a> if you are running VS2013 or [Bundler & Minifier](https://visualstudiogallery.msdn.microsoft.com/9ec27da7-e24b-4d56-8064-fd7e88ac1c40) plug-in for VS2015 in order to generate the Tubular bundles.
@@ -73,7 +73,7 @@ You can get all the dependencies using the following links in your master HTML p
 <link rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap/latest/css/bootstrap.min.css" />
 <link rel="stylesheet" href="//cdn.jsdelivr.net/fontawesome/latest/css/font-awesome.min.css" />
 
-<script src="//cdn.jsdelivr.net/g/angularjs@1.5.0(angular.min.js+angular-animate.min.js+angular-route.min.js),angular.bootstrap@2.1.2(ui-bootstrap.min.js+ui-bootstrap-tpls.min.js),filesaver.js,blob.js(Blob.js),filesaver.js"></script>
+<script src="//cdn.jsdelivr.net/g/angularjs@1.5.0(angular.min.js+angular-animate.min.js+angular-route.min.js),angular.bootstrap@2.1.2(ui-bootstrap.min.js+ui-bootstrap-tpls.min.js),filesaver.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/angular-local-storage/0.1.5/angular-local-storage.min.js"></script>
 ```
 

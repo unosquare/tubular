@@ -35,8 +35,7 @@ namespace Unosquare.Tubular
                     .Where(p => Common.PrimitiveTypes.Contains(p.PropertyType) && p.CanRead)
                     .ToDictionary(k => k.Name, v => v);
         }
-
-
+        
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static Dictionary<GridColumn, PropertyInfo> MapColumnsToProperties(GridColumn[] columns,
             Dictionary<string, PropertyInfo> properties)
@@ -244,7 +243,7 @@ namespace Unosquare.Tubular
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static Dictionary<string, object> AggregateSubset(GridColumn[] columns, IQueryable subset)
         {
-            var aggregateColumns = columns.Where(c => c.Aggregate != AggregationFunction.None);
+            var aggregateColumns = columns.Where(c => c.Aggregate != AggregationFunction.None).ToArray();
             var payload = new Dictionary<string, object>(aggregateColumns.Count());
 
             Action<GridColumn, Func<IQueryable<double?>, double?>, Func<IQueryable<decimal?>, decimal?>> aggregate = (column, doubleF, decimalF) => {
@@ -540,31 +539,13 @@ namespace Unosquare.Tubular
         /// <param name="filter">The LINQ expression</param>
         /// <param name="records">How many records to retrieve, default 8</param>
         /// <returns>The filtered IQueryable</returns>
-        public static IQueryable<string> CreateTypeAheadList(this IQueryable dataSource, string fieldName, string filter,
-            int records = 8)
-        {
-            // TODO: I need to connect this to a better platform
-            return (dataSource.CreateDynamicFilteredSet(fieldName, filter)
-                .Select($"{fieldName}.ToString()") as IQueryable<string>)
-                .Distinct()
-                .Take(records);
-        }
-
-        /// <summary>
-        /// Generates a list with distinct values to use in TypeAhead UI control
-        /// </summary>
-        /// <param name="dataSource">The IQueryable source</param>
-        /// <param name="fieldName">The field to filter</param>
-        /// <param name="records">How many records, 0 to retrieve all</param>
-        /// <returns>The filtered IQueryable</returns>
         public static IQueryable<string> CreateTypeAheadList(this IQueryable dataSource, string fieldName,
-            int records = 8)
+            string filter = null, int records = 8)
         {
-            var stringDatasource = (dataSource
-                .Select($"{fieldName}.ToString()") as IQueryable<string>)
-                .Distinct();
+            var iqueryable = filter == null ? dataSource : dataSource.CreateDynamicFilteredSet(fieldName, filter);
 
-            return (records > 0 ? stringDatasource.Take(records) : stringDatasource);
+            return (iqueryable?.Select($"{fieldName}.ToString()") as IQueryable<string>)?.Distinct()
+                .Take(records);
         }
     }
 }

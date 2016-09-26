@@ -32,10 +32,6 @@
                     }).when('/new/', {
                         templateUrl: '/ui/app/common/formnew.html',
                         title: 'Add a new ORDER NOW!'
-                    }).when('/widget/', {
-                        templateUrl: '/ui/app/common/widget.html',
-                        title: 'Widgets',
-                        controller: 'widgetCtrl'
                     }).otherwise({
                         redirectTo: '/'
                     });
@@ -145,30 +141,13 @@
                     toastr.success(event.point.name + ': ' + event.point.y);
                 };
             }
-        ]).controller("widgetCtrl", [
-            '$scope', function ($scope) {
-                var grids = {};
-                $scope.summaryGrid1 = "Summary for grid 1";
-                $scope.summaryGrid2 = "Summary for grid 2";
-                $scope.summaryForm1 = "Summary for form 1";
-                $scope.summaryForm2 = "Summary for form 2";
-                
-                $scope.$on('tbGrid_OnGreetParentController', function(event, grid) {
-                    grids[grid.name] = grid;
-                });
-
-                $scope.refreshGrid1 = function () {
-                    grids['widgetgrid1'].retrieveData();
-                }
-                
-            }
         ]);
 
     angular.module('app', [
+        'ngAnimate',
         'tubular',
         'tubular-chart.directives',
         'tubular-hchart.directives',
-        'tubular-widget.directives',
         'toastr',
         'app.routes',
         'app.controllers'

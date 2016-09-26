@@ -50,14 +50,11 @@
     <Compile Include="ChartsExtension.cs" />
     <Compile Include="Common.cs" />
     <Compile Include="Extensions.cs" />
-    <Compile Include="FluentExtension.cs" />
     <Compile Include="ObjectModel\Filter.cs" />
-    <Compile Include="ObjectModel\FormOptions.cs" />
     <Compile Include="ObjectModel\GridColumn.cs" />
     <Compile Include="ObjectModel\GridDataRequest.cs" />
     <Compile Include="ObjectModel\GridDataResponse.cs" />
     <Compile Include="ObjectModel\GridDataUpdateRow.cs" />
-    <Compile Include="ObjectModel\GridOptions.cs" />
     <Compile Include="ObjectModel\ModelColumn.cs" />
     <Compile Include="ObjectModel\MultipleSerieChartResponse.cs" />
     <Compile Include="ObjectModel\SingleSerieChartResponse.cs" />
@@ -114,8 +111,8 @@
     <Content Include="Javascript\tubular\tubular-models.js" />
     <Content Include="Javascript\tubular\tubular-services-http.js" />
     <Content Include="Javascript\tubular\tubular-services-i18n.js" />
-    <Content Include="Javascript\tubular\tubular-services-localdata.js" />
-    <Content Include="Javascript\tubular\tubular-services-odata.js" />
+    <Content Include="Javascript\tubular-localdata\tubular-services-localdata.js" />
+    <Content Include="Javascript\tubular-odata\tubular-services-odata.js" />
     <Content Include="Javascript\tubular\tubular-services-template.js" />
     <Content Include="Javascript\tubular\tubular-services.js" />
     <Content Include="Javascript\tubular\tubular.js" />
