@@ -1,11 +1,9 @@
 ﻿namespace Unosquare.Tubular.Tests.Database
 {
     using System;
-    using System.Data.Entity;
-    using System.Data.Common;
-    using System.Collections;
     using System.Collections.Generic;
-    using System.Linq;
+    using System.Data.Common;
+    using System.Data.Entity;
 
     public class SampleEntities : DbContext
     {
@@ -13,14 +11,7 @@
             : base(connection, true)
         {
         }
-
-        public void Fill()
-        {
-            GenerateData().ToList().ForEach(x => Things.Add(x));
-
-            SaveChanges();
-        }
-
+        
         public static IEnumerable<Thing> GenerateData(int count = 100)
         {
             var colors = new[] { "red", "yellow", "blue" };

@@ -10,17 +10,14 @@
     [TestFixture]
     public class TestHelper
     {
-        
         private const int PageSize = 10;
         private const string SearchText = "Name - 1";
-
         
-
-        private void SimpleListTest(bool ignoreTimezone)
+        private static void SimpleListTest(bool ignoreTimezone)
         {
             var dataSource = SampleEntities.GenerateData().AsQueryable();// _context.Things;
             var data = dataSource.Take(PageSize).ToList();
-            var timezoneOffset = 300;
+            const int timezoneOffset = 300;
 
             Assert.AreEqual(PageSize, data.Count, "Set has 10 items");
 
@@ -40,9 +37,7 @@
 
             Assert.AreEqual(ignoreTimezone ? data.First().Date : data.First().Date.AddMinutes(-timezoneOffset),
                 response.Payload.First()[2], "Same date at first item");
-
-           
-
+            
             Assert.AreEqual(dataSource.Count(), response.TotalRecordCount, "Total rows matching");
         }
 
