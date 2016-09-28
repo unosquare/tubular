@@ -217,7 +217,8 @@ namespace Unosquare.Tubular
 
                 if (totalPages > 0)
                 {
-                    currentPage = 1 + (int)Math.Truncate((skip / (float)filteredCount) * totalPages);
+                    var portion = skip/(decimal) filteredCount;
+                    currentPage = (int) (1 + Math.Round(portion * totalPages, MidpointRounding.AwayFromZero));
 
                     if (currentPage > totalPages)
                     {

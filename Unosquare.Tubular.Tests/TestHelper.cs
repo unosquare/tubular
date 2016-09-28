@@ -10,13 +10,13 @@
     [TestFixture]
     public class TestHelper
     {
-        private const int PageSize = 10;
+        private const int PageSize = 20;
         private const string SearchText = "Name - 1";
         
-        private static void SimpleListTest(bool ignoreTimezone)
+        private static void SimpleListTest(bool ignoreTimezone, int page = 1)
         {
-            var dataSource = SampleEntities.GenerateData().AsQueryable();// _context.Things;
-            var data = dataSource.Take(PageSize).ToList();
+            var dataSource = SampleEntities.GenerateData(440).AsQueryable();
+            var data = dataSource.Skip(PageSize * page).Take(PageSize).ToList();
             const int timezoneOffset = 300;
 
             Assert.AreEqual(PageSize, data.Count, "Set has 10 items");
@@ -24,7 +24,7 @@
             var request = new GridDataRequest()
             {
                 Take = PageSize,
-                Skip = 0,
+                Skip = PageSize * page,
                 Search = new Filter(),
                 Columns = Thing.GetColumns(),
                 TimezoneOffset = timezoneOffset
@@ -32,6 +32,7 @@
 
             var response = request.CreateGridDataResponse(dataSource);
 
+            Assert.AreEqual(response.CurrentPage, page + 1);
             Assert.AreEqual(data.Count, response.Payload.Count, "Same length");
             Assert.AreEqual(data.First().Id, response.Payload.First().First(), "Same first item");
 
@@ -40,11 +41,11 @@
             
             Assert.AreEqual(dataSource.Count(), response.TotalRecordCount, "Total rows matching");
         }
-
+        
         [Test]
-        public void SimpleList()
+        public void SimpleList([Range(0, 21)] int page)
         {
-            SimpleListTest(false);
+            SimpleListTest(false, page);
         }
 
         [Test]
@@ -171,9 +172,7 @@
             Assert.AreEqual(dataFiltered.Count, tubularDataFiltered.Count(), "Same length");
             Assert.AreEqual(dataFiltered.First(), tubularDataFiltered.First(), "Same first item");
         }
-
-
-       
+        
         [Test]
         public void TestListSimpleSearch()
         {
