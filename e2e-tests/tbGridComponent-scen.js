@@ -22,7 +22,7 @@ describe('tbGridComponents', function () {
             }
             newRow.$$('button').first().click().then(function() {
                 var newLastItem = element.all(by.repeater('row in $component.rows')).last().getText();
-                expect(lastItem).not.toBe(newLastItem);
+                expect(lastItem).toBe(newLastItem);
             });
         });
     });
