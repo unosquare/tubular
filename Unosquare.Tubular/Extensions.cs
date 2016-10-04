@@ -211,25 +211,15 @@ namespace Unosquare.Tubular
             else
             {
                 var filteredCount = subset.Count();
-                var totalPages = response.TotalPages = (filteredCount + pageSize - 1) / pageSize;
-                var currentPage = 0;
-                var skip = request.Skip;
-
+                var totalPages = response.TotalPages = filteredCount / pageSize;
+                
                 if (totalPages > 0)
                 {
-                    var portion = skip/(decimal) filteredCount;
-                    currentPage = (int) (1 + Math.Round(portion * totalPages, MidpointRounding.AwayFromZero));
-
-                    if (currentPage > totalPages)
-                    {
-                        currentPage = totalPages;
-                        skip = (currentPage - 1) * pageSize;
-                    }
-
-                    if (skip > 0) 
-                        subset = subset.Skip(skip);
+                    response.CurrentPage = request.Skip / pageSize + 1;
+                    
+                    if (request.Skip > 0) subset = subset.Skip(request.Skip);
                 }
-                response.CurrentPage = currentPage;
+                
                 subset = subset.Take(pageSize);
             }
 

@@ -13,13 +13,14 @@
         private const int PageSize = 20;
         private const string SearchText = "Name - 1";
         
-        private static void SimpleListTest(bool ignoreTimezone, int page = 1)
+        private static void SimpleListTest(bool ignoreTimezone, int page = 1, int setSize = 445)
         {
-            var dataSource = SampleEntities.GenerateData(440).AsQueryable();
+            var dataSource = SampleEntities.GenerateData(setSize).AsQueryable();
             var data = dataSource.Skip(PageSize * page).Take(PageSize).ToList();
             const int timezoneOffset = 300;
 
-            Assert.AreEqual(PageSize, data.Count, "Set has 10 items");
+            if (PageSize * page + PageSize < setSize)
+                Assert.AreEqual(data.Count, PageSize, "Set has 10 items");
 
             var request = new GridDataRequest()
             {
@@ -32,7 +33,7 @@
 
             var response = request.CreateGridDataResponse(dataSource);
 
-            Assert.AreEqual(response.CurrentPage, page + 1);
+            Assert.AreEqual(page + 1, response.CurrentPage);
             Assert.AreEqual(data.Count, response.Payload.Count, "Same length");
             Assert.AreEqual(data.First().Id, response.Payload.First().First(), "Same first item");
 
@@ -43,9 +44,9 @@
         }
         
         [Test]
-        public void SimpleList([Range(0, 21)] int page)
+        public void SimpleList([Range(0, 21)] int page, [Range(430, 450)] int setSize)
         {
-            SimpleListTest(false, page);
+            SimpleListTest(false, page, setSize);
         }
 
         [Test]
