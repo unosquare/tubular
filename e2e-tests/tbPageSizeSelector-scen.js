@@ -13,7 +13,8 @@ describe('tbPageSizeSelctor', function(){
         firstDataRow,
         lastDataRow,
         firstPageBtn,
-        nextPageBtn;
+        nextPageBtn,
+        tbPageSizeSelector;
         
     beforeAll(function(){        
         // Go to test

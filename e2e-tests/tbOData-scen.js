@@ -10,8 +10,8 @@ describe('OData', function() {
 
     var firstDataRow,
         lastDataRow,
-        i_sortIcon,
-        a_orderIdSorting,
+        iSortIcon,
+        aOrderIdSorting,
         filterBtn,
         tbColumnFilter,
         popoverForm,
@@ -20,8 +20,8 @@ describe('OData', function() {
         filterSelect,
         valueInput,
         dataRows,
-        a_customerNameSorting,
-        a_shippedDateSorting;
+        aCustomerNameSorting,
+        aShippedDateSorting;
 
     beforeAll(function() {
         // Go to test
@@ -46,19 +46,19 @@ describe('OData', function() {
         // Last showing row
         lastDataRow = element.all(by.repeater('row in $component.rows')).last();
         // Font-awesome sort icon (indicates sort-enabled and sort order)
-        i_sortIcon = element(by.tagName('thead'))
+        iSortIcon = element(by.tagName('thead'))
             .$$('tr th').first()
             .$('i');
         // Sort Order ID column link
-        a_orderIdSorting = element(by.tagName('thead'))
+        aOrderIdSorting = element(by.tagName('thead'))
             .$$('tr th').first()
             .$('a');
         // Sort Customer Name column link
-        a_customerNameSorting = element(by.tagName('thead'))
+        aCustomerNameSorting = element(by.tagName('thead'))
             .$$('tr th').get(1)
             .$('a');
         // Sort Shipped Date column link
-        a_shippedDateSorting = element(by.tagName('thead'))
+        aShippedDateSorting = element(by.tagName('thead'))
             .$$('tr th').get(2)
             .$('a');
     });
@@ -77,10 +77,10 @@ describe('OData', function() {
             dataRows = element.all(by.repeater('row in $component.rows'));
         });
 
-        var dataSetLowerID = '10248',
-            dataSetHigherID = '11077',
-            dataSet100HigerID = '10347';
-            dataSet100LowerID = '10978';
+        var dataSetLowerId = '10248',
+            dataSetHigherId = '11077',
+            dataSet100HigerId = '10347',
+            dataSet100LowerId = '10978',
             dataSetLowerCustomerName = 'ALFKI',
             dataSet100LowerCustomerName = 'TORTU',
             dataSetHigherCustomerName = 'WOLZA',
@@ -88,63 +88,63 @@ describe('OData', function() {
             dataSetLowerDate = /7\/4\/96 */,
             dataSet100LowerDate = /3\/26\/98 */,
             dataSetHigherDate = /5\/6\/98 */;
-            dataSet100HigherDate = /11\/6\/96 */;
+            var dataSet100HigherDate = /11\/6\/96 */;
 
         beforeEach(function() {
             // Clear possible sortings and start with default
-            a_orderIdSorting.click().then(function(){
-                i_sortIcon.getAttribute('class').then(function(sortIconClass) {
+            aOrderIdSorting.click().then(function(){
+                iSortIcon.getAttribute('class').then(function(sortIconClass) {
                 if (sortIconClass.indexOf('arrow') != -1) {
                     if (sortIconClass.indexOf('arrow-up') != -1) {
-                        a_orderIdSorting.click();
+                        aOrderIdSorting.click();
                     }
 
-                    a_orderIdSorting.click();
+                    aOrderIdSorting.click();
                 }
             });
             });
         });
 
         it('should order data in ascending order when click-sorting an unsorted numeric column', function() {
-            a_orderIdSorting.click();
+            aOrderIdSorting.click();
 
-            expect(firstDataRow.$$('td').first().getText()).toBe(dataSetLowerID);
-            expect(lastDataRow.$$('td').first().getText()).toBe(dataSet100HigerID);
+            expect(firstDataRow.$$('td').first().getText()).toBe(dataSetLowerId);
+            expect(lastDataRow.$$('td').first().getText()).toBe(dataSet100HigerId);
         });
 
         it('should order data in descending order when click-sorting an ascending-sorted numeric column', function() {
-            a_orderIdSorting.click();
-            a_orderIdSorting.click();
+            aOrderIdSorting.click();
+            aOrderIdSorting.click();
 
-            expect(firstDataRow.$$('td').first().getText()).toBe(dataSetHigherID);
-            expect(lastDataRow.$$('td').first().getText()).toBe(dataSet100LowerID);
+            expect(firstDataRow.$$('td').first().getText()).toBe(dataSetHigherId);
+            expect(lastDataRow.$$('td').first().getText()).toBe(dataSet100LowerId);
         });
 
         it('should order data in ascending order when click-sorting an unsorted text column', function() {
-            a_customerNameSorting.click();
+            aCustomerNameSorting.click();
 
             expect(firstDataRow.$$('td').get(1).getText()).toBe(dataSetLowerCustomerName);
             expect(lastDataRow.$$('td').get(1).getText()).toBe(dataSet100HigherCustomerName);
         });
 
         it('should order data in descending order when click-sorting an ascending-sorted text column', function() {
-            a_customerNameSorting.click();
-            a_customerNameSorting.click();
+            aCustomerNameSorting.click();
+            aCustomerNameSorting.click();
 
             expect(firstDataRow.$$('td').get(1).getText()).toBe(dataSetHigherCustomerName);
             expect(lastDataRow.$$('td').get(1).getText()).toBe(dataSet100LowerCustomerName);
         });
 
         it('should order data in ascending order when click-sorting an unsorted date column', function() {
-            a_shippedDateSorting.click();
+            aShippedDateSorting.click();
 
             expect(firstDataRow.$$('td').get(2).getText()).toMatch(dataSetLowerDate);
             expect(lastDataRow.$$('td').get(2).getText()).toMatch(dataSet100HigherDate);
         });
 
         it('should order data in descending order when click-sorting an ascending-sorted date column', function() {
-            a_shippedDateSorting.click();
-            a_shippedDateSorting.click();
+            aShippedDateSorting.click();
+            aShippedDateSorting.click();
 
             expect(firstDataRow.$$('td').get(2).getText()).toMatch(dataSetHigherDate);
             expect(lastDataRow.$$('td').get(2).getText()).toMatch(dataSet100LowerDate);

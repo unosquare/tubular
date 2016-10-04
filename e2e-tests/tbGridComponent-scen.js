@@ -55,7 +55,7 @@ describe('tbGridComponents', function () {
 
     it('should update item with tbSaveButton and cancel action', function () {
         var lastItem = element.all(by.repeater('row in $component.rows')).last();
-        // TOOD: Nestor
+        
         lastItem.$$('td').last().getText().then(function(originalValue) {
             lastItem.$$('button').get(2).click().then(function() {
                 lastItem.$('input').sendKeys('TEST');

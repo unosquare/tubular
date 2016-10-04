@@ -10,7 +10,7 @@ describe('LocalData', function() {
 
     var firstDataRow,
         lastDataRow,
-        i_sortIcon,
+        iSortIcon,
         filterBtn,
         tbColumnFilter,
         popoverForm,
@@ -45,7 +45,7 @@ describe('LocalData', function() {
         // Last showing row
         lastDataRow = element.all(by.repeater('row in $component.rows')).last();
         // Font-awesome sort icon (indicates sort-enabled and sort order)
-        i_sortIcon = element(by.tagName('thead'))
+        iSortIcon = element(by.tagName('thead'))
             .$$('tr th').first()
             .$('i');
         // Sort Customer Name column link
@@ -78,7 +78,7 @@ describe('LocalData', function() {
         beforeEach(function() {
             // Clear possible sortings and start with default
             a_shippedCitySorting.click();
-            i_sortIcon.getAttribute('class').then(function(sortIconClass) {
+            iSortIcon.getAttribute('class').then(function(sortIconClass) {
                 if (sortIconClass.indexOf('arrow') != -1) {
                     if (sortIconClass.indexOf('arrow-up') != -1) {
                         a_shippedCitySorting.click();
