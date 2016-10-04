@@ -42,7 +42,7 @@ describe('tbGridComponents', function () {
 
     it('should update item with tbSaveButton', function () {
         var lastItem = element.all(by.repeater('row in $component.rows')).last();
-        lastItem.$$('td').last().getText().then(function(originalValue) {
+        lastItem.$$('td').last().getText().then(function() {
             lastItem.$$('button').get(2).click().then(function() {
                 lastItem.$$('input').sendKeys('TEST').then(function(){
                     lastItem.$$('button').first().click().then(function(){

@@ -39,7 +39,6 @@ describe('tbGridPagerInfo', function () {
     });
 
     it("should show text in accordance to numbered of filter rows and current results-page", function () {
-        
         // Started on page 1
         expect(tbGridPagerInfo.getText()).toBe('Showing 1 to 10 of 53 records');
 

@@ -178,7 +178,7 @@ describe('tubularTemplateServiceModule', function () {
             expectedString = expectedString.replace(/\s/g, "");
             var result = htmlOutput.replace(/\s/g, "");
             
-            expect(expectedString == result).toBe(true);
+            expect(expectedString === result).toBe(true);
         });
     });
 
@@ -216,7 +216,7 @@ describe('tubularTemplateServiceModule', function () {
             expectedString = expectedString.replace(/\s/g, "");
             var result = htmlOutput.replace(/\s/g, "");
 
-            expect(expectedString == result).toBe(true);
+            expect(expectedString === result).toBe(true);
         });
 
         it('should two columns layout html match', function () {
@@ -225,7 +225,7 @@ describe('tubularTemplateServiceModule', function () {
             expectedString = expectedString.replace(/\s/g, "");
             var result = htmlOutputTwoCol.replace(/\s/g, "");
 
-            expect(expectedString == result).toBe(true);
+            expect(expectedString === result).toBe(true);
         });
 
         it('should three columns layout html match', function () {

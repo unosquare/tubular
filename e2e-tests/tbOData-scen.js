@@ -94,8 +94,8 @@ describe('OData', function() {
             // Clear possible sortings and start with default
             aOrderIdSorting.click().then(function(){
                 iSortIcon.getAttribute('class').then(function(sortIconClass) {
-                if (sortIconClass.indexOf('arrow') != -1) {
-                    if (sortIconClass.indexOf('arrow-up') != -1) {
+                if (sortIconClass.indexOf('arrow') !== -1) {
+                    if (sortIconClass.indexOf('arrow-up') !== -1) {
                         aOrderIdSorting.click();
                     }
 
@@ -164,7 +164,7 @@ describe('OData', function() {
                     dataRows.each(function (row) {
                         row.$$('td').get(1).getText()
                             .then(function (customer) {
-                                filterOk = filterOk && (customer.indexOf(containedString) != -1);
+                                filterOk = filterOk && (customer.indexOf(containedString) !== -1);
                             });
                     }).then(function () {
                         expect(filterOk).toBe(true);

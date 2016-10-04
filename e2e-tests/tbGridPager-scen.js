@@ -55,7 +55,7 @@ describe('tbGridPager', function () {
 
         // Ensure data is sorted by ascending-ID
         firstDataRow.getText().then(function (textId) {
-            if (textId != 1) {
+            if (textId !== 1) {
                 element(by.tagName('thead'))
                     .$$('tr th').first()
                     .$('a')

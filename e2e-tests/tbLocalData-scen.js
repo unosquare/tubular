@@ -19,8 +19,8 @@ describe('LocalData', function() {
         filterSelect,
         valueInput,
         dataRows,
-        a_customerNameSorting,
-        a_shippedCitySorting;
+        aCustomerNameSorting,
+        aShippedCitySorting;
 
     beforeAll(function() {
         // Go to test
@@ -49,11 +49,11 @@ describe('LocalData', function() {
             .$$('tr th').first()
             .$('i');
         // Sort Customer Name column link
-        a_customerNameSorting = element(by.tagName('thead'))
+        aCustomerNameSorting = element(by.tagName('thead'))
             .$$('tr th').first()
             .$('a');
         // Sort Shipped Date column link
-        a_shippedCitySorting = element(by.tagName('thead'))
+        aShippedCitySorting = element(by.tagName('thead'))
             .$$('tr th').get(2)
             .$('a');
     });
@@ -77,27 +77,27 @@ describe('LocalData', function() {
 
         beforeEach(function() {
             // Clear possible sortings and start with default
-            a_shippedCitySorting.click();
+            aShippedCitySorting.click();
             iSortIcon.getAttribute('class').then(function(sortIconClass) {
-                if (sortIconClass.indexOf('arrow') != -1) {
-                    if (sortIconClass.indexOf('arrow-up') != -1) {
-                        a_shippedCitySorting.click();
+                if (sortIconClass.indexOf('arrow') !== -1) {
+                    if (sortIconClass.indexOf('arrow-up') !== -1) {
+                        aShippedCitySorting.click();
                     }
 
-                    a_shippedCitySorting.click();
+                    aShippedCitySorting.click();
                 }
             });
         });
 
         it('should order data in ascending order when click-sorting an unsorted text column', function() {
-            a_customerNameSorting.click();            
+            aCustomerNameSorting.click();            
             expect(firstDataRow.$$('td').get(0).getText()).toBe(dataSetLowerCustomerName);
             expect(lastDataRow.$$('td').get(0).getText()).toBe(dataSetHigherCustomerName);
         });
 
         it('should order data in descending order when click-sorting an ascending-sorted text column', function() {
-            a_customerNameSorting.click();
-            a_customerNameSorting.click();
+            aCustomerNameSorting.click();
+            aCustomerNameSorting.click();
             expect(firstDataRow.$$('td').get(0).getText()).toBe(dataSetHigherCustomerName);
             expect(lastDataRow.$$('td').get(0).getText()).toBe(dataSetLowerCustomerName);
         });
@@ -116,7 +116,7 @@ describe('LocalData', function() {
                     dataRows.each(function (row) {
                         row.$$('td').first().getText()
                             .then(function (customer) {
-                                filterOk = filterOk && (customer.indexOf(containedString) != -1);
+                                filterOk = filterOk && (customer.indexOf(containedString) !== -1);
                             });
                     }).then(function () {
                         expect(filterOk).toBe(true);
@@ -139,7 +139,7 @@ describe('LocalData', function() {
                     dataRows.each(function (row) {
                         row.$$('td').first().getText()
                             .then(function (customer) {
-                                filterOk = filterOk && (customer.indexOf(containedString) != -1);
+                                filterOk = filterOk && (customer.indexOf(containedString) !== -1);
                             });
                     }).then(function () {
                         expect(filterOk).toBe(true);

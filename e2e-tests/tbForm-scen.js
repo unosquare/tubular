@@ -30,18 +30,14 @@ describe('tbForm related components ->', function () {
             }).then(function () {
                 return tbFormEditBtn1.click().then(function () {
                     return tbSimpleEditorInput.getAttribute('value').then(function (val) {
-                        if (val != tbSimpleEditorCustomerOriginal) {
+                        if (val !== tbSimpleEditorCustomerOriginal) {
                             return tbSimpleEditorInput.clear().then(function () {
                                 return tbSimpleEditorInput.sendKeys(tbSimpleEditorCustomerOriginal).then(function () {
-                                    return tbFormSaveBtn.click().then(function () {
-                                        return true;
-                                    });
+                                    return tbFormSaveBtn.click();
                                 });
                             });
                         } else {
-                            return tbFormCancelBtn.click().then(function () {
-                                return true;
-                            });
+                            return tbFormCancelBtn.click();
                         }
                     });
                 });
@@ -53,8 +49,8 @@ describe('tbForm related components ->', function () {
     //  * tbNumericEditor * //
     /************************/
     var tbNumericEditor,
-        tbNumericEditor_input,
-        tbNumericEditor_label,
+        tbNumericEditorInput,
+        tbNumericEditorLabel,
         tbNumericEditor_helper,
         tbNumericEditor_errorMessages,
         tbNumericEditorValue_original = '300';
@@ -68,10 +64,10 @@ describe('tbForm related components ->', function () {
             })
                 .then(function () {
                     return tbFormEditBtn1.click().then(function () {
-                        return tbNumericEditor_input.getAttribute('value').then(function (val) {
+                        return tbNumericEditorInput.getAttribute('value').then(function (val) {
                             if (val != tbNumericEditorValue_original) {
-                                return tbNumericEditor_input.clear().then(function () {
-                                    return tbNumericEditor_input.sendKeys(tbNumericEditorValue_original).then(function () {
+                                return tbNumericEditorInput.clear().then(function () {
+                                    return tbNumericEditorInput.sendKeys(tbNumericEditorValue_original).then(function () {
                                         return tbFormSaveBtn.click().then(function () {
                                             return true;
                                         });
@@ -974,8 +970,8 @@ describe('tbForm related components ->', function () {
             tbFormEditBtn1 = element.all(by.repeater('row in $component.rows')).first().$$('td').first().$$('button').first();
             // tbNumericEditor component and subcomponents
             tbNumericEditor = $('div.modal-dialog form').$('tb-numeric-editor');
-            tbNumericEditor_input = tbNumericEditor.$('input');
-            tbNumericEditor_label = tbNumericEditor.$('label');
+            tbNumericEditorInput = tbNumericEditor.$('input');
+            tbNumericEditorLabel = tbNumericEditor.$('label');
             tbNumericEditor_helper = tbNumericEditor.$$('span').filter(function (elem, index) {
                 return elem.getAttribute('ng-show').then(function (val) {
                     return val != null ? val.indexOf('$ctrl.help') != -1 : false;
@@ -997,16 +993,16 @@ describe('tbForm related components ->', function () {
         });
 
         it('should set initial component value to the value of "value" attribute when defined', function () {
-            expect(tbNumericEditor_input.getAttribute('value')).toMatch('300');
+            expect(tbNumericEditorInput.getAttribute('value')).toMatch('300');
         });
 
         it('should be invalidated when the entered number is not in the range of "min" and "max" attributes', function () {
             var errorPresent = false;
             var messageCount;
 
-            tbNumericEditor_input.clear().then(function () {
+            tbNumericEditorInput.clear().then(function () {
                 // input '0'
-                tbNumericEditor_input.sendKeys('0').then(function () {
+                tbNumericEditorInput.sendKeys('0').then(function () {
                     tbNumericEditor_errorMessages.getText().then(function (errorsArray) {
                         errorsArray.forEach(function (val) {
                             if (val == 'The minimum number is 1.') {
@@ -1022,8 +1018,8 @@ describe('tbForm related components ->', function () {
                             messageCount = count;
                         })
                             .then(function () {
-                                tbNumericEditor_input.clear().then(function () {
-                                    tbNumericEditor_input.sendKeys('100').then(function () {
+                                tbNumericEditorInput.clear().then(function () {
+                                    tbNumericEditorInput.sendKeys('100').then(function () {
                                         // Expect min value error to have been removed
                                         expect(tbNumericEditor_errorMessages.count()).toBeLessThan(messageCount);
                                     });
@@ -1031,7 +1027,7 @@ describe('tbForm related components ->', function () {
                             });
                     })
                     .then(function () {
-                        tbNumericEditor_input.sendKeys('0').then(function () {
+                        tbNumericEditorInput.sendKeys('0').then(function () {
                             // Expect max value error to be displayed
                             expect(tbNumericEditor_errorMessages.count()).toBe(messageCount);
                         });
@@ -1040,7 +1036,7 @@ describe('tbForm related components ->', function () {
         });
 
         it('should show the component name value in a label field when "showLabel" attribute is true', function () {
-            expect(tbNumericEditor_label.getText()).toMatch('Num Editor Test');
+            expect(tbNumericEditorLabel.getText()).toMatch('Num Editor Test');
         });
 
         it('should show a help field equal to this attribute, is present', function () {
@@ -1050,7 +1046,7 @@ describe('tbForm related components ->', function () {
         it('should require the field when the attribute "required" is true', function () {
             var errorPresent = false;
 
-            tbNumericEditor_input.clear().then(function () {
+            tbNumericEditorInput.clear().then(function () {
                 tbNumericEditor_errorMessages.getText().then(function (errorsArray) {
                     errorsArray.forEach(function (val) {
                         if (val === 'The field is required.') {
@@ -1064,11 +1060,11 @@ describe('tbForm related components ->', function () {
         });
 
         it('should submit modifications to item/server when clicking form "Save"', function () {
-            tbNumericEditor_input.clear().then(function () {
-                tbNumericEditor_input.sendKeys('100').then(function () {
+            tbNumericEditorInput.clear().then(function () {
+                tbNumericEditorInput.sendKeys('100').then(function () {
                     tbFormSaveBtn.click().then(function () {
                         tbFormEditBtn1.click().then(function () {
-                            tbNumericEditor_input.getAttribute('value').then(function (text) {
+                            tbNumericEditorInput.getAttribute('value').then(function (text) {
                                 expect(text).toMatch('100');
                             });
                         });
@@ -1078,14 +1074,14 @@ describe('tbForm related components ->', function () {
         });
 
         it('should NOT submit modifications to item/server when clicking form "Cancel"', function () {
-            tbNumericEditor_input.getAttribute('value').then(function (val) {
+            tbNumericEditorInput.getAttribute('value').then(function (val) {
                 expect(val).toMatch(tbNumericEditorValue_original);
             })
                 .then(function () {
-                    tbNumericEditor_input.sendKeys('220').then(function () {
+                    tbNumericEditorInput.sendKeys('220').then(function () {
                         tbFormCancelBtn.click().then(function () {
                             tbFormEditBtn1.click().then(function () {
-                                tbNumericEditor_input.getAttribute('value').then(function (val) {
+                                tbNumericEditorInput.getAttribute('value').then(function (val) {
                                     expect(val).toMatch(tbNumericEditorValue_original);
                                 });
                             });
