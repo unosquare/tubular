@@ -1,3 +1,5 @@
+/* jshint: true */
+/* globals: expect:false,beforeAll:false,expect:false,browser:false,element:false,by:false,describe:false,protractor:false,it:false,beforeEach:false */
 
 // This protractor scen file tests the tubularHttp.
 describe('tbHttp', function () {
@@ -33,7 +35,7 @@ describe('tbHttp', function () {
         });
     });
    
-    it('should expirated', function(){
+    it('should expired', function(){
         element(by.model('username')).sendKeys('admin');
         element(by.model('password')).sendKeys('pass.word');
         element(by.id('submitBtn')).click();

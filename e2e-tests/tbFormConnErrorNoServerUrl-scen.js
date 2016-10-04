@@ -1,4 +1,7 @@
-describe("tbForm Connection Error",function(){
+/* jshint: true */
+/* globals: expect:false,beforeAll:false,expect:false,browser:false,element:false,by:false,describe:false,protractor:false,it:false */
+
+describe("tbForm Connection Error", function () {
     
     beforeAll(function () {
         // Go to test

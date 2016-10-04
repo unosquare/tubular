@@ -132,7 +132,7 @@ var tubularTemplate = {
         var notADateValue = 'not-a-date';
         input.setAttribute('value', notADateValue);
 
-        return (input.value !== notADateValue);
+        return input.value !== notADateValue;
     },
 
     /*
@@ -149,7 +149,7 @@ var tubularTemplate = {
             if (jsonModel.hasOwnProperty(prop)) {
                 var value = jsonModel[prop];
                 // Ignore functions
-                if (prop[0] === '$' || typeof (value) === 'function') {
+                if (prop[0] === '$' || typeof value === 'function') {
                     continue;
                 }
 
@@ -373,9 +373,6 @@ var tubularTemplate = {
             bottomToolbar += '\r\n\t<tb-grid-pager-info class="col-md-3"></tb-grid-pager-info>';
         }
 
-        // TODO: If it's page mode add button
-        // TODO: Add Selectable param, default false
-        // TODO: Add Name param
         return '<div class="container">' +
             '\r\n<tb-grid server-url="' + options.dataUrl + '" request-method="' + options.RequestMethod + '" class="row" ' +
             'page-size="10" require-authentication="' + options.RequireAuthentication + '" ' +
@@ -1415,11 +1412,11 @@ try {
         moment.fn.toJSON = function() { return this.format(); }
     }
 
-    var changeValueFn = function($ctrl, $scope) {
+    var changeValueFn = function($ctrl) {
         return function(val) {
             if (angular.isUndefined(val)) return;
 
-            if (typeof (val) === 'string') {
+            if (typeof val === 'string') {
                 $ctrl.value = hasMoment ? moment(val) : new Date(val);
             }
 
@@ -1454,8 +1451,8 @@ try {
                 }
 
                 if (tubular.isValid($ctrl.match)) {
-                    if ($ctrl.value !== $scope.$component.model[$ctrl.match]) {
-                        var label = $filter('filter')($scope.$component.fields, { name: $ctrl.match }, true)[0].label;
+                    if ($ctrl.value !== $ctrl.$component.model[$ctrl.match]) {
+                        var label = $filter('filter')($ctrl.$component.fields, { name: $ctrl.match }, true)[0].label;
                         $ctrl.$valid = false;
                         $ctrl.state.$errors = [$filter('translate')('EDITOR_MATCH', label)];
                         return;
@@ -1519,7 +1516,7 @@ try {
             var $ctrl = this;
             
             // This could be $onChange??
-            $scope.$watch(function() { return $ctrl.value; }, changeValueFn($ctrl, $scope));
+            $scope.$watch(function() { return $ctrl.value; }, changeValueFn($ctrl));
 
             $scope.$watch(function () {
                 return $ctrl.dateValue;
@@ -1571,7 +1568,7 @@ try {
     var tbDateEditorCtrl = ['$scope', '$element', 'tubularEditorService', '$filter', function($scope, $element, tubular, $filter) {
             var $ctrl = this;
             
-            $scope.$watch(function () { return $ctrl.value; }, changeValueFn($ctrl, $scope));
+            $scope.$watch(function () { return $ctrl.value; }, changeValueFn($ctrl));
 
             $scope.$watch(function () {
                 return $ctrl.dateValue;
@@ -4307,7 +4304,18 @@ try {
 
                 me.generateGrid = tubularTemplate.generateGrid;
 
-                me.setupFilter = function($scope, $element, $compile, $filter, $ctrl) {
+                me.setupFilter = function ($scope, $element, $compile, $filter, $ctrl) {
+                    var dateOps = {
+                        'None': $filter('translate')('OP_NONE'),
+                        'Equals': $filter('translate')('OP_EQUALS'),
+                        'NotEquals': $filter('translate')('OP_NOTEQUALS'),
+                        'Between': $filter('translate')('OP_BETWEEN'),
+                        'Gte': '>=',
+                        'Gt': '>',
+                        'Lte': '<=',
+                        'Lt': '<'
+                    };
+
                     var filterOperators = {
                         'string': {
                             'None': $filter('translate')('OP_NONE'),
@@ -4329,36 +4337,9 @@ try {
                             'Lte': '<=',
                             'Lt': '<'
                         },
-                        'date': {
-                            'None': $filter('translate')('OP_NONE'),
-                            'Equals': $filter('translate')('OP_EQUALS'),
-                            'NotEquals': $filter('translate')('OP_NOTEQUALS'),
-                            'Between': $filter('translate')('OP_BETWEEN'),
-                            'Gte': '>=',
-                            'Gt': '>',
-                            'Lte': '<=',
-                            'Lt': '<'
-                        },
-                        'datetime': {
-                            'None': $filter('translate')('OP_NONE'),
-                            'Equals': $filter('translate')('OP_EQUALS'),
-                            'NotEquals': $filter('translate')('OP_NOTEQUALS'),
-                            'Between': $filter('translate')('OP_BETWEEN'),
-                            'Gte': '>=',
-                            'Gt': '>',
-                            'Lte': '<=',
-                            'Lt': '<'
-                        },
-                        'datetimeutc': {
-                            'None': $filter('translate')('OP_NONE'),
-                            'Equals': $filter('translate')('OP_EQUALS'),
-                            'NotEquals': $filter('translate')('OP_NOTEQUALS'),
-                            'Between': $filter('translate')('OP_BETWEEN'),
-                            'Gte': '>=',
-                            'Gt': '>',
-                            'Lte': '<=',
-                            'Lt': '<'
-                        },
+                        'date': dateOps,
+                        'datetime': dateOps,
+                        'datetimeutc': dateOps,
                         'boolean': {
                             'None': $filter('translate')('OP_NONE'),
                             'Equals': $filter('translate')('OP_EQUALS'),
@@ -4378,9 +4359,9 @@ try {
                     $ctrl.filterTitle = $ctrl.title || $filter('translate')('CAPTION_FILTER');
 
                     $scope.$watch(function() {
-                        var columns = $ctrl.$component.columns.filter(function(e) { return e.Name === $ctrl.filter.Name; });
+                        var c = $ctrl.$component.columns.filter(function(e) { return e.Name === $ctrl.filter.Name; });
 
-                        return columns.length !== 0 ? columns[0] : null;
+                        return c.length !== 0 ? c[0] : null;
                     }, function(val) {
                         if (!val) return;
 
@@ -4392,10 +4373,10 @@ try {
                     }, true);
 
                     $ctrl.retrieveData = function() {
-                        var columns = $ctrl.$component.columns.filter(function(e) { return e.Name === $ctrl.filter.Name; });
+                        var c = $ctrl.$component.columns.filter(function(e) { return e.Name === $ctrl.filter.Name; });
 
-                        if (columns.length !== 0) {
-                            columns[0].Filter = $ctrl.filter;
+                        if (c.length !== 0) {
+                            c[0].Filter = $ctrl.filter;
                         }
 
                         $ctrl.$component.retrieveData();

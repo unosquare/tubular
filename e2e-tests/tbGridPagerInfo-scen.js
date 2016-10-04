@@ -1,3 +1,5 @@
+/* jshint: true */
+/* globals: expect:false,beforeAll:false,expect:false,browser:false,element:false,by:false,describe:false,protractor:false,it:false */
 
 // This protractor scen file tests the tbGridPagerInfo component.
 

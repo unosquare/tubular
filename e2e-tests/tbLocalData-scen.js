@@ -1,3 +1,6 @@
+/* jshint: true */
+/* globals: expect:false,beforeAll:false,expect:false,browser:false,element:false,by:false,describe:false,protractor:false,it:false,beforeEach:false */
+
 // This protractor scen file tests tbColumn and tbGrid components with Local Data.
 
 // It is assumed throughout the test that the data received for the main tbGrid
@@ -110,7 +113,7 @@ describe('LocalData', function() {
             applyBtn.click()
                 .then(function () {
                     // Verify filtering
-                    dataRows.each(function (row, index) {
+                    dataRows.each(function (row) {
                         row.$$('td').first().getText()
                             .then(function (customer) {
                                 filterOk = filterOk && (customer.indexOf(containedString) != -1);
@@ -133,7 +136,7 @@ describe('LocalData', function() {
             valueInput.sendKeys(protractor.Key.ENTER)
                 .then(function () {
                     // Verify filtering
-                    dataRows.each(function (row, index) {
+                    dataRows.each(function (row) {
                         row.$$('td').first().getText()
                             .then(function (customer) {
                                 filterOk = filterOk && (customer.indexOf(containedString) != -1);
@@ -143,9 +146,5 @@ describe('LocalData', function() {
                     });
                 });
         });
-    });
-
-    describe('Grid Local Data tbTextSearch', function () {
-        // TODO: Nestor
     });
 });

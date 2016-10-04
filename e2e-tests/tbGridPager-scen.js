@@ -1,5 +1,7 @@
+/* jshint: true */
+/* globals: expect:false,beforeAll:false,expect:false,browser:false,element:false,by:false,describe:false,protractor:false,it:false */
 
-// This protractor scen file tests tbGridPager component and the page navigation behaviour
+// This protractor scen file tests tbGridPager component and the page navigation behavior
 // that is related with it. 
 
 // It is assumed throughout the test that the data received for the main tbGrid

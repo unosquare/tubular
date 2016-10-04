@@ -7,11 +7,11 @@
         moment.fn.toJSON = function() { return this.format(); }
     }
 
-    var changeValueFn = function($ctrl, $scope) {
+    var changeValueFn = function($ctrl) {
         return function(val) {
             if (angular.isUndefined(val)) return;
 
-            if (typeof (val) === 'string') {
+            if (typeof val === 'string') {
                 $ctrl.value = hasMoment ? moment(val) : new Date(val);
             }
 
@@ -46,8 +46,8 @@
                 }
 
                 if (tubular.isValid($ctrl.match)) {
-                    if ($ctrl.value !== $scope.$component.model[$ctrl.match]) {
-                        var label = $filter('filter')($scope.$component.fields, { name: $ctrl.match }, true)[0].label;
+                    if ($ctrl.value !== $ctrl.$component.model[$ctrl.match]) {
+                        var label = $filter('filter')($ctrl.$component.fields, { name: $ctrl.match }, true)[0].label;
                         $ctrl.$valid = false;
                         $ctrl.state.$errors = [$filter('translate')('EDITOR_MATCH', label)];
                         return;
@@ -111,7 +111,7 @@
             var $ctrl = this;
             
             // This could be $onChange??
-            $scope.$watch(function() { return $ctrl.value; }, changeValueFn($ctrl, $scope));
+            $scope.$watch(function() { return $ctrl.value; }, changeValueFn($ctrl));
 
             $scope.$watch(function () {
                 return $ctrl.dateValue;
@@ -163,7 +163,7 @@
     var tbDateEditorCtrl = ['$scope', '$element', 'tubularEditorService', '$filter', function($scope, $element, tubular, $filter) {
             var $ctrl = this;
             
-            $scope.$watch(function () { return $ctrl.value; }, changeValueFn($ctrl, $scope));
+            $scope.$watch(function () { return $ctrl.value; }, changeValueFn($ctrl));
 
             $scope.$watch(function () {
                 return $ctrl.dateValue;

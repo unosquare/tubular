@@ -356,6 +356,7 @@
 
             public DateTime? NullableDate { get; set; }
         }
+
         [Test]
         public void NullableDateAdjustTimeZone()
         {
@@ -365,6 +366,7 @@
             var actual = (MyDateClass)Extensions.AdjustTimeZone(date, offset);
 
             Assert.AreEqual(now.AddMinutes(-offset), actual.Date, "Non-nullable date adjusted");
+            Assert.IsNotNull(actual.NullableDate);
             Assert.AreEqual(now.AddMinutes(-offset), actual.NullableDate.Value, "Nullable date with value adjusted");
 
             date = new MyDateClass { Date = now, NullableDate = null };

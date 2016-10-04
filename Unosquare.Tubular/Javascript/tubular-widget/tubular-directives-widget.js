@@ -258,9 +258,7 @@
                                 $scope.container.redraw();
                             };
 
-                            $scope.$watch('collapsed', function(v) {
-                                $scope.container.saveSettings();
-                            });
+                            $scope.$watch('collapsed', $scope.container.saveSettings);
 
                             $scope.move = function(direction) {
                                 $scope.container.move(this, direction);

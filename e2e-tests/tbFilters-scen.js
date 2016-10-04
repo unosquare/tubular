@@ -1,3 +1,6 @@
+/* jshint: true */
+/* globals: expect:false,beforeAll:false,expect:false,browser:false,element:false,by:false,describe:false,protractor:false,it:false */
+
 // This protractor scen file tests tubular-directives-filters components.
 
 // tbFilterButtons internal component is implicitlly tested by the other tests in this file.
