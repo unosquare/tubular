@@ -2,6 +2,7 @@
 /* globals: expect:false,beforeAll:false,expect:false,browser:false,element:false,by:false,describe:false,protractor:false,it:false,afterEach:false */
 
 describe('tbForm related components ->', function () {
+    var trueFunc = function () { return true };
 
     /**********************/
     // *     Global     * //
@@ -33,11 +34,11 @@ describe('tbForm related components ->', function () {
                         if (val !== tbSimpleEditorCustomerOriginal) {
                             return tbSimpleEditorInput.clear().then(function () {
                                 return tbSimpleEditorInput.sendKeys(tbSimpleEditorCustomerOriginal).then(function () {
-                                    return tbFormSaveBtn.click();
+                                    return tbFormSaveBtn.click(trueFunc);
                                 });
                             });
                         } else {
-                            return tbFormCancelBtn.click();
+                            return tbFormCancelBtn.click(trueFunc);
                         }
                     });
                 });
