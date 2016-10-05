@@ -30,10 +30,8 @@
         <![endif]-->
 
         <!-- JS (from CDN) -->
-        <script src="//cdn.jsdelivr.net/g/angularjs(angular.min.js+angular-route.min.js),filesaver.js,toastr,highlight.js,zeroclipboard,chart.js,highcharts"></script>
+        <script src="//cdn.jsdelivr.net/g/angularjs(angular.min.js+angular-route.min.js),angular.bootstrap@2.1.2(ui-bootstrap.min.js+ui-bootstrap-tpls.min.js),filesaver.js,toastr,highlight.js,zeroclipboard,chart.js,highcharts"></script>
         <script src="//cdnjs.cloudflare.com/ajax/libs/angular-local-storage/0.1.5/angular-local-storage.min.js"></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.0.1/ui-bootstrap.min.js"></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.0.1/ui-bootstrap-tpls.min.js"></script>
 	    <script src="//pc035860.github.io/angular-highlightjs/angular-highlightjs.min.js"></script>
         <script src="//cdnjs.cloudflare.com/ajax/libs/angular-filter/0.5.8/angular-filter.min.js"></script>
 
@@ -57,16 +55,16 @@
                     <header class="navbar navbar-static-top" id="top" role="banner">
                         <div class="container">
                             <div class="navbar-header">
-                                <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target=".bs-navbar-collapse">
+                                <button type="button" class="navbar-toggle" 
+                                        data-toggle="collapse" data-target="#bs-example-navbar-collapse-3" ng-click="isCollapsed = !isCollapsed">
                                     <i class="fa fa-bars"></i>
                                 </button>
                             </div>
-                            <nav class="collapse navbar-collapse bs-navbar-collapse">
+                            <nav class="hidden-xs">
                                 <ul class="nav navbar-nav">
                                     <li><a href="/tubular">Home</a></li>
-                                    <li><a href="/tubular/#Basic">Samples</a></li>
-                                    <li><a href="/tubular/#Csharp">C# Samples</a></li>
-                                    <li><a href="/tubular/#Charts">Charts</a></li>
+                                    <li><a href="/tubular/#Basic">Grid Samples</a></li>
+                                    <li><a href="/tubular/#Charts">Charts Samples</a></li>
                                     <li>
                                         <a href="/tubular/#Generator">Grid Generator</a>
                                     </li>
@@ -80,6 +78,25 @@
                                 <ul class="nav navbar-nav navbar-right">
                                     <li><a href="http://www.unosquare.com">Unosquare</a></li>
                                     <li><a href="http://github.com/unosquare/tubular"><i class="fa fa-github-square"></i>&nbsp;GitHub</a></li>
+                                </ul>
+                            </nav>
+                            <nav class="visible-xs collapse" uib-collapse="!isCollapsed">
+                                <ul class="nav navbar-nav">
+                                    <li>
+                                        <a href="/tubular" ng-click="isCollapsed = !isCollapsed">Home</a>
+                                    </li>
+                                    <li>
+                                        <a href="/tubular/#Basic" ng-click="isCollapsed = !isCollapsed">Grid Samples</a>
+                                    </li>
+                                    <li>
+                                        <a href="/tubular/#Documentation" ng-click="isCollapsed = !isCollapsed">Documentation</a>
+                                    </li>
+                                    <li>
+                                        <a href="http://www.unosquare.com">Unosquare</a>
+                                    </li>
+                                    <li>
+                                        <a href="http://github.com/unosquare/tubular"><i class="fa fa-github-square"></i>&nbsp;GitHub</a>
+                                    </li>
                                 </ul>
                             </nav>
                         </div>

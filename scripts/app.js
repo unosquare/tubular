@@ -11,11 +11,7 @@
                     }).when('/Basic', {
                         templateUrl: 'assets/home.html',
                         key: 'Tubular Samples',
-                        desc: 'A little collection with samples from basic grid to more awesome.'
-                    }).when('/Csharp', {
-                        templateUrl: 'assets/csharp.html',
-                        key: 'Tubular C# Samples',
-                        desc: 'Grid samples connecting to a Web API service in Azure.'
+                        desc: 'A little collection with samples from basic grid to more complex UI.'
                     }).when('/Charts', {
                         templateUrl: 'assets/charts.html',
                         key: 'Tubular Charts Samples',
@@ -47,17 +43,16 @@
                         body: 'First grid shows a basic layout, without any additional feature or special column. ' +
                             'Just a plain grid using a JSON data source.',
                         key: 'sample',
-                        next: 'sample2'
+                        next: 'samplesharp1'
                     },
                     {
-                        title: 'Grid with Paginations using OData',
-                        body: 'Adding a new feature: the pagination. ' +
-                            'This demo is using an OData data source and you can move across the pages and change the size.',
-                        key: 'sample2',
+                        title: 'Grid with Paginations',
+                        body: 'Adding a new feature: the pagination. You can move across the pages and change the size.',
+                        key: 'samplesharp1',
                         next: 'sample3'
                     },
                     {
-                        title: 'Grid with common features using OData',
+                        title: 'Grid with common features',
                         body: 'The grid can be extended to include features like sorting and filtering. ' +
                             'Press Ctrl key to sort by multiple columns.',
                         key: 'sample3',
@@ -81,6 +76,12 @@
                             'This demo is read-only, but you can get the idea.',
                         key: 'sample7',
                         next: null
+                    },
+                    {
+                        title: 'Grid with Aggregation results',
+                        body: 'This sample has more controls in the grid and also two columns has aggregation methods. Customer count and Amount sum. The tbFootSet directive is helpful to show them.',
+                        key: 'sample8',
+                        next: null
                     }
                 ];
 
@@ -94,21 +95,6 @@
                         title: 'Basic line chart with Highcharts',
                         body: 'Easily add a chart using a REST Service with the Tubular C# connector. In this sample we are using a JSON file, because there is not support to server side in this documentation',
                         key: 'samplechart2',
-                        next: null
-                    }
-                ];
-
-                $scope.tutorialSharp = [
-                    {
-                        title: 'Grid with Paginations',
-                        body: 'Adding a new feature: the pagination.',
-                        key: 'samplesharp1',
-                        next: 'sample8'
-                    },
-                    {
-                        title: 'Grid with Aggregation results',
-                        body: 'This sample has more controls in the grid and also two columns has aggregation methods. Customer count and Amount sum. The tbFootSet directive is helpful to show them.',
-                        key: 'sample8',
                         next: null
                     }
                 ];
