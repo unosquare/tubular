@@ -2,7 +2,7 @@
 /* globals: expect:false,beforeAll:false,expect:false,browser:false,element:false,by:false,describe:false,protractor:false,it:false */
 
 describe('tbForm related components ->', function () {
-
+    var trueFunc = function () { return true; };
     /**********************/
     // *     Global     * //
     /**********************/
@@ -33,15 +33,11 @@ describe('tbForm related components ->', function () {
                         if (val != tbSimpleEditorCustomer_original) {
                             return tbSimpleEditor_input.clear().then(function () {
                                 return tbSimpleEditor_input.sendKeys(tbSimpleEditorCustomer_original).then(function () {
-                                    return tbFormSaveBtn.click().then(function () {
-                                        return true;
-                                    });
+                                    return tbFormSaveBtn.click().then(trueFunc);
                                 });
                             });
                         } else {
-                            return tbFormCancelBtn.click().then(function () {
-                                return true;
-                            });
+                            return tbFormCancelBtn.click().then(trueFunc);
                         }
                     });
                 });
@@ -72,16 +68,12 @@ describe('tbForm related components ->', function () {
                             if (val != tbNumericEditorValue_original) {
                                 return tbNumericEditor_input.clear().then(function () {
                                     return tbNumericEditor_input.sendKeys(tbNumericEditorValue_original).then(function () {
-                                        return tbFormSaveBtn.click().then(function () {
-                                            return true;
-                                        });
+                                        return tbFormSaveBtn.click().then(trueFunc);
                                     });
                                 });
                             }
                             else {
-                                return tbFormCancelBtn.click().then(function () {
-                                    return true;
-                                });
+                                return tbFormCancelBtn.click().then(trueFunc);
                             }
                         });
                     });
@@ -115,17 +107,13 @@ describe('tbForm related components ->', function () {
                                 return tbTypeaheadEditor_input.clear().then(function () {
                                     return tbTypeaheadEditor_input.sendKeys(tbTypeaheadEditorCity_originalMatcher).then(function () {
                                         return tbTypeaheadEditor_options.first().click().then(function () {
-                                            return tbFormSaveBtn.click().then(function () {
-                                                return true;
-                                            });
+                                            return tbFormSaveBtn.click().then(trueFunc);
                                         });
                                     });
                                 });
                             }
                             else {
-                                return tbFormCancelBtn.click().then(function () {
-                                    return true;
-                                });
+                                return tbFormCancelBtn.click().then(trueFunc);
                             }
                         });
                     });
@@ -156,16 +144,12 @@ describe('tbForm related components ->', function () {
                             if (val != tbDateEditorDate_original) {
                                 return tbDateEditor_input.clear().then(function () {
                                     return tbDateEditor_input.sendKeys(tbDateEditorDate_original).then(function () {
-                                        return tbFormSaveBtn.click().then(function () {
-                                            return true;
-                                        });
+                                        return tbFormSaveBtn.click().then(trueFunc);
                                     });
                                 });
                             }
                             else {
-                                return tbFormCancelBtn.click().then(function () {
-                                    return true;
-                                });
+                                return tbFormCancelBtn.click().then(trueFunc);
                             }
                         });
                     });
@@ -196,16 +180,12 @@ describe('tbForm related components ->', function () {
                             if (val != tbTextAreaCustomer_original) {
                                 return tbTextArea_input.clear().then(function () {
                                     return tbTextArea_input.sendKeys(tbTextAreaCustomer_original).then(function () {
-                                        return tbFormSaveBtn.click().then(function () {
-                                            return true;
-                                        });
+                                        return tbFormSaveBtn.click().then(trueFunc);
                                     });
                                 });
                             }
                             else {
-                                return tbFormCancelBtn.click().then(function () {
-                                    return true;
-                                });
+                                return tbFormCancelBtn.click().then(trueFunc);
                             }
                         });
                     });
@@ -243,15 +223,11 @@ describe('tbForm related components ->', function () {
                         return tbDropDownEditor_select.getAttribute('value').then(function (val) {
                             if (val != tbDropDownEditorCity_original) {
                                 return selectDropDownOption('Guadalajara').click().then(function () {
-                                    return tbFormSaveBtn.click().then(function () {
-                                        return true;
-                                    });
+                                    return tbFormSaveBtn.click().then(trueFunc);
                                 });
                             }
                             else {
-                                return tbFormCancelBtn.click().then(function () {
-                                    return true;
-                                });
+                                return tbFormCancelBtn.click().then(trueFunc);
                             }
                         });
                     });
@@ -277,15 +253,11 @@ describe('tbForm related components ->', function () {
                         return tbCheckboxField.getAttribute('class').then(function (val) {
                             if (val.indexOf('ng-empty') == -1) {
                                 return tbCheckboxField.click().then(function () {
-                                    return tbFormSaveBtn.click().then(function () {
-                                        return true;
-                                    });
+                                    return tbFormSaveBtn.click().then(trueFunc);
                                 });
                             }
                             else {
-                                return tbFormCancelBtn.click().then(function () {
-                                    return true;
-                                });
+                                return tbFormCancelBtn.click().then(trueFunc);
                             }
                         });
                     });
