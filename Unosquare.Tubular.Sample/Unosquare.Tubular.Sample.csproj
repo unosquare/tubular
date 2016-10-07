@@ -176,6 +176,7 @@
     <Compile Include="Application\UserAuthenticationResult.cs" />
     <Compile Include="Controllers\OrdersController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Order.cs" />
     <Compile Include="Models\OrderDetail.cs" />
     <Compile Include="Models\Product.cs" />
@@ -201,7 +202,6 @@
       <Name>Unosquare.Tubular</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
