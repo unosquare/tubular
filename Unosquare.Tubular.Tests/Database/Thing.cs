@@ -20,6 +20,8 @@
 
         public System.DateTime Date { get; set; }
 
+        public System.DateTime? NullableDate { get; set; }
+
         public bool Bool { get; set; }
 
         public static GridColumn[] GetColumnsWithAggregate()

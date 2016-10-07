@@ -1,10 +1,16 @@
-describe('tb Form Date Editor', function(){
-        var tbDateEditor,
-        tbDateEditor_input,
-        tbDateEditor_label,
-        tbDateEditor_helper,
-        tbDateEditor_errorMessages,
-        tbDateEditorDate_original = '02/02/2016';
+/* jshint: true */
+/* globals: expect:false,beforeAll:false,expect:false,browser:false,element:false,by:false,describe:false,protractor:false,it:false */
+
+describe('tb Form Date Editor', function () {
+    var tbFormSaveBtn,
+        tbFormCancelBtn,
+        tbDateEditor,
+        tbDateEditorInput,
+        tbDateEditorLabel,
+        tbDateEditorHelper,
+        tbFormEditBtn1,
+        tbDateEditorErrorMessages,
+        tbDateEditorDateOriginal = '02/02/2016';
         
     var tbDateEditorRestore = function () {
         return browser.wait(function () {
@@ -15,10 +21,10 @@ describe('tb Form Date Editor', function(){
             })
                 .then(function () {
                     return tbFormEditBtn1.click().then(function() {
-                        return tbDateEditor_input.getAttribute('value').then(function(val) {
-                            if (val != tbDateEditorDate_original) {
-                                return tbDateEditor_input.clear().then(function() {
-                                    return tbDateEditor_input.sendKeys(tbDateEditorDate_original).then(function() {
+                        return tbDateEditorInput.getAttribute('value').then(function(val) {
+                            if (val !== tbDateEditorDateOriginal) {
+                                return tbDateEditorInput.clear().then(function() {
+                                    return tbDateEditorInput.sendKeys(tbDateEditorDateOriginal).then(function() {
                                             return tbFormSaveBtn.click().then(function() {
                                                 return true;
                                             });
@@ -63,10 +69,10 @@ describe('tb Form Date Editor', function(){
             
             // tbSimpleEditor component and subcomponents
             tbDateEditor = $('div.modal-dialog form').$('tb-simple-editor');
-            tbDateEditor_input = $('div.modal-dialog form').$('tb-date-editor').$('input');
-            tbDateEditor_label = $('div.modal-dialog form').$('tb-date-editor').$('label');
-            tbDateEditor_errorMessages = $('div.modal-dialog form').$('tb-date-editor').all(by.repeater('error in $ctrl.state.$errors'));
-            tbDateEditor_helper = $('div.modal-dialog form').$('tb-date-editor').$$('span').filter(function (elem) {
+            tbDateEditorInput = $('div.modal-dialog form').$('tb-date-editor').$('input');
+            tbDateEditorLabel = $('div.modal-dialog form').$('tb-date-editor').$('label');
+            tbDateEditorErrorMessages = $('div.modal-dialog form').$('tb-date-editor').all(by.repeater('error in $ctrl.state.$errors'));
+            tbDateEditorHelper = $('div.modal-dialog form').$('tb-date-editor').$$('span').filter(function (elem) {
                 return elem.getAttribute('ng-show').then(function (val) {
                     return val != null ? val.indexOf('$ctrl.help') != -1 : false;
                 });
@@ -86,20 +92,20 @@ describe('tb Form Date Editor', function(){
         });
 
         it('should set initial date value to the value of "value" attribute when defined', function () {
-            expect(tbDateEditor_input.getAttribute('value')).toMatch(tbDateEditorDate_original);
+            expect(tbDateEditorInput.getAttribute('value')).toMatch(tbDateEditorDateOriginal);
         });
 
         it('should be invalidated when the date is not in the range of "min" and "max" attributes', function () {
             var errorPresent = false;
             var messageCount;
             
-            tbDateEditor_input.clear().then(function () {
+            tbDateEditorInput.clear().then(function () {
                 // input  an invalid < min date
-                tbDateEditor_input.sendKeys('02/20/2015').then(function () {
+                tbDateEditorInput.sendKeys('02/20/2015').then(function () {
                     //browser.pause();
-                    tbDateEditor_errorMessages.getText().then(function (errorsArray) {
+                    tbDateEditorErrorMessages.getText().then(function (errorsArray) {
                         errorsArray.forEach(function (val) {
-                            if (val == 'The minimum date is 01/28/2016.') {
+                            if (val === 'The minimum date is 01/28/2016.') {
                                 errorPresent = true;
                             }
                         });
@@ -108,23 +114,23 @@ describe('tb Form Date Editor', function(){
                     });
                 })
                     .then(function () {
-                        tbDateEditor_errorMessages.count().then(function (count) {
+                        tbDateEditorErrorMessages.count().then(function (count) {
                             messageCount = count;
                         })
                             .then(function () {
-                                tbDateEditor_input.clear().then(function() {
-                                    tbDateEditor_input.sendKeys('05/08/2016').then(function () {
+                                tbDateEditorInput.clear().then(function() {
+                                    tbDateEditorInput.sendKeys('05/08/2016').then(function () {
                                         // Expect min date error to have been removed
-                                        expect(tbDateEditor_errorMessages.count()).toBeLessThan(messageCount);
+                                        expect(tbDateEditorErrorMessages.count()).toBeLessThan(messageCount);
                                     });
                                 });
                             });
                     })
                     .then(function () {
-                        tbDateEditor_input.clear().then(function () {
-                            tbDateEditor_input.sendKeys('06/11/2016').then(function () {
+                        tbDateEditorInput.clear().then(function () {
+                            tbDateEditorInput.sendKeys('06/11/2016').then(function () {
                                 // Expect max chars error to be displayed
-                                expect(tbDateEditor_errorMessages.count()).toBe(messageCount);
+                                expect(tbDateEditorErrorMessages.count()).toBe(messageCount);
                             });
                         });
                     });
@@ -132,19 +138,19 @@ describe('tb Form Date Editor', function(){
         });
 
         it('should show the component name value in a label field when "showLabel" attribute is true', function () {
-            expect(tbDateEditor_label.getText()).toMatch('Date Editor Date');
+            expect(tbDateEditorLabel.getText()).toMatch('Date Editor Date');
         });
 
         it('should show a help field equal to this attribute, is present', function () {
-            expect(tbDateEditor_helper.getText()).toMatch("Date help");
+            expect(tbDateEditorHelper.getText()).toMatch("Date help");
         });
 
         it('should submit modifications to item/server when clicking form "Save"', function () {
-            tbDateEditor_input.clear().then(function() {
-                tbDateEditor_input.sendKeys('05/05/2016').then(function () {
+            tbDateEditorInput.clear().then(function() {
+                tbDateEditorInput.sendKeys('05/05/2016').then(function () {
                     tbFormSaveBtn.click().then(function () {
                         tbFormEditBtn1.click().then(function () {
-                            tbDateEditor_input.getAttribute('value').then(function (text) {
+                            tbDateEditorInput.getAttribute('value').then(function (text) {
                                 expect(text).toMatch('05/05/2016');
                             });
                         });
@@ -154,15 +160,15 @@ describe('tb Form Date Editor', function(){
         });
 
         it('should NOT submit modifications to item/server when clicking form "Cancel"', function () {
-            tbDateEditor_input.getAttribute('value').then(function(text) {
-                expect(text).toMatch(tbDateEditorDate_original);
+            tbDateEditorInput.getAttribute('value').then(function(text) {
+                expect(text).toMatch(tbDateEditorDateOriginal);
             })
             .then(function() {
-                tbDateEditor_input.sendKeys('05/05/2016').then(function() {
+                tbDateEditorInput.sendKeys('05/05/2016').then(function() {
                     tbFormCancelBtn.click().then(function() {
                         tbFormEditBtn1.click().then(function() {
-                            tbDateEditor_input.getAttribute('value').then(function(text) {
-                                expect(text).toMatch(tbDateEditorDate_original);
+                            tbDateEditorInput.getAttribute('value').then(function(text) {
+                                expect(text).toMatch(tbDateEditorDateOriginal);
                             });
                         });
                     });

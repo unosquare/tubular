@@ -72,16 +72,20 @@
                                     obj[col.Name] = moment(obj[col.Name]);
                                 }
                             } else {
-                                var timezone = new Date(Date.parse(obj[col.Name])).toString().match(/([-\+][0-9]+)\s/)[1];
-                                timezone = timezone.substr(0, timezone.length - 2) + ':' + timezone.substr(timezone.length - 2, 2);
-                                var tempDate = new Date(Date.parse(obj[col.Name] + timezone));
-
-                                if (col.DataType === "date") {
-                                    obj[col.Name] = new Date(1900 + tempDate.getYear(), tempDate.getMonth(), tempDate.getDate());
+                                if (!obj[col.Name]) {
+                                    obj[col.Name] = new Date();
                                 } else {
-                                    obj[col.Name] = new Date(1900 + tempDate.getYear(),
-                                        tempDate.getMonth(), tempDate.getDate(), tempDate.getHours(),
-                                        tempDate.getMinutes(), tempDate.getSeconds(), 0);
+                                    var timezone = new Date(Date.parse(obj[col.Name])).toString().match(/([-\+][0-9]+)\s/)[1];
+                                    timezone = timezone.substr(0, timezone.length - 2) + ':' + timezone.substr(timezone.length - 2, 2);
+                                    var tempDate = new Date(Date.parse(obj[col.Name].replace('Z', '') + timezone));
+
+                                    if (col.DataType === "date") {
+                                        obj[col.Name] = new Date(1900 + tempDate.getYear(), tempDate.getMonth(), tempDate.getDate());
+                                    } else {
+                                        obj[col.Name] = new Date(1900 + tempDate.getYear(),
+                                            tempDate.getMonth(), tempDate.getDate(), tempDate.getHours(),
+                                            tempDate.getMinutes(), tempDate.getSeconds(), 0);
+                                    }
                                 }
                             }
                         }
@@ -104,8 +108,7 @@
                     var valid = true;
 
                     angular.forEach(obj.$state, function (val) {
-                        if (angular.isUndefined(val)) return;
-                        if (val.$valid()) return;
+                        if (angular.isUndefined(val) || val.$valid()) return;
 
                         valid = false;
                     });

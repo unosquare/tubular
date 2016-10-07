@@ -45,7 +45,7 @@
             {
                 var item = i as OrderDto;
 
-                if (item.CustomerName == "Super La Playa")
+                if (item?.CustomerName == "Super La Playa")
                 {
                     item.ShippedDate = "Blocked";
                     item.ShipperCity = "Blocked";
@@ -61,6 +61,7 @@
         [HttpPost, Route("pagedwithformat")]
         public async Task<IHttpActionResult> GridDataWithFormat([FromBody] GridDataRequest request)
         {
+            // This is just a sample using a Task
             using (var context = new SampleDbContext())
             {
                 return

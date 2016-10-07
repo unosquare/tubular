@@ -1,3 +1,6 @@
+/* jshint: true */
+/* globals: expect:false,beforeAll:false,expect:false,browser:false,element:false,by:false,describe:false,protractor:false,it:false,beforeEach:false */
+
 var tubularTemplateServiceModule = require("../dist/node-module.js");
 var genFields = '\r\n\t<tb-numeric-editor name=\"Id\"\r\n\t\tlabel=\"Id\" show-label=\"true\"\r\n\t\tplaceholder=\"\"\r\n\t\trequired=\"true\"\r\n\t\tread-only=\"false\"\r\n\t\tformat=\"\"\r\n\t\thelp=\"\"\u003e\r\n\t\u003c/tb-numeric-editor\u003e\r\n\t\u003ctb-simple-editor name=\"Name\"\r\n\t\teditor-type=\"string\" \r\n\t\tlabel=\"Name\" show-label=\"true\"\r\n\t\tplaceholder=\"\"\r\n\t\trequired=\"true\"\r\n\t\tread-only=\"false\"\r\n\t\thelp=\"\"\u003e\r\n\t\u003c/tb-simple-editor\u003e\r\n\t\u003ctb-simple-editor name=\"Company\"\r\n\t\teditor-type=\"string\" \r\n\t\tlabel=\"Company\" show-label=\"true\"\r\n\t\tplaceholder=\"\"\r\n\t\trequired=\"true\"\r\n\t\tread-only=\"false\"\r\n\t\thelp=\"\"\u003e\r\n\t\u003c/tb-simple-editor\u003e\r\n\t\u003ctb-simple-editor name=\"Email\"\r\n\t\teditor-type=\"string\" \r\n\t\tlabel=\"Email\" show-label=\"true\"\r\n\t\tplaceholder=\"\"\r\n\t\trequired=\"true\"\r\n\t\tread-only=\"false\"\r\n\t\thelp=\"\"\u003e\r\n\t\u003c/tb-simple-editor\u003e\r\n\t\u003ctb-simple-editor name=\"Phone\"\r\n\t\teditor-type=\"string\" \r\n\t\tlabel=\"Phone\" show-label=\"true\"\r\n\t\tplaceholder=\"\"\r\n\t\trequired=\"true\"\r\n\t\tread-only=\"false\"\r\n\t\thelp=\"\"\u003e\r\n\t\u003c/tb-simple-editor\u003e\r\n\t\u003ctb-date-time-editor name=\"Birthday\"\r\n\t\tlabel=\"Birthday\" show-label=\"true\"\r\n\t\trequired=\"true\"\r\n\t\tread-only=\"false\"\r\n\t\tformat=\"\"\r\n\t\thelp=\"\"\u003e\r\n\t\u003c/tb-date-time-editor\u003e\r\n\t\u003ctb-checkbox-field name=\"IsOwner\"\r\n\t\tread-only=\"false\"\r\n\t\thelp=\"\"\u003e\r\n\t</tb-checkbox-field>';
 var genCells = "\r\n\t\t<tb-cell-template column-name=\"Id\">\r\n\t\t\t<tb-numeric-editor is-editing=\"row.$isEditing\" value=\"row.Id\"></tb-numeric-editor>\r\n\t\t</tb-cell-template>\r\n\t\t<tb-cell-template column-name=\"Name\">\r\n\t\t\t<tb-simple-editor is-editing=\"row.$isEditing\" value=\"row.Name\"></tb-simple-editor>\r\n\t\t</tb-cell-template>\r\n\t\t<tb-cell-template column-name=\"Company\">\r\n\t\t\t<tb-simple-editor is-editing=\"row.$isEditing\" value=\"row.Company\"></tb-simple-editor>\r\n\t\t</tb-cell-template>\r\n\t\t<tb-cell-template column-name=\"Email\">\r\n\t\t\t<tb-simple-editor is-editing=\"row.$isEditing\" value=\"row.Email\"></tb-simple-editor>\r\n\t\t</tb-cell-template>\r\n\t\t<tb-cell-template column-name=\"Phone\">\r\n\t\t\t<tb-simple-editor is-editing=\"row.$isEditing\" value=\"row.Phone\"></tb-simple-editor>\r\n\t\t</tb-cell-template>\r\n\t\t<tb-cell-template column-name=\"Birthday\">\r\n\t\t\t<tb-date-time-editor is-editing=\"row.$isEditing\" value=\"row.Birthday\"></tb-date-time-editor>\r\n\t\t</tb-cell-template>\r\n\t\t<tb-cell-template column-name=\"IsOwner\">\r\n\t\t\t<tb-checkbox-field is-editing=\"row.$isEditing\" value=\"row.IsOwner\"></tb-checkbox-field>\r\n\t\t</tb-cell-template>";
@@ -175,7 +178,7 @@ describe('tubularTemplateServiceModule', function () {
             expectedString = expectedString.replace(/\s/g, "");
             var result = htmlOutput.replace(/\s/g, "");
             
-            expect(expectedString == result).toBe(true);
+            expect(expectedString === result).toBe(true);
         });
     });
 
@@ -213,7 +216,7 @@ describe('tubularTemplateServiceModule', function () {
             expectedString = expectedString.replace(/\s/g, "");
             var result = htmlOutput.replace(/\s/g, "");
 
-            expect(expectedString == result).toBe(true);
+            expect(expectedString === result).toBe(true);
         });
 
         it('should two columns layout html match', function () {
@@ -222,7 +225,7 @@ describe('tubularTemplateServiceModule', function () {
             expectedString = expectedString.replace(/\s/g, "");
             var result = htmlOutputTwoCol.replace(/\s/g, "");
 
-            expect(expectedString == result).toBe(true);
+            expect(expectedString === result).toBe(true);
         });
 
         it('should three columns layout html match', function () {
@@ -231,7 +234,7 @@ describe('tubularTemplateServiceModule', function () {
             expectedString = expectedString.replace(/\s/g, "");
             var result = htmlOutputThreeCol.replace(/\s/g, "");
 
-            expect(expectedString == result).toBe(true);
+            expect(expectedString === result).toBe(true);
         });
     });
 
@@ -239,7 +242,7 @@ describe('tubularTemplateServiceModule', function () {
         var htmlOutput = tubularTemplateServiceModule.generateCells(columns, 'Inline');
 
         it('should html match', function () {
-            expect(htmlOutput == genCells).toBe(true);
+            expect(htmlOutput === genCells).toBe(true);
         });
     });
 
@@ -252,7 +255,7 @@ describe('tubularTemplateServiceModule', function () {
             expectedString = expectedString.replace(/\s/g, "");
             var result = htmlOutput.replace(/\s/g, "");
 
-            expect(expectedString == result).toBe(true);
+            expect(expectedString === result).toBe(true);
         });
     });
 });

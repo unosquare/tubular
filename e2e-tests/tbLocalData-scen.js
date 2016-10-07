@@ -1,3 +1,6 @@
+/* jshint: true */
+/* globals: expect:false,beforeAll:false,expect:false,browser:false,element:false,by:false,describe:false,protractor:false,it:false,beforeEach:false */
+
 // This protractor scen file tests tbColumn and tbGrid components with Local Data.
 
 // It is assumed throughout the test that the data received for the main tbGrid
@@ -7,7 +10,7 @@ describe('LocalData', function() {
 
     var firstDataRow,
         lastDataRow,
-        i_sortIcon,
+        iSortIcon,
         filterBtn,
         tbColumnFilter,
         popoverForm,
@@ -16,8 +19,8 @@ describe('LocalData', function() {
         filterSelect,
         valueInput,
         dataRows,
-        a_customerNameSorting,
-        a_shippedCitySorting;
+        aCustomerNameSorting,
+        aShippedCitySorting;
 
     beforeAll(function() {
         // Go to test
@@ -42,15 +45,15 @@ describe('LocalData', function() {
         // Last showing row
         lastDataRow = element.all(by.repeater('row in $component.rows')).last();
         // Font-awesome sort icon (indicates sort-enabled and sort order)
-        i_sortIcon = element(by.tagName('thead'))
+        iSortIcon = element(by.tagName('thead'))
             .$$('tr th').first()
             .$('i');
         // Sort Customer Name column link
-        a_customerNameSorting = element(by.tagName('thead'))
+        aCustomerNameSorting = element(by.tagName('thead'))
             .$$('tr th').first()
             .$('a');
         // Sort Shipped Date column link
-        a_shippedCitySorting = element(by.tagName('thead'))
+        aShippedCitySorting = element(by.tagName('thead'))
             .$$('tr th').get(2)
             .$('a');
     });
@@ -74,27 +77,27 @@ describe('LocalData', function() {
 
         beforeEach(function() {
             // Clear possible sortings and start with default
-            a_shippedCitySorting.click();
-            i_sortIcon.getAttribute('class').then(function(sortIconClass) {
-                if (sortIconClass.indexOf('arrow') != -1) {
-                    if (sortIconClass.indexOf('arrow-up') != -1) {
-                        a_shippedCitySorting.click();
+            aShippedCitySorting.click();
+            iSortIcon.getAttribute('class').then(function(sortIconClass) {
+                if (sortIconClass.indexOf('arrow') !== -1) {
+                    if (sortIconClass.indexOf('arrow-up') !== -1) {
+                        aShippedCitySorting.click();
                     }
 
-                    a_shippedCitySorting.click();
+                    aShippedCitySorting.click();
                 }
             });
         });
 
         it('should order data in ascending order when click-sorting an unsorted text column', function() {
-            a_customerNameSorting.click();            
+            aCustomerNameSorting.click();            
             expect(firstDataRow.$$('td').get(0).getText()).toBe(dataSetLowerCustomerName);
             expect(lastDataRow.$$('td').get(0).getText()).toBe(dataSetHigherCustomerName);
         });
 
         it('should order data in descending order when click-sorting an ascending-sorted text column', function() {
-            a_customerNameSorting.click();
-            a_customerNameSorting.click();
+            aCustomerNameSorting.click();
+            aCustomerNameSorting.click();
             expect(firstDataRow.$$('td').get(0).getText()).toBe(dataSetHigherCustomerName);
             expect(lastDataRow.$$('td').get(0).getText()).toBe(dataSetLowerCustomerName);
         });
@@ -110,10 +113,10 @@ describe('LocalData', function() {
             applyBtn.click()
                 .then(function () {
                     // Verify filtering
-                    dataRows.each(function (row, index) {
+                    dataRows.each(function (row) {
                         row.$$('td').first().getText()
                             .then(function (customer) {
-                                filterOk = filterOk && (customer.indexOf(containedString) != -1);
+                                filterOk = filterOk && (customer.indexOf(containedString) !== -1);
                             });
                     }).then(function () {
                         expect(filterOk).toBe(true);
@@ -133,19 +136,15 @@ describe('LocalData', function() {
             valueInput.sendKeys(protractor.Key.ENTER)
                 .then(function () {
                     // Verify filtering
-                    dataRows.each(function (row, index) {
+                    dataRows.each(function (row) {
                         row.$$('td').first().getText()
                             .then(function (customer) {
-                                filterOk = filterOk && (customer.indexOf(containedString) != -1);
+                                filterOk = filterOk && (customer.indexOf(containedString) !== -1);
                             });
                     }).then(function () {
                         expect(filterOk).toBe(true);
                     });
                 });
         });
-    });
-
-    describe('Grid Local Data tbTextSearch', function () {
-        // TODO: Nestor
     });
 });

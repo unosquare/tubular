@@ -52,8 +52,7 @@
                     fractionSize = fractionSize || 2;
 
                     if (format === "C") {
-                        symbol = symbol || "$";
-                        return $filter("currency")(input, symbol, fractionSize);
+                        return $filter("currency")(input, symbol || "$", fractionSize);
                     }
 
                     if (format === "I") {

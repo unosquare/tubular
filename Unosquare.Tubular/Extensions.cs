@@ -20,8 +20,6 @@ namespace Unosquare.Tubular
     {
         private static readonly Regex TimezoneOffset = new Regex(@"timezoneOffset=(\d[^&]*)");
 
-        private static readonly object SyncRoot = new object();
-
         private static readonly ConcurrentDictionary<Type, Dictionary<string, PropertyInfo>> TypePropertyCache = new ConcurrentDictionary<Type, Dictionary<string, PropertyInfo>>();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -37,8 +35,7 @@ namespace Unosquare.Tubular
                     .Where(p => Common.PrimitiveTypes.Contains(p.PropertyType) && p.CanRead)
                     .ToDictionary(k => k.Name, v => v);
         }
-
-
+        
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static Dictionary<GridColumn, PropertyInfo> MapColumnsToProperties(GridColumn[] columns,
             Dictionary<string, PropertyInfo> properties)
@@ -94,18 +91,29 @@ namespace Unosquare.Tubular
         /// <returns></returns>
         public static object AdjustTimeZone(object data, int timezoneOffset)
         {
-            var properties = data.GetType().GetProperties().Where(x => x.PropertyType == typeof (DateTime));
+            var dateTimeProperties = data.GetType().GetProperties().Where(x => x.PropertyType == typeof (DateTime) || x.PropertyType == typeof(DateTime?));
 
-            foreach (var prop in properties)
+            foreach (var prop in dateTimeProperties)
             {
-                if (!(prop.GetValue(data) is DateTime)) continue;
-
-                var value = (DateTime) prop.GetValue(data);
-                value = value.AddMinutes(-timezoneOffset);
-                prop.SetValue(data, value);
+                AdjustTimeZoneForProperty(data, timezoneOffset, prop);
             }
 
             return data;
+        }
+
+        private static void AdjustTimeZoneForProperty(object data, int timezoneOffset, PropertyInfo prop)
+        {
+            DateTime value;
+            if (prop.PropertyType == typeof(DateTime?))
+            {
+                var nullableValue = (DateTime?)prop.GetValue(data);
+                if (!nullableValue.HasValue) return;
+                value = nullableValue.Value;
+            }
+            else
+                value = (DateTime)prop.GetValue(data);
+            value = value.AddMinutes(-timezoneOffset);
+            prop.SetValue(data, value);
         }
 
         /// <summary>
@@ -188,79 +196,7 @@ namespace Unosquare.Tubular
 
             // Check aggregations before paging
             // Should it aggregate before filtering too?
-            response.AggregationPayload = new Dictionary<string, object>();
-
-            foreach (var column in request.Columns)
-            {
-                switch (column.Aggregate)
-                {
-                    case AggregationFunction.Sum:
-                        // we try to select the column as decimal? and sum it
-                        if (subset.ElementType.GetProperty(column.Name).PropertyType == typeof (double))
-                        {
-                            response.AggregationPayload.Add(column.Name,
-                                subset.Select(column.Name).Cast<double?>().Sum());
-                        }
-                        else
-                        {
-                            response.AggregationPayload.Add(column.Name,
-                                subset.Select(column.Name).Cast<decimal?>().Sum());
-                        }
-
-                        break;
-                    case AggregationFunction.Average:
-                        if (subset.ElementType.GetProperty(column.Name).PropertyType == typeof (double))
-                        {
-                            response.AggregationPayload.Add(column.Name,
-                                subset.Select(column.Name).Cast<double?>().Average());
-                        }
-                        else
-                        {
-                            response.AggregationPayload.Add(column.Name,
-                                subset.Select(column.Name).Cast<decimal?>().Average());
-                        }
-
-                        break;
-                    case AggregationFunction.Max:
-                        if (subset.ElementType.GetProperty(column.Name).PropertyType == typeof (double))
-                        {
-                            response.AggregationPayload.Add(column.Name,
-                                subset.Select(column.Name).Cast<double?>().Max());
-                        }
-                        else
-                        {
-                            response.AggregationPayload.Add(column.Name,
-                                subset.Select(column.Name).Cast<decimal?>().Max());
-                        }
-
-                        break;
-                    case AggregationFunction.Min:
-                        if (subset.ElementType.GetProperty(column.Name).PropertyType == typeof (double))
-                        {
-                            response.AggregationPayload.Add(column.Name,
-                                subset.Select(column.Name).Cast<double?>().Min());
-                        }
-                        else
-                        {
-                            response.AggregationPayload.Add(column.Name,
-                                subset.Select(column.Name).Cast<decimal?>().Min());
-                        }
-
-                        break;
-                    case AggregationFunction.Count:
-                        response.AggregationPayload.Add(column.Name, subset.Select(column.Name).Cast<string>().Count());
-                        break;
-                    case AggregationFunction.DistinctCount:
-                        response.AggregationPayload.Add(column.Name,
-                            subset.Select(column.Name).Cast<string>().Distinct().Count());
-                        break;
-                    case AggregationFunction.None:
-                        break;
-                    default:
-                        response.AggregationPayload.Add(column.Name, 0);
-                        break;
-                }
-            }
+            response.AggregationPayload = AggregateSubset(request.Columns, subset);
 
             var pageSize = request.Take;
 
@@ -274,27 +210,17 @@ namespace Unosquare.Tubular
             }
             else
             {
-                response.TotalPages = (response.FilteredRecordCount + pageSize - 1)/pageSize;
-
-                if (response.TotalPages > 0)
+                var filteredCount = subset.Count();
+                var totalPages = response.TotalPages = filteredCount / pageSize;
+                
+                if (totalPages > 0)
                 {
-                    response.CurrentPage = 1 +
-                                           (int)
-                                               Math.Truncate((request.Skip/(float) response.FilteredRecordCount)*
-                                                             response.TotalPages);
-
-                    if (response.CurrentPage > response.TotalPages)
-                    {
-                        response.CurrentPage = response.TotalPages;
-                        request.Skip = (response.CurrentPage - 1)*request.Take;
-                    }
-
-                    if (request.Skip < 0) request.Skip = 0;
-
-                    subset = subset.Skip(request.Skip);
+                    response.CurrentPage = request.Skip / pageSize + 1;
+                    
+                    if (request.Skip > 0) subset = subset.Skip(request.Skip);
                 }
-
-                subset = subset.Take(request.Take);
+                
+                subset = subset.Take(pageSize);
             }
 
             // Generate the response data in a suitable format
@@ -303,6 +229,61 @@ namespace Unosquare.Tubular
 
             response.Payload = CreateGridPayload(subset, columnMap, pageSize, request.TimezoneOffset);
             return response;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static Dictionary<string, object> AggregateSubset(GridColumn[] columns, IQueryable subset)
+        {
+            var aggregateColumns = columns.Where(c => c.Aggregate != AggregationFunction.None).ToArray();
+            var payload = new Dictionary<string, object>(aggregateColumns.Count());
+
+            Action<GridColumn, Func<IQueryable<double?>, double?>, Func<IQueryable<decimal?>, decimal?>> aggregate = (column, doubleF, decimalF) => {
+                if (subset.ElementType.GetProperty(column.Name).PropertyType == typeof(double))
+                {
+                    payload.Add(column.Name,
+                        doubleF(subset.Select(column.Name).Cast<double?>()));
+                }
+                else
+                {
+                    payload.Add(column.Name,
+                        decimalF(subset.Select(column.Name).Cast<decimal?>()));
+                }
+            };
+
+            foreach (var column in aggregateColumns)
+            {
+                switch (column.Aggregate)
+                {
+                    case AggregationFunction.Sum:
+                        aggregate(column, x => x.Sum(), x => x.Sum());
+
+                        break;
+                    case AggregationFunction.Average:
+                        aggregate(column, x => x.Average(), x => x.Average());
+
+                        break;
+                    case AggregationFunction.Max:
+                        aggregate(column, x => x.Max(), x => x.Max());
+                       
+                        break;
+                    case AggregationFunction.Min:
+                        aggregate(column, x => x.Min(), x => x.Min());
+
+                        break;
+                    case AggregationFunction.Count:
+                        payload.Add(column.Name, subset.Select(column.Name).Count());
+                        break;
+                    case AggregationFunction.DistinctCount:
+                        payload.Add(column.Name,
+                            subset.Select(column.Name).Distinct().Count());
+                        break;
+                    
+                    default:
+                        payload.Add(column.Name, 0);
+                        break;
+                }
+            }
+            return payload;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -549,31 +530,13 @@ namespace Unosquare.Tubular
         /// <param name="filter">The LINQ expression</param>
         /// <param name="records">How many records to retrieve, default 8</param>
         /// <returns>The filtered IQueryable</returns>
-        public static IQueryable<string> CreateTypeAheadList(this IQueryable dataSource, string fieldName, string filter,
-            int records = 8)
-        {
-            // TODO: I need to connect this to a better platform
-            return (dataSource.CreateDynamicFilteredSet(fieldName, filter)
-                .Select($"{fieldName}.ToString()") as IQueryable<string>)
-                .Distinct()
-                .Take(records);
-        }
-
-        /// <summary>
-        /// Generates a list with distinct values to use in TypeAhead UI control
-        /// </summary>
-        /// <param name="dataSource">The IQueryable source</param>
-        /// <param name="fieldName">The field to filter</param>
-        /// <param name="records">How many records, 0 to retrieve all</param>
-        /// <returns>The filtered IQueryable</returns>
         public static IQueryable<string> CreateTypeAheadList(this IQueryable dataSource, string fieldName,
-            int records = 8)
+            string filter = null, int records = 8)
         {
-            var stringDatasource = (dataSource
-                .Select($"{fieldName}.ToString()") as IQueryable<string>)
-                .Distinct();
+            var iqueryable = filter == null ? dataSource : dataSource.CreateDynamicFilteredSet(fieldName, filter);
 
-            return (records > 0 ? stringDatasource.Take(records) : stringDatasource);
+            return (iqueryable?.Select($"{fieldName}.ToString()") as IQueryable<string>)?.Distinct()
+                .Take(records);
         }
     }
 }

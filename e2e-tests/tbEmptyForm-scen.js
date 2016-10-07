@@ -1,4 +1,7 @@
-describe('tbSingleForm', function() {
+/* jshint: true */
+/* globals: expect:false,beforeAll:false,expect:false,browser:false,element:false,by:false,describe:false,protractor:false,it:false */
+
+describe('tbSingleForm', function () {
 
     beforeAll(function() {
         // Go to test

@@ -65,7 +65,7 @@
                 };
 
                 me.cache = $cacheFactory('tubularHttpCache');
-                me.useCache = true;
+                me.useCache = false;
                 me.requireAuthentication = true;
                 me.refreshTokenUrl = me.tokenUrl = '/api/token';
                 me.setTokenUrl = function(val) { me.tokenUrl = val; };
@@ -100,13 +100,13 @@
                         },
                         data: 'grant_type=password&username=' + username + '&password=' + password
                     }).success(function(data) {
-                        me.handleSuccessCallback(userDataCallback, successCallback, persistData, data);
+                        me.handleSuccessCallback(userDataCallback, successCallback, persistData, data, username);
                     }).error(function(data) {
                         me.handleErrorCallback(errorCallback, data);
                     });
                 };
 
-                me.handleSuccessCallback = function(userDataCallback, successCallback, persistData, data) {
+                me.handleSuccessCallback = function (userDataCallback, successCallback, persistData, data, username) {
                     me.userData.isAuthenticated = true;
                     me.userData.username = data.userName || username;
                     me.userData.bearerToken = data.access_token;
@@ -176,7 +176,7 @@
 
                     var dataRequest = me.retrieveDataAsync(request);
 
-                    dataRequest.promise.then(function(data) {
+                    dataRequest.promise.then(function (data) {
                         model.$hasChanges = false;
                         model.resetOriginal();
 
@@ -341,7 +341,7 @@
                     var canceller = $q.defer();
                     var cancel = me.getCancel(canceller);
 
-                    if (me.requireAuthentication && me.isAuthenticated() === false) {
+                    if (me.requireAuthentication && !me.isAuthenticated()) {
                         // Return empty dataset
                         return {
                             promise: $q(function(resolve) {

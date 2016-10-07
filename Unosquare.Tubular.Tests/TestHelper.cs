@@ -1,42 +1,31 @@
-﻿using Effort;
-using NUnit.Framework;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using Unosquare.Tubular.ObjectModel;
-using Unosquare.Tubular.Tests.Database;
-
-namespace Unosquare.Tubular.Tests
+﻿namespace Unosquare.Tubular.Tests
 {
+    using NUnit.Framework;
+    using System.Collections.Generic;
+    using System.Linq;
+    using ObjectModel;
+    using Database;
+    using System;
+
     [TestFixture]
     public class TestHelper
     {
-        private SampleEntities _context;
-        private const int PageSize = 10;
+        private const int PageSize = 20;
         private const string SearchText = "Name - 1";
-
-        [SetUp]
-        public void SetUp()
+        
+        private static void SimpleListTest(bool ignoreTimezone, int page = 1, int setSize = 445)
         {
-            Effort.Provider.EffortProviderConfiguration.RegisterProvider();
+            var dataSource = SampleEntities.GenerateData(setSize).AsQueryable();
+            var data = dataSource.Skip(PageSize * page).Take(PageSize).ToList();
+            const int timezoneOffset = 300;
 
-            var connection = DbConnectionFactory.CreateTransient();
-            _context = new SampleEntities(connection);
-            _context.Fill();
-        }
-
-        private void SimpleListTest(bool ignoreTimezone)
-        {
-            var dataSource = _context.Things;
-            var data = dataSource.Take(PageSize).ToList();
-            var timezoneOffset = 300;
-
-            Assert.AreEqual(PageSize, data.Count, "Set has 10 items");
+            if (PageSize * page + PageSize < setSize)
+                Assert.AreEqual(data.Count, PageSize, "Set has 10 items");
 
             var request = new GridDataRequest()
             {
                 Take = PageSize,
-                Skip = 0,
+                Skip = PageSize * page,
                 Search = new Filter(),
                 Columns = Thing.GetColumns(),
                 TimezoneOffset = timezoneOffset
@@ -44,19 +33,20 @@ namespace Unosquare.Tubular.Tests
 
             var response = request.CreateGridDataResponse(dataSource);
 
+            Assert.AreEqual(page + 1, response.CurrentPage);
             Assert.AreEqual(data.Count, response.Payload.Count, "Same length");
             Assert.AreEqual(data.First().Id, response.Payload.First().First(), "Same first item");
 
             Assert.AreEqual(ignoreTimezone ? data.First().Date : data.First().Date.AddMinutes(-timezoneOffset),
                 response.Payload.First()[2], "Same date at first item");
-
+            
             Assert.AreEqual(dataSource.Count(), response.TotalRecordCount, "Total rows matching");
         }
-
+        
         [Test]
-        public void SimpleList()
+        public void SimpleList([Range(0, 21)] int page, [Range(430, 450)] int setSize)
         {
-            SimpleListTest(false);
+            SimpleListTest(false, page, setSize);
         }
 
         [Test]
@@ -71,7 +61,7 @@ namespace Unosquare.Tubular.Tests
         [Test]
         public void SimpleFilter()
         {
-            var dataSource = _context.Things.Where(x => x.Id > 95);
+            var dataSource = SampleEntities.GenerateData().AsQueryable().Where(x => x.Id > 95);
             var data = dataSource.Take(PageSize).ToList();
 
             var request = new GridDataRequest()
@@ -92,7 +82,7 @@ namespace Unosquare.Tubular.Tests
         [Test]
         public void SimpleSort()
         {
-            var dataSource = _context.Things.OrderBy(x => x.Date);
+            var dataSource = SampleEntities.GenerateData().AsQueryable().OrderBy(x => x.Date);
             var data = dataSource.Take(PageSize).ToList();
 
             var request = new GridDataRequest()
@@ -114,7 +104,7 @@ namespace Unosquare.Tubular.Tests
         [Test]
         public void SimpleSearch()
         {
-            var dataSource = _context.Things;
+            var dataSource = SampleEntities.GenerateData().AsQueryable(); 
             var data = dataSource.Where(x => x.Name.Contains(SearchText)).Take(PageSize).ToList();
 
             var request = new GridDataRequest()
@@ -141,7 +131,7 @@ namespace Unosquare.Tubular.Tests
         [Test]
         public void TakeAll()
         {
-            var dataSource = _context.Things;
+            var dataSource = SampleEntities.GenerateData().AsQueryable();
             var data = dataSource.ToList();
 
             var request = new GridDataRequest()
@@ -164,7 +154,7 @@ namespace Unosquare.Tubular.Tests
         public void TestCreateCreateTypeAheadList()
         {
             const int elementsCount = 8;
-            var dataSource = _context.Things;
+            var dataSource = SampleEntities.GenerateData().AsQueryable();
 
             var data = dataSource.Select(x => x.Number.ToString()).Distinct().Take(elementsCount).ToList();
             var tubularData = dataSource.CreateTypeAheadList("Number");
@@ -183,7 +173,7 @@ namespace Unosquare.Tubular.Tests
             Assert.AreEqual(dataFiltered.Count, tubularDataFiltered.Count(), "Same length");
             Assert.AreEqual(dataFiltered.First(), tubularDataFiltered.First(), "Same first item");
         }
-
+        
         [Test]
         public void TestListSimpleSearch()
         {
@@ -303,7 +293,7 @@ namespace Unosquare.Tubular.Tests
         [Test]
         public void TestSimpleAggregate()
         {
-            var dataSource = _context.Things;
+            var dataSource = SampleEntities.GenerateData().AsQueryable();
             var data = dataSource.Take(PageSize).ToList();
 
             Assert.AreEqual(PageSize, data.Count, "Set has 10 items");
@@ -330,7 +320,7 @@ namespace Unosquare.Tubular.Tests
         [Test]
         public void TestMultipleAggregate()
         {
-            var dataSource = _context.Things;
+            var dataSource = SampleEntities.GenerateData().AsQueryable();
             var data = dataSource.Take(PageSize).ToList();
 
             Assert.AreEqual(PageSize, data.Count, "Set has 10 items");
@@ -358,6 +348,31 @@ namespace Unosquare.Tubular.Tests
                 "Name same distinct count");
             Assert.AreEqual(dataSource.Select(x => x.Date).Distinct().Count(), (int) response.AggregationPayload["Date"],
                 "Date same distinct count");
+        }
+
+
+        class MyDateClass {
+            public DateTime Date { get; set; }
+
+            public DateTime? NullableDate { get; set; }
+        }
+
+        [Test]
+        public void NullableDateAdjustTimeZone()
+        {
+            const int offset = 30;
+            var now = DateTime.Now;
+            var date = new MyDateClass { Date = now, NullableDate = now };
+            var actual = (MyDateClass)Extensions.AdjustTimeZone(date, offset);
+
+            Assert.AreEqual(now.AddMinutes(-offset), actual.Date, "Non-nullable date adjusted");
+            Assert.IsNotNull(actual.NullableDate);
+            Assert.AreEqual(now.AddMinutes(-offset), actual.NullableDate.Value, "Nullable date with value adjusted");
+
+            date = new MyDateClass { Date = now, NullableDate = null };
+            actual = (MyDateClass)Extensions.AdjustTimeZone(date, offset);
+
+            Assert.IsNull(actual.NullableDate, "Nullable date adjusted");
         }
     }
 }

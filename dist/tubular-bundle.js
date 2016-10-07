@@ -132,7 +132,7 @@ var tubularTemplate = {
         var notADateValue = 'not-a-date';
         input.setAttribute('value', notADateValue);
 
-        return (input.value !== notADateValue);
+        return input.value !== notADateValue;
     },
 
     /*
@@ -149,7 +149,7 @@ var tubularTemplate = {
             if (jsonModel.hasOwnProperty(prop)) {
                 var value = jsonModel[prop];
                 // Ignore functions
-                if (prop[0] === '$' || typeof (value) === 'function') {
+                if (prop[0] === '$' || typeof value === 'function') {
                     continue;
                 }
 
@@ -373,9 +373,6 @@ var tubularTemplate = {
             bottomToolbar += '\r\n\t<tb-grid-pager-info class="col-md-3"></tb-grid-pager-info>';
         }
 
-        // TODO: If it's page mode add button
-        // TODO: Add Selectable param, default false
-        // TODO: Add Name param
         return '<div class="container">' +
             '\r\n<tb-grid server-url="' + options.dataUrl + '" request-method="' + options.RequestMethod + '" class="row" ' +
             'page-size="10" require-authentication="' + options.RequireAuthentication + '" ' +
@@ -476,8 +473,7 @@ try {
                     fractionSize = fractionSize || 2;
 
                     if (format === "C") {
-                        symbol = symbol || "$";
-                        return $filter("currency")(input, symbol, fractionSize);
+                        return $filter("currency")(input, symbol || "$", fractionSize);
                     }
 
                     if (format === "I") {
@@ -816,8 +812,6 @@ try {
                         };
 
                         if ($ctrl.currentRequest !== null) {
-                            // This message is annoying when you connect errors to toastr
-                            //$ctrl.currentRequest.cancel('tubularGrid(' + $ctrl.$id + '): new request coming.');
                             return;
                         }
 
@@ -842,6 +836,14 @@ try {
                                 }
 
                                 $ctrl.dataSource = data;
+
+                                if (!data.Payload)
+                                {
+                                    var errorMsg = 'tubularGrid(' + $ctrl.$id + '): response is invalid.';
+                                    $ctrl.currentRequest.cancel(errorMsg);
+                                    $scope.$emit('tbGrid_OnConnectionError', errorMsg);
+                                    return;
+                                }
 
                                 $ctrl.rows = data.Payload.map(function(el) {
                                     var model = new TubularModel($scope, $ctrl, el, $ctrl.dataService);
@@ -1410,11 +1412,11 @@ try {
         moment.fn.toJSON = function() { return this.format(); }
     }
 
-    var changeValueFn = function($ctrl, $scope) {
+    var changeValueFn = function($ctrl) {
         return function(val) {
             if (angular.isUndefined(val)) return;
 
-            if (typeof (val) === 'string') {
+            if (typeof val === 'string') {
                 $ctrl.value = hasMoment ? moment(val) : new Date(val);
             }
 
@@ -1430,14 +1432,6 @@ try {
                 } else {
                     $ctrl.dateValue = $ctrl.value;
                 }
-
-                $scope.$watch(function() {
-                    return $ctrl.dateValue;
-                }, function(val) {
-                    if (angular.isDefined(val)) {
-                        $ctrl.value = hasMoment ? moment(val) : new Date(val);
-                    }
-                });
             }
         };
     };
@@ -1457,8 +1451,8 @@ try {
                 }
 
                 if (tubular.isValid($ctrl.match)) {
-                    if ($ctrl.value !== $scope.$component.model[$ctrl.match]) {
-                        var label = $filter('filter')($scope.$component.fields, { name: $ctrl.match }, true)[0].label;
+                    if ($ctrl.value !== $ctrl.$component.model[$ctrl.match]) {
+                        var label = $filter('filter')($ctrl.$component.fields, { name: $ctrl.match }, true)[0].label;
                         $ctrl.$valid = false;
                         $ctrl.state.$errors = [$filter('translate')('EDITOR_MATCH', label)];
                         return;
@@ -1522,7 +1516,15 @@ try {
             var $ctrl = this;
             
             // This could be $onChange??
-            $scope.$watch(function() { return $ctrl.value; }, changeValueFn($ctrl, $scope));
+            $scope.$watch(function() { return $ctrl.value; }, changeValueFn($ctrl));
+
+            $scope.$watch(function () {
+                return $ctrl.dateValue;
+            }, function (val) {
+                if (angular.isDefined(val)) {
+                    $ctrl.value = hasMoment ? moment(val) : new Date(val);
+                }
+            });
 
             $ctrl.validate = function() {
                 if (tubular.isValid($ctrl.min)) {
@@ -1566,7 +1568,15 @@ try {
     var tbDateEditorCtrl = ['$scope', '$element', 'tubularEditorService', '$filter', function($scope, $element, tubular, $filter) {
             var $ctrl = this;
             
-            $scope.$watch(function () { return $ctrl.value; }, changeValueFn($ctrl, $scope));
+            $scope.$watch(function () { return $ctrl.value; }, changeValueFn($ctrl));
+
+            $scope.$watch(function () {
+                return $ctrl.dateValue;
+            }, function (val) {
+                if (angular.isDefined(val)) {
+                    $ctrl.value = hasMoment ? moment(val) : new Date(val);
+                }
+            });
 
             $ctrl.validate = function() {
                 if (angular.isDefined($ctrl.min)) {
@@ -3258,16 +3268,20 @@ try {
                                     obj[col.Name] = moment(obj[col.Name]);
                                 }
                             } else {
-                                var timezone = new Date(Date.parse(obj[col.Name])).toString().match(/([-\+][0-9]+)\s/)[1];
-                                timezone = timezone.substr(0, timezone.length - 2) + ':' + timezone.substr(timezone.length - 2, 2);
-                                var tempDate = new Date(Date.parse(obj[col.Name] + timezone));
-
-                                if (col.DataType === "date") {
-                                    obj[col.Name] = new Date(1900 + tempDate.getYear(), tempDate.getMonth(), tempDate.getDate());
+                                if (!obj[col.Name]) {
+                                    obj[col.Name] = new Date();
                                 } else {
-                                    obj[col.Name] = new Date(1900 + tempDate.getYear(),
-                                        tempDate.getMonth(), tempDate.getDate(), tempDate.getHours(),
-                                        tempDate.getMinutes(), tempDate.getSeconds(), 0);
+                                    var timezone = new Date(Date.parse(obj[col.Name])).toString().match(/([-\+][0-9]+)\s/)[1];
+                                    timezone = timezone.substr(0, timezone.length - 2) + ':' + timezone.substr(timezone.length - 2, 2);
+                                    var tempDate = new Date(Date.parse(obj[col.Name].replace('Z', '') + timezone));
+
+                                    if (col.DataType === "date") {
+                                        obj[col.Name] = new Date(1900 + tempDate.getYear(), tempDate.getMonth(), tempDate.getDate());
+                                    } else {
+                                        obj[col.Name] = new Date(1900 + tempDate.getYear(),
+                                            tempDate.getMonth(), tempDate.getDate(), tempDate.getHours(),
+                                            tempDate.getMinutes(), tempDate.getSeconds(), 0);
+                                    }
                                 }
                             }
                         }
@@ -3290,8 +3304,7 @@ try {
                     var valid = true;
 
                     angular.forEach(obj.$state, function (val) {
-                        if (angular.isUndefined(val)) return;
-                        if (val.$valid()) return;
+                        if (angular.isUndefined(val) || val.$valid()) return;
 
                         valid = false;
                     });
@@ -3700,11 +3713,11 @@ try {
 
                                 if (angular.equals(ctrl.value, parent.model[scope.Name]) === false) {
                                     if (angular.isDefined(parent.model[scope.Name])) {
-                                        if (ctrl.DataType === 'date' && parent.model[scope.Name] != null) {
+                                        if (ctrl.DataType === 'date' && parent.model[scope.Name] != null && typeof parent.model[scope.Name] === 'string') {
                                             // TODO: Include MomentJS
                                             var timezone = new Date(Date.parse(parent.model[scope.Name])).toString().match(/([-\+][0-9]+)\s/)[1];
                                             timezone = timezone.substr(0, timezone.length - 2) + ':' + timezone.substr(timezone.length - 2, 2);
-                                            ctrl.value = new Date(Date.parse(parent.model[scope.Name] + timezone));
+                                            ctrl.value = new Date(Date.parse(parent.model[scope.Name].replace('Z', '') + timezone));
                                         } else {
                                             ctrl.value = parent.model[scope.Name];
                                         }
@@ -3748,9 +3761,7 @@ try {
                                         ctrl.checkValid();
                                         return this.$errors.length === 0;
                                     },
-                                    $dirty: function() {
-                                        return ctrl.$dirty();
-                                    },
+                                    $dirty: ctrl.$dirty,
                                     $errors: []
                                 };
 
@@ -3842,7 +3853,7 @@ try {
                 };
 
                 me.cache = $cacheFactory('tubularHttpCache');
-                me.useCache = true;
+                me.useCache = false;
                 me.requireAuthentication = true;
                 me.refreshTokenUrl = me.tokenUrl = '/api/token';
                 me.setTokenUrl = function(val) { me.tokenUrl = val; };
@@ -3877,13 +3888,13 @@ try {
                         },
                         data: 'grant_type=password&username=' + username + '&password=' + password
                     }).success(function(data) {
-                        me.handleSuccessCallback(userDataCallback, successCallback, persistData, data);
+                        me.handleSuccessCallback(userDataCallback, successCallback, persistData, data, username);
                     }).error(function(data) {
                         me.handleErrorCallback(errorCallback, data);
                     });
                 };
 
-                me.handleSuccessCallback = function(userDataCallback, successCallback, persistData, data) {
+                me.handleSuccessCallback = function (userDataCallback, successCallback, persistData, data, username) {
                     me.userData.isAuthenticated = true;
                     me.userData.username = data.userName || username;
                     me.userData.bearerToken = data.access_token;
@@ -3953,7 +3964,7 @@ try {
 
                     var dataRequest = me.retrieveDataAsync(request);
 
-                    dataRequest.promise.then(function(data) {
+                    dataRequest.promise.then(function (data) {
                         model.$hasChanges = false;
                         model.resetOriginal();
 
@@ -4118,7 +4129,7 @@ try {
                     var canceller = $q.defer();
                     var cancel = me.getCancel(canceller);
 
-                    if (me.requireAuthentication && me.isAuthenticated() === false) {
+                    if (me.requireAuthentication && !me.isAuthenticated()) {
                         // Return empty dataset
                         return {
                             promise: $q(function(resolve) {
@@ -4293,7 +4304,18 @@ try {
 
                 me.generateGrid = tubularTemplate.generateGrid;
 
-                me.setupFilter = function($scope, $element, $compile, $filter, $ctrl) {
+                me.setupFilter = function ($scope, $element, $compile, $filter, $ctrl) {
+                    var dateOps = {
+                        'None': $filter('translate')('OP_NONE'),
+                        'Equals': $filter('translate')('OP_EQUALS'),
+                        'NotEquals': $filter('translate')('OP_NOTEQUALS'),
+                        'Between': $filter('translate')('OP_BETWEEN'),
+                        'Gte': '>=',
+                        'Gt': '>',
+                        'Lte': '<=',
+                        'Lt': '<'
+                    };
+
                     var filterOperators = {
                         'string': {
                             'None': $filter('translate')('OP_NONE'),
@@ -4315,36 +4337,9 @@ try {
                             'Lte': '<=',
                             'Lt': '<'
                         },
-                        'date': {
-                            'None': $filter('translate')('OP_NONE'),
-                            'Equals': $filter('translate')('OP_EQUALS'),
-                            'NotEquals': $filter('translate')('OP_NOTEQUALS'),
-                            'Between': $filter('translate')('OP_BETWEEN'),
-                            'Gte': '>=',
-                            'Gt': '>',
-                            'Lte': '<=',
-                            'Lt': '<'
-                        },
-                        'datetime': {
-                            'None': $filter('translate')('OP_NONE'),
-                            'Equals': $filter('translate')('OP_EQUALS'),
-                            'NotEquals': $filter('translate')('OP_NOTEQUALS'),
-                            'Between': $filter('translate')('OP_BETWEEN'),
-                            'Gte': '>=',
-                            'Gt': '>',
-                            'Lte': '<=',
-                            'Lt': '<'
-                        },
-                        'datetimeutc': {
-                            'None': $filter('translate')('OP_NONE'),
-                            'Equals': $filter('translate')('OP_EQUALS'),
-                            'NotEquals': $filter('translate')('OP_NOTEQUALS'),
-                            'Between': $filter('translate')('OP_BETWEEN'),
-                            'Gte': '>=',
-                            'Gt': '>',
-                            'Lte': '<=',
-                            'Lt': '<'
-                        },
+                        'date': dateOps,
+                        'datetime': dateOps,
+                        'datetimeutc': dateOps,
                         'boolean': {
                             'None': $filter('translate')('OP_NONE'),
                             'Equals': $filter('translate')('OP_EQUALS'),
@@ -4364,9 +4359,9 @@ try {
                     $ctrl.filterTitle = $ctrl.title || $filter('translate')('CAPTION_FILTER');
 
                     $scope.$watch(function() {
-                        var columns = $ctrl.$component.columns.filter(function(e) { return e.Name === $ctrl.filter.Name; });
+                        var c = $ctrl.$component.columns.filter(function(e) { return e.Name === $ctrl.filter.Name; });
 
-                        return columns.length !== 0 ? columns[0] : null;
+                        return c.length !== 0 ? c[0] : null;
                     }, function(val) {
                         if (!val) return;
 
@@ -4378,10 +4373,10 @@ try {
                     }, true);
 
                     $ctrl.retrieveData = function() {
-                        var columns = $ctrl.$component.columns.filter(function(e) { return e.Name === $ctrl.filter.Name; });
+                        var c = $ctrl.$component.columns.filter(function(e) { return e.Name === $ctrl.filter.Name; });
 
-                        if (columns.length !== 0) {
-                            columns[0].Filter = $ctrl.filter;
+                        if (c.length !== 0) {
+                            c[0].Filter = $ctrl.filter;
                         }
 
                         $ctrl.$component.retrieveData();

@@ -53,14 +53,14 @@
   {
     "outputFileName": "Javascript/tubular-odata-bundle.js",
     "inputFiles": [
-      "Javascript/tubular/tubular-services-odata.js"
+      "Javascript/tubular-odata/tubular-services-odata.js"
     ],
     "sourceMap": false
   },
   {
     "outputFileName": "Javascript/tubular-localdata-bundle.js",
     "inputFiles": [
-      "Javascript/tubular/tubular-services-localdata.js"
+      "Javascript/tubular-localdata/tubular-services-localdata.js"
     ],
     "sourceMap": false
   }

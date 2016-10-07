@@ -1,3 +1,6 @@
+/* jshint: true */
+/* globals: expect:false,beforeAll:false,expect:false,browser:false,element:false,by:false,describe:false,protractor:false,it:false,beforeEach:false */
+
 // This protractor scen file tests tbColumn and tnForm components.
 
 describe('tbSingleForm', function() {
@@ -16,7 +19,6 @@ describe('tbSingleForm', function() {
         });
 
         it('should change customer name', function () {
-
             $('#btnDefault').click().then(function() {
                 expect($('input').getAttribute('value')).toBe('Unosquare');
             });            

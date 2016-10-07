@@ -110,7 +110,18 @@
 
                 me.generateGrid = tubularTemplate.generateGrid;
 
-                me.setupFilter = function($scope, $element, $compile, $filter, $ctrl) {
+                me.setupFilter = function ($scope, $element, $compile, $filter, $ctrl) {
+                    var dateOps = {
+                        'None': $filter('translate')('OP_NONE'),
+                        'Equals': $filter('translate')('OP_EQUALS'),
+                        'NotEquals': $filter('translate')('OP_NOTEQUALS'),
+                        'Between': $filter('translate')('OP_BETWEEN'),
+                        'Gte': '>=',
+                        'Gt': '>',
+                        'Lte': '<=',
+                        'Lt': '<'
+                    };
+
                     var filterOperators = {
                         'string': {
                             'None': $filter('translate')('OP_NONE'),
@@ -132,36 +143,9 @@
                             'Lte': '<=',
                             'Lt': '<'
                         },
-                        'date': {
-                            'None': $filter('translate')('OP_NONE'),
-                            'Equals': $filter('translate')('OP_EQUALS'),
-                            'NotEquals': $filter('translate')('OP_NOTEQUALS'),
-                            'Between': $filter('translate')('OP_BETWEEN'),
-                            'Gte': '>=',
-                            'Gt': '>',
-                            'Lte': '<=',
-                            'Lt': '<'
-                        },
-                        'datetime': {
-                            'None': $filter('translate')('OP_NONE'),
-                            'Equals': $filter('translate')('OP_EQUALS'),
-                            'NotEquals': $filter('translate')('OP_NOTEQUALS'),
-                            'Between': $filter('translate')('OP_BETWEEN'),
-                            'Gte': '>=',
-                            'Gt': '>',
-                            'Lte': '<=',
-                            'Lt': '<'
-                        },
-                        'datetimeutc': {
-                            'None': $filter('translate')('OP_NONE'),
-                            'Equals': $filter('translate')('OP_EQUALS'),
-                            'NotEquals': $filter('translate')('OP_NOTEQUALS'),
-                            'Between': $filter('translate')('OP_BETWEEN'),
-                            'Gte': '>=',
-                            'Gt': '>',
-                            'Lte': '<=',
-                            'Lt': '<'
-                        },
+                        'date': dateOps,
+                        'datetime': dateOps,
+                        'datetimeutc': dateOps,
                         'boolean': {
                             'None': $filter('translate')('OP_NONE'),
                             'Equals': $filter('translate')('OP_EQUALS'),
@@ -181,9 +165,9 @@
                     $ctrl.filterTitle = $ctrl.title || $filter('translate')('CAPTION_FILTER');
 
                     $scope.$watch(function() {
-                        var columns = $ctrl.$component.columns.filter(function(e) { return e.Name === $ctrl.filter.Name; });
+                        var c = $ctrl.$component.columns.filter(function(e) { return e.Name === $ctrl.filter.Name; });
 
-                        return columns.length !== 0 ? columns[0] : null;
+                        return c.length !== 0 ? c[0] : null;
                     }, function(val) {
                         if (!val) return;
 
@@ -195,10 +179,10 @@
                     }, true);
 
                     $ctrl.retrieveData = function() {
-                        var columns = $ctrl.$component.columns.filter(function(e) { return e.Name === $ctrl.filter.Name; });
+                        var c = $ctrl.$component.columns.filter(function(e) { return e.Name === $ctrl.filter.Name; });
 
-                        if (columns.length !== 0) {
-                            columns[0].Filter = $ctrl.filter;
+                        if (c.length !== 0) {
+                            c[0].Filter = $ctrl.filter;
                         }
 
                         $ctrl.$component.retrieveData();

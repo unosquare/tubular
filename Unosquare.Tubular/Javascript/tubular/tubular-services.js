@@ -339,11 +339,11 @@
 
                                 if (angular.equals(ctrl.value, parent.model[scope.Name]) === false) {
                                     if (angular.isDefined(parent.model[scope.Name])) {
-                                        if (ctrl.DataType === 'date' && parent.model[scope.Name] != null) {
+                                        if (ctrl.DataType === 'date' && parent.model[scope.Name] != null && typeof parent.model[scope.Name] === 'string') {
                                             // TODO: Include MomentJS
                                             var timezone = new Date(Date.parse(parent.model[scope.Name])).toString().match(/([-\+][0-9]+)\s/)[1];
                                             timezone = timezone.substr(0, timezone.length - 2) + ':' + timezone.substr(timezone.length - 2, 2);
-                                            ctrl.value = new Date(Date.parse(parent.model[scope.Name] + timezone));
+                                            ctrl.value = new Date(Date.parse(parent.model[scope.Name].replace('Z', '') + timezone));
                                         } else {
                                             ctrl.value = parent.model[scope.Name];
                                         }
@@ -387,9 +387,7 @@
                                         ctrl.checkValid();
                                         return this.$errors.length === 0;
                                     },
-                                    $dirty: function() {
-                                        return ctrl.$dirty();
-                                    },
+                                    $dirty: ctrl.$dirty,
                                     $errors: []
                                 };
 

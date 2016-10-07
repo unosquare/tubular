@@ -301,8 +301,6 @@
                         };
 
                         if ($ctrl.currentRequest !== null) {
-                            // This message is annoying when you connect errors to toastr
-                            //$ctrl.currentRequest.cancel('tubularGrid(' + $ctrl.$id + '): new request coming.');
                             return;
                         }
 
@@ -327,6 +325,14 @@
                                 }
 
                                 $ctrl.dataSource = data;
+
+                                if (!data.Payload)
+                                {
+                                    var errorMsg = 'tubularGrid(' + $ctrl.$id + '): response is invalid.';
+                                    $ctrl.currentRequest.cancel(errorMsg);
+                                    $scope.$emit('tbGrid_OnConnectionError', errorMsg);
+                                    return;
+                                }
 
                                 $ctrl.rows = data.Payload.map(function(el) {
                                     var model = new TubularModel($scope, $ctrl, el, $ctrl.dataService);

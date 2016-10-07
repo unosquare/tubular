@@ -136,10 +136,10 @@
                                     </div>
                                 </tb-cell-template>
                                 <tb-cell-template class="text-center" column-name="OrderId">
-                                    <a href="/form/{{row.OrderId}}">{{row.OrderId}}</a>
+                                    <a href="/form/{{row.OrderId}}" ng-bind="row.OrderId"></a>
                                 </tb-cell-template>
                                 <tb-cell-template column-name="CustomerName">
-                                    <span ng-hide="row.$isEditing">{{row.CustomerName}}</span>
+                                    <span ng-hide="row.$isEditing" ng-bind="row.CustomerName"></span>
                                     <div ng-show="row.$isEditing">
                                         <input type="text" ng-model="row.CustomerName" class="form-control"/>
                                     </div>

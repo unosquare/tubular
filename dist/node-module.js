@@ -132,7 +132,7 @@ var tubularTemplate = {
         var notADateValue = 'not-a-date';
         input.setAttribute('value', notADateValue);
 
-        return (input.value !== notADateValue);
+        return input.value !== notADateValue;
     },
 
     /*
@@ -149,7 +149,7 @@ var tubularTemplate = {
             if (jsonModel.hasOwnProperty(prop)) {
                 var value = jsonModel[prop];
                 // Ignore functions
-                if (prop[0] === '$' || typeof (value) === 'function') {
+                if (prop[0] === '$' || typeof value === 'function') {
                     continue;
                 }
 
@@ -373,9 +373,6 @@ var tubularTemplate = {
             bottomToolbar += '\r\n\t<tb-grid-pager-info class="col-md-3"></tb-grid-pager-info>';
         }
 
-        // TODO: If it's page mode add button
-        // TODO: Add Selectable param, default false
-        // TODO: Add Name param
         return '<div class="container">' +
             '\r\n<tb-grid server-url="' + options.dataUrl + '" request-method="' + options.RequestMethod + '" class="row" ' +
             'page-size="10" require-authentication="' + options.RequireAuthentication + '" ' +

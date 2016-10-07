@@ -1,3 +1,5 @@
+/* jshint: true */
+/* globals: expect:false,beforeAll:false,expect:false,browser:false,element:false,by:false,describe:false,protractor:false,it:false */
 
 // This protractor scen file tests the tbGridComponents.
 
@@ -22,7 +24,7 @@ describe('tbGridComponents', function () {
             }
             newRow.$$('button').first().click().then(function() {
                 var newLastItem = element.all(by.repeater('row in $component.rows')).last().getText();
-                expect(lastItem).not.toBe(newLastItem);
+                expect(lastItem).toBe(newLastItem);
             });
         });
     });
@@ -40,7 +42,7 @@ describe('tbGridComponents', function () {
 
     it('should update item with tbSaveButton', function () {
         var lastItem = element.all(by.repeater('row in $component.rows')).last();
-        lastItem.$$('td').last().getText().then(function(originalValue) {
+        lastItem.$$('td').last().getText().then(function() {
             lastItem.$$('button').get(2).click().then(function() {
                 lastItem.$$('input').sendKeys('TEST').then(function(){
                     lastItem.$$('button').first().click().then(function(){
@@ -53,7 +55,7 @@ describe('tbGridComponents', function () {
 
     it('should update item with tbSaveButton and cancel action', function () {
         var lastItem = element.all(by.repeater('row in $component.rows')).last();
-        // TOOD: Nestor
+        
         lastItem.$$('td').last().getText().then(function(originalValue) {
             lastItem.$$('button').get(2).click().then(function() {
                 lastItem.$('input').sendKeys('TEST');
