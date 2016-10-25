@@ -119,14 +119,15 @@ var models = [
     }
 ];
 
-beforeAll(function () {
-    // Get page
-    browser.get('index.html');
-    element(by.id('testsSelector')).click();
-    element(by.id('tbTemplateServiceModelTest')).click();
-});
-
 describe('tubularTemplateServiceModule', function () {
+        
+    beforeAll(function () {
+        // Get page
+        browser.get('index.html');
+        element(by.id('testsSelector')).click();
+        element(by.id('tbTemplateServiceModelTest')).click();
+    });
+
     var columns = tubularTemplateServiceModule.createColumns(models);
 
     describe('#createColumns()', function () {

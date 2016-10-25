@@ -5,7 +5,7 @@
 describe('tbHttp', function () {
     
     beforeEach(function () {
-         browser.get('index.html');
+        browser.get('index.html');
         element(by.id('tbLogin')).click();
     });
 

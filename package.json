@@ -43,7 +43,7 @@
     "grunt-coveralls": "^1.0.1",
     "grunt-string-replace": "^1.2.1",
     "http-server": "^0.9.0",
-    "protractor": "^4.0.9",
-    "selenium-standalone": "^5.7.2"
+    "protractor": "3.3.0",
+    "selenium-standalone": "5.1.1"
   }
 }
