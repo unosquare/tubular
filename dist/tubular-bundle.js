@@ -1656,10 +1656,24 @@ try {
                 }
             };
 
+            $scope.updateReadonlyValue = function () {
+                $ctrl.readOnlyValue = $ctrl.value;
+                if (!$ctrl.value) return;
+
+                if (angular.isDefined($ctrl.optionLabel) && $ctrl.options) {
+                    if (angular.isDefined($ctrl.optionKey)) {
+                        $ctrl.readOnlyValue = $ctrl.options.filter(function (el) { return el[$ctrl.optionKey] === $ctrl.value; })[0][$ctrl.optionLabel];
+                    } else {
+                        $ctrl.readOnlyValue = $ctrl.options[$ctrl.optionLabel];
+                    }
+                }
+            };
+
             $scope.$watch(function() {
                 return $ctrl.value;
             }, function(val) {
-                $scope.$emit('tbForm_OnFieldChange', $ctrl.$component, $ctrl.name, val, $scope.options);
+                $scope.$emit('tbForm_OnFieldChange', $ctrl.$component, $ctrl.name, val, $ctrl.options);
+                $scope.updateReadonlyValue();
             });
 
             $ctrl.loadData = function() {
@@ -1955,7 +1969,7 @@ try {
          */
         .component('tbDropdownEditor', {
             template: '<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">' +
-                '<span ng-hide="$ctrl.isEditing" ng-bind="$ctrl.value"></span>' +
+                '<span ng-hide="$ctrl.isEditing" ng-bind="$ctrl.readOnlyValue"></span>' +
                 '<label ng-show="$ctrl.showLabel" ng-bind="$ctrl.label"></label>' +
                 '<select ng-options="{{ $ctrl.selectOptions }}" ng-show="$ctrl.isEditing" ng-model="$ctrl.value" class="form-control" ' +
                 'ng-required="$ctrl.required" ng-disabled="$ctrl.readOnly" name="{{$ctrl.name}}" ng-change="onChange({value: value})" />' +
