@@ -172,12 +172,15 @@
     <Compile Include="Application\UserAuthenticationResult.cs" />
     <Compile Include="Controllers\OrdersController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
+    <Compile Include="Migrations\201610251618143_initial.cs" />
+    <Compile Include="Migrations\201610251618143_initial.Designer.cs">
+      <DependentUpon>201610251618143_initial.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Order.cs" />
     <Compile Include="Models\OrderDetail.cs" />
     <Compile Include="Models\Product.cs" />
     <Compile Include="Models\SampleDbContext.cs" />
-    <Compile Include="Models\SampleDbContextInitializer.cs" />
     <Compile Include="Models\SystemRole.cs" />
     <Compile Include="Models\SystemUser.cs" />
     <Compile Include="Models\Warehouse.cs" />
@@ -197,6 +200,14 @@
       <Project>{1a8f5423-f375-4add-82a7-5b93182219ff}</Project>
       <Name>Unosquare.Tubular</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201610251618143_initial.resx">
+      <DependentUpon>201610251618143_initial.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

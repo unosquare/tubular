@@ -155,14 +155,16 @@
         {
             using (var context = new SampleDbContext())
             {
-                return
-                    Ok(
-                        await
-                            context.Orders.AsNoTracking()
-                                .Select(x => x.ShipperCity)
-                                .Distinct()
-                                .OrderBy(x => x)
-                                .ToListAsync());
+                return Ok(await context.Orders
+                    .AsNoTracking()
+                    .Select(x => new
+                    {
+                        Key = x.ShipperCity,
+                        Label = x.ShipperCity.ToUpper()
+                    })
+                    .Distinct()
+                    .OrderBy(x => x)
+                    .ToListAsync());
             }
         }
 
