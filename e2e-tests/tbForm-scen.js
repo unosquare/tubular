@@ -646,14 +646,13 @@ describe('tbForm related components', function () {
         it('should show a help field equal to this attribute, is present', function () {
             expect(tbDateEditor_helper.getText()).toMatch("Date help");
         });
-
         it('should submit modifications to item/server when clicking form "Save"', function () {
             tbDateEditor_input.clear().then(function () {
-                tbDateEditor_input.sendKeys('05/05/2016').then(function () {
+                tbDateEditor_input.sendKeys('15/09/2016').then(function () {
                     tbFormSaveBtn.click().then(function () {
                         tbFormEditBtn1.click().then(function () {
                             tbDateEditor_input.getAttribute('value').then(function (text) {
-                                expect(text).toMatch('05/05/2016');
+                                expect(text).toMatch('15/09/2016');
                             });
                         });
                     });
