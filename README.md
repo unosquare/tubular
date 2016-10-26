@@ -155,3 +155,23 @@ The following HTML represents a basic grid. You don't need to add anything else 
 ```
 
 Tubular works directly with either your own OData service or a custom RESTful call. You can simplify your RESTful API significantly by using our .NET Tubular.ServerSide library which handles IQueryables easily.
+
+##Running the sample project
+
+
+In order to run the sample project included in the solution, first you must use Code-first migrations Update-Database command. Here is the explanation step by step:
+
+First of all, set Unosquare.Tubular.Sample as the solution's Default Project by right clicking it an selecting "Set as StartUp Project". Otherwise the database update will not work.
+
+Next, into the Web.config file of the Unosquare.Tubular.Sample project, specify the missing parameter of the "SampleDbContext" connection string as this example:
+
+            connectionString="MyComputer\SQLEXPRESS"
+
+This way you are specifying where to run the seed method with initial data. 
+
+Finally, open the Package Manager Console, select Unosquare.Tubular.Sample as Default project in the top bar and run the following command:
+
+        Update-Database
+
+After this, just right-click the project and select Debug>Start New Instance and you should be watching and explorer window with the sample page. 
+       
