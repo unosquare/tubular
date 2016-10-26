@@ -129,7 +129,9 @@ describe('tbForm related components', function () {
         tbDateEditor_label,
         tbDateEditor_helper,
         tbDateEditor_errorMessages,
-        tbDateEditorDate_original = '02/02/2016';
+        tbDateEditorDate_original = '02/02/2016',
+        tbDateEditorDate_modified = '15/09/2016';
+
 
     var tbDateEditorRestore = function () {
         return browser.wait(function () {
@@ -652,7 +654,7 @@ describe('tbForm related components', function () {
                     tbFormSaveBtn.click().then(function () {
                         tbFormEditBtn1.click().then(function () {
                             tbDateEditor_input.getAttribute('value').then(function (text) {
-                                expect(text).toMatch('15/09/2016');
+                                expect(text).toMatch(tbDateEditorDate_modified);
                             });
                         });
                     });
