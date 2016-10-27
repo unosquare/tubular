@@ -150,6 +150,21 @@
             }
         }
 
+        [HttpGet, Route("citiesdd")]
+        public async Task<IHttpActionResult> GetCitiesDropdown()
+        {
+            using (var context = new SampleDbContext())
+            {
+                return Ok(await context.Orders
+                    .AsNoTracking()
+                    .Select(x=>x.ShipperCity)
+                    .Distinct()
+                    .OrderBy(x => x)
+                    .ToArrayAsync()
+                    );
+            }
+        }
+
         [HttpGet, Route("cities")]
         public async Task<IHttpActionResult> GetCities()
         {
