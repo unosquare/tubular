@@ -129,8 +129,7 @@ describe('tbForm related components', function () {
         tbDateEditor_label,
         tbDateEditor_helper,
         tbDateEditor_errorMessages,
-        tbDateEditorDate_original = '02/02/2016',
-        tbDateEditorDate_modified = '15/09/2016';
+        tbDateEditorDate_original = '02/02/2016';
 
 
     var tbDateEditorRestore = function () {
@@ -572,7 +571,7 @@ describe('tbForm related components', function () {
             tbFormEditBtn1 = element.all(by.repeater('row in $component.rows')).get(3).$$('td').first().$$('button').first();
 
             // tbSimpleEditor component and subcomponents
-            tbDateEditor = $('div.modal-dialog form').$('tb-simple-editor');
+            tbDateEditor = $('div.modal-dialog form').$('tb-date-editor');
             tbDateEditor_input = $('div.modal-dialog form').$('tb-date-editor').$('input');
             tbDateEditor_label = $('div.modal-dialog form').$('tb-date-editor').$('label');
             tbDateEditor_errorMessages = $('div.modal-dialog form').$('tb-date-editor').all(by.repeater('error in $ctrl.state.$errors'));
@@ -654,7 +653,7 @@ describe('tbForm related components', function () {
                     tbFormSaveBtn.click().then(function () {
                         tbFormEditBtn1.click().then(function () {
                             tbDateEditor_input.getAttribute('value').then(function (text) {
-                                expect(text).toMatch(tbDateEditorDate_modified);
+                                expect(text).toMatch('15/09/2016');
                             });
                         });
                     });
