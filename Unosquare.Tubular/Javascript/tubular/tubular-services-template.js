@@ -72,7 +72,7 @@
                 if (!$templateCache.get(me.tbColumnOptionsFilterPopoverTemplateName)) {
                     me.tbColumnOptionsFilterPopoverTemplate = '<div>' +
                         '<form class="tubular-column-filter-form" onsubmit="return false;">' +
-                        '<select class="form-control checkbox-list" ng-options="item for item in $ctrl.optionsItems" ' +
+                        '<select class="form-control checkbox-list" ng-options="item.Key as item.Label for item in $ctrl.optionsItems" ' +
                         'ng-model="$ctrl.filter.Argument" multiple ng-disabled="$ctrl.dataIsLoaded == false"></select>&nbsp;' +
                         '<hr />' +
                         '<tb-column-filter-buttons></tb-column-filter-buttons>' +
@@ -206,6 +206,8 @@
 
                     $ctrl.applyFilter = function() {
                         $ctrl.filter.HasFilter = true;
+                        var x = $ctrl.filter;
+                        var y = $ctrl.filter.Argument;
                         $ctrl.retrieveData();
                     };
 

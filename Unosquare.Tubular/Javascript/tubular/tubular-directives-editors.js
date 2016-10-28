@@ -211,6 +211,7 @@
         }
     ];
 
+
     var tbDropdownEditorCtrl = ['tubularEditorService', '$scope', function(tubular, $scope) {
             var $ctrl = this;
 
@@ -230,7 +231,6 @@
                         }
                     }
                 }
-
                 if (angular.isDefined($ctrl.optionsUrl)) {
                     $scope.$watch('optionsUrl', function(val, prev) {
                         if (val === prev) return;
@@ -562,6 +562,7 @@
          * @param {string} optionKey Set the property to get the keys.
          * @param {string} defaultValue Set the default value.
          */
+
         .component('tbDropdownEditor', {
             template: '<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">' +
                 '<span ng-hide="$ctrl.isEditing" ng-bind="$ctrl.readOnlyValue"></span>' +
