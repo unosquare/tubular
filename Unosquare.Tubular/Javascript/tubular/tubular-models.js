@@ -80,11 +80,10 @@
                                     var tempDate = new Date(Date.parse(obj[col.Name].replace('Z', '') + timezone));
 
                                     if (col.DataType === "date") {
-                                        obj[col.Name] = new Date(1900 + tempDate.getYear(), tempDate.getMonth(), tempDate.getDate());
+                                        obj[col.Name] = new Date(tempDate.getFullYear(), tempDate.getMonth(), tempDate.getDate());
                                     } else {
-                                        obj[col.Name] = new Date(1900 + tempDate.getYear(),
-                                            tempDate.getMonth(), tempDate.getDate(), tempDate.getHours(),
-                                            tempDate.getMinutes(), tempDate.getSeconds(), 0);
+                                        obj[col.Name] = new Date(tempDate.getFullYear(), tempDate.getMonth(), tempDate.getDate(),
+                                            tempDate.getHours(), tempDate.getMinutes(), tempDate.getSeconds(), 0);
                                     }
                                 }
                             }
@@ -151,23 +150,19 @@
                 };
 
                 obj.resetOriginal = function () {
-                    for (var k in obj.$original) {
-                        if (obj.$original.hasOwnProperty(k)) {
-                            obj.$original[k] = obj[k];
-                        }
-                    }
+                    angular.forEach(obj.$original, function (k) {
+                        obj.$original[k] = obj[k];
+                    });
                 };
 
                 obj.revertChanges = function () {
-                    for (var k in obj) {
-                        if (obj.hasOwnProperty(k)) {
-                            if (k[0] === '$' || angular.isUndefined(obj.$original[k])) {
-                                continue;
-                            }
-
-                            obj[k] = obj.$original[k];
+                    angular.forEach(obj, function (k) {
+                        if (k[0] === '$' || angular.isUndefined(obj.$original[k])) {
+                            return;
                         }
-                    }
+
+                        obj[k] = obj.$original[k];
+                    });
 
                     obj.$hasChanges = obj.$isEditing = false;
                 };
