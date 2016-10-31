@@ -1656,10 +1656,24 @@ try {
                 }
             };
 
+            $scope.updateReadonlyValue = function () {
+                $ctrl.readOnlyValue = $ctrl.value;
+                if (!$ctrl.value) return;
+
+                if (angular.isDefined($ctrl.optionLabel) && $ctrl.options) {
+                    if (angular.isDefined($ctrl.optionKey)) {
+                        $ctrl.readOnlyValue = $ctrl.options.filter(function (el) { return el[$ctrl.optionKey] === $ctrl.value; })[0][$ctrl.optionLabel];
+                    } else {
+                        $ctrl.readOnlyValue = $ctrl.options[$ctrl.optionLabel];
+                    }
+                }
+            };
+
             $scope.$watch(function() {
                 return $ctrl.value;
             }, function(val) {
-                $scope.$emit('tbForm_OnFieldChange', $ctrl.$component, $ctrl.name, val, $scope.options);
+                $scope.$emit('tbForm_OnFieldChange', $ctrl.$component, $ctrl.name, val, $ctrl.options);
+                $scope.updateReadonlyValue();
             });
 
             $ctrl.loadData = function() {
@@ -1955,7 +1969,7 @@ try {
          */
         .component('tbDropdownEditor', {
             template: '<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">' +
-                '<span ng-hide="$ctrl.isEditing" ng-bind="$ctrl.value"></span>' +
+                '<span ng-hide="$ctrl.isEditing" ng-bind="$ctrl.readOnlyValue"></span>' +
                 '<label ng-show="$ctrl.showLabel" ng-bind="$ctrl.label"></label>' +
                 '<select ng-options="{{ $ctrl.selectOptions }}" ng-show="$ctrl.isEditing" ng-model="$ctrl.value" class="form-control" ' +
                 'ng-required="$ctrl.required" ng-disabled="$ctrl.readOnly" name="{{$ctrl.name}}" ng-change="onChange({value: value})" />' +
@@ -2279,8 +2293,8 @@ try {
                 $columnOptionsFilter: '^?tbColumnOptionsFilter'
             },
             template: '<div class="text-right">' +
-                '<a class="btn btn-sm btn-success" ng-click="$ctrl.currentFilter.applyFilter()"' +
-                'ng-disabled="$ctrl.currentFilter.filter.Operator == \'None\'">{{::\'CAPTION_APPLY\' | translate}}</a>&nbsp;' +
+                '<button class="btn btn-sm btn-success" ng-click="$ctrl.currentFilter.applyFilter()"' +
+                'ng-disabled="$ctrl.currentFilter.filter.Operator == \'None\'">{{::\'CAPTION_APPLY\' | translate}}</button>&nbsp;' +
                 '<button class="btn btn-sm btn-danger" ng-click="$ctrl.currentFilter.clearFilter()">{{::\'CAPTION_CLEAR\' | translate}}</button>' +
                 '</div>',
             controller: ['$scope', function($scope) {
@@ -3276,11 +3290,10 @@ try {
                                     var tempDate = new Date(Date.parse(obj[col.Name].replace('Z', '') + timezone));
 
                                     if (col.DataType === "date") {
-                                        obj[col.Name] = new Date(1900 + tempDate.getYear(), tempDate.getMonth(), tempDate.getDate());
+                                        obj[col.Name] = new Date(tempDate.getFullYear(), tempDate.getMonth(), tempDate.getDate());
                                     } else {
-                                        obj[col.Name] = new Date(1900 + tempDate.getYear(),
-                                            tempDate.getMonth(), tempDate.getDate(), tempDate.getHours(),
-                                            tempDate.getMinutes(), tempDate.getSeconds(), 0);
+                                        obj[col.Name] = new Date(tempDate.getFullYear(), tempDate.getMonth(), tempDate.getDate(),
+                                            tempDate.getHours(), tempDate.getMinutes(), tempDate.getSeconds(), 0);
                                     }
                                 }
                             }
@@ -3347,23 +3360,19 @@ try {
                 };
 
                 obj.resetOriginal = function () {
-                    for (var k in obj.$original) {
-                        if (obj.$original.hasOwnProperty(k)) {
-                            obj.$original[k] = obj[k];
-                        }
-                    }
+                    angular.forEach(obj.$original, function (k) {
+                        obj.$original[k] = obj[k];
+                    });
                 };
 
                 obj.revertChanges = function () {
-                    for (var k in obj) {
-                        if (obj.hasOwnProperty(k)) {
-                            if (k[0] === '$' || angular.isUndefined(obj.$original[k])) {
-                                continue;
-                            }
-
-                            obj[k] = obj.$original[k];
+                    angular.forEach(obj, function (k) {
+                        if (k[0] === '$' || angular.isUndefined(obj.$original[k])) {
+                            return;
                         }
-                    }
+
+                        obj[k] = obj.$original[k];
+                    });
 
                     obj.$hasChanges = obj.$isEditing = false;
                 };
