@@ -1,143 +1,146 @@
 ﻿<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:ng="http://angularjs.org/" lang="en" ng-app="app">
-    <head>
-        <base href="/tubular/">
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="description" content="Tubular">
-        <meta name="keywords" content="application, html5, angularjs, responsive, web api">
-        <meta name="author" content="Unosquare Labs">
 
-        <title>Tubular Samples and Generator</title>
+<head>
+    <base href="/tubular/">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Tubular">
+    <meta name="keywords" content="application, html5, angularjs, responsive, web api">
+    <meta name="author" content="Unosquare Labs">
 
-        <!-- Favicons -->
-	    <link rel="icon" href="favicon.ico" />
-    
-        <!-- CSS (from CDN) -->
-	    <link rel="stylesheet" href="//cdn.jsdelivr.net/fontawesome/latest/css/font-awesome.min.css" />
-	    <link rel="stylesheet" href="//cdn.jsdelivr.net/toastr/2.0.1/toastr.css" />
-        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootswatch/latest/lumen/bootstrap.min.css" />
-        <link rel="stylesheet" href="//cdn.jsdelivr.net/highlight.js/9.3.0/styles/monokai-sublime.min.css" />
+    <title>Tubular Samples and Generator</title>
 
-        <link rel="stylesheet" href="vendor/tubular/tubular-bundle.css" />
-        <link rel="stylesheet" href="assets/common.css" />
+    <!-- Favicons -->
+    <link rel="icon" href="favicon.ico" />
 
-        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-        <!--[if lt IE 9]>
-            <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
-            <script src="//cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js"></script>
-        <![endif]-->
+    <!-- CSS (from CDN) -->
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/fontawesome/latest/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/toastr/2.0.1/toastr.css" />
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootswatch/latest/lumen/bootstrap.min.css" />
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/highlight.js/9.3.0/styles/monokai-sublime.min.css" />
 
-        <!-- JS (from CDN) -->
-        <script src="//cdn.jsdelivr.net/g/angularjs(angular.min.js+angular-route.min.js),angular.bootstrap@2.1.2(ui-bootstrap.min.js+ui-bootstrap-tpls.min.js),filesaver.js,toastr,highlight.js,zeroclipboard,chart.js,highcharts"></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/angular-local-storage/0.1.5/angular-local-storage.min.js"></script>
-	    <script src="//pc035860.github.io/angular-highlightjs/angular-highlightjs.min.js"></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/angular-filter/0.5.8/angular-filter.min.js"></script>
+    <link rel="stylesheet" href="vendor/tubular/tubular-bundle.css" />
+    <link rel="stylesheet" href="assets/common.css" />
 
-        <!-- Angular Application files -->
-        <script src="vendor/tubular/tubular-bundle.js"></script>
-        <script src="vendor/tubular/tubular-localdata-bundle.js"></script>
-        <script src="vendor/tubular/tubular-odata-bundle.js"></script>
-        <script src="vendor/tubular/tubular-chartjs-bundle.js"></script>
-        <script src="vendor/tubular/tubular-highcharts-bundle.js"></script>
+    <!-- JS (from CDN) -->
+    <script src="//cdn.jsdelivr.net/g/angularjs(angular.min.js+angular-route.min.js),angular.bootstrap@2.1.2(ui-bootstrap.min.js+ui-bootstrap-tpls.min.js),filesaver.js,toastr,highlight.js,zeroclipboard,chart.js"></script>
+    <!-- JSDeliver HighChart's version is buggy -->
+    <script src="//code.highcharts.com/highcharts.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular-local-storage/0.1.5/angular-local-storage.min.js"></script>
+    <script src="//pc035860.github.io/angular-highlightjs/angular-highlightjs.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular-filter/0.5.8/angular-filter.min.js"></script>
 
-        <script src="scripts/generator.js"></script>
-        <script src="scripts/app.js"></script>
-    </head>
+    <!-- Angular Application files -->
+    <script src="vendor/tubular/tubular-bundle.js"></script>
+    <script src="vendor/tubular/tubular-localdata-bundle.js"></script>
+    <script src="vendor/tubular/tubular-odata-bundle.js"></script>
+    <script src="vendor/tubular/tubular-chartjs-bundle.js"></script>
+    <script src="vendor/tubular/tubular-highcharts-bundle.js"></script>
 
-    <body ng-cloak>
-        <div id="wrapper">
-            <div class="content-body" ng-controller="infoCtrl as info">
-                <div class="jumbotron-fade"></div>
-                <div class="jumbotron">
-                    <div class="navbar-fade"></div>
-                    <header class="navbar navbar-static-top" id="top" role="banner">
-                        <div class="container">
-                            <div class="navbar-header">
-                                <button type="button" class="navbar-toggle" 
-                                        data-toggle="collapse" data-target="#bs-example-navbar-collapse-3" ng-click="isCollapsed = !isCollapsed">
+    <script src="scripts/generator.js"></script>
+    <script src="scripts/app.js"></script>
+</head>
+
+<body ng-cloak>
+    <div id="wrapper">
+        <div class="content-body" ng-controller="infoCtrl as info">
+            <div class="jumbotron-fade"></div>
+            <div class="jumbotron">
+                <div class="navbar-fade"></div>
+                <header class="navbar navbar-static-top" id="top" role="banner">
+                    <div class="container">
+                        <div class="navbar-header">
+                            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-3" ng-click="isCollapsed = !isCollapsed">
                                     <i class="fa fa-bars"></i>
                                 </button>
-                            </div>
-                            <nav class="hidden-xs">
-                                <ul class="nav navbar-nav">
-                                    <li><a href="/tubular">Home</a></li>
-                                    <li><a href="/tubular/#Basic">Grid Samples</a></li>
-                                    <li><a href="/tubular/#Charts">Charts Samples</a></li>
-                                    <li>
-                                        <a href="/tubular/#Generator">Grid Generator</a>
-                                    </li>
-                                    <li>
-                                        <a href="/tubular/#FormGenerator">Form Generator</a>
-                                    </li>
-                                    <li>
-                                        <a href="/tubular/#Documentation">Documentation</a>
-                                    </li>
-                                </ul>
-                                <ul class="nav navbar-nav navbar-right">
-                                    <li><a href="http://www.unosquare.com">Unosquare</a></li>
-                                    <li><a href="http://github.com/unosquare/tubular"><i class="fa fa-github-square"></i>&nbsp;GitHub</a></li>
-                                </ul>
-                            </nav>
-                            <nav class="visible-xs collapse" uib-collapse="!isCollapsed">
-                                <ul class="nav navbar-nav">
-                                    <li>
-                                        <a href="/tubular" ng-click="isCollapsed = !isCollapsed">Home</a>
-                                    </li>
-                                    <li>
-                                        <a href="/tubular/#Basic" ng-click="isCollapsed = !isCollapsed">Grid Samples</a>
-                                    </li>
-                                    <li>
-                                        <a href="/tubular/#Documentation" ng-click="isCollapsed = !isCollapsed">Documentation</a>
-                                    </li>
-                                    <li>
-                                        <a href="http://www.unosquare.com">Unosquare</a>
-                                    </li>
-                                    <li>
-                                        <a href="http://github.com/unosquare/tubular"><i class="fa fa-github-square"></i>&nbsp;GitHub</a>
-                                    </li>
-                                </ul>
-                            </nav>
                         </div>
-                    </header>
-                    <div>
-                        <div class="jumbotron-inner"></div>
-                        <div class="container jumbotron-outer">
-                            <div class="row">
-                                <div class="col-md-4 col-xs-12">
-                                    <img src="assets/tubular.png" alt="Tubular"/>
-                                </div>
-                                <div class="col-md-8 col-xs-12">
-                                    <p ng-if="info.$location.path() == '/'">
-                                        A set of <a href="https://angularjs.org/" target="_blank">AngularJS</a> directives and C# classes designed to rapidly build modern web applications.
-                                        The centerpiece of Tubular is its fully templateable grid with lots of features such as server-side pagination, multi-column sorting and filtering,
-                                        built-in export to CSV, and in-line editing of rows via templates.
-                                    </p>
-                                    <h2 ng-if="info.$location.path() != '/'">{{info.$route.current.key}}</h2>
-                                    <p ng-if="info.$location.path() != '/'">{{info.$route.current.desc}}</p>
-                                </div>
+                        <nav class="hidden-xs">
+                            <ul class="nav navbar-nav">
+                                <li><a href="/tubular">Home</a></li>
+                                <li><a href="/tubular/#Basic">Grid Samples</a></li>
+                                <li><a href="/tubular/#Charts">Charts Samples</a></li>
+                                <li>
+                                    <a href="/tubular/#Generator">Grid Generator</a>
+                                </li>
+                                <li>
+                                    <a href="/tubular/#FormGenerator">Form Generator</a>
+                                </li>
+                                <li>
+                                    <a href="/tubular/#Documentation">Documentation</a>
+                                </li>
+                            </ul>
+                            <ul class="nav navbar-nav navbar-right">
+                                <li><a href="http://www.unosquare.com">Unosquare</a></li>
+                                <li><a href="http://github.com/unosquare/tubular"><i class="fa fa-github-square"></i>&nbsp;GitHub</a></li>
+                            </ul>
+                        </nav>
+                        <nav class="visible-xs collapse" uib-collapse="!isCollapsed">
+                            <ul class="nav navbar-nav">
+                                <li>
+                                    <a href="/tubular" ng-click="isCollapsed = !isCollapsed">Home</a>
+                                </li>
+                                <li>
+                                    <a href="/tubular/#Basic" ng-click="isCollapsed = !isCollapsed">Grid Samples</a>
+                                </li>
+                                <li>
+                                    <a href="/tubular/#Documentation" ng-click="isCollapsed = !isCollapsed">Documentation</a>
+                                </li>
+                                <li>
+                                    <a href="http://www.unosquare.com">Unosquare</a>
+                                </li>
+                                <li>
+                                    <a href="http://github.com/unosquare/tubular"><i class="fa fa-github-square"></i>&nbsp;GitHub</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </header>
+                <div>
+                    <div class="jumbotron-inner"></div>
+                    <div class="container jumbotron-outer">
+                        <div class="row">
+                            <div class="col-md-4 col-xs-12">
+                                <img src="assets/tubular.png" alt="Tubular" />
+                            </div>
+                            <div class="col-md-8 col-xs-12">
+                                <p ng-if="info.$location.path() == '/'">
+                                    A set of <a href="https://angularjs.org/" target="_blank">AngularJS</a> directives and C# classes designed to rapidly build modern web applications. The centerpiece of Tubular is its fully templateable grid with lots
+                                    of features such as server-side pagination, multi-column sorting and filtering, built-in export to CSV, and in-line editing of rows via templates.
+                                </p>
+                                <h2 ng-if="info.$location.path() != '/'">{{info.$route.current.key}}</h2>
+                                <p ng-if="info.$location.path() != '/'">{{info.$route.current.desc}}</p>
                             </div>
                         </div>
                     </div>
                 </div>
-                <ng-view></ng-view>
             </div>
-            <footer>
-                Brought to you by Unosquare<br />
-                <a href="http://www.unosquare.com">
-                    <img src="assets/logo_178.png" />
-                </a>
-                <script>
-          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-          ga('create', 'UA-8535255-2', 'auto');
-          ga('send', 'pageview');
-                </script>
-            </footer>
+            <ng-view></ng-view>
         </div>
-    </body>
+        <footer>
+            Brought to you by Unosquare<br />
+            <a href="http://www.unosquare.com">
+                <img src="assets/logo_178.png" />
+            </a>
+            <script>
+                (function(i, s, o, g, r, a, m) {
+                    i['GoogleAnalyticsObject'] = r;
+                    i[r] = i[r] || function() {
+                        (i[r].q = i[r].q || []).push(arguments)
+                    }, i[r].l = 1 * new Date();
+                    a = s.createElement(o),
+                        m = s.getElementsByTagName(o)[0];
+                    a.async = 1;
+                    a.src = g;
+                    m.parentNode.insertBefore(a, m)
+                })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+                ga('create', 'UA-8535255-2', 'auto');
+                ga('send', 'pageview');
+            </script>
+        </footer>
+    </div>
+</body>
+
 </html>
