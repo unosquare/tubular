@@ -16,7 +16,6 @@ describe('OData', function() {
         tbColumnFilter,
         popoverForm,
         applyBtn,
-        clearBtn,
         filterSelect,
         valueInput,
         dataRows,
@@ -71,7 +70,6 @@ describe('OData', function() {
             filterBtn = tbColumnFilter.$('.btn-popover');
             popoverForm = $('tb-column-filter form.tubular-column-filter-form');
             applyBtn = popoverForm.$('tb-column-filter-buttons').$('.btn-success');
-            clearBtn = popoverForm.$('tb-column-filter-buttons').$('.btn-danger');
             filterSelect = popoverForm.$('select');
             valueInput = popoverForm.$('input:not(.ng-hide)');
             dataRows = element.all(by.repeater('row in $component.rows'));
