@@ -7,7 +7,15 @@
 
 *:star:Please star this project if you find it useful!*
 
-Tubular is a set of <a href="https://angularjs.org/" target="_blank">AngularJS</a> directives and C# classes designed to rapidly build modern web applications.  The centerpiece of Tubular is its fully templateable grid with lots of features such as server-side pagination, multi-column sorting and filtering, built-in export to CSV (client-side), and in-line editing of rows via templates.
+Tubular provides a set of directives and services using AngularJS as framework, the main component is a grid with multiple options:
+
+* **Full markup design**, you don't need to write even a Controller in AngularJS to start using our Grid or Form
+* Common functionality like **Sorting, Filtering (specific to the data type), Free-text search, Paging** and more.
+* Easy to implement inline editors, page or popup forms totally bound to your grid.
+* Basic services like **Print and Export to CSV** in client-side.
+* .NET Framework and .NET Core Library (available in [Nuget](https://www.nuget.org/packages/Tubular.ServerSide)) to create **REST service** easily with any WebApi library. 
+
+If you are looking for Angular2 support, check [Tubular2](https://github.com/unosquare/tubular2) project.
 
 Please visit the <a href="http://unosquare.github.io/tubular" target="_blank">Tubular GitHub Page</a> to learn how quickly you can start coding. Don't forget to check out the Tubular Generator which quickly turns models into an awesome UIs!
 
