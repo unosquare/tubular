@@ -161,5 +161,14 @@ $ npm install tubular --save</div>
             <p>Tubular works directly with either your own OData service or a custom RESTful call. You can simplify 
             your RESTful API significantly by using our .NET library which handles <code>IQueryable</code> easily.</p>
             </div>
+            <h2>Running the sample project</h2>
+            <p>In order to run the sample project included in the solution, first you must use Code-first migrations Update-Database command. Here is the explanation step by step:</p>
+            <p>First of all, set Unosquare.Tubular.Sample as the solution's Default Project by right clicking it an selecting "Set as StartUp Project". Otherwise the database update will not work.</p>
+            <p>Next, into the Web.config file of the Unosquare.Tubular.Sample project, specify the missing parameter of the "SampleDbContext" connection string as this example:</p>
+            <div hljs>connectionString="MyComputer\SQLEXPRESS"</div>
+            <p>This way you are specifying where to run the seed method with initial data. </p>
+            <p>Finally, open the Package Manager Console, select Unosquare.Tubular.Sample as Default project in the top bar and run the following command:</p>
+            <div hljs>PM  Update-Database</div>
+            <p>After this, just right-click the project and select Debug&gt;Start New Instance and you should be watching and explorer window with the sample page. </p>
     </div>
 </div>
