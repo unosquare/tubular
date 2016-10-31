@@ -13,6 +13,10 @@
         .service('tubularLocalData', ['tubularHttp', '$q', '$filter', function(tubularHttp, $q, $filter) {
                 var me = this;
 
+                me.getByKey = tubularHttp.getByKey;
+
+                me.get = tubularHttp.get;
+
                 me.retrieveDataAsync = function(request) {
                     request.requireAuthentication = false;
 
