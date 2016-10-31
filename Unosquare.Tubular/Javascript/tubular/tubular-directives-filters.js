@@ -68,9 +68,9 @@
                             controller: [
                                 '$scope', function($innerScope) {
                                     $innerScope.Model = model;
-                                    $innerScope.isInvalid = function() {
-                                        return $innerScope.Model.filter(function(el) { return el.Visible; }).length === 1;
-                                    }
+                                    $innerScope.isInvalid = function () {
+                                        return $innerScope.Model.filter(function (el) { return el.Visible; }).length === 1;
+                                    };
 
                                     $innerScope.closePopup = dialog.close;
                                 }

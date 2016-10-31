@@ -359,17 +359,13 @@ describe('tbForm related components', function () {
             }).first();
 
             //* Restore default value and open form popup *\\
-            tbDropDownEditorRestore().then(function () {
-                tbFormEditBtn2.click();
-            });
+            tbDropDownEditorRestore().then(tbFormEditBtn2.click);
 
         });
 
         afterEach(function () {
             //* Restore default value and open form popup *\\    
-            tbDropDownEditorRestore().then(function () {
-                tbFormEditBtn2.click();
-            });
+            tbDropDownEditorRestore().then(tbFormEditBtn2.click);
         });
 
         it('should set initial input value to the value of "value" attribute when defined', function () {
@@ -433,16 +429,12 @@ describe('tbForm related components', function () {
             }).first();
 
             //* Restore default value and open form popup *\\
-            tbTextAreaRestore().then(function () {
-                tbFormEditBtn2.click();
-            });
+            tbTextAreaRestore().then(tbFormEditBtn2.click);
         });
 
         afterEach(function () {
             //* Restore default value and open form popup *\\    
-            tbTextAreaRestore().then(function () {
-                tbFormEditBtn2.click();
-            });
+            tbTextAreaRestore().then(tbFormEditBtn2.click);
         });
 
         it('should set initial input value to the value of "value" attribute when defined', function () {
@@ -552,9 +544,7 @@ describe('tbForm related components', function () {
                 if (present) {
                     tbFormCancelBtn.click();
                 }
-            }).then(function () {
-                tbFormEditBtn2.click();
-            });
+            }).then(tbFormEditBtn2.click);
         });
 
         it('should be present and contain the attribute-defined value', function () {
@@ -582,17 +572,13 @@ describe('tbForm related components', function () {
             }).first();
 
             //* Restore default value and open form popup *\\
-            tbDateEditorRestore().then(function () {
-                tbFormEditBtn1.click();
-            });
+            tbDateEditorRestore().then(tbFormEditBtn1.click);
 
         });
 
         afterEach(function () {
             //* Restore default value and open form popup *\\    
-            tbDateEditorRestore().then(function () {
-                tbFormEditBtn1.click();
-            });
+            tbDateEditorRestore().then(tbFormEditBtn1.click);
         });
 
         it('should set initial date value to the value of "value" attribute when defined', function () {
@@ -697,16 +683,12 @@ describe('tbForm related components', function () {
             tbTypeaheadEditor_options = tbTypeaheadEditor.all(by.repeater('match in matches track by $index'));
 
             //* Restore default value and open form popup *\\
-            tbTypeaheadEditorRestore().then(function () {
-                tbFormEditBtn1.click();
-            });
+            tbTypeaheadEditorRestore().then(tbFormEditBtn1.click);
         });
 
         afterEach(function () {
             //* Restore default value and open form popup *\\
-            tbTypeaheadEditorRestore().then(function () {
-                tbFormEditBtn1.click();
-            });
+            tbTypeaheadEditorRestore().then(tbFormEditBtn1.click);
         });
 
         it('should show an options list when there is an API-info/component entered-data', function () {

@@ -182,7 +182,7 @@ var tubularTemplate = {
             if (columns.hasOwnProperty(column)) {
                 var columnObj = columns[column];
                 columnObj.Label = columnObj.Name.replace(/([a-z])([A-Z])/g, '$1 $2');
-                columnObj.EditorType = this.getEditorTypeByDateType(columnObj.DataType);
+                columnObj.EditorType = tubularTemplate.getEditorTypeByDateType(columnObj.DataType);
 
                 // Grid attributes
                 columnObj.Searchable = columnObj.DataType === 'string';
@@ -235,23 +235,13 @@ var tubularTemplate = {
         });
     },
 
-    /**
-     * Generates the Form's fields template using a column object
-     * 
-     * @param {array} columns 
-     * @returns {string} 
-     */
-    generateFields: function(columns) {
-        return this.generateFieldsArray(columns).join('');
-    },
-
     generatePopup: function(model, title) {
-        var columns = this.createColumns(model);
+        var columns = tubularTemplate.createColumns(model);
 
         return '<tb-form model="Model">' +
             '<div class="modal-header"><h3 class="modal-title">' + (title || 'Edit Row') + '</h3></div>' +
             '<div class="modal-body">' +
-            this.generateFields(columns) +
+            tubularTemplate.generateFieldsArray(columns).join('') +
             '</div>' +
             '<div class="modal-footer">' +
             '<button class="btn btn-primary" ng-click="savePopup()" ng-disabled="!Model.$valid()">Save</button>' +
@@ -282,7 +272,7 @@ var tubularTemplate = {
      */
     generateForm: function(fields, options) {
         var layout = options.Layout === 'Simple' ? '' : options.Layout.toLowerCase();
-        var fieldsArray = this.generateFieldsArray(fields);
+        var fieldsArray = tubularTemplate.generateFieldsArray(fields);
         var fieldsMarkup;
 
         if (layout === '') {
@@ -401,7 +391,7 @@ var tubularTemplate = {
                 (options.Mode === 'Inline' ? '\r\n\t\t\t<tb-save-button model="row"></tb-save-button>' : '') +
                 '\r\n\t\t\t<tb-edit-button model="row"></tb-edit-button>' +
                 '\r\n\t\t</tb-cell-template>' : '') +
-            this.generateCells(columns, options.Mode) +
+            tubularTemplate.generateCells(columns, options.Mode) +
             '\r\n\t</tb-row-template>' +
             '\r\n\t</tb-row-set>' +
             '\r\n\t</tb-grid-table>' +
@@ -1616,6 +1606,7 @@ try {
         }
     ];
 
+
     var tbDropdownEditorCtrl = ['tubularEditorService', '$scope', function(tubular, $scope) {
             var $ctrl = this;
 
@@ -1635,7 +1626,6 @@ try {
                         }
                     }
                 }
-
                 if (angular.isDefined($ctrl.optionsUrl)) {
                     $scope.$watch('optionsUrl', function(val, prev) {
                         if (val === prev) return;
@@ -1967,6 +1957,7 @@ try {
          * @param {string} optionKey Set the property to get the keys.
          * @param {string} defaultValue Set the default value.
          */
+
         .component('tbDropdownEditor', {
             template: '<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">' +
                 '<span ng-hide="$ctrl.isEditing" ng-bind="$ctrl.readOnlyValue"></span>' +
@@ -2344,9 +2335,9 @@ try {
                             controller: [
                                 '$scope', function($innerScope) {
                                     $innerScope.Model = model;
-                                    $innerScope.isInvalid = function() {
-                                        return $innerScope.Model.filter(function(el) { return el.Visible; }).length === 1;
-                                    }
+                                    $innerScope.isInvalid = function () {
+                                        return $innerScope.Model.filter(function (el) { return el.Visible; }).length === 1;
+                                    };
 
                                     $innerScope.closePopup = dialog.close;
                                 }
@@ -4273,9 +4264,10 @@ try {
                 }
 
                 if (!$templateCache.get(me.tbColumnOptionsFilterPopoverTemplateName)) {
+                    // TODO: we need to expose the Key and Label as binding
                     me.tbColumnOptionsFilterPopoverTemplate = '<div>' +
                         '<form class="tubular-column-filter-form" onsubmit="return false;">' +
-                        '<select class="form-control checkbox-list" ng-options="item for item in $ctrl.optionsItems" ' +
+                        '<select class="form-control checkbox-list" ng-options="item.Key as item.Label for item in $ctrl.optionsItems" ' +
                         'ng-model="$ctrl.filter.Argument" multiple ng-disabled="$ctrl.dataIsLoaded == false"></select>&nbsp;' +
                         '<hr />' +
                         '<tb-column-filter-buttons></tb-column-filter-buttons>' +
@@ -4409,6 +4401,8 @@ try {
 
                     $ctrl.applyFilter = function() {
                         $ctrl.filter.HasFilter = true;
+                        var x = $ctrl.filter;
+                        var y = $ctrl.filter.Argument;
                         $ctrl.retrieveData();
                     };
 

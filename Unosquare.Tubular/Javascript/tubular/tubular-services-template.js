@@ -70,6 +70,7 @@
                 }
 
                 if (!$templateCache.get(me.tbColumnOptionsFilterPopoverTemplateName)) {
+                    // TODO: we need to expose the Key and Label as binding
                     me.tbColumnOptionsFilterPopoverTemplate = '<div>' +
                         '<form class="tubular-column-filter-form" onsubmit="return false;">' +
                         '<select class="form-control checkbox-list" ng-options="item.Key as item.Label for item in $ctrl.optionsItems" ' +

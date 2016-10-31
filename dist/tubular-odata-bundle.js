@@ -33,6 +33,12 @@
                     'Lt': "{0} lt {1}"
                 };
 
+                me.getByKey = function (url, key) {
+                    return me.get(url + "(" + key + ")");
+                };
+
+                me.get = tubularHttp.get;
+
                 me.generateUrl = function (request) {
                     var params = request.data;
 

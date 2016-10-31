@@ -182,7 +182,7 @@ var tubularTemplate = {
             if (columns.hasOwnProperty(column)) {
                 var columnObj = columns[column];
                 columnObj.Label = columnObj.Name.replace(/([a-z])([A-Z])/g, '$1 $2');
-                columnObj.EditorType = this.getEditorTypeByDateType(columnObj.DataType);
+                columnObj.EditorType = tubularTemplate.getEditorTypeByDateType(columnObj.DataType);
 
                 // Grid attributes
                 columnObj.Searchable = columnObj.DataType === 'string';
@@ -235,23 +235,13 @@ var tubularTemplate = {
         });
     },
 
-    /**
-     * Generates the Form's fields template using a column object
-     * 
-     * @param {array} columns 
-     * @returns {string} 
-     */
-    generateFields: function(columns) {
-        return this.generateFieldsArray(columns).join('');
-    },
-
     generatePopup: function(model, title) {
-        var columns = this.createColumns(model);
+        var columns = tubularTemplate.createColumns(model);
 
         return '<tb-form model="Model">' +
             '<div class="modal-header"><h3 class="modal-title">' + (title || 'Edit Row') + '</h3></div>' +
             '<div class="modal-body">' +
-            this.generateFields(columns) +
+            tubularTemplate.generateFieldsArray(columns).join('') +
             '</div>' +
             '<div class="modal-footer">' +
             '<button class="btn btn-primary" ng-click="savePopup()" ng-disabled="!Model.$valid()">Save</button>' +
@@ -282,7 +272,7 @@ var tubularTemplate = {
      */
     generateForm: function(fields, options) {
         var layout = options.Layout === 'Simple' ? '' : options.Layout.toLowerCase();
-        var fieldsArray = this.generateFieldsArray(fields);
+        var fieldsArray = tubularTemplate.generateFieldsArray(fields);
         var fieldsMarkup;
 
         if (layout === '') {
@@ -401,7 +391,7 @@ var tubularTemplate = {
                 (options.Mode === 'Inline' ? '\r\n\t\t\t<tb-save-button model="row"></tb-save-button>' : '') +
                 '\r\n\t\t\t<tb-edit-button model="row"></tb-edit-button>' +
                 '\r\n\t\t</tb-cell-template>' : '') +
-            this.generateCells(columns, options.Mode) +
+            tubularTemplate.generateCells(columns, options.Mode) +
             '\r\n\t</tb-row-template>' +
             '\r\n\t</tb-row-set>' +
             '\r\n\t</tb-grid-table>' +
