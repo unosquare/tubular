@@ -39,6 +39,8 @@ describe('Tubular Filters', function () {
         tbTextSearchInput,
         tbTextSearchClearBtn;
 
+    var referenceDate = new Date('02/04/2016 00:00 AM');
+
     beforeAll(function () {
         // Get page
         browser.get('index.html');
@@ -326,7 +328,7 @@ describe('Tubular Filters', function () {
             applyBtn.click()
                 .then(function () {
                     // Verify filtering
-                    dataRows.each(function (row, index) {
+                    dataRows.each(function (row) {
                         row.$$('td').get(1).getText()
                             .then(function (customer) {
 
@@ -409,7 +411,7 @@ describe('Tubular Filters', function () {
                 .then(function () {
                     dataRows.getText()
                         .then(function (modifiedText) {
-                            equalData = (originalData.length == modifiedText.length) && originalData.every(function (element, index) {
+                            equalData = (originalData.length === modifiedText.length) && originalData.every(function (element, index) {
                                 return element === modifiedText[index];
                             });
 
@@ -558,8 +560,7 @@ describe('Tubular Filters', function () {
 
         it('should correctly filter data for the "Greater-or-equal" filtering option', function () {
             var filterOk = true;
-            var referenceDate = new Date('02/04/2016 00:00 AM');
-
+            
             // Set filter and apply it
             filterBtn.click();
             filterSelect.$('[value="string:Gte"]').click();
@@ -582,8 +583,7 @@ describe('Tubular Filters', function () {
 
         it('should corretlly filter data for the "Greater" filtering option', function () {
             var filterOk = true;
-            var referenceDate = new Date('02/04/2016 00:00 AM');
-
+            
             // Set filter and apply it
             filterBtn.click();
             filterSelect.$('[value="string:Gt"]').click();
@@ -606,8 +606,7 @@ describe('Tubular Filters', function () {
 
         it('should correctly filter data for the "Less-or-equal" filtering option', function () {
             var filterOk = true;
-            var referenceDate = new Date('02/04/2016 00:00 AM');
-
+            
             // Set filter and apply it
             filterBtn.click();
             filterSelect.$('[value="string:Lte"]').click();
@@ -630,8 +629,7 @@ describe('Tubular Filters', function () {
 
         it('should correctly filter data for the "Less" filtering option', function () {
             var filterOk = true;
-            var referenceDate = new Date('02/04/2016 00:00 AM');
-
+            
             // Set filter and apply it
             filterBtn.click();
             filterSelect.$('[value="string:Lt"]').click();

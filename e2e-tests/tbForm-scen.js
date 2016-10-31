@@ -14,35 +14,32 @@ describe('tbForm related components', function () {
     /**********************/
     // * tbSimpleEditor * //
     /**********************/
-    var tbSimpleEditor,
-        tbSimpleEditor_input,
+    var tbSimpleEditor_input,
         tbSimpleEditor_label,
         tbSimpleEditor_helper,
         tbSimpleEditor_errorMessages,
         tbSimpleEditorCustomer_original = 'Unosquare LLC';
 
+    var restoreCancelClickFn = function () {
+        return tbFormCancelBtn.isPresent().then(function (present) { if (present) tbFormCancelBtn.click() });
+    };
+
     var tbSimpleEditorRestore = function () {
-        return browser.wait(function () {
-            return tbFormCancelBtn.isPresent().then(function (present) {
-                if (present) {
-                    tbFormCancelBtn.click();
-                }
-            }).then(function () {
-                return tbFormEditBtn1.click().then(function () {
-                    return tbSimpleEditor_input.getAttribute('value').then(function (val) {
-                        if (val != tbSimpleEditorCustomer_original) {
-                            return tbSimpleEditor_input.clear().then(function () {
-                                return tbSimpleEditor_input.sendKeys(tbSimpleEditorCustomer_original).then(function () {
-                                    return tbFormSaveBtn.click().then(trueFunc);
-                                });
+        return browser.wait(restoreCancelClickFn().then(function () {
+            return tbFormEditBtn1.click().then(function () {
+                return tbSimpleEditor_input.getAttribute('value').then(function (val) {
+                    if (val !== tbSimpleEditorCustomer_original) {
+                        return tbSimpleEditor_input.clear().then(function () {
+                            return tbSimpleEditor_input.sendKeys(tbSimpleEditorCustomer_original).then(function () {
+                                return tbFormSaveBtn.click().then(trueFunc);
                             });
-                        } else {
-                            return tbFormCancelBtn.click().then(trueFunc);
-                        }
-                    });
+                        });
+                    } else {
+                        return tbFormCancelBtn.click().then(trueFunc);
+                    }
                 });
             });
-        });
+        }));
     }
 
     /************************/
@@ -56,29 +53,22 @@ describe('tbForm related components', function () {
         tbNumericEditorValue_original = '300';
 
     var tbNumericEditorRestore = function () {
-        return browser.wait(function () {
-            return tbFormCancelBtn.isPresent().then(function (present) {
-                if (present) {
-                    tbFormCancelBtn.click();
-                }
-            })
-                .then(function () {
-                    return tbFormEditBtn1.click().then(function () {
-                        return tbNumericEditor_input.getAttribute('value').then(function (val) {
-                            if (val != tbNumericEditorValue_original) {
-                                return tbNumericEditor_input.clear().then(function () {
-                                    return tbNumericEditor_input.sendKeys(tbNumericEditorValue_original).then(function () {
-                                        return tbFormSaveBtn.click().then(trueFunc);
-                                    });
-                                });
-                            }
-                            else {
-                                return tbFormCancelBtn.click().then(trueFunc);
-                            }
+        return browser.wait(restoreCancelClickFn().then(function () {
+            return tbFormEditBtn1.click().then(function () {
+                return tbNumericEditor_input.getAttribute('value').then(function (val) {
+                    if (val !== tbNumericEditorValue_original) {
+                        return tbNumericEditor_input.clear().then(function () {
+                            return tbNumericEditor_input.sendKeys(tbNumericEditorValue_original).then(function () {
+                                return tbFormSaveBtn.click().then(trueFunc);
+                            });
                         });
-                    });
+                    }
+                    else {
+                        return tbFormCancelBtn.click().then(trueFunc);
+                    }
                 });
-        });
+            });
+        }));
     }
 
     /**************************/
@@ -87,45 +77,36 @@ describe('tbForm related components', function () {
     var tbTypeaheadEditor,
         tbTypeaheadEditor_input,
         tbTypeaheadEditor_label,
-        tbTypeaheadEditor_helper,
         tbTypeaheadEditor_errorMessages,
         tbTypeaheadEditor_options,
         tbTypeaheadEditorCity_original = 'Guadalajara, JAL, Mexico',
         tbTypeaheadEditorCity_originalMatcher = 'Guad';
 
     var tbTypeaheadEditorRestore = function () {
-        return browser.wait(function () {
-            return tbFormCancelBtn.isPresent().then(function (present) {
-                if (present) {
-                    tbFormCancelBtn.click();
-                }
-            })
-                .then(function () {
-                    return tbFormEditBtn1.click().then(function () {
-                        return tbTypeaheadEditor_input.getAttribute('value').then(function (val) {
-                            if (val != tbTypeaheadEditorCity_original) {
-                                return tbTypeaheadEditor_input.clear().then(function () {
-                                    return tbTypeaheadEditor_input.sendKeys(tbTypeaheadEditorCity_originalMatcher).then(function () {
-                                        return tbTypeaheadEditor_options.first().click().then(function () {
-                                            return tbFormSaveBtn.click().then(trueFunc);
-                                        });
-                                    });
+        return browser.wait(restoreCancelClickFn().then(function () {
+            return tbFormEditBtn1.click().then(function () {
+                return tbTypeaheadEditor_input.getAttribute('value').then(function (val) {
+                    if (val !== tbTypeaheadEditorCity_original) {
+                        return tbTypeaheadEditor_input.clear().then(function () {
+                            return tbTypeaheadEditor_input.sendKeys(tbTypeaheadEditorCity_originalMatcher).then(function () {
+                                return tbTypeaheadEditor_options.first().click().then(function () {
+                                    return tbFormSaveBtn.click().then(trueFunc);
                                 });
-                            }
-                            else {
-                                return tbFormCancelBtn.click().then(trueFunc);
-                            }
+                            });
                         });
-                    });
+                    }
+                    else {
+                        return tbFormCancelBtn.click().then(trueFunc);
+                    }
                 });
-        });
-    }
+            });
+        }));
+    };
 
     /**************************/
     //    * tbDateEditor *    //
     /**************************/
-    var tbDateEditor,
-        tbDateEditor_input,
+    var tbDateEditor_input,
         tbDateEditor_label,
         tbDateEditor_helper,
         tbDateEditor_errorMessages,
@@ -133,30 +114,23 @@ describe('tbForm related components', function () {
 
 
     var tbDateEditorRestore = function () {
-        return browser.wait(function () {
-            return tbFormCancelBtn.isPresent().then(function (present) {
-                if (present) {
-                    tbFormCancelBtn.click();
-                }
-            })
-                .then(function () {
-                    return tbFormEditBtn1.click().then(function () {
-                        return tbDateEditor_input.getAttribute('value').then(function (val) {
-                            if (val != tbDateEditorDate_original) {
-                                return tbDateEditor_input.clear().then(function () {
-                                    return tbDateEditor_input.sendKeys(tbDateEditorDate_original).then(function () {
-                                        return tbFormSaveBtn.click().then(trueFunc);
-                                    });
-                                });
-                            }
-                            else {
-                                return tbFormCancelBtn.click().then(trueFunc);
-                            }
+        return browser.wait(restoreCancelClickFn().then(function () {
+            return tbFormEditBtn1.click().then(function () {
+                return tbDateEditor_input.getAttribute('value').then(function (val) {
+                    if (val != tbDateEditorDate_original) {
+                        return tbDateEditor_input.clear().then(function () {
+                            return tbDateEditor_input.sendKeys(tbDateEditorDate_original).then(function () {
+                                return tbFormSaveBtn.click().then(trueFunc);
+                            });
                         });
-                    });
+                    }
+                    else {
+                        return tbFormCancelBtn.click().then(trueFunc);
+                    }
                 });
-        });
-    }
+            });
+        }));
+    };
 
     /**************************/
     //     * tbTextArea *     //
@@ -169,30 +143,23 @@ describe('tbForm related components', function () {
         tbTextAreaCustomer_original = 'Microsoft';
 
     var tbTextAreaRestore = function () {
-        return browser.wait(function () {
-            return tbFormCancelBtn.isPresent().then(function (present) {
-                if (present) {
-                    tbFormCancelBtn.click();
-                }
-            })
-                .then(function () {
-                    return tbFormEditBtn2.click().then(function () {
-                        return tbTextArea_input.getAttribute('value').then(function (val) {
-                            if (val != tbTextAreaCustomer_original) {
-                                return tbTextArea_input.clear().then(function () {
-                                    return tbTextArea_input.sendKeys(tbTextAreaCustomer_original).then(function () {
-                                        return tbFormSaveBtn.click().then(trueFunc);
-                                    });
-                                });
-                            }
-                            else {
-                                return tbFormCancelBtn.click().then(trueFunc);
-                            }
+        return browser.wait(restoreCancelClickFn().then(function () {
+            return tbFormEditBtn2.click().then(function () {
+                return tbTextArea_input.getAttribute('value').then(function (val) {
+                    if (val != tbTextAreaCustomer_original) {
+                        return tbTextArea_input.clear().then(function () {
+                            return tbTextArea_input.sendKeys(tbTextAreaCustomer_original).then(function () {
+                                return tbFormSaveBtn.click().then(trueFunc);
+                            });
                         });
-                    });
+                    }
+                    else {
+                        return tbFormCancelBtn.click().then(trueFunc);
+                    }
                 });
-        });
-    }
+            });
+        }));
+    };
 
     /****************************/
     //  * tbtbDropdownEditor *  //
@@ -201,7 +168,6 @@ describe('tbForm related components', function () {
         tbDropDownEditor_select,
         tbDropDownEditor_label,
         tbDropDownEditor_helper,
-        tbDropDownEditor_errorMessages,
         tbDropDownEditorCity_original = 'string:Guadalajara, JAL, Mexico';
 
     function selectDropDownOption(filterText) {
@@ -213,28 +179,21 @@ describe('tbForm related components', function () {
     };
 
     var tbDropDownEditorRestore = function () {
-        return browser.wait(function () {
-            return tbFormCancelBtn.isPresent().then(function (present) {
-                if (present) {
-                    tbFormCancelBtn.click();
-                }
-            })
-                .then(function () {
-                    return tbFormEditBtn2.click().then(function () {
-                        return tbDropDownEditor_select.getAttribute('value').then(function (val) {
-                            if (val != tbDropDownEditorCity_original) {
-                                return selectDropDownOption('Guadalajara').click().then(function () {
-                                    return tbFormSaveBtn.click().then(trueFunc);
-                                });
-                            }
-                            else {
-                                return tbFormCancelBtn.click().then(trueFunc);
-                            }
+        return browser.wait(restoreCancelClickFn().then(function () {
+            return tbFormEditBtn2.click().then(function () {
+                return tbDropDownEditor_select.getAttribute('value').then(function (val) {
+                    if (val != tbDropDownEditorCity_original) {
+                        return selectDropDownOption('Guadalajara').click().then(function () {
+                            return tbFormSaveBtn.click().then(trueFunc);
                         });
-                    });
+                    }
+                    else {
+                        return tbFormCancelBtn.click().then(trueFunc);
+                    }
                 });
-        });
-    }
+            });
+        }));
+    };
 
     /****************************/
     //  * tbCheckboxField *  //
@@ -243,32 +202,26 @@ describe('tbForm related components', function () {
         tbCheckboxField_onRow;
 
     var tbCheckboxFieldRestore = function () {
-        return browser.wait(function () {
-            return tbFormCancelBtn.isPresent().then(function (present) {
-                if (present) {
-                    tbFormCancelBtn.click();
-                }
-            })
-                .then(function () {
-                    return tbFormEditBtn2.click().then(function () {
-                        return tbCheckboxField.getAttribute('class').then(function (val) {
-                            if (val.indexOf('ng-empty') == -1) {
-                                return tbCheckboxField.click().then(function () {
-                                    return tbFormSaveBtn.click().then(trueFunc);
-                                });
-                            }
-                            else {
-                                return tbFormCancelBtn.click().then(trueFunc);
-                            }
+        return browser.wait(restoreCancelClickFn().then(function () {
+            return tbFormEditBtn2.click().then(function () {
+                return tbCheckboxField.getAttribute('class').then(function (val) {
+                    if (val.indexOf('ng-empty') === -1) {
+                        return tbCheckboxField.click().then(function () {
+                            return tbFormSaveBtn.click().then(trueFunc);
                         });
-                    });
+                    }
+                    else {
+                        return tbFormCancelBtn.click().then(trueFunc);
+                    }
                 });
-        });
-    }
+            });
+        }));
+    };
 
     beforeAll(function () {
         browser.get('index.html');
         element(by.id('testsSelector')).click();
+
         element(by.id('tbFormTest')).click().then(function () {
             // Save and Cancel buttons
             tbFormSaveBtn = $('div.modal-dialog form').$('#btnSave');
@@ -351,7 +304,6 @@ describe('tbForm related components', function () {
             tbDropDownEditor = $('div.modal-dialog form').$('tb-dropdown-editor');
             tbDropDownEditor_select = tbDropDownEditor.$('select');
             tbDropDownEditor_label = tbDropDownEditor.$('label');
-            tbDropDownEditor_errorMessages = tbDropDownEditor.all(by.repeater('error in $ctrl.state.$errors'));
             tbDropDownEditor_helper = tbDropDownEditor.$$('span').filter(function (elem, index) {
                 return elem.getAttribute('ng-show').then(function (val) {
                     return val != null ? val.indexOf('$ctrl.help') != -1 : false;
@@ -535,24 +487,6 @@ describe('tbForm related components', function () {
 
     });
 
-    describe('tbHiddenField', function () {
-
-        beforeAll(function () {
-            tbFormEditBtn2 = element.all(by.repeater('row in $component.rows')).first().$$('td').first().$$('button').last();
-
-            tbFormCancelBtn.isPresent().then(function (present) {
-                if (present) {
-                    tbFormCancelBtn.click();
-                }
-            }).then(tbFormEditBtn2.click);
-        });
-
-        it('should be present and contain the attribute-defined value', function () {
-            expect($('tb-hidden-field').getAttribute('value')).toMatch('YouDontSeeMe');
-        });
-
-    });
-
     describe('tbDateEditor', function () {
 
         beforeAll(function () {
@@ -561,7 +495,6 @@ describe('tbForm related components', function () {
             tbFormEditBtn1 = element.all(by.repeater('row in $component.rows')).get(3).$$('td').first().$$('button').first();
 
             // tbSimpleEditor component and subcomponents
-            tbDateEditor = $('div.modal-dialog form').$('tb-date-editor');
             tbDateEditor_input = $('div.modal-dialog form').$('tb-date-editor').$('input');
             tbDateEditor_label = $('div.modal-dialog form').$('tb-date-editor').$('label');
             tbDateEditor_errorMessages = $('div.modal-dialog form').$('tb-date-editor').all(by.repeater('error in $ctrl.state.$errors'));
@@ -674,11 +607,6 @@ describe('tbForm related components', function () {
             tbTypeaheadEditor = $('div.modal-dialog form').$('tb-typeahead-editor');
             tbTypeaheadEditor_input = tbTypeaheadEditor.$('input');
             tbTypeaheadEditor_label = tbTypeaheadEditor.$('label');
-            tbTypeaheadEditor_helper = $('div.modal-dialog form').$('tb-typeahead-editor').$$('span').filter(function (elem, index) {
-                return elem.getAttribute('ng-show').then(function (val) {
-                    return val != null ? val.indexOf('help') != -1 : false;
-                });
-            }).first();
             tbTypeaheadEditor_errorMessages = tbTypeaheadEditor.all(by.repeater('error in state.$errors'));
             tbTypeaheadEditor_options = tbTypeaheadEditor.all(by.repeater('match in matches track by $index'));
 
@@ -788,7 +716,6 @@ describe('tbForm related components', function () {
             // 3rd element in list, should be: <OrderID = 3 , Customer Name = Unosquare LLC ... >
             tbFormEditBtn1 = element.all(by.repeater('row in $component.rows')).get(2).$$('td').first().$$('button').first();
             // tbSimpleEditor component and subcomponents
-            tbSimpleEditor = $('div.modal-dialog form').$('tb-simple-editor');
             tbSimpleEditor_input = $('div.modal-dialog form').$('tb-simple-editor').$('input');
             tbSimpleEditor_label = $('div.modal-dialog form').$('tb-simple-editor').$('label');
             tbSimpleEditor_errorMessages = $('div.modal-dialog form').$('tb-simple-editor').all(by.repeater('error in $ctrl.state.$errors'));
