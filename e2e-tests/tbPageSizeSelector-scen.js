@@ -39,10 +39,8 @@ describe('tbPageSizeSelctor', function(){
         nextPageBtn = element(by.tagName('tb-grid-pager')).$('li.pagination-next a');
     });
     
-    beforeEach(function(){
-        // Go to page 1 before every test if not there
-        firstPageBtn.click();
-    });
+    // Go to page 1 before every test if not there
+    beforeEach(firstPageBtn.click);
     
     it('should filter up to 10 data rows per page when selecting a page size of "10"', function(){        
         // Select '10' on tbPageSizeSelector

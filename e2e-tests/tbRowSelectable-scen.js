@@ -4,7 +4,7 @@
 //tbRowSelectable test
 describe('tbRowSelectable', function () {
     beforeAll(function(){
-         browser.get('index.html');
+        browser.get('index.html');
         element(by.id('testsSelector')).click();
         element(by.id('tbRowSelectable')).click();
     });

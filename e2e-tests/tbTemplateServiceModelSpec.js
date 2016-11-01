@@ -155,14 +155,6 @@ describe('tubularTemplateServiceModule', function () {
         });
     });
 
-    describe('#generateFields()', function () {
-        var htmlOutput = tubularTemplateServiceModule.generateFields(columns);
-
-        it('should html match', function () {
-            expect(htmlOutput).toMatch(genFields);
-        });
-    });
-
     describe('#generatePopup()', function () {
         var htmlOutput = tubularTemplateServiceModule.generatePopup(models, "TEST");
 

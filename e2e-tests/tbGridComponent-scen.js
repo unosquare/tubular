@@ -71,6 +71,7 @@ describe('tbGridComponents', function () {
         var lastItem = element.all(by.repeater('row in $component.rows')).last();
         lastItem.$('tb-remove-button').click().then(function () {
             expect($('div.popover').isDisplayed()).toBe(true);
+
             $('div.popover').$$('button').first().click().then(function() {
                 element.all(by.repeater('row in $component.rows')).count().then(function (count) {
                     expect(count).not.toBe(originalCount);
