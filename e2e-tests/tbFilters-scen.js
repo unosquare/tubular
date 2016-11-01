@@ -71,9 +71,7 @@ describe('Tubular Filters', function () {
                 .then(function () {
                     element(by.tagName('tb-grid-pager')).$('.pagination-first a').click().then(function () {
                         filterBtn.click().then(function () {
-                            clearBtn.click().then(function () {
-                                loadData();
-                            });
+                            clearBtn.click().then(loadData);
                         });
                     });
                 });
@@ -85,9 +83,7 @@ describe('Tubular Filters', function () {
                 .then(function () {
                     element(by.tagName('tb-grid-pager')).$('.pagination-first a').click().then(function () {
                         filterBtn.click().then(function () {
-                            clearBtn.click().then(function () {
-                                loadData();
-                            });
+                            clearBtn.click().then(loadData);
                         });
                     });
                 });
