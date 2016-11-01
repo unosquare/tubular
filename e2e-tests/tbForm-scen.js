@@ -370,7 +370,7 @@ describe('tbForm related components', function () {
             // 1st element in list, should be: <OrderID = 1 , Customer Name = Microsoft ... >
             tbFormEditBtn2 = element.all(by.repeater('row in $component.rows')).first().$$('td').first().$$('button').last();
             // tbTextArea component and subcomponents
-            tbTextArea = $('div.modal-dialog form').$('tb-text-area');
+            tbTextArea = $('div.modal-dialog').$('tb-text-area');
             tbTextArea_input = tbTextArea.$('textarea');
             tbTextArea_label = tbTextArea.$('label');
             tbTextArea_errorMessages = tbTextArea.all(by.repeater('error in $ctrl.state.$errors'));
@@ -442,17 +442,18 @@ describe('tbForm related components', function () {
             var errorPresent = false;
 
             tbTextArea_input.clear().then(function () {
-                tbTextArea_errorMessages.getText().then(function (errorsArray) {
-                    errorsArray.forEach(function (val) {
-                        if (val == 'The field is required.') {
-                            errorPresent = true;
-                        }
+                    tbTextArea_errorMessages.getText().then(function (errorsArray) {
+                        errorsArray.forEach(function (val) {
+                            tbTextArea_input.sendKeys(val);
+                            if (val == 'The field is required.') {
+                                errorPresent = true;
+                            }
+                        });
+                            // Expect required error to display
+                            expect(errorPresent).toBe(true);
+                        })
                     });
-                    // Expect required error to display
-                    expect(errorPresent).toBe(true);
-                });
             });
-        });
 
         it('should submit modifications to item/server when clicking form "Save"', function () {
             tbTextArea_input.clear().then(function () {
