@@ -443,18 +443,18 @@ describe('tbForm related components', function () {
             var errorPresent = false;
 
             tbTextArea_input.clear().then(function () {
-                    tbTextArea_errorMessages.getText().then(function (errorsArray) {
-                        errorsArray.forEach(function (val) {
-                            tbTextArea_input.sendKeys(val);
-                            if (val == 'The field is required.') {
-                                errorPresent = true;
-                            }
-                        });
-                            // Expect required error to display
-                            expect(errorPresent).toBe(true);
-                        })
+                tbTextArea_errorMessages.getText().then(function (errorsArray) {
+                    errorsArray.forEach(function (val) {
+                        tbTextArea_input.sendKeys(val);
+                        if (val == 'The field is required.') {
+                            errorPresent = true;
+                        }
                     });
+                    // Expect required error to display
+                    expect(errorPresent).toBe(true);
+                })
             });
+        });
 
         it('should submit modifications to item/server when clicking form "Save"', function () {
             tbTextArea_input.clear().then(function () {
@@ -820,7 +820,7 @@ describe('tbForm related components', function () {
             expect(tbSimpleEditor_helper.getText()).toMatch("This doesn't help at all");
         });
 
-        
+
         it('should require the field when the attribute "required" is true', function () {
             var errorPresent = false;
 
@@ -958,6 +958,8 @@ describe('tbForm related components', function () {
             tbNumericEditor_input.clear().then(function () {
                 tbNumericEditor_errorMessages.getText().then(function (errorsArray) {
                     errorsArray.forEach(function (val) {
+                        var x = val == 'The field is required.' ? '1' : '0';
+                        tbNumericEditor_input.sendKeys(x);
                         if (val == 'The field is required.') {
                             errorPresent = true;
                         }
