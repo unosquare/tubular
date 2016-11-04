@@ -30,7 +30,6 @@ describe('tbColumn', function() {
         // Select '100' on tbPageSizeSelector
         element(by.model('$ctrl.$component.pageSize'))
             .$('[value="number:100"]').click();
-
         /**********************/
         // * Test variables * //
         /**********************/
@@ -69,7 +68,7 @@ describe('tbColumn', function() {
             // Clear possible sorting and start with default
             aShippedDateSorting.click();
             aShippedDateSorting.click();
-            dataSetHigherDate = firstDataRow.$$('td').first().getText();
+            dataSetHigherDate = firstDataRow.$$('td').get(2).getText(); //It's getting the id, not the date
             aOrderIdSorting.click();
             iSortIcon.getAttribute('class').then(function(sortIconClass) {
                 if (sortIconClass.indexOf('arrow') !== -1) {
@@ -111,7 +110,7 @@ describe('tbColumn', function() {
             expect(lastDataRow.$$('td').get(1).getText()).toBe(dataSetLowerCustomerName);
         });
 
-        it('should order data in ascending order when click-sorting an unsorted date column', function() {
+        it('should order data in ascending order when click-sorting an unsorted date column', function () {
             aShippedDateSorting.click();
 
             expect(firstDataRow.$$('td').get(2).getText()).toMatch(dataSetLowerDate);
