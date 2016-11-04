@@ -57,9 +57,9 @@ describe('tbGridComponents', function () {
         var lastItem = element.all(by.repeater('row in $component.rows')).last();
         
         lastItem.$$('td').last().getText().then(function(originalValue) {
-            lastItem.$$('button').get(2).click().then(function() {
+            lastItem.$$('button').get(2).click().then(function () {
                 lastItem.$('input').sendKeys('TEST');
-                lastItem.$$('button').get(1).click().then(function() {
+                lastItem.$$('button').get(1).click().then(function () {
                     expect(lastItem.$$('td').last().getText()).toBe(originalValue);
                 });
             });
