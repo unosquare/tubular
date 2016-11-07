@@ -68,7 +68,7 @@ describe('tbColumn', function() {
             // Clear possible sorting and start with default
             aShippedDateSorting.click();
             aShippedDateSorting.click();
-            dataSetHigherDate = firstDataRow.$$('td').get(2).getText(); //It's getting the id, not the date
+            dataSetHigherDate = firstDataRow.$$('td').get(2).getText();
             aOrderIdSorting.click();
             iSortIcon.getAttribute('class').then(function(sortIconClass) {
                 if (sortIconClass.indexOf('arrow') !== -1) {
@@ -109,18 +109,16 @@ describe('tbColumn', function() {
             expect(firstDataRow.$$('td').get(1).getText()).toBe(dataSetHigherCustomerName);
             expect(lastDataRow.$$('td').get(1).getText()).toBe(dataSetLowerCustomerName);
         });
-
         it('should order data in ascending order when click-sorting an unsorted date column', function () {
             aShippedDateSorting.click();
-
             expect(firstDataRow.$$('td').get(2).getText()).toMatch(dataSetLowerDate);
             expect(lastDataRow.$$('td').get(2).getText()).toMatch(dataSetHigherDate);
+            aShippedDateSorting.click();
+            aShippedDateSorting.click();
         });
-
-        it('should order data in descending order when click-sorting an ascending-sorted date column', function() {
+        it('should order data in descending order when click-sorting an ascending-sorted date column', function () {
             aShippedDateSorting.click();
             aShippedDateSorting.click();
-
             expect(firstDataRow.$$('td').get(2).getText()).toMatch(dataSetHigherDate);
             expect(lastDataRow.$$('td').get(2).getText()).toMatch(dataSetLowerDate);
         });
@@ -148,7 +146,6 @@ describe('tbColumn', function() {
         it('should export grid', function() {
             element(by.tagName('tb-export-button')).click().then(function() {
                 element(by.tagName('tb-export-button')).$$('a').first().click().then(function() {
-                    // TODO: Check FS? http://stackoverflow.com/questions/21935696/protractor-e2e-test-case-for-downloading-pdf-file
                 });
             });
         });
