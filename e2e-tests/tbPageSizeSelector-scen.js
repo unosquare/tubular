@@ -67,8 +67,8 @@ describe('tbPageSizeSelctor', function(){
         // Go to next page of results (page 2)
         nextNavBtn.click();
         
-        expect(firstDataRow.$$('td').first().getText()).toBe('21');
-        expect(lastDataRow.$$('td').first().getText()).toBe('40');
+        expect(firstDataRow.$$('td').first().getText()).toMatch('21');
+        expect(lastDataRow.$$('td').first().getText()).toMatch('40');
         expect(dataRowsCollection.count()).toBe(20);
     });
     
@@ -78,17 +78,18 @@ describe('tbPageSizeSelctor', function(){
         tbPageSizeSelector.$('[value="number:50"]').click();
         
         // Verifying results on results-page 1
-        expect(firstDataRow.$$('td').first().getText()).toBe('1');
-        expect(lastDataRow.$$('td').first().getText()).toBe('50');
+        expect(firstDataRow.$$('td').first().getText()).toMatch('1');
+        expect(lastDataRow.$$('td').first().getText()).toMatch('50');
         expect(dataRowsCollection.count()).toBe(50);
         
         // Go to next page of results (page 2)
         nextNavBtn.click();
         
         // Verifying results on results-page 2
-        expect(firstDataRow.$$('td').first().getText()).toBe('51');
-        expect(lastDataRow.$$('td').first().getText()).toBe('53');
+        expect(firstDataRow.$$('td').first().getText()).toMatch('51');
+        expect(lastDataRow.$$('td').first().getText()).toMatch('53');
         expect(dataRowsCollection.count()).toBe(3);
+        firstNavBtn.click();
     });
     
     it('should filter up to 100 data rows per page when selecting a page size of "100"', function(){
@@ -96,8 +97,8 @@ describe('tbPageSizeSelctor', function(){
         tbPageSizeSelector.$('select').click();
         tbPageSizeSelector.$('[value="number:100"]').click();
         
-        expect(firstDataRow.$$('td').first().getText()).toBe('1');
-        expect(lastDataRow.$$('td').first().getText()).toBe('53');
+        expect(firstDataRow.$$('td').first().getText()).toMatch('1');
+        expect(lastDataRow.$$('td').first().getText()).toMatch('53');
         expect(dataRowsCollection.count()).toBe(53);
     });
     
