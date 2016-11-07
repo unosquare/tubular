@@ -116,21 +116,16 @@ describe('tbGridPager', function () {
     });
 
     describe('page navigation', function () {
-
-        // Go to first page
-        beforeEach(firstNavBtn.$('a').click);
-
+    
         it('should go to next results page when clicking on next navigation button', function () {
+            firstNavBtn.$('a').click();
             nextNavBtn.$('a').click();
-
             expect(firstDataRow.getText()).toMatch(/^11\s/);
         });
 
         it('should go to previous results page when clicking on previous navigation button', function () {
             // Go to next-to-next page (page 3)
             nextNavBtn.$('a').click();
-            nextNavBtn.$('a').click();
-
             // Go back one page (page 2)
             previousNavBtn.$('a').click();
 
