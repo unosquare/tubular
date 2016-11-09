@@ -111,18 +111,17 @@ describe('tbForm related components', function () {
         tbDateEditor_label,
         tbDateEditor_helper,
         tbDateEditor_errorMessages,
-        tbDateEditorDate_original = '15/02/2016';
+        tbDateEditorDate_modified = "05/08/2016",
+        tbDateEditorDate_original = "01/30/2016";
 
 
     var tbDateEditorRestore = function () {
         return browser.wait(restoreCancelClickFn().then(function () {
             return tbFormEditBtn1.click().then(function () {
-                return tbDateEditor_input.getAttribute('value').then(function (val) {
+                return tbDateEditor_input.getAttribute("value").then(function (val) {
                     if (val != tbDateEditorDate_original) {
-                        return tbDateEditor_input.sendKeys('').then(function () {
-                            return tbDateEditor_input.sendKeys(tbDateEditorDate_original).then(function () {
-                                return tbFormSaveBtn.click().then(trueFunc);
-                            });
+                        return tbDateEditor_input.sendKeys(tbDateEditorDate_original).then(function () {
+                            return tbFormSaveBtn.click().then(trueFunc);
                         });
                     }
                     else {
@@ -132,6 +131,15 @@ describe('tbForm related components', function () {
             });
         }));
     };
+
+    var compareDates = function (a, b) {
+        var currentValue = new Date(a);
+        var currentDate = new Date(currentValue.getFullYear(), currentValue.getMonth(), currentValue.getDate(), 0, 0, 0, 0);
+        var expectedValue = new Date(b);
+        var expectedDate = new Date(expectedValue.getFullYear(), expectedValue.getMonth(), expectedValue.getDate(), 0, 0, 0, 0);
+        return (currentDate.toDateString() == expectedDate.toDateString());
+    };
+
 
     /**************************/
     //     * tbTextArea *     //
@@ -494,10 +502,7 @@ describe('tbForm related components', function () {
         beforeAll(function () {
             //* Assign test variables *\\
             // 4th element in list, should be: <OrderID = 4 , Customer Name = Unosquare LLC, Shipped Date = 1/30/16  ... >
-            tbFormEditBtn1 = element.all(by.repeater('row in $component.rows')).get(3).$$('td').first().$$('button').first();
-
-            // tbSimpleEditor component and subcomponents
-            tbDateEditor_input = $('div.modal-dialog form').$('tb-date-editor').$('input');
+            tbDateEditor_input = $('tb-date-editor').$('input');
             tbDateEditor_label = $('div.modal-dialog form').$('tb-date-editor').$('label');
             tbDateEditor_errorMessages = $('div.modal-dialog form').$('tb-date-editor').all(by.repeater('error in $ctrl.state.$errors'));
             tbDateEditor_helper = $('div.modal-dialog form').$('tb-date-editor').$$('span').filter(function (elem) {
@@ -505,6 +510,8 @@ describe('tbForm related components', function () {
                     return val != null ? val.indexOf('$ctrl.help') != -1 : false;
                 });
             }).first();
+
+            tbSimpleEditor_input = $('div.modal-dialog form').$('tb-simple-editor').$('input');
 
             //* Restore default value and open form popup *\\
             tbDateEditorRestore().then(tbFormEditBtn1.click);
@@ -516,16 +523,17 @@ describe('tbForm related components', function () {
         });
 
         it('should set initial date value to the value of "value" attribute when defined', function () {
-            expect(tbDateEditor_input.getAttribute('value')).toMatch(tbDateEditorDate_original);
+            tbDateEditor_input.getAttribute("value").then(function (value) {
+                expect(compareDates(tbDateEditorDate_original, value)).toBe(true);
+            });
         });
 
         it('should be invalidated when the date is not in the range of "min" and "max" attributes', function () {
             var errorPresent = false;
             var messageCount;
-
-            tbDateEditor_input.clear().then(function () {
+            tbDateEditor_input.sendKeys("").then(function () {
                 // input  an invalid < min date
-                tbDateEditor_input.sendKeys('02/20/2015').then(function () {
+                tbDateEditor_input.sendKeys("02/20/2015").then(function () {
                     tbDateEditor_errorMessages.getText().then(function (errorsArray) {
                         errorsArray.forEach(function (val) {
                             if (val == 'The minimum date is 01/28/2016.') {
@@ -541,8 +549,9 @@ describe('tbForm related components', function () {
                             messageCount = count;
                         })
                             .then(function () {
-                                tbDateEditor_input.clear().then(function () {
-                                    tbDateEditor_input.sendKeys('05/08/2016').then(function () {
+                                tbDateEditor_label.click();
+                                tbDateEditor_input.sendKeys("").then(function () {
+                                    tbDateEditor_input.sendKeys("05/08/2016").then(function () {
                                         // Expect min date error to have been removed
                                         expect(tbDateEditor_errorMessages.count()).toBeLessThan(messageCount);
                                     });
@@ -550,8 +559,8 @@ describe('tbForm related components', function () {
                             });
                     })
                     .then(function () {
-                        tbDateEditor_input.clear().then(function () {
-                            tbDateEditor_input.sendKeys('06/11/2016').then(function () {
+                        tbDateEditor_input.sendKeys("").then(function () {
+                            tbDateEditor_input.sendKeys("06/11/2016").then(function () {
                                 // Expect max chars error to be displayed
                                 expect(tbDateEditor_errorMessages.count()).toBe(messageCount);
                             });
@@ -568,13 +577,11 @@ describe('tbForm related components', function () {
             expect(tbDateEditor_helper.getText()).toMatch("Date help");
         });
         it('should submit modifications to item/server when clicking form "Save"', function () {
-            tbDateEditor_input.clear().then(function () {
-                tbDateEditor_input.sendKeys('15/09/2016').then(function () {
-                    tbFormSaveBtn.click().then(function () {
-                        tbFormEditBtn1.click().then(function () {
-                            tbDateEditor_input.getAttribute('value').then(function (text) {
-                                expect(text).toMatch('15/09/2016');
-                            });
+            tbDateEditor_input.sendKeys(tbDateEditorDate_modified).then(function () {
+                tbFormSaveBtn.click().then(function () {
+                    tbFormEditBtn1.click().then(function () {
+                        tbDateEditor_input.getAttribute("value").then(function (value) {
+                            expect(compareDates(tbDateEditorDate_modified, value)).toBe(true);
                         });
                     });
                 });
@@ -582,16 +589,11 @@ describe('tbForm related components', function () {
         });
 
         it('should NOT submit modifications to item/server when clicking form "Cancel"', function () {
-            tbDateEditor_input.getAttribute('value').then(function (text) {
-                expect(text).toMatch(tbDateEditorDate_original);
-            })
-            .then(function () {
-                tbDateEditor_input.sendKeys('05/05/2016').then(function () {
-                    tbFormCancelBtn.click().then(function () {
-                        tbFormEditBtn1.click().then(function () {
-                            tbDateEditor_input.getAttribute('value').then(function (text) {
-                                expect(text).toMatch(tbDateEditorDate_original);
-                            });
+            tbDateEditor_input.sendKeys(tbDateEditorDate_modified).then(function () {
+                tbFormCancelBtn.click().then(function () {
+                    tbFormEditBtn1.click().then(function () {
+                        tbDateEditor_input.getAttribute("value").then(function (value) {
+                            expect(compareDates(value, tbDateEditorDate_original)).toBe(true);
                         });
                     });
                 });
