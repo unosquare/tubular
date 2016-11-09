@@ -502,6 +502,7 @@ describe('tbForm related components', function () {
         beforeAll(function () {
             //* Assign test variables *\\
             // 4th element in list, should be: <OrderID = 4 , Customer Name = Unosquare LLC, Shipped Date = 1/30/16  ... >
+            tbFormEditBtn1 = element.all(by.repeater('row in $component.rows')).get(1).$$('td').first().$$('button').first();
             tbDateEditor_input = $('tb-date-editor').$('input');
             tbDateEditor_label = $('div.modal-dialog form').$('tb-date-editor').$('label');
             tbDateEditor_errorMessages = $('div.modal-dialog form').$('tb-date-editor').all(by.repeater('error in $ctrl.state.$errors'));
@@ -524,7 +525,7 @@ describe('tbForm related components', function () {
 
         it('should set initial date value to the value of "value" attribute when defined', function () {
             tbDateEditor_input.getAttribute("value").then(function (value) {
-                expect(compareDates(tbDateEditorDate_original, value)).toBe(true);
+                expect(compareDates(value, tbDateEditorDate_original)).toBe(true);
             });
         });
 
@@ -593,7 +594,7 @@ describe('tbForm related components', function () {
                 tbFormCancelBtn.click().then(function () {
                     tbFormEditBtn1.click().then(function () {
                         tbDateEditor_input.getAttribute("value").then(function (value) {
-                            expect(compareDates(value, tbDateEditorDate_original)).toBe(true);
+                            expect(compareDates(tbDateEditorDate_original, value)).toBe(true);
                         });
                     });
                 });
