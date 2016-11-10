@@ -14,7 +14,7 @@ describe('tbColumn', function() {
         iSortIcon,
         aOrderIdSorting,
         aCustomerNameSorting,
-        aShippedDateSorting;
+        aCreationDateSorting;
 
     beforeAll(function() {
         // Go to test
@@ -50,25 +50,25 @@ describe('tbColumn', function() {
             .$$('tr th').get(1)
             .$('a');
         // Sort Shipped Date column link
-        aShippedDateSorting = element(by.tagName('thead'))
-            .$$('tr th').get(2)
+        aCreationDateSorting = element(by.tagName('thead'))
+            .$$('tr th').get(3)
             .$('a');
     });
 
     describe('Grid Sorting', function() {
 
         var dataSetLowerId = '1',
-            dataSetHigherId = '53',
-            dataSetLowerCustomerName = 'Advanced Technology Systems',
-            dataSetHigherCustomerName = 'Vesta',
-            dataSetLowerDate = /1\/28\/16 \d:17.*/,
+            dataSetHigherId = '49',
+            dataSetLowerCustomerName = 'Unosquare LLC',
+            dataSetHigherCustomerName = 'Unosquare LLC',
+            dataSetLowerDate = /12\/30\/15 \d:17.*/,
             dataSetHigherDate;
 
         beforeEach(function() {
             // Clear possible sorting and start with default
-            aShippedDateSorting.click();
-            aShippedDateSorting.click();
-            dataSetHigherDate = firstDataRow.$$('td').get(2).getText();
+            aCreationDateSorting.click();
+            aCreationDateSorting.click();
+            dataSetHigherDate = firstDataRow.$$('td').get(3).getText();
             aOrderIdSorting.click();
             iSortIcon.getAttribute('class').then(function(sortIconClass) {
                 if (sortIconClass.indexOf('arrow') !== -1) {
@@ -110,15 +110,15 @@ describe('tbColumn', function() {
             expect(lastDataRow.$$('td').get(1).getText()).toBe(dataSetLowerCustomerName);
         });
         it('should order data in ascending order when click-sorting an unsorted date column', function () {
-            aShippedDateSorting.click();
+            aCreationDateSorting.click();
             expect(firstDataRow.$$('td').get(2).getText()).toMatch(dataSetLowerDate);
             expect(lastDataRow.$$('td').get(2).getText()).toMatch(dataSetHigherDate);
-            aShippedDateSorting.click();
-            aShippedDateSorting.click();
+            aCreationDateSorting.click();
+            aCreationDateSorting.click();
         });
         it('should order data in descending order when click-sorting an ascending-sorted date column', function () {
-            aShippedDateSorting.click();
-            aShippedDateSorting.click();
+            aCreationDateSorting.click();
+            aCreationDateSorting.click();
             expect(firstDataRow.$$('td').get(2).getText()).toMatch(dataSetHigherDate);
             expect(lastDataRow.$$('td').get(2).getText()).toMatch(dataSetLowerDate);
         });

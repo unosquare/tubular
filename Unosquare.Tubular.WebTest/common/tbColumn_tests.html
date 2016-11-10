@@ -45,6 +45,12 @@
                                     <span>{{label}}</span>
                                 </tb-column-header>
                             </tb-column>
+                            <tb-column name="CreationDate" sortable="true"
+                                       column-type="datetimeutc">
+                                <tb-column-header>
+                                    <span>{{label}}</span>
+                                </tb-column-header>
+                            </tb-column>
                             <tb-column name="ShipperCity" sortable="true">
                                 <tb-column-header>
                                     <span>{{label}}</span>
@@ -61,6 +67,9 @@
                                 </tb-cell-template>
                                 <tb-cell-template>
                                     {{row.ShippedDate | date: 'short'}}
+                                </tb-cell-template>
+                                <tb-cell-template>
+                                    {{row.CreationDate | date: 'M/dd/yyyy'}}
                                 </tb-cell-template>
                                 <tb-cell-template>
                                     {{row.ShipperCity}}
