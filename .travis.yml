@@ -1,5 +1,7 @@
 language: csharp
 solution: Unosquare.Tubular.Lib.sln
+notifications:
+  slack: unolabs:cbusXPH6pBwZ35rVDzi4k4ve
 install:
   - nuget restore Unosquare.Tubular.Lib.sln
   - nuget install NUnit.ConsoleRunner -OutputDirectory testrunner
