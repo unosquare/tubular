@@ -59,8 +59,8 @@ describe('tbColumn', function() {
 
         var dataSetLowerId = '1',
             dataSetHigherId = '49',
-            dataSetLowerCustomerName = 'Unosquare LLC',
-            dataSetHigherCustomerName = 'Unosquare LLC',
+            dataSetLowerCustomerName = 'Advanced Technology Systems',
+            dataSetHigherCustomerName = 'Vesta',
             dataSetLowerDate = /12\/30\/15 \d:17.*/,
             dataSetHigherDate;
 
@@ -111,16 +111,16 @@ describe('tbColumn', function() {
         });
         it('should order data in ascending order when click-sorting an unsorted date column', function () {
             aCreationDateSorting.click();
-            expect(firstDataRow.$$('td').get(2).getText()).toMatch(dataSetLowerDate);
-            expect(lastDataRow.$$('td').get(2).getText()).toMatch(dataSetHigherDate);
+            expect(firstDataRow.$$('td').get(3).getText()).toMatch(dataSetLowerDate);
+            expect(lastDataRow.$$('td').get(3).getText()).toMatch(dataSetHigherDate);
             aCreationDateSorting.click();
             aCreationDateSorting.click();
         });
         it('should order data in descending order when click-sorting an ascending-sorted date column', function () {
             aCreationDateSorting.click();
             aCreationDateSorting.click();
-            expect(firstDataRow.$$('td').get(2).getText()).toMatch(dataSetHigherDate);
-            expect(lastDataRow.$$('td').get(2).getText()).toMatch(dataSetLowerDate);
+            expect(firstDataRow.$$('td').get(3).getText()).toMatch(dataSetHigherDate);
+            expect(lastDataRow.$$('td').get(3).getText()).toMatch(dataSetLowerDate);
         });
 
     });
