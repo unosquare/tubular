@@ -1,4 +1,4 @@
-module.exports = function (grunt) {
+module.exports = function(grunt) {
     // Load grunt tasks automatically
     require('load-grunt-tasks')(grunt);
     grunt.loadNpmTasks('grunt-coveralls');
@@ -8,13 +8,18 @@ module.exports = function (grunt) {
         copy: {
             instrument: {
                 files: [{
-                    src: ['Unosquare.Tubular.WebTest/**/*', '!Unosquare.Tubular.WebTest/**/*.js'],
+                    src: ['test/Unosquare.Tubular.WebTest/**/*', '!Unosquare.Tubular.WebTest/**/*.js'],
                     dest: 'instrumented/'
                 }]
             }
         },
         instrument: {
-            files: ['Unosquare.Tubular.WebTest/**/*.js', 'Unosquare.Tubular/Javascript/tubular/**/*.js', 'Unosquare.Tubular/Javascript/tubular-odata/**/*.js','Unosquare.Tubular/Javascript/tubular-localdata/**/*.js'],
+            files: [
+                'test/Unosquare.Tubular.WebTest/**/*.js',
+                'src/Unosquare.Tubular/Javascript/tubular/**/*.js',
+                'src/Unosquare.Tubular/Javascript/tubular-odata/**/*.js',
+                'src/Unosquare.Tubular/Javascript/tubular-localdata/**/*.js'
+            ],
             options: {
                 lazy: true,
                 basePath: "instrumented"
@@ -24,8 +29,7 @@ module.exports = function (grunt) {
             dist: {
                 files: { 'instrumented/Unosquare.Tubular.WebTest/': 'instrumented/Unosquare.Tubular.WebTest/**/*.html' },
                 options: {
-                    replacements: [
-                        {
+                    replacements: [{
                             pattern: /"\/Unosquare\.Tubular\.WebTest\/testApp\.js/g,
                             replacement: '"/instrumented/Unosquare.Tubular.WebTest/testApp.js'
                         },
@@ -55,22 +59,21 @@ module.exports = function (grunt) {
             }
         },
         protractor_coverage: {
-            options: {                
+            options: {
                 keepAlive: true,
                 noColor: false,
                 collectorPort: 9001,
                 webdriverManagerUpdate: true,
-                configFile: "e2e-tests/protractor.conf.grunt.js"        
+                configFile: "test/e2e-tests/protractor.conf.grunt.js"
             },
             remote: {
                 options: {
-                    configFile: "e2e-tests/protractor.conf.grunt.js",
                     coverageDir: 'coverage',
                     args: {
                         baseUrl: 'http://localhost:9000/instrumented/Unosquare.Tubular.WebTest/',
                         browser: "firefox"
-                        // sauceUser: 'geoperez',
-                        // sauceKey: 'dd986cd7-696b-433a-941e-3820d83aa09a'
+                            // sauceUser: 'geoperez',
+                            // sauceKey: 'dd986cd7-696b-433a-941e-3820d83aa09a'
                     }
                 }
             },

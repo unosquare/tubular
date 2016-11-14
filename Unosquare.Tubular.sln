@@ -3,13 +3,10 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unosquare.Tubular", "Unosquare.Tubular\Unosquare.Tubular.csproj", "{1A8F5423-F375-4ADD-82A7-5B93182219FF}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unosquare.Tubular.Sample", "Unosquare.Tubular.Sample\Unosquare.Tubular.Sample.csproj", "{FB930993-4912-4022-9435-718B3E576478}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Folder", "Solution Folder", "{142E9E46-AD02-4F12-98D2-1E0EE6A4F26A}"
 	ProjectSection(SolutionItems) = preProject
 		.travis.yml = .travis.yml
+		appveyor.yml = appveyor.yml
 		bower.json = bower.json
 		Gruntfile.js = Gruntfile.js
 		LICENSE = LICENSE
@@ -17,53 +14,61 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Folder", "Solution
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unosquare.Tubular.EmbedioSample", "Unosquare.Tubular.EmbedioSample\Unosquare.Tubular.EmbedioSample.csproj", "{91590BE4-DBFD-4A67-943C-AF47EEF3F386}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unosquare.Tubular.Tests", "Unosquare.Tubular.Tests\Unosquare.Tubular.Tests.csproj", "{2B9D1173-BB0F-4B39-8E65-17C08F69C4BB}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "e2e-tests", "e2e-tests", "{8894759D-8938-4ABE-8BEB-D9C5F62D3296}"
 	ProjectSection(SolutionItems) = preProject
-		e2e-tests\protractor.conf.grunt.js = e2e-tests\protractor.conf.grunt.js
-		e2e-tests\tbColumn-scen.js = e2e-tests\tbColumn-scen.js
-		e2e-tests\tbEmptyForm-scen.js = e2e-tests\tbEmptyForm-scen.js
-		e2e-tests\tbFilters-scen.js = e2e-tests\tbFilters-scen.js
-		e2e-tests\tbForm-scen.js = e2e-tests\tbForm-scen.js
-		e2e-tests\tbFormConnErrorNoModelKey-scen.js = e2e-tests\tbFormConnErrorNoModelKey-scen.js
-		e2e-tests\tbFormConnErrorNoServerUrl-scen.js = e2e-tests\tbFormConnErrorNoServerUrl-scen.js
-		e2e-tests\tbFormConnErrorNoServerUrl-scen2.js = e2e-tests\tbFormConnErrorNoServerUrl-scen2.js
-		e2e-tests\tbFormMoment-scen.js = e2e-tests\tbFormMoment-scen.js
-		e2e-tests\tbGridComponent-scen.js = e2e-tests\tbGridComponent-scen.js
-		e2e-tests\tbGridPager-scen.js = e2e-tests\tbGridPager-scen.js
-		e2e-tests\tbGridPagerInfo-scen.js = e2e-tests\tbGridPagerInfo-scen.js
-		e2e-tests\tbHttpSpec.js = e2e-tests\tbHttpSpec.js
-		e2e-tests\tbLocalData-scen.js = e2e-tests\tbLocalData-scen.js
-		e2e-tests\tbOData-scen.js = e2e-tests\tbOData-scen.js
-		e2e-tests\tbPageSizeSelector-scen.js = e2e-tests\tbPageSizeSelector-scen.js
-		e2e-tests\tbRowSelectable-scen.js = e2e-tests\tbRowSelectable-scen.js
-		e2e-tests\tbSingleForm-scen.js = e2e-tests\tbSingleForm-scen.js
-		e2e-tests\tbTemplateServiceModelSpec.js = e2e-tests\tbTemplateServiceModelSpec.js
+		test\e2e-tests\protractor.conf.grunt.js = test\e2e-tests\protractor.conf.grunt.js
+		test\e2e-tests\tbColumn-scen.js = test\e2e-tests\tbColumn-scen.js
+		test\e2e-tests\tbEmptyForm-scen.js = test\e2e-tests\tbEmptyForm-scen.js
+		test\e2e-tests\tbFilters-scen.js = test\e2e-tests\tbFilters-scen.js
+		test\e2e-tests\tbForm-scen.js = test\e2e-tests\tbForm-scen.js
+		test\e2e-tests\tbFormConnErrorNoModelKey-scen.js = test\e2e-tests\tbFormConnErrorNoModelKey-scen.js
+		test\e2e-tests\tbFormConnErrorNoServerUrl-scen.js = test\e2e-tests\tbFormConnErrorNoServerUrl-scen.js
+		test\e2e-tests\tbFormConnErrorNoServerUrl-scen2.js = test\e2e-tests\tbFormConnErrorNoServerUrl-scen2.js
+		test\e2e-tests\tbFormMoment-scen.js = test\e2e-tests\tbFormMoment-scen.js
+		test\e2e-tests\tbGridComponent-scen.js = test\e2e-tests\tbGridComponent-scen.js
+		test\e2e-tests\tbGridPager-scen.js = test\e2e-tests\tbGridPager-scen.js
+		test\e2e-tests\tbGridPagerInfo-scen.js = test\e2e-tests\tbGridPagerInfo-scen.js
+		test\e2e-tests\tbHttpSpec.js = test\e2e-tests\tbHttpSpec.js
+		test\e2e-tests\tbLocalData-scen.js = test\e2e-tests\tbLocalData-scen.js
+		test\e2e-tests\tbOData-scen.js = test\e2e-tests\tbOData-scen.js
+		test\e2e-tests\tbPageSizeSelector-scen.js = test\e2e-tests\tbPageSizeSelector-scen.js
+		test\e2e-tests\tbRowSelectable-scen.js = test\e2e-tests\tbRowSelectable-scen.js
+		test\e2e-tests\tbSingleForm-scen.js = test\e2e-tests\tbSingleForm-scen.js
+		test\e2e-tests\tbTemplateServiceModelSpec.js = test\e2e-tests\tbTemplateServiceModelSpec.js
 	EndProjectSection
 EndProject
-Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Unosquare.Tubular.WebTest", "Unosquare.Tubular.WebTest\", "{541E3FFC-0E2F-42B0-87F1-9C2A33E44ADE}"
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Unosquare.Tubular.WebTest", "test\Unosquare.Tubular.WebTest\", "{541E3FFC-0E2F-42B0-87F1-9C2A33E44ADE}"
 	ProjectSection(WebsiteProperties) = preProject
 		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
 		Debug.AspNetCompiler.VirtualPath = "/localhost_60649"
-		Debug.AspNetCompiler.PhysicalPath = "Unosquare.Tubular.WebTest\"
+		Debug.AspNetCompiler.PhysicalPath = "test\Unosquare.Tubular.WebTest\"
 		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_60649\"
 		Debug.AspNetCompiler.Updateable = "true"
 		Debug.AspNetCompiler.ForceOverwrite = "true"
 		Debug.AspNetCompiler.FixedNames = "false"
 		Debug.AspNetCompiler.Debug = "True"
 		Release.AspNetCompiler.VirtualPath = "/localhost_60649"
-		Release.AspNetCompiler.PhysicalPath = "Unosquare.Tubular.WebTest\"
+		Release.AspNetCompiler.PhysicalPath = "test\Unosquare.Tubular.WebTest\"
 		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_60649\"
 		Release.AspNetCompiler.Updateable = "true"
 		Release.AspNetCompiler.ForceOverwrite = "true"
 		Release.AspNetCompiler.FixedNames = "false"
 		Release.AspNetCompiler.Debug = "False"
 		VWDPort = "60649"
-		SlnRelativePath = "Unosquare.Tubular.WebTest\"
+		SlnRelativePath = "test\Unosquare.Tubular.WebTest\"
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{AA478CE3-1C9B-4315-983D-9B339064DDBB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{686F589E-2DC2-4573-AFDA-8563922DCE72}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Unosquare.Tubular", "src\Unosquare.Tubular\Unosquare.Tubular.xproj", "{1A8F5423-F375-4ADD-82A7-5B93182219FF}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Unosquare.Tubular.EmbedioSample", "src\Unosquare.Tubular.EmbedioSample\Unosquare.Tubular.EmbedioSample.xproj", "{91590BE4-DBFD-4A67-943C-AF47EEF3F386}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Unosquare.Tubular.Test", "test\Unosquare.Tubular.Tests\Unosquare.Tubular.Test.xproj", "{C91F303C-DFF3-4260-8A66-0EBEF53F69F5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unosquare.Tubular.OwinSample", "src\Unosquare.Tubular.OwinSample\Unosquare.Tubular.OwinSample.csproj", "{FB930993-4912-4022-9435-718B3E576478}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -71,28 +76,35 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{1A8F5423-F375-4ADD-82A7-5B93182219FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1A8F5423-F375-4ADD-82A7-5B93182219FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1A8F5423-F375-4ADD-82A7-5B93182219FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1A8F5423-F375-4ADD-82A7-5B93182219FF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FB930993-4912-4022-9435-718B3E576478}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FB930993-4912-4022-9435-718B3E576478}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FB930993-4912-4022-9435-718B3E576478}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FB930993-4912-4022-9435-718B3E576478}.Release|Any CPU.Build.0 = Release|Any CPU
-		{91590BE4-DBFD-4A67-943C-AF47EEF3F386}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{91590BE4-DBFD-4A67-943C-AF47EEF3F386}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{91590BE4-DBFD-4A67-943C-AF47EEF3F386}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{91590BE4-DBFD-4A67-943C-AF47EEF3F386}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2B9D1173-BB0F-4B39-8E65-17C08F69C4BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2B9D1173-BB0F-4B39-8E65-17C08F69C4BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2B9D1173-BB0F-4B39-8E65-17C08F69C4BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2B9D1173-BB0F-4B39-8E65-17C08F69C4BB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{541E3FFC-0E2F-42B0-87F1-9C2A33E44ADE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{541E3FFC-0E2F-42B0-87F1-9C2A33E44ADE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{541E3FFC-0E2F-42B0-87F1-9C2A33E44ADE}.Release|Any CPU.ActiveCfg = Debug|Any CPU
 		{541E3FFC-0E2F-42B0-87F1-9C2A33E44ADE}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{1A8F5423-F375-4ADD-82A7-5B93182219FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A8F5423-F375-4ADD-82A7-5B93182219FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A8F5423-F375-4ADD-82A7-5B93182219FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A8F5423-F375-4ADD-82A7-5B93182219FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91590BE4-DBFD-4A67-943C-AF47EEF3F386}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91590BE4-DBFD-4A67-943C-AF47EEF3F386}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91590BE4-DBFD-4A67-943C-AF47EEF3F386}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91590BE4-DBFD-4A67-943C-AF47EEF3F386}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C91F303C-DFF3-4260-8A66-0EBEF53F69F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C91F303C-DFF3-4260-8A66-0EBEF53F69F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C91F303C-DFF3-4260-8A66-0EBEF53F69F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C91F303C-DFF3-4260-8A66-0EBEF53F69F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB930993-4912-4022-9435-718B3E576478}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB930993-4912-4022-9435-718B3E576478}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB930993-4912-4022-9435-718B3E576478}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB930993-4912-4022-9435-718B3E576478}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{541E3FFC-0E2F-42B0-87F1-9C2A33E44ADE} = {686F589E-2DC2-4573-AFDA-8563922DCE72}
+		{1A8F5423-F375-4ADD-82A7-5B93182219FF} = {AA478CE3-1C9B-4315-983D-9B339064DDBB}
+		{91590BE4-DBFD-4A67-943C-AF47EEF3F386} = {AA478CE3-1C9B-4315-983D-9B339064DDBB}
+		{C91F303C-DFF3-4260-8A66-0EBEF53F69F5} = {686F589E-2DC2-4573-AFDA-8563922DCE72}
+		{FB930993-4912-4022-9435-718B3E576478} = {AA478CE3-1C9B-4315-983D-9B339064DDBB}
 	EndGlobalSection
 EndGlobal
