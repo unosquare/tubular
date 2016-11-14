@@ -16,8 +16,8 @@ init:
 before_build:
 - appveyor-retry dotnet restore -v Minimal
 build_script:
-- dotnet build "Unosquare.Tubular" -c %CONFIGURATION% --no-dependencies --version-suffix %LABEL%
+- dotnet build "src\Unosquare.Tubular" -c %CONFIGURATION% --no-dependencies --version-suffix %LABEL%
 test_script:
-- dotnet test "test\Unosquare.Tubular.Test" -c %CONFIGURATION%
+- dotnet test "test\Unosquare.Tubular.Tests" -c %CONFIGURATION%
 cache:
 - '%USERPROFILE%\.nuget\packages'
