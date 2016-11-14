@@ -3,9 +3,9 @@ solution: Unosquare.Tubular.Lib.sln
 notifications:
   slack: unolabs:cbusXPH6pBwZ35rVDzi4k4ve
 install:
-  - nuget restore Unosquare.Tubular.Lib.sln
-  - nuget restore ./src/Unosquare.Tubular/Unosquare.Tubular.csproj
   - nuget install NUnit.ConsoleRunner -OutputDirectory testrunner
+  - nuget config -set repositoryPath=/home/travis/build/unosquare/tubular/packages/
+  - nuget restore Unosquare.Tubular.Lib.sln
   - rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm && (cd ~/.nvm && git checkout `git describe --abbrev=0 --tags`) && source ~/.nvm/nvm.sh && nvm install $TRAVIS_NODE_VERSION
   - npm install
 env:
