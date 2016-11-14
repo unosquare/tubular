@@ -10,12 +10,12 @@ install:
 env:
   - TRAVIS_NODE_VERSION="4"
 before_script:
-  - touch ./Unosquare.Tubular/Javascript/tubular-bundle.js
-  - touch ./Unosquare.Tubular/Javascript/tubular-bundle.min.js
+  - touch ./src/Unosquare.Tubular/Javascript/tubular-bundle.js
+  - touch ./src/Unosquare.Tubular/Javascript/tubular-bundle.min.js
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
 script:
   - xbuild /p:Configuration=Release Unosquare.Tubular.Lib.sln
-  - mono --debug ./testrunner/NUnit.ConsoleRunner.*/tools/nunit3-console.exe --process=Single ./Unosquare.Tubular.Tests/bin/Release/Unosquare.Tubular.Tests.dll
+  - mono --debug ./testrunner/NUnit.ConsoleRunner.*/tools/nunit3-console.exe --process=Single ./src/Unosquare.Tubular.Tests/bin/Release/Unosquare.Tubular.Tests.dll
   - ./node_modules/protractor/bin/webdriver-manager update
   - grunt test
