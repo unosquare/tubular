@@ -31,7 +31,7 @@ PM> Install-Package Tubular
 
 ### Package containing only the server-side stuff
 
-The same Nuget contains .NET46 and .NETCoreApp1.0 versions.
+The same Nuget contains .NET452 and .NETCoreApp1.0 versions.
 
 <pre>
 PM> Install-Package Tubular.ServerSide
@@ -182,4 +182,3 @@ Finally, open the Package Manager Console, select Unosquare.Tubular.Sample as De
         Update-Database
 
 After this, just right-click the project and select Debug>Start New Instance and you should be watching and explorer window with the sample page. 
-       
