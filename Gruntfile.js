@@ -8,7 +8,7 @@ module.exports = function(grunt) {
         copy: {
             instrument: {
                 files: [{
-                    src: ['test/Unosquare.Tubular.WebTest/**/*', '!Unosquare.Tubular.WebTest/**/*.js'],
+                    src: ['test/Unosquare.Tubular.WebTest/**/*', '!test/Unosquare.Tubular.WebTest/**/*.js'],
                     dest: 'instrumented/'
                 }]
             }
@@ -27,23 +27,15 @@ module.exports = function(grunt) {
         },
         'string-replace': {
             dist: {
-                files: { 'instrumented/Unosquare.Tubular.WebTest/': 'instrumented/Unosquare.Tubular.WebTest/**/*.html' },
+                files: { 'instrumented/test/Unosquare.Tubular.WebTest/': 'instrumented/test/Unosquare.Tubular.WebTest/**/*.html' },
                 options: {
                     replacements: [{
-                            pattern: /"\/Unosquare\.Tubular\.WebTest\/testApp\.js/g,
-                            replacement: '"/instrumented/Unosquare.Tubular.WebTest/testApp.js'
+                            pattern: /\/Unosquare\.Tubular\.WebTest\/testApp\.js/g,
+                            replacement: '/instrumented/test/Unosquare.Tubular.WebTest/testApp.js'
                         },
                         {
-                            pattern: /\.\.\/Unosquare\.Tubular\/Javascript\/tubular/g,
-                            replacement: "/instrumented/Unosquare.Tubular/Javascript/tubular"
-                        },
-                        {
-                            pattern: /\.\.\/Unosquare\.Tubular\/Javascript\/tubular-odata/g,
-                            replacement: "/instrumented/Unosquare.Tubular/Javascript/tubular-odata"
-                        },
-                        {
-                            pattern: /\.\.\/Unosquare\.Tubular\/Javascript\/tubular-localdata/g,
-                            replacement: "/instrumented/Unosquare.Tubular/Javascript/tubular-localdata"
+                            pattern: /\.\.\/\.\.\/src\/Unosquare\.Tubular\/Javascript\/tubular/g,
+                            replacement: '/instrumented/src/Unosquare.Tubular/Javascript/tubular'
                         }
                     ]
                 }
@@ -70,7 +62,7 @@ module.exports = function(grunt) {
                 options: {
                     coverageDir: 'coverage',
                     args: {
-                        baseUrl: 'http://localhost:9000/instrumented/Unosquare.Tubular.WebTest/',
+                        baseUrl: 'http://localhost:9000/instrumented/test/Unosquare.Tubular.WebTest/',
                         browser: "firefox"
                             // sauceUser: 'geoperez',
                             // sauceKey: 'dd986cd7-696b-433a-941e-3820d83aa09a'
@@ -80,9 +72,9 @@ module.exports = function(grunt) {
             local: {
                 options: {
                     args: {
-                        baseUrl: "http://localhost:9000/Unosquare.Tubular.WebTest/",
+                        baseUrl: "http://localhost:9000/test/Unosquare.Tubular.WebTest/",
                         browser: "chrome",
-                        specs: ['e2e-tests/tbHttpSpec.js']
+                        specs: ['test/e2e-tests/tbHttpSpec.js']
                     }
                 }
             }

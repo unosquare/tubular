@@ -3,70 +3,71 @@
 
     angular.module('testApp.routes', ['ngRoute'])
         .config([
-            '$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
+            '$routeProvider', '$locationProvider',
+            function($routeProvider, $locationProvider) {
                 $routeProvider.
-                    when('/tbGridPagerTests', {
-                        templateUrl: '/Unosquare.Tubular.WebTest/common/tbGridPager_tests.html',
+                when('/tbGridPagerTests', {
+                        templateUrl: '/test/Unosquare.Tubular.WebTest/common/tbGridPager_tests.html',
                         title: 'Tubular Grid Pager (and related) Tests'
                     })
                     .when('/tbColumnTests', {
-                        templateUrl: '/Unosquare.Tubular.WebTest/common/tbColumn_tests.html',
+                        templateUrl: '/test/Unosquare.Tubular.WebTest/common/tbColumn_tests.html',
                         title: 'Tubular Column Tests'
                     })
                     .when('/tbFiltersTests', {
-                        templateUrl: '/Unosquare.Tubular.WebTest/common/tbFilters_tests.html',
+                        templateUrl: '/test/Unosquare.Tubular.WebTest/common/tbFilters_tests.html',
                         title: 'Tubular Column Tests'
                     })
                     .when('/tbFormTests', {
-                        templateUrl: '/Unosquare.Tubular.WebTest/common/tbForm_tests.html',
+                        templateUrl: '/test/Unosquare.Tubular.WebTest/common/tbForm_tests.html',
                         title: 'Tubular Form Tests'
                     })
                     .when('/tbFormSavingTests', {
-                        templateUrl: '/Unosquare.Tubular.WebTest/common/tbFormSaving_tests.html',
+                        templateUrl: '/test/Unosquare.Tubular.WebTest/common/tbFormSaving_tests.html',
                         title: 'Tubular Form Saving Tests'
                     })
                     .when('/tbGridComponentsTests', {
-                        templateUrl: '/Unosquare.Tubular.WebTest/common/tbGridComponent_tests.html',
+                        templateUrl: '/test/Unosquare.Tubular.WebTest/common/tbGridComponent_tests.html',
                         title: 'Tubular Grid Components Tests'
                     })
                     .when('/tbODataTests', {
-                        templateUrl: '/Unosquare.Tubular.WebTest/common/tbOData_tests.html',
+                        templateUrl: '/test/Unosquare.Tubular.WebTest/common/tbOData_tests.html',
                         title: 'Tubular Grid OData Tests'
                     })
                     .when('/tbLocalDataTests', {
-                        templateUrl: '/Unosquare.Tubular.WebTest/common/tbLocalData_tests.html',
+                        templateUrl: '/test/Unosquare.Tubular.WebTest/common/tbLocalData_tests.html',
                         title: 'Tubular Grid Local Data Tests'
                     })
                     .when('/tbSingleFormTests', {
-                        templateUrl: '/Unosquare.Tubular.WebTest/common/tbSingleForm_tests.html',
+                        templateUrl: '/test/Unosquare.Tubular.WebTest/common/tbSingleForm_tests.html',
                         title: 'Tubular Single Form Tests'
                     })
                     .when('/tbEmptyFormTests', {
-                        templateUrl: '/Unosquare.Tubular.WebTest/common/tbEmptyForm_tests.html',
+                        templateUrl: '/test/Unosquare.Tubular.WebTest/common/tbEmptyForm_tests.html',
                         title: 'Tubular Empty Form Tests'
                     })
                     .when('/Login', {
-                        templateUrl: '/Unosquare.Tubular.WebTest/common/login.html',
+                        templateUrl: '/test/Unosquare.Tubular.WebTest/common/login.html',
                         title: 'Login'
                     })
                     .when('/tbFormConnErrorNoModelKeyTests', {
-                        templateUrl: '/Unosquare.Tubular.WebTest/common/tbFormConnErrorNoModelKey_tests.html',
+                        templateUrl: '/test/Unosquare.Tubular.WebTest/common/tbFormConnErrorNoModelKey_tests.html',
                         title: 'Tubular Form Loading Test'
                     })
                     .when('/tbFormConnErrorNoServerUrlTests', {
-                        templateUrl: '/Unosquare.Tubular.WebTest/common/tbFormConnErrorNoServerUrl_tests.html',
+                        templateUrl: '/test/Unosquare.Tubular.WebTest/common/tbFormConnErrorNoServerUrl_tests.html',
                         title: 'Tubular Form Loading Test'
                     })
                     .when('/tbFormConnErrorNoServerUrlTests2', {
-                        templateUrl: '/Unosquare.Tubular.WebTest/common/tbFormConnErrorNoServerUrl_tests2.html',
+                        templateUrl: '/test/Unosquare.Tubular.WebTest/common/tbFormConnErrorNoServerUrl_tests2.html',
                         title: 'Tubular Form Loading Test 2'
                     })
                     .when('/expirationDate', {
-                        templateUrl: '/Unosquare.Tubular.WebTest/common/expiration.html',
+                        templateUrl: '/test/Unosquare.Tubular.WebTest/common/expiration.html',
                         title: 'expiration test'
                     })
                     .when('/tbRowSelectable', {
-                        templateUrl: '/Unosquare.Tubular.WebTest/common/tbRowSelectable.html',
+                        templateUrl: '/test/Unosquare.Tubular.WebTest/common/tbRowSelectable.html',
                         title: 'selectedRows clearSelection isEmptySelection'
                     })
                     .otherwise({
@@ -85,7 +86,8 @@
                 toastr.error('No data found');
             });
         }).controller('LoginCtrl', [
-            '$scope', '$location', 'tubularHttp', function($scope, $location, tubularHttp) {
+            '$scope', '$location', 'tubularHttp',
+            function($scope, $location, tubularHttp) {
                 $scope.loading = false;
                 tubularHttp.tokenUrl = 'http://tubular.azurewebsites.net/token';
                 $scope.submitForm = function(valid) {
@@ -115,7 +117,8 @@
             });
 
         }).controller('expDate', [
-            '$scope', 'tubularHttp', 'localStorageService', '$location', function($scope, tubularHttp, localStorageService, $location) {
+            '$scope', 'tubularHttp', 'localStorageService', '$location',
+            function($scope, tubularHttp, localStorageService, $location) {
                 $scope.isAuthenticated = function() {
                     if (tubularHttp.isAuthenticated()) {
                         $scope.isAuth = "is Authenticated!";
@@ -161,10 +164,11 @@
                 };
             }
         ]).controller('rwController', [
-            '$scope', 'localStorageService', function($scope, localStorageService) {
+            '$scope', 'localStorageService',
+            function($scope, localStorageService) {
                 $scope.selectRows = function() {
                     var rows = localStorageService.get('sampleshap1_rows');
-                        $scope.rows = rows.length;
+                    $scope.rows = rows.length;
                 };
             }
         ]);

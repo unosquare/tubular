@@ -4,34 +4,34 @@
 <head>
     <base href="/">
     <meta charset="utf-8">
-    
+
     <!-- CSS (from CDN) -->
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootswatch/latest/lumen/bootstrap.min.css" />
     <link rel="stylesheet" href="//cdn.jsdelivr.net/fontawesome/latest/css/font-awesome.min.css" />
     <link rel="stylesheet" href="//cdn.jsdelivr.net/toastr/latest/toastr.css" />
 
     <link rel="stylesheet" href="//cdn.jsdelivr.net/tubular/1.0.0-rc.1/tubular-bundle.min.css" />
-    <link rel="stylesheet" href="../Unosquare.Tubular.Sample/ui/styles/common.css" />
+    <link rel="stylesheet" href="../../src/Unosquare.Tubular.OwinSample/ui/styles/common.css" />
 
     <script src="//cdn.jsdelivr.net/g/jquery@2.1.4,bootstrap@3.3.6,angularjs@1.5.0(angular.min.js+angular-route.min.js),toastr,angular.bootstrap@2.1.2(ui-bootstrap.min.js+ui-bootstrap-tpls.min.js),filesaver.js,chart.js@1.0.1,highcharts"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular-local-storage/0.1.5/angular-local-storage.min.js"></script>
 
     <!-- tubular angular application -->
-    <script src="../Unosquare.Tubular/Javascript/tubular/node-module.js"></script>
-    <script src="../Unosquare.Tubular/Javascript/tubular/tubular.js"></script>
-    <script src="../Unosquare.Tubular/Javascript/tubular/tubular-directives.js"></script>
-    <script src="../Unosquare.Tubular/Javascript/tubular/tubular-directives-editors.js"></script>
-    <script src="../Unosquare.Tubular/Javascript/tubular/tubular-directives-filters.js"></script>
-    <script src="../Unosquare.Tubular/Javascript/tubular/tubular-directives-forms.js"></script>
-    <script src="../Unosquare.Tubular/Javascript/tubular/tubular-directives-gridcomponents.js"></script>
-    <script src="../Unosquare.Tubular/Javascript/tubular/tubular-directives-gridpager.js"></script>
-    <script src="../Unosquare.Tubular/Javascript/tubular/tubular-models.js"></script>
-    <script src="../Unosquare.Tubular/Javascript/tubular/tubular-services.js"></script>
-    <script src="../Unosquare.Tubular/Javascript/tubular/tubular-services-http.js"></script>
-    <script src="../Unosquare.Tubular/Javascript/tubular-localdata/tubular-services-localdata.js"></script>
-    <script src="../Unosquare.Tubular/Javascript/tubular-odata/tubular-services-odata.js"></script>
-    <script src="../Unosquare.Tubular/Javascript/tubular/tubular-services-template.js"></script>
-    <script src="../Unosquare.Tubular/Javascript/tubular/tubular-services-i18n.js"></script>
+    <script src="../../src/Unosquare.Tubular/Javascript/tubular/node-module.js"></script>
+    <script src="../../src/Unosquare.Tubular/Javascript/tubular/tubular.js"></script>
+    <script src="../../src/Unosquare.Tubular/Javascript/tubular/tubular-directives.js"></script>
+    <script src="../../src/Unosquare.Tubular/Javascript/tubular/tubular-directives-editors.js"></script>
+    <script src="../../src/Unosquare.Tubular/Javascript/tubular/tubular-directives-filters.js"></script>
+    <script src="../../src/Unosquare.Tubular/Javascript/tubular/tubular-directives-forms.js"></script>
+    <script src="../../src/Unosquare.Tubular/Javascript/tubular/tubular-directives-gridcomponents.js"></script>
+    <script src="../../src/Unosquare.Tubular/Javascript/tubular/tubular-directives-gridpager.js"></script>
+    <script src="../../src/Unosquare.Tubular/Javascript/tubular/tubular-models.js"></script>
+    <script src="../../src/Unosquare.Tubular/Javascript/tubular/tubular-services.js"></script>
+    <script src="../../src/Unosquare.Tubular/Javascript/tubular/tubular-services-http.js"></script>
+    <script src="../../src/Unosquare.Tubular/Javascript/tubular-localdata/tubular-services-localdata.js"></script>
+    <script src="../../src/Unosquare.Tubular/Javascript/tubular-odata/tubular-services-odata.js"></script>
+    <script src="../../src/Unosquare.Tubular/Javascript/tubular/tubular-services-template.js"></script>
+    <script src="../../src/Unosquare.Tubular/Javascript/tubular/tubular-services-i18n.js"></script>
 
     <!-- test app -->
     <script src="/Unosquare.Tubular.WebTest/testApp.js"></script>
@@ -43,7 +43,7 @@
             <div class="container">
                 <div class="navbar-header">
                     <a href="http://unosquare.github.io/tubular/" class="navbar-brand">
-                        <img src="../Unosquare.Tubular.Sample/ui/media/tubular.png" alt="tubular" style="height: 80px; margin-top: -30px;" />
+                        <img src="../../src/Unosquare.Tubular.OwinSample/ui/media/tubular.png" alt="tubular" style="height: 80px; margin-top: -30px;" />
                     </a>
                 </div>
                 <nav class="collapse navbar-collapse bs-navbar-collapse">
@@ -78,11 +78,12 @@
                 </nav>
             </div>
         </header>
-        <div class="content-body">            
+        <div class="content-body">
             <div class="container">
                 <ng-view></ng-view>
             </div>
         </div>
     </div>
 </body>
+
 </html>
