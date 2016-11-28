@@ -19,4 +19,4 @@ script:
   - xbuild /p:Configuration=Release Unosquare.Tubular.Lib.sln
   - mono --debug ./testrunner/NUnit.ConsoleRunner.*/tools/nunit3-console.exe --process=Single ./src/Unosquare.Tubular.Tests/bin/Release/Unosquare.Tubular.Tests.dll
   - ./node_modules/protractor/bin/webdriver-manager update
-  - grunt test
+  - grunt test --force

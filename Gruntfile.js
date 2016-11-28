@@ -5,32 +5,23 @@ module.exports = function(grunt) {
 
     // Project configuration.
     grunt.initConfig({
-        copy: {
-            instrument: {
-                files: [{
-                    src: ['test/Unosquare.Tubular.WebTest/**/*', '!test/Unosquare.Tubular.WebTest/**/*.js'],
-                    dest: 'instrumented/'
-                }]
-            }
-        },
         instrument: {
             files: [
-                'test/Unosquare.Tubular.WebTest/**/*.js',
-                'src/Unosquare.Tubular/Javascript/tubular/**/*.js',
-                'src/Unosquare.Tubular/Javascript/tubular-odata/**/*.js',
-                'src/Unosquare.Tubular/Javascript/tubular-localdata/**/*.js'
+                'test/Unosquare.Tubular.WebTest/testApp.js',
+                'src/Unosquare.Tubular/Javascript/tubular/*.js',
+                'src/Unosquare.Tubular/Javascript/tubular-odata/*.js',
+                'src/Unosquare.Tubular/Javascript/tubular-localdata/*.js'
             ],
             options: {
-                lazy: true,
-                basePath: "instrumented"
+                basePath: 'instrumented/'
             }
         },
         'string-replace': {
             dist: {
-                files: { 'instrumented/test/Unosquare.Tubular.WebTest/': 'instrumented/test/Unosquare.Tubular.WebTest/**/*.html' },
+                files: { 'instrumented/': 'test/Unosquare.Tubular.WebTest/index*.html' },
                 options: {
                     replacements: [{
-                            pattern: /\/Unosquare\.Tubular\.WebTest\/testApp\.js/g,
+                            pattern: /testApp\.js/g,
                             replacement: '/instrumented/test/Unosquare.Tubular.WebTest/testApp.js'
                         },
                         {
@@ -98,7 +89,6 @@ module.exports = function(grunt) {
     });
 
     grunt.registerTask('test', [
-        'copy:instrument',
         'instrument',
         'string-replace',
         'connect:server',
