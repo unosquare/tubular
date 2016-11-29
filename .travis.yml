@@ -10,13 +10,12 @@ matrix:
       dist: trusty
       sudo: false
     - mono: 4.2.1
+      env: TRAVIS_NODE_VERSION=4
 install:
   - if [[ $DOTNETCORE == "" ]]; then nuget install NUnit.ConsoleRunner -OutputDirectory testrunner; fi
   - if [[ $DOTNETCORE == "1" ]]; then dotnet restore; else nuget restore Unosquare.Tubular.Lib.sln; fi 
-  - rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm && (cd ~/.nvm && git checkout `git describe --abbrev=0 --tags`) && source ~/.nvm/nvm.sh && nvm install $TRAVIS_NODE_VERSION
+  - if [[ $DOTNETCORE == "" ]]; then rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm && (cd ~/.nvm && git checkout `git describe --abbrev=0 --tags`) && source ~/.nvm/nvm.sh && nvm install $TRAVIS_NODE_VERSION; fi
   - npm install
-env:
-  - TRAVIS_NODE_VERSION="4"
 before_script:
   - touch ./src/Unosquare.Tubular/Javascript/tubular-bundle.js
   - touch ./src/Unosquare.Tubular/Javascript/tubular-bundle.min.js
@@ -25,5 +24,4 @@ before_script:
 script:
   - if [[ $DOTNETCORE == "" ]]; then xbuild /p:"TargetFrameworkVersion=v4.5;Configuration=Release" Unosquare.Tubular.Lib.sln; fi
   - if [[ $DOTNETCORE == "1" ]]; then dotnet test ./test/Unosquare.Tubular.Tests; else mono --debug ./testrunner/NUnit.ConsoleRunner.*/tools/nunit3-console.exe --process=Single ./test/Unosquare.Tubular.Tests/bin/Release/Unosquare.Tubular.Tests.dll; fi
-  - ./node_modules/protractor/bin/webdriver-manager update
-  - grunt test
+  - npm test

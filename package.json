@@ -1,49 +1,49 @@
 {
-  "name": "tubular",
-  "filename": "tubular-bundle.min.js",
-  "version": "1.0.0",
-  "description": "A set of AngularJS directives and designed to rapidly build modern web applications.",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/unosquare/tubular"
-  },
-  "scripts": {
-    "protractor": "protractor e2e-tests/protractor.conf.js"
-  },
-  "keywords": [
-    "grid",
-    "forms",
-    "scaffolder",
-    "bootstrap",
-    "angularjs"
-  ],
-  "author": "Mario Divece <mario@unosquare.com>",
-  "contributors": [
-    {
-      "name": "Geovanni Perez",
-      "email": "geovanni.perez@gmail.com"
+    "name": "tubular",
+    "filename": "tubular-bundle.min.js",
+    "version": "1.0.0",
+    "description": "A set of AngularJS directives and designed to rapidly build modern web applications.",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/unosquare/tubular"
+    },
+    "scripts": {
+        "protractor": "protractor e2e-tests/protractor.conf.js",
+        "pretest": "./node_modules/protractor/bin/webdriver-manager update",
+        "test": "grunt test"
+    },
+    "keywords": [
+        "grid",
+        "forms",
+        "scaffolder",
+        "bootstrap",
+        "angularjs"
+    ],
+    "author": "Mario Divece <mario@unosquare.com>",
+    "contributors": [{
+        "name": "Geovanni Perez",
+        "email": "geovanni.perez@gmail.com"
+    }],
+    "license": "MIT",
+    "homepage": "http://unosquare.github.io/tubular",
+    "main": "dist/node-module.js",
+    "files": [
+        "dist/node-module.js"
+    ],
+    "dependencies": {},
+    "devDependencies": {
+        "grunt": "^1.0.1",
+        "grunt-contrib-copy": "^1.0.0",
+        "grunt-contrib-jshint": "^1.0.0",
+        "grunt-istanbul": "^0.7.0",
+        "grunt-protractor-coverage": "^0.2.17",
+        "load-grunt-tasks": "^3.5.0",
+        "coveralls": "^2.11.14",
+        "grunt-contrib-connect": "^1.0.2",
+        "grunt-coveralls": "^1.0.1",
+        "grunt-string-replace": "^1.2.1",
+        "http-server": "^0.9.0",
+        "protractor": "3.3.0",
+        "selenium-standalone": "5.1.1"
     }
-  ],
-  "license": "MIT",
-  "homepage": "http://unosquare.github.io/tubular",
-  "main": "dist/node-module.js",
-  "files": [
-    "dist/node-module.js"
-  ],
-  "dependencies": {   },
-  "devDependencies": {
-    "grunt": "^1.0.1",
-    "grunt-contrib-copy": "^1.0.0",
-    "grunt-contrib-jshint": "^1.0.0",
-    "grunt-istanbul": "^0.7.0",
-    "grunt-protractor-coverage": "^0.2.17",
-    "load-grunt-tasks": "^3.5.0",
-    "coveralls": "^2.11.14",
-    "grunt-contrib-connect": "^1.0.2",
-    "grunt-coveralls": "^1.0.1",
-    "grunt-string-replace": "^1.2.1",
-    "http-server": "^0.9.0",
-    "protractor": "3.3.0",
-    "selenium-standalone": "5.1.1"
-  }
 }
