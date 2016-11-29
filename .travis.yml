@@ -4,7 +4,6 @@ notifications:
   slack: unolabs:cbusXPH6pBwZ35rVDzi4k4ve
 install:
   - nuget install NUnit.ConsoleRunner -OutputDirectory testrunner
-  - nuget config -set repositoryPath=/home/travis/.nuget/packages/
   - nuget restore Unosquare.Tubular.Lib.sln
   - rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm && (cd ~/.nvm && git checkout `git describe --abbrev=0 --tags`) && source ~/.nvm/nvm.sh && nvm install $TRAVIS_NODE_VERSION
   - npm install
