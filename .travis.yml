@@ -7,6 +7,8 @@ matrix:
     - dotnet: 1.0.0-preview2-003131
       mono: none
       env: DOTNETCORE=1
+      dist: trusty
+      sudo: false
     - mono: 4.2.1
 install:
   - if [[ $DOTNETCORE == "" ]]; then nuget install NUnit.ConsoleRunner -OutputDirectory testrunner; fi
