@@ -11,6 +11,12 @@
                 "System.Text.RegularExpressions": "4.1.0"
             }
         },
+        "netstandard1.6": {
+            "dependencies": {
+                "NETStandard.Library": "1.6.1",
+                "System.Text.RegularExpressions": "4.3.0"
+            }
+        },
         "net452": {
             "frameworkAssemblies": {
                 "System.Net.Http": ""

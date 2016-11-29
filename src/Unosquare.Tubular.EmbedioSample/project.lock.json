@@ -750,6 +750,33 @@
           "ref/netstandard1.0/System.Diagnostics.Tools.dll": {}
         }
       },
+      "System.Diagnostics.TraceSource/4.0.0": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.NETCore.Platforms": "1.0.1",
+          "System.Collections": "4.0.11",
+          "System.Diagnostics.Debug": "4.0.11",
+          "System.Globalization": "4.0.11",
+          "System.Resources.ResourceManager": "4.0.1",
+          "System.Runtime": "4.1.0",
+          "System.Runtime.Extensions": "4.1.0",
+          "System.Threading": "4.0.11",
+          "runtime.native.System": "4.0.0"
+        },
+        "compile": {
+          "ref/netstandard1.3/System.Diagnostics.TraceSource.dll": {}
+        },
+        "runtimeTargets": {
+          "runtimes/unix/lib/netstandard1.3/System.Diagnostics.TraceSource.dll": {
+            "assetType": "runtime",
+            "rid": "unix"
+          },
+          "runtimes/win/lib/netstandard1.3/System.Diagnostics.TraceSource.dll": {
+            "assetType": "runtime",
+            "rid": "win"
+          }
+        }
+      },
       "System.Diagnostics.Tracing/4.1.0": {
         "type": "package",
         "dependencies": {
@@ -1014,12 +1041,13 @@
           "lib/netstandard1.6/System.Linq.dll": {}
         }
       },
-      "System.Linq.Dynamic.Core/1.0.6.5": {
+      "System.Linq.Dynamic.Core/1.0.6.8": {
         "type": "package",
         "dependencies": {
           "System.Collections.Concurrent": "4.0.12",
           "System.ComponentModel.TypeConverter": "4.1.0",
           "System.Diagnostics.Debug": "4.0.11",
+          "System.Diagnostics.TraceSource": "4.0.0",
           "System.Dynamic.Runtime": "4.0.11",
           "System.Globalization": "4.0.11",
           "System.Linq.Expressions": "4.1.0",
@@ -2155,7 +2183,7 @@
         "type": "project",
         "framework": ".NETCoreApp,Version=v1.0",
         "dependencies": {
-          "System.Linq.Dynamic.Core": "1.0.6.5",
+          "System.Linq.Dynamic.Core": "1.0.6.8",
           "System.Text.RegularExpressions": "4.1.0"
         },
         "compile": {
@@ -2188,7 +2216,7 @@
           "lib/net45/Newtonsoft.Json.dll": {}
         }
       },
-      "System.Linq.Dynamic.Core/1.0.6.5": {
+      "System.Linq.Dynamic.Core/1.0.6.8": {
         "type": "package",
         "compile": {
           "lib/net452/System.Linq.Dynamic.Core.dll": {}
@@ -2201,7 +2229,7 @@
         "type": "project",
         "framework": ".NETFramework,Version=v4.5.2",
         "dependencies": {
-          "System.Linq.Dynamic.Core": "1.0.6.5"
+          "System.Linq.Dynamic.Core": "1.0.6.8"
         },
         "frameworkAssemblies": [
           "System.Net.Http"
@@ -3501,6 +3529,45 @@
         "ref/xamarinwatchos10/_._"
       ]
     },
+    "System.Diagnostics.TraceSource/4.0.0": {
+      "sha512": "6WVCczFZKXwpWpzd/iJkYnsmWTSFFiU24Xx/YdHXBcu+nFI/ehTgeqdJQFbtRPzbrO3KtRNjvkhtj4t5/WwWsA==",
+      "type": "package",
+      "path": "System.Diagnostics.TraceSource/4.0.0",
+      "files": [
+        "System.Diagnostics.TraceSource.4.0.0.nupkg.sha512",
+        "System.Diagnostics.TraceSource.nuspec",
+        "ThirdPartyNotices.txt",
+        "dotnet_library_license.txt",
+        "lib/MonoAndroid10/_._",
+        "lib/MonoTouch10/_._",
+        "lib/net46/System.Diagnostics.TraceSource.dll",
+        "lib/xamarinios10/_._",
+        "lib/xamarinmac20/_._",
+        "lib/xamarintvos10/_._",
+        "lib/xamarinwatchos10/_._",
+        "ref/MonoAndroid10/_._",
+        "ref/MonoTouch10/_._",
+        "ref/net46/System.Diagnostics.TraceSource.dll",
+        "ref/netstandard1.3/System.Diagnostics.TraceSource.dll",
+        "ref/netstandard1.3/System.Diagnostics.TraceSource.xml",
+        "ref/netstandard1.3/de/System.Diagnostics.TraceSource.xml",
+        "ref/netstandard1.3/es/System.Diagnostics.TraceSource.xml",
+        "ref/netstandard1.3/fr/System.Diagnostics.TraceSource.xml",
+        "ref/netstandard1.3/it/System.Diagnostics.TraceSource.xml",
+        "ref/netstandard1.3/ja/System.Diagnostics.TraceSource.xml",
+        "ref/netstandard1.3/ko/System.Diagnostics.TraceSource.xml",
+        "ref/netstandard1.3/ru/System.Diagnostics.TraceSource.xml",
+        "ref/netstandard1.3/zh-hans/System.Diagnostics.TraceSource.xml",
+        "ref/netstandard1.3/zh-hant/System.Diagnostics.TraceSource.xml",
+        "ref/xamarinios10/_._",
+        "ref/xamarinmac20/_._",
+        "ref/xamarintvos10/_._",
+        "ref/xamarinwatchos10/_._",
+        "runtimes/unix/lib/netstandard1.3/System.Diagnostics.TraceSource.dll",
+        "runtimes/win/lib/net46/System.Diagnostics.TraceSource.dll",
+        "runtimes/win/lib/netstandard1.3/System.Diagnostics.TraceSource.dll"
+      ]
+    },
     "System.Diagnostics.Tracing/4.1.0": {
       "sha512": "iWrF1bD6liY2jZRXbMD7PAY/jaU7XNcJtwvmHMxKVVlnlMwhtLFDXgvRbmOMJ1JzqE2HQWam8yAphrsxOsREWQ==",
       "type": "package",
@@ -4245,12 +4312,12 @@
         "ref/xamarinwatchos10/_._"
       ]
     },
-    "System.Linq.Dynamic.Core/1.0.6.5": {
-      "sha512": "kiokG2TH26xy9l5qWHR5ctpOxfEKxGcTXKCDJ2PlgHC4TIwkx3ytgGr7+nMB1hMn0vglwY8/AX4vP7qVtbYmAg==",
+    "System.Linq.Dynamic.Core/1.0.6.8": {
+      "sha512": "u1DrK0pBff/hoZddYGeQoStOf05TVfQx4W0PSTVvLPRm12qZ2Vp4EXby9NbigHNIPuQN2SytweFSVyEsf/HlPQ==",
       "type": "package",
-      "path": "System.Linq.Dynamic.Core/1.0.6.5",
+      "path": "System.Linq.Dynamic.Core/1.0.6.8",
       "files": [
-        "System.Linq.Dynamic.Core.1.0.6.5.nupkg.sha512",
+        "System.Linq.Dynamic.Core.1.0.6.8.nupkg.sha512",
         "System.Linq.Dynamic.Core.nuspec",
         "lib/net35/System.Linq.Dynamic.Core.dll",
         "lib/net35/System.Linq.Dynamic.Core.xml",
