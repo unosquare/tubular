@@ -388,8 +388,16 @@ namespace Unosquare.Tubular
                                 searchParamArgs.Add(DateTime.Parse(column.Filter.Text));
                                 break;
                             case DataType.Date:
-                                searchParamArgs.Add(DateTime.Parse(column.Filter.Text).Date);
-                                searchParamArgs.Add(DateTime.Parse(column.Filter.Text).Date.AddDays(1).AddMinutes(-1));
+                                if (TubularDefaultSettings.AdjustTimezoneOffset)
+                                {
+                                    searchParamArgs.Add(DateTime.Parse(column.Filter.Text).Date.ToUniversalTime());
+                                    searchParamArgs.Add(DateTime.Parse(column.Filter.Text).Date.ToUniversalTime().AddDays(1).AddMinutes(-1));
+                                }
+                                else
+                                {
+                                    searchParamArgs.Add(DateTime.Parse(column.Filter.Text).Date);
+                                    searchParamArgs.Add(DateTime.Parse(column.Filter.Text).Date.AddDays(1).AddMinutes(-1));
+                                }
                                 break;
                             case DataType.Boolean:
                                 searchParamArgs.Add(bool.Parse(column.Filter.Text));
