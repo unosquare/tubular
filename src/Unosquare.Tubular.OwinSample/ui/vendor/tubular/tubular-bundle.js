@@ -3357,7 +3357,7 @@ try {
                 };
 
                 obj.revertChanges = function () {
-                    angular.forEach(obj, function (k) {
+                    angular.forEach(Object.keys(obj), function (k) {
                         if (k[0] === '$' || angular.isUndefined(obj.$original[k])) {
                             return;
                         }

@@ -61,6 +61,7 @@
                         tubularHttp.get($ctrl.serverUrl).promise.then(function (data) {
                             if (!data || !data.Data || data.Data.length === 0) {
                                 $ctrl.isEmpty = true;
+                                if (!$ctrl.options) $ctrl.options = {};
                                 $ctrl.options.series = [{ data: [] }];
 
                                 if ($ctrl.onLoad) {
@@ -111,6 +112,7 @@
             ]
         });
 })(window.angular);
+
 (function (factory) {
     'use strict';
     if (typeof exports === 'object') {
