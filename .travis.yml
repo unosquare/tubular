@@ -4,13 +4,19 @@ notifications:
   slack: unolabs:cbusXPH6pBwZ35rVDzi4k4ve
 matrix:
   include:
-    - dotnet: 1.0.0-preview2-003131
+    - os: linux
+      dotnet: 1.0.0-preview2-003131
       mono: none
       env: DOTNETCORE=1
       dist: trusty
       sudo: false
-    - mono: 4.2.1
+    - os: linux
+      mono: 4.2.1
       env: TRAVIS_NODE_VERSION=4
+    - os: osx
+      dotnet: 1.0.0-preview2-003131
+      mono: none
+      env: DOTNETCORE=1
 install:
   - if [[ $DOTNETCORE == "" ]]; then nuget install NUnit.ConsoleRunner -OutputDirectory testrunner; fi
   - if [[ $DOTNETCORE == "1" ]]; then dotnet restore; else nuget restore Unosquare.Tubular.Lib.sln; fi 
@@ -19,8 +25,8 @@ install:
 before_script:
   - touch ./src/Unosquare.Tubular/Javascript/tubular-bundle.js
   - touch ./src/Unosquare.Tubular/Javascript/tubular-bundle.min.js
-  - export DISPLAY=:99.0
-  - sh -e /etc/init.d/xvfb start
+  - if [[ $TRAVIS_OS_NAME == "osx" ]]; then export DISPLAY=:99.0; fi
+  - if [[ $TRAVIS_OS_NAME == "osx" ]]; then sh -e /etc/init.d/xvfb start; fi
 script:
   - if [[ $DOTNETCORE == "" ]]; then xbuild /p:"TargetFrameworkVersion=v4.5;Configuration=Release" Unosquare.Tubular.Lib.sln; fi
   - if [[ $DOTNETCORE == "1" ]]; then dotnet test ./test/Unosquare.Tubular.Tests -f netcoreapp1.0; else mono --debug ./testrunner/NUnit.ConsoleRunner.*/tools/nunit3-console.exe --process=Single ./test/Unosquare.Tubular.Tests/bin/Release/Unosquare.Tubular.Tests.dll; fi
