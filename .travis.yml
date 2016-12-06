@@ -35,6 +35,7 @@ before_script:
   - if [[ $TRAVIS_OS_NAME == "linux" ]]; then export DISPLAY=:99.0; fi
   - if [[ $TRAVIS_OS_NAME == "linux" ]]; then sh -e /etc/init.d/xvfb start; fi
 script:
-  - if [[ $DOTNETCORE == "" ]]; then xbuild /p:"TargetFrameworkVersion=v4.5;Configuration=Release" Unosquare.Tubular.Lib.sln; fi
+  - if [[ $DOTNETCORE == "" ]] && [[ $TRAVIS_NODE_VERSION == "4" ]]; then xbuild /p:"TargetFrameworkVersion=v4.5;Configuration=Release" Unosquare.Tubular.Lib.sln; fi
+  - if [[ $DOTNETCORE == "" ]] && [[ $TRAVIS_NODE_VERSION == "" ]]; then xbuild /p:Configuration=Release Unosquare.Tubular.Lib.sln; fi
   - if [[ $DOTNETCORE == "1" ]]; then dotnet test ./test/Unosquare.Tubular.Tests -f netcoreapp1.0; else mono --debug ./testrunner/NUnit.ConsoleRunner.*/tools/nunit3-console.exe --process=Single ./test/Unosquare.Tubular.Tests/bin/Release/Unosquare.Tubular.Tests.dll; fi
   - npm test
