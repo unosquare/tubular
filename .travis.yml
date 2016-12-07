@@ -6,7 +6,7 @@ matrix:
   include:
     - os: linux
       dotnet: 1.0.0-preview2-003131
-      mono: none
+      mono: latest
       env: DOTNETCORE=1
       dist: trusty
       sudo: false
@@ -17,7 +17,7 @@ matrix:
       mono: latest
     - os: osx
       dotnet: 1.0.0-preview2-003131
-      mono: none
+      mono: latest
       env: DOTNETCORE=1
     - os: osx
       mono: latest
@@ -37,5 +37,5 @@ before_script:
 script:
   - if [[ $DOTNETCORE == "" ]] && [[ $TRAVIS_NODE_VERSION == "4" ]]; then xbuild /p:"TargetFrameworkVersion=v4.5;Configuration=Release" Unosquare.Tubular.Lib.sln; fi
   - if [[ $DOTNETCORE == "" ]] && [[ $TRAVIS_NODE_VERSION == "" ]]; then xbuild /p:Configuration=Release Unosquare.Tubular.Lib.sln; fi
-  - if [[ $DOTNETCORE == "1" ]]; then dotnet test ./test/Unosquare.Tubular.Tests -f netcoreapp1.0; else mono --debug ./testrunner/NUnit.ConsoleRunner.*/tools/nunit3-console.exe --process=Single ./test/Unosquare.Tubular.Tests/bin/Release/Unosquare.Tubular.Tests.dll; fi
+  - if [[ $DOTNETCORE == "1" ]]; then dotnet test ./test/Unosquare.Tubular.Tests; else mono --debug ./testrunner/NUnit.ConsoleRunner.*/tools/nunit3-console.exe --process=Single ./test/Unosquare.Tubular.Tests/bin/Release/Unosquare.Tubular.Tests.dll; fi
   - npm test
