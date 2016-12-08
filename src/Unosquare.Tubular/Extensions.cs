@@ -258,6 +258,7 @@ namespace Unosquare.Tubular
             {
                 switch (column.Aggregate)
                 {
+#if NET452
                     case AggregationFunction.Sum:
                         aggregate(column, x => x.Sum(), x => x.Sum());
 
@@ -274,6 +275,7 @@ namespace Unosquare.Tubular
                         aggregate(column, x => x.Min(), x => x.Min());
 
                         break;
+#endif
                     case AggregationFunction.Count:
                         payload.Add(column.Name, subset.Select(column.Name).Count());
                         break;

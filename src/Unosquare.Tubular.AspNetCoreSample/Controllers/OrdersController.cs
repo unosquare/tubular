@@ -124,7 +124,7 @@ namespace Unosquare.Tubular.AspNetCoreSample.Controllers
         }
 
         [HttpGet, Route("cities")]
-        public object GetCities()
+        public IEnumerable<object> GetCities()
         {
             return _context.Orders
                 .Select(x => new
@@ -133,7 +133,7 @@ namespace Unosquare.Tubular.AspNetCoreSample.Controllers
                     Label = x.ShipperCity.ToUpper()
                 })
                 .Distinct()
-                .OrderBy(x => x)
+                .OrderBy(x => x.Label)
                 .ToList();
         }
 

@@ -2179,7 +2179,7 @@
           "lib/netstandard1.3/_._": {}
         }
       },
-      "Unosquare.Tubular/1.0.7": {
+      "Unosquare.Tubular/1.0.9": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v1.0",
         "dependencies": {
@@ -2225,7 +2225,7 @@
           "lib/net452/System.Linq.Dynamic.Core.dll": {}
         }
       },
-      "Unosquare.Tubular/1.0.7": {
+      "Unosquare.Tubular/1.0.9": {
         "type": "project",
         "framework": ".NETFramework,Version=v4.5.2",
         "dependencies": {
@@ -7182,7 +7182,7 @@
         "ref/xamarinwatchos10/_._"
       ]
     },
-    "Unosquare.Tubular/1.0.7": {
+    "Unosquare.Tubular/1.0.9": {
       "type": "project",
       "path": "../Unosquare.Tubular/project.json",
       "msbuildProject": "../Unosquare.Tubular/Unosquare.Tubular.xproj"
@@ -7191,7 +7191,7 @@
   "projectFileDependencyGroups": {
     "": [
       "EmbedIO >= 1.1.2",
-      "Unosquare.Tubular >= 1.0.7-*"
+      "Unosquare.Tubular >= 1.0.9-*"
     ],
     ".NETCoreApp,Version=v1.0": [
       "Microsoft.NETCore.App >= 1.0.1"

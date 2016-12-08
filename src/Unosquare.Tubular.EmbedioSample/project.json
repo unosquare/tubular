@@ -5,7 +5,7 @@
     "copyToOutput": "html"
   },
   "dependencies": {
-    "Unosquare.Tubular": "1.0.7-*",
+    "Unosquare.Tubular": "1.0.9-*",
     "EmbedIO": "1.1.2"
   },
   "frameworks": {
