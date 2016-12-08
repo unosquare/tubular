@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unosquare.Tubular", "src\Unosquare.Tubular\Unosquare.Tubular.csproj", "{1A8F5423-F375-4ADD-82A7-5B93182219FF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unosquare.Tubular.Tests", "test\Unosquare.Tubular.Tests\Unosquare.Tubular.Tests.csproj", "{2B9D1173-BB0F-4B39-8E65-17C08F69C4BB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unosquare.Tubular.OwinSample", "src\Unosquare.Tubular.OwinSample\Unosquare.Tubular.OwinSample.csproj", "{FB930993-4912-4022-9435-718B3E576478}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{2B9D1173-BB0F-4B39-8E65-17C08F69C4BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2B9D1173-BB0F-4B39-8E65-17C08F69C4BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2B9D1173-BB0F-4B39-8E65-17C08F69C4BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB930993-4912-4022-9435-718B3E576478}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB930993-4912-4022-9435-718B3E576478}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB930993-4912-4022-9435-718B3E576478}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB930993-4912-4022-9435-718B3E576478}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

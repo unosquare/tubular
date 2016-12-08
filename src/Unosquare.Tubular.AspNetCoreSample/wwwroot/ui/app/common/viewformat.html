@@ -1,0 +1,151 @@
+﻿<div class="container" ng-controller="tubularSampleCtrl as sample" ng-init="modelType = 'Line'; modelPieType = 'Pie'">
+    <h2>Chart JS</h2>
+    <p>Click a node or pie slice to get a notification.</p>
+    <div class="row">
+        <div class="col-md-5">
+            <tb-chartjs server-url="/api/orders/chart" chart-type="{{modelType | lowercase}}"
+                        on-click="chartClick"
+                        require-authentication="false" show-legend="true">
+            </tb-chartjs>
+        </div>
+        <div class="col-md-5">
+            <tb-chartjs server-url="/api/orders/chartpie" chart-type="{{modelPieType | lowercase}}"
+                        on-click="pieClick"
+                        require-authentication="false" show-legend="true">
+            </tb-chartjs>
+        </div>
+        <div class="col-md-2">
+            <h3>First chart</h3>
+            <div class="btn-group">
+                <div class="btn btn-sm btn-default" ng-click="modelType = 'Line'">
+                    Line
+                </div>
+                <div class="btn btn-sm btn-default" ng-click="modelType = 'Bar'">
+                    Bar
+                </div>
+            </div>
+            <h3>Second chart</h3>
+            <div class="btn-group">
+                <div class="btn btn-sm btn-default" ng-click="modelPieType = 'Pie'">
+                    Pie
+                </div>
+                <div class="btn btn-sm btn-default" ng-click="modelPieType = 'Doughnut'">
+                    Doughnut
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h2>Highcharts</h2>
+    <div class="row">
+        <div class="col-md-6">
+            <tb-highcharts server-url="/api/orders/chart" chart-type="{{modelType | lowercase}}"
+                           on-click="highchartClick"
+                           require-authentication="false" title="Order Sales">
+            </tb-highcharts>
+        </div>
+        <div class="col-md-6">
+            <tb-highcharts server-url="/api/orders/chartpie" chart-type="{{modelPieType | lowercase}}"
+                           on-click="highpieClick"
+                           require-authentication="false" title="Pie chart">
+            </tb-highcharts>
+        </div>
+    </div>
+
+    <tb-grid server-url="/api/orders/pagedwithformat" require-authentication="false"
+             name="samplegridformat" page-size="7" class="row" save-page-size="false">
+
+        <!-- Main full-width container -->
+        <div class="col-md-12">
+            <!-- Top toolbar nested row -->
+            <div class="row">
+                <tb-grid-pager class="col-md-6 col-xs-12"></tb-grid-pager>
+                <div class="col-md-3 col-xs-6">
+                    <div class="btn-group">
+                        <tb-export-button filename="data.csv"></tb-export-button>
+                        <tb-print-button title="Sample"></tb-print-button>
+                    </div>
+                </div>
+                <tb-text-search class="col-md-3 col-xs-6"></tb-text-search>
+            </div>
+
+            <!-- Main grid nested row -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-default panel-rounded">
+                        <tb-grid-table class="table tubular-grid-table table-bordered table-responsive table-striped table-hover responsive-mobile">
+                            <!-- Columns Definition -->
+                            <tb-column-definitions>
+                                <tb-column name="OrderId" label="Order ID" sortable="true" sort-order="1" class="column-sm"
+                                           sort-direction="Ascending" is-key="true">
+                                    <tb-column-header>ID</tb-column-header>
+                                </tb-column>
+                                <tb-column name="CustomerName" label="Customer" searchable="true" sortable="true" aggregate="distinctcount">
+                                    <tb-column-filter only-contains="true"></tb-column-filter>
+                                    <tb-column-header>
+                                        <span>{{label}}</span>
+                                    </tb-column-header>
+                                </tb-column>
+                                <tb-column name="ShipperCity" label="Shipping City" sortable="true" searchable="true" aggregate="count">
+                                    <tb-column-header>{{label}}</tb-column-header>
+                                    <tb-column-options-filter options-url="/api/orders/cities"></tb-column-options-filter>
+                                </tb-column>
+                                <tb-column name="Amount" label="Amount" column-type="numeric" sortable="true">
+                                    <tb-column-header>{{label}}</tb-column-header>
+                                    <tb-column-filter></tb-column-filter>
+                                </tb-column>
+                                <tb-column name="ShippedDate" label="Date" column-type="string" class="column-md">
+                                    <tb-column-header>{{label}}</tb-column-header>
+                                    <tb-column-date-time-filter></tb-column-date-time-filter>
+                                </tb-column>
+                                <tb-column name="IsShipped" column-type="boolean" class="column-md">
+                                    <tb-column-header>Shipped?</tb-column-header>
+                                    <tb-column-filter></tb-column-filter>
+                                </tb-column>
+                            </tb-column-definitions>
+
+                            <!-- Rowsets -->
+                            <tb-row-set>
+                                <!-- Empty grid row -->
+                                <tb-row-template ng-show="$parent.$component.isEmpty">
+                                    <tb-cell-template class="bg-warning" colspan="{{$parent.$component.visibleColumns()}}">
+                                        <b>No records found</b>
+                                    </tb-cell-template>
+                                </tb-row-template>
+                                <!-- General rows -->
+                                <tb-row-template ng-repeat="row in $component.rows" row-model="row" selectable="false">
+                                    <tb-cell-template class="text-center" column-name="OrderId">
+                                        <a href="/form/{{row.OrderId}}">{{row.OrderId}}</a>
+                                    </tb-cell-template>
+                                    <tb-cell-template column-name="CustomerName">
+                                        {{row.CustomerName}}
+                                    </tb-cell-template>
+                                    <tb-cell-template column-name="ShipperCity">
+                                        {{row.ShipperCity}}
+                                    </tb-cell-template>
+                                    <tb-cell-template class="text-right" column-name="Amount">
+                                        {{row.Amount}}
+                                    </tb-cell-template>
+                                    <tb-cell-template class="text-right" column-name="ShippedDate">
+                                        {{row.ShippedDate}}
+                                    </tb-cell-template>
+                                    <tb-cell-template class="text-center" column-name="IsShipped">
+                                        {{row.IsShipped}}
+                                    </tb-cell-template>
+                                </tb-row-template>
+                            </tb-row-set>
+                        </tb-grid-table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom toolbar nested row -->
+            <div class="row">
+                <div class="col-md-6 col-xs-12">
+                    <b>Distinct Customers:</b> {{$parent.aggregationFunctions.CustomerName}}
+                </div>
+                <tb-grid-pager-info class="col-md-3 col-xs-6"></tb-grid-pager-info>
+            </div>
+        </div>
+    </tb-grid>
+</div>

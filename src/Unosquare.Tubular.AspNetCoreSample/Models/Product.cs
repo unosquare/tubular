@@ -1,7 +1,7 @@
-﻿namespace Unosquare.Tubular.Sample.Models
-{
-    using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
+namespace Unosquare.Tubular.AspNetCoreSample.Models
+{
     public class Product
     {
         [Key]

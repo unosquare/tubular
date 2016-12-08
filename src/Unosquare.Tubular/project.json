@@ -1,34 +1,37 @@
 {
-    "title": "Unosquare Tubular",
-    "copyright": "Unosquare 2016",
-    "version": "1.0.9-*",
-    "dependencies": {
-        "System.Linq.Dynamic.Core": "1.0.6.8"
+  "title": "Unosquare Tubular",
+  "copyright": "Unosquare 2016",
+  "version": "1.0.9-*",
+  "dependencies": {
+    "System.Linq.Dynamic.Core": "1.0.6.8"
+  },
+  "frameworks": {
+    "netcoreapp1.0": {
+      "dependencies": {
+        "System.Text.RegularExpressions": "4.1.0"
+      }
     },
-    "frameworks": {
-        "netcoreapp1.0": {
-            "dependencies": {
-                "System.Text.RegularExpressions": "4.1.0"
-            }
-        },
-        "netstandard1.6": {
-            "dependencies": {
-                "NETStandard.Library": "1.6.1",
-                "System.Text.RegularExpressions": "4.3.0"
-            }
-        },
-        "net452": {
-            "frameworkAssemblies": {
-                "System.Net.Http": ""
-            }
-        }
+    "netstandard1.6": {
+      "dependencies": {
+        "NETStandard.Library": "1.6.1",
+        "System.Text.RegularExpressions": "4.3.0"
+      }
     },
-    "buildOptions": {
-        "xmlDoc": true
-    },
-    "scripts": {
-        "postcompile": [
-            "dotnet pack --no-build --configuration %compile:Configuration%"
-        ]
+    "net452": {
+      "frameworkAssemblies": {
+        "System.Net.Http": ""
+      }
     }
+  },
+  "buildOptions": {
+    "xmlDoc": true
+  },
+  "scripts": {
+    "postcompile": [
+      "dotnet pack --no-build --configuration %compile:Configuration%"
+    ]
+  },
+  "runtimes": {
+    "win": {}
+  }
 }

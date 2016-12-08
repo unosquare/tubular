@@ -68,7 +68,7 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Unosquare.Tubular.EmbedioSa
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Unosquare.Tubular.Test", "test\Unosquare.Tubular.Tests\Unosquare.Tubular.Test.xproj", "{C91F303C-DFF3-4260-8A66-0EBEF53F69F5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unosquare.Tubular.OwinSample", "src\Unosquare.Tubular.OwinSample\Unosquare.Tubular.OwinSample.csproj", "{FB930993-4912-4022-9435-718B3E576478}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Unosquare.Tubular.AspNetCoreSample", "src\Unosquare.Tubular.AspNetCoreSample\Unosquare.Tubular.AspNetCoreSample.xproj", "{BB821F0E-243F-4CF4-8D6F-2FEDE727A688}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -92,10 +92,10 @@ Global
 		{C91F303C-DFF3-4260-8A66-0EBEF53F69F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C91F303C-DFF3-4260-8A66-0EBEF53F69F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C91F303C-DFF3-4260-8A66-0EBEF53F69F5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FB930993-4912-4022-9435-718B3E576478}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FB930993-4912-4022-9435-718B3E576478}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FB930993-4912-4022-9435-718B3E576478}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FB930993-4912-4022-9435-718B3E576478}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB821F0E-243F-4CF4-8D6F-2FEDE727A688}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB821F0E-243F-4CF4-8D6F-2FEDE727A688}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB821F0E-243F-4CF4-8D6F-2FEDE727A688}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB821F0E-243F-4CF4-8D6F-2FEDE727A688}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -105,6 +105,6 @@ Global
 		{1A8F5423-F375-4ADD-82A7-5B93182219FF} = {AA478CE3-1C9B-4315-983D-9B339064DDBB}
 		{91590BE4-DBFD-4A67-943C-AF47EEF3F386} = {AA478CE3-1C9B-4315-983D-9B339064DDBB}
 		{C91F303C-DFF3-4260-8A66-0EBEF53F69F5} = {686F589E-2DC2-4573-AFDA-8563922DCE72}
-		{FB930993-4912-4022-9435-718B3E576478} = {AA478CE3-1C9B-4315-983D-9B339064DDBB}
+		{BB821F0E-243F-4CF4-8D6F-2FEDE727A688} = {AA478CE3-1C9B-4315-983D-9B339064DDBB}
 	EndGlobalSection
 EndGlobal

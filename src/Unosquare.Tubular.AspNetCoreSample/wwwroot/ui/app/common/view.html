@@ -1,0 +1,206 @@
+﻿<div class="container" ng-controller="tubularSampleCtrl as sample" ng-init="toggleVisible = true">
+<h3>Filter {{sample.Filter}}</h3>
+<tb-grid server-url="/api/orders/paged" server-save-url="/api/orders/save" require-authentication="false"
+         name="samplegrid" page-size="20" class="row" on-before-get-data="sample.onTableController">
+
+    <!-- Main full-width container -->
+    <div class="col-md-12">
+        <!-- Top toolbar nested row -->
+        <div class="row">
+            <tb-grid-pager class="col-md-5 col-xs-12"></tb-grid-pager>
+            <div class="col-md-4 col-xs-6">
+                <div class="btn-group btn-group-sm">
+                    <tb-export-button filename="data.csv" class="btn-group"></tb-export-button>
+                    <tb-print-button title="Sample" class="btn-group"></tb-print-button>
+                    <tb-column-selector></tb-column-selector>
+                </div>
+            </div>
+            <tb-text-search class="col-md-3 col-xs-6"></tb-text-search>
+        </div>
+
+        <!-- Main grid nested row -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel panel-default panel-rounded">
+                    <tb-grid-table class="table tubular-grid-table table-bordered table-responsive table-striped table-hover responsive-mobile">
+                        <!-- Columns Definition -->
+                        <tb-column-definitions>
+                            <tb-column class="text-center" style="display:table-cell">
+                                <div class="btn-group btn-group-xs">
+                                    <button class="btn btn-default" ng-click="$component.newRow()"
+                                            ng-hide="$component.tempRow.$isEditing">
+                                        New inline
+                                    </button>
+                                    <a class="btn btn-default hidden-xs hidden-sm" href="/new" ng-hide="$component.tempRow.$isEditing">
+                                        New form
+                                    </a>
+                                </div>
+                            </tb-column>
+                            <tb-column name="OrderId" label="Order ID" sortable="true" sort-order="1" class="column-sm" 
+                                       sort-direction="Ascending" is-key="true">
+                                <tb-column-header>ID</tb-column-header>
+                            </tb-column>
+                            <tb-column name="CustomerName" label="Customer" searchable="true" sortable="true" aggregate="distinctcount">
+                                <tb-column-filter title="Filter Customer" column-selector="true"
+                                                  Text="{{sample.Filter}}" Operator="NotEquals"></tb-column-filter>
+                                <tb-column-header>
+                                    <span>{{label}}</span>
+                                </tb-column-header>
+                            </tb-column>
+                            <tb-column name="ShipperCity" label="Shipping City" sortable="true" searchable="true" aggregate="count">
+                                <tb-column-header>{{label}}</tb-column-header>
+                                <tb-column-options-filter options-url="/api/orders/cities"></tb-column-options-filter>
+                            </tb-column>
+                            <tb-column name="Amount" column-type="numeric" sortable="true" aggregate="sum">
+                                <tb-column-header>{{label}}</tb-column-header>
+                                <tb-column-filter></tb-column-filter>
+                            </tb-column>
+                            <tb-column name="ShippedDate" label="Date" column-type="datetimeutc" class="column-md">
+                                <tb-column-header>{{sample.ColumnName}}</tb-column-header>
+                                <tb-column-date-time-filter></tb-column-date-time-filter>
+                            </tb-column>
+                            <tb-column name="IsShipped" column-type="boolean" class="column-md" visible="toggleVisible">
+                                <tb-column-header>Shipped?</tb-column-header>
+                                <tb-column-filter></tb-column-filter>
+                            </tb-column>
+                            <tb-column name="OrderType" column-type="numeric" sortable="true" aggregate="count">
+                                <tb-column-header>{{label}}</tb-column-header>
+                                <tb-column-filter></tb-column-filter>
+                            </tb-column>
+                        </tb-column-definitions>
+
+                        <!-- Rowsets -->
+                        <tb-row-set>
+                            <!-- Empty grid row -->
+                            <tb-row-template ng-show="$parent.$component.isEmpty">
+                                <tb-cell-template class="bg-warning" colspan="{{$parent.$component.visibleColumns()}}">
+                                    <b>No records found</b>
+                                </tb-cell-template>
+                            </tb-row-template>
+                            <!-- New record row -->
+                            <tb-row-template ng-show="$component.tempRow.$isEditing">
+                                <tb-cell-template class="text-center">
+                                    <div class="btn-group">
+                                        <tb-save-button model="$component.tempRow" save-css="btn-xs"
+                                                        cancel-css="btn-xs btn-danger" is-new="true"
+                                                        component="$component">
+                                        </tb-save-button>
+                                    </div>
+                                </tb-cell-template>
+                                <tb-cell-template class="text-center">
+                                    <span class="small">ID is autoassigned</span>
+                                </tb-cell-template>
+                                <tb-cell-template>
+                                    <tb-simple-editor value="$component.tempRow.CustomerName" required="true">
+                                    </tb-simple-editor>
+                                </tb-cell-template>
+                                <tb-cell-template class="cell-menu">
+                                    <tb-typeahead-editor value="$component.tempRow.ShipperCity" name="ShipperCity"
+                                                         required="true"
+                                                         option-label="Label" option-key="Key"
+                                                         options-url="api/orders/cities">
+                                    </tb-typeahead-editor>
+                                </tb-cell-template>
+                                <tb-cell-template>
+                                    <tb-numeric-editor value="$component.tempRow.Amount" format="C"
+                                                       min="0" max="100" required="true">
+                                    </tb-numeric-editor>
+                                </tb-cell-template>
+                                <tb-cell-template class="text-right col-md-3 cell-menu">
+                                    <tb-date-editor value="$component.tempRow.ShippedDate">
+                                    </tb-date-editor>
+                                </tb-cell-template>
+                                <tb-cell-template class="text-center">
+                                    <span class="small">You can't tag this order yet.</span>
+                                </tb-cell-template>
+                                <tb-cell-template class="text-center">
+                                    <span>&nbsp;</span>
+                                </tb-cell-template>
+                            </tb-row-template>
+                            <!-- General rows -->
+                            <tb-row-template ng-repeat="row in $component.rows" row-model="row" selectable="false">
+                                <tb-cell-template ng-class="{'danger': rowModel.$hasChanges}"
+                                                  class="cell-menu text-center">
+                                    <div class="btn-group">
+                                        <tb-save-button model="row" save-css="btn-xs"
+                                                        cancel-css="btn-danger btn-xs">
+                                        </tb-save-button>
+                                        <tb-edit-button model="row" class="btn btn-xs hidden-xs hidden-sm">
+                                        </tb-edit-button>
+                                        <button ng-click="row.editPopup('/ui/app/common/popup.html')"
+                                                class="btn btn-default btn-xs"
+                                                ng-hide="row.$isEditing">
+                                            Popup
+                                        </button>
+                                        <tb-remove-button model="row">
+                                        </tb-remove-button>
+                                    </div>
+                                </tb-cell-template>
+                                <tb-cell-template class="text-center" column-name="OrderId">
+                                    <a href="/form/{{row.OrderId}}" ng-bind="row.OrderId"></a>
+                                </tb-cell-template>
+                                <tb-cell-template column-name="CustomerName">
+                                    <span ng-hide="row.$isEditing" ng-bind="row.CustomerName"></span>
+                                    <div ng-show="row.$isEditing">
+                                        <input type="text" ng-model="row.CustomerName" class="form-control"/>
+                                    </div>
+                                </tb-cell-template>
+                                <tb-cell-template column-name="ShipperCity">
+                                    <tb-dropdown-editor is-editing="row.$isEditing" name="ShipperCity"
+                                                        option-label="Label" option-key="Key"
+                                                        options-url="api/orders/cities">
+                                    </tb-dropdown-editor>
+                                </tb-cell-template>
+                                <tb-cell-template class="text-right" column-name="Amount">
+                                    <tb-numeric-editor is-editing="row.$isEditing" name="Amount"
+                                                       format="C" min="1" max="100" required="true">
+                                    </tb-numeric-editor>
+                                </tb-cell-template>
+                                <tb-cell-template class="text-right cell-menu" column-name="ShippedDate">
+                                    <tb-date-editor is-editing="row.$isEditing" name="ShippedDate">
+                                    </tb-date-editor>
+                                </tb-cell-template>
+                                <tb-cell-template class="text-center" column-name="IsShipped">
+                                    <tb-checkbox-field is-editing="row.$isEditing" name="IsShipped">
+                                    </tb-checkbox-field>
+                                </tb-cell-template>
+                                <tb-cell-template class="text-center" column-name="OrderType">
+                                    <tb-simple-editor is-editing="row.$isEditing" name="OrderType">
+                                    </tb-simple-editor>
+                                </tb-cell-template>
+                            </tb-row-template>
+                        </tb-row-set>
+                        <tb-foot-set>
+                            <tb-row-template class="bg-info">
+                                <tb-cell-template></tb-cell-template>
+                                <tb-cell-template></tb-cell-template>
+                                <tb-cell-template>
+                                    <b>DISTINCT {{$component.aggregationFunctions.CustomerName}}</b>
+                                </tb-cell-template>
+                                <tb-cell-template></tb-cell-template>
+                                <tb-cell-template class="text-right">
+                                    <b>{{$component.aggregationFunctions.Amount | currency}}</b>
+                                </tb-cell-template>
+                                <tb-cell-template column-name="ShippedDate"></tb-cell-template>
+                                <tb-cell-template column-name="IsShipped"></tb-cell-template>
+                                <tb-cell-template column-name="OrderType">
+                                    <b>COUNT {{$component.aggregationFunctions.OrderType}}</b>
+                                </tb-cell-template>
+                            </tb-row-template>
+                        </tb-foot-set>
+                    </tb-grid-table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom toolbar nested row -->
+        <div class="row">
+            <tb-page-size-selector class="col-xs-6"></tb-page-size-selector>
+            <tb-grid-pager-info css-class="col-xs-6"></tb-grid-pager-info>
+        </div>
+    </div>
+</tb-grid>
+<div class="alert alert-default">
+    <input type="checkbox" ng-model="toggleVisible"/> Toggle Is Shipped column
+</div>
+</div>

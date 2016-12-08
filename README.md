@@ -109,6 +109,11 @@ You can access to global settings by using the static object <i>TubularDefaultSe
     <tr><th>AdjustTimezoneOffset</th><td><i>True</i></td><td>Determines if the DateTime from a Response should adjust the timezone offset send by within the Request.</td></tr>
 </table>
 
+## Building C# Library
+
+Depending in your environment you must use the solution **Unosquare.Tubular.sln** if you want to build with DOTNET or **Unosquare.Tubular.Lib.sln** if you use msbuild or xbuild.
+In other words, use first solution file for VS2015 with .NET Core support or the second one for any other environment.
+
 ##Boilerplate
 
 We have 3 boilerplates ready to seed your project:

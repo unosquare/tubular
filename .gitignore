@@ -232,3 +232,4 @@ dist/tubular-bundle.min.js
 /Unosquare.Tubular.EmbedioSample/html/vendor/tubular/*.js
 /src/Unosquare.Tubular/*.targets
 /test/Unosquare.Tubular.Tests/*.targets
+/src/Unosquare.Tubular.AspNetCoreSample/wwwroot/ui/vendor/tubular
