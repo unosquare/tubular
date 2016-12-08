@@ -14,7 +14,7 @@ environment:
 before_build:
 - appveyor-retry dotnet restore -v Minimal
 build_script:
-- dotnet build */**/project.json -c %CONFIGURATION% --version-suffix %LABEL%
+- dotnet build */**/project.json -c %CONFIGURATION%
 test_script:
 - dotnet test "test\Unosquare.Tubular.Tests" -c %CONFIGURATION%
 cache:
