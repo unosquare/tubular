@@ -25,6 +25,8 @@ install:
   - if [[ $TRAVIS_OS_NAME == "osx" ]]; then mkdir -p /usr/local/lib; fi
   - if [[ $TRAVIS_OS_NAME == "osx" ]]; then ln -s /usr/local/opt/openssl/lib/libcrypto.1.0.0.dylib /usr/local/lib/; fi
   - if [[ $TRAVIS_OS_NAME == "osx" ]]; then ln -s /usr/local/opt/openssl/lib/libssl.1.0.0.dylib /usr/local/lib/; fi
+  - if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew install brew-cask; fi
+  - if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew cask install google-chrome; fi
   - if [[ $DOTNETCORE == "" ]]; then nuget install NUnit.ConsoleRunner -OutputDirectory testrunner; fi
   - if [[ $DOTNETCORE == "1" ]]; then dotnet restore; else nuget restore Unosquare.Tubular.Lib.sln; fi 
   - if [[ $TRAVIS_NODE_VERSION == "4" ]]; then rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm && (cd ~/.nvm && git checkout `git describe --abbrev=0 --tags`) && source ~/.nvm/nvm.sh && nvm install $TRAVIS_NODE_VERSION; fi
