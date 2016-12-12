@@ -12,20 +12,20 @@
     {
         private const int PageSize = 20;
         private const string SearchText = "Name - 1";
-        
+
         private static void SimpleListTest(bool ignoreTimezone, int page = 1, int setSize = 445)
         {
             var dataSource = SampleEntities.GenerateData(setSize).AsQueryable();
-            var data = dataSource.Skip(PageSize * page).Take(PageSize).ToList();
+            var data = dataSource.Skip(PageSize*page).Take(PageSize).ToList();
             const int timezoneOffset = 300;
 
-            if (PageSize * page + PageSize < setSize)
+            if (PageSize*page + PageSize < setSize)
                 Assert.AreEqual(data.Count, PageSize, "Set has 10 items");
 
             var request = new GridDataRequest()
             {
                 Take = PageSize,
-                Skip = PageSize * page,
+                Skip = PageSize*page,
                 Search = new Filter(),
                 Columns = Thing.GetColumns(),
                 TimezoneOffset = timezoneOffset
@@ -39,10 +39,10 @@
 
             Assert.AreEqual(ignoreTimezone ? data.First().Date : data.First().Date.AddMinutes(-timezoneOffset),
                 response.Payload.First()[2], "Same date at first item");
-            
+
             Assert.AreEqual(dataSource.Count(), response.TotalRecordCount, "Total rows matching");
         }
-        
+
         [Test]
         public void SimpleList([Range(0, 21)] int page, [Range(430, 450)] int setSize)
         {
@@ -104,7 +104,7 @@
         [Test]
         public void SimpleSearch()
         {
-            var dataSource = SampleEntities.GenerateData().AsQueryable(); 
+            var dataSource = SampleEntities.GenerateData().AsQueryable();
             var data = dataSource.Where(x => x.Name.Contains(SearchText)).Take(PageSize).ToList();
 
             var request = new GridDataRequest()
@@ -173,7 +173,7 @@
             Assert.AreEqual(dataFiltered.Count, tubularDataFiltered.Count(), "Same length");
             Assert.AreEqual(dataFiltered.First(), tubularDataFiltered.First(), "Same first item");
         }
-        
+
         [Test]
         public void TestListSimpleSearch()
         {
@@ -289,7 +289,8 @@
             Assert.AreEqual(dataSource.Count(x => x.Name.ToLowerInvariant().Contains(SearchText.ToLowerInvariant())),
                 response.FilteredRecordCount, "Total filtered rows matching");
         }
-        
+
+#if NET452
         [Test]
         public void TestSimpleAggregate()
         {
@@ -311,7 +312,7 @@
             Assert.AreEqual(data.Count, response.Payload.Count, "Same length");
             Assert.AreEqual(data.First().Id, response.Payload.First().First(), "Same first item");
 
-            Assert.AreEqual(dataSource.Sum(x => x.Number), (double) response.AggregationPayload["Number"],
+            Assert.AreEqual(dataSource.Sum(x => x.Number), response.AggregationPayload["Number"],
                 "Same average number");
             Assert.AreEqual(dataSource.Sum(x => x.DecimalNumber), (decimal) response.AggregationPayload["DecimalNumber"],
                 "Same average decimal number");
@@ -349,9 +350,10 @@
             Assert.AreEqual(dataSource.Select(x => x.Date).Distinct().Count(), (int) response.AggregationPayload["Date"],
                 "Date same distinct count");
         }
+#endif
 
-
-        class MyDateClass {
+        class MyDateClass
+        {
             public DateTime Date { get; set; }
 
             public DateTime? NullableDate { get; set; }
@@ -362,15 +364,15 @@
         {
             const int offset = 30;
             var now = DateTime.Now;
-            var date = new MyDateClass { Date = now, NullableDate = now };
-            var actual = (MyDateClass)Extensions.AdjustTimeZone(date, offset);
+            var date = new MyDateClass {Date = now, NullableDate = now};
+            var actual = (MyDateClass) Extensions.AdjustTimeZone(date, offset);
 
             Assert.AreEqual(now.AddMinutes(-offset), actual.Date, "Non-nullable date adjusted");
             Assert.IsNotNull(actual.NullableDate);
             Assert.AreEqual(now.AddMinutes(-offset), actual.NullableDate.Value, "Nullable date with value adjusted");
 
-            date = new MyDateClass { Date = now, NullableDate = null };
-            actual = (MyDateClass)Extensions.AdjustTimeZone(date, offset);
+            date = new MyDateClass {Date = now, NullableDate = null};
+            actual = (MyDateClass) Extensions.AdjustTimeZone(date, offset);
 
             Assert.IsNull(actual.NullableDate, "Nullable date adjusted");
         }
