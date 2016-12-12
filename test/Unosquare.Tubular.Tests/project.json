@@ -4,7 +4,7 @@
     "dependencies": {
         "NUnit": "3.5.0",
         "dotnet-test-nunit": "3.4.0-beta-1",
-        "Unosquare.Tubular": "1.0.9-*"
+        "Unosquare.Tubular": { "target": "project" }
     },
 
     "testRunner": "nunit",
