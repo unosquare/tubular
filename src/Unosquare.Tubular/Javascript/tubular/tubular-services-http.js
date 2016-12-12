@@ -99,9 +99,9 @@
                             'Content-Type': 'application/x-www-form-urlencoded'
                         },
                         data: 'grant_type=password&username=' + username + '&password=' + password
-                    }).success(function(data) {
+                    }).then(function success(data) {
                         me.handleSuccessCallback(userDataCallback, successCallback, persistData, data, username);
-                    }).error(function(data) {
+                    }, function error(data) {
                         me.handleErrorCallback(errorCallback, data);
                     });
                 };
@@ -198,9 +198,9 @@
                         url: me.refreshTokenUrl,
                         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                         data: 'grant_type=refresh_token&refresh_token=' + me.userData.refreshToken
-                    }).success(function(data) {
+                    }).then (function success(data) {
                         me.handleSuccessCallback(null, null, persistData, data);
-                    }).error(function(data) {
+                    }, function error(data) {
                         me.handleErrorCallback(errorCallback, data);
                     });
                 };
