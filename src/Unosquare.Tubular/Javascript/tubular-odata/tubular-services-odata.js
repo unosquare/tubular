@@ -48,7 +48,7 @@
 
                     url += "&$select=" + params.Columns.map(function (el) { return el.Name; }).join(',');
 
-                    if (params.Take != -1) {
+                    if (params.Take !== -1) {
                         url += "&$skip=" + params.Skip;
                         url += "&$top=" + params.Take;
                     }
@@ -67,7 +67,7 @@
                         .map(function (el) {
                             return me.operatorsMapping[el.Filter.Operator]
                                 .replace('{0}', el.Name)
-                                .replace('{1}', el.DataType == "string" ? "'" + el.Filter.Text + "'" : el.Filter.Text);
+                                .replace('{1}', el.DataType === "string" ? "'" + el.Filter.Text + "'" : el.Filter.Text);
                         })
                         .filter(function (el) { return el.length > 1; });
 

@@ -22,7 +22,7 @@ namespace Unosquare.Tubular.AspNetCoreSample.Controllers
         public object Get(string id)
         {
             var orderId = int.Parse(id);
-            var order = _context.Orders.Where(o => o.OrderId == orderId).FirstOrDefault();
+            var order = _context.Orders.FirstOrDefault(o => o.OrderId == orderId);
 
             if (order == null) return NotFound();
 
@@ -76,7 +76,7 @@ namespace Unosquare.Tubular.AspNetCoreSample.Controllers
         [HttpPut, Route("save")]
         public async Task<object> UpdateOrder([FromBody] GridDataUpdateRow<Order> request)
         {
-            var order = _context.Orders.Where(o => o.OrderId == request.Old.OrderId).FirstOrDefault();
+            var order = _context.Orders.FirstOrDefault(o => o.OrderId == request.Old.OrderId);
 
             if (order == null)
                 return null;
@@ -111,7 +111,7 @@ namespace Unosquare.Tubular.AspNetCoreSample.Controllers
         public async Task<object> DeleteOrder(string id)
         {
             var orderId = int.Parse(id);
-            var orderDb = _context.Orders.Where(o => o.OrderId == orderId).FirstOrDefault();
+            var orderDb = _context.Orders.FirstOrDefault(o => o.OrderId == orderId);
 
             if (orderDb == null)
                 return NotFound();

@@ -31,16 +31,17 @@ namespace Unosquare.Tubular.AspNetCoreSample
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<SampleDbContext>(
-                  options => options.UseSqlServer(Configuration["ConnectionString"]));
+                options => options.UseSqlServer(Configuration["ConnectionString"]));
 
             // Add framework services.
             services.AddMvc()
                 // Change the JSON contract resolver to DefaultContractResolver to avoid issues with camel case property
-                .AddJsonOptions(options => options.SerializerSettings.ContractResolver = new DefaultContractResolver()); ;
+                .AddJsonOptions(options => options.SerializerSettings.ContractResolver = new DefaultContractResolver());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, SampleDbContext dbContext)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory,
+            SampleDbContext dbContext)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
@@ -51,6 +52,7 @@ namespace Unosquare.Tubular.AspNetCoreSample
             app.UseMvc();
 
             #region Seeder
+
             Task.Factory.StartNew(() =>
             {
                 if (dbContext.Orders.Any()) return;
@@ -58,20 +60,18 @@ namespace Unosquare.Tubular.AspNetCoreSample
                 {
                     var shipperCities = new[]
                     {
-                "Guadalajara, JAL, Mexico", "Los Angeles, CA, USA", "Portland, OR, USA", "Leon, GTO, Mexico",
-                "Boston, MA, USA"
-            };
+                        "Guadalajara, JAL, Mexico", "Los Angeles, CA, USA", "Portland, OR, USA", "Leon, GTO, Mexico",
+                        "Boston, MA, USA"
+                    };
 
                     var companies = new[]
-                    {"Unosquare LLC", "Advanced Technology Systems", "Super La Playa", "Vesta", "Microsoft", "Oxxo", "Simian"};
-
-                    dbContext.Products.AddRange(new[]
                     {
-                new Product {Name = "CocaCola"},
-                new Product {Name = "Pepsi"},
-                new Product {Name = "Starbucks"},
-                new Product {Name = "Donut"}
-            });
+                        "Unosquare LLC", "Advanced Technology Systems", "Super La Playa", "Vesta", "Microsoft", "Oxxo",
+                        "Simian"
+                    };
+
+                    dbContext.Products.AddRange(new Product {Name = "CocaCola"}, new Product {Name = "Pepsi"},
+                        new Product {Name = "Starbucks"}, new Product {Name = "Donut"});
 
                     dbContext.SaveChanges();
 
@@ -104,7 +104,7 @@ namespace Unosquare.Tubular.AspNetCoreSample
                             });
                         }
 
-                        order.Amount = order.Details.Sum(x => x.Price * x.Quantity);
+                        order.Amount = order.Details.Sum(x => x.Price*x.Quantity);
 
                         dbContext.Orders.Add(order);
                     }
@@ -116,6 +116,7 @@ namespace Unosquare.Tubular.AspNetCoreSample
                     throw ex;
                 }
             });
+
             #endregion
         }
     }

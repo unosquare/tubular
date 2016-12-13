@@ -233,3 +233,4 @@ dist/tubular-bundle.min.js
 /src/Unosquare.Tubular/*.targets
 /test/Unosquare.Tubular.Tests/*.targets
 /src/Unosquare.Tubular.AspNetCoreSample/wwwroot/ui/vendor/tubular
+*.lock.json

@@ -1,28 +1,31 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Linq.Dynamic.Core;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Text.RegularExpressions;
-using Unosquare.Tubular.ObjectModel;
+﻿namespace Unosquare.Tubular
+{
+    using System;
+    using System.Collections.Concurrent;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Linq;
+    using System.Linq.Dynamic.Core;
+    using System.Reflection;
+    using System.Runtime.CompilerServices;
+    using System.Text;
+    using Unosquare.Tubular.ObjectModel;
 #if NET452
+using System.Text.RegularExpressions;
 using System.Net.Http;
 #endif
 
-namespace Unosquare.Tubular
-{
     /// <summary>
     /// Extensions methods
     /// </summary>
     public static class Extensions
     {
+#if NET452
         private static readonly Regex TimezoneOffset = new Regex(@"timezoneOffset=(\d[^&]*)");
+#endif
 
-        private static readonly ConcurrentDictionary<Type, Dictionary<string, PropertyInfo>> TypePropertyCache = new ConcurrentDictionary<Type, Dictionary<string, PropertyInfo>>();
+        private static readonly ConcurrentDictionary<Type, Dictionary<string, PropertyInfo>> TypePropertyCache =
+            new ConcurrentDictionary<Type, Dictionary<string, PropertyInfo>>();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static Dictionary<string, PropertyInfo> ExtractProperties(Type t)
@@ -34,10 +37,10 @@ namespace Unosquare.Tubular
         private static Dictionary<string, PropertyInfo> GetTypeProperties(Type t)
         {
             return t.GetProperties()
-                    .Where(p => Common.PrimitiveTypes.Contains(p.PropertyType) && p.CanRead)
-                    .ToDictionary(k => k.Name, v => v);
+                .Where(p => Common.PrimitiveTypes.Contains(p.PropertyType) && p.CanRead)
+                .ToDictionary(k => k.Name, v => v);
         }
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static Dictionary<GridColumn, PropertyInfo> MapColumnsToProperties(GridColumn[] columns,
             Dictionary<string, PropertyInfo> properties)
@@ -93,7 +96,10 @@ namespace Unosquare.Tubular
         /// <returns></returns>
         public static object AdjustTimeZone(object data, int timezoneOffset)
         {
-            var dateTimeProperties = data.GetType().GetProperties().Where(x => x.PropertyType == typeof (DateTime) || x.PropertyType == typeof(DateTime?));
+            var dateTimeProperties =
+                data.GetType()
+                    .GetProperties()
+                    .Where(x => x.PropertyType == typeof(DateTime) || x.PropertyType == typeof(DateTime?));
 
             foreach (var prop in dateTimeProperties)
             {
@@ -108,24 +114,24 @@ namespace Unosquare.Tubular
             DateTime value;
             if (prop.PropertyType == typeof(DateTime?))
             {
-                var nullableValue = (DateTime?)prop.GetValue(data);
+                var nullableValue = (DateTime?) prop.GetValue(data);
                 if (!nullableValue.HasValue) return;
                 value = nullableValue.Value;
             }
             else
-                value = (DateTime)prop.GetValue(data);
+                value = (DateTime) prop.GetValue(data);
             value = value.AddMinutes(-timezoneOffset);
             prop.SetValue(data, value);
         }
 
 #if NET452
-        /// <summary>
-        /// Checks the datetime properties in an object and adjust the timezone.
-        /// </summary>
-        /// <param name="request">The Http Request</param>
-        /// <param name="data">The output object</param>
-        /// <param name="fromLocal"></param>
-        /// <returns></returns>
+/// <summary>
+/// Checks the datetime properties in an object and adjust the timezone.
+/// </summary>
+/// <param name="request">The Http Request</param>
+/// <param name="data">The output object</param>
+/// <param name="fromLocal"></param>
+/// <returns></returns>
         public static object AdjustObjectTimeZone(this HttpRequestMessage request, object data, bool fromLocal = false)
         {
             var query = request.RequestUri.Query;
@@ -141,7 +147,7 @@ namespace Unosquare.Tubular
             return AdjustTimeZone(data, timeDiff);
         }
 #endif
-        
+
         /// <summary>
         /// Delegates a process to format a subset response
         /// </summary>
@@ -215,15 +221,15 @@ namespace Unosquare.Tubular
             else
             {
                 var filteredCount = subset.Count();
-                var totalPages = response.TotalPages = filteredCount / pageSize;
-                
+                var totalPages = response.TotalPages = filteredCount/pageSize;
+
                 if (totalPages > 0)
                 {
-                    response.CurrentPage = request.Skip / pageSize + 1;
-                    
+                    response.CurrentPage = request.Skip/pageSize + 1;
+
                     if (request.Skip > 0) subset = subset.Skip(request.Skip);
                 }
-                
+
                 subset = subset.Take(pageSize);
             }
 
@@ -239,21 +245,25 @@ namespace Unosquare.Tubular
         private static Dictionary<string, object> AggregateSubset(GridColumn[] columns, IQueryable subset)
         {
             var aggregateColumns = columns.Where(c => c.Aggregate != AggregationFunction.None).ToArray();
-            var payload = new Dictionary<string, object>(aggregateColumns.Count());
+            var payload = new Dictionary<string, object>(aggregateColumns.Length);
 
-            Action<GridColumn, Func<IQueryable<double?>, double?>, Func<IQueryable<decimal?>, decimal?>> aggregate = (column, doubleF, decimalF) => {
-                if (subset.ElementType.GetProperty(column.Name).PropertyType == typeof(double))
+#if NET452
+            Action<GridColumn, Func<IQueryable<double?>, double?>, Func<IQueryable<decimal?>, decimal?>> aggregate =
+                (column, doubleF, decimalF) =>
                 {
-                    payload.Add(column.Name,
-                        doubleF(subset.Select(column.Name).Cast<double?>()));
-                }
-                else
-                {
-                    payload.Add(column.Name,
-                        decimalF(subset.Select(column.Name).Cast<decimal?>()));
-                }
-            };
-
+                    if (subset.ElementType.GetProperty(column.Name).PropertyType == typeof(double))
+                    {
+                        payload.Add(column.Name,
+                            doubleF(subset.Select(column.Name).Cast<double?>()));
+                    }
+                    else
+                    {
+                        payload.Add(column.Name,
+                            decimalF(subset.Select(column.Name).Cast<decimal?>()));
+                    }
+                };
+            
+#endif
             foreach (var column in aggregateColumns)
             {
                 switch (column.Aggregate)
@@ -283,7 +293,7 @@ namespace Unosquare.Tubular
                         payload.Add(column.Name,
                             subset.Select(column.Name).Distinct().Count());
                         break;
-                    
+
                     default:
                         payload.Add(column.Name, 0);
                         break;
@@ -317,7 +327,7 @@ namespace Unosquare.Tubular
         private static IQueryable FilterResponse(GridDataRequest request, IQueryable subset, GridDataResponse response)
         {
             var isDbQuery = subset.GetType().GetTypeInfo().IsGenericType &&
-                            subset.GetType().GetInterfaces().Any(y => y == typeof (IListSource));
+                            subset.GetType().GetInterfaces().Any(y => y == typeof(IListSource));
 
             // Perform Searching
             var searchLambda = new StringBuilder();
@@ -354,9 +364,9 @@ namespace Unosquare.Tubular
             // Perform Filtering
             foreach (
                 var column in
-                    request.Columns.Where(x => x.Filter != null)
-                        .Where(
-                            column => !string.IsNullOrWhiteSpace(column.Filter.Text) || column.Filter.Argument != null))
+                request.Columns.Where(x => x.Filter != null)
+                    .Where(
+                        column => !string.IsNullOrWhiteSpace(column.Filter.Text) || column.Filter.Argument != null))
             {
                 column.Filter.HasFilter = true;
 
@@ -393,12 +403,18 @@ namespace Unosquare.Tubular
                                 if (TubularDefaultSettings.AdjustTimezoneOffset)
                                 {
                                     searchParamArgs.Add(DateTime.Parse(column.Filter.Text).Date.ToUniversalTime());
-                                    searchParamArgs.Add(DateTime.Parse(column.Filter.Text).Date.ToUniversalTime().AddDays(1).AddMinutes(-1));
+                                    searchParamArgs.Add(
+                                        DateTime.Parse(column.Filter.Text)
+                                            .Date.ToUniversalTime()
+                                            .AddDays(1)
+                                            .AddMinutes(-1));
                                 }
                                 else
                                 {
                                     searchParamArgs.Add(DateTime.Parse(column.Filter.Text).Date);
-                                    searchParamArgs.Add(DateTime.Parse(column.Filter.Text).Date.AddDays(1).AddMinutes(-1));
+                                    searchParamArgs.Add(DateTime.Parse(column.Filter.Text)
+                                        .Date.AddDays(1)
+                                        .AddMinutes(-1));
                                 }
                                 break;
                             case DataType.Boolean:
