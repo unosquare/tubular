@@ -100,9 +100,9 @@
                         },
                         data: 'grant_type=password&username=' + username + '&password=' + password
                     }).then(function success(data) {
-                        me.handleSuccessCallback(userDataCallback, successCallback, persistData, data, username);
+                        me.handleSuccessCallback(userDataCallback, successCallback, persistData, data.data, username);
                     }, function error(data) {
-                        me.handleErrorCallback(errorCallback, data);
+                        me.handleErrorCallback(errorCallback, data.data);
                     });
                 };
 
@@ -199,9 +199,9 @@
                         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                         data: 'grant_type=refresh_token&refresh_token=' + me.userData.refreshToken
                     }).then (function success(data) {
-                        me.handleSuccessCallback(null, null, persistData, data);
+                        me.handleSuccessCallback(null, null, persistData, data.data);
                     }, function error(data) {
-                        me.handleErrorCallback(errorCallback, data);
+                        me.handleErrorCallback(errorCallback, data.data);
                     });
                 };
 
