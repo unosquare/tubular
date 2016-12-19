@@ -98,7 +98,7 @@
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded'
                         },
-                        data: 'grant_type=password&username=' + username + '&password=' + password
+                        data: 'grant_type=password&username=' + encodeURIComponent(username) + '&password=' + encodeURIComponent(password)
                     }).then(function success(data) {
                         me.handleSuccessCallback(userDataCallback, successCallback, persistData, data.data, username);
                     }, function error(data) {
