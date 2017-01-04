@@ -8,13 +8,11 @@
   "frameworks": {
     "netcoreapp1.1": {
       "dependencies": {
-        "System.Text.RegularExpressions": "4.3.0"
       }
     },
     "netstandard1.6": {
       "dependencies": {
-        "NETStandard.Library": "1.6.1",
-        "System.Text.RegularExpressions": "4.3.0"
+        "NETStandard.Library": "1.6.1"
       }
     },
     "net452": {

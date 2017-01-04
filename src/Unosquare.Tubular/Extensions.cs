@@ -11,8 +11,8 @@
     using System.Text;
     using Unosquare.Tubular.ObjectModel;
 #if NET452
-using System.Text.RegularExpressions;
-using System.Net.Http;
+    using System.Text.RegularExpressions;
+    using System.Net.Http;
 #endif
 
     /// <summary>
@@ -66,15 +66,15 @@ using System.Net.Http;
             {
                 var payloadItem = new List<object>(columnMap.Keys.Count);
 
-                foreach (var column in columnMap.Select(m => new {Value = m.Value.GetValue(item), m.Key}))
+                foreach (var column in columnMap.Select(m => new { Value = m.Value.GetValue(item), m.Key }))
                 {
                     if (column.Value is DateTime)
                     {
                         if (column.Key.DataType == DataType.DateTimeUtc ||
                             TubularDefaultSettings.AdjustTimezoneOffset == false)
-                            payloadItem.Add(((DateTime) column.Value));
+                            payloadItem.Add(((DateTime)column.Value));
                         else
-                            payloadItem.Add(((DateTime) column.Value).AddMinutes(-timezoneOffset));
+                            payloadItem.Add(((DateTime)column.Value).AddMinutes(-timezoneOffset));
                     }
                     else
                     {
@@ -114,12 +114,12 @@ using System.Net.Http;
             DateTime value;
             if (prop.PropertyType == typeof(DateTime?))
             {
-                var nullableValue = (DateTime?) prop.GetValue(data);
+                var nullableValue = (DateTime?)prop.GetValue(data);
                 if (!nullableValue.HasValue) return;
                 value = nullableValue.Value;
             }
             else
-                value = (DateTime) prop.GetValue(data);
+                value = (DateTime)prop.GetValue(data);
             value = value.AddMinutes(-timezoneOffset);
             prop.SetValue(data, value);
         }
@@ -160,22 +160,10 @@ using System.Net.Http;
         /// </summary>
         /// <param name="request">The Tubular's grid request</param>
         /// <param name="dataSource">The IQueryable source</param>
-        /// <returns></returns>
-        public static GridDataResponse CreateGridDataResponse(this GridDataRequest request, IQueryable dataSource)
-        {
-            return CreateGridDataResponse(request, dataSource, null);
-        }
-
-        /// <summary>
-        /// Generates a GridDataReponse using the GridDataRequest and an IQueryable source,
-        /// like a DataSet in Entity Framework.
-        /// </summary>
-        /// <param name="request">The Tubular's grid request</param>
-        /// <param name="dataSource">The IQueryable source</param>
         /// <param name="preProcessSubset">The subset's process delegate</param>
         /// <returns></returns>
         public static GridDataResponse CreateGridDataResponse(this GridDataRequest request, IQueryable dataSource,
-            ProcessResponseSubset preProcessSubset)
+            ProcessResponseSubset preProcessSubset = null)
         {
             if (request == null) throw new InvalidOperationException("The GridDataRequest is null");
 
@@ -221,11 +209,11 @@ using System.Net.Http;
             else
             {
                 var filteredCount = subset.Count();
-                var totalPages = response.TotalPages = filteredCount/pageSize;
+                var totalPages = response.TotalPages = filteredCount / pageSize;
 
                 if (totalPages > 0)
                 {
-                    response.CurrentPage = request.Skip/pageSize + 1;
+                    response.CurrentPage = request.Skip / pageSize + 1;
 
                     if (request.Skip > 0) subset = subset.Skip(request.Skip);
                 }
