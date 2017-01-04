@@ -10,17 +10,14 @@
     "testRunner": "nunit",
 
     "frameworks": {
-        "netcoreapp1.0": {
+        "netcoreapp1.1": {
             "imports": "dnxcore50",
             "dependencies": {
-                "Microsoft.NETCore.App": {
-                    "type": "platform",
-                    "version": "1.0.1"
-                }
+                "Microsoft.NETCore.App": "1.1.0"
             }
         },
         "netstandard1.6": {
-            "imports": ["dnxcore50", "netcoreapp1.0"],
+            "imports": ["dnxcore50", "netcoreapp1.1"],
             "dependencies": {
                 "NETStandard.Library": "1.6.1"
             }

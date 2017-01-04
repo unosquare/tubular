@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
-using System.Reflection;
 using Unosquare.Labs.EmbedIO;
 using Unosquare.Labs.EmbedIO.Modules;
+using Unosquare.Swan;
 
 namespace Unosquare.Tubular.EmbedioSample
 {
@@ -14,20 +14,7 @@ namespace Unosquare.Tubular.EmbedioSample
         /// <value>
         /// The HTML root path.
         /// </value>
-        public static string HtmlRootPath
-        {
-            get
-            {
-                var assemblyPath = Path.GetDirectoryName(typeof(Program).GetTypeInfo().Assembly.Location);
-#if !DEBUG
-                // This lets you edit the files without restarting the server.
-                return Path.GetFullPath(Path.Combine(assemblyPath, "..\\..\\html"));
-#else
-                // This is when you have deployed the server.
-                return Path.Combine(assemblyPath, "..\\html");
-#endif
-            }
-        }
+        public static string HtmlRootPath => Path.Combine(CurrentApp.EntryAssemblyDirectory, "html");
 
         /// <summary>
         /// Defines the entry point of the application.
@@ -35,14 +22,11 @@ namespace Unosquare.Tubular.EmbedioSample
         /// <param name="args">The arguments.</param>
         private static void Main(string[] args)
         {
-            var url = "http://localhost:9696/";
-
-            if (args.Length > 0)
-                url = args[0];
-
+            var url = args.Length > 0 ? args[0] : "http://localhost:9696/";
+            
             // Our web server is disposable. Note that if you don't want to use logging,
             // there are alternate constructors that allow you to skip specifying an ILog object.
-            using (var server = new WebServer(url, new Labs.EmbedIO.Log.SimpleConsoleLog()))
+            using (var server = new WebServer(url))
             {
                 // First, we will configure our web server by adding Modules.
 

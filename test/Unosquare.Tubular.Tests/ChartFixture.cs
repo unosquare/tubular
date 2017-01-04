@@ -1,8 +1,8 @@
 ﻿namespace Unosquare.Tubular.Tests
 {
-    using System.Linq;
-    using NUnit.Framework;
     using Database;
+    using NUnit.Framework;
+    using System.Linq;
 
     [TestFixture]
     public class ChartFixture
