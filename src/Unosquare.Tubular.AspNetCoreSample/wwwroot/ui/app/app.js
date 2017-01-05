@@ -76,8 +76,16 @@
             }
         ])
         .controller('tubularSampleCtrl', [
-            '$scope', '$location', 'toastr', function ($scope, $location, toastr) {
+            '$scope', '$location', 'toastr', '$http', function ($scope, $location, toastr, $http) {
                 var me = this;
+
+                $http.get('api/orders/cities').then(function (res) {
+                    $scope.cities = [];
+                    angular.forEach(res.data, function (value) {
+                        $scope.cities.push(value.Key);
+                    });
+                });
+
                 me.onTableController = function () {
                     console.log('On Before Get Data Event: fired.');
                 };
