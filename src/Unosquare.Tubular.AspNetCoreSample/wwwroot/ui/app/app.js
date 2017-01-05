@@ -1,18 +1,6 @@
 ﻿(function(angular) {
     'use strict';
 
-    // define console methods if not defined
-    if (typeof console === "undefined") {
-        window.console = {
-            log: function () { },
-            debug: function () { },
-            error: function () { },
-            assert: function () { },
-            info: function () { },
-            warn: function () { }
-        };
-    }
-
     angular.module('app.routes', ['ngRoute'])
         .config([
             '$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
@@ -76,12 +64,13 @@
             }
         ])
         .controller('tubularSampleCtrl', [
-            '$scope', '$location', 'toastr', '$http', function ($scope, $location, toastr, $http) {
+            '$scope', '$location', 'toastr', 'tubularHttp', function ($scope, $location, toastr, tubularHttp) {
                 var me = this;
 
-                $http.get('api/orders/cities').then(function (res) {
+                tubularHttp.setRequireAuthentication(false);
+                tubularHttp.get('api/orders/cities').promise.then(function (data) {
                     $scope.cities = [];
-                    angular.forEach(res.data, function (value) {
+                    angular.forEach(data, function (value) {
                         $scope.cities.push(value.Key);
                     });
                 });
