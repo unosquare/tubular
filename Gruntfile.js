@@ -20,10 +20,7 @@ module.exports = function(grunt) {
             dist: {
                 files: { 'instrumented/': 'test/Unosquare.Tubular.WebTest/index*.html' },
                 options: {
-                    replacements: [{
-                            pattern: /testApp\.js/g,
-                            replacement: '/instrumented/test/Unosquare.Tubular.WebTest/testApp.js'
-                        },
+                    replacements: [
                         {
                             pattern: /\.\.\/\.\.\/src\/Unosquare\.Tubular\/Javascript\/tubular/g,
                             replacement: '/instrumented/src/Unosquare.Tubular/Javascript/tubular'
@@ -64,7 +61,7 @@ module.exports = function(grunt) {
                 options: {
                     args: {
                         baseUrl: "http://localhost:9000/test/Unosquare.Tubular.WebTest/",
-                        browser: "chrome",
+                        browser: "firefox",
                         specs: ['test/e2e-tests/tbHttpSpec.js']
                     }
                 }
