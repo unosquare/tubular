@@ -55,6 +55,7 @@
                     me.userData.username = '';
                     me.userData.bearerToken = '';
                     me.userData.expirationDate = null;
+                    me.userData.refreshToken = null;
                 }
 
                 me.userData = {

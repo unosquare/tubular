@@ -128,11 +128,10 @@
                         return false;
                     }
                 };
-                $scope.changeExpirationDate = function() {
-                    localStorageService.clearAll();
+                $scope.removeAuthentication = function() {
+                    tubularHttp.removeAuthentication();
+
                     tubularHttp.setRequireAuthentication(true);
-                    tubularHttp.userData.expirationDate = null;
-                    $location.path("/expirationDate");
 
                     if (tubularHttp.isAuthenticated()) {
                         $scope.redirected = "Authenticated";
@@ -144,6 +143,7 @@
                     var retData = tubularHttp.userData;
                     var savedDat = localStorageService.get('auth_data');
                     $scope.retSavData = retData.username === savedDat.username;
+                    $scope.refreshToken = retData.refreshToken;
                 };
 
                 $scope.getTest = function() {
@@ -156,12 +156,14 @@
                 $scope.postTest = function() {
                     tubularHttp.post('http://tubular.azurewebsites.net/api/orders/53', { 'ShipperCity': 'California' }).promise.then(function(data) {
                         if (data == null) {
-                            $scope.postLog = 'null';
+                            $scope.postLog = 'null' ;
                         } else {
                             $scope.postLog = data;
                         }
                     });
                 };
+
+                $scope.useRefreshToken = function(){}
             }
         ]).controller('rwController', [
             '$scope', 'localStorageService',

@@ -34,12 +34,22 @@ describe('tbHttp', function () {
             expect($('#isAuth').getText()).toBe('false');
         });
     });
-   
-    it('should expired', function(){
+
+    it('should have a refresh token', function () {
         element(by.model('username')).sendKeys('admin');
         element(by.model('password')).sendKeys('pass.word');
         element(by.id('submitBtn')).click();
-        element(by.id('btnExp')).click().then(function(){
+        element(by.id('btnRetData')).click().then(function () {
+            expect($('#lbRet').getText()).toBe('true');
+            expect($('#lbRefreshToken').getText()).not.toBeNull();
+        });
+    });
+   
+    it('should remove authentication', function(){
+        element(by.model('username')).sendKeys('admin');
+        element(by.model('password')).sendKeys('pass.word');
+        element(by.id('submitBtn')).click();
+        element(by.id('btnRemoveAuth')).click().then(function(){
             expect($('#expAuth').getText()).toBe('Not Authenticated');
         });         
     });
@@ -48,7 +58,7 @@ describe('tbHttp', function () {
         element(by.model('username')).sendKeys('admin');
         element(by.model('password')).sendKeys('pass.word');
         element(by.id('submitBtn')).click();
-        element(by.id('btnExp')).click();
+        element(by.id('btnRemoveAuth')).click();
         element(by.id('btnGet')).click().then(function(){
             if($('#lbGet').getText()){
                 expect($('#lbGet').getText()).toBe('cancel');
@@ -60,7 +70,7 @@ describe('tbHttp', function () {
         element(by.model('username')).sendKeys('admin');
         element(by.model('password')).sendKeys('pass.word');
         element(by.id('submitBtn')).click();
-        element(by.id('btnExp')).click();
+        element(by.id('btnRemoveAuth')).click();
         element(by.id('btnPost')).click().then(function(){
             expect($('#lbPost').getText()).toBe('null');
         });

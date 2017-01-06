@@ -1,6 +1,6 @@
 <div ng-controller="expDate">
-    <button id="btnExp" ng-click="changeExpirationDate()" class="btn btn-success">
-        <i class="fa fa-check-circle"></i>&nbsp;change expDay
+    <button id="btnRemoveAuth" ng-click="removeAuthentication()" class="btn btn-success">
+        <i class="fa fa-check-circle"></i>&nbsp;Remove Authentication
     </button>
     <label id="expAuth">{{redirected}}</label>
     <br/>
@@ -13,6 +13,9 @@
         <i class="fa fa-check-circle"></i>&nbsp;Retrieve Saved Data
     </button>
     <label id="lbRet">{{retSavData}}</label>
+    <label id="lbRefreshToken">{{refreshToken}}</label>
+    <label id="lbOriginalAccessToken">{{originalAccessToken}}</label>
+    <label id="lbNewAccessToken">{{newAccessToken}}</label>
     <br/>
     <button id="btnGet" ng-click="getTest()" class="btn btn-success">
         <i class="fa fa-check-circle"></i>&nbsp;Get
@@ -21,6 +24,9 @@
     <br/>
     <button id="btnPost" ng-click="postTest()" class="btn btn-success">
         <i class="fa fa-check-circle"></i>&nbsp;Post
+    </button>
+    <button id="btnUseRefreshToken" ng-click="useRefreshToken()" class="btn btn-success">
+        <i class="fa fa-check-circle"></i>&nbsp;Use Refresh Token
     </button>
     <label id="lbPost">{{postLog}}</label>
     
