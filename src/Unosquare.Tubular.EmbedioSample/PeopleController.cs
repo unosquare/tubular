@@ -5,6 +5,7 @@ using Unosquare.Net;
 using Unosquare.Labs.EmbedIO;
 using Unosquare.Labs.EmbedIO.Modules;
 using Unosquare.Tubular.ObjectModel;
+using Unosquare.Swan;
 
 namespace Unosquare.Tubular.EmbedioSample
 {
