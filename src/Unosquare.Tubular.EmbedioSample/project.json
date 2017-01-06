@@ -6,7 +6,7 @@
   },
   "dependencies": {
     "Unosquare.Tubular": { "target": "project" },
-    "EmbedIO": "1.4.0"
+    "EmbedIO": "1.4.6"
   },
   "frameworks": {
     "netcoreapp1.1": {
