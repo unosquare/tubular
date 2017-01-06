@@ -61,7 +61,7 @@ describe('tbColumn', function() {
             dataSetHigherId = '49',
             dataSetLowerCustomerName = 'Advanced Technology Systems',
             dataSetHigherCustomerName = 'Vesta',
-            dataSetLowerDate = /12\/30\/15 \d:17.*/,
+            dataSetLowerDate = /12\/30\/2015/,
             dataSetHigherDate;
 
         beforeEach(function() {
