@@ -17,6 +17,8 @@ describe('tbGridPager', function () {
         previousNavBtn,
         lastNavBtn,
         nextNavBtn,
+        totalRecords,
+        pageSize,
         activeNavBtn;
 
     beforeAll(function () {
@@ -45,11 +47,20 @@ describe('tbGridPager', function () {
         // Current showing page button
         activeNavBtn = tbGridPager.$('.active');
 
-
         // Select '10' on tbPageSizeSelector
         element(by.model('$ctrl.$component.pageSize'))
             .$('[value="number:10"]').click();
-            
+
+        pageSize = 10;
+
+        var recordsRegex = /Showing (\d+) to (\d+) of (\d+) records/;
+        element(by.tagName('tb-grid-pager-info')).$('.pager-info').getText().then(function (result) {
+            var pagerResults = recordsRegex.exec(result);
+            // Since the result will be something like ["Showing 31 to 40 of 49 records", "31", "40", "49"]
+            // We need the third item in the results
+            totalRecords = parseInt(pagerResults[3]);
+        });
+
         // Go to first page if not there
         firstNavBtn.$('a').click();
 
@@ -116,7 +127,7 @@ describe('tbGridPager', function () {
     });
 
     describe('page navigation', function () {
-    
+
         it('should go to next results page when clicking on next navigation button', function () {
             firstNavBtn.$('a').click();
             nextNavBtn.$('a').click();
@@ -135,7 +146,13 @@ describe('tbGridPager', function () {
         it('should go to last results page when clicking on last navigation button', function () {
             lastNavBtn.$('a').click();
 
-            expect(lastDataRow.getText()).toMatch(/^53\s/);
+            expect(lastNavBtn.getAttribute('class')).toMatch(/disabled/);
+            expect(nextNavBtn.getAttribute('class')).toMatch(/disabled/);
+
+            // Update active nav
+            activeNavBtn = tbGridPager.$('.active');
+
+            expect(activeNavBtn.$('a').getText()).toEqual(Math.ceil(totalRecords / pageSize).toString());
         });
 
         it('should go to first results page when clicking on first navigation button', function () {
