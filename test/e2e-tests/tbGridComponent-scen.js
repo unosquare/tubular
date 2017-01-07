@@ -17,14 +17,12 @@ describe('tbGridComponents', function () {
         element(by.id('newButton')).click().then(function() {
             var newRow = $('tr[ng-show]');
             expect(newRow.isDisplayed()).toBe(true);
-            if(element.all(by.repeater('row in $component.rows')).last().getText() === 'DEMO'){
-                newRow.$('input').sendKeys('DEMOTEST');
-            }else{
-                newRow.$('input').sendKeys('DEMO');
-            }
+
+            newRow.$('input').sendKeys(new Date().valueOf());
+
             newRow.$$('button').first().click().then(function() {
                 var newLastItem = element.all(by.repeater('row in $component.rows')).last().getText();
-                expect(lastItem).toBe(newLastItem);
+                expect(lastItem).not.toBe(newLastItem);
             });
         });
     });
@@ -44,9 +42,9 @@ describe('tbGridComponents', function () {
         var lastItem = element.all(by.repeater('row in $component.rows')).last();
         lastItem.$$('td').last().getText().then(function() {
             lastItem.$$('button').get(2).click().then(function() {
-                lastItem.$$('input').sendKeys('TEST').then(function(){
+                lastItem.$$('input').clear().sendKeys('TEST').then(function(){
                     lastItem.$$('button').first().click().then(function(){
-                        expect(lastItem.$$('td').last().getText()).toBe("DEMOTEST");                        
+                        expect(lastItem.$$('td').last().getText()).toBe("TEST");                        
                     });
                 });
             });
