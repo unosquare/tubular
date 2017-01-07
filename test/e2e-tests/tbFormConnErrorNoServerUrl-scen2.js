@@ -18,6 +18,6 @@ describe("tbForm Connection Error", function () {
     });
 
     it("tbForm connection error functionality",function(){
-        expect(errorText).toEqual('');
+        expect(errorText).toEqual('No data found');
     });
 });
