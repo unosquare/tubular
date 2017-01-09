@@ -83,7 +83,7 @@ namespace Unosquare.Tubular.AspNetCoreSample
                 SigningCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256),
                 IdentityResolver = (userName, password) =>
                 {
-                    var isLogged = (userName == "Admin" && password == "Pass.word1");
+                    var isLogged = (userName == "Admin" && password == "pass.word");
                     if (!isLogged)
                     {
                         return null;
