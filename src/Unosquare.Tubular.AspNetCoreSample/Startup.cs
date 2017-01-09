@@ -4,11 +4,16 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Serialization;
 using System;
 using System.Linq;
+using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using Unosquare.Tubular.AspNetCoreSample.Models;
+using Unosquare.Tubular.AspNetCoreSample.Providers;
 
 namespace Unosquare.Tubular.AspNetCoreSample
 {
@@ -47,6 +52,58 @@ namespace Unosquare.Tubular.AspNetCoreSample
             loggerFactory.AddDebug();
 
             app.UseDefaultFiles();
+
+
+            var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("HOLAAAAASOYUNSECRETOYASI"));
+            var tokenOptions = new TokenValidationParameters
+            {
+                // The signing key must match!
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = signingKey,
+
+                // Validate the JWT Issuer (iss) claim
+                ValidateIssuer = true,
+                ValidIssuer = "ExampleIssuer",
+
+                // Validate the JWT Audience (aud) claim
+                ValidateAudience = true,
+                ValidAudience = "ExampleAudience",
+
+                // Validate the token expiry
+                ValidateLifetime = true,
+
+                // If you want to allow a certain amount of clock drift, set that here:
+                ClockSkew = TimeSpan.Zero
+            };
+
+            app.UseMiddleware<TokenProviderMiddleware>(Options.Create(new TokenProviderOptions
+            {
+                Audience = tokenOptions.ValidAudience,
+                Issuer = tokenOptions.ValidIssuer,
+                SigningCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256),
+                IdentityResolver = (userName, password) =>
+                {
+                    var isLogged = (userName == "Admin" && password == "Pass.word1");
+                    if (!isLogged)
+                    {
+                        return null;
+                    }
+
+                    var identity = new ClaimsIdentity();
+                    identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, userName));
+                    return Task.FromResult(identity);
+                }
+            }));
+
+            app.UseJwtBearerAuthentication(new JwtBearerOptions
+            {
+                AutomaticAuthenticate = true,
+                AutomaticChallenge = true,
+                TokenValidationParameters = tokenOptions
+            });
+
+            app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+
             app.UseStaticFiles();
 
             app.UseMvc();

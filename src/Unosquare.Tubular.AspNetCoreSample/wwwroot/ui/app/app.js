@@ -138,7 +138,39 @@
                     toastr.success(event.point.name + ': ' + event.point.y);
                 };
             }
-        ]);
+        ]).controller('loginCtrl',
+            function ($scope, $location, tubularHttp, localStorageService, $uibModal, $routeParams, toastr) {
+                $scope.loading = false;
+                $scope.tokenReset = $routeParams.token;
+
+                $scope.submitForm = function () {
+                    if (!$scope.username ||
+                        !$scope.password ||
+                        $scope.username.trim() === '' ||
+                        $scope.password.trim() === '') {
+                        toastr.error("", "You need to fill in a username and password");
+                        return;
+                    }
+
+                    $scope.loading = true;
+
+                    tubularHttp.authenticate($scope.username,
+                        $scope.password,
+                        $scope.redirectHome,
+                        function (error) {
+                            $scope.loading = false;
+                            toastr.error(error);
+                        },
+                        true,
+                        function (data) {
+                        });
+                };
+
+                $scope.redirectHome = function () {
+                    $location.path("/");
+                };
+
+            });
 
     angular.module('app', [
         'ngAnimate',
