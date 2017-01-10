@@ -92,7 +92,7 @@
                     });
 
                     $scope.$on('chart-create', function (evt, chart) {
-                        if ($ctrl.chartType == 'pie' || $ctrl.chartType == 'doughnut') {
+                        if ($ctrl.chartType === 'pie' || $ctrl.chartType === 'doughnut') {
                             $ctrl.legends = chart.chart.config.data.labels.map(function(v, i) {
                                 return {
                                     label: v,

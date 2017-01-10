@@ -112,7 +112,7 @@
                                     };
                                 });
 
-                                $ctrl.options.series = [{ name: data.SerieName || '', data: uniqueSerie, showInLegend: (data.SerieName || '') != '' }];
+                                $ctrl.options.series = [{ name: data.SerieName || '', data: uniqueSerie, showInLegend: (data.SerieName || '') !== '' }];
                             }
 
                             if ($ctrl.onLoad) {
