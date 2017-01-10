@@ -3843,6 +3843,7 @@ try {
                     me.userData.username = '';
                     me.userData.bearerToken = '';
                     me.userData.expirationDate = null;
+                    me.userData.refreshToken = null;
                 }
 
                 me.userData = {
@@ -3886,7 +3887,7 @@ try {
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded'
                         },
-                        data: 'grant_type=password&username=' + username + '&password=' + password
+                        data: 'grant_type=password&username=' + encodeURIComponent(username) + '&password=' + encodeURIComponent(password)
                     }).then(function success(data) {
                         me.handleSuccessCallback(userDataCallback, successCallback, persistData, data.data, username);
                     }, function error(data) {
