@@ -1,4 +1,4 @@
-﻿(function(angular, moment) {
+﻿(function (angular, moment) {
     'use strict';
 
     /**
@@ -12,9 +12,13 @@
      */
     angular.module('tubular', ['tubular.directives', 'tubular.services', 'tubular.models', 'LocalStorageModule'])
         .config([
-            'localStorageServiceProvider', function(localStorageServiceProvider) {
+            'localStorageServiceProvider', function (localStorageServiceProvider) {
                 localStorageServiceProvider.setPrefix('tubular');
             }
+        ])
+        .config(['$httpProvider', function ($httpProvider) {
+            $httpProvider.interceptors.push('tubularAuthInterceptor');
+        }
         ])
         /**
          * @ngdoc filter
@@ -27,8 +31,8 @@
          * @param {object} input Input to filter.
          * @returns {string} Formatted error message.
          */
-        .filter('errormessage', function() {
-            return function(input) {
+        .filter('errormessage', function () {
+            return function (input) {
                 if (angular.isDefined(input) && angular.isDefined(input.data) &&
                     input.data &&
                     angular.isDefined(input.data.ExceptionMessage)) {
@@ -47,8 +51,8 @@
          * `numberorcurrency` is a hack to hold `currency` and `number` in a single filter.
          */
         .filter("numberorcurrency", [
-            "$filter", function($filter) {
-                return function(input, format, symbol, fractionSize) {
+            "$filter", function ($filter) {
+                return function (input, format, symbol, fractionSize) {
                     fractionSize = fractionSize || 2;
 
                     if (format === "C") {
@@ -73,8 +77,8 @@
          * `moment` is a filter to call format from moment or, if the input is a Date, call Angular's `date` filter.
          */
         .filter("moment", [
-            "$filter", function($filter) {
-                return function(input, format) {
+            "$filter", function ($filter) {
+                return function (input, format) {
                     if (angular.isDefined(input) && typeof (input) === "object") {
                         if (typeof moment == 'function' && input !== null && input instanceof moment) {
                             return input.format(format);

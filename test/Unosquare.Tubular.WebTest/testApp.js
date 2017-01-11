@@ -77,10 +77,6 @@
                 $locationProvider.html5Mode(true);
             }
         ])
-        .config(['$httpProvider', function ($httpProvider) {
-            $httpProvider.interceptors.push('tubularAuthInterceptor');
-        }
-        ])
         .controller("tbFormCtrl", function ($scope) {
             $scope.$on('tbForm_OnSuccessfulSave', function (event, data, form) {
                 toastr.success(data || "Updated");
