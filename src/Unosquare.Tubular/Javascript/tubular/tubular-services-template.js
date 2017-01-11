@@ -207,8 +207,6 @@
 
                     $ctrl.applyFilter = function() {
                         $ctrl.filter.HasFilter = true;
-                        var x = $ctrl.filter;
-                        var y = $ctrl.filter.Argument;
                         $ctrl.retrieveData();
                     };
 

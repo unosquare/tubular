@@ -1,4 +1,5 @@
 {
+  "title": "Tubular with EmbedIO webserver sample",
   "version": "1.0.0-*",
   "buildOptions": {
     "emitEntryPoint": true,
@@ -13,6 +14,9 @@
       "dependencies": {
         "Microsoft.NETCore.App": "1.1.0"
       }
+    },
+    "net452": {
+
     }
   },
   "runtimes": {
