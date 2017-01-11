@@ -13,6 +13,7 @@
       "Javascript/tubular/tubular-models.js",
       "Javascript/tubular/tubular-services.js",
       "Javascript/tubular/tubular-services-http.js",
+      "Javascript/tubular/tubular-auth-interceptor.js",
       "Javascript/tubular/tubular-services-template.js",
       "Javascript/tubular/tubular-services-i18n.js"
     ],

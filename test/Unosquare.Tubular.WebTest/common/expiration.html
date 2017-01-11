@@ -2,6 +2,9 @@
     <button id="btnRemoveAuth" ng-click="removeAuthentication()" class="btn btn-success">
         <i class="fa fa-check-circle"></i>&nbsp;Remove Authentication
     </button>
+    <button id="btnExpireAccessToken" ng-click="expireAccessToken()" class="btn btn-success">
+        <i class="fa fa-check-circle"></i>&nbsp;Expire Access Token
+    </button>
     <label id="expAuth">{{redirected}}</label>
     <br/>
     <button id="btnAuth" ng-click="isAuthenticated()" class="btn btn-success">
@@ -26,8 +29,8 @@
         <i class="fa fa-check-circle"></i>&nbsp;Post
     </button>
     <button id="btnUseRefreshToken" ng-click="useRefreshToken()" class="btn btn-success">
-        <i class="fa fa-check-circle"></i>&nbsp;Use Refresh Token
+        <i class="fa fa-check-circle"></i>&nbsp;Post
     </button>
     <label id="lbPost">{{postLog}}</label>
-    
+    <label id="lbAccessToken">{{accessToken}}</label> {{userData}}
 </div>
