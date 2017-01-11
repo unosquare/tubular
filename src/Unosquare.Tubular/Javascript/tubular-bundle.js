@@ -423,13 +423,10 @@ try {
      */
     angular.module('tubular', ['tubular.directives', 'tubular.services', 'tubular.models', 'LocalStorageModule'])
         .config([
-            'localStorageServiceProvider', function (localStorageServiceProvider) {
+            'localStorageServiceProvider', '$httpProvider', function (localStorageServiceProvider, $httpProvider) {
                 localStorageServiceProvider.setPrefix('tubular');
+                $httpProvider.interceptors.push('tubularAuthInterceptor');
             }
-        ])
-        .config(['$httpProvider', function ($httpProvider) {
-            $httpProvider.interceptors.push('tubularAuthInterceptor');
-        }
         ])
         /**
          * @ngdoc filter
