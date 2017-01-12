@@ -5,7 +5,7 @@
 
 // It is assumed throughout the test that the data received for the main tbGrid
 // component at the related HTML file (tbPager_test.html) is static and constrained
-// to 53 records with consecutive ID's.
+// to 500 records with consecutive ID's.
 
 describe('tbGridPagerInfo', function () {
 
@@ -40,22 +40,22 @@ describe('tbGridPagerInfo', function () {
 
     it("should show text in accordance to numbered of filter rows and current results-page", function () {
         // Started on page 1
-        expect(tbGridPagerInfo.getText()).toBe('Showing 1 to 10 of 53 records');
+        expect(tbGridPagerInfo.getText()).toBe('Showing 1 to 10 of 500 records');
 
         // Go to page 2 and change number of showing records to 20
         nextPageBtn.click();
         tbPageSizeSelector.$('[value="number:20"]').click();
 
-        expect(tbGridPagerInfo.getText()).toBe('Showing 21 to 40 of 53 records');
+        expect(tbGridPagerInfo.getText()).toBe('Showing 21 to 40 of 500 records');
 
         // Go page 3
         nextPageBtn.click();
 
-        expect(tbGridPagerInfo.getText()).toBe('Showing 41 to 53 of 53 records');
+        expect(tbGridPagerInfo.getText()).toBe('Showing 41 to 60 of 500 records');
     });
 
 
     it("should show count in footer", function() {
-        expect(element(by.id('count')).getText()).toBe('53');
+        expect(element(by.id('count')).getText()).toBe('500');
     });
 });
