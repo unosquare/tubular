@@ -206,6 +206,14 @@
                     $scope.rows = rows.length;
                 };
             }
+        ]).controller('tbColumnCtrl', [
+            '$scope', 'localStorageService',
+            function ($scope, localStorageService) {
+                $scope.clearStorage = function () {
+                    console.log(localStorageService);
+                    localStorageService.clearAll();
+                };
+            }
         ]);
 
     angular.module('app', [
