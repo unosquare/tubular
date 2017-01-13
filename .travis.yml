@@ -7,7 +7,7 @@ matrix:
     - os: linux
       dotnet: 1.0.0-preview2-003131
       mono: latest
-      env: DOTNETCORE=1
+      env: DOTNETCORE=1 TRAVIS_NODE_VERSION=4
       dist: trusty
       sudo: false
     - os: linux
@@ -18,7 +18,7 @@ matrix:
     - os: osx
       dotnet: 1.0.0-preview2-003131
       mono: latest
-      env: DOTNETCORE=1
+      env: DOTNETCORE=1 TRAVIS_NODE_VERSION=4
     - os: osx
       mono: latest
 install:
@@ -28,7 +28,7 @@ install:
   - if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew cask install google-chrome; fi
   - if [[ $DOTNETCORE == "" ]]; then nuget install NUnit.ConsoleRunner -OutputDirectory testrunner; fi
   - if [[ $DOTNETCORE == "1" ]]; then dotnet restore; else nuget restore Unosquare.Tubular.Lib.sln; fi 
-  - if [[ $TRAVIS_NODE_VERSION == "4" ]]; then rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm && (cd ~/.nvm && git checkout `git describe --abbrev=0 --tags`) && source ~/.nvm/nvm.sh && nvm install $TRAVIS_NODE_VERSION; else npm install -g protractor@2; fi
+  - if [[ $TRAVIS_NODE_VERSION == "4" ]]; then rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm && (cd ~/.nvm && git checkout `git describe --abbrev=0 --tags`) && source ~/.nvm/nvm.sh && nvm install $TRAVIS_NODE_VERSION; fi
   - npm install
 before_script:
   - touch ./src/Unosquare.Tubular/Javascript/tubular-bundle.js
