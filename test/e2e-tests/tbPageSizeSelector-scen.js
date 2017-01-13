@@ -31,10 +31,6 @@ describe('tbPageSizeSelctor', function () {
         tbPageSizeSelector = element(by.tagName('tb-page-size-selector'));
         // All showing rows
         dataRowsCollection = element.all(by.repeater('row in $component.rows'));
-        // First showing row
-        firstDataRow = element.all(by.repeater('row in $component.rows')).first();
-        // Last showing row
-        lastDataRow = element.all(by.repeater('row in $component.rows')).last();
         // First-page button 
         firstNavBtn = tbGridPager.$('.pagination-first').$('a');
         // Next-page button
@@ -53,6 +49,11 @@ describe('tbPageSizeSelctor', function () {
         // Select '10' on tbPageSizeSelector
         tbPageSizeSelector.$('select').click(); //$('[value="number:10"]').
         tbPageSizeSelector.$('[value="number:10"]').click();
+
+        // Update values
+        firstDataRow = element.all(by.repeater('row in $component.rows')).first();
+        lastDataRow = element.all(by.repeater('row in $component.rows')).last();
+
         expect(firstDataRow.$$('td').first().getText()).toMatch('1');
         expect(lastDataRow.$$('td').first().getText()).toMatch('10');
         expect(dataRowsCollection.count()).toBe(10);
@@ -63,13 +64,12 @@ describe('tbPageSizeSelctor', function () {
         // Select '20' on tbPageSizeSelector
         tbPageSizeSelector.$('select').click();
         tbPageSizeSelector.$('[value="number:20"]').click().then(function () {
-            // First showing row
-            firstDataRow = element.all(by.repeater('row in $component.rows')).first();
-            // Last showing row
-            lastDataRow = element.all(by.repeater('row in $component.rows')).last();
-            
+
             // Go to next page of results (page 2)
             nextNavBtn.click().then(function () {
+                firstDataRow = element.all(by.repeater('row in $component.rows')).first();
+                lastDataRow = element.all(by.repeater('row in $component.rows')).last();
+
                 expect(firstDataRow.$$('td').first().getText()).toMatch('21');
                 expect(lastDataRow.$$('td').first().getText()).toMatch('40');
                 expect(dataRowsCollection.count()).toBe(20);
@@ -81,6 +81,11 @@ describe('tbPageSizeSelctor', function () {
         // Select '50' on tbPageSizeSelector
         tbPageSizeSelector.$('select').click();
         tbPageSizeSelector.$('[value="number:50"]').click().then(function () {
+
+            // Update values
+            firstDataRow = element.all(by.repeater('row in $component.rows')).first();
+            lastDataRow = element.all(by.repeater('row in $component.rows')).last();
+
             // Verifying results on results-page 1
             expect(firstDataRow.$$('td').first().getText()).toMatch('1');
             expect(lastDataRow.$$('td').first().getText()).toMatch('50');
@@ -88,6 +93,10 @@ describe('tbPageSizeSelctor', function () {
 
             // Go to next page of results (page 2)
             nextNavBtn.click().then(function () {
+
+                // Update values
+                firstDataRow = element.all(by.repeater('row in $component.rows')).first();
+                lastDataRow = element.all(by.repeater('row in $component.rows')).last();
 
                 // Verifying results on results-page 2
                 expect(firstDataRow.$$('td').first().getText()).toMatch('51');
@@ -102,6 +111,10 @@ describe('tbPageSizeSelctor', function () {
         // Select '100' on tbPageSizeSelector
         tbPageSizeSelector.$('select').click();
         tbPageSizeSelector.$('[value="number:100"]').click().then(function () {
+            // Update values
+            firstDataRow = element.all(by.repeater('row in $component.rows')).first();
+            lastDataRow = element.all(by.repeater('row in $component.rows')).last();
+
             expect(firstDataRow.$$('td').first().getText()).toMatch('1');
             expect(lastDataRow.$$('td').first().getText()).toMatch('100');
             expect(dataRowsCollection.count()).toBe(100);
