@@ -102,6 +102,7 @@
     </Content>
     <Content Include="Javascript\tubular-widget\tubular-directives-widget.js" />
     <Content Include="Javascript\tubular\node-module.js" />
+    <Content Include="Javascript\tubular\tubular-auth-interceptor.js" />
     <Content Include="Javascript\tubular\tubular-directives-editors.js" />
     <Content Include="Javascript\tubular\tubular-directives-filters.js" />
     <Content Include="Javascript\tubular\tubular-directives-forms.js" />

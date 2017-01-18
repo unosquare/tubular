@@ -41,6 +41,11 @@ namespace Unosquare.Tubular.GenericModels
         /// Gets or sets a value indicating whether this link is function.
         /// </summary>
         public bool IsFunction { get; set; }
+
+        /// <summary>
+        /// Gets or sets the icon.
+        /// </summary>
+        public string Icon { get; set; }
     }
 
     /// <summary>
