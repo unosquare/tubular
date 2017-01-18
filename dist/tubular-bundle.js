@@ -409,7 +409,7 @@ try {
 } catch (e) {
     // Ignore
 }
-(function(angular, moment) {
+(function (angular, moment) {
     'use strict';
 
     /**
@@ -423,8 +423,9 @@ try {
      */
     angular.module('tubular', ['tubular.directives', 'tubular.services', 'tubular.models', 'LocalStorageModule'])
         .config([
-            'localStorageServiceProvider', function(localStorageServiceProvider) {
+            'localStorageServiceProvider', '$httpProvider', function (localStorageServiceProvider, $httpProvider) {
                 localStorageServiceProvider.setPrefix('tubular');
+                $httpProvider.interceptors.push('tubularAuthInterceptor');
             }
         ])
         /**
@@ -438,8 +439,8 @@ try {
          * @param {object} input Input to filter.
          * @returns {string} Formatted error message.
          */
-        .filter('errormessage', function() {
-            return function(input) {
+        .filter('errormessage', function () {
+            return function (input) {
                 if (angular.isDefined(input) && angular.isDefined(input.data) &&
                     input.data &&
                     angular.isDefined(input.data.ExceptionMessage)) {
@@ -458,8 +459,8 @@ try {
          * `numberorcurrency` is a hack to hold `currency` and `number` in a single filter.
          */
         .filter("numberorcurrency", [
-            "$filter", function($filter) {
-                return function(input, format, symbol, fractionSize) {
+            "$filter", function ($filter) {
+                return function (input, format, symbol, fractionSize) {
                     fractionSize = fractionSize || 2;
 
                     if (format === "C") {
@@ -484,8 +485,8 @@ try {
          * `moment` is a filter to call format from moment or, if the input is a Date, call Angular's `date` filter.
          */
         .filter("moment", [
-            "$filter", function($filter) {
-                return function(input, format) {
+            "$filter", function ($filter) {
+                return function (input, format) {
                     if (angular.isDefined(input) && typeof (input) === "object") {
                         if (typeof moment == 'function' && input !== null && input instanceof moment) {
                             return input.format(format);
@@ -3184,6 +3185,12 @@ try {
                         if ($ctrl.currentInitial < 0 || $ctrl.$component.totalRecordCount === 0) {
                             $ctrl.currentInitial = 0;
                         }
+                        
+                        if ($ctrl.$component.pageSize > $ctrl.$component.filteredRecordCount)
+                        {
+                            $ctrl.currentInitial = 1;
+                            $ctrl.currentTop = $ctrl.$component.filteredRecordCount;
+                        }
                     };
 
                     $scope.$watch('$ctrl.$component.filteredRecordCount', function () {
@@ -3786,7 +3793,7 @@ try {
             }
         ]);
 })(window.angular, window.saveAs);
-(function(angular) {
+(function (angular) {
     'use strict';
 
     angular.module('tubular.services')
@@ -3802,7 +3809,7 @@ try {
          */
         .service('tubularHttp', [
             '$http', '$timeout', '$q', '$cacheFactory', 'localStorageService', '$filter',
-            function($http, $timeout, $q, $cacheFactory, localStorageService, $filter) {
+            function ($http, $timeout, $q, $cacheFactory, localStorageService, $filter) {
                 var me = this;
 
                 function isAuthenticationExpired(expirationDate) {
@@ -3853,14 +3860,23 @@ try {
                     expirationDate: null
                 };
 
+                me.isBearerTokenExpired = function () {
+                    return isAuthenticationExpired(me.userData.expirationDate);
+                }
+
+                me.useRefreshTokens = false;
                 me.cache = $cacheFactory('tubularHttpCache');
                 me.useCache = false;
                 me.requireAuthentication = true;
                 me.refreshTokenUrl = me.tokenUrl = '/api/token';
-                me.setTokenUrl = function(val) { me.tokenUrl = val; };
-                me.setRequireAuthentication = function(val) { me.requireAuthentication = val; };
+                me.apiBaseUrl = '/api';
 
-                me.isAuthenticated = function() {
+                me.setRequireAuthentication = function (val) { me.requireAuthentication = val; };
+                me.setTokenUrl = function (val) { me.tokenUrl = val; };
+                me.setRefreshTokenUrl = function (val) { me.refreshTokenUrl = val; };
+                me.setApiBaseUrl = function (val) { me.apiBaseUrl = val; };
+
+                me.isAuthenticated = function () {
                     if (!me.userData.isAuthenticated || isAuthenticationExpired(me.userData.expirationDate)) {
                         try {
                             retrieveSavedData();
@@ -3872,13 +3888,19 @@ try {
                     return true;
                 };
 
-                me.removeAuthentication = function() {
+
+                me.setAccessTokenAsExpired = function () {
+                    me.userData.expirationDate = new Date(new Date().getTime() - 10 * 1000);
+                    saveData();
+                };
+
+                me.removeAuthentication = function () {
                     removeData();
                     clearUserData();
                     $http.defaults.headers.common.Authorization = null;
                 };
 
-                me.authenticate = function(username, password, successCallback, errorCallback, persistData, userDataCallback) {
+                me.authenticate = function (username, password, successCallback, errorCallback, persistData, userDataCallback) {
                     this.removeAuthentication();
 
                     $http({
@@ -3891,6 +3913,7 @@ try {
                     }).then(function success(data) {
                         me.handleSuccessCallback(userDataCallback, successCallback, persistData, data.data, username);
                     }, function error(data) {
+                        console.log(data);
                         me.handleErrorCallback(errorCallback, data.data);
                     });
                 };
@@ -3919,7 +3942,7 @@ try {
                     }
                 };
 
-                me.handleErrorCallback = function(errorCallback, data) {
+                me.handleErrorCallback = function (errorCallback, data) {
                     if (typeof errorCallback === 'function') {
                         if (data.error_description) {
                             errorCallback(data.error_description);
@@ -3929,12 +3952,12 @@ try {
                     }
                 };
 
-                me.addTimeZoneToUrl = function(url) {
+                me.addTimeZoneToUrl = function (url) {
                     var separator = url.indexOf('?') === -1 ? '?' : '&';
                     return url + separator + 'timezoneOffset=' + new Date().getTimezoneOffset();
                 }
 
-                me.saveDataAsync = function(model, request) {
+                me.saveDataAsync = function (model, request) {
                     var component = model.$component;
                     model.$component = null;
                     var clone = angular.copy(model);
@@ -3975,33 +3998,20 @@ try {
                     return dataRequest;
                 };
 
-                me.getExpirationDate = function() {
+                me.getExpirationDate = function () {
                     var date = new Date();
                     var minutes = 5;
                     return new Date(date.getTime() + minutes * 60000);
                 };
 
-                me.refreshSession = function(persistData, errorCallback) {
-                    $http({
-                        method: 'POST',
-                        url: me.refreshTokenUrl,
-                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                        data: 'grant_type=refresh_token&refresh_token=' + me.userData.refreshToken
-                    }).then (function success(data) {
-                        me.handleSuccessCallback(null, null, persistData, data.data);
-                    }, function error(data) {
-                        me.handleErrorCallback(errorCallback, data.data);
-                    });
-                };
-
-                me.getCancel = function(canceller) {
-                    return function(reason) {
+                me.getCancel = function (canceller) {
+                    return function (reason) {
                         console.error(reason);
                         canceller.resolve(reason);
                     }
                 };
 
-                me.retrieveDataAsync = function(request) {
+                me.retrieveDataAsync = function (request) {
                     var canceller = $q.defer();
                     var cancel = me.getCancel(canceller);
 
@@ -4013,12 +4023,11 @@ try {
                         request.requireAuthentication = request.requireAuthentication === "true";
                     }
 
-                    if (request.requireAuthentication && me.isAuthenticated() === false) {
-                        if (me.userData.refreshToken) {
-                            me.refreshSession(true);
-                        } else {
+                    if (!me.useRefreshTokens) {
+                        if (request.requireAuthentication && me.isAuthenticated() === false) {
+
                             return {
-                                promise: $q(function(resolve) {
+                                promise: $q(function (resolve) {
                                     resolve(null);
                                 }),
                                 cancel: cancel
@@ -4033,7 +4042,7 @@ try {
 
                         if (angular.isDefined(data) && data.Expiration.getTime() > new Date().getTime()) {
                             return {
-                                promise: $q(function(resolve) {
+                                promise: $q(function (resolve) {
                                     resolve(data.Set);
                                 }),
                                 cancel: cancel
@@ -4043,7 +4052,7 @@ try {
 
                     request.timeout = request.timeout || 17000;
 
-                    var timeoutHanlder = $timeout(function() {
+                    var timeoutHanlder = $timeout(function () {
                         cancel('Timed out');
                     }, request.timeout);
 
@@ -4052,7 +4061,7 @@ try {
                         method: request.requestMethod,
                         data: request.data,
                         timeout: canceller.promise
-                    }).then(function(response) {
+                    }).then(function (response) {
                         $timeout.cancel(timeoutHanlder);
 
                         if (me.useCache) {
@@ -4060,21 +4069,11 @@ try {
                         }
 
                         return response.data;
-                    }, function(error) {
-                        if (angular.isDefined(error) && angular.isDefined(error.status) && error.status === 401) {
-                            if (me.isAuthenticated()) {
-                                if (me.userData.refreshToken) {
-                                    me.refreshSession(true);
+                    }, function (error) {
+                        me.removeAuthentication();
 
-                                    return me.retrieveDataAsync(request);
-                                } else {
-                                    me.removeAuthentication();
-                                    // Let's trigger a refresh
-                                    document.location = document.location;
-                                }
-                            }
-                        }
-
+                        // Let's trigger a refresh
+                        document.location = document.location;
                         return $q.reject(error);
                     });
 
@@ -4084,34 +4083,63 @@ try {
                     };
                 };
 
-                me.get = function(url, params) {
-                    if (me.requireAuthentication && !me.isAuthenticated()) {
-                        var canceller = $q.defer();
+                me.get = function (url, params) {
+                    if (!me.useRefreshTokens) {
+                        if (me.requireAuthentication && !me.isAuthenticated()) {
+                            var canceller = $q.defer();
 
-                        // Return empty dataset
-                        return {
-                            promise: $q(function(resolve) {
-                                resolve(null);
-                            }),
-                            cancel: me.getCancel(canceller)
-                        };
+                            // Return empty dataset
+                            return {
+                                promise: $q(function (resolve) {
+                                    resolve(null);
+                                }),
+                                cancel: me.getCancel(canceller)
+                            };
+                        }
                     }
 
-                    return { promise: $http.get(url, params).then(function(data) { return data.data; }) };
+                    return { promise: $http.get(url, params).then(function (data) { return data.data; }) };
                 };
 
-                me.getBinary = function(url) {
+                me.getBinary = function (url) {
                     return me.get(url, { responseType: 'arraybuffer' });
                 };
 
-                me.delete = function(url) {
+                me.delete = function (url) {
+                    if (!me.useRefreshTokens) {
+                        if (me.requireAuthentication && !me.isAuthenticated()) {
+                            var canceller = $q.defer();
+
+                            // Return empty dataset
+                            return {
+                                promise: $q(function (resolve) {
+                                    resolve(null);
+                                }),
+                                cancel: me.getCancel(canceller)
+                            };
+                        }
+                    }
+
                     return me.retrieveDataAsync({
                         serverUrl: url,
                         requestMethod: 'DELETE'
                     });
                 };
 
-                me.post = function(url, data) {
+                me.post = function (url, data) {
+                    if (!me.useRefreshTokens) {
+                        if (me.requireAuthentication && !me.isAuthenticated()) {
+                            var canceller = $q.defer();
+
+                            // Return empty dataset
+                            return {
+                                promise: $q(function (resolve) {
+                                    resolve(null);
+                                }),
+                                cancel: me.getCancel(canceller)
+                            };
+                        }
+                    }
                     return me.retrieveDataAsync({
                         serverUrl: url,
                         requestMethod: 'POST',
@@ -4126,25 +4154,27 @@ try {
                  * Allow to post a `FormData` object with `$http`. You need to append the files
                  * in your own FormData.
                  */
-                me.postBinary = function(url, formData) {
+                me.postBinary = function (url, formData) {
                     var canceller = $q.defer();
                     var cancel = me.getCancel(canceller);
 
-                    if (me.requireAuthentication && !me.isAuthenticated()) {
-                        // Return empty dataset
-                        return {
-                            promise: $q(function(resolve) {
-                                resolve(null);
-                            }),
-                            cancel: cancel
-                        };
+                    if (!me.useRefreshTokens) {
+                        if (me.requireAuthentication && !me.isAuthenticated()) {
+                            // Return empty dataset
+                            return {
+                                promise: $q(function (resolve) {
+                                    resolve(null);
+                                }),
+                                cancel: cancel
+                            };
+                        }
                     }
 
                     var promise = $http({
                         url: url,
                         method: "POST",
                         headers: { 'Content-Type': undefined },
-                        transformRequest: function(data) {
+                        transformRequest: function (data) {
                             // TODO: Remove?
                             return data;
                         },
@@ -4157,7 +4187,21 @@ try {
                     };
                 };
 
-                me.put = function(url, data) {
+                me.put = function (url, data) {
+                    if (!me.useRefreshTokens) {
+                        if (me.requireAuthentication && !me.isAuthenticated()) {
+                            var canceller = $q.defer();
+
+                            // Return empty dataset
+                            return {
+                                promise: $q(function (resolve) {
+                                    resolve(null);
+                                }),
+                                cancel: me.getCancel(canceller)
+                            };
+                        }
+                    }
+
                     return me.retrieveDataAsync({
                         serverUrl: url,
                         requestMethod: 'PUT',
@@ -4165,7 +4209,7 @@ try {
                     });
                 };
 
-                me.getByKey = function(url, key) {
+                me.getByKey = function (url, key) {
                     var urlData = me.addTimeZoneToUrl(url).split('?');
                     var getUrl = urlData[0] + key;
 
@@ -4177,11 +4221,11 @@ try {
                 // This is a kind of factory to retrieve a DataService
                 me.instances = [];
 
-                me.registerService = function(name, instance) {
+                me.registerService = function (name, instance) {
                     me.instances[name] = instance;
                 };
 
-                me.getDataService = function(name) {
+                me.getDataService = function (name) {
                     if (angular.isUndefined(name) || name == null || name === 'tubularHttp') {
                         return me;
                     }
@@ -4193,6 +4237,114 @@ try {
             }
         ]);
 })(window.angular);
+(function (angular, moment) {
+    'use strict';
+
+    angular.module('tubular.services')
+        .factory('tubularAuthInterceptor', ['$q', '$injector', function ($q, $injector) {
+            var authRequestRunning = null;
+            return {
+
+                'request': function (config) {
+                    // Get the service here because otherwise, a circular dependency injection will be detected
+                    var tubularHttp = $injector.get("tubularHttp");
+                    var apiBaseUrl = tubularHttp.apiBaseUrl;
+
+                    config.headers = config.headers || {};
+
+                    if (
+                        config.url.substring(0, apiBaseUrl.length) === apiBaseUrl &&
+                        tubularHttp.tokenUrl != config.url &&
+                        tubularHttp.useRefreshTokens &&
+                        tubularHttp.requireAuthentication &&
+                        tubularHttp.userData.refreshToken) {
+                        
+                        if (tubularHttp.isBearerTokenExpired()) {
+                            // Let's force an error to automatically go directly to the refresh token stuff
+                            return $q.reject({ error: 'expired token', status: 401, config: config });
+                        }
+                    }
+
+                    return config;
+                },
+
+                'requestError': function (rejection) {
+
+                    return $q.reject(rejection);
+                },
+
+                // optional method
+                'response': function (response) {
+                    return response;
+                },
+
+                // optional method
+                'responseError': function (rejection) {
+                    switch (rejection.status) {
+                        case 401:
+                            var tubularHttp = $injector.get("tubularHttp");
+                            var apiBaseUrl = tubularHttp.apiBaseUrl;
+
+                            var deferred = $q.defer();
+
+                            if (
+                                rejection.config.url.substring(0, apiBaseUrl.length) === apiBaseUrl &&
+                                tubularHttp.tokenUrl != rejection.config.url &&
+                                tubularHttp.useRefreshTokens &&
+                                tubularHttp.requireAuthentication &&
+                                tubularHttp.userData.refreshToken) {
+
+
+                                if (!authRequestRunning) {
+                                    authRequestRunning = $injector.get("$http")({
+                                        method: 'POST',
+                                        url: tubularHttp.refreshTokenUrl,
+                                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                                        data: 'grant_type=refresh_token&refresh_token=' + tubularHttp.userData.refreshToken
+                                    });
+
+                                    console.log("Getting new access token");
+                                }
+
+                                authRequestRunning.then(function (r) {
+                                    authRequestRunning = null;
+                                    tubularHttp.handleSuccessCallback(null, null, true, r.data);
+
+                                    console.log("Success on getting token", r);
+                                    if (tubularHttp.requireAuthentication && tubularHttp.isAuthenticated()) {
+                                        $injector.get("$http")(rejection.config).then(function (resp) {
+                                            deferred.resolve(resp);
+                                        }, function (resp) {
+                                            deferred.reject(rejection);
+                                        });
+                                    }
+                                    else {
+                                        deferred.reject(rejection);
+                                    }
+                                }, function (response) {
+                                    console.log("Error on getting token", response);
+                                    authRequestRunning = null;
+                                    deferred.reject(response);
+                                    tubularHttp.removeAuthentication();
+                                    $injector.get("$state").go('/Login');
+                                    return;
+                                });
+
+                            }
+                            else {
+                                deferred.reject(rejection);
+                            }
+
+                            return deferred.promise;
+                            break;
+                        default:
+                            break;
+                    }
+                    return rejection || $q.when(response);
+                }
+            };
+        }]);
+})(window.angular, window.moment || null);
 (function(angular) {
     'use strict';
 

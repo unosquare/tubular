@@ -78,6 +78,12 @@
                         if ($ctrl.currentInitial < 0 || $ctrl.$component.totalRecordCount === 0) {
                             $ctrl.currentInitial = 0;
                         }
+                        
+                        if ($ctrl.$component.pageSize > $ctrl.$component.filteredRecordCount)
+                        {
+                            $ctrl.currentInitial = 1;
+                            $ctrl.currentTop = $ctrl.$component.filteredRecordCount;
+                        }
                     };
 
                     $scope.$watch('$ctrl.$component.filteredRecordCount', function () {
