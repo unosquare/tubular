@@ -44,7 +44,7 @@
         ]).factory('noCacheInterceptor', function () {
             return {
                 request: function (config) {
-                    if (config.method == 'GET' && config.url.indexOf('.htm') === -1 && config.url.indexOf('blob:') === -1) {
+                    if (config.method === 'GET' && config.url.indexOf('.htm') === -1 && config.url.indexOf('blob:') === -1) {
                         var separator = config.url.indexOf('?') === -1 ? '?' : '&';
                         config.url = config.url + separator + 'noCache=' + new Date().getTime();
                     }
@@ -64,8 +64,22 @@
                 });
             }
         ]).controller('loginCtrl', [
-            '$scope', '$location', function ($scope, $location) {
-                // TODO: Complete
+            '$scope', '$location', 'tubularHttp', 'toastr', function($scope, $location, tubularHttp, toastr) {
+                $scope.loading = false;
+                tubularHttp.tokenUrl = 'http://tubular.azurewebsites.net/token';
+
+                $scope.submitForm = function() {
+                    $scope.loading = true;
+
+                    tubularHttp.authenticate($scope.username, $scope.password,
+                        function() {
+                            $location.path("/expirationDate");
+                        },
+                        function(error) {
+                            $scope.loading = false;
+                            toastr.error(error);
+                        });
+                };
             }
         ]).controller('i18nCtrl', [
             '$scope', 'tubularTranslate', 'toastr', function ($scope, tubularTranslate, toastr) {

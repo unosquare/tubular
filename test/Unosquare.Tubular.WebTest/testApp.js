@@ -91,23 +91,22 @@
             function ($scope, $location, tubularHttp) {
                 $scope.loading = false;
                 tubularHttp.tokenUrl = 'http://tubular.azurewebsites.net/token';
-                $scope.submitForm = function (valid) {
-                    if (valid == false) {
-                        toastr.error("Please complete form");
-                    }
 
+                $scope.submitForm = function() {
                     $scope.loading = true;
 
-                    tubularHttp.authenticate($scope.username, $scope.password, $scope.redirectHome, function (error) {
-                        var resul = tubularHttp.isAuthenticated();
-                        $scope.isAuth = resul;
-                        $scope.loading = false;
-                        toastr.error(error);
-                    }, true);
-                };
+                    tubularHttp.authenticate($scope.username,
+                        $scope.password,
+                        $scope,
+                        function(data) {
+                            $location.path("/expirationDate");
+                        },
+                        function(error) {
+                            $scope.isAuth = tubularHttp.isAuthenticated();
+                            $scope.loading = false;
+                            toastr.error(error);
+                        });
 
-                $scope.redirectHome = function () {
-                    $location.path("/expirationDate");
                 };
             }
         ]).controller("navCtrl", function ($scope) {
@@ -169,11 +168,7 @@
 
                 $scope.postTest = function () {
                     tubularHttp.post('http://tubular.azurewebsites.net/api/orders/53', { 'ShipperCity': 'California' }).promise.then(function (data) {
-                        if (data == null) {
-                            $scope.postLog = 'null';
-                        } else {
-                            $scope.postLog = data;
-                        }
+                        $scope.postLog = data || 'null';
                     });
                 };
 
@@ -190,8 +185,7 @@
 
                     tubularHttp.useRefreshTokens = true;
                     var response = tubularHttp.get('http://tubular.azurewebsites.net/api/orders/10');
-                    console.log(response);
-
+                    
                     response.promise.then(function (data) {
                         console.log("Order", data);
                         $scope.accessToken = tubularHttp.userData.bearerToken;
@@ -210,7 +204,6 @@
             '$scope', 'localStorageService',
             function ($scope, localStorageService) {
                 $scope.clearStorage = function () {
-                    console.log(localStorageService);
                     localStorageService.clearAll();
                 };
             }

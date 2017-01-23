@@ -4214,7 +4214,7 @@ try {
             }
         ]);
 })(window.angular);
-(function (angular, moment) {
+(function (angular) {
     'use strict';
 
     angular.module('tubular.services')
@@ -4231,7 +4231,7 @@ try {
 
                     if (
                         config.url.substring(0, apiBaseUrl.length) === apiBaseUrl &&
-                        tubularHttp.tokenUrl != config.url &&
+                        tubularHttp.tokenUrl !== config.url &&
                         tubularHttp.useRefreshTokens &&
                         tubularHttp.requireAuthentication &&
                         tubularHttp.userData.refreshToken) {
@@ -4279,19 +4279,16 @@ try {
                                         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                                         data: 'grant_type=refresh_token&refresh_token=' + tubularHttp.userData.refreshToken
                                     });
-
-                                    console.log("Getting new access token");
                                 }
 
                                 authRequestRunning.then(function (r) {
                                     authRequestRunning = null;
                                     tubularHttp.handleSuccessCallback(null, null, true, r.data);
 
-                                    console.log("Success on getting token", r);
                                     if (tubularHttp.requireAuthentication && tubularHttp.isAuthenticated()) {
                                         $injector.get("$http")(rejection.config).then(function (resp) {
                                             deferred.resolve(resp);
-                                        }, function (resp) {
+                                        }, function () {
                                             deferred.reject(rejection);
                                         });
                                     }
@@ -4299,7 +4296,6 @@ try {
                                         deferred.reject(rejection);
                                     }
                                 }, function (response) {
-                                    console.log("Error on getting token", response);
                                     authRequestRunning = null;
                                     deferred.reject(response);
                                     tubularHttp.removeAuthentication();
@@ -4313,7 +4309,6 @@ try {
                             }
 
                             return deferred.promise;
-                            break;
                         default:
                             break;
                     }
@@ -4321,7 +4316,7 @@ try {
                 }
             };
         }]);
-})(window.angular, window.moment || null);
+})(window.angular);
 (function(angular) {
     'use strict';
 

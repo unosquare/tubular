@@ -114,7 +114,7 @@
                     $location.path('/');
                 });
 
-                $scope.$on('tbForm_OnCancel', function (model, error, formScope) {
+                $scope.$on('tbForm_OnCancel', function () {
                     $location.path('/');
                 });
 

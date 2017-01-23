@@ -1,3 +1,52 @@
-﻿<div ng-controller="loginCtrl">
-    
+﻿<div class="container" ng-controller="loginCtrl">
+    <div class="row">
+        <div class="col-lg-4 col-md-3 col-xs-1">&nbsp;</div>
+        <div class="col-lg-4 col-md-6 col-xs-10">
+            <div class="tubular-general-overlay" ng-show="loading">
+                <div>
+                    <div class="fa fa-refresh fa-2x fa-spin"></div>
+                </div>
+            </div>
+            <div class="">&nbsp;</div>
+            <form name="loginForm" ng-submit="submitForm()" novalidate id="loginform">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <i class="fa fa-user"></i>&nbsp;<strong>Tubular</strong> - Login
+                    </div>
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <label>Username</label>
+                            <div class="input-group">
+                                <span class="input-group-addon hidden-xs">
+                                    <i class="fa fa-user"></i>
+                                </span>
+                                <input type="text" class="form-control" autofocus
+                                       name="username" ng-model="username" required />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <div class="input-group">
+                                <span class="input-group-addon hidden-xs">
+                                    <i class="fa fa-unlock-alt"></i>
+                                </span>
+                                <input type="password" class="form-control"
+                                       name="password" ng-model="password" required />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        <div class="pull-right">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fa fa-check-circle"></i>&nbsp;Log in
+                            </button>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-lg-4 col-md-3 col-xs-1">&nbsp;</div>
+    </div>
+    <div class="text-center">Please fill input data with Username: <strong>Admin</strong> and Password : <strong>pass.word</strong></div>
 </div>
