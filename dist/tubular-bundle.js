@@ -4266,7 +4266,7 @@ try {
 
                             if (
                                 rejection.config.url.substring(0, apiBaseUrl.length) === apiBaseUrl &&
-                                tubularHttp.tokenUrl != rejection.config.url &&
+                                tubularHttp.tokenUrl !== rejection.config.url &&
                                 tubularHttp.useRefreshTokens &&
                                 tubularHttp.requireAuthentication &&
                                 tubularHttp.userData.refreshToken) {

@@ -16,18 +16,12 @@
                 "Microsoft.NETCore.App": "1.1.0"
             }
         },
-        "netstandard1.6": {
-            "imports": ["dnxcore50", "netcoreapp1.1"],
-            "dependencies": {
-                "NETStandard.Library": "1.6.1"
-            }
-        },
         "net452": {}
     },
-    "runtimes": {
-        "win": {},
-        "win81-x64": {},
-        "ubuntu.14.04-x64": {},
-        "osx.10.11-x64": {}
-    }
+  "runtimes": {
+    "win": {},
+    "win81-x64": {},
+    "ubuntu.14.04-x64": {},
+    "osx.10.11-x64": {}
+  }
 }

@@ -6,10 +6,6 @@
     "System.Linq.Dynamic.Core": "1.0.6.9"
   },
   "frameworks": {
-    "netcoreapp1.1": {
-      "dependencies": {
-      }
-    },
     "netstandard1.6": {
       "dependencies": {
         "NETStandard.Library": "1.6.1"

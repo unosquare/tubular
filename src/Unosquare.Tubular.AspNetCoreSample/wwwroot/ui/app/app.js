@@ -32,7 +32,7 @@
         ]).factory('noCacheInterceptor', function () {
             return {
                 request: function (config) {
-                    if (config.method == 'GET' && config.url.indexOf('.htm') === -1 && config.url.indexOf('blob:') === -1) {
+                    if (config.method === 'GET' && config.url.indexOf('.htm') === -1 && config.url.indexOf('blob:') === -1) {
                         var separator = config.url.indexOf('?') === -1 ? '?' : '&';
                         config.url = config.url + separator + 'noCache=' + new Date().getTime();
                     }
@@ -50,10 +50,6 @@
                 $scope.$on('$routeChangeSuccess', function () {
                     me.content = $route.current.title;
                 });
-            }
-        ]).controller('loginCtrl', [
-            '$scope', '$location', function ($scope, $location) {
-                // TODO: Complete
             }
         ]).controller('i18nCtrl', [
             '$scope', 'tubularTranslate', 'toastr', function ($scope, tubularTranslate, toastr) {
