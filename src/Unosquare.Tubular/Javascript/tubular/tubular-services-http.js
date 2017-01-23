@@ -105,25 +105,24 @@
                     $http.defaults.headers.common.Authorization = null;
                 };
 
-                me.authenticate = function (username, password, successCallback, errorCallback, persistData, userDataCallback) {
+                me.authenticate = function (username, password, successCallback, errorCallback) {
                     this.removeAuthentication();
 
                     $http({
                         method: 'POST',
                         url: me.tokenUrl,
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        },
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                         data: 'grant_type=password&username=' + encodeURIComponent(username) + '&password=' + encodeURIComponent(password)
-                    }).then(function success(data) {
-                        me.handleSuccessCallback(userDataCallback, successCallback, persistData, data.data, username);
-                    }, function error(data) {
-                        console.log(data);
-                        me.handleErrorCallback(errorCallback, data.data);
+                    }).then(function(response) {
+                        me.handleSuccessCallback(successCallback, response.data, username);
+                    }, function (errorResponse) {
+                        if (typeof errorCallback === 'function') {
+                            errorCallback(errorResponse.data.error_description || $filter('translate')('UI_HTTPERROR'));
+                        }
                     });
                 };
 
-                me.handleSuccessCallback = function (userDataCallback, successCallback, persistData, data, username) {
+                me.handleSuccessCallback = function (successCallback, data, username) {
                     me.userData.isAuthenticated = true;
                     me.userData.username = data.userName || username;
                     me.userData.bearerToken = data.access_token;
@@ -132,34 +131,16 @@
                     me.userData.role = data.role;
                     me.userData.refreshToken = data.refresh_token;
 
-                    if (typeof userDataCallback === 'function') {
-                        userDataCallback(data);
-                    }
-
                     setHttpAuthHeader();
-
-                    if (persistData) {
-                        saveData();
-                    }
+                    saveData();
 
                     if (typeof successCallback === 'function') {
-                        successCallback();
-                    }
-                };
-
-                me.handleErrorCallback = function (errorCallback, data) {
-                    if (typeof errorCallback === 'function') {
-                        if (data.error_description) {
-                            errorCallback(data.error_description);
-                        } else {
-                            errorCallback($filter('translate')('UI_HTTPERROR'));
-                        }
+                        successCallback(data);
                     }
                 };
 
                 me.addTimeZoneToUrl = function (url) {
-                    var separator = url.indexOf('?') === -1 ? '?' : '&';
-                    return url + separator + 'timezoneOffset=' + new Date().getTimezoneOffset();
+                    return url + (url.indexOf('?') === -1 ? '?' : '&') + 'timezoneOffset=' + new Date().getTimezoneOffset();
                 }
 
                 me.saveDataAsync = function (model, request) {
@@ -205,8 +186,7 @@
 
                 me.getExpirationDate = function () {
                     var date = new Date();
-                    var minutes = 5;
-                    return new Date(date.getTime() + minutes * 60000);
+                    return new Date(date.getTime() + 5 * 60000); // Add 5 minutes
                 };
 
                 me.getCancel = function (canceller) {
@@ -379,10 +359,7 @@
                         url: url,
                         method: "POST",
                         headers: { 'Content-Type': undefined },
-                        transformRequest: function (data) {
-                            // TODO: Remove?
-                            return data;
-                        },
+                        transformRequest: function (data) { return data; }, // TODO: Remove
                         data: formData
                     });
 

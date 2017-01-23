@@ -154,22 +154,15 @@
 
                     $scope.loading = true;
 
-                    tubularHttp.authenticate($scope.username,
-                        $scope.password,
-                        $scope.redirectHome,
+                    tubularHttp.authenticate($scope.username, $scope.password,
+                        function () {
+                            $location.path("/");
+                        },
                         function (error) {
                             $scope.loading = false;
                             toastr.error(error);
-                        },
-                        true,
-                        function (data) {
                         });
                 };
-
-                $scope.redirectHome = function () {
-                    $location.path("/");
-                };
-
             });
 
     angular.module('app', [
