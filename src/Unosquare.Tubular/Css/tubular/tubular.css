@@ -44,8 +44,6 @@ div.tubular-overlay {
     width: 100%;
     height: 100%;
     z-index: 5000;
-    padding-left: 0px;
-    padding-right: 0px;
     opacity: 0.4;
     text-align: center;
     color: #fff;
@@ -56,12 +54,9 @@ div.tubular-overlay {
         background-color: #b4b4b4;
         color: #fff;
         height: 100%;
-        top: 0;
         left: 0px;
         right: 0px;
-        bottom: 0;
         display: block;
-        padding-right: 0px;
         border-radius: 4px;
     }
 
@@ -82,8 +77,6 @@ div.tubular-overlay {
     }
 
     .tubular-overlay.ng-hide, .tubular-general-overlay.ng-hide {
-        line-height: 0;
-        opacity: 0;
         padding: 0 0px;
     }
 
