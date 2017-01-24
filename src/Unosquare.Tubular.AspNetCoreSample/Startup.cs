@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -51,6 +53,32 @@ namespace Unosquare.Tubular.AspNetCoreSample
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
+            app.UseExceptionHandler(errorApp =>
+            {
+                errorApp.Run(async context =>
+                {
+                    context.Response.StatusCode = 500; // or another Status accordingly to Exception Type
+                    context.Response.ContentType = "application/json";
+
+                    var error = context.Features.Get<IExceptionHandlerFeature>();
+
+                    if (error != null)
+                    {
+                        var ex = error.Error;
+                        var innerEx = (ex as AggregateException);
+                        var message = $"Main Exception: {ex}";
+
+                        if (innerEx != null)
+                        {
+                            message = innerEx.InnerExceptions.Aggregate(message,
+                                (current, inner) => current + $"\r\nInner Exception: {inner}");
+                        }
+
+                        await context.Response.WriteAsync(message, Encoding.UTF8);
+                    }
+                });
+            });
+
             app.UseDefaultFiles();
 
 
@@ -83,10 +111,11 @@ namespace Unosquare.Tubular.AspNetCoreSample
                 SigningCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256),
                 IdentityResolver = (userName, password) =>
                 {
+                    // TODO: Replace with your implementation
                     var isLogged = (userName == "Admin" && password == "pass.word");
                     if (!isLogged)
                     {
-                        return null;
+                        return Task.FromResult<ClaimsIdentity>(null);
                     }
 
                     var identity = new ClaimsIdentity();
