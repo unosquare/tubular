@@ -6,7 +6,7 @@
             var authRequestRunning = null;
             return {
 
-                'request': function (config) {
+                request: function (config) {
                     // Get the service here because otherwise, a circular dependency injection will be detected
                     var tubularHttp = $injector.get("tubularHttp");
                     var apiBaseUrl = tubularHttp.apiBaseUrl;
@@ -19,7 +19,7 @@
                         tubularHttp.useRefreshTokens &&
                         tubularHttp.requireAuthentication &&
                         tubularHttp.userData.refreshToken) {
-                        
+
                         if (tubularHttp.isBearerTokenExpired()) {
                             // Let's force an error to automatically go directly to the refresh token stuff
                             return $q.reject({ error: 'expired token', status: 401, config: config });
@@ -29,24 +29,24 @@
                     return config;
                 },
 
-                'requestError': function (rejection) {
+                requestError: function (rejection) {
 
                     return $q.reject(rejection);
                 },
 
                 // optional method
-                'response': function (response) {
+                response: function (response) {
                     return response;
                 },
 
                 // optional method
-                'responseError': function (rejection) {
+                responseError: function (rejection) {
+                    var deferred = $q.defer();
+
                     switch (rejection.status) {
                         case 401:
                             var tubularHttp = $injector.get("tubularHttp");
                             var apiBaseUrl = tubularHttp.apiBaseUrl;
-
-                            var deferred = $q.defer();
 
                             if (
                                 rejection.config.url.substring(0, apiBaseUrl.length) === apiBaseUrl &&
@@ -67,13 +67,13 @@
 
                                 authRequestRunning.then(function (r) {
                                     authRequestRunning = null;
-                                    tubularHttp.handleSuccessCallback(null, null, true, r.data);
+                                    tubularHttp.handleSuccessCallback(null, r.data);
 
                                     if (tubularHttp.requireAuthentication && tubularHttp.isAuthenticated()) {
                                         $injector.get("$http")(rejection.config).then(function (resp) {
                                             deferred.resolve(resp);
                                         }, function () {
-                                            deferred.reject(rejection);
+                                            deferred.reject(r);
                                         });
                                     }
                                     else {
@@ -96,7 +96,9 @@
                         default:
                             break;
                     }
-                    return rejection || $q.when(response);
+
+                    deferred.reject(rejection);
+                    return deferred.promise;
                 }
             };
         }]);
