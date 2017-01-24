@@ -35,7 +35,6 @@ describe('tbHttp', function () {
         element(by.model('password')).sendKeys('pass.');
 
         element(by.id('submitBtn')).click().then(function () {
-            // browser.pause();
             element(by.id('btnRemoveAuth')).click().then(function () {
                 element(by.id('btnAuth')).click().then(function () {
                     expect($('#isAuth').getText()).toBe('Not Authenticated');
@@ -97,7 +96,6 @@ describe('tbHttp', function () {
                     var originalAccessToken = value;
 
                     element(by.id('btnUseRefreshToken')).click().then(function () {
-                        browser.pause();
                         expect($('#lbAccessToken').getText()).not.toBe(originalAccessToken);
                     });
                 });
