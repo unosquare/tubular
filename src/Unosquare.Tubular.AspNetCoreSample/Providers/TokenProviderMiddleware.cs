@@ -92,14 +92,14 @@ namespace Unosquare.Tubular.AspNetCoreSample.Providers
                 return _next(context);
             }
 
+            context.Response.ContentType = "application/json";
+
             // Request must be POST with Content-Type: application/x-www-form-urlencoded
             if (!context.Request.Method.Equals("POST")
                 || !context.Request.HasFormContentType)
             {
-                var error = SerializeError("Bad request.");
                 context.Response.StatusCode = 400;
-                context.Response.ContentLength = error.Length;
-                return context.Response.WriteAsync(error);
+                return context.Response.WriteAsync(SerializeError("Bad request."));
             }
 
             _logger.LogInformation("Handling request: " + context.Request.Path);
@@ -115,10 +115,8 @@ namespace Unosquare.Tubular.AspNetCoreSample.Providers
             var identity = await _options.IdentityResolver(username, password);
             if (identity == null)
             {
-                var error = SerializeError("Invalid username or password.");
                 context.Response.StatusCode = 400;
-                context.Response.ContentLength = error.Length;
-                await context.Response.WriteAsync(error);
+                await context.Response.WriteAsync(SerializeError("Invalid username or password."));
                 return;
             }
 
