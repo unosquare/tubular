@@ -3908,7 +3908,7 @@ try {
                         url: me.tokenUrl,
                         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                         data: 'grant_type=password&username=' + encodeURIComponent(username) + '&password=' + encodeURIComponent(password)
-                    }).then(function(response) {
+                    }).then(function (response) {
                         me.handleSuccessCallback(successCallback, response.data, username);
                     }, function (errorResponse) {
                         if (typeof errorCallback === 'function') {
@@ -4222,7 +4222,7 @@ try {
             var authRequestRunning = null;
             return {
 
-                'request': function (config) {
+                request: function (config) {
                     // Get the service here because otherwise, a circular dependency injection will be detected
                     var tubularHttp = $injector.get("tubularHttp");
                     var apiBaseUrl = tubularHttp.apiBaseUrl;
@@ -4235,7 +4235,7 @@ try {
                         tubularHttp.useRefreshTokens &&
                         tubularHttp.requireAuthentication &&
                         tubularHttp.userData.refreshToken) {
-                        
+
                         if (tubularHttp.isBearerTokenExpired()) {
                             // Let's force an error to automatically go directly to the refresh token stuff
                             return $q.reject({ error: 'expired token', status: 401, config: config });
@@ -4245,24 +4245,24 @@ try {
                     return config;
                 },
 
-                'requestError': function (rejection) {
+                requestError: function (rejection) {
 
                     return $q.reject(rejection);
                 },
 
                 // optional method
-                'response': function (response) {
+                response: function (response) {
                     return response;
                 },
 
                 // optional method
-                'responseError': function (rejection) {
+                responseError: function (rejection) {
+                    var deferred = $q.defer();
+
                     switch (rejection.status) {
                         case 401:
                             var tubularHttp = $injector.get("tubularHttp");
                             var apiBaseUrl = tubularHttp.apiBaseUrl;
-
-                            var deferred = $q.defer();
 
                             if (
                                 rejection.config.url.substring(0, apiBaseUrl.length) === apiBaseUrl &&
@@ -4289,7 +4289,7 @@ try {
                                         $injector.get("$http")(rejection.config).then(function (resp) {
                                             deferred.resolve(resp);
                                         }, function () {
-                                            deferred.reject(rejection);
+                                            deferred.reject(r);
                                         });
                                     }
                                     else {
@@ -4312,7 +4312,9 @@ try {
                         default:
                             break;
                     }
-                    return rejection || $q.when(response);
+
+                    deferred.reject(rejection);
+                    return deferred.promise;
                 }
             };
         }]);

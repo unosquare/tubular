@@ -113,7 +113,7 @@
                         url: me.tokenUrl,
                         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                         data: 'grant_type=password&username=' + encodeURIComponent(username) + '&password=' + encodeURIComponent(password)
-                    }).then(function(response) {
+                    }).then(function (response) {
                         me.handleSuccessCallback(successCallback, response.data, username);
                     }, function (errorResponse) {
                         if (typeof errorCallback === 'function') {

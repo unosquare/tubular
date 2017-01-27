@@ -92,19 +92,19 @@
                 $scope.loading = false;
                 tubularHttp.tokenUrl = 'http://tubular.azurewebsites.net/token';
 
-                $scope.submitForm = function() {
+                $scope.submitForm = function () {
                     $scope.loading = true;
 
                     tubularHttp.authenticate($scope.username,
                         $scope.password,
-                        $scope,
-                        function(data) {
+                        function (data) {
                             $location.path("/expirationDate");
                         },
-                        function(error) {
+                        function (error) {
                             $scope.isAuth = tubularHttp.isAuthenticated();
                             $scope.loading = false;
                             toastr.error(error);
+                            $location.path("/expirationDate");
                         });
 
                 };
@@ -176,6 +176,7 @@
                     tubularHttp.setRefreshTokenUrl('http://tubular.azurewebsites.net/token');
                     tubularHttp.setTokenUrl('http://tubular.azurewebsites.net/token');
                     tubularHttp.setApiBaseUrl('http://tubular.azurewebsites.net/api');
+                    tubularHttp.useRefreshTokens = true;
 
                     $scope.accessToken = tubularHttp.userData.bearerToken;
                     tubularHttp.setRequireAuthentication(true);
@@ -185,7 +186,7 @@
 
                     tubularHttp.useRefreshTokens = true;
                     var response = tubularHttp.get('http://tubular.azurewebsites.net/api/orders/10');
-                    
+
                     response.promise.then(function (data) {
                         console.log("Order", data);
                         $scope.accessToken = tubularHttp.userData.bearerToken;
