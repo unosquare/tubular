@@ -3919,7 +3919,7 @@ try {
 
                 me.handleSuccessCallback = function (successCallback, data, username) {
                     me.userData.isAuthenticated = true;
-                    me.userData.username = data.userName || username;
+                    me.userData.username = data.userName || username || me.userData.username;
                     me.userData.bearerToken = data.access_token;
                     me.userData.expirationDate = new Date();
                     me.userData.expirationDate = new Date(me.userData.expirationDate.getTime() + data.expires_in * 1000);
@@ -4283,7 +4283,7 @@ try {
 
                                 authRequestRunning.then(function (r) {
                                     authRequestRunning = null;
-                                    tubularHttp.handleSuccessCallback(null, null, true, r.data);
+                                    tubularHttp.handleSuccessCallback(null, r.data);
 
                                     if (tubularHttp.requireAuthentication && tubularHttp.isAuthenticated()) {
                                         $injector.get("$http")(rejection.config).then(function (resp) {

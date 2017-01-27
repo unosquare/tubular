@@ -67,7 +67,7 @@
 
                                 authRequestRunning.then(function (r) {
                                     authRequestRunning = null;
-                                    tubularHttp.handleSuccessCallback(null, null, true, r.data);
+                                    tubularHttp.handleSuccessCallback(null, r.data);
 
                                     if (tubularHttp.requireAuthentication && tubularHttp.isAuthenticated()) {
                                         $injector.get("$http")(rejection.config).then(function (resp) {
