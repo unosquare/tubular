@@ -8,7 +8,7 @@ namespace Unosquare.Tubular.GenericModels
     public class ApiResult
     {
         /// <summary>
-        /// The ok status
+        /// The OK status
         /// </summary>
         public const string OkStatus = "OK";
         /// <summary>

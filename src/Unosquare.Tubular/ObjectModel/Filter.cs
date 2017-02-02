@@ -41,11 +41,8 @@
 
         /// <summary>
         /// Gets or sets the options URL.
-        /// The url returns a list of Filter objects
+        /// The URL returns a list of Filter objects
         /// </summary>
-        /// <value>
-        /// The options URL.
-        /// </value>
         public string OptionsUrl { get; set; }
 
         /// <summary>

@@ -45,7 +45,7 @@
         /// </summary>
         public AggregationFunction Aggregate { get; set; }
         /// <summary>
-        /// The Agregation Function to perform in the column
+        /// The Aggregation Function to perform in the column
         /// </summary>
         public AggregationFunction MetaAggregate { get; set; }
     }
