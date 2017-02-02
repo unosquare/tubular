@@ -1,12 +1,9 @@
 ﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Serialization;
 using System;
@@ -14,8 +11,8 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Unosquare.Swan.AspNetCore;
 using Unosquare.Tubular.AspNetCoreSample.Models;
-using Unosquare.Tubular.AspNetCoreSample.Providers;
 
 namespace Unosquare.Tubular.AspNetCoreSample
 {
@@ -53,49 +50,24 @@ namespace Unosquare.Tubular.AspNetCoreSample
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
-            app.UseExceptionHandler(errorApp =>
-            {
-                errorApp.Run(async context =>
-                {
-                    context.Response.StatusCode = 500; // or another Status accordingly to Exception Type
-                    context.Response.ContentType = "application/json";
-
-                    var error = context.Features.Get<IExceptionHandlerFeature>();
-
-                    if (error != null)
-                    {
-                        var ex = error.Error;
-                        var innerEx = (ex as AggregateException);
-                        var message = $"Main Exception: {ex}";
-
-                        if (innerEx != null)
-                        {
-                            message = innerEx.InnerExceptions.Aggregate(message,
-                                (current, inner) => current + $"\r\nInner Exception: {inner}");
-                        }
-
-                        await context.Response.WriteAsync(message, Encoding.UTF8);
-                    }
-                });
-            });
+            app.UseFallback();
+            app.UseJsonExceptionHandler();
 
             app.UseDefaultFiles();
 
-
-            var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("HOLAAAAASOYUNSECRETOYASI"));
             var tokenOptions = new TokenValidationParameters
             {
                 // The signing key must match!
                 ValidateIssuerSigningKey = true,
-                IssuerSigningKey = signingKey,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("YOUMAYCHANGEMETOANOTHER")),
 
                 // Validate the JWT Issuer (iss) claim
                 ValidateIssuer = true,
-                ValidIssuer = "ExampleIssuer",
+                ValidIssuer = "TubularSample",
 
                 // Validate the JWT Audience (aud) claim
                 ValidateAudience = true,
-                ValidAudience = "ExampleAudience",
+                ValidAudience = "Unosquare",
 
                 // Validate the token expiry
                 ValidateLifetime = true,
@@ -104,31 +76,18 @@ namespace Unosquare.Tubular.AspNetCoreSample
                 ClockSkew = TimeSpan.Zero
             };
 
-            app.UseMiddleware<TokenProviderMiddleware>(Options.Create(new TokenProviderOptions
+            app.UseBearerTokenProvider(tokenOptions, (userName, password, grantType, clientId) =>
             {
-                Audience = tokenOptions.ValidAudience,
-                Issuer = tokenOptions.ValidIssuer,
-                SigningCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256),
-                IdentityResolver = (userName, password) =>
+                // TODO: Replace with your implementation
+                if (userName == "Admin" && password == "pass.word")
                 {
-                    // TODO: Replace with your implementation
-                    var isLogged = (userName == "Admin" && password == "pass.word");
-                    if (!isLogged)
-                    {
-                        return Task.FromResult<ClaimsIdentity>(null);
-                    }
 
                     var identity = new ClaimsIdentity();
                     identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, userName));
                     return Task.FromResult(identity);
                 }
-            }));
 
-            app.UseJwtBearerAuthentication(new JwtBearerOptions
-            {
-                AutomaticAuthenticate = true,
-                AutomaticChallenge = true,
-                TokenValidationParameters = tokenOptions
+                return Task.FromResult<ClaimsIdentity>(null);
             });
 
             app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
@@ -154,8 +113,8 @@ namespace Unosquare.Tubular.AspNetCoreSample
                     "Simian"
                 };
 
-                dbContext.Products.AddRange(new Product {Name = "CocaCola"}, new Product {Name = "Pepsi"},
-                    new Product {Name = "Starbucks"}, new Product {Name = "Donut"});
+                dbContext.Products.AddRange(new Product { Name = "CocaCola" }, new Product { Name = "Pepsi" },
+                    new Product { Name = "Starbucks" }, new Product { Name = "Donut" });
 
                 dbContext.SaveChanges();
 
@@ -188,7 +147,7 @@ namespace Unosquare.Tubular.AspNetCoreSample
                         });
                     }
 
-                    order.Amount = order.Details.Sum(x => x.Price*x.Quantity);
+                    order.Amount = order.Details.Sum(x => x.Price * x.Quantity);
 
                     dbContext.Orders.Add(order);
                 }
