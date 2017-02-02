@@ -149,31 +149,7 @@
 
             Assert.AreEqual(dataSource.Count(), response.TotalRecordCount, "Total rows matching");
         }
-
-        [Test]
-        public void TestCreateCreateTypeAheadList()
-        {
-            const int elementsCount = 8;
-            var dataSource = SampleEntities.GenerateData().AsQueryable();
-
-            var data = dataSource.Select(x => x.Number.ToString()).Distinct().Take(elementsCount).ToList();
-            var tubularData = dataSource.CreateTypeAheadList("Number");
-
-            Assert.AreEqual(data.Count, tubularData.Count(), "Same length");
-            Assert.AreEqual(data.First(), tubularData.First(), "Same first item");
-
-            var dataFiltered =
-                dataSource.Where(x => x.Name.Contains(SearchText))
-                    .Select(x => x.Name)
-                    .Distinct()
-                    .Take(elementsCount)
-                    .ToList();
-            var tubularDataFiltered = dataSource.CreateTypeAheadList("Name", SearchText);
-
-            Assert.AreEqual(dataFiltered.Count, tubularDataFiltered.Count(), "Same length");
-            Assert.AreEqual(dataFiltered.First(), tubularDataFiltered.First(), "Same first item");
-        }
-
+        
         [Test]
         public void TestListSimpleSearch()
         {

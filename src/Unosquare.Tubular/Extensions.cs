@@ -9,7 +9,7 @@
     using System.Reflection;
     using System.Runtime.CompilerServices;
     using System.Text;
-    using Unosquare.Tubular.ObjectModel;
+    using ObjectModel;
 #if NET452
     using System.Text.RegularExpressions;
     using System.Net.Http;
@@ -526,35 +526,6 @@
                 response.FilteredRecordCount = subset.Count();
 
             return subset;
-        }
-
-        /// <summary>
-        /// Creates a dynamic set filtered by a LINQ expression
-        /// </summary>
-        /// <param name="dataSource">The IQueryable source</param>
-        /// <param name="fieldName">The field to filter</param>
-        /// <param name="filter">The LINQ expression</param>
-        /// <returns>The filtered IQueryable</returns>
-        public static IQueryable CreateDynamicFilteredSet(this IQueryable dataSource, string fieldName, string filter)
-        {
-            return dataSource.Where($"{fieldName}.Contains(@0)", filter);
-        }
-
-        /// <summary>
-        /// Generates a list with distinct values to use in TypeAhead UI control
-        /// </summary>
-        /// <param name="dataSource">The IQueryable source</param>
-        /// <param name="fieldName">The field to filter</param>
-        /// <param name="filter">The LINQ expression</param>
-        /// <param name="records">How many records to retrieve, default 8</param>
-        /// <returns>The filtered IQueryable</returns>
-        public static IQueryable<string> CreateTypeAheadList(this IQueryable dataSource, string fieldName,
-            string filter = null, int records = 8)
-        {
-            var iqueryable = filter == null ? dataSource : dataSource.CreateDynamicFilteredSet(fieldName, filter);
-
-            return (iqueryable?.Select($"{fieldName}.ToString()") as IQueryable<string>)?.Distinct()
-                .Take(records);
         }
     }
 }
