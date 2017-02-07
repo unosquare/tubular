@@ -9,7 +9,7 @@
     },
     "scripts": {
         "protractor": "protractor e2e-tests/protractor.conf.js",
-        "pretest": "./node_modules/protractor/bin/webdriver-manager update",
+        "updatewebmanager": "./node_modules/protractor/bin/webdriver-manager update",
         "test": "grunt test"
     },
     "keywords": [
