@@ -6,14 +6,17 @@ matrix:
   include:
     - os: linux
       mono: latest
+      node_js: latest
       dist: trusty
       sudo: false
     - os: linux
       mono: latest
+      node_js: latest
     - os: osx
       mono: latest
+      node_js: latest
 install:
-  - if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew cask install google-chrome; else rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm && (cd ~/.nvm && git checkout `git describe --abbrev=0 --tags`) && source ~/.nvm/nvm.sh && nvm install 4; fi
+  - if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew cask install google-chrome; fi
   - nuget install NUnit.ConsoleRunner -OutputDirectory testrunner
   - nuget restore Unosquare.Tubular.Lib.sln
   - npm install
