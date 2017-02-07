@@ -2,9 +2,10 @@ language: csharp
 solution: Unosquare.Tubular.Lib.sln
 notifications:
   slack: unolabs:cbusXPH6pBwZ35rVDzi4k4ve
-node_js: 6
 addons:
   firefox: "49.0"
+env:
+  - TRAVIS_NODE_VERSION="6"
 matrix:
   include:
     - os: linux
@@ -17,6 +18,7 @@ matrix:
       mono: latest
 install:
   - if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew cask install google-chrome; fi
+  - rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm && (cd ~/.nvm && git checkout `git describe --abbrev=0 --tags`) && source ~/.nvm/nvm.sh && nvm install $TRAVIS_NODE_VERSION
   - nuget install NUnit.ConsoleRunner -OutputDirectory testrunner
   - nuget restore Unosquare.Tubular.Lib.sln
   - npm install
