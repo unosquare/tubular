@@ -11,5 +11,6 @@ exports.config = {
 
     framework: 'jasmine',
 
+    directConnect : true,
     jasmineNodeOpts: { defaultTimeoutInterval: 3000000 }
 };
