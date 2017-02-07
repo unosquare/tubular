@@ -55,7 +55,6 @@
     <Compile Include="ObjectModel\GridDataRequest.cs" />
     <Compile Include="ObjectModel\GridDataResponse.cs" />
     <Compile Include="ObjectModel\GridDataUpdateRow.cs" />
-    <Compile Include="ObjectModel\ModelColumn.cs" />
     <Compile Include="ObjectModel\MultipleSerieChartResponse.cs" />
     <Compile Include="ObjectModel\SingleSerieChartResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -6,7 +6,7 @@
     using System.Linq;
     using System.Linq.Dynamic.Core;
     using System.Linq.Expressions;
-    using Unosquare.Tubular.ObjectModel;
+    using ObjectModel;
 
     /// <summary>
     /// Extension methods to create chart responses

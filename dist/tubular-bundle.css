@@ -428,7 +428,6 @@ div.tubular-overlay {
         right: 0;
         bottom: 0;
         display: block;
-        padding-top: 6px;
         padding-right: 0;
         border-radius: 4px;
     }
@@ -452,7 +451,7 @@ div.tubular-overlay {
     .tubular-overlay.ng-hide, .tubular-general-overlay.ng-hide {
         line-height: 0;
         opacity: 0;
-        padding: 0 10px;
+        padding: 0 0;
     }
 
 div.tubular-general-overlay {
@@ -769,4 +768,13 @@ li.pagination-first, li.pagination-prev, li.pagination-next, li.pagination-last 
 .btn-group > tb-print-button, .btn-group > tb-export-button, .btn-group > tb-column-selector {
     position: relative;
     float: left;
+}
+
+.nopadding {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+.nomarging {
+    margin: 0 !important;
 }
