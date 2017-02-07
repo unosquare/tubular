@@ -2,19 +2,17 @@ language: csharp
 solution: Unosquare.Tubular.Lib.sln
 notifications:
   slack: unolabs:cbusXPH6pBwZ35rVDzi4k4ve
+node_js: 6
 matrix:
   include:
     - os: linux
       mono: latest
-      node_js: latest
       dist: trusty
       sudo: false
     - os: linux
       mono: latest
-      node_js: latest
     - os: osx
       mono: latest
-      node_js: latest
 install:
   - if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew cask install google-chrome; fi
   - nuget install NUnit.ConsoleRunner -OutputDirectory testrunner
