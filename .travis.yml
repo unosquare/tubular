@@ -1,5 +1,6 @@
 language: csharp
 solution: Unosquare.Tubular.Lib.sln
+sudo: required
 notifications:
   slack: unolabs:cbusXPH6pBwZ35rVDzi4k4ve
 addons:
