@@ -5,27 +5,17 @@ notifications:
 matrix:
   include:
     - os: linux
-      dotnet: 1.0.0-preview2-003131
       mono: latest
-      env: DOTNETCORE=1 TRAVIS_NODE_VERSION=4
       dist: trusty
       sudo: false
     - os: linux
       mono: latest
     - os: osx
-      dotnet: 1.0.0-preview2-003131
-      mono: latest
-      env: DOTNETCORE=1 TRAVIS_NODE_VERSION=4
-    - os: osx
       mono: latest
 install:
-  - if [[ $TRAVIS_OS_NAME == "osx" ]]; then mkdir -p /usr/local/lib; fi
-  - if [[ $TRAVIS_OS_NAME == "osx" ]]; then ln -s /usr/local/opt/openssl/lib/libcrypto.1.0.0.dylib /usr/local/lib/; fi
-  - if [[ $TRAVIS_OS_NAME == "osx" ]]; then ln -s /usr/local/opt/openssl/lib/libssl.1.0.0.dylib /usr/local/lib/; fi
-  - if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew cask install google-chrome; fi
-  - if [[ $DOTNETCORE == "" ]]; then nuget install NUnit.ConsoleRunner -OutputDirectory testrunner; fi
-  - if [[ $DOTNETCORE == "1" ]]; then dotnet restore; else nuget restore Unosquare.Tubular.Lib.sln; fi 
-  - if [[ $TRAVIS_NODE_VERSION == "4" ]]; then rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm && (cd ~/.nvm && git checkout `git describe --abbrev=0 --tags`) && source ~/.nvm/nvm.sh && nvm install $TRAVIS_NODE_VERSION; fi
+  - if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew cask install google-chrome; else rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm && (cd ~/.nvm && git checkout `git describe --abbrev=0 --tags`) && source ~/.nvm/nvm.sh && nvm install 4; fi
+  - nuget install NUnit.ConsoleRunner -OutputDirectory testrunner
+  - nuget restore Unosquare.Tubular.Lib.sln
   - npm install
 before_script:
   - touch ./src/Unosquare.Tubular/Javascript/tubular-bundle.js
@@ -33,7 +23,6 @@ before_script:
   - if [[ $TRAVIS_OS_NAME == "linux" ]]; then export DISPLAY=:99.0; fi
   - if [[ $TRAVIS_OS_NAME == "linux" ]]; then sh -e /etc/init.d/xvfb start; fi
 script:
-  - if [[ $DOTNETCORE == "" ]] && [[ $TRAVIS_NODE_VERSION == "" ]]; then xbuild /p:Configuration=Release Unosquare.Tubular.Lib.sln; fi
-  - if [[ $DOTNETCORE == "1" ]]; then dotnet build */**/project.json -c Release; fi
-  - if [[ $DOTNETCORE == "1" ]]; then dotnet test ./test/Unosquare.Tubular.Tests; else mono --debug ./testrunner/NUnit.ConsoleRunner.*/tools/nunit3-console.exe --process=Single ./test/Unosquare.Tubular.Tests/bin/Release/Unosquare.Tubular.Tests.dll; fi
+  - xbuild /p:Configuration=Release Unosquare.Tubular.Lib.sln
+  - mono --debug ./testrunner/NUnit.ConsoleRunner.*/tools/nunit3-console.exe --process=Single ./test/Unosquare.Tubular.Tests/bin/Release/Unosquare.Tubular.Tests.dll
   - npm test
