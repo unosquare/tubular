@@ -73,7 +73,7 @@
                                 }
                             } else {
                                 if (!obj[col.Name]) {
-                                    obj[col.Name] = new Date();
+                                    obj[col.Name] = '';
                                 } else {
                                     var timezone = new Date(Date.parse(obj[col.Name])).toString().match(/([-\+][0-9]+)\s/)[1];
                                     timezone = timezone.substr(0, timezone.length - 2) + ':' + timezone.substr(timezone.length - 2, 2);
