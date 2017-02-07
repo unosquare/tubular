@@ -9,7 +9,7 @@
     },
     "scripts": {
         "protractor": "protractor e2e-tests/protractor.conf.js",
-        "pretest": "./node_modules/protractor/bin/webdriver-manager update",
+        "updatewebmanager": "./node_modules/protractor/bin/webdriver-manager update",
         "test": "grunt test"
     },
     "keywords": [
@@ -44,7 +44,6 @@
         "grunt-string-replace": "^1.2.1",
         "http-server": "^0.9.0",
         "protractor": "~5.1.1",
-        "selenium-webdriver": "3.0.1",
-        "selenium-standalone": "^5.9.0"
+        "selenium-webdriver": "3.0.1"
     }
 }

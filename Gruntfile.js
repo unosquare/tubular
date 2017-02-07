@@ -40,8 +40,8 @@ module.exports = function(grunt) {
         },
         protractor_coverage: {
             options: {
-                keepAlive: true,
                 noColor: false,
+                keepAlive: false,
                 collectorPort: 9001,
                 webdriverManagerUpdate: true,
                 configFile: "test/e2e-tests/protractor.conf.grunt.js"
