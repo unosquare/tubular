@@ -3,6 +3,8 @@ solution: Unosquare.Tubular.Lib.sln
 notifications:
   slack: unolabs:cbusXPH6pBwZ35rVDzi4k4ve
 node_js: 6
+addons:
+  firefox: "49.0"
 matrix:
   include:
     - os: linux
