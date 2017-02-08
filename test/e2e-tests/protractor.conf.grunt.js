@@ -18,7 +18,9 @@ exports.config = {
             savePath: './report',
             cleanDestination: false,
             consolidate: true,
-            consolidateAll: true
+            consolidateAll: true,
+            showPassed: false,
+            takeScreenshotsOnlyOnFailures: true
         })
       );
    }
