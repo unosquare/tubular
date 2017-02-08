@@ -18,7 +18,7 @@ cd ..
 # Move content
 mkdir out/reports/$TRAVIS_BUILD_NUMBER
 cd report
-cp -r * out/reports/$TRAVIS_BUILD_NUMBER
+cp -r * ../out/reports/$TRAVIS_BUILD_NUMBER
 cd ..
 cp eslint.html out/reports/$TRAVIS_BUILD_NUMBER
 
