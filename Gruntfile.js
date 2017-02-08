@@ -107,7 +107,7 @@ module.exports = function(grunt) {
                 browsers: ['PhantomJS']
             },
             dev: {
-                reporters: 'dots'
+                //reporters: 'dots'
             }
 
         }

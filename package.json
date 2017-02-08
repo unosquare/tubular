@@ -55,6 +55,7 @@
     "grunt-karma": "2.0.0",
     "karma": "1.4.1",
     "karma-jasmine": "1.1.0",
+    "karma-coverage": "1.1.1",
     "phantomjs": "2.1.7",
     "karma-junit-reporter": "1.2.0",
     "karma-html-reporter": "0.2.7",

@@ -18,6 +18,8 @@ module.exports = function (config) {
         files: [
           'bower_components/angular/angular.js',
           'bower_components/angular-mocks/angular-mocks.js',
+          'src/Unosquare.Tubular/Javascript/tubular/tubular-services.js',
+          'src/Unosquare.Tubular/Javascript/tubular-localdata/tubular-services-localdata.js',
           'src/**/*.spec.js'
         ],
 
@@ -31,14 +33,14 @@ module.exports = function (config) {
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
-
+             'src/Unosquare.Tubular/Javascript/tubular/**/{*.js,!*.spec.js}': ['coverage']
         },
 
 
         // test results reporter to use
         // possible values: 'dots', 'progress'
         // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-        reporters: ['progress', 'junit', 'html'],
+        reporters: ['progress', 'coverage', 'html'],
 
         junitReporter: {
             outputDir: 'report/unit', // results will be saved as $outputDir/$browserName.xml
@@ -54,6 +56,12 @@ module.exports = function (config) {
             // experimental 
             preserveDescribeNesting: false, // folded suites stay folded  
             foldAll: false, // reports start folded (only with preserveDescribeNesting) 
+        },
+
+        // optionally, configure the reporter
+        coverageReporter: {
+        type : 'html',
+        dir : 'report/coverage/'
         },
         // web server port
         port: 9876,
