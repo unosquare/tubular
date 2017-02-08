@@ -17,9 +17,7 @@ cd ..
 
 # Move content
 mkdir out/reports/$TRAVIS_BUILD_NUMBER
-cp report/* out/reports/$TRAVIS_BUILD_NUMBER
-cp report/**/* out/reports/$TRAVIS_BUILD_NUMBER
-ls out/reports/$TRAVIS_BUILD_NUMBER
+cp -r report out/reports/$TRAVIS_BUILD_NUMBER
 
 # Now let's go have some fun with the cloned repo
 cd out
