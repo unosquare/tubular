@@ -14,6 +14,7 @@
 *.userprefs
 [Rr]eport/
 eslint.html
+bower*/
 
 # Build results
 [Dd]ebug/

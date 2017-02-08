@@ -3,7 +3,11 @@ module.exports = function(grunt) {
     require('load-grunt-tasks')(grunt);
     grunt.loadNpmTasks('grunt-coveralls');
     grunt.loadNpmTasks("gruntify-eslint");
+    
+    grunt.loadNpmTasks('grunt-karma');
 
+   
+   
     // Project configuration.
     grunt.initConfig({
         instrument: {
@@ -92,6 +96,20 @@ module.exports = function(grunt) {
                 silent: true
             },
             src: ["src/Unosquare.Tubular/Javascript/tubular**/**.js"]
+        },
+        karma: {
+            options: {
+                configFile: 'karma.conf.js',
+                browsers: ['Chrome', 'Firefox']
+            },
+            ci: {
+                singleRun: true,
+                browsers: ['PhantomJS']
+            },
+            dev: {
+                reporters: 'dots'
+            }
+
         }
     });
 
@@ -110,4 +128,7 @@ module.exports = function(grunt) {
     ]);
 
     grunt.registerTask("lint", ["eslint"]);
+    // Default task.
+    grunt.registerTask('unit', ['karma:dev']);
+    grunt.registerTask('unit:ci', ['karma:ci']);
 };
