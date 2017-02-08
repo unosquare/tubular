@@ -2,8 +2,6 @@
 set -e # Exit with nonzero exit code if anything fails
 
 TARGET_BRANCH="gh-pages"
-ENCRYPTION_LABEL="a8a17fe422f5" 
-COMMIT_AUTHOR_EMAIL="geovanni.perez@gmail.com"
 
 # Save some useful information
 REPO=`git config remote.origin.url`
@@ -25,7 +23,7 @@ ls out/reports/$TRAVIS_BUILD_NUMBER
 # Now let's go have some fun with the cloned repo
 cd out
 git config user.name "Travis CI"
-git config user.email "$COMMIT_AUTHOR_EMAIL"
+git config user.email "geovanni.perez@gmail.com"
 
 # Commit the "changes", i.e. the new version.
 # The delta will show diffs between new and old versions.
@@ -33,12 +31,8 @@ git add reports/$TRAVIS_BUILD_NUMBER/*
 git commit -m "Deploy to GitHub Pages: ${SHA}"
 
 # Get the deploy key by using Travis's stored variables to decrypt deploy_key.enc
-ENCRYPTED_KEY_VAR="encrypted_${ENCRYPTION_LABEL}_key"
-ENCRYPTED_IV_VAR="encrypted_${ENCRYPTION_LABEL}_iv"
-ENCRYPTED_KEY=${!ENCRYPTED_KEY_VAR}
-ENCRYPTED_IV=${!ENCRYPTED_IV_VAR}
 cd ..
-openssl aes-256-cbc -K $ENCRYPTED_KEY -iv $ENCRYPTED_IV -in tubular.enc -out tubular -d
+openssl aes-256-cbc -K $encrypted_a8a17fe422f5_key -iv $encrypted_a8a17fe422f5_iv -in tubular.enc -out tubular -d
 chmod 600 tubular
 eval `ssh-agent -s`
 ssh-add tubular
