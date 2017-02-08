@@ -16,6 +16,7 @@ exports.config = {
       jasmine.getEnv().addReporter(
         new Jasmine2HtmlReporter({
             savePath: './report',
+            cleanDestination: false,
             consolidate: true,
             consolidateAll: true
         })
