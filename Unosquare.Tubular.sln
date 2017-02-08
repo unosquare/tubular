@@ -5,6 +5,7 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Folder", "Solution Folder", "{142E9E46-AD02-4F12-98D2-1E0EE6A4F26A}"
 	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
 		.travis.yml = .travis.yml
 		appveyor.yml = appveyor.yml
 		bower.json = bower.json
@@ -35,6 +36,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "e2e-tests", "e2e-tests", "{
 		test\e2e-tests\tbRowSelectable-scen.js = test\e2e-tests\tbRowSelectable-scen.js
 		test\e2e-tests\tbSingleForm-scen.js = test\e2e-tests\tbSingleForm-scen.js
 		test\e2e-tests\tbTemplateServiceModelSpec.js = test\e2e-tests\tbTemplateServiceModelSpec.js
+	EndProjectSection
+	ProjectSection(FolderStartupServices) = postProject
+		{82A7F48D-3B50-4B1E-B82E-3ADA8210C358} = {82A7F48D-3B50-4B1E-B82E-3ADA8210C358}
 	EndProjectSection
 EndProject
 Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Unosquare.Tubular.WebTest", "test\Unosquare.Tubular.WebTest\", "{541E3FFC-0E2F-42B0-87F1-9C2A33E44ADE}"
