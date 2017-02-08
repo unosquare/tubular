@@ -17,6 +17,7 @@ cd ..
 
 # Move content
 mkdir out/reports/$TRAVIS_BUILD_NUMBER
+cp report/* out/reports/$TRAVIS_BUILD_NUMBER
 cp report/**/* out/reports/$TRAVIS_BUILD_NUMBER
 ls out/reports/$TRAVIS_BUILD_NUMBER
 
