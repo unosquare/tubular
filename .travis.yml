@@ -7,8 +7,6 @@ addons:
   firefox: "49.0"
 env:
   - TRAVIS_NODE_VERSION="6"
-  - ENCRYPTION_LABEL: "a8a17fe422f5"
-  - COMMIT_AUTHOR_EMAIL: "geovanni.perez@gmail.com"
 mono: latest
 install:
   - if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew cask install google-chrome; fi

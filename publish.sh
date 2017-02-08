@@ -1,8 +1,9 @@
 #!/bin/bash
 set -e # Exit with nonzero exit code if anything fails
 
-SOURCE_BRANCH="master"
 TARGET_BRANCH="gh-pages"
+ENCRYPTION_LABEL="a8a17fe422f5" 
+COMMIT_AUTHOR_EMAIL="geovanni.perez@gmail.com"
 
 # Save some useful information
 REPO=`git config remote.origin.url`
