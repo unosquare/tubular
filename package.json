@@ -1,6 +1,6 @@
 {
   "name": "tubular-documentation",
-  "description": "A set of AngularJS directives and designed to rapidly build modern web applications.",
+  "description": "Documentation for Tubular",
   "repository": {
     "type": "git",
     "url": "https://github.com/unosquare/tubular"
