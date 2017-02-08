@@ -18,6 +18,7 @@ git checkout $TARGET_BRANCH || git checkout --orphan $TARGET_BRANCH
 cd ..
 
 # Move content
+mkdir out/reports/$TRAVIS_BUILD_NUMBER
 cp report/**/* out/reports/$TRAVIS_BUILD_NUMBER
 
 # Now let's go have some fun with the cloned repo
