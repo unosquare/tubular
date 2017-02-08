@@ -32,7 +32,7 @@ git commit -m "Deploy to GitHub Pages: ${SHA}"
 
 # Get the deploy key by using Travis's stored variables to decrypt deploy_key.enc
 cd ..
-openssl aes-256-cbc -K $encrypted_a8a17fe422f5_key -iv $encrypted_a8a17fe422f5_iv -in tubular.enc -out tubular -d
+openssl aes-256-cbc -K $encrypted_b7840835169d_key -iv $encrypted_b7840835169d_iv -in tubular.enc -out tubular -d-out tubular -d
 chmod 600 tubular
 eval `ssh-agent -s`
 ssh-add tubular
