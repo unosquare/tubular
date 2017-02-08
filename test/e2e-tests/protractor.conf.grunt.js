@@ -1,16 +1,24 @@
+var Jasmine2HtmlReporter = require('protractor-jasmine2-html-reporter');
+
 exports.config = {
     allScriptsTimeout: 11000000,
 
-    specs: [
-        './test/e2e-tests/*.js'
-    ],
+    specs: [ './test/e2e-tests/*.js' ],
 
-    capabilities: {
-        'browserName': 'firefox'
-    },
+    capabilities: { 'browserName': 'firefox' },
 
     framework: 'jasmine',
 
     directConnect : true,
-    jasmineNodeOpts: { defaultTimeoutInterval: 3000000 }
+    jasmineNodeOpts: { defaultTimeoutInterval: 3000000 },
+
+    onPrepare: function() {
+      jasmine.getEnv().addReporter(
+        new Jasmine2HtmlReporter({
+            savePath: './report',
+            consolidate: true,
+            consolidateAll: true
+        })
+      );
+   }
 };
