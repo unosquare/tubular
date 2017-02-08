@@ -20,7 +20,8 @@ exports.config = {
             consolidate: true,
             consolidateAll: true,
             showPassed: false,
-            takeScreenshotsOnlyOnFailures: true
+            takeScreenshotsOnlyOnFailures: true,
+            fileName: 'index.html'
         })
       );
    }
