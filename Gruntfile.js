@@ -2,6 +2,7 @@ module.exports = function(grunt) {
     // Load grunt tasks automatically
     require('load-grunt-tasks')(grunt);
     grunt.loadNpmTasks('grunt-coveralls');
+    grunt.loadNpmTasks("gruntify-eslint");
 
     // Project configuration.
     grunt.initConfig({
@@ -82,6 +83,15 @@ module.exports = function(grunt) {
             local: {
                 src: 'coverage/*.info'
             }
+        },
+        eslint: {
+            options: {
+                configFile: '.eslintrc.json',
+                format: 'html',
+                outputFile: 'eslint.html',
+                silent: true
+            },
+            src: ["src/Unosquare.Tubular/Javascript/tubular**/**.js"]
         }
     });
 
@@ -98,4 +108,6 @@ module.exports = function(grunt) {
         'connect:server',
         'protractor_coverage:local'
     ]);
+
+    grunt.registerTask("lint", ["eslint"]);
 };

@@ -13,6 +13,7 @@
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 [Rr]eport/
+eslint.html
 
 # Build results
 [Dd]ebug/
