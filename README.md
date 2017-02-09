@@ -122,8 +122,6 @@ We have 3 boilerplates ready to seed your project:
 * [ASP.NET 4.6 Boilerplate](https://github.com/unosquare/tubular-boilerplate-csharp).
 * [ASP.NET Core Boilerplate](https://github.com/unosquare/tubular-aspnet-core-boilerplate)
 
-A <a href="http://yeoman.io/" taget="_blank">Yeoman Generator</a> can be found at <a href="https://github.com/unosquare/generator-tubular" target="_blank">generator-tubular</a> but it's not longer in maintenance.
-
 ## Samples
 
 You can check out the <a href="http://unosquare.github.io/tubular" target="_blank">Tubular GitHub Page</a> to get a few examples. We still need to work on more samples and better documentation, but we feel what we have now will get you up to speed very quickly :).
