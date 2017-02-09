@@ -20,7 +20,6 @@ mkdir out/reports/$TRAVIS_BUILD_NUMBER
 cd report
 cp -r * ../out/reports/$TRAVIS_BUILD_NUMBER
 cd ..
-cp eslint.html out/reports/$TRAVIS_BUILD_NUMBER
 
 # Now let's go have some fun with the cloned repo
 cd out
