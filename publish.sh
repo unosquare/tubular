@@ -18,10 +18,13 @@ cd ..
 # Move content
 mkdir out/reports/$TRAVIS_BUILD_NUMBER
 mkdir out/reports/$TRAVIS_BUILD_NUMBER/e2e
+mkdir out/reports/$TRAVIS_BUILD_NUMBER/eslint
 cd report
 cp -r * ../out/reports/$TRAVIS_BUILD_NUMBER/e2e
 cd ..
-cp dist/* out/vendor/tubular
+cd dist
+cp -r * ../out/vendor/tubular
+cd ..
 
 # Now let's go have some fun with the cloned repo
 cd out

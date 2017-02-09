@@ -5,7 +5,7 @@ module.exports = function (config) {
     config.set({
 
         // base path that will be used to resolve all patterns (eg. files, exclude)
-        basePath: '',
+        basePath: 'src/Unosquare.Tubular',
 
 
         // frameworks to use
@@ -25,27 +25,28 @@ module.exports = function (config) {
           'bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
           'bower_components/file-saver.js/FileSaver.js',
           'bower_components/highchart-ng/dist/highcharts-ng.js',
+          'bower_components/chart.js/dist/Chart.js',
           'bower_components/angular-chart.js/dist/angular-chart.js',
-          'src/Unosquare.Tubular/Javascript/tubular/tubular-models.js',
-          'src/Unosquare.Tubular/Javascript/tubular/tubular-services.js',
-          'src/Unosquare.Tubular/Javascript/tubular/tubular-directives.js',
-          'src/Unosquare.Tubular/Javascript/tubular/tubular.js',
-          'src/Unosquare.Tubular/Javascript/tubular*/**/*.js',
-          'src/**/*.spec.js'
+          'Javascript/tubular/tubular-models.js',
+          'Javascript/tubular/tubular-services.js',
+          'Javascript/tubular/tubular-directives.js',
+          'Javascript/tubular/tubular.js',
+          'Javascript/tubular*/**/*.js',
+          'Javascript/tubular*/**/*.spec.js'
         ],
 
 
         // list of files to exclude
         exclude: [
-           'src/*.min.js',
-           'src/*bundle.js'
+           '*.min.js',
+           '*bundle.js'
         ],
 
 
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
-             'src/Unosquare.Tubular/Javascript/tubular*/!(*spec|*bundle).js': ['coverage']
+             'Javascript/tubular*/!(*spec|*bundle).js': ['coverage']
         },
 
 

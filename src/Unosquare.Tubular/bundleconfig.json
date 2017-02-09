@@ -22,7 +22,7 @@
   {
     "outputFileName": "Css/tubular-bundle.css",
     "inputFiles": [
-      "Css/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css",
+      "bower_components/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css",
       "Css/angular-chartjs/angular-chart.css",
       "Css/tubular/tubular.css"
     ],
@@ -31,16 +31,16 @@
   {
     "outputFileName": "Javascript/tubular-chartjs-bundle.js",
     "inputFiles": [
-      "Javascript/tubular-chart/tubular-directives-chartjs.js",
-      "Javascript/angular-chartjs/angular-chart.js"
+      "bower_components/angular-chart.js/dist/angular-chart.js",
+      "Javascript/tubular-chart/tubular-directives-chartjs.js"
     ],
     "sourceMap": false
   },
   {
     "outputFileName": "Javascript/tubular-highcharts-bundle.js",
     "inputFiles": [
-      "Javascript/tubular-chart/tubular-directives-highcharts.js",
-      "Javascript/highchartjs-ng/highcharts-ng.min.js"
+      "bower_components/highchart-ng/dist/highcharts-ng.js",
+      "Javascript/tubular-chart/tubular-directives-highcharts.js"
     ],
     "sourceMap": false
   },
