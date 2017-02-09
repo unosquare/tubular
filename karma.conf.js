@@ -26,7 +26,8 @@ module.exports = function (config) {
 
         // list of files to exclude
         exclude: [
-           'Scripts/*.min.js'
+           'src/*.min.js',
+           'src/*bundle.js'
         ],
 
 
@@ -47,10 +48,10 @@ module.exports = function (config) {
             useBrowserName: true,
         },
         htmlReporter: {
-            outputDir: 'report/unit/', // where to put the reports  
+            outputDir: 'report/unit', // where to put the reports  
             focusOnFailures: true, // reports show failures on start 
             namedFiles: true, // name files instead of creating sub-directories 
-           
+           reportName: 'index',
 
 
             // experimental 

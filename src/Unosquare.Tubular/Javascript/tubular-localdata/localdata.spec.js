@@ -2,8 +2,7 @@
 
 describe('service: tubularLocalData', function () {
     var sut, tubularHttp;
-
-    
+        
     beforeEach(function () {
         angular.module('ui.bootstrap', []);
         module('tubular.services');
@@ -20,6 +19,10 @@ describe('service: tubularLocalData', function () {
 
     it('should be defined', function () {
         expect(sut).toBeDefined();
+    });
+
+    it('should register itself as local', function () {
+        expect(tubularHttp.registerService).toHaveBeenCalledWith('local', sut);
     });
 
     describe('method: get', function () {
