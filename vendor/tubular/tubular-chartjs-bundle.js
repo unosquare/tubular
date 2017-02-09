@@ -61,6 +61,7 @@
                         tubularHttp.get($ctrl.serverUrl).promise.then(function (data) {
                             if (!data || !data.Data || data.Data.length === 0) {
                                 $ctrl.isEmpty = true;
+                                if (!$ctrl.options) $ctrl.options = {};
                                 $ctrl.options.series = [{ data: [] }];
 
                                 if ($ctrl.onLoad) {
@@ -91,7 +92,7 @@
                     });
 
                     $scope.$on('chart-create', function (evt, chart) {
-                        if ($ctrl.chartType == 'pie' || $ctrl.chartType == 'doughnut') {
+                        if ($ctrl.chartType === 'pie' || $ctrl.chartType === 'doughnut') {
                             $ctrl.legends = chart.chart.config.data.labels.map(function(v, i) {
                                 return {
                                     label: v,
@@ -111,6 +112,7 @@
             ]
         });
 })(window.angular);
+
 (function (factory) {
     'use strict';
     if (typeof exports === 'object') {
