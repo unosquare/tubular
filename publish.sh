@@ -24,7 +24,7 @@ cp dist/* out/vendor/tubular
 
 # Now let's go have some fun with the cloned repo
 cd out
-npm install gulp
+npm install
 gulp dgeni
 
 git config user.name "Travis CI"
