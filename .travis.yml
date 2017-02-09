@@ -4,7 +4,7 @@ sudo: required
 notifications:
   slack: unolabs:cbusXPH6pBwZ35rVDzi4k4ve
 addons:
-  firefox: "49.0"
+  firefox: "51.0"
 env:
   - TRAVIS_NODE_VERSION="6"
 mono: latest
