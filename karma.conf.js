@@ -33,7 +33,7 @@ module.exports = function (config) {
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
-             'src/Unosquare.Tubular/Javascript/tubular/**/{*.js,!*.spec.js}': ['coverage']
+             'src/Unosquare.Tubular/Javascript/tubular*/!(*spec|*bundle).js': ['coverage']
         },
 
 
@@ -60,8 +60,9 @@ module.exports = function (config) {
 
         // optionally, configure the reporter
         coverageReporter: {
-        type : 'html',
-        dir : 'report/coverage/'
+            type: 'lcov',
+            dir: 'report/coverage'
+
         },
         // web server port
         port: 9876,
