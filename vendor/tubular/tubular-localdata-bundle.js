@@ -11,15 +11,14 @@
          * stored in a BLOB as a BASE64 string.
          */
         .factory('tubularLocalData', tubularLocalData)
-        .run([
+    .run([
             'tubularHttp', 'tubularLocalData',
             function (tubularHttp, tubularLocalData) {
                 // register data services
                 tubularHttp.registerService('local', tubularLocalData);
             }
-        ]);
-
-
+    ])
+    
     tubularLocalData.$inject = ['tubularHttp', '$q', '$filter', '$log']
     function tubularLocalData(tubularHttp, $q, $filter, $log) {
 
@@ -164,4 +163,4 @@
         }
     }
     
-})(window.angular);
+})(angular);

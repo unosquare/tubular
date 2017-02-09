@@ -4050,10 +4050,12 @@ try {
 
                         return response.data;
                     }, function (error) {
-                        me.removeAuthentication();
+                        if (error.status === 401) {
+                            me.removeAuthentication();
 
-                        // Let's trigger a refresh
-                        document.location = document.location;
+                            // Let's trigger a refresh
+                            document.location = document.location;
+                        }
                         return $q.reject(error);
                     });
 
