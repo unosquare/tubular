@@ -20,7 +20,6 @@ mkdir out/reports/$TRAVIS_BUILD_NUMBER
 mkdir out/reports/$TRAVIS_BUILD_NUMBER/e2e
 mkdir out/reports/$TRAVIS_BUILD_NUMBER/eslint
 cd report
-mv eslint.html out/reports/$TRAVIS_BUILD_NUMBER/eslint/index.html
 cp -r * ../out/reports/$TRAVIS_BUILD_NUMBER/e2e
 cd ..
 cd dist
