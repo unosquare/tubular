@@ -109,6 +109,7 @@ describe('LocalData', function() {
             // Set filter and apply it
             filterBtn.click();
             filterSelect.$('[value="string:Contains"]').click();
+            valueInput.clear();
             valueInput.sendKeys(containedString);
             applyBtn.click()
                 .then(function () {
