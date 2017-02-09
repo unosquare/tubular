@@ -92,7 +92,7 @@ module.exports = function(grunt) {
             options: {
                 configFile: '.eslintrc.json',
                 format: 'html',
-                outputFile: 'eslint.html',
+                outputFile: 'report/eslint.html',
                 silent: true
             },
             src: ["src/Unosquare.Tubular/Javascript/tubular**/**.js"]

@@ -1,9 +1,17 @@
 {
   "env": {
-    "browser": true
+    "browser": true,
+    "jasmine": true,
+    "angular/mocks" :  true
   },
+  "plugins": [ "angular", "jasmine" ],
   "extends": [
     "eslint:recommended",
-    "angular"
-  ]
+    "angular",
+    "plugin:jasmine/recommended"
+  ],
+  "rules": {
+    "quotes": [ 2, "single" ],
+    "angular/on-watch": "warn"
+  }
 }

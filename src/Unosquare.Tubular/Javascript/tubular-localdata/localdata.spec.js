@@ -1,4 +1,4 @@
-﻿"use strict";
+﻿'use strict';
 
 describe('service: tubularLocalData', function () {
     var sut, tubularHttp;
@@ -6,7 +6,7 @@ describe('service: tubularLocalData', function () {
     
     beforeEach(function () {
         angular.module('ui.bootstrap', []);
-        module('tubular.services');
+        angular.module('tubular.services');
         module(function ($provide) {
             tubularHttp = jasmine.createSpyObj('tubularHttp', ['get', 'getByKey', 'registerService']);
             $provide.value('tubularHttp', tubularHttp)
