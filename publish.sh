@@ -23,7 +23,7 @@ cd report
 cp -r * ../out/reports/$TRAVIS_BUILD_NUMBER/e2e
 cd ..
 cd dist
-cp * out/vendor/tubular
+cp -r * out/vendor/tubular
 cd ..
 
 # Now let's go have some fun with the cloned repo
