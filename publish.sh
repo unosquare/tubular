@@ -17,8 +17,9 @@ cd ..
 
 # Move content
 mkdir out/reports/$TRAVIS_BUILD_NUMBER
+mkdir out/reports/$TRAVIS_BUILD_NUMBER/e2e
 cd report
-cp -r * ../out/reports/$TRAVIS_BUILD_NUMBER
+cp -r * ../out/reports/$TRAVIS_BUILD_NUMBER/e2e
 cd ..
 cp dist/* out/vendor/tubular
 
@@ -34,7 +35,7 @@ git config user.email "geovanni.perez@gmail.com"
 # The delta will show diffs between new and old versions.
 git add reports/$TRAVIS_BUILD_NUMBER/*
 git add vendor/tubular/*
-git add docs/build/**/*
+git add docs/build/*
 git commit -m "Deploy to GitHub Pages: ${SHA}"
 
 # Get the deploy key by using Travis's stored variables to decrypt deploy_key.enc
