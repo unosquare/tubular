@@ -18,8 +18,17 @@ module.exports = function (config) {
         files: [
           'bower_components/angular/angular.js',
           'bower_components/angular-mocks/angular-mocks.js',
+          'bower_components/angular-route/angular-route.js',
+          'bower_components/angular-loader/angular-loader.js',
+          'bower_components/angular-local-storage/dist/angular-local-storage.js',
+          'bower_components/angular-bootstrap/ui-bootstrap.js',
+          'bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
+          'bower_components/file-saver.js/FileSaver.js',
+          'src/Unosquare.Tubular/Javascript/tubular/tubular-models.js',
           'src/Unosquare.Tubular/Javascript/tubular/tubular-services.js',
-          'src/Unosquare.Tubular/Javascript/tubular-localdata/tubular-services-localdata.js',
+          'src/Unosquare.Tubular/Javascript/tubular/tubular-directives.js',
+          'src/Unosquare.Tubular/Javascript/tubular/tubular.js',
+          'src/Unosquare.Tubular/Javascript/tubular*/**/*.js',
           'src/**/*.spec.js'
         ],
 
