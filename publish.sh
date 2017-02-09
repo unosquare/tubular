@@ -20,9 +20,12 @@ mkdir out/reports/$TRAVIS_BUILD_NUMBER
 cd report
 cp -r * ../out/reports/$TRAVIS_BUILD_NUMBER
 cd ..
+cp dist/* out/vendor/tubular
 
 # Now let's go have some fun with the cloned repo
 cd out
+gulp dgeni
+
 git config user.name "Travis CI"
 git config user.email "geovanni.perez@gmail.com"
 
