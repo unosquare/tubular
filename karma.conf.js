@@ -24,6 +24,8 @@ module.exports = function (config) {
           'bower_components/angular-bootstrap/ui-bootstrap.js',
           'bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
           'bower_components/file-saver.js/FileSaver.js',
+          'bower_components/highchart-ng/dist/highcharts-ng.js',
+          'bower_components/angular-chart.js/dist/angular-chart.js',
           'src/Unosquare.Tubular/Javascript/tubular/tubular-models.js',
           'src/Unosquare.Tubular/Javascript/tubular/tubular-services.js',
           'src/Unosquare.Tubular/Javascript/tubular/tubular-directives.js',
