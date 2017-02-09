@@ -53,9 +53,7 @@ module.exports = function(grunt) {
                     coverageDir: 'coverage',
                     args: {
                         baseUrl: 'http://localhost:9000/instrumented/test/Unosquare.Tubular.WebTest/',
-                        browser: [ "chrome", "firefox" ]
-                            // sauceUser: 'geoperez',
-                            // sauceKey: 'dd986cd7-696b-433a-941e-3820d83aa09a'
+                        browser: process.env.TRAVIS_OS_NAME == "osx" ? "chrome" : "firefox"
                     }
                 }
             },
