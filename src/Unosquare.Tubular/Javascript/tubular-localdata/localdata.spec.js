@@ -6,7 +6,7 @@ describe('service: tubularLocalData', function () {
     
     beforeEach(function () {
         angular.module('ui.bootstrap', []);
-        angular.module('tubular.services');
+        module('tubular.services');
         module(function ($provide) {
             tubularHttp = jasmine.createSpyObj('tubularHttp', ['get', 'getByKey', 'registerService']);
             $provide.value('tubularHttp', tubularHttp)
@@ -21,11 +21,35 @@ describe('service: tubularLocalData', function () {
     it('should be defined', function () {
         expect(sut).toBeDefined();
     });
-    it('should have get method', function () {
-        expect(sut.get).toBe(tubularHttp.get);
+
+    describe('method: get', function () {
+        it('should delegate to tubularHttp.get', function () {
+            var expected = Math.random();
+            tubularHttp.get.and.returnValue(expected);
+
+            var actual = sut.get();
+
+            expect(actual).toBe(expected);
+        })
     })
 
-    it('should have getByKey method', function () {
-        expect(sut.getByKey).toBe(tubularHttp.getByKey);
+    describe('method: getByKey', function () {
+        it('should delegate to tubularHttp.getByKey', function () {
+            var expected = Math.random();
+            tubularHttp.getByKey.and.returnValue(expected);
+
+            var actual = sut.getByKey();
+
+            expect(actual).toBe(expected);
+        })
     })
+    
+    describe('method: pageRequest', function () {
+       
+    })
+
+    describe('method: retrieveDataAsync', function () {
+       
+    })
+   
 });

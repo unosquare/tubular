@@ -1,36 +1,38 @@
 {
-    "name": "tubular",
-    "filename": "tubular-bundle.min.js",
-    "version": "1.1.0",
-    "description": "A set of AngularJS directives and designed to rapidly build modern web applications.",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/unosquare/tubular"
-    },
-    "scripts": {
-        "protractor": "protractor e2e-tests/protractor.conf.js",
-        "pretest": "./node_modules/protractor/bin/webdriver-manager update",
-        "test": "grunt eslint && grunt unit:ci && grunt test"
-    },
-    "keywords": [
-        "grid",
-        "forms",
-        "scaffolder",
-        "bootstrap",
-        "angularjs"
-    ],
-    "author": "Mario Divece <mario@unosquare.com>",
-    "contributors": [{
-        "name": "Geovanni Perez",
-        "email": "geovanni.perez@gmail.com"
-    }],
-    "license": "MIT",
-    "homepage": "http://unosquare.github.io/tubular",
-    "main": "dist/node-module.js",
-    "files": [
-        "dist/node-module.js"
-    ],
-    "dependencies": {},
+  "name": "tubular",
+  "filename": "tubular-bundle.min.js",
+  "version": "1.1.0",
+  "description": "A set of AngularJS directives and designed to rapidly build modern web applications.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/unosquare/tubular"
+  },
+  "scripts": {
+    "protractor": "protractor e2e-tests/protractor.conf.js",
+    "pretest": "./node_modules/protractor/bin/webdriver-manager update",
+    "test": "grunt eslint && grunt unit:ci && grunt test"
+  },
+  "keywords": [
+    "grid",
+    "forms",
+    "scaffolder",
+    "bootstrap",
+    "angularjs"
+  ],
+  "author": "Mario Divece <mario@unosquare.com>",
+  "contributors": [
+    {
+      "name": "Geovanni Perez",
+      "email": "geovanni.perez@gmail.com"
+    }
+  ],
+  "license": "MIT",
+  "homepage": "http://unosquare.github.io/tubular",
+  "main": "dist/node-module.js",
+  "files": [
+    "dist/node-module.js"
+  ],
+  "dependencies": {},
   "devDependencies": {
     "grunt": "~1.0.1",
     "bower": "1.8.0",
@@ -55,6 +57,7 @@
     "gruntify-eslint": "3.1.0",
     "grunt-karma": "2.0.0",
     "karma": "1.4.1",
+    "jasmine-core": "2.5.2",
     "karma-jasmine": "1.1.0",
     "karma-coverage": "1.1.1",
     "phantomjs": "2.1.7",
@@ -64,4 +67,4 @@
     "karma-chrome-launcher": "^2.0.0",
     "karma-firefox-launcher": "^1.0.0"
   }
-}
+} 

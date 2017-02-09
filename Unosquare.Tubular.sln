@@ -14,6 +14,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Folder", "Solution
 		karma.conf.js = karma.conf.js
 		LICENSE = LICENSE
 		package.json = package.json
+		publish.sh = publish.sh
 		README.md = README.md
 	EndProjectSection
 EndProject

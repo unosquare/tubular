@@ -3391,6 +3391,13 @@ try {
      * It contains common services like HTTP client, filtering and printing services.
      */
     angular.module('tubular.services', ['ui.bootstrap'])
+         .run([
+            'tubularHttp', 'tubularLocalData',
+            function (tubularHttp, tubularLocalData) {
+                // register data services
+                tubularHttp.registerService('local', tubularLocalData);
+            }
+         ])
         /**
          * @ngdoc service
          * @name tubularPopupService
