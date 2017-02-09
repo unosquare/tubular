@@ -3,11 +3,8 @@ module.exports = function(grunt) {
     require('load-grunt-tasks')(grunt);
     grunt.loadNpmTasks('grunt-coveralls');
     grunt.loadNpmTasks("gruntify-eslint");
-    
     grunt.loadNpmTasks('grunt-karma');
 
-   
-   
     // Project configuration.
     grunt.initConfig({
         instrument: {
@@ -56,7 +53,7 @@ module.exports = function(grunt) {
                     coverageDir: 'coverage',
                     args: {
                         baseUrl: 'http://localhost:9000/instrumented/test/Unosquare.Tubular.WebTest/',
-                        browser: process.env.TRAVIS_OS_NAME == "osx" ? "chrome" : "firefox"
+                        browser: [ "chrome", "firefox" ]
                             // sauceUser: 'geoperez',
                             // sauceKey: 'dd986cd7-696b-433a-941e-3820d83aa09a'
                     }
