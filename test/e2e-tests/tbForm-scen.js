@@ -383,7 +383,7 @@ describe('tbForm related components', function () {
             tbTextArea_input = tbTextArea.$('textarea');
             tbTextArea_label = tbTextArea.$('label');
             tbTextArea_errorMessages = tbTextArea.all(by.repeater('error in $ctrl.state.$errors'));
-            tbTextArea_helper = tbTextArea.$$('span').filter(function (elem, index) {
+            tbTextArea_helper = tbTextArea.$$('span').filter(function (elem) {
                 return elem.getAttribute('ng-show').then(function (val) {
                     return val != null ? val.indexOf('$ctrl.help') != -1 : false;
                 });
@@ -884,7 +884,7 @@ describe('tbForm related components', function () {
             tbNumericEditor = $('div.modal-dialog form').$('tb-numeric-editor');
             tbNumericEditor_input = tbNumericEditor.$('input');
             tbNumericEditor_label = tbNumericEditor.$('label');
-            tbNumericEditor_helper = tbNumericEditor.$$('span').filter(function (elem, index) {
+            tbNumericEditor_helper = tbNumericEditor.$$('span').filter(function (elem) {
                 return elem.getAttribute('ng-show').then(function (val) {
                     return val != null ? val.indexOf('$ctrl.help') != -1 : false;
                 });

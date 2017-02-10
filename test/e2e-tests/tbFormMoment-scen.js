@@ -4,7 +4,6 @@
 describe('tb Form Date Editor', function () {
     var tbFormSaveBtn,
         tbFormCancelBtn,
-        tbDateEditor,
         tbDateEditorInput,
         tbDateEditorLabel,
         tbDateEditorHelper,
@@ -67,8 +66,7 @@ describe('tb Form Date Editor', function () {
             // 4th element in list, should be: <OrderID = 4 , Customer Name = Unosquare LLC, Shipped Date = 1/30/16  ... >
             tbFormEditBtn1 = element.all(by.repeater('row in $component.rows')).get(3).$$('td').first().$$('button').first();
             
-            // tbSimpleEditor component and subcomponents
-            tbDateEditor = $('div.modal-dialog form').$('tb-simple-editor');
+            // tbDateEditor component and subcomponents
             tbDateEditorInput = $('div.modal-dialog form').$('tb-date-editor').$('input');
             tbDateEditorLabel = $('div.modal-dialog form').$('tb-date-editor').$('label');
             tbDateEditorErrorMessages = $('div.modal-dialog form').$('tb-date-editor').all(by.repeater('error in $ctrl.state.$errors'));

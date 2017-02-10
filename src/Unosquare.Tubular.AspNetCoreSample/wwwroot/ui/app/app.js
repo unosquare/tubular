@@ -85,7 +85,7 @@
                     console.log(eventData);
                 });
 
-                $scope.$on('tbGrid_OnRemove', function (data) {
+                $scope.$on('tbGrid_OnRemove', function () {
                     toastr.success("Record removed");
                 });
 
@@ -105,7 +105,7 @@
                     if (formScope) formScope.clear();
                 });
 
-                $scope.$on('tbForm_OnSavingNoChanges', function (event, formScope) {
+                $scope.$on('tbForm_OnSavingNoChanges', function (event) {
                     toastr.warning("Nothing to save");
                     $location.path('/');
                 });
@@ -114,13 +114,13 @@
                     $location.path('/');
                 });
 
-                $scope.chartClick = function (points, evt) {
+                $scope.chartClick = function (points) {
                     angular.forEach(points, function (point) {
                         toastr.success(points[0]._chart.config.data.datasets[point._datasetIndex].label);
                     });
                 };
 
-                $scope.pieClick = function (points, evt) {
+                $scope.pieClick = function (points) {
                     angular.forEach(points, function (point) {
                         toastr.success(point._model.label + ': ' + point._model.y);
                     });

@@ -12,8 +12,6 @@ describe('tbPageSizeSelctor', function () {
     var dataRowsCollection,
         firstDataRow,
         lastDataRow,
-        firstPageBtn,
-        nextPageBtn,
         tbPageSizeSelector;
 
     beforeAll(function () {
@@ -42,8 +40,6 @@ describe('tbPageSizeSelctor', function () {
         nextNavBtn.click();
         firstNavBtn.click();
     });
-
-
 
     it('should filter up to 10 data rows per page when selecting a page size of "10"', function () {
         // Select '10' on tbPageSizeSelector
