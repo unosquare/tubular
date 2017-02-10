@@ -78,7 +78,7 @@
             }
         ])
         .controller("tbFormCtrl", function ($scope) {
-            $scope.$on('tbForm_OnSuccessfulSave', function (event, data, form) {
+            $scope.$on('tbForm_OnSuccessfulSave', function (event, data) {
                 toastr.success(data || "Updated");
                 alert("saved");
             });
@@ -97,19 +97,16 @@
 
                     tubularHttp.authenticate($scope.username,
                         $scope.password,
-                        function (data) {
-                            $location.path("/expirationDate");
-                        },
+                        function () { $location.path("/expirationDate"); },
                         function (error) {
                             $scope.isAuth = tubularHttp.isAuthenticated();
                             $scope.loading = false;
                             toastr.error(error);
                             $location.path("/expirationDate");
                         });
-
                 };
             }
-        ]).controller("navCtrl", function ($scope) {
+        ]).controller("navCtrl", function () {
             // TODO: Check login info
         }).controller('onSaved', function ($scope) {
             $scope.$on('tbForm_OnSuccessfulSave', function () {
@@ -117,8 +114,8 @@
             });
 
         }).controller('expDate', [
-            '$scope', 'tubularHttp', 'localStorageService', '$location',
-            function ($scope, tubularHttp, localStorageService, $location) {
+            '$scope', 'tubularHttp', 'localStorageService',
+            function ($scope, tubularHttp, localStorageService) {
                 tubularHttp.setRefreshTokenUrl('http://tubular.azurewebsites.net/token');
                 tubularHttp.setTokenUrl('http://tubular.azurewebsites.net/token');
                 tubularHttp.setApiBaseUrl('http://tubular.azurewebsites.net/api');
