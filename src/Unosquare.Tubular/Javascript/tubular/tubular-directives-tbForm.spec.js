@@ -1,6 +1,6 @@
 ﻿'use strict';
-describe('module: tubular.directives', function () {
-    describe('directive: tubularLocalData', function () {
+describe('Module: tubular.directives', function () {
+    describe('Directive: tb-form', function () {
         var sut, scope, isolated, $routeParams, template, element, tubularHttp, tubularModel, tubularEditorService;
 
         beforeEach(function () {
@@ -37,6 +37,12 @@ describe('module: tubular.directives', function () {
         it('should set tubularDirective properly', function () {
             
             expect(isolated.tubularDirective).toBe('tubular-form');
+
+        })
+
+        it('should set require authentication', function () {
+            
+            expect(tubularHttp.setRequireAuthentication).toHaveBeenCalledWith(isolated.requireAuthentication);
 
         })
 

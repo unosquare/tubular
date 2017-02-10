@@ -55,10 +55,7 @@ module.exports = function (config) {
         // available reporters: https://npmjs.org/browse/keyword/karma-reporter
         reporters: ['progress', 'coverage', 'html'],
 
-        junitReporter: {
-            outputDir: 'report/unit', // results will be saved as $outputDir/$browserName.xml
-            useBrowserName: true,
-        },
+      
         htmlReporter: {
             outputDir: 'report/unit', // where to put the reports  
             focusOnFailures: true, // reports show failures on start 
@@ -74,7 +71,7 @@ module.exports = function (config) {
         // optionally, configure the reporter
         coverageReporter: {
             type: 'html',
-            dir: 'report/coverage',
+            dir: '../../report/coverage',
             subdir: '.'
 
         },

@@ -11,21 +11,23 @@
          * stored in a BLOB as a BASE64 string.
          */
         .factory('tubularLocalData', tubularLocalData)
-    .run([
-            'tubularHttp', 'tubularLocalData',
-            function (tubularHttp, tubularLocalData) {
-                // register data services
-                tubularHttp.registerService('local', tubularLocalData);
-            }
-    ])
+        .run(registerAsLocal);
+
+    registerAsLocal.$inject = ['tubularHttp', 'tubularLocalData'];
+    tubularLocalData.$inject = ['tubularHttp', '$q', '$filter', '$log'];
     
-    tubularLocalData.$inject = ['tubularHttp', '$q', '$filter', '$log']
+    function registerAsLocal(tubularHttp, tubularLocalData) {
+                // register data services
+          tubularHttp.registerService('local', tubularLocalData);
+    }
+    
     function tubularLocalData(tubularHttp, $q, $filter, $log) {
 
         return {
             getByKey: tubularHttp.getByKey,
             get : tubularHttp.get,
             retrieveDataAsync: retrieveDataAsync
+
         }
         
 
