@@ -253,7 +253,7 @@
                             $scope.container.widgets.push($scope);
 
                             $scope.setWidth = function(width) {
-                                $scope.fullWidth = width == 2;
+                                $scope.fullWidth = width === 2;
                                 $scope.container.recalculate();
                                 $scope.container.redraw();
                             };
