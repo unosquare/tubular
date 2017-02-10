@@ -2720,7 +2720,7 @@ try {
                 };
             }
         ]);
-})(window.angular);
+})(angular);
 (function(angular) {
     'use strict';
 

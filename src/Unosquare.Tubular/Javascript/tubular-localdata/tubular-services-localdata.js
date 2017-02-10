@@ -25,8 +25,7 @@
         return {
             getByKey: tubularHttp.getByKey,
             get : tubularHttp.get,
-            retrieveDataAsync: retrieveDataAsync,
-            pageRequest: pageRequest
+            retrieveDataAsync: retrieveDataAsync
 
         }
         
@@ -63,21 +62,7 @@
             };
         }
 
-        function reduceFilterArray(filters) {
-            var filtersPattern = {};
-
-            for (var i in filters) {
-                if (filters.hasOwnProperty(i)) {
-                    for (var k in filters[i]) {
-                        if (filters[i].hasOwnProperty(k)) {
-                            filtersPattern[k] = filters[i][k].toLocaleLowerCase();
-                        }
-                    }
-                }
-            }
-
-            return filtersPattern;
-        }
+        
 
         function pageRequest(request, database) {
             var response = {
@@ -163,4 +148,20 @@
         }
     }
     
+
+    function reduceFilterArray(filters) {
+        var filtersPattern = {};
+
+        for (var i in filters) {
+            if (filters.hasOwnProperty(i)) {
+                for (var k in filters[i]) {
+                    if (filters[i].hasOwnProperty(k)) {
+                        filtersPattern[k] = filters[i][k].toLocaleLowerCase();
+                    }
+                }
+            }
+        }
+
+        return filtersPattern;
+    }
 })(angular);

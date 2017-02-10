@@ -215,4 +215,4 @@
                 };
             }
         ]);
-})(window.angular);
+})(angular);

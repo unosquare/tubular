@@ -54,6 +54,7 @@ module.exports = function(grunt) {
                     args: {
                         baseUrl: 'http://localhost:9000/instrumented/test/Unosquare.Tubular.WebTest/',
                         browser: process.env.TRAVIS_OS_NAME == "osx" ? "chrome" : "firefox"
+                        
                     }
                 }
             },
@@ -102,7 +103,7 @@ module.exports = function(grunt) {
                
             },
             dev: {
-                
+                singleRun : false
             }
 
         }

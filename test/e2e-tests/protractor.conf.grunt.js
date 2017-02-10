@@ -6,6 +6,7 @@ exports.config = {
     specs: [ './test/e2e-tests/*.js' ],
 
     capabilities: { 'browserName': 'firefox' },
+    
 
     framework: 'jasmine',
 

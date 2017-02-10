@@ -7,7 +7,7 @@ describe('service: tubularLocalData', function () {
         angular.module('ui.bootstrap', []);
         module('tubular.services');
         module(function ($provide) {
-            tubularHttp = jasmine.createSpyObj('tubularHttp', ['get', 'getByKey', 'registerService']);
+            tubularHttp = jasmine.createSpyObj('tubularHttp', ['get', 'getByKey', 'registerService', 'retrieveDataAsync']);
             $provide.value('tubularHttp', tubularHttp)
         })
         inject(function ($injector) {
@@ -47,9 +47,7 @@ describe('service: tubularLocalData', function () {
         })
     })
     
-    describe('method: pageRequest', function () {
-       
-    })
+   
 
     describe('method: retrieveDataAsync', function () {
        
