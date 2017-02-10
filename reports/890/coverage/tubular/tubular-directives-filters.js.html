@@ -1,0 +1,773 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for tubular/tubular-directives-filters.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../prettify.css" />
+    <link rel="stylesheet" href="../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../index.html">all files</a> / <a href="index.html">tubular/</a> tubular-directives-filters.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">5.13% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>2/39</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>0/8</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">5.88% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>1/17</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">5.26% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>2/38</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line low'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">﻿(function(angular) {
+    'use strict';
+&nbsp;
+    angular.module('tubular.directives')
+        /**
+         * @ngdoc component
+         * @name tbColumnFilterButtons
+         * @module tubular.directives
+         *
+         * @description
+         * The `tbColumnFilterButtons` is an internal component, and it is used to show basic filtering buttons.
+         */
+        .component('tbColumnFilterButtons', {
+            require: {
+                $columnFilter: '^?tbColumnFilter',
+                $columnDateTimeFilter: '^?tbColumnDateTimeFilter',
+                $columnOptionsFilter: '^?tbColumnOptionsFilter'
+            },
+            template: '&lt;div class="text-right"&gt;' +
+                '&lt;button class="btn btn-sm btn-success" ng-click="$ctrl.currentFilter.applyFilter()"' +
+                'ng-disabled="$ctrl.currentFilter.filter.Operator == \'None\'"&gt;{{::\'CAPTION_APPLY\' | translate}}&lt;/button&gt;&amp;nbsp;' +
+                '&lt;button class="btn btn-sm btn-danger" ng-click="$ctrl.currentFilter.clearFilter()"&gt;{{::\'CAPTION_CLEAR\' | translate}}&lt;/button&gt;' +
+                '&lt;/div&gt;',
+            controller: ['$scope', <span class="fstat-no" title="function not covered" >function($scope) {</span>
+<span class="cstat-no" title="statement not covered" >                    var $ctrl = this;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    $ctrl.$onInit = <span class="fstat-no" title="function not covered" >function() {</span></span>
+                        // Set currentFilter to either one of the parent components or for when this template is being rendered by $compile
+<span class="cstat-no" title="statement not covered" >                        $ctrl.currentFilter = $ctrl.$columnFilter || $ctrl.$columnDateTimeFilter || $ctrl.$columnOptionsFilter || $scope.$parent.$ctrl;</span>
+                    };
+                }
+            ]
+        })
+        /**
+         * @ngdoc component
+         * @name tbColumnSelector
+         * @module tubular.directives
+         *
+         * @description
+         * The `tbColumnSelector` is a button to show columns selector popup.
+         */
+        .component('tbColumnSelector', {
+            require: {
+                $component: '^tbGrid'
+            },
+            template: '&lt;button class="btn btn-sm btn-default" ng-click="$ctrl.openColumnsSelector()"&gt;{{::\'CAPTION_SELECTCOLUMNS\' | translate}}&lt;/button&gt;&lt;/div&gt;',
+            controller: ['$uibModal', <span class="fstat-no" title="function not covered" >function($modal) {</span>
+<span class="cstat-no" title="statement not covered" >                    var $ctrl = this;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    $ctrl.openColumnsSelector = <span class="fstat-no" title="function not covered" >function() {</span></span>
+<span class="cstat-no" title="statement not covered" >                        var model = $ctrl.$component.columns;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                        var dialog = $modal.open({</span>
+                            template: '&lt;div class="modal-header"&gt;' +
+                                '&lt;h3 class="modal-title"&gt;{{::\'CAPTION_SELECTCOLUMNS\' | translate}}&lt;/h3&gt;' +
+                                '&lt;/div&gt;' +
+                                '&lt;div class="modal-body"&gt;' +
+                                '&lt;table class="table table-bordered table-responsive table-striped table-hover table-condensed"&gt;' +
+                                '&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Visible?&lt;/th&gt;&lt;th&gt;Name&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;' +
+                                '&lt;tbody&gt;&lt;tr ng-repeat="col in Model"&gt;' +
+                                '&lt;td&gt;&lt;input type="checkbox" ng-model="col.Visible" ng-disabled="col.Visible &amp;&amp; isInvalid()" /&gt;&lt;/td&gt;' +
+                                '&lt;td&gt;{{col.Label}}&lt;/td&gt;' +
+                                '&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;' +
+                                '&lt;/div&gt;' +
+                                '&lt;div class="modal-footer"&gt;&lt;button class="btn btn-warning" ng-click="closePopup()"&gt;{{::\'CAPTION_CLOSE\' | translate}}&lt;/button&gt;&lt;/div&gt;',
+                            backdropClass: 'fullHeight',
+                            animation: false,
+                            controller: [
+                                '$scope', <span class="fstat-no" title="function not covered" >function($innerScope) {</span>
+<span class="cstat-no" title="statement not covered" >                                    $innerScope.Model = model;</span>
+<span class="cstat-no" title="statement not covered" >                                    $innerScope.isInvalid = <span class="fstat-no" title="function not covered" >function () {</span></span>
+<span class="cstat-no" title="statement not covered" >                                        return $innerScope.Model.filter(<span class="fstat-no" title="function not covered" >function (el) {</span> <span class="cstat-no" title="statement not covered" >return el.Visible; </span>}).length === 1;</span>
+                                    };
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                                    $innerScope.closePopup = dialog.close;</span>
+                                }
+                            ]
+                        });
+                    };
+                }
+            ]
+        })
+        /**
+         * @ngdoc directive
+         * @name tbColumnFilter
+         * @module tubular.directives
+         * @restrict E
+         *
+         * @description
+         * The `tbColumnFilter` directive is a the basic filter popover. You need to define it inside a `tbColumn`.
+         * 
+         * The parent scope will provide information about the data type.
+         * 
+         * @param {string} title Set the popover title.
+         * @param {string} text Set the search text.
+         * @param {string} operator Set the initial operator, default depends on data type.
+         * @param {object} argument Set the argument.
+         * @param {boolean} onlyContains Set if the operator selector should show, default false.
+         */
+        .component('tbColumnFilter', {
+            require: {
+                $component: '^tbGrid'
+            },
+            template: '&lt;div class="tubular-column-menu"&gt;' +
+                '&lt;button class="btn btn-xs btn-default btn-popover" ' +
+                'uib-popover-template="$ctrl.templateName" popover-placement="bottom" popover-title="{{$ctrl.filterTitle}}" popover-is-open="$ctrl.isOpen"' +
+                ' popover-trigger="\'click outsideClick\'" ng-class="{ \'btn-success\': $ctrl.filter.HasFilter }"&gt;' +
+                '&lt;i class="fa fa-filter"&gt;&lt;/i&gt;&lt;/button&gt;' +
+                '&lt;/div&gt;',
+            bindings: {
+                text: '@',
+                argument: '@',
+                operator: '@',
+                title: '@',
+                onlyContains: '=?'
+            },
+            controller: [
+                '$scope', '$element', '$compile', '$filter', 'tubularTemplateService', <span class="fstat-no" title="function not covered" >function($scope, $element, $compile, $filter, tubular) {</span>
+<span class="cstat-no" title="statement not covered" >                    var $ctrl = this;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    $ctrl.$onInit = <span class="fstat-no" title="function not covered" >function() {</span></span>
+<span class="cstat-no" title="statement not covered" >                        $ctrl.onlyContains = angular.isUndefined($ctrl.onlyContains) ? false : $ctrl.onlyContains;</span>
+<span class="cstat-no" title="statement not covered" >                        $ctrl.templateName = tubular.tbColumnFilterPopoverTemplateName;</span>
+<span class="cstat-no" title="statement not covered" >                        tubular.setupFilter($scope, $element, $compile, $filter, $ctrl);</span>
+                    };
+                }
+            ]
+        })
+        /**
+         * @ngdoc directive
+         * @name tbColumnDateTimeFilter
+         * @module tubular.directives
+         * @restrict E
+         *
+         * @description
+         * The `tbColumnDateTimeFilter` directive is a specific filter with Date and Time editors, instead regular inputs.
+         * 
+         * The parent scope will provide information about the data type.
+         * 
+         * @param {string} title Set the popover title.
+         * @param {string} text Set the search text.
+         * @param {object} argument Set the search object (if the search is text use text attribute).
+         * @param {string} operator Set the initial operator, default depends on data type.
+         */
+        .component('tbColumnDateTimeFilter', {
+            require: {
+                $component: '^tbGrid'
+            },
+            template: '&lt;div class="tubular-column-menu"&gt;' +
+                '&lt;button class="btn btn-xs btn-default btn-popover" ' +
+                'uib-popover-template="$ctrl.templateName" popover-placement="bottom" popover-title="{{$ctrl.filterTitle}}" popover-is-open="$ctrl.isOpen" ' +
+                'popover-trigger="\'outsideClick\'" ng-class="{ \'btn-success\': $ctrl.filter.HasFilter }"&gt;' +
+                '&lt;i class="fa fa-filter"&gt;&lt;/i&gt;&lt;/button&gt;' +
+                '&lt;/div&gt;',
+            bindings: {
+                text: '@',
+                argument: '@',
+                operator: '@',
+                title: '@'
+            },
+            controller: [
+                '$scope', '$element', '$compile', '$filter', 'tubularTemplateService', <span class="fstat-no" title="function not covered" >function($scope, $element, $compile, $filter, tubular) {</span>
+<span class="cstat-no" title="statement not covered" >                    var $ctrl = this;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    $ctrl.$onInit = <span class="fstat-no" title="function not covered" >function() {</span></span>
+<span class="cstat-no" title="statement not covered" >                        $ctrl.templateName = tubular.tbColumnDateTimeFilterPopoverTemplateName;</span>
+<span class="cstat-no" title="statement not covered" >                        tubular.setupFilter($scope, $element, $compile, $filter, $ctrl);</span>
+                    };
+                }
+            ]
+        })
+        /**
+         * @ngdoc component
+         * @name tbColumnOptionsFilter
+         * @module tubular.directives
+         * @restrict E
+         *
+         * @description
+         * The `tbColumnOptionsFilter` directive is a filter with an dropdown listing all the possible values to filter.
+         * 
+         * @param {string} title Set the popover title.
+         * @param {object} argument Set the search object.
+         * @param {string} operator Set the initial operator, default depends on data type.
+         * @param {string} optionsUrl Set the URL to retrieve options
+         */
+        .component('tbColumnOptionsFilter', {
+            require: {
+                $component: '^tbGrid'
+            },
+            template: '&lt;div class="tubular-column-menu"&gt;' +
+                '&lt;button class="btn btn-xs btn-default btn-popover" uib-popover-template="$ctrl.templateName" popover-placement="bottom" ' +
+                'popover-title="{{$ctrl.filterTitle}}" popover-is-open="$ctrl.isOpen" popover-trigger="\'click outsideClick\'" ' +
+                'ng-class="{ \'btn-success\': $ctrl.filter.HasFilter }"&gt;' +
+                '&lt;i class="fa fa-filter"&gt;&lt;/i&gt;&lt;/button&gt;' +
+                '&lt;/div&gt;',
+            bindings: {
+                argument: '@',
+                operator: '@',
+                optionsUrl: '@',
+                title: '@'
+            },
+            controller: [
+                '$scope', '$element', '$compile', '$filter', 'tubularTemplateService', <span class="fstat-no" title="function not covered" >function ($scope, $element, $compile, $filter, tubular) {</span>
+<span class="cstat-no" title="statement not covered" >                    var $ctrl = this;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    $ctrl.getOptionsFromUrl = <span class="fstat-no" title="function not covered" >function() {</span></span>
+<span class="cstat-no" title="statement not covered" >                        if ($ctrl.dataIsLoaded) {</span>
+<span class="cstat-no" title="statement not covered" >                            $scope.$apply();</span>
+<span class="cstat-no" title="statement not covered" >                            return;</span>
+                        }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                        var currentRequest = $ctrl.$component.dataService.retrieveDataAsync({</span>
+                            serverUrl: $ctrl.filter.OptionsUrl,
+                            requestMethod: 'GET'
+                        });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                        currentRequest.promise.then(</span>
+<span class="fstat-no" title="function not covered" >                            function(data) {</span>
+<span class="cstat-no" title="statement not covered" >                                $ctrl.optionsItems = data;</span>
+<span class="cstat-no" title="statement not covered" >                                $ctrl.dataIsLoaded = true;</span>
+                            }, <span class="fstat-no" title="function not covered" >function(error) {</span>
+<span class="cstat-no" title="statement not covered" >                                $scope.$emit('tbGrid_OnConnectionError', error);</span>
+                            });
+                    };
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    $ctrl.$onInit = <span class="fstat-no" title="function not covered" >function() {</span></span>
+<span class="cstat-no" title="statement not covered" >                        $ctrl.dataIsLoaded = false;</span>
+<span class="cstat-no" title="statement not covered" >                        $ctrl.templateName = tubular.tbColumnOptionsFilterPopoverTemplateName;</span>
+<span class="cstat-no" title="statement not covered" >                        tubular.setupFilter($scope, $element, $compile, $filter, $ctrl);</span>
+<span class="cstat-no" title="statement not covered" >                        $ctrl.getOptionsFromUrl();</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                        $ctrl.filter.Operator = 'Multiple';</span>
+                    };
+                }
+            ]
+        });
+})(window.angular);</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Fri Feb 10 2017 22:44:43 GMT+0000 (UTC)
+</div>
+</div>
+<script src="../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../sorter.js"></script>
+</body>
+</html>
