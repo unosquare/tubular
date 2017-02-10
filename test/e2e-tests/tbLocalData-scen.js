@@ -90,7 +90,7 @@ describe('LocalData', function() {
         });
 
         it('should order data in ascending order when click-sorting an unsorted text column', function() {
-            aCustomerNameSorting.click();            
+            aCustomerNameSorting.click();
             expect(firstDataRow.$$('td').get(0).getText()).toBe(dataSetLowerCustomerName);
             expect(lastDataRow.$$('td').get(0).getText()).toBe(dataSetHigherCustomerName);
         });
@@ -100,7 +100,7 @@ describe('LocalData', function() {
             aCustomerNameSorting.click();
             expect(firstDataRow.$$('td').get(0).getText()).toBe(dataSetHigherCustomerName);
             expect(lastDataRow.$$('td').get(0).getText()).toBe(dataSetLowerCustomerName);
-        });
+            });
 
         it('should correctly filter data for the "Contains" filtering option', function () {
             var filterOk = true;
@@ -111,6 +111,12 @@ describe('LocalData', function() {
             filterSelect.$('[value="string:Contains"]').click();
             valueInput.clear();
             valueInput.sendKeys(containedString);
+
+            //Time out to wait the applyBtn to be enabled
+            //filterSelect.$('[value="string:Contains"]').click(); not working
+            var EC = protractor.ExpectedConditions;
+            browser.wait(EC.elementToBeClickable(applyBtn), 5000);
+
             applyBtn.click()
                 .then(function () {
                     // Verify filtering
