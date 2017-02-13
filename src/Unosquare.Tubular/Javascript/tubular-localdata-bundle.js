@@ -198,12 +198,12 @@
             
             var urlData = request.serverUrl.substr('data:application/json;base64,'.length);
             urlData = atob(urlData);
-            return $q.resolve(angular.fromJson(urlData));
+            return angular.fromJson(urlData);
         }
        
 
-        function pageRequest(request, database) {
-            return pager.page(request, database);
+        function pageRequest(request, data) {
+            return pager.page(request, data);
         }
     }
 

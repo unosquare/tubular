@@ -52,7 +52,7 @@ describe('Module: tubular.services', function () {
 
 
         describe('Method: retrieveDataAsync', function () {
-            var request, defered, scope;
+            var request, defered, httpResult, scope, expected;
 
             beforeEach(inject(function (_$q_, _$rootScope_) {
                 request = {
@@ -60,19 +60,24 @@ describe('Module: tubular.services', function () {
                     serverUrl: 'http://someurl'
                 };
                 scope = _$rootScope_;
-                defered = {
-                    promise: _$q_.defer()
+                defered = _$q_.defer();
+                httpResult = {
+                    promise: defered.promise
                 }
+
+                tubularHttp.retrieveDataAsync.and.returnValue(httpResult)
+                expected = ['test expected']
+                pager.page.and.returnValue(expected)
                 
             }))
 
             function call() {
-                return sut.retrieveDataAsync(request);
+                return sut.retrieveDataAsync(request).promise;
             }
 
             it('should reset requireAuthentication on request', function () {
-                tubularHttp.retrieveDataAsync.and.returnValue(defered)
-                defered.promise.resolve(['test']);
+                
+                defered.resolve(['test']);
 
                 call()
                 scope.$digest();
@@ -83,14 +88,40 @@ describe('Module: tubular.services', function () {
             describe('url starts with http', function () {
                 
 
-                it('should return result from tubularHttp', function () {
+                it('should get data from tubularHttp', function () {
 
-                    tubularHttp.retrieveDataAsync.and.returnValue(defered)
-                    defered.promise.resolve(['test']);
+                    defered.resolve(['test']);
 
-                    var result = call();
+                    call();
                     scope.$digest();
+
                     expect(tubularHttp.retrieveDataAsync).toHaveBeenCalledWith(request);
+
+                })
+
+                it('should use pager to page the data', function () {
+                    var data = ['test'];
+                    defered.resolve(data);
+
+                    call();
+                    scope.$digest();
+                    expect(pager.page).toHaveBeenCalledWith(request, data);
+
+                })
+
+                it('should return result from pager', function (done) {
+                    var data = ['test'];
+                    defered.resolve(data);
+
+                    call().then(function (data) {
+                        expect(data).toBe(expected);
+                        done()
+                    });
+
+                    scope.$digest();
+                    
+                   
+                   
 
                 })
             })
