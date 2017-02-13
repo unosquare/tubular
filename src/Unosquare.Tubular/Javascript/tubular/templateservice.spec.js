@@ -123,12 +123,19 @@ describe('Module: tubular.services', function () {
 
         beforeEach(function () {
             angular.module('ui.bootstrap', []);
-            module('tubular.services');
+            module('tubular.services', function ($provide) {
+                $provide.value('tubularHttp', {});
+            });
             inject(function ($injector) {
                 tubularTemplateService = $injector.get('tubularTemplateService');
                 columns = tubularTemplateService.createColumns(models);
             });
         });
+
+        beforeEach(inject(function ($injector) {
+            tubularTemplateService = $injector.get('tubularTemplateService');
+            columns = tubularTemplateService.createColumns(models);
+        }));
 
         describe('Method: createColumns', function () {
             it('should return an array with 7 elements', function () {
