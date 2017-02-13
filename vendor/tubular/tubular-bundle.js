@@ -2961,7 +2961,7 @@
     function getColumnsVisibility(gridScope) {
         return gridScope.columns
             .map(function (c) { return c.Visible; });
-    };
+    }
 
     function exportToCsv(filename, header, rows, visibility) {
         var processRow = function (row) {
@@ -3007,9 +3007,9 @@
         }
 
         // Add "\uFEFF" (UTF-8 BOM)
-        var blob = new Blob(["\uFEFF" + csvFile], { type: 'text/csv;charset=utf-8;' });
+        var blob = new Blob(['\uFEFF' + csvFile], { type: 'text/csv;charset=utf-8;' });
         saveAs(blob, filename);
-    };
+    }
 
     /**
      * @ngdoc module
@@ -3029,7 +3029,7 @@
          */
         .factory('tubularPopupService', [
             '$uibModal', '$rootScope', 'tubularTemplateService',
-            function($modal, $rootScope, tubularTemplateService) {
+            function ($uibModal, $rootScope, tubularTemplateService) {
                 return {
                     onSuccessForm: function(callback) {
                         $rootScope.$on('tbForm_OnSuccessfulSave', callback);
@@ -3053,7 +3053,7 @@
                             template = tubularTemplateService.generatePopup(model);
                         }
 
-                        var dialog = $modal.open({
+                        var dialog = $uibModal.open({
                             templateUrl: template,
                             backdropClass: 'fullHeight',
                             animation: false,
@@ -3904,7 +3904,7 @@
             };
         }]);
 })(angular);
-(function(angular) {
+(function (angular) {
     'use strict';
 
     function canUseHtml5Date() {
@@ -3927,7 +3927,7 @@
          */
         .service('tubularTemplateService',
         [
-            '$templateCache', function($templateCache) {
+            '$templateCache', function ($templateCache) {
                 var me = this;
 
                 me.enums = {
@@ -4136,27 +4136,27 @@
                  * @param {string} mode 
                  * @returns {string} 
                  */
-                me.generateCells = function(columns, mode) {
-                    return columns.map(function(el) {
-                            var editorTag = el.EditorType
-                                .replace(/([A-Z])/g, function($1) { return '-' + $1.toLowerCase(); });
+                me.generateCells = function (columns, mode) {
+                    return columns.map(function (el) {
+                        var editorTag = el.EditorType
+                            .replace(/([A-Z])/g, function ($1) { return '-' + $1.toLowerCase(); });
 
-                            return '\r\n\t\t<tb-cell-template column-name="' +
+                        return '\r\n\t\t<tb-cell-template column-name="' +
+                            el.Name +
+                            '">' +
+                            '\r\n\t\t\t' +
+                            (mode === 'Inline'
+                                ? '<' +
+                                editorTag +
+                                ' is-editing="row.$isEditing" value="row.' +
                                 el.Name +
                                 '">' +
-                                '\r\n\t\t\t' +
-                                (mode === 'Inline'
-                                    ? '<' +
-                                    editorTag +
-                                    ' is-editing="row.$isEditing" value="row.' +
-                                    el.Name +
-                                    '">' +
-                                    '</' +
-                                    editorTag +
-                                    '>'
-                                    : el.Template) +
-                                '\r\n\t\t</tb-cell-template>';
-                        })
+                                '</' +
+                                editorTag +
+                                '>'
+                                : el.Template) +
+                            '\r\n\t\t</tb-cell-template>';
+                    })
                         .join('');
                 };
 
@@ -4166,7 +4166,7 @@
                  * @param {object} options 
                  * @returns {string} 
                  */
-                me.generateGrid = function(columns, options) {
+                me.generateGrid = function (columns, options) {
                     var topToolbar = '';
                     var bottomToolbar = '';
 
@@ -4218,7 +4218,7 @@
                         (options.Mode !== 'Read-Only'
                             ? '\r\n\t\t<tb-column label="Actions"><tb-column-header>{{label}}</tb-column-header></tb-column>'
                             : '') +
-                        columns.map(function(el) {
+                        columns.map(function (el) {
                             return '\r\n\t\t<tb-column name="' +
                                 el.Name +
                                 '" label="' +
@@ -4273,16 +4273,16 @@
                         '\r\n</div>';
                 };
 
-                me.getEditorTypeByDateType = function(dataType) {
+                me.getEditorTypeByDateType = function (dataType) {
                     switch (dataType) {
-                    case 'date':
-                        return 'tbDateTimeEditor';
-                    case 'numeric':
-                        return 'tbNumericEditor';
-                    case 'boolean':
-                        return 'tbCheckboxField';
-                    default:
-                        return 'tbSimpleEditor';
+                        case 'date':
+                            return 'tbDateTimeEditor';
+                        case 'numeric':
+                            return 'tbNumericEditor';
+                        case 'boolean':
+                            return 'tbCheckboxField';
+                        default:
+                            return 'tbSimpleEditor';
                     }
                 };
 
@@ -4292,24 +4292,20 @@
                  * @param {object} model
                  * @returns {array} The Columns
                  */
-                me.createColumns = function(model) {
+                me.createColumns = function (model) {
                     var jsonModel = (model instanceof Array && model.length > 0) ? model[0] : model;
                     var columns = [];
 
                     for (var prop in jsonModel) {
                         if (jsonModel.hasOwnProperty(prop)) {
                             var value = jsonModel[prop];
-                            // Ignore functions
-                            if (prop[0] === '$' || typeof value === 'function') {
+
+                            // Ignore functions and  null value, but maybe evaluate another item if there is anymore
+                            if (prop[0] === '$' || angular.isFunction(value) || value == null) {
                                 continue;
                             }
 
-                            // Ignore null value, but maybe evaluate another item if there is anymore
-                            if (value == null) {
-                                continue;
-                            }
-
-                            if (typeof value === 'number' || parseFloat(value).toString() === value) {
+                            if (angular.isNumber(value) || parseFloat(value).toString() === value) {
                                 columns.push({
                                     Name: prop,
                                     DataType: 'numeric',
@@ -4342,9 +4338,8 @@
 
                     var firstSort = false;
 
-                    for (var column in columns) {
-                        if (columns.hasOwnProperty(column)) {
-                            var columnObj = columns[column];
+                    angular.forEach(columns,
+                        function(columnObj) {
                             columnObj.Label = columnObj.Name.replace(/([a-z])([A-Z])/g, '$1 $2');
                             columnObj.EditorType = me.getEditorTypeByDateType(columnObj.DataType);
 
@@ -4370,13 +4365,12 @@
                                 columnObj.SortDirection = 'Ascending';
                                 firstSort = true;
                             }
-                        }
-                    }
+                        });
 
                     return columns;
                 };
 
-                me.generatePopupTemplate = function(model, title) {
+                me.generatePopupTemplate = function (model, title) {
                     var columns = me.createColumns(model);
 
                     return '<tb-form model="Model">' +
@@ -4393,7 +4387,7 @@
                         '</tb-form>';
                 };
 
-                me.generatePopup = function(model, title) {
+                me.generatePopup = function (model, title) {
                     var templateName = 'temp' + (new Date().getTime()) + '.html';
                     var template = me.generatePopupTemplate(model, title);
 
@@ -4409,7 +4403,7 @@
                  * @param {object} options 
                  * @returns {string} 
                  */
-                me.generateForm = function(fields, options) {
+                me.generateForm = function (fields, options) {
                     var layout = options.Layout === 'Simple' ? '' : options.Layout.toLowerCase();
                     var fieldsArray = me.generateFieldsArray(fields);
                     var fieldsMarkup;
@@ -4420,16 +4414,16 @@
                         fieldsMarkup = '\r\n\t<div class="row">' +
                             (layout === 'two-columns'
                                 ? '\r\n\t<div class="col-md-6">' +
-                                fieldsArray.filter(function(i, e) { return (e % 2) === 0; }).join('') +
+                                fieldsArray.filter(function (i, e) { return (e % 2) === 0; }).join('') +
                                 '\r\n\t</div>\r\n\t<div class="col-md-6">' +
-                                fieldsArray.filter(function(i, e) { return (e % 2) === 1; }).join('') +
+                                fieldsArray.filter(function (i, e) { return (e % 2) === 1; }).join('') +
                                 '</div>'
                                 : '\r\n\t<div class="col-md-4">' +
-                                fieldsArray.filter(function(i, e) { return (e % 3) === 0; }).join('') +
+                                fieldsArray.filter(function (i, e) { return (e % 3) === 0; }).join('') +
                                 '\r\n\t</div>\r\n\t<div class="col-md-4">' +
-                                fieldsArray.filter(function(i, e) { return (e % 3) === 1; }).join('') +
+                                fieldsArray.filter(function (i, e) { return (e % 3) === 1; }).join('') +
                                 '\r\n\t</div>\r\n\t<div class="col-md-4">' +
-                                fieldsArray.filter(function(i, e) { return (e % 3) === 2; }).join('') +
+                                fieldsArray.filter(function (i, e) { return (e % 3) === 2; }).join('') +
                                 '\r\n\t</div>') +
                             '\r\n\t</div>';
                     }
@@ -4466,10 +4460,10 @@
                  * @param {array} columns
                  * @returns {array}
                  */
-                me.generateFieldsArray = function(columns) {
-                    return columns.map(function(el) {
+                me.generateFieldsArray = function (columns) {
+                    return columns.map(function (el) {
                         var editorTag = el.EditorType
-                            .replace(/([A-Z])/g, function($1) { return '-' + $1.toLowerCase(); });
+                            .replace(/([A-Z])/g, function ($1) { return '-' + $1.toLowerCase(); });
                         var defaults = me.defaults.fieldsSettings[el.EditorType];
 
                         return '\r\n\t<' +
@@ -4491,8 +4485,8 @@
                             '>';
                     });
                 };
-                
-                me.setupFilter = function($scope, $element, $compile, $filter, $ctrl) {
+
+                me.setupFilter = function ($scope, $element, $compile, $filter, $ctrl) {
                     var dateOps = {
                         'None': $filter('translate')('OP_NONE'),
                         'Equals': $filter('translate')('OP_EQUALS'),
@@ -4546,13 +4540,13 @@
 
                     $ctrl.filterTitle = $ctrl.title || $filter('translate')('CAPTION_FILTER');
 
-                    $scope.$watch(function() {
-                            var c = $ctrl.$component.columns
-                                .filter(function(e) { return e.Name === $ctrl.filter.Name; });
+                    $scope.$watch(function () {
+                        var c = $ctrl.$component.columns
+                            .filter(function (e) { return e.Name === $ctrl.filter.Name; });
 
-                            return c.length !== 0 ? c[0] : null;
-                        },
-                        function(val) {
+                        return c.length !== 0 ? c[0] : null;
+                    },
+                        function (val) {
                             if (!val) return;
 
                             if ($ctrl.filter.HasFilter !== val.Filter.HasFilter) {
@@ -4563,8 +4557,8 @@
                         },
                         true);
 
-                    $ctrl.retrieveData = function() {
-                        var c = $ctrl.$component.columns.filter(function(e) { return e.Name === $ctrl.filter.Name; });
+                    $ctrl.retrieveData = function () {
+                        var c = $ctrl.$component.columns.filter(function (e) { return e.Name === $ctrl.filter.Name; });
 
                         if (c.length !== 0) {
                             c[0].Filter = $ctrl.filter;
@@ -4574,7 +4568,7 @@
                         $ctrl.close();
                     };
 
-                    $ctrl.clearFilter = function() {
+                    $ctrl.clearFilter = function () {
                         if ($ctrl.filter.Operator !== 'Multiple') {
                             $ctrl.filter.Operator = 'None';
                         }
@@ -4589,51 +4583,47 @@
                         $ctrl.retrieveData();
                     };
 
-                    $ctrl.applyFilter = function() {
+                    $ctrl.applyFilter = function () {
                         $ctrl.filter.HasFilter = true;
                         $ctrl.retrieveData();
                     };
 
-                    $ctrl.close = function() {
+                    $ctrl.close = function () {
                         $ctrl.isOpen = false;
                     };
 
-                    $ctrl.checkEvent = function(keyEvent) {
+                    $ctrl.checkEvent = function (keyEvent) {
                         if (keyEvent.which === 13) {
                             $ctrl.applyFilter();
                             keyEvent.preventDefault();
                         }
                     };
 
-                    var columns = $ctrl.$component.columns.filter(function(e) { return e.Name === $ctrl.filter.Name; });
+                    var columns = $ctrl.$component.columns.filter(function (e) { return e.Name === $ctrl.filter.Name; });
 
-                    $scope.$watch('$ctrl.filter.Operator',
-                        function(val) {
+                    $scope.$watch('$ctrl.filter.Operator', function (val) {
                             if (val === 'None') $ctrl.filter.Text = '';
                         });
 
                     if (columns.length === 0) return;
 
-                    $scope.$watch('$ctrl.filter',
-                        function(n) {
-                            if (columns[0].Filter.Text !== n.Text) {
-                                n.Text = columns[0].Filter.Text;
+                    $scope.$watch('$ctrl.filter', function (n) {
+                        if (columns[0].Filter.Text !== n.Text) {
+                            n.Text = columns[0].Filter.Text;
 
-                                if (columns[0].Filter.Operator !== n.Operator) {
-                                    n.Operator = columns[0].Filter.Operator;
-                                }
+                            if (columns[0].Filter.Operator !== n.Operator) {
+                                n.Operator = columns[0].Filter.Operator;
                             }
+                        }
 
-                            $ctrl.filter.HasFilter = columns[0].Filter.HasFilter;
-                        });
+                        $ctrl.filter.HasFilter = columns[0].Filter.HasFilter;
+                    });
 
                     columns[0].Filter = $ctrl.filter;
                     $ctrl.dataType = columns[0].DataType;
                     $ctrl.filterOperators = filterOperators[$ctrl.dataType];
 
-                    if ($ctrl
-                        .dataType ===
-                        'date' ||
+                    if ($ctrl.dataType === 'date' ||
                         $ctrl.dataType === 'datetime' ||
                         $ctrl.dataType === 'datetimeutc') {
                         $ctrl.filter.Argument = [new Date()];
