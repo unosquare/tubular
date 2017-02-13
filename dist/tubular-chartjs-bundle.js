@@ -512,4 +512,4 @@
                 }
             ]
         });
-})(window.angular);
+})(angular);

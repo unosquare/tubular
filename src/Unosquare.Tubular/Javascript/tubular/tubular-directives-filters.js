@@ -234,4 +234,4 @@
                 }
             ]
         });
-})(window.angular);
+})(angular);

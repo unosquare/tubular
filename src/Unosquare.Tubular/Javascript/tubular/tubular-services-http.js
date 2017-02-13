@@ -40,7 +40,7 @@
                 function retrieveSavedData() {
                     var savedData = localStorageService.get('auth_data');
 
-                    if (typeof savedData === 'undefined' || savedData == null) {
+                    if (angular.isUndefined(savedData)) {
                         throw 'No authentication data exists';
                     } else if (isAuthenticationExpired(savedData.expirationDate)) {
                         throw 'Authentication token has already expired';
@@ -116,7 +116,7 @@
                     }).then(function (response) {
                         me.handleSuccessCallback(successCallback, response.data, username);
                     }, function (errorResponse) {
-                        if (typeof errorCallback === 'function') {
+                        if (angular.isFunction(errorCallback)) {
                             errorCallback(errorResponse.data.error_description || $filter('translate')('UI_HTTPERROR'));
                         }
                     });
@@ -134,7 +134,7 @@
                     setHttpAuthHeader();
                     saveData();
 
-                    if (typeof successCallback === 'function') {
+                    if (angular.isFunction(successCallback)) {
                         successCallback(data);
                     }
                 };
@@ -220,7 +220,7 @@
                         }
                     }
 
-                    var checksum = JSON.stringify(request);
+                    var checksum = angular.toJson(request);
 
                     if ((request.requestMethod === 'GET' || request.requestMethod === 'POST') && me.useCache) {
                         var data = me.cache.get(checksum);
@@ -359,7 +359,7 @@
 
                     var promise = $http({
                         url: url,
-                        method: "POST",
+                        method: 'POST',
                         headers: { 'Content-Type': undefined },
                         transformRequest: function (data) { return data; }, // TODO: Remove
                         data: formData
@@ -420,4 +420,4 @@
                 };
             }
         ]);
-})(window.angular);
+})(angular);

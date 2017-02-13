@@ -12,25 +12,25 @@
          * 
          * This service provides authentication using bearer-tokens, if you require any other you need to provide it.
          */
-        .service('tubularOData', ['tubularHttp', function(tubularHttp) {
+        .factory('tubularOData', ['tubularHttp', function (tubularHttp) {
                 var me = this;
 
                 // {0} represents column name and {1} represents filter value
                 me.operatorsMapping = {
                     'None': '',
-                    'Equals': "{0} eq {1}",
-                    'NotEquals': "{0} ne {1}",
-                    'Contains': "substringof({1}, {0}) eq true",
-                    'StartsWith': "startswith({0}, {1}) eq true",
-                    'EndsWith': "endswith({0}, {1}) eq true",
-                    'NotContains': "substringof({1}, {0}) eq false",
-                    'NotStartsWith': "startswith({0}, {1}) eq false",
-                    'NotEndsWith': "endswith({0}, {1}) eq false",
+                    'Equals': '{0} eq {1}',
+                    'NotEquals': '{0} ne {1}',
+                    'Contains': 'substringof({1}, {0}) eq true',
+                    'StartsWith': 'startswith({0}, {1}) eq true',
+                    'EndsWith': 'endswith({0}, {1}) eq true',
+                    'NotContains': 'substringof({1}, {0}) eq false',
+                    'NotStartsWith': 'startswith({0}, {1}) eq false',
+                    'NotEndsWith': 'endswith({0}, {1}) eq false',
                     // TODO: 'Between': 'Between', 
-                    'Gte': "{0} ge {1}",
-                    'Gt': "{0} gt {1}",
-                    'Lte': "{0} le {1}",
-                    'Lt': "{0} lt {1}"
+                    'Gte': '{0} ge {1}',
+                    'Gt': '{0} gt {1}',
+                    'Lte': '{0} le {1}',
+                    'Lt': '{0} lt {1}'
                 };
 
                 me.getByKey = function (url, key) {
@@ -46,20 +46,20 @@
                     url += url.indexOf('?') > 0 ? '&' : '?';
                     url += '$format=json&$inlinecount=allpages';
 
-                    url += "&$select=" + params.Columns.map(function (el) { return el.Name; }).join(',');
+                    url += '&$select=' + params.Columns.map(function (el) { return el.Name; }).join(',');
 
                     if (params.Take !== -1) {
-                        url += "&$skip=" + params.Skip;
-                        url += "&$top=" + params.Take;
+                        url += '&$skip=' + params.Skip;
+                        url += '&$top=' + params.Take;
                     }
 
                     var order = params.Columns
                         .filter(function (el) { return el.SortOrder > 0; })
                         .sort(function (a, b) { return a.SortOrder - b.SortOrder; })
-                        .map(function (el) { return el.Name + " " + (el.SortDirection === "Descending" ? "desc" : ""); });
+                        .map(function (el) { return el.Name + ' ' + (el.SortDirection === 'Descending' ? 'desc' : ''); });
 
                     if (order.length > 0) {
-                        url += "&$orderby=" + order.join(',');
+                        url += '&$orderby=' + order.join(',');
                     }
 
                     var filter = params.Columns
@@ -80,12 +80,12 @@
                             });
 
                         if (freetext.length > 0) {
-                            filter.push("(" + freetext.join(' or ') + ")");
+                            filter.push('(' + freetext.join(' or ') + ')');
                         }
                     }
 
                     if (filter.length > 0) {
-                        url += "&$filter=" + filter.join(' and ');
+                        url += '&$filter=' + filter.join(' and ');
                     }
 
                     return url;
@@ -108,7 +108,7 @@
                             FilteredRecordCount: 1
                         };
 
-                        result.TotalRecordCount = parseInt(data["odata.count"]);
+                        result.TotalRecordCount = parseInt(data['odata.count']);
                         result.FilteredRecordCount = result.TotalRecordCount; // TODO: Calculate filtered items
                         result.TotalPages = parseInt((result.FilteredRecordCount + params.Take - 1) / params.Take);
                         result.CurrentPage = parseInt(1 + ((params.Skip / result.FilteredRecordCount) * result.TotalPages));
@@ -142,4 +142,4 @@
                 tubularHttp.registerService('odata', tubularOData);
             }
         ]);
-})(window.angular);
+})(angular);

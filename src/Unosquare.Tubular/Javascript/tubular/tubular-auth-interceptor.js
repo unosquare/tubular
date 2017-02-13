@@ -18,7 +18,7 @@
 
                 request: function (config) {
                     // Get the service here because otherwise, a circular dependency injection will be detected
-                    var tubularHttp = $injector.get("tubularHttp");
+                    var tubularHttp = $injector.get('tubularHttp');
                     var apiBaseUrl = tubularHttp.apiBaseUrl;
 
                     config.headers = config.headers || {};
@@ -55,7 +55,7 @@
 
                     switch (rejection.status) {
                         case 401:
-                            var tubularHttp = $injector.get("tubularHttp");
+                            var tubularHttp = $injector.get('tubularHttp');
                             var apiBaseUrl = tubularHttp.apiBaseUrl;
 
                             if (
@@ -67,7 +67,7 @@
 
 
                                 if (!authRequestRunning) {
-                                    authRequestRunning = $injector.get("$http")({
+                                    authRequestRunning = $injector.get('$http')({
                                         method: 'POST',
                                         url: tubularHttp.refreshTokenUrl,
                                         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -80,7 +80,7 @@
                                     tubularHttp.handleSuccessCallback(null, r.data);
 
                                     if (tubularHttp.requireAuthentication && tubularHttp.isAuthenticated()) {
-                                        $injector.get("$http")(rejection.config).then(function (resp) {
+                                        $injector.get('$http')(rejection.config).then(function (resp) {
                                             deferred.resolve(resp);
                                         }, function () {
                                             deferred.reject(r);
@@ -93,7 +93,7 @@
                                     authRequestRunning = null;
                                     deferred.reject(response);
                                     tubularHttp.removeAuthentication();
-                                    $injector.get("$state").go('/Login');
+                                    $injector.get('$state').go('/Login');
                                     return;
                                 });
 
@@ -112,4 +112,4 @@
                 }
             };
         }]);
-})(window.angular);
+})(angular);

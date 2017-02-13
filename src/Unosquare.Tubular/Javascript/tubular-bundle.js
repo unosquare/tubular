@@ -220,7 +220,7 @@ var tubularTemplate = {
      */
     generateFieldsArray: function(columns) {
         return columns.map(function(el) {
-            var editorTag = el.EditorType.replace(/([A-Z])/g, function($1) { return "-" + $1.toLowerCase(); });
+            var editorTag = el.EditorType.replace(/([A-Z])/g, function($1) { return '-' + $1.toLowerCase(); });
             var defaults = tubularTemplate.defaults.fieldsSettings[el.EditorType];
 
             return '\r\n\t<' + editorTag + ' name="' + el.Name + '"' +
@@ -278,21 +278,21 @@ var tubularTemplate = {
         if (layout === '') {
             fieldsMarkup = fieldsArray.join('');
         } else {
-            fieldsMarkup = "\r\n\t<div class='row'>" +
+            fieldsMarkup = '\r\n\t<div class="row">' +
                 (layout === 'two-columns' ?
-                    "\r\n\t<div class='col-md-6'>" +
+                    '\r\n\t<div class="col-md-6">' +
                     fieldsArray.filter(function(i, e) { return (e % 2) === 0; }).join('') +
-                    "\r\n\t</div>\r\n\t<div class='col-md-6'>" +
+                    '\r\n\t</div>\r\n\t<div class="col-md-6">' +
                     fieldsArray.filter(function(i, e) { return (e % 2) === 1; }).join('') +
-                    "</div>" :
-                    "\r\n\t<div class='col-md-4'>" +
+                    '</div>' :
+                    '\r\n\t<div class="col-md-4">' +
                     fieldsArray.filter(function(i, e) { return (e % 3) === 0; }).join('') +
-                    "\r\n\t</div>\r\n\t<div class='col-md-4'>" +
+                    '\r\n\t</div>\r\n\t<div class="col-md-4">' +
                     fieldsArray.filter(function(i, e) { return (e % 3) === 1; }).join('') +
-                    "\r\n\t</div>\r\n\t<div class='col-md-4'>" +
+                    '\r\n\t</div>\r\n\t<div class="col-md-4">' +
                     fieldsArray.filter(function(i, e) { return (e % 3) === 2; }).join('') +
-                    "\r\n\t</div>") +
-                "\r\n\t</div>";
+                    '\r\n\t</div>') +
+                '\r\n\t</div>';
         }
 
         return '<tb-form server-save-method="' + options.SaveMethod + '" ' +
@@ -315,7 +315,7 @@ var tubularTemplate = {
      */
     generateCells: function(columns, mode) {
         return columns.map(function(el) {
-            var editorTag = el.EditorType.replace(/([A-Z])/g, function($1) { return "-" + $1.toLowerCase(); });
+            var editorTag = el.EditorType.replace(/([A-Z])/g, function($1) { return '-' + $1.toLowerCase(); });
 
             return '\r\n\t\t<tb-cell-template column-name="' + el.Name + '">' +
                 '\r\n\t\t\t' +
@@ -487,8 +487,8 @@ try {
         .filter("moment", [
             "$filter", function ($filter) {
                 return function (input, format) {
-                    if (angular.isDefined(input) && typeof (input) === "object") {
-                        if (typeof moment == 'function' && input !== null && input instanceof moment) {
+                    if (angular.isObject(input)) {
+                        if (angular.isFunction(moment) && input !== null && input instanceof moment) {
                             return input.format(format);
                         } else {
                             return $filter('date')(input);
@@ -499,7 +499,7 @@ try {
                 };
             }
         ]);
-})(window.angular, window.moment || null);
+})(angular, moment || null);
 (function (angular) {
     'use strict';
 
@@ -577,7 +577,7 @@ try {
                         $ctrl.rows = [];
 
                         $ctrl.savePage = angular.isUndefined($ctrl.savePage) ? true : $ctrl.savePage;
-                        $ctrl.currentPage = $ctrl.savePage ? (localStorageService.get($ctrl.name + "_page") || 1) : 1;
+                        $ctrl.currentPage = $ctrl.savePage ? (localStorageService.get($ctrl.name + '_page') || 1) : 1;
 
                         $ctrl.savePageSize = angular.isUndefined($ctrl.savePageSize) ? true : $ctrl.savePageSize;
                         $ctrl.pageSize = angular.isUndefined($ctrl.pageSize) ? 20 : $ctrl.pageSize;
@@ -592,7 +592,7 @@ try {
                         $ctrl.serverSaveMethod = $ctrl.serverSaveMethod || 'POST';
                         $ctrl.requestTimeout = 20000;
                         $ctrl.currentRequest = null;
-                        $ctrl.autoSearch = $routeParams.param || ($ctrl.saveSearch ? (localStorageService.get($ctrl.name + "_search") || '') : '');
+                        $ctrl.autoSearch = $routeParams.param || ($ctrl.saveSearch ? (localStorageService.get($ctrl.name + '_search') || '') : '');
                         $ctrl.search = {
                             Text: $ctrl.autoSearch,
                             Operator: $ctrl.autoSearch === '' ? 'None' : 'Auto'
@@ -619,7 +619,7 @@ try {
                             return;
                         }
 
-                        localStorageService.set($ctrl.name + "_columns", $ctrl.columns);
+                        localStorageService.set($ctrl.name + '_columns', $ctrl.columns);
                     }, true);
 
                     $scope.$watch('$ctrl.serverUrl', function(newVal, prevVal) {
@@ -663,7 +663,7 @@ try {
                     $scope.$watch('$ctrl.pageSize', function() {
                         if ($ctrl.hasColumnsDefinitions && $ctrl.requestCounter > 0) {
                             if ($ctrl.savePageSize) {
-                                localStorageService.set($ctrl.name + "_pageSize", $ctrl.pageSize);
+                                localStorageService.set($ctrl.name + '_pageSize', $ctrl.pageSize);
                             }
                             $ctrl.retrieveData();
                         }
@@ -678,9 +678,9 @@ try {
                     $ctrl.saveSearch = function() {
                         if ($ctrl.saveSearch) {
                             if ($ctrl.search.Text === '') {
-                                localStorageService.remove($ctrl.name + "_search");
+                                localStorageService.remove($ctrl.name + '_search');
                             } else {
-                                localStorageService.set($ctrl.name + "_search", $ctrl.search.Text);
+                                localStorageService.set($ctrl.name + '_search', $ctrl.search.Text);
                             }
                         }
                     };
@@ -709,7 +709,7 @@ try {
                     $ctrl.deleteRow = function (row) {
                         // TODO: Should I move this behavior to model?
                         var urlparts = $ctrl.serverDeleteUrl.split('?');
-                        var url = urlparts[0] + "/" + row.$key;
+                        var url = urlparts[0] + '/' + row.$key;
 
                         if (urlparts.length > 1) {
                             url += '?' + urlparts[1];
@@ -737,10 +737,10 @@ try {
                     };
 
                     $ctrl.verifyColumns = function() {
-                        var columns = localStorageService.get($ctrl.name + "_columns");
-                        if (columns == null || columns === "") {
+                        var columns = localStorageService.get($ctrl.name + '_columns');
+                        if (columns == null || columns === '') {
                             // Nothing in settings, saving initial state
-                            localStorageService.set($ctrl.name + "_columns", $ctrl.columns);
+                            localStorageService.set($ctrl.name + '_columns', $ctrl.columns);
                             return;
                         }
 
@@ -778,7 +778,7 @@ try {
                         $ctrl.verifyColumns();
 
                         if ($ctrl.savePageSize) {
-                            $ctrl.pageSize = (localStorageService.get($ctrl.name + "_pageSize") || $ctrl.pageSize);
+                            $ctrl.pageSize = (localStorageService.get($ctrl.name + '_pageSize') || $ctrl.pageSize);
                         }
 
                         if ($ctrl.pageSize < 10) $ctrl.pageSize = 20; // default
@@ -819,7 +819,7 @@ try {
 
                                 if (angular.isUndefined(data) || data == null) {
                                     $scope.$emit('tbGrid_OnConnectionError', {
-                                        statusText: "Data is empty",
+                                        statusText: 'Data is empty',
                                         status: 0
                                     });
 
@@ -857,7 +857,7 @@ try {
                                 $ctrl.isEmpty = $ctrl.filteredRecordCount === 0;
 
                                 if ($ctrl.savePage) {
-                                    localStorageService.set($ctrl.name + "_page", $ctrl.currentPage);
+                                    localStorageService.set($ctrl.name + '_page', $ctrl.currentPage);
                                 }
                             }, function(error) {
                                 $ctrl.requestedPage = $ctrl.currentPage;
@@ -918,7 +918,7 @@ try {
                     };
 
                     $ctrl.selectedRows = function() {
-                        return localStorageService.get($ctrl.name + "_rows") || [];
+                        return localStorageService.get($ctrl.name + '_rows') || [];
                     };
 
                     $ctrl.clearSelection = function() {
@@ -926,7 +926,7 @@ try {
                             value.$selected = false;
                         });
 
-                        localStorageService.set($ctrl.name + "_rows", []);
+                        localStorageService.set($ctrl.name + '_rows', []);
                     };
 
                     $ctrl.isEmptySelection = function() {
@@ -954,7 +954,7 @@ try {
                             });
                         }
 
-                        localStorageService.set($ctrl.name + "_rows", rows);
+                        localStorageService.set($ctrl.name + '_rows', rows);
                     };
 
                     $ctrl.getFullDataSource = function(callback) {
@@ -1112,7 +1112,7 @@ try {
                                 $scope.$component.sortColumn($scope.column.Name, multiple);
                             };
 
-                            $scope.$watch("visible", function (val) {
+                            $scope.$watch('visible', function (val) {
                                 if (angular.isDefined(val)) {
                                     $scope.column.Visible = val;
                                 }
@@ -1147,12 +1147,12 @@ try {
 
                                 this.IsKey = angular.isDefined($scope.isKey) ? $scope.isKey : false;
                                 this.Searchable = angular.isDefined($scope.searchable) ? $scope.searchable : false;
-                                this.Visible = $scope.visible === "false" ? false : true;
+                                this.Visible = $scope.visible === 'false' ? false : true;
                                 this.Filter = null;
-                                this.DataType = $scope.columnType || "string";
-                                this.IsGrouping = $scope.isGrouping === "true";
-                                this.Aggregate = $scope.aggregate || "none";
-                                this.MetaAggregate = $scope.metaAggregate || "none";
+                                this.DataType = $scope.columnType || 'string';
+                                this.IsGrouping = $scope.isGrouping === 'true';
+                                this.Aggregate = $scope.aggregate || 'none';
+                                this.MetaAggregate = $scope.metaAggregate || 'none';
                             };
                             
                             $scope.$component.addColumn(column);
@@ -1302,7 +1302,7 @@ try {
                             $scope.tubularDirective = 'tubular-rowset';
                             $scope.fields = [];
                             $scope.hasFieldsDefinitions = false;
-                            $scope.selectableBool = $scope.selectable === "true";
+                            $scope.selectableBool = $scope.selectable === 'true';
                             $scope.$component = $scope.$parent.$parent.$parent.$component;
 
                             $scope.$watch('hasFieldsDefinitions', function(newVal) {
@@ -1393,7 +1393,7 @@ try {
                 };
             }
         ]);
-})(window.angular);
+})(angular);
 (function(angular, moment) {
     'use strict';
 
@@ -1407,7 +1407,7 @@ try {
         return function(val) {
             if (angular.isUndefined(val)) return;
 
-            if (typeof val === 'string') {
+            if (angular.isString(val)) {
                 $ctrl.value = hasMoment ? moment(val) : new Date(val);
             }
 
@@ -1496,7 +1496,7 @@ try {
             };
 
             $ctrl.$onInit = function() {
-                $ctrl.DataType = "numeric";
+                $ctrl.DataType = 'numeric';
 
                 tubular.setupScope($scope, 0, $ctrl, false);
             };
@@ -1519,7 +1519,7 @@ try {
 
             $ctrl.validate = function() {
                 if (tubular.isValid($ctrl.min)) {
-                    if (Object.prototype.toString.call($ctrl.min) !== "[object Date]") {
+                    if (!angular.isDate($ctrl.min)) {
                         $ctrl.min = new Date($ctrl.min);
                     }
 
@@ -1532,7 +1532,7 @@ try {
                 }
 
                 if (tubular.isValid($ctrl.max)) {
-                    if (Object.prototype.toString.call($ctrl.max) !== "[object Date]") {
+                    if (!angular.isDate($ctrl.max)) {
                         $ctrl.max = new Date($ctrl.max);
                     }
 
@@ -1545,12 +1545,12 @@ try {
             };
 
             $ctrl.$onInit = function() {
-                $ctrl.DataType = "date";
+                $ctrl.DataType = 'date';
 
                 tubular.setupScope($scope, $ctrl.format, $ctrl);
 
                 if (hasMoment && angular.isUndefined($ctrl.format)) {
-                    $ctrl.format = "MMM D, Y";
+                    $ctrl.format = 'MMM D, Y';
                 }
             };
         }
@@ -1571,7 +1571,7 @@ try {
 
             $ctrl.validate = function() {
                 if (angular.isDefined($ctrl.min)) {
-                    if (Object.prototype.toString.call($ctrl.min) !== "[object Date]") {
+                    if (!angular.isDate($ctrl.min)) {
                         $ctrl.min = new Date($ctrl.min);
                     }
 
@@ -1584,7 +1584,7 @@ try {
                 }
 
                 if (angular.isDefined($ctrl.max)) {
-                    if (Object.prototype.toString.call($ctrl.max) !== "[object Date]") {
+                    if (!angular.isDate($ctrl.max)) {
                         $ctrl.max = new Date($ctrl.max);
                     }
 
@@ -1597,11 +1597,11 @@ try {
             };
 
             $ctrl.$onInit = function() {
-                $ctrl.DataType = "date";
+                $ctrl.DataType = 'date';
                 tubular.setupScope($scope, $ctrl.format, $ctrl);
 
                 if (hasMoment && angular.isUndefined($ctrl.format)) {
-                    $ctrl.format = "MMM D, Y";
+                    $ctrl.format = 'MMM D, Y';
                 }
             };
         }
@@ -1614,10 +1614,10 @@ try {
             $ctrl.$onInit = function() {
                 tubular.setupScope($scope, null, $ctrl);
                 $ctrl.dataIsLoaded = false;
-                $ctrl.selectOptions = "d for d in $ctrl.options";
+                $ctrl.selectOptions = 'd for d in $ctrl.options';
 
                 if (angular.isDefined($ctrl.optionLabel)) {
-                    $ctrl.selectOptions = "d." + $ctrl.optionLabel + " for d in $ctrl.options";
+                    $ctrl.selectOptions = 'd.' + $ctrl.optionLabel + ' for d in $ctrl.options';
 
                     if (angular.isDefined($ctrl.optionTrack)) {
                         $ctrl.selectOptions = 'd as d.' + $ctrl.optionLabel + ' for d in $ctrl.options track by d.' + $ctrl.optionTrack;
@@ -2063,11 +2063,11 @@ try {
                     controller: [
                         '$scope', 'tubularEditorService', function ($scope, tubular) {
                             tubular.setupScope($scope);
-                            $scope.selectOptions = "d for d in getValues($viewValue)";
+                            $scope.selectOptions = 'd for d in getValues($viewValue)';
                             $scope.lastSet = [];
 
                             if (angular.isDefined($scope.optionLabel)) {
-                                $scope.selectOptions = "d as d." + $scope.optionLabel + " for d in getValues($viewValue)";
+                                $scope.selectOptions = 'd as d.' + $scope.optionLabel + ' for d in getValues($viewValue)';
                             }
 
                             $scope.$watch('value', function (val) {
@@ -2502,7 +2502,7 @@ try {
                 }
             ]
         });
-})(window.angular);
+})(angular);
 (function (angular) {
     'use strict';
 
@@ -2766,21 +2766,21 @@ try {
                         $ctrl.lastSearch = $ctrl.$component.search.Text;
                     };
 
-                    $scope.$watch("$ctrl.$component.search.Text", function(val, prev) {
+                    $scope.$watch('$ctrl.$component.search.Text', function(val, prev) {
                         if (angular.isUndefined(val) || val === prev) {
                             return;
                         }
 
                         $ctrl.$component.search.Text = val;
 
-                        if ($ctrl.lastSearch !== "" && val === "") {
+                        if ($ctrl.lastSearch !== '' && val === '') {
                             $ctrl.$component.saveSearch();
                             $ctrl.$component.search.Operator = 'None';
                             $ctrl.$component.retrieveData();
                             return;
                         }
 
-                        if (val === "" || val.length < $ctrl.minChars || val === $ctrl.lastSearch) {
+                        if (val === '' || val.length < $ctrl.minChars || val === $ctrl.lastSearch) {
                             return;
                         }
 
@@ -3063,32 +3063,32 @@ try {
 
                 $ctrl.printGrid = function() {
                     $ctrl.$component.getFullDataSource(function(data) {
-                        var tableHtml = "<table class='table table-bordered table-striped'><thead><tr>"
+                        var tableHtml = '<table class="table table-bordered table-striped"><thead><tr>'
                             + $ctrl.$component.columns
                             .filter(function(c) { return c.Visible; })
                             .map(function(el) {
-                                return "<th>" + (el.Label || el.Name) + "</th>";
-                            }).join(" ")
-                            + "</tr></thead>"
-                            + "<tbody>"
+                                return '<th>' + (el.Label || el.Name) + '</th>';
+                            }).join(' ')
+                            + '</tr></thead>'
+                            + '<tbody>'
                             + data.map(function(row) {
-                                if (typeof (row) === 'object') {
+                                if (angular.isObject(row)) {
                                     row = Object.keys(row).map(function(key) { return row[key] });
                                 }
 
-                                return "<tr>" + row.map(function(cell, index) {
+                                return '<tr>' + row.map(function(cell, index) {
                                     if (angular.isDefined($ctrl.$component.columns[index]) &&
                                         !$ctrl.$component.columns[index].Visible) {
-                                        return "";
+                                        return '';
                                     }
 
-                                    return "<td>" + cell + "</td>";
-                                }).join(" ") + "</tr>";
-                            }).join(" ")
-                            + "</tbody>"
-                            + "</table>";
+                                    return '<td>' + cell + '</td>';
+                                }).join(' ') + '</tr>';
+                            }).join('  ')
+                            + '</tbody>'
+                            + '</table>';
 
-                        var popup = window.open("about:blank", "Print", "menubar=0,location=0,height=500,width=800");
+                        var popup = window.open('about:blank', 'Print', 'menubar=0,location=0,height=500,width=800');
                         popup.document.write('<link rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap/latest/css/bootstrap.min.css" />');
 
                         if ($ctrl.printCss !== '') {
@@ -3104,7 +3104,7 @@ try {
                 };
             }
         });
-})(window.angular);
+})(angular);
 (function (angular) {
     'use strict';
 
@@ -3205,7 +3205,7 @@ try {
                 }
             ]
         });
-})(window.angular);
+})(angular);
 (function (angular, moment) {
     'use strict';
 
@@ -3230,7 +3230,7 @@ try {
         .factory('tubularModel', function () {
             return function ($scope, $ctrl, data, dataService) {
                 var obj = {
-                    $key: "",
+                    $key: '',
                     $addField: function (key, value, ignoreOriginal) {
                         this[key] = value;
                         if (angular.isUndefined(this.$original)) {
@@ -3272,9 +3272,9 @@ try {
 
                         obj.$addField(col.Name, value);
 
-                        if (col.DataType === "date" || col.DataType === "datetime" || col.DataType === "datetimeutc") {
+                        if (col.DataType === 'date' || col.DataType === 'datetime' || col.DataType === 'datetimeutc') {
                             if (typeof moment == 'function') {
-                                if (col.DataType === "datetimeutc") {
+                                if (col.DataType === 'datetimeutc') {
                                     obj[col.Name] = moment.utc(obj[col.Name]);
                                 } else {
                                     obj[col.Name] = moment(obj[col.Name]);
@@ -3287,7 +3287,7 @@ try {
                                     timezone = timezone.substr(0, timezone.length - 2) + ':' + timezone.substr(timezone.length - 2, 2);
                                     var tempDate = new Date(Date.parse(obj[col.Name].replace('Z', '') + timezone));
 
-                                    if (col.DataType === "date") {
+                                    if (col.DataType === 'date') {
                                         obj[col.Name] = new Date(tempDate.getFullYear(), tempDate.getMonth(), tempDate.getDate());
                                     } else {
                                         obj[col.Name] = new Date(tempDate.getFullYear(), tempDate.getMonth(), tempDate.getDate(),
@@ -3298,7 +3298,7 @@ try {
                         }
 
                         if (col.IsKey) {
-                            obj.$key += obj[col.Name] + ",";
+                            obj.$key += obj[col.Name] + ',';
                         }
                     });
                 }
@@ -3378,7 +3378,7 @@ try {
                 return obj;
             };
         });
-})(window.angular, window.moment || null);
+})(angular, moment || null);
 (function(angular, saveAs) {
     'use strict';
 
@@ -3835,7 +3835,7 @@ try {
                 function retrieveSavedData() {
                     var savedData = localStorageService.get('auth_data');
 
-                    if (typeof savedData === 'undefined' || savedData == null) {
+                    if (angular.isUndefined(savedData)) {
                         throw 'No authentication data exists';
                     } else if (isAuthenticationExpired(savedData.expirationDate)) {
                         throw 'Authentication token has already expired';
@@ -3911,7 +3911,7 @@ try {
                     }).then(function (response) {
                         me.handleSuccessCallback(successCallback, response.data, username);
                     }, function (errorResponse) {
-                        if (typeof errorCallback === 'function') {
+                        if (angular.isFunction(errorCallback)) {
                             errorCallback(errorResponse.data.error_description || $filter('translate')('UI_HTTPERROR'));
                         }
                     });
@@ -3929,7 +3929,7 @@ try {
                     setHttpAuthHeader();
                     saveData();
 
-                    if (typeof successCallback === 'function') {
+                    if (angular.isFunction(successCallback)) {
                         successCallback(data);
                     }
                 };
@@ -4015,7 +4015,7 @@ try {
                         }
                     }
 
-                    var checksum = JSON.stringify(request);
+                    var checksum = angular.toJson(request);
 
                     if ((request.requestMethod === 'GET' || request.requestMethod === 'POST') && me.useCache) {
                         var data = me.cache.get(checksum);
@@ -4154,7 +4154,7 @@ try {
 
                     var promise = $http({
                         url: url,
-                        method: "POST",
+                        method: 'POST',
                         headers: { 'Content-Type': undefined },
                         transformRequest: function (data) { return data; }, // TODO: Remove
                         data: formData
@@ -4215,7 +4215,7 @@ try {
                 };
             }
         ]);
-})(window.angular);
+})(angular);
 (function (angular) {
     'use strict';
     /**
@@ -4236,7 +4236,7 @@ try {
 
                 request: function (config) {
                     // Get the service here because otherwise, a circular dependency injection will be detected
-                    var tubularHttp = $injector.get("tubularHttp");
+                    var tubularHttp = $injector.get('tubularHttp');
                     var apiBaseUrl = tubularHttp.apiBaseUrl;
 
                     config.headers = config.headers || {};
@@ -4273,7 +4273,7 @@ try {
 
                     switch (rejection.status) {
                         case 401:
-                            var tubularHttp = $injector.get("tubularHttp");
+                            var tubularHttp = $injector.get('tubularHttp');
                             var apiBaseUrl = tubularHttp.apiBaseUrl;
 
                             if (
@@ -4285,7 +4285,7 @@ try {
 
 
                                 if (!authRequestRunning) {
-                                    authRequestRunning = $injector.get("$http")({
+                                    authRequestRunning = $injector.get('$http')({
                                         method: 'POST',
                                         url: tubularHttp.refreshTokenUrl,
                                         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -4298,7 +4298,7 @@ try {
                                     tubularHttp.handleSuccessCallback(null, r.data);
 
                                     if (tubularHttp.requireAuthentication && tubularHttp.isAuthenticated()) {
-                                        $injector.get("$http")(rejection.config).then(function (resp) {
+                                        $injector.get('$http')(rejection.config).then(function (resp) {
                                             deferred.resolve(resp);
                                         }, function () {
                                             deferred.reject(r);
@@ -4311,7 +4311,7 @@ try {
                                     authRequestRunning = null;
                                     deferred.reject(response);
                                     tubularHttp.removeAuthentication();
-                                    $injector.get("$state").go('/Login');
+                                    $injector.get('$state').go('/Login');
                                     return;
                                 });
 
@@ -4330,7 +4330,7 @@ try {
                 }
             };
         }]);
-})(window.angular);
+})(angular);
 (function(angular) {
     'use strict';
 
@@ -4597,7 +4597,7 @@ try {
 
             }
         ]);
-})(window.angular);
+})(angular);
 (function (angular) {
     'use strict';
 
@@ -4773,4 +4773,4 @@ try {
                 };
             }
         ]);
-})(window.angular);
+})(angular);

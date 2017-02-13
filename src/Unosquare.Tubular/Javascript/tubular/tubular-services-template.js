@@ -264,4 +264,4 @@
 
             }
         ]);
-})(window.angular);
+})(angular);

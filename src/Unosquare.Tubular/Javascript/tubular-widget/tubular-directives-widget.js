@@ -35,9 +35,9 @@
                     controller: [
                         '$scope', '$element', 'localStorageService', function($scope, $element, localStorageService) {
                             $scope.name = $scope.name || 'tbcontainer';
-                            $scope.fixedWidgets = angular.isDefined($scope.fixedWidgets) && $scope.fixedWidgets == "true";
+                            $scope.fixedWidgets = angular.isDefined($scope.fixedWidgets) && $scope.fixedWidgets == 'true';
                             $scope.widgets = [];
-                            $scope.settings = localStorageService.get($scope.name + "_data");
+                            $scope.settings = localStorageService.get($scope.name + '_data');
 
                             $scope.redraw = function() {
                                 var currentRows = $element.children('div.row');
@@ -152,7 +152,7 @@
                                     };
                                 });
 
-                                localStorageService.set($scope.name + "_data", newSettings);
+                                localStorageService.set($scope.name + '_data', newSettings);
                             };
                         }
                     ],
@@ -237,8 +237,8 @@
                     controller: [
                         '$scope', '$element', function($scope, $element) {
                             $scope.name = $scope.name || 'tbwidget';
-                            $scope.fullWidth = angular.isDefined($scope.fullWidth) && $scope.fullWidth == "true";
-                            $scope.isHidden = angular.isDefined($scope.isHidden) && $scope.isHidden == "true";
+                            $scope.fullWidth = angular.isDefined($scope.fullWidth) && $scope.fullWidth == 'true';
+                            $scope.isHidden = angular.isDefined($scope.isHidden) && $scope.isHidden == 'true';
                             $scope.collapsed = false;
                             $scope.maximized = false;
                             $scope.position = 0;
@@ -300,4 +300,4 @@
                 }
             }
         ]);
-})(window.angular);
+})(angular);

@@ -285,4 +285,4 @@ if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.ex
                 }
             ]
         });
-})(window.angular);
+})(angular);

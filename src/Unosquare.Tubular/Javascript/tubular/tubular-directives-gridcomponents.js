@@ -43,21 +43,21 @@
                         $ctrl.lastSearch = $ctrl.$component.search.Text;
                     };
 
-                    $scope.$watch("$ctrl.$component.search.Text", function(val, prev) {
+                    $scope.$watch('$ctrl.$component.search.Text', function(val, prev) {
                         if (angular.isUndefined(val) || val === prev) {
                             return;
                         }
 
                         $ctrl.$component.search.Text = val;
 
-                        if ($ctrl.lastSearch !== "" && val === "") {
+                        if ($ctrl.lastSearch !== '' && val === '') {
                             $ctrl.$component.saveSearch();
                             $ctrl.$component.search.Operator = 'None';
                             $ctrl.$component.retrieveData();
                             return;
                         }
 
-                        if (val === "" || val.length < $ctrl.minChars || val === $ctrl.lastSearch) {
+                        if (val === '' || val.length < $ctrl.minChars || val === $ctrl.lastSearch) {
                             return;
                         }
 
@@ -340,32 +340,32 @@
 
                 $ctrl.printGrid = function() {
                     $ctrl.$component.getFullDataSource(function(data) {
-                        var tableHtml = "<table class='table table-bordered table-striped'><thead><tr>"
+                        var tableHtml = '<table class="table table-bordered table-striped"><thead><tr>'
                             + $ctrl.$component.columns
                             .filter(function(c) { return c.Visible; })
                             .map(function(el) {
-                                return "<th>" + (el.Label || el.Name) + "</th>";
-                            }).join(" ")
-                            + "</tr></thead>"
-                            + "<tbody>"
+                                return '<th>' + (el.Label || el.Name) + '</th>';
+                            }).join(' ')
+                            + '</tr></thead>'
+                            + '<tbody>'
                             + data.map(function(row) {
-                                if (typeof (row) === 'object') {
+                                if (angular.isObject(row)) {
                                     row = Object.keys(row).map(function(key) { return row[key] });
                                 }
 
-                                return "<tr>" + row.map(function(cell, index) {
+                                return '<tr>' + row.map(function(cell, index) {
                                     if (angular.isDefined($ctrl.$component.columns[index]) &&
                                         !$ctrl.$component.columns[index].Visible) {
-                                        return "";
+                                        return '';
                                     }
 
-                                    return "<td>" + cell + "</td>";
-                                }).join(" ") + "</tr>";
-                            }).join(" ")
-                            + "</tbody>"
-                            + "</table>";
+                                    return '<td>' + cell + '</td>';
+                                }).join(' ') + '</tr>';
+                            }).join('  ')
+                            + '</tbody>'
+                            + '</table>';
 
-                        var popup = window.open("about:blank", "Print", "menubar=0,location=0,height=500,width=800");
+                        var popup = window.open('about:blank', 'Print', 'menubar=0,location=0,height=500,width=800');
                         popup.document.write('<link rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap/latest/css/bootstrap.min.css" />');
 
                         if ($ctrl.printCss !== '') {
@@ -381,4 +381,4 @@
                 };
             }
         });
-})(window.angular);
+})(angular);

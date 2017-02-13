@@ -76,8 +76,8 @@
         .filter("moment", [
             "$filter", function ($filter) {
                 return function (input, format) {
-                    if (angular.isDefined(input) && typeof (input) === "object") {
-                        if (typeof moment == 'function' && input !== null && input instanceof moment) {
+                    if (angular.isObject(input)) {
+                        if (angular.isFunction(moment) && input !== null && input instanceof moment) {
                             return input.format(format);
                         } else {
                             return $filter('date')(input);
@@ -88,4 +88,4 @@
                 };
             }
         ]);
-})(window.angular, window.moment || null);
+})(angular, moment || null);

@@ -111,4 +111,4 @@
                 }
             ]
         });
-})(window.angular);
+})(angular);

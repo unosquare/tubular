@@ -11,7 +11,7 @@
         return function(val) {
             if (angular.isUndefined(val)) return;
 
-            if (typeof val === 'string') {
+            if (angular.isString(val)) {
                 $ctrl.value = hasMoment ? moment(val) : new Date(val);
             }
 
@@ -100,7 +100,7 @@
             };
 
             $ctrl.$onInit = function() {
-                $ctrl.DataType = "numeric";
+                $ctrl.DataType = 'numeric';
 
                 tubular.setupScope($scope, 0, $ctrl, false);
             };
@@ -123,7 +123,7 @@
 
             $ctrl.validate = function() {
                 if (tubular.isValid($ctrl.min)) {
-                    if (Object.prototype.toString.call($ctrl.min) !== "[object Date]") {
+                    if (!angular.isDate($ctrl.min)) {
                         $ctrl.min = new Date($ctrl.min);
                     }
 
@@ -136,7 +136,7 @@
                 }
 
                 if (tubular.isValid($ctrl.max)) {
-                    if (Object.prototype.toString.call($ctrl.max) !== "[object Date]") {
+                    if (!angular.isDate($ctrl.max)) {
                         $ctrl.max = new Date($ctrl.max);
                     }
 
@@ -149,12 +149,12 @@
             };
 
             $ctrl.$onInit = function() {
-                $ctrl.DataType = "date";
+                $ctrl.DataType = 'date';
 
                 tubular.setupScope($scope, $ctrl.format, $ctrl);
 
                 if (hasMoment && angular.isUndefined($ctrl.format)) {
-                    $ctrl.format = "MMM D, Y";
+                    $ctrl.format = 'MMM D, Y';
                 }
             };
         }
@@ -175,7 +175,7 @@
 
             $ctrl.validate = function() {
                 if (angular.isDefined($ctrl.min)) {
-                    if (Object.prototype.toString.call($ctrl.min) !== "[object Date]") {
+                    if (!angular.isDate($ctrl.min)) {
                         $ctrl.min = new Date($ctrl.min);
                     }
 
@@ -188,7 +188,7 @@
                 }
 
                 if (angular.isDefined($ctrl.max)) {
-                    if (Object.prototype.toString.call($ctrl.max) !== "[object Date]") {
+                    if (!angular.isDate($ctrl.max)) {
                         $ctrl.max = new Date($ctrl.max);
                     }
 
@@ -201,11 +201,11 @@
             };
 
             $ctrl.$onInit = function() {
-                $ctrl.DataType = "date";
+                $ctrl.DataType = 'date';
                 tubular.setupScope($scope, $ctrl.format, $ctrl);
 
                 if (hasMoment && angular.isUndefined($ctrl.format)) {
-                    $ctrl.format = "MMM D, Y";
+                    $ctrl.format = 'MMM D, Y';
                 }
             };
         }
@@ -218,10 +218,10 @@
             $ctrl.$onInit = function() {
                 tubular.setupScope($scope, null, $ctrl);
                 $ctrl.dataIsLoaded = false;
-                $ctrl.selectOptions = "d for d in $ctrl.options";
+                $ctrl.selectOptions = 'd for d in $ctrl.options';
 
                 if (angular.isDefined($ctrl.optionLabel)) {
-                    $ctrl.selectOptions = "d." + $ctrl.optionLabel + " for d in $ctrl.options";
+                    $ctrl.selectOptions = 'd.' + $ctrl.optionLabel + ' for d in $ctrl.options';
 
                     if (angular.isDefined($ctrl.optionTrack)) {
                         $ctrl.selectOptions = 'd as d.' + $ctrl.optionLabel + ' for d in $ctrl.options track by d.' + $ctrl.optionTrack;
@@ -667,11 +667,11 @@
                     controller: [
                         '$scope', 'tubularEditorService', function ($scope, tubular) {
                             tubular.setupScope($scope);
-                            $scope.selectOptions = "d for d in getValues($viewValue)";
+                            $scope.selectOptions = 'd for d in getValues($viewValue)';
                             $scope.lastSet = [];
 
                             if (angular.isDefined($scope.optionLabel)) {
-                                $scope.selectOptions = "d as d." + $scope.optionLabel + " for d in getValues($viewValue)";
+                                $scope.selectOptions = 'd as d.' + $scope.optionLabel + ' for d in getValues($viewValue)';
                             }
 
                             $scope.$watch('value', function (val) {

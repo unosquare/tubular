@@ -174,4 +174,4 @@
             // console.log(tubularTranslate.translationTable);
         }
     ]);
-})(window.angular);
+})(angular);
