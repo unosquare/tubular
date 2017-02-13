@@ -166,17 +166,15 @@
                 cancel: cancelFunc
             };
 
-            function cancelFunc(reason) {
-                $log.info(reason);
-                return $q.resolve(reason);
-            }
-
         }
 
-        
+        function cancelFunc(reason) {
+            $log.info(reason);
+            return $q.resolve(reason);
+        }
 
         function getPromise(request) {
-            return $q.resolve(getData(request)).then(function(data) {
+            return $q.resolve(getData(request)).then(function onData(data) {
                 return pageRequest(request, data);
             });
         }
