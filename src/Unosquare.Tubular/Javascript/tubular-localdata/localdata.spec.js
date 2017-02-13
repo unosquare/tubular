@@ -1,7 +1,7 @@
 ﻿'use strict';
 describe('Module: tubular.services', function () {
     describe('Service: tubularLocalData', function () {
-        var sut, tubularHttp, pager;
+        var sut, tubularHttp, pager, localDataBase64;
 
         beforeEach(function () {
             angular.module('ui.bootstrap', []);
@@ -9,8 +9,10 @@ describe('Module: tubular.services', function () {
             module(function ($provide) {
                 tubularHttp = jasmine.createSpyObj('tubularHttp', ['get', 'getByKey', 'registerService', 'retrieveDataAsync']);
                 pager = jasmine.createSpyObj('pager', ['page']);
+                localDataBase64 = jasmine.createSpyObj('localDataBase64', ['getFromUrl']);
                 $provide.value('tubularHttp', tubularHttp)
                 $provide.value('tubularLocalDataPager', pager)
+                $provide.value('tubularLocalDataBase64', localDataBase64)
             })
             inject(function ($injector) {
                 sut = $injector.get('tubularLocalData');
@@ -139,6 +141,62 @@ describe('Module: tubular.services', function () {
 
                 
             })
+
+            describe('url starts with data', function () {
+
+                beforeEach(function () {
+                    request.serverUrl = "data://";
+                })
+                it('should get data from base64', function () {
+
+                    
+
+                    call();
+                    scope.$digest();
+
+                    expect(localDataBase64.getFromUrl).toHaveBeenCalledWith(request.serverUrl);
+
+                })
+
+                it('should use pager to page the data', function () {
+                    localDataBase64.getFromUrl.and.returnValue(serverData);
+                    
+                    call();
+
+                    scope.$digest();
+
+
+                    expect(pager.page).toHaveBeenCalledWith(request, serverData);
+
+                })
+
+                it('should return result from pager', function (done) {
+
+                    localDataBase64.getFromUrl.and.returnValue(serverData);
+
+                    call().promise.then(function (data) {
+                        expect(data).toBe(expected);
+                        done()
+                    });
+
+                    scope.$digest();
+                })
+
+
+                it('should cancel with correct reason', function (done) {
+                    var reason = "cancelling";
+
+                    call().cancel(reason).then(function (data) {
+                        expect(data).toBe(reason);
+                        done()
+                    });
+
+                    scope.$digest();
+                })
+
+
+            })
+
 
             
         })

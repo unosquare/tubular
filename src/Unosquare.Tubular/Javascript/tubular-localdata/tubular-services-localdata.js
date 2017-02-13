@@ -14,7 +14,7 @@
         .run(registerAsLocal);
 
     registerAsLocal.$inject = ['tubularHttp', 'tubularLocalData'];
-    tubularLocalData.$inject = ['tubularHttp', '$q', '$log', 'tubularLocalDataPager'];
+    tubularLocalData.$inject = ['tubularHttp', '$q', '$log', 'tubularLocalDataPager', 'tubularLocalDataBase64'];
 
     
     function registerAsLocal(tubularHttp, tubularLocalData) {
@@ -22,7 +22,7 @@
         tubularHttp.registerService('local', tubularLocalData);
     }
 
-    function tubularLocalData(tubularHttp, $q, $log, pager) {
+    function tubularLocalData(tubularHttp, $q, $log, pager, localDataBase64) {
 
         return {
             getByKey: tubularHttp.getByKey,
@@ -59,12 +59,7 @@
         }
 
         function dataFromUrl(request){
-            if (request.serverUrl.indexOf('data:') !== 0)
-                return null;
-            
-            var urlData = request.serverUrl.substr('data:application/json;base64,'.length);
-            urlData = atob(urlData);
-            return angular.fromJson(urlData);
+            return localDataBase64.getFromUrl(request.serverUrl);
         }
        
 
