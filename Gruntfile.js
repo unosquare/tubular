@@ -10,9 +10,10 @@ module.exports = function(grunt) {
         instrument: {
             files: [
                 'test/Unosquare.Tubular.WebTest/testApp.js',
-                'src/Unosquare.Tubular/Javascript/tubular/*.js',
-                'src/Unosquare.Tubular/Javascript/tubular-odata/*.js',
-                'src/Unosquare.Tubular/Javascript/tubular-localdata/*.js'
+                'src/Unosquare.Tubular/Javascript/tubular*-bundle.js'
+                //'src/Unosquare.Tubular/Javascript/tubular/*.js',
+                //'src/Unosquare.Tubular/Javascript/tubular-odata/*.js',
+                //'src/Unosquare.Tubular/Javascript/tubular-localdata/*.js'
             ],
             options: {
                 basePath: 'instrumented/'
