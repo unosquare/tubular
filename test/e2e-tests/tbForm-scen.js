@@ -1,5 +1,5 @@
 /* jshint: true */
-/* globals: expect:false,beforeAll:false,expect:false,browser:false,element:false,by:false,describe:false,protractor:false,it:false */
+/* globals: expect:false,beforeAll:false,expect:false,browser:false,element:false,by:false,describe:false,protractor:false,it:false,afterEach:false */
 
 describe('tbForm related components', function () {
     var trueFunc = function () { return true; };
@@ -208,7 +208,7 @@ describe('tbForm related components', function () {
     //  * tbCheckboxField *  //
     /****************************/
     var tbCheckboxField,
-        tbCheckboxField_onRow;
+        tbCheckboxFieldOnRow;
 
     var tbCheckboxFieldRestore = function () {
         return browser.wait(restoreCancelClickFn().then(function () {
@@ -253,7 +253,7 @@ describe('tbForm related components', function () {
             tbFormEditBtn2 = element.all(by.repeater('row in $component.rows')).get(1).$$('td').first().$$('button').last();
             // tbDropDownEditor component and subcomponents
             tbCheckboxField = $('div.modal-dialog form').$('tb-checkbox-field').$('input[type="checkbox"]');
-            tbCheckboxField_onRow = element.all(by.repeater('row in $component.rows'))
+            tbCheckboxFieldOnRow = element.all(by.repeater('row in $component.rows'))
                 .get(1).$$('td').last().$('input[type="checkbox"]');
 
             //* Restore default value *\\
@@ -267,14 +267,14 @@ describe('tbForm related components', function () {
 
         it('should save changes on "SAVE"', function () {
             // Ensure field is unckecked
-            tbCheckboxField_onRow.getAttribute('class').then(function (val) {
+            tbCheckboxFieldOnRow.getAttribute('class').then(function (val) {
                 expect(val.indexOf('ng-empty')).not.toBe(-1);
             })
             .then(function () {
                 tbFormEditBtn2.click().then(function () {
                     tbCheckboxField.click().then(function () {
                         tbFormSaveBtn.click().then(function () {
-                            tbCheckboxField_onRow.getAttribute('class').then(function (val) {
+                            tbCheckboxFieldOnRow.getAttribute('class').then(function (val) {
                                 expect(val.indexOf('ng-empty')).toBe(-1);
                             });
                         });
@@ -285,14 +285,14 @@ describe('tbForm related components', function () {
 
         it('should discard changes on "CANCEL"', function () {
             // Ensure field is unckecked
-            tbCheckboxField_onRow.getAttribute('class').then(function (val) {
+            tbCheckboxFieldOnRow.getAttribute('class').then(function (val) {
                 expect(val.indexOf('ng-empty')).not.toBe(-1);
             })
             .then(function () {
                 tbFormEditBtn2.click().then(function () {
                     tbCheckboxField.click().then(function () {
                         tbFormCancelBtn.click().then(function () {
-                            tbCheckboxField_onRow.getAttribute('class').then(function (val) {
+                            tbCheckboxFieldOnRow.getAttribute('class').then(function (val) {
                                 expect(val.indexOf('ng-empty')).not.toBe(-1);
                             });
                         });

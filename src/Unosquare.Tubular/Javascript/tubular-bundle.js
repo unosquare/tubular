@@ -3392,137 +3392,118 @@ try {
      */
     angular.module('tubular.services', ['ui.bootstrap'])
         /**
-         * @ngdoc service
+         * @ngdoc factory
          * @name tubularPopupService
          *
          * @description
          * Use `tubularPopupService` to show or generate popups with a `tbForm` inside.
          */
-        .service('tubularPopupService', [
+        .factory('tubularPopupService', [
             '$uibModal', '$rootScope', 'tubularTemplateService',
             function($modal, $rootScope, tubularTemplateService) {
-                var me = this;
+                return {
+                    onSuccessForm: function(callback) {
+                        $rootScope.$on('tbForm_OnSuccessfulSave', callback);
+                    },
 
-                me.onSuccessForm = function(callback) {
-                    $rootScope.$on('tbForm_OnSuccessfulSave', callback);
-                };
+                    onConnectionError: function(callback) {
+                        $rootScope.$on('tbForm_OnConnectionError', callback);
+                    },
 
-                me.onConnectionError = function(callback) {
-                    $rootScope.$on('tbForm_OnConnectionError', callback);
-                };
+                    /**
+                     * Opens a new Popup
+                     * 
+                     * @param {string} template 
+                     * @param {object} model 
+                     * @param {object} gridScope 
+                     * @param {string} size 
+                     * @returns {object} The Popup instance
+                     */
+                    openDialog: function(template, model, gridScope, size) {
+                        if (angular.isUndefined(template)) {
+                            template = tubularTemplateService.generatePopup(model);
+                        }
 
-                /**
-                 * Opens a new Popup
-                 * 
-                 * @param {string} template 
-                 * @param {object} model 
-                 * @param {object} gridScope 
-                 * @param {string} size 
-                 * @returns {object} The Popup instance
-                 */
-                me.openDialog = function(template, model, gridScope, size) {
-                    if (angular.isUndefined(template)) {
-                        template = tubularTemplateService.generatePopup(model);
+                        var dialog = $modal.open({
+                            templateUrl: template,
+                            backdropClass: 'fullHeight',
+                            animation: false,
+                            size: size,
+                            controller: [
+                                '$scope', function($scope) {
+                                    $scope.Model = model;
+
+                                    $scope.savePopup = function(innerModel, forceUpdate) {
+                                        innerModel = innerModel || $scope.Model;
+
+                                        // If we have nothing to save and it's not a new record, just close
+                                        if (!forceUpdate && !innerModel.$isNew && !innerModel.$hasChanges) {
+                                            $scope.closePopup();
+                                            return null;
+                                        }
+
+                                        var result = innerModel.save(forceUpdate);
+
+                                        if (angular.isUndefined(result) || result === false) {
+                                            return null;
+                                        }
+
+                                        result.then(
+                                            function(data) {
+                                                $scope.$emit('tbForm_OnSuccessfulSave', data);
+                                                $rootScope.$broadcast('tbForm_OnSuccessfulSave', data);
+                                                $scope.Model.$isLoading = false;
+                                                if (gridScope.autoRefresh) gridScope.retrieveData();
+                                                dialog.close();
+
+                                                return data;
+                                            },
+                                            function(error) {
+                                                $scope.$emit('tbForm_OnConnectionError', error);
+                                                $rootScope.$broadcast('tbForm_OnConnectionError', error);
+                                                $scope.Model.$isLoading = false;
+
+                                                return error;
+                                            });
+
+                                        return result;
+                                    };
+
+                                    $scope.closePopup = function() {
+                                        if (angular.isDefined($scope.Model.revertChanges)) {
+                                            $scope.Model.revertChanges();
+                                        }
+
+                                        dialog.close();
+                                    };
+                                }
+                            ]
+                        });
+
+                        return dialog;
                     }
-
-                    var dialog = $modal.open({
-                        templateUrl: template,
-                        backdropClass: 'fullHeight',
-                        animation: false,
-                        size: size,
-                        controller: [
-                            '$scope', function($scope) {
-                                $scope.Model = model;
-
-                                $scope.savePopup = function(innerModel, forceUpdate) {
-                                    innerModel = innerModel || $scope.Model;
-
-                                    // If we have nothing to save and it's not a new record, just close
-                                    if (!forceUpdate && !innerModel.$isNew && !innerModel.$hasChanges) {
-                                        $scope.closePopup();
-                                        return null;
-                                    }
-
-                                    var result = innerModel.save(forceUpdate);
-
-                                    if (angular.isUndefined(result) || result === false) {
-                                        return null;
-                                    }
-
-                                    result.then(
-                                        function(data) {
-                                            $scope.$emit('tbForm_OnSuccessfulSave', data);
-                                            $rootScope.$broadcast('tbForm_OnSuccessfulSave', data);
-                                            $scope.Model.$isLoading = false;
-                                            if (gridScope.autoRefresh) gridScope.retrieveData();
-                                            dialog.close();
-
-                                            return data;
-                                        }, function(error) {
-                                            $scope.$emit('tbForm_OnConnectionError', error);
-                                            $rootScope.$broadcast('tbForm_OnConnectionError', error);
-                                            $scope.Model.$isLoading = false;
-
-                                            return error;
-                                        });
-
-                                    return result;
-                                };
-
-                                $scope.closePopup = function() {
-                                    if (angular.isDefined($scope.Model.revertChanges)) {
-                                        $scope.Model.revertChanges();
-                                    }
-
-                                    dialog.close();
-                                };
-                            }
-                        ]
-                    });
-
-                    return dialog;
                 };
             }
         ])
         /**
-         * @ngdoc service
+         * @ngdoc factory
          * @name tubularGridExportService
          *
          * @description
          * Use `tubularGridExportService` to export your `tbGrid` to a CSV file.
          */
-        .service('tubularGridExportService', function() {
-            var me = this;
-
-            me.getColumns = function(gridScope) {
+        .factory('tubularGridExportService', function () {
+            var getColumns =  function(gridScope) {
                 return gridScope.columns.map(function(c) { return c.Label; });
             };
 
-            me.getColumnsVisibility = function(gridScope) {
+            var getColumnsVisibility = function(gridScope) {
                 return gridScope.columns
                     .map(function(c) { return c.Visible; });
             };
 
-            me.exportAllGridToCsv = function(filename, gridScope) {
-                var columns = me.getColumns(gridScope);
-                var visibility = me.getColumnsVisibility(gridScope);
-
-                gridScope.getFullDataSource(function(data) {
-                    me.exportToCsv(filename, columns, data, visibility);
-                });
-            };
-
-            me.exportGridToCsv = function(filename, gridScope) {
-                var columns = me.getColumns(gridScope);
-                var visibility = me.getColumnsVisibility(gridScope);
-
-                gridScope.currentRequest = {};
-                me.exportToCsv(filename, columns, gridScope.dataSource.Payload, visibility);
-                gridScope.currentRequest = null;
-            };
-
-            me.exportToCsv = function(filename, header, rows, visibility) {
-                var processRow = function(row) {
+            var exportToCsv = function(filename, header, rows, visibility) {
+                var processRow = function (row) {
                     if (angular.isObject(row)) {
                         row = Object.keys(row).map(function(key) { return row[key]; });
                     }
@@ -3567,6 +3548,26 @@ try {
                 // Add "\uFEFF" (UTF-8 BOM)
                 var blob = new Blob(["\uFEFF" + csvFile], { type: 'text/csv;charset=utf-8;' });
                 saveAs(blob, filename);
+            };
+
+            return {
+                exportAllGridToCsv: function(filename, gridScope) {
+                    var columns = getColumns(gridScope);
+                    var visibility = getColumnsVisibility(gridScope);
+
+                    gridScope.getFullDataSource(function(data) {
+                        exportToCsv(filename, columns, data, visibility);
+                    });
+                },
+
+                exportGridToCsv: function(filename, gridScope) {
+                    var columns = getColumns(gridScope);
+                    var visibility = getColumnsVisibility(gridScope);
+
+                    gridScope.currentRequest = {};
+                    exportToCsv(filename, columns, gridScope.dataSource.Payload, visibility);
+                    gridScope.currentRequest = null;
+                }
             };
         })
         /**

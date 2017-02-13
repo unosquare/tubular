@@ -7,10 +7,7 @@
 
     function tubularLocalDataPager(filterFilter, orderByFilter) {
         return {
-            sort: sort,
-            filter: filter,
-            search: search,
-            format: format
+            page: page
         }
 
 
@@ -18,10 +15,11 @@
             if (data.length === 0)
                 return createEmptyResponse();
             var set = data;
-            set = sort(request, set);
-            set = filter(request, set);
-            set = search(request, set);
-            return format(request, set);
+            var requestParams = request.data;
+            set = sort(requestParams, set);
+            set = filter(requestParams, set);
+            set = search(requestParams, set);
+            return format(requestParams, set);
         }
 
         function sort(request, set) {
@@ -198,12 +196,12 @@
             
             var urlData = request.serverUrl.substr('data:application/json;base64,'.length);
             urlData = atob(urlData);
-            return $q.resolve(angular.fromJson(urlData));
+            return angular.fromJson(urlData);
         }
        
 
-        function pageRequest(request, database) {
-            return pager.page(request, database);
+        function pageRequest(request, data) {
+            return pager.page(request, data);
         }
     }
 
