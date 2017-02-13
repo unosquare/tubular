@@ -1,4 +1,5 @@
 ﻿'use strict';
+
 describe('Module: tubular.services', function () {
     describe('Service: tubularLocalData', function () {
         var sut, tubularHttp, pager, localDataBase64;
@@ -17,7 +18,6 @@ describe('Module: tubular.services', function () {
             inject(function ($injector) {
                 sut = $injector.get('tubularLocalData');
             })
-
         });
 
 
