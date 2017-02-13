@@ -62,8 +62,7 @@ module.exports = function(grunt) {
                 options: {
                     args: {
                         baseUrl: "http://localhost:9000/test/Unosquare.Tubular.WebTest/",
-                        browser: "firefox",
-                        specs: ['test/e2e-tests/tbHttpSpec.js']
+                        browser: "firefox"
                     }
                 }
             }
@@ -103,7 +102,10 @@ module.exports = function(grunt) {
                
             },
             dev: {
-               // singleRun : false
+                singleRun: false,
+                preprocessors: {
+                },
+                reporters: ['progress'],
             }
 
         }

@@ -106,6 +106,7 @@ describe('LocalData', function() {
 
             // Set filter and apply it
             filterBtn.click();
+            expect(filterSelect.isPresent()).toBe(true);
             filterSelect.$('[value="string:Contains"]').click();
             valueInput.clear();
             valueInput.sendKeys(containedString);
@@ -134,14 +135,21 @@ describe('LocalData', function() {
             var containedString = 'pp';
 
             // Set filter and apply it
+           
             filterBtn.click();
-            filterSelect.$('[value="string:Contains"]').click();
+            filterSelect.$('[value="string:Contains"]').click()
+            
+            expect(valueInput.isEnabled()).toBe(true);
+
             valueInput.clear();
+            
             valueInput.sendKeys(containedString);
-            valueInput.sendKeys(protractor.Key.ENTER)
+            
+            return valueInput.sendKeys(protractor.Key.ENTER)
                 .then(function () {
                     // Verify filtering
-                    dataRows.each(function (row) {
+            
+                    return dataRows.each(function (row) {
                         row.$$('td').first().getText()
                             .then(function (customer) {
                                 filterOk = filterOk && (customer.indexOf(containedString) !== -1);
@@ -150,6 +158,8 @@ describe('LocalData', function() {
                         expect(filterOk).toBe(true);
                     });
                 });
+
+            
         });
     });
 });

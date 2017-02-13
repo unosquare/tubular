@@ -61,6 +61,7 @@
   {
     "outputFileName": "Javascript/tubular-localdata-bundle.js",
     "inputFiles": [
+      "Javascript/tubular-localdata/tubular-services-localdatapager.js",
       "Javascript/tubular-localdata/tubular-services-localdata.js"
     ],
     "sourceMap": false

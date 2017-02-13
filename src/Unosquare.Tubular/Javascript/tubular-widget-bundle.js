@@ -97,7 +97,7 @@
 
                             $scope.move = function(widget, direction) {
                                 var rowNumber = widget.row;
-                                var targetRowNumber = direction == 'up' ? rowNumber - 1 : direction === 'down' ? rowNumber + 1 : rowNumber;
+                                var targetRowNumber = direction === 'up' ? rowNumber - 1 : direction === 'down' ? rowNumber + 1 : rowNumber;
                                 var widgetRow = $scope.widgetsAsRows[rowNumber];
                                 var targetRow = $scope.widgetsAsRows[targetRowNumber];
                                 switch (direction) {
