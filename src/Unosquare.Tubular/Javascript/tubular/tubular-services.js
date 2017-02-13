@@ -1,6 +1,63 @@
 ﻿(function(angular, saveAs) {
     'use strict';
 
+    function getColumns(gridScope) {
+        return gridScope.columns.map(function (c) { return c.Label; });
+    }
+
+    function getColumnsVisibility(gridScope) {
+        return gridScope.columns
+            .map(function (c) { return c.Visible; });
+    };
+
+    function exportToCsv(filename, header, rows, visibility) {
+        var processRow = function (row) {
+            if (angular.isObject(row)) {
+                row = Object.keys(row).map(function (key) { return row[key]; });
+            }
+
+            var finalVal = '';
+            for (var j = 0; j < row.length; j++) {
+                if (!visibility[j]) {
+                    continue;
+                }
+
+                var innerValue = row[j] == null ? '' : row[j].toString();
+
+                if (row[j] instanceof Date) {
+                    innerValue = row[j].toLocaleString();
+                }
+
+                var result = innerValue.replace(/"/g, '""');
+
+                if (result.search(/("|,|\n)/g) >= 0) {
+                    result = '"' + result + '"';
+                }
+
+                if (j > 0) {
+                    finalVal += ',';
+                }
+
+                finalVal += result;
+            }
+            return finalVal + '\n';
+        };
+
+        var csvFile = '';
+
+        if (header.length > 0) {
+            csvFile += processRow(header);
+        }
+
+        for (var i = 0; i < rows.length; i++) {
+            csvFile += processRow(rows[i]);
+        }
+
+        // Add "\uFEFF" (UTF-8 BOM)
+        var blob = new Blob(["\uFEFF" + csvFile], { type: 'text/csv;charset=utf-8;' });
+        saveAs(blob, filename);
+    };
+
     /**
      * @ngdoc module
      * @name tubular.services
@@ -48,7 +105,9 @@
                             backdropClass: 'fullHeight',
                             animation: false,
                             size: size,
-                            controller: [
+                            controller:
+                                // TODO: Move out of this scope
+                                [
                                 '$scope', function($scope) {
                                     $scope.Model = model;
 
@@ -112,63 +171,6 @@
          * Use `tubularGridExportService` to export your `tbGrid` to a CSV file.
          */
         .factory('tubularGridExportService', function () {
-            var getColumns =  function(gridScope) {
-                return gridScope.columns.map(function(c) { return c.Label; });
-            };
-
-            var getColumnsVisibility = function(gridScope) {
-                return gridScope.columns
-                    .map(function(c) { return c.Visible; });
-            };
-
-            var exportToCsv = function(filename, header, rows, visibility) {
-                var processRow = function (row) {
-                    if (angular.isObject(row)) {
-                        row = Object.keys(row).map(function(key) { return row[key]; });
-                    }
-
-                    var finalVal = '';
-                    for (var j = 0; j < row.length; j++) {
-                        if (!visibility[j]) {
-                            continue;
-                        }
-
-                        var innerValue = row[j] == null ? '' : row[j].toString();
-
-                        if (row[j] instanceof Date) {
-                            innerValue = row[j].toLocaleString();
-                        }
-
-                        var result = innerValue.replace(/"/g, '""');
-
-                        if (result.search(/("|,|\n)/g) >= 0) {
-                            result = '"' + result + '"';
-                        }
-
-                        if (j > 0) {
-                            finalVal += ',';
-                        }
-
-                        finalVal += result;
-                    }
-                    return finalVal + '\n';
-                };
-
-                var csvFile = '';
-
-                if (header.length > 0) {
-                    csvFile += processRow(header);
-                }
-
-                for (var i = 0; i < rows.length; i++) {
-                    csvFile += processRow(rows[i]);
-                }
-
-                // Add "\uFEFF" (UTF-8 BOM)
-                var blob = new Blob(["\uFEFF" + csvFile], { type: 'text/csv;charset=utf-8;' });
-                saveAs(blob, filename);
-            };
-
             return {
                 exportAllGridToCsv: function(filename, gridScope) {
                     var columns = getColumns(gridScope);
@@ -200,9 +202,7 @@
             '$filter', function($filter) {
                 var me = this;
 
-                me.isValid = function(value) {
-                    return !(!value);
-                };
+                me.isValid = function(value) { return !(!value); };
 
                 /**
                 * Simple helper to generate a unique name for Tubular Forms
@@ -214,11 +214,13 @@
                 };
 
                 /**
-             * Setups a new Editor, this functions is like a common class constructor to be used
-             * with all the tubularEditors.
-             */
+                 * Setups a new Editor, this functions is like a common class constructor to be used
+                 * with all the tubularEditors.
+                 */
                 me.setupScope = function(scope, defaultFormat, ctrl, setDirty) {
-                    if (angular.isUndefined(ctrl)) ctrl = scope;
+                    if (angular.isUndefined(ctrl)) {
+                        ctrl = scope;
+                    }
 
                     ctrl.isEditing = angular.isUndefined(ctrl.isEditing) ? true : ctrl.isEditing;
                     ctrl.showLabel = ctrl.showLabel || false;
@@ -410,4 +412,4 @@
                 };
             }
         ]);
-})(window.angular, window.saveAs);
+})(angular, saveAs);
