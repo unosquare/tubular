@@ -48,13 +48,6 @@ describe('Tubular Filters', function () {
         element(by.id('tbFiltersTest')).click();
     });
 
-    afterEach(function () {
-        browser.manage().logs().get('browser').then(function (browserLog) {
-            console.log('log: ' + require('util').inspect(browserLog));
-            expect(browserLog.length).toEqual(0);
-
-        });
-    });
 
     describe('tbColumnFilter', function () {
 

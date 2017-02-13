@@ -66,13 +66,7 @@ describe('tbColumn', function () {
             element(by.id('btnClearLocalStorage')).click();
         });
 
-        afterEach(function () {
-            browser.manage().logs().get('browser').then(function (browserLog) {
-                console.log('log: ' + require('util').inspect(browserLog));
-                expect(browserLog.length).toEqual(0);
-
-            });
-        });
+       
 
         var dataSetLowerId = '1',
             dataSetHigherId = '500',
