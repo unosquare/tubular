@@ -28,13 +28,14 @@ cd ..
 cd out
 npm install
 gulp dgeni
+gulp reports
 
 git config user.name "Travis CI"
 git config user.email "geovanni.perez@gmail.com"
 
 # Commit the "changes", i.e. the new version.
 # The delta will show diffs between new and old versions.
-git add reports/$TRAVIS_BUILD_NUMBER/*
+git add reports/*
 git add vendor/tubular/*
 git add docs/build/*
 git commit -m "Deploy to GitHub Pages: ${SHA}"

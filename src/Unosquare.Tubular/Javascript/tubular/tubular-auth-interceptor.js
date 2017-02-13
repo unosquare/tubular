@@ -1,6 +1,16 @@
 (function (angular) {
     'use strict';
-
+    /**
+     * @ngdoc function
+     * @name tubularAuthInterceptor
+     * @description
+     *
+     * Implement a httpInterceptor to handle authorization using bearer tokens
+     *
+     * @constructor
+     * @returns {Object} A httpInterceptor
+     * 
+     */   
     angular.module('tubular.services')
         .factory('tubularAuthInterceptor', ['$q', '$injector', function ($q, $injector) {
             var authRequestRunning = null;

@@ -1,7 +1,7 @@
 {
   "name": "tubular",
   "filename": "tubular-bundle.min.js",
-  "version": "1.1.0",
+  "version": "1.2.2",
   "description": "A set of AngularJS directives and designed to rapidly build modern web applications.",
   "repository": {
     "type": "git",
@@ -67,4 +67,4 @@
     "karma-chrome-launcher": "^2.0.0",
     "karma-firefox-launcher": "^1.0.0"
   }
-} 
+}

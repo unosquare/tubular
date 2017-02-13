@@ -6,7 +6,7 @@
 // It is assumed throughout the test that the data received for the main tbGrid
 // component at the related HTML file (tbColumn_tests.html) is static.
 
-describe('LocalData', function() {
+describe('LocalData', function () {
 
     var firstDataRow,
         lastDataRow,
@@ -21,7 +21,7 @@ describe('LocalData', function() {
         aCustomerNameSorting,
         aShippedCitySorting;
 
-    beforeAll(function() {
+    beforeAll(function () {
         // Go to test
         browser.get('index.html');
         element(by.id('testsSelector')).click();
@@ -57,7 +57,7 @@ describe('LocalData', function() {
             .$('a');
     });
 
-    describe('Grid Local Data Sorting', function() {
+    describe('Grid Local Data Sorting', function () {
 
         beforeAll(function () {
             // Set test variables
@@ -73,10 +73,11 @@ describe('LocalData', function() {
         var dataSetLowerCustomerName = 'Apple',
             dataSetHigherCustomerName = 'Unosquare';
 
-        beforeEach(function() {
+        beforeEach(function () {
             // Clear possible sortings and start with default
             aShippedCitySorting.click();
-            iSortIcon.getAttribute('class').then(function(sortIconClass) {
+
+            iSortIcon.getAttribute('class').then(function (sortIconClass) {
                 if (sortIconClass.indexOf('arrow') !== -1) {
                     if (sortIconClass.indexOf('arrow-up') !== -1) {
                         aShippedCitySorting.click();
@@ -87,18 +88,23 @@ describe('LocalData', function() {
             });
         });
 
-        it('should order data in ascending order when click-sorting an unsorted text column', function() {
+        afterEach(function() {
+            browser.executeScript('window.sessionStorage.clear();');
+            browser.executeScript('window.localStorage.clear();');
+        });
+
+        it('should order data in ascending order when click-sorting an unsorted text column', function () {
             aCustomerNameSorting.click();
             expect(firstDataRow.$$('td').get(0).getText()).toBe(dataSetLowerCustomerName);
             expect(lastDataRow.$$('td').get(0).getText()).toBe(dataSetHigherCustomerName);
         });
 
-        it('should order data in descending order when click-sorting an ascending-sorted text column', function() {
+        it('should order data in descending order when click-sorting an ascending-sorted text column', function () {
             aCustomerNameSorting.click();
             aCustomerNameSorting.click();
             expect(firstDataRow.$$('td').get(0).getText()).toBe(dataSetHigherCustomerName);
             expect(lastDataRow.$$('td').get(0).getText()).toBe(dataSetLowerCustomerName);
-            });
+        });
 
         it('should correctly filter data for the "Contains" filtering option', function () {
             var filterOk = true;
@@ -112,9 +118,7 @@ describe('LocalData', function() {
             valueInput.sendKeys(containedString);
 
             //Time out to wait the applyBtn to be enabled
-            //filterSelect.$('[value="string:Contains"]').click(); not working
-            var EC = protractor.ExpectedConditions;
-            browser.wait(EC.elementToBeClickable(applyBtn), 5000);
+            browser.wait(protractor.ExpectedConditions.elementToBeClickable(applyBtn), 5000);
 
             applyBtn.click()
                 .then(function () {
@@ -129,7 +133,7 @@ describe('LocalData', function() {
                     });
                 });
         });
-        
+
         it('should correctly filter data for the "Contains" with ENTER key', function () {
             var filterOk = true;
             var containedString = 'pp';
