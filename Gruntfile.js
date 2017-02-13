@@ -103,6 +103,7 @@ module.exports = function(grunt) {
             },
             dev: {
                 singleRun: false,
+                autoWatch: true,
                 preprocessors: {
                 },
                 reporters: ['progress']
