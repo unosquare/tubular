@@ -15,10 +15,11 @@
             if (data.length === 0)
                 return createEmptyResponse();
             var set = data;
-            set = sort(request, set);
-            set = filter(request, set);
-            set = search(request, set);
-            return format(request, set);
+            var requestParams = request.data;
+            set = sort(requestParams, set);
+            set = filter(requestrequestParams, set);
+            set = search(requestParams, set);
+            return format(requestParams, set);
         }
 
         function sort(request, set) {
