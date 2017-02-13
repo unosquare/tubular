@@ -220,7 +220,7 @@ var tubularTemplate = {
      */
     generateFieldsArray: function(columns) {
         return columns.map(function(el) {
-            var editorTag = el.EditorType.replace(/([A-Z])/g, function($1) { return "-" + $1.toLowerCase(); });
+            var editorTag = el.EditorType.replace(/([A-Z])/g, function($1) { return '-' + $1.toLowerCase(); });
             var defaults = tubularTemplate.defaults.fieldsSettings[el.EditorType];
 
             return '\r\n\t<' + editorTag + ' name="' + el.Name + '"' +
@@ -278,21 +278,21 @@ var tubularTemplate = {
         if (layout === '') {
             fieldsMarkup = fieldsArray.join('');
         } else {
-            fieldsMarkup = "\r\n\t<div class='row'>" +
+            fieldsMarkup = '\r\n\t<div class="row">' +
                 (layout === 'two-columns' ?
-                    "\r\n\t<div class='col-md-6'>" +
+                    '\r\n\t<div class="col-md-6">' +
                     fieldsArray.filter(function(i, e) { return (e % 2) === 0; }).join('') +
-                    "\r\n\t</div>\r\n\t<div class='col-md-6'>" +
+                    '\r\n\t</div>\r\n\t<div class="col-md-6">' +
                     fieldsArray.filter(function(i, e) { return (e % 2) === 1; }).join('') +
-                    "</div>" :
-                    "\r\n\t<div class='col-md-4'>" +
+                    '</div>' :
+                    '\r\n\t<div class="col-md-4">' +
                     fieldsArray.filter(function(i, e) { return (e % 3) === 0; }).join('') +
-                    "\r\n\t</div>\r\n\t<div class='col-md-4'>" +
+                    '\r\n\t</div>\r\n\t<div class="col-md-4">' +
                     fieldsArray.filter(function(i, e) { return (e % 3) === 1; }).join('') +
-                    "\r\n\t</div>\r\n\t<div class='col-md-4'>" +
+                    '\r\n\t</div>\r\n\t<div class="col-md-4">' +
                     fieldsArray.filter(function(i, e) { return (e % 3) === 2; }).join('') +
-                    "\r\n\t</div>") +
-                "\r\n\t</div>";
+                    '\r\n\t</div>') +
+                '\r\n\t</div>';
         }
 
         return '<tb-form server-save-method="' + options.SaveMethod + '" ' +
@@ -315,7 +315,7 @@ var tubularTemplate = {
      */
     generateCells: function(columns, mode) {
         return columns.map(function(el) {
-            var editorTag = el.EditorType.replace(/([A-Z])/g, function($1) { return "-" + $1.toLowerCase(); });
+            var editorTag = el.EditorType.replace(/([A-Z])/g, function($1) { return '-' + $1.toLowerCase(); });
 
             return '\r\n\t\t<tb-cell-template column-name="' + el.Name + '">' +
                 '\r\n\t\t\t' +
