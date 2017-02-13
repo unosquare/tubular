@@ -3291,6 +3291,7 @@ try {
                         if (angular.isUndefined(val) || val.$valid()) return;
 
                         valid = false;
+                        valid = false;
                     });
 
                     return valid;

@@ -57,7 +57,7 @@
                                 {{row.CustomerName}}
                             </tb-cell-template>
                             <tb-cell-template>
-                                {{row.ShippedDate | date: 'short'}}
+                                {{row.ShippedDate | moment }}
                             </tb-cell-template>
                             <tb-cell-template>
                                 {{row.ShipperCity}}
