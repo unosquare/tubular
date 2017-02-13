@@ -499,7 +499,7 @@ try {
                 };
             }
         ]);
-})(angular, moment);
+})(angular, moment || null);
 (function (angular) {
     'use strict';
 
