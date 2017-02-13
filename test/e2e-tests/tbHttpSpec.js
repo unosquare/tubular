@@ -9,14 +9,7 @@ describe('tbHttp', function () {
         element(by.id('tbLogin')).click();
     });
 
-    afterEach(function () {
-        browser.manage().logs().get('browser').then(function (browserLog) {
-            console.log('log: ' + require('util').inspect(browserLog));
-            expect(browserLog.length).toEqual(0);
-
-        });
-    });
-
+ 
     it('should be authenticated', function () {
         element(by.model('username')).sendKeys('admin');
         element(by.model('password')).sendKeys('pass.word');

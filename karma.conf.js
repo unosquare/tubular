@@ -69,6 +69,8 @@ module.exports = function (config) {
             foldAll: false, // reports start folded (only with preserveDescribeNesting) 
         },
 
+        
+
         // optionally, configure the reporter
         coverageReporter: {
             type: 'html',
