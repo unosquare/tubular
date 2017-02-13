@@ -102,10 +102,11 @@ module.exports = function(grunt) {
                 singleRun: true
             },
             dev: {
-                singleRun: true,
+                singleRun: false,
+                autoWatch: true,
                 preprocessors: {
                 },
-                reporters: ['progress', 'jasmine-runner']
+                reporters: ['progress']
             }
 
         }
