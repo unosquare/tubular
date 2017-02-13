@@ -393,17 +393,13 @@
                     for (var prop in jsonModel) {
                         if (jsonModel.hasOwnProperty(prop)) {
                             var value = jsonModel[prop];
-                            // Ignore functions
-                            if (prop[0] === '$' || typeof value === 'function') {
+
+                            // Ignore functions and  null value, but maybe evaluate another item if there is anymore
+                            if (prop[0] === '$' || angular.isFunction(value) || value == null) {
                                 continue;
                             }
 
-                            // Ignore null value, but maybe evaluate another item if there is anymore
-                            if (value == null) {
-                                continue;
-                            }
-
-                            if (typeof value === 'number' || parseFloat(value).toString() === value) {
+                            if (angular.isNumber(value) || parseFloat(value).toString() === value) {
                                 columns.push({
                                     Name: prop,
                                     DataType: 'numeric',
@@ -436,9 +432,8 @@
 
                     var firstSort = false;
 
-                    for (var column in columns) {
-                        if (columns.hasOwnProperty(column)) {
-                            var columnObj = columns[column];
+                    angular.forEach(columns,
+                        function(columnObj) {
                             columnObj.Label = columnObj.Name.replace(/([a-z])([A-Z])/g, '$1 $2');
                             columnObj.EditorType = me.getEditorTypeByDateType(columnObj.DataType);
 
@@ -464,8 +459,7 @@
                                 columnObj.SortDirection = 'Ascending';
                                 firstSort = true;
                             }
-                        }
-                    }
+                        });
 
                     return columns;
                 };

@@ -2961,7 +2961,7 @@
     function getColumnsVisibility(gridScope) {
         return gridScope.columns
             .map(function (c) { return c.Visible; });
-    };
+    }
 
     function exportToCsv(filename, header, rows, visibility) {
         var processRow = function (row) {
@@ -3007,9 +3007,9 @@
         }
 
         // Add "\uFEFF" (UTF-8 BOM)
-        var blob = new Blob(["\uFEFF" + csvFile], { type: 'text/csv;charset=utf-8;' });
+        var blob = new Blob(['\uFEFF' + csvFile], { type: 'text/csv;charset=utf-8;' });
         saveAs(blob, filename);
-    };
+    }
 
     /**
      * @ngdoc module
@@ -3029,7 +3029,7 @@
          */
         .factory('tubularPopupService', [
             '$uibModal', '$rootScope', 'tubularTemplateService',
-            function($modal, $rootScope, tubularTemplateService) {
+            function ($uibModal, $rootScope, tubularTemplateService) {
                 return {
                     onSuccessForm: function(callback) {
                         $rootScope.$on('tbForm_OnSuccessfulSave', callback);
@@ -3053,7 +3053,7 @@
                             template = tubularTemplateService.generatePopup(model);
                         }
 
-                        var dialog = $modal.open({
+                        var dialog = $uibModal.open({
                             templateUrl: template,
                             backdropClass: 'fullHeight',
                             animation: false,
@@ -4299,17 +4299,13 @@
                     for (var prop in jsonModel) {
                         if (jsonModel.hasOwnProperty(prop)) {
                             var value = jsonModel[prop];
-                            // Ignore functions
-                            if (prop[0] === '$' || typeof value === 'function') {
+
+                            // Ignore functions and  null value, but maybe evaluate another item if there is anymore
+                            if (prop[0] === '$' || angular.isFunction(value) || value == null) {
                                 continue;
                             }
 
-                            // Ignore null value, but maybe evaluate another item if there is anymore
-                            if (value == null) {
-                                continue;
-                            }
-
-                            if (typeof value === 'number' || parseFloat(value).toString() === value) {
+                            if (angular.isNumber(value) || parseFloat(value).toString() === value) {
                                 columns.push({
                                     Name: prop,
                                     DataType: 'numeric',
@@ -4342,9 +4338,8 @@
 
                     var firstSort = false;
 
-                    for (var column in columns) {
-                        if (columns.hasOwnProperty(column)) {
-                            var columnObj = columns[column];
+                    angular.forEach(columns,
+                        function(columnObj) {
                             columnObj.Label = columnObj.Name.replace(/([a-z])([A-Z])/g, '$1 $2');
                             columnObj.EditorType = me.getEditorTypeByDateType(columnObj.DataType);
 
@@ -4370,8 +4365,7 @@
                                 columnObj.SortDirection = 'Ascending';
                                 firstSort = true;
                             }
-                        }
-                    }
+                        });
 
                     return columns;
                 };

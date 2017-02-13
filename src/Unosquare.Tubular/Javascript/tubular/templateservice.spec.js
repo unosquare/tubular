@@ -5,116 +5,116 @@ describe('Module: tubular.services', function () {
     var genCells = '\r\n\t\t<tb-cell-template column-name="Id">\r\n\t\t\t<tb-numeric-editor is-editing="row.$isEditing" value="row.Id"></tb-numeric-editor>\r\n\t\t</tb-cell-template>\r\n\t\t<tb-cell-template column-name="Name">\r\n\t\t\t<tb-simple-editor is-editing="row.$isEditing" value="row.Name"></tb-simple-editor>\r\n\t\t</tb-cell-template>\r\n\t\t<tb-cell-template column-name="Company">\r\n\t\t\t<tb-simple-editor is-editing="row.$isEditing" value="row.Company"></tb-simple-editor>\r\n\t\t</tb-cell-template>\r\n\t\t<tb-cell-template column-name="Email">\r\n\t\t\t<tb-simple-editor is-editing="row.$isEditing" value="row.Email"></tb-simple-editor>\r\n\t\t</tb-cell-template>\r\n\t\t<tb-cell-template column-name="Phone">\r\n\t\t\t<tb-simple-editor is-editing="row.$isEditing" value="row.Phone"></tb-simple-editor>\r\n\t\t</tb-cell-template>\r\n\t\t<tb-cell-template column-name="Birthday">\r\n\t\t\t<tb-date-time-editor is-editing="row.$isEditing" value="row.Birthday"></tb-date-time-editor>\r\n\t\t</tb-cell-template>\r\n\t\t<tb-cell-template column-name="IsOwner">\r\n\t\t\t<tb-checkbox-field is-editing="row.$isEditing" value="row.IsOwner"></tb-checkbox-field>\r\n\t\t</tb-cell-template>';
 
     var firstColumn = {
-        "Name": 'Id',
-        "DataType": 'numeric',
-        "Template": '{{row.Id | number}}',
-        "Label": 'Id',
-        "EditorType": 'tbNumericEditor',
-        "Searchable": false,
-        "Filter": true,
-        "Visible": true,
-        "Sortable": true,
-        "IsKey": true,
-        "SortOrder": 1,
-        "SortDirection": 'Ascending',
-        "ShowLabel": true,
-        "Placeholder": '',
-        "Format": '',
-        "Help": '',
-        "Required": true,
-        "ReadOnly": false
+        'Name': 'Id',
+        'DataType': 'numeric',
+        'Template': '{{row.Id | number}}',
+        'Label': 'Id',
+        'EditorType': 'tbNumericEditor',
+        'Searchable': false,
+        'Filter': true,
+        'Visible': true,
+        'Sortable': true,
+        'IsKey': true,
+        'SortOrder': 1,
+        'SortDirection': 'Ascending',
+        'ShowLabel': true,
+        'Placeholder': '',
+        'Format': '',
+        'Help': '',
+        'Required': true,
+        'ReadOnly': false
     };
 
     var models = [
         {
-            "Id": 8,
-            "Name": 'Guzman Webster',
-            "Company": 'IDEGO',
-            "Email": 'guzmanwebster@idego.com',
-            "Phone": '+1 (869) 428-2675',
-            "Birthday": 'Fri Mar 01 1996 00:57:47 GMT-0600 (Central Standard Time (Mexico))',
-            "IsOwner": 'false'
+            'Id': 8,
+            'Name': 'Guzman Webster',
+            'Company': 'IDEGO',
+            'Email': 'guzmanwebster@idego.com',
+            'Phone': '+1 (869) 428-2675',
+            'Birthday': 'Fri Mar 01 1996 00:57:47 GMT-0600 (Central Standard Time (Mexico))',
+            'IsOwner': 'false'
         },
         {
-            "Id": 7,
-            "Name": 'Michelle Baker',
-            "Company": 'ZOINAGE',
-            "Email": 'michellebaker@zoinage.com',
-            "Phone": '+1 (936) 427-2358',
-            "Birthday": 'Tue Dec 28 2004 14:58:04 GMT-0600 (Central Standard Time (Mexico))',
-            "IsOwner": 'true'
+            'Id': 7,
+            'Name': 'Michelle Baker',
+            'Company': 'ZOINAGE',
+            'Email': 'michellebaker@zoinage.com',
+            'Phone': '+1 (936) 427-2358',
+            'Birthday': 'Tue Dec 28 2004 14:58:04 GMT-0600 (Central Standard Time (Mexico))',
+            'IsOwner': 'true'
         },
         {
-            "Id": 4,
-            "Name": 'Williams Chase',
-            "Company": 'MARQET',
-            "Email": 'williamschase@marqet.com',
-            "Phone": '+1 (973) 598-2805',
-            "Birthday": 'Thu Sep 09 1982 03:19:55 GMT-0500 (Central Daylight Time (Mexico))',
-            "IsOwner": 'true'
+            'Id': 4,
+            'Name': 'Williams Chase',
+            'Company': 'MARQET',
+            'Email': 'williamschase@marqet.com',
+            'Phone': '+1 (973) 598-2805',
+            'Birthday': 'Thu Sep 09 1982 03:19:55 GMT-0500 (Central Daylight Time (Mexico))',
+            'IsOwner': 'true'
         },
         {
-            "Id": 6,
-            "Name": 'Amanda Britt',
-            "Company": 'NIQUENT',
-            "Email": 'amandabritt@niquent.com',
-            "Phone": '+1 (934) 567-2694',
-            "Birthday": 'Wed May 06 1992 01:17:53 GMT-0500 (Central Daylight Time (Mexico))',
-            "IsOwner": 'true'
+            'Id': 6,
+            'Name': 'Amanda Britt',
+            'Company': 'NIQUENT',
+            'Email': 'amandabritt@niquent.com',
+            'Phone': '+1 (934) 567-2694',
+            'Birthday': 'Wed May 06 1992 01:17:53 GMT-0500 (Central Daylight Time (Mexico))',
+            'IsOwner': 'true'
         },
         {
-            "Id": 7,
-            "Name": 'Craft Fernandez',
-            "Company": 'ISOSURE',
-            "Email": 'craftfernandez@isosure.com',
-            "Phone": '+1 (814) 446-3624',
-            "Birthday": 'Wed Dec 30 1992 00:02:57 GMT-0600 (Central Standard Time (Mexico))',
-            "IsOwner": 'false'
+            'Id': 7,
+            'Name': 'Craft Fernandez',
+            'Company': 'ISOSURE',
+            'Email': 'craftfernandez@isosure.com',
+            'Phone': '+1 (814) 446-3624',
+            'Birthday': 'Wed Dec 30 1992 00:02:57 GMT-0600 (Central Standard Time (Mexico))',
+            'IsOwner': 'false'
         },
         {
-            "Id": 2,
-            "Name": 'Wanda Weeks',
-            "Company": 'AMTAS',
-            "Email": 'wandaweeks@amtas.com',
-            "Phone": '+1 (846) 510-2084',
-            "Birthday": 'Tue Feb 04 1997 01:49:44 GMT-0600 (Central Standard Time (Mexico))',
-            "IsOwner": 'true'
+            'Id': 2,
+            'Name': 'Wanda Weeks',
+            'Company': 'AMTAS',
+            'Email': 'wandaweeks@amtas.com',
+            'Phone': '+1 (846) 510-2084',
+            'Birthday': 'Tue Feb 04 1997 01:49:44 GMT-0600 (Central Standard Time (Mexico))',
+            'IsOwner': 'true'
         },
         {
-            "Id": 2,
-            "Name": 'Sims Suarez',
-            "Company": 'ZEROLOGY',
-            "Email": 'simssuarez@zerology.com',
-            "Phone": '+1 (927) 587-3401',
-            "Birthday": 'Thu Mar 07 2013 13:38:04 GMT-0600 (Central Standard Time (Mexico))',
-            "IsOwner": 'true'
+            'Id': 2,
+            'Name': 'Sims Suarez',
+            'Company': 'ZEROLOGY',
+            'Email': 'simssuarez@zerology.com',
+            'Phone': '+1 (927) 587-3401',
+            'Birthday': 'Thu Mar 07 2013 13:38:04 GMT-0600 (Central Standard Time (Mexico))',
+            'IsOwner': 'true'
         },
         {
-            "Id": 6,
-            "Name": 'Stein Garcia',
-            "Company": 'ACCUFARM',
-            "Email": 'steingarcia@accufarm.com',
-            "Phone": '+1 (906) 507-3424',
-            "Birthday": 'Sat Nov 01 2008 17:57:32 GMT-0600 (Central Standard Time (Mexico))',
-            "IsOwner": 'true'
+            'Id': 6,
+            'Name': 'Stein Garcia',
+            'Company': 'ACCUFARM',
+            'Email': 'steingarcia@accufarm.com',
+            'Phone': '+1 (906) 507-3424',
+            'Birthday': 'Sat Nov 01 2008 17:57:32 GMT-0600 (Central Standard Time (Mexico))',
+            'IsOwner': 'true'
         },
         {
-            "Id": 5,
-            "Name": 'Summer Shaw',
-            "Company": 'PHUEL',
-            "Email": 'summershaw@phuel.com',
-            "Phone": '+1 (943) 565-2278',
-            "Birthday": 'Wed Aug 02 2006 00:45:06 GMT-0500 (Central Daylight Time (Mexico))',
-            "IsOwner": 'true'
+            'Id': 5,
+            'Name': 'Summer Shaw',
+            'Company': 'PHUEL',
+            'Email': 'summershaw@phuel.com',
+            'Phone': '+1 (943) 565-2278',
+            'Birthday': 'Wed Aug 02 2006 00:45:06 GMT-0500 (Central Daylight Time (Mexico))',
+            'IsOwner': 'true'
         },
         {
-            "Id": 0,
-            "Name": 'Laurie Pacheco',
-            "Company": 'ENOMEN',
-            "Email": 'lauriepacheco@enomen.com',
-            "Phone": '+1 (992) 456-2187',
-            "Birthday": 'Sun Dec 13 1981 07:06:47 GMT-0600 (Central Standard Time (Mexico))',
-            "IsOwner": 'true'
+            'Id': 0,
+            'Name': 'Laurie Pacheco',
+            'Company': 'ENOMEN',
+            'Email': 'lauriepacheco@enomen.com',
+            'Phone': '+1 (992) 456-2187',
+            'Birthday': 'Sun Dec 13 1981 07:06:47 GMT-0600 (Central Standard Time (Mexico))',
+            'IsOwner': 'true'
         }
     ];
 
