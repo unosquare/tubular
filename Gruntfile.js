@@ -100,7 +100,6 @@ module.exports = function(grunt) {
             },
             ci: {
                 singleRun: true
-               
             },
             dev: {
                 singleRun: true,
