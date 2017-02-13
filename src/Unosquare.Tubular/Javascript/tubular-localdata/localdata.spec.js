@@ -52,7 +52,7 @@ describe('Module: tubular.services', function () {
 
 
         describe('Method: retrieveDataAsync', function () {
-            var request, defered, httpResult, scope, expected;
+            var request, defered, httpResult, serverData, scope, expected;
 
             beforeEach(inject(function (_$q_, _$rootScope_) {
                 request = {
@@ -61,6 +61,7 @@ describe('Module: tubular.services', function () {
                 };
                 scope = _$rootScope_;
                 defered = _$q_.defer();
+                serverData = ['test'];
                 httpResult = {
                     promise: defered.promise
                 }
@@ -72,12 +73,12 @@ describe('Module: tubular.services', function () {
             }))
 
             function call() {
-                return sut.retrieveDataAsync(request).promise;
+                return sut.retrieveDataAsync(request);
             }
 
             it('should reset requireAuthentication on request', function () {
                 
-                defered.resolve(['test']);
+                defered.resolve(serverData);
 
                 call()
                 scope.$digest();
@@ -90,7 +91,7 @@ describe('Module: tubular.services', function () {
 
                 it('should get data from tubularHttp', function () {
 
-                    defered.resolve(['test']);
+                    defered.resolve(serverData);
 
                     call();
                     scope.$digest();
@@ -100,30 +101,43 @@ describe('Module: tubular.services', function () {
                 })
 
                 it('should use pager to page the data', function () {
-                    var data = ['test'];
-                    defered.resolve(data);
+                   
+                    defered.resolve(serverData);
 
                     call();
+
                     scope.$digest();
-                    expect(pager.page).toHaveBeenCalledWith(request, data);
+
+
+                    expect(pager.page).toHaveBeenCalledWith(request, serverData);
 
                 })
 
                 it('should return result from pager', function (done) {
-                    var data = ['test'];
-                    defered.resolve(data);
+                    
+                    defered.resolve(serverData);
 
-                    call().then(function (data) {
+                    call().promise.then(function (data) {
                         expect(data).toBe(expected);
                         done()
                     });
 
                     scope.$digest();
-                    
-                   
-                   
-
                 })
+
+
+                it('should cancel with correct reason', function (done) {
+                    var reason = "cancelling";
+
+                    call().cancel(reason).then(function (data) {
+                        expect(data).toBe(reason);
+                        done()
+                    });
+
+                    scope.$digest();
+                })
+
+                
             })
 
             

@@ -168,12 +168,14 @@
                 cancel: cancelFunc
             };
 
+            function cancelFunc(reason) {
+                $log.info(reason);
+                return $q.resolve(reason);
+            }
+
         }
 
-        function cancelFunc(reason) {
-            $log.error(reason);
-            return $q.defer().resolve(reason);
-        }
+        
 
         function getPromise(request) {
             return $q.resolve(getData(request)).then(function gotData(data) {
