@@ -8,7 +8,7 @@
     function getColumnsVisibility(gridScope) {
         return gridScope.columns
             .map(function (c) { return c.Visible; });
-    };
+    }
 
     function exportToCsv(filename, header, rows, visibility) {
         var processRow = function (row) {
@@ -54,9 +54,9 @@
         }
 
         // Add "\uFEFF" (UTF-8 BOM)
-        var blob = new Blob(["\uFEFF" + csvFile], { type: 'text/csv;charset=utf-8;' });
+        var blob = new Blob(['\uFEFF' + csvFile], { type: 'text/csv;charset=utf-8;' });
         saveAs(blob, filename);
-    };
+    }
 
     /**
      * @ngdoc module
@@ -76,7 +76,7 @@
          */
         .factory('tubularPopupService', [
             '$uibModal', '$rootScope', 'tubularTemplateService',
-            function($modal, $rootScope, tubularTemplateService) {
+            function ($uibModal, $rootScope, tubularTemplateService) {
                 return {
                     onSuccessForm: function(callback) {
                         $rootScope.$on('tbForm_OnSuccessfulSave', callback);
@@ -100,7 +100,7 @@
                             template = tubularTemplateService.generatePopup(model);
                         }
 
-                        var dialog = $modal.open({
+                        var dialog = $uibModal.open({
                             templateUrl: template,
                             backdropClass: 'fullHeight',
                             animation: false,
