@@ -111,7 +111,7 @@
                 }
             ]
         });
-})(window.angular);
+})(angular);
 
 (function (factory) {
     'use strict';

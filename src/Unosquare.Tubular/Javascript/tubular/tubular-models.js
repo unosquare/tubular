@@ -22,7 +22,7 @@
         .factory('tubularModel', function () {
             return function ($scope, $ctrl, data, dataService) {
                 var obj = {
-                    $key: "",
+                    $key: '',
                     $addField: function (key, value, ignoreOriginal) {
                         this[key] = value;
                         if (angular.isUndefined(this.$original)) {
@@ -64,9 +64,9 @@
 
                         obj.$addField(col.Name, value);
 
-                        if (col.DataType === "date" || col.DataType === "datetime" || col.DataType === "datetimeutc") {
-                            if (typeof moment == 'function') {
-                                if (col.DataType === "datetimeutc") {
+                        if (col.DataType === 'date' || col.DataType === 'datetime' || col.DataType === 'datetimeutc') {
+                            if (angular.isFunction(moment)) {
+                                if (col.DataType === 'datetimeutc') {
                                     obj[col.Name] = moment.utc(obj[col.Name]);
                                 } else {
                                     obj[col.Name] = moment(obj[col.Name]);
@@ -79,7 +79,7 @@
                                     timezone = timezone.substr(0, timezone.length - 2) + ':' + timezone.substr(timezone.length - 2, 2);
                                     var tempDate = new Date(Date.parse(obj[col.Name].replace('Z', '') + timezone));
 
-                                    if (col.DataType === "date") {
+                                    if (col.DataType === 'date') {
                                         obj[col.Name] = new Date(tempDate.getFullYear(), tempDate.getMonth(), tempDate.getDate());
                                     } else {
                                         obj[col.Name] = new Date(tempDate.getFullYear(), tempDate.getMonth(), tempDate.getDate(),
@@ -90,7 +90,7 @@
                         }
 
                         if (col.IsKey) {
-                            obj.$key += obj[col.Name] + ",";
+                            obj.$key += obj[col.Name] + ',';
                         }
                     });
                 }
@@ -170,4 +170,4 @@
                 return obj;
             };
         });
-})(window.angular, window.moment || null);
+})(angular, moment);

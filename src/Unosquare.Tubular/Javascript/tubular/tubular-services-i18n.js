@@ -18,13 +18,13 @@
                 me.translationTable = {
                     'en': {
                         'EDITOR_REGEX_DOESNT_MATCH': "The field doesn't match the regular expression.",
-                        'EDITOR_REQUIRED': "The field is required.",
-                        'EDITOR_MIN_CHARS': "The field needs to be minimum {0} chars.",
-                        'EDITOR_MAX_CHARS': "The field needs to be maximum {0} chars.",
-                        'EDITOR_MIN_NUMBER': "The minimum number is {0}.",
-                        'EDITOR_MAX_NUMBER': "The maximum number is {0}.",
-                        'EDITOR_MIN_DATE': "The minimum date is {0}.",
-                        'EDITOR_MAX_DATE': "The maximum date is {0}.",
+                        'EDITOR_REQUIRED': 'The field is required.',
+                        'EDITOR_MIN_CHARS': 'The field needs to be minimum {0} chars.',
+                        'EDITOR_MAX_CHARS': 'The field needs to be maximum {0} chars.',
+                        'EDITOR_MIN_NUMBER': 'The minimum number is {0}.',
+                        'EDITOR_MAX_NUMBER': 'The maximum number is {0}.',
+                        'EDITOR_MIN_DATE': 'The minimum date is {0}.',
+                        'EDITOR_MAX_DATE': 'The maximum date is {0}.',
                         'EDITOR_MATCH': 'The field needs to match the {0} field.',
                         'CAPTION_APPLY': 'Apply',
                         'CAPTION_CLEAR': 'Clear',
@@ -71,14 +71,14 @@
                         'OP_BETWEEN': 'Between'
                     },
                     'es': {
-                        'EDITOR_REGEX_DOESNT_MATCH': "El campo no es válido contra la expresión regular.",
-                        'EDITOR_REQUIRED': "El campo es requerido.",
-                        'EDITOR_MIN_CHARS': "El campo requiere mínimo {0} caracteres.",
-                        'EDITOR_MAX_CHARS': "El campo requiere máximo {0} caracteres.",
-                        'EDITOR_MIN_NUMBER': "El número mínimo es {0}.",
-                        'EDITOR_MAX_NUMBER': "El número maximo es {0}.",
-                        'EDITOR_MIN_DATE': "La fecha mínima es {0}.",
-                        'EDITOR_MAX_DATE': "La fecha máxima es {0}.",
+                        'EDITOR_REGEX_DOESNT_MATCH': 'El campo no es válido contra la expresión regular.',
+                        'EDITOR_REQUIRED': 'El campo es requerido.',
+                        'EDITOR_MIN_CHARS': 'El campo requiere mínimo {0} caracteres.',
+                        'EDITOR_MAX_CHARS': 'El campo requiere máximo {0} caracteres.',
+                        'EDITOR_MIN_NUMBER': 'El número mínimo es {0}.',
+                        'EDITOR_MAX_NUMBER': 'El número maximo es {0}.',
+                        'EDITOR_MIN_DATE': 'La fecha mínima es {0}.',
+                        'EDITOR_MAX_DATE': 'La fecha máxima es {0}.',
                         'EDITOR_MATCH': 'El campo debe de conincidir con el campo {0}.',
                         'CAPTION_APPLY': 'Aplicar',
                         'CAPTION_CLEAR': 'Limpiar',
@@ -161,10 +161,10 @@
                     if (angular.isDefined(input)) {
                         var translation = tubularTranslate.translate(input);
 
-                        translation = translation.replace("{0}", param1 || '');
-                        translation = translation.replace("{1}", param2 || '');
-                        translation = translation.replace("{2}", param3 || '');
-                        translation = translation.replace("{3}", param4 || '');
+                        translation = translation.replace('{0}', param1 || '');
+                        translation = translation.replace('{1}', param2 || '');
+                        translation = translation.replace('{2}', param3 || '');
+                        translation = translation.replace('{3}', param4 || '');
 
                         return translation;
                     }
@@ -173,4 +173,4 @@
                 };
             }
         ]);
-})(window.angular);
+})(angular);

@@ -129,7 +129,7 @@
                     };
 
                     $scope.$watch('$ctrl.serverUrl', function (val) {
-                        if (angular.isDefined(val) && val != null && val != '') {
+                        if (angular.isDefined(val) && val != null && val !== '') {
                             $ctrl.loadData();
                         }
                     });
@@ -142,4 +142,4 @@
                 }
             ]
         });
-})(window.angular);
+})(angular);

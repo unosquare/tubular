@@ -142,7 +142,7 @@
 
             me.exportToCsv = function(filename, header, rows, visibility) {
                 var processRow = function(row) {
-                    if (typeof (row) === 'object') {
+                    if (angular.isObject(row)) {
                         row = Object.keys(row).map(function(key) { return row[key]; });
                     }
 
@@ -209,7 +209,7 @@
                 me.getUniqueTbFormName = function() {
                     me.tbFormCounter = me.tbFormCounter || (me.tbFormCounter = -1);
                     me.tbFormCounter++;
-                    return "tbForm" + me.tbFormCounter;
+                    return 'tbForm' + me.tbFormCounter;
                 };
 
                 /**
@@ -257,7 +257,7 @@
                         ctrl.state.$errors = [];
 
                         if ((angular.isUndefined(ctrl.value) && ctrl.required) ||
-                        (Object.prototype.toString.call(ctrl.value) === "[object Date]" && isNaN(ctrl.value.getTime()) && ctrl.required)) {
+                            (angular.isDate(ctrl.value) && isNaN(ctrl.value.getTime()) && ctrl.required)) {
                             ctrl.$valid = false;
                             ctrl.state.$errors = [$filter('translate')('EDITOR_REQUIRED')];
 

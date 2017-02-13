@@ -75,7 +75,7 @@
                         $ctrl.rows = [];
 
                         $ctrl.savePage = angular.isUndefined($ctrl.savePage) ? true : $ctrl.savePage;
-                        $ctrl.currentPage = $ctrl.savePage ? (localStorageService.get($ctrl.name + "_page") || 1) : 1;
+                        $ctrl.currentPage = $ctrl.savePage ? (localStorageService.get($ctrl.name + '_page') || 1) : 1;
 
                         $ctrl.savePageSize = angular.isUndefined($ctrl.savePageSize) ? true : $ctrl.savePageSize;
                         $ctrl.pageSize = angular.isUndefined($ctrl.pageSize) ? 20 : $ctrl.pageSize;
@@ -90,7 +90,7 @@
                         $ctrl.serverSaveMethod = $ctrl.serverSaveMethod || 'POST';
                         $ctrl.requestTimeout = 20000;
                         $ctrl.currentRequest = null;
-                        $ctrl.autoSearch = $routeParams.param || ($ctrl.saveSearch ? (localStorageService.get($ctrl.name + "_search") || '') : '');
+                        $ctrl.autoSearch = $routeParams.param || ($ctrl.saveSearch ? (localStorageService.get($ctrl.name + '_search') || '') : '');
                         $ctrl.search = {
                             Text: $ctrl.autoSearch,
                             Operator: $ctrl.autoSearch === '' ? 'None' : 'Auto'
@@ -117,7 +117,7 @@
                             return;
                         }
 
-                        localStorageService.set($ctrl.name + "_columns", $ctrl.columns);
+                        localStorageService.set($ctrl.name + '_columns', $ctrl.columns);
                     }, true);
 
                     $scope.$watch('$ctrl.serverUrl', function(newVal, prevVal) {
@@ -161,7 +161,7 @@
                     $scope.$watch('$ctrl.pageSize', function() {
                         if ($ctrl.hasColumnsDefinitions && $ctrl.requestCounter > 0) {
                             if ($ctrl.savePageSize) {
-                                localStorageService.set($ctrl.name + "_pageSize", $ctrl.pageSize);
+                                localStorageService.set($ctrl.name + '_pageSize', $ctrl.pageSize);
                             }
                             $ctrl.retrieveData();
                         }
@@ -176,9 +176,9 @@
                     $ctrl.saveSearch = function() {
                         if ($ctrl.saveSearch) {
                             if ($ctrl.search.Text === '') {
-                                localStorageService.remove($ctrl.name + "_search");
+                                localStorageService.remove($ctrl.name + '_search');
                             } else {
-                                localStorageService.set($ctrl.name + "_search", $ctrl.search.Text);
+                                localStorageService.set($ctrl.name + '_search', $ctrl.search.Text);
                             }
                         }
                     };
@@ -207,7 +207,7 @@
                     $ctrl.deleteRow = function (row) {
                         // TODO: Should I move this behavior to model?
                         var urlparts = $ctrl.serverDeleteUrl.split('?');
-                        var url = urlparts[0] + "/" + row.$key;
+                        var url = urlparts[0] + '/' + row.$key;
 
                         if (urlparts.length > 1) {
                             url += '?' + urlparts[1];
@@ -235,10 +235,10 @@
                     };
 
                     $ctrl.verifyColumns = function() {
-                        var columns = localStorageService.get($ctrl.name + "_columns");
-                        if (columns == null || columns === "") {
+                        var columns = localStorageService.get($ctrl.name + '_columns');
+                        if (columns == null || columns === '') {
                             // Nothing in settings, saving initial state
-                            localStorageService.set($ctrl.name + "_columns", $ctrl.columns);
+                            localStorageService.set($ctrl.name + '_columns', $ctrl.columns);
                             return;
                         }
 
@@ -276,7 +276,7 @@
                         $ctrl.verifyColumns();
 
                         if ($ctrl.savePageSize) {
-                            $ctrl.pageSize = (localStorageService.get($ctrl.name + "_pageSize") || $ctrl.pageSize);
+                            $ctrl.pageSize = (localStorageService.get($ctrl.name + '_pageSize') || $ctrl.pageSize);
                         }
 
                         if ($ctrl.pageSize < 10) $ctrl.pageSize = 20; // default
@@ -317,7 +317,7 @@
 
                                 if (angular.isUndefined(data) || data == null) {
                                     $scope.$emit('tbGrid_OnConnectionError', {
-                                        statusText: "Data is empty",
+                                        statusText: 'Data is empty',
                                         status: 0
                                     });
 
@@ -355,7 +355,7 @@
                                 $ctrl.isEmpty = $ctrl.filteredRecordCount === 0;
 
                                 if ($ctrl.savePage) {
-                                    localStorageService.set($ctrl.name + "_page", $ctrl.currentPage);
+                                    localStorageService.set($ctrl.name + '_page', $ctrl.currentPage);
                                 }
                             }, function(error) {
                                 $ctrl.requestedPage = $ctrl.currentPage;
@@ -416,7 +416,7 @@
                     };
 
                     $ctrl.selectedRows = function() {
-                        return localStorageService.get($ctrl.name + "_rows") || [];
+                        return localStorageService.get($ctrl.name + '_rows') || [];
                     };
 
                     $ctrl.clearSelection = function() {
@@ -424,7 +424,7 @@
                             value.$selected = false;
                         });
 
-                        localStorageService.set($ctrl.name + "_rows", []);
+                        localStorageService.set($ctrl.name + '_rows', []);
                     };
 
                     $ctrl.isEmptySelection = function() {
@@ -452,7 +452,7 @@
                             });
                         }
 
-                        localStorageService.set($ctrl.name + "_rows", rows);
+                        localStorageService.set($ctrl.name + '_rows', rows);
                     };
 
                     $ctrl.getFullDataSource = function(callback) {
@@ -610,7 +610,7 @@
                                 $scope.$component.sortColumn($scope.column.Name, multiple);
                             };
 
-                            $scope.$watch("visible", function (val) {
+                            $scope.$watch('visible', function (val) {
                                 if (angular.isDefined(val)) {
                                     $scope.column.Visible = val;
                                 }
@@ -645,12 +645,12 @@
 
                                 this.IsKey = angular.isDefined($scope.isKey) ? $scope.isKey : false;
                                 this.Searchable = angular.isDefined($scope.searchable) ? $scope.searchable : false;
-                                this.Visible = $scope.visible === "false" ? false : true;
+                                this.Visible = $scope.visible === 'false' ? false : true;
                                 this.Filter = null;
-                                this.DataType = $scope.columnType || "string";
-                                this.IsGrouping = $scope.isGrouping === "true";
-                                this.Aggregate = $scope.aggregate || "none";
-                                this.MetaAggregate = $scope.metaAggregate || "none";
+                                this.DataType = $scope.columnType || 'string';
+                                this.IsGrouping = $scope.isGrouping === 'true';
+                                this.Aggregate = $scope.aggregate || 'none';
+                                this.MetaAggregate = $scope.metaAggregate || 'none';
                             };
                             
                             $scope.$component.addColumn(column);
@@ -800,7 +800,7 @@
                             $scope.tubularDirective = 'tubular-rowset';
                             $scope.fields = [];
                             $scope.hasFieldsDefinitions = false;
-                            $scope.selectableBool = $scope.selectable === "true";
+                            $scope.selectableBool = $scope.selectable === 'true';
                             $scope.$component = $scope.$parent.$parent.$parent.$component;
 
                             $scope.$watch('hasFieldsDefinitions', function(newVal) {
@@ -891,4 +891,4 @@
                 };
             }
         ]);
-})(window.angular);
+})(angular);

@@ -1393,7 +1393,7 @@ try {
                 };
             }
         ]);
-})(window.angular);
+})(angular);
 (function(angular, moment) {
     'use strict';
 
@@ -2502,7 +2502,7 @@ try {
                 }
             ]
         });
-})(window.angular);
+})(angular);
 (function (angular) {
     'use strict';
 
@@ -2720,7 +2720,7 @@ try {
                 };
             }
         ]);
-})(window.angular);
+})(angular);
 (function(angular) {
     'use strict';
 
@@ -3104,7 +3104,7 @@ try {
                 };
             }
         });
-})(window.angular);
+})(angular);
 (function (angular) {
     'use strict';
 
@@ -3205,7 +3205,7 @@ try {
                 }
             ]
         });
-})(window.angular);
+})(angular);
 (function (angular, moment) {
     'use strict';
 
@@ -4213,7 +4213,7 @@ try {
                 };
             }
         ]);
-})(window.angular);
+})(angular);
 (function (angular) {
     'use strict';
 
@@ -4318,7 +4318,7 @@ try {
                 }
             };
         }]);
-})(window.angular);
+})(angular);
 (function(angular) {
     'use strict';
 
@@ -4585,7 +4585,7 @@ try {
 
             }
         ]);
-})(window.angular);
+})(angular);
 (function (angular) {
     'use strict';
 
@@ -4761,4 +4761,4 @@ try {
                 };
             }
         ]);
-})(window.angular);
+})(angular);

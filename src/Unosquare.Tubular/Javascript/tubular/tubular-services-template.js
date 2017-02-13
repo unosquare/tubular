@@ -1,4 +1,4 @@
-﻿(function(angular) {
+﻿(function (angular, tubularTemplate) {
     'use strict';
 
     angular.module('tubular.services')
@@ -157,7 +157,7 @@
                     $ctrl.filter = {
                         Text: $ctrl.text || null,
                         Argument: $ctrl.argument ? [$ctrl.argument] : null,
-                        Operator: $ctrl.operator || "Contains",
+                        Operator: $ctrl.operator || 'Contains',
                         OptionsUrl: $ctrl.optionsUrl || null,
                         HasFilter: !($ctrl.text == null),
                         Name: $scope.$parent.$parent.column.Name
@@ -264,4 +264,4 @@
 
             }
         ]);
-})(window.angular);
+})(angular, tubularTemplate);

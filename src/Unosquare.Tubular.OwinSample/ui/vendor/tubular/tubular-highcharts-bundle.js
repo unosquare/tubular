@@ -142,7 +142,7 @@
                 }
             ]
         });
-})(window.angular);
+})(angular);
 /**
  * highcharts-ng
  * @version v0.0.12 - 2016-08-07
