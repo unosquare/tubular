@@ -6,7 +6,8 @@
   },
   "plugins": [ "angular", "jasmine" ],
   "globals": {
-    "moment" :  true
+    "moment" :  true,
+    "tubularTemplate": true
   },
   "extends": [
     "eslint:recommended",
