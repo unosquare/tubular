@@ -869,4 +869,4 @@
                 }
             ]
         });
-})(angular, tubularTemplate, moment || null);
+})(angular, tubularTemplate, moment);

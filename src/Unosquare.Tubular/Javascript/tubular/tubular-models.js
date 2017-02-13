@@ -170,4 +170,4 @@
                 return obj;
             };
         });
-})(angular, moment || null);
+})(angular, moment);

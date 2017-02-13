@@ -499,7 +499,7 @@ try {
                 };
             }
         ]);
-})(angular, moment || null);
+})(angular, moment);
 (function (angular) {
     'use strict';
 
@@ -2265,7 +2265,7 @@ try {
                 }
             ]
         });
-})(angular, tubularTemplate, moment || null);
+})(angular, tubularTemplate, moment);
 (function(angular) {
     'use strict';
 
@@ -3378,7 +3378,7 @@ try {
                 return obj;
             };
         });
-})(angular, moment || null);
+})(angular, moment);
 (function(angular, saveAs) {
     'use strict';
 

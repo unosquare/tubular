@@ -88,4 +88,4 @@
                 };
             }
         ]);
-})(angular, moment || null);
+})(angular, moment);

@@ -12,6 +12,7 @@
   ],
   "rules": {
     "quotes": [ 2, "single" ],
-    "angular/on-watch": "warn"
+    "angular/on-watch": "warn",
+    "angular/di": [ 2, "array" ]
   }
 }
