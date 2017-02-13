@@ -1,32 +1,26 @@
 (function (angular, tubularTemplate, moment) {
     'use strict';
 
-    var hasMoment = angular.isFunction(moment);
-
-    if (hasMoment) {
-        moment.fn.toJSON = function() { return this.format(); }
-    }
-
+    // Fix moment serialization
+    moment.fn.toJSON = function() { return this.format(); }
+    
     var changeValueFn = function($ctrl) {
         return function(val) {
             if (angular.isUndefined(val)) return;
 
             if (angular.isString(val)) {
-                $ctrl.value = hasMoment ? moment(val) : new Date(val);
+                $ctrl.value = moment(val);
             }
 
-            if (angular.isUndefined($ctrl.dateValue)) {
-                if (hasMoment) {
-                    if ($ctrl.value instanceof moment) {
-                        var tmpDate = $ctrl.value.toObject();
-                        $ctrl.dateValue = new Date(tmpDate.years, tmpDate.months, tmpDate.date, tmpDate.hours, tmpDate.minutes, tmpDate.seconds);
-                    } else {
-                        // NULL value
-                        $ctrl.dateValue = $ctrl.value;
-                    }
-                } else {
-                    $ctrl.dateValue = $ctrl.value;
-                }
+            if (angular.isDefined($ctrl.dateValue))
+                return;
+
+            if ($ctrl.value instanceof moment) {
+                var tmpDate = $ctrl.value.toObject();
+                $ctrl.dateValue = new Date(tmpDate.years, tmpDate.months, tmpDate.date, tmpDate.hours, tmpDate.minutes, tmpDate.seconds);
+            } else {
+                // NULL value
+                $ctrl.dateValue = $ctrl.value;
             }
         };
     };
@@ -117,7 +111,7 @@
                 return $ctrl.dateValue;
             }, function (val) {
                 if (angular.isDefined(val)) {
-                    $ctrl.value = hasMoment ? moment(val) : new Date(val);
+                    $ctrl.value = moment(val);
                 }
             });
 
@@ -153,7 +147,7 @@
 
                 tubular.setupScope($scope, $ctrl.format, $ctrl);
 
-                if (hasMoment && angular.isUndefined($ctrl.format)) {
+                if (angular.isUndefined($ctrl.format)) {
                     $ctrl.format = 'MMM D, Y';
                 }
             };
@@ -169,7 +163,7 @@
                 return $ctrl.dateValue;
             }, function (val) {
                 if (angular.isDefined(val)) {
-                    $ctrl.value = hasMoment ? moment(val) : new Date(val);
+                    $ctrl.value = moment(val);
                 }
             });
 
@@ -204,7 +198,7 @@
                 $ctrl.DataType = 'date';
                 tubular.setupScope($scope, $ctrl.format, $ctrl);
 
-                if (hasMoment && angular.isUndefined($ctrl.format)) {
+                if (angular.isUndefined($ctrl.format)) {
                     $ctrl.format = 'MMM D, Y';
                 }
             };

@@ -65,28 +65,7 @@
                         obj.$addField(col.Name, value);
 
                         if (col.DataType === 'date' || col.DataType === 'datetime' || col.DataType === 'datetimeutc') {
-                            if (angular.isFunction(moment)) {
-                                if (col.DataType === 'datetimeutc') {
-                                    obj[col.Name] = moment.utc(obj[col.Name]);
-                                } else {
-                                    obj[col.Name] = moment(obj[col.Name]);
-                                }
-                            } else {
-                                if (!obj[col.Name]) {
-                                    obj[col.Name] = '';
-                                } else {
-                                    var timezone = new Date(Date.parse(obj[col.Name])).toString().match(/([-\+][0-9]+)\s/)[1];
-                                    timezone = timezone.substr(0, timezone.length - 2) + ':' + timezone.substr(timezone.length - 2, 2);
-                                    var tempDate = new Date(Date.parse(obj[col.Name].replace('Z', '') + timezone));
-
-                                    if (col.DataType === 'date') {
-                                        obj[col.Name] = new Date(tempDate.getFullYear(), tempDate.getMonth(), tempDate.getDate());
-                                    } else {
-                                        obj[col.Name] = new Date(tempDate.getFullYear(), tempDate.getMonth(), tempDate.getDate(),
-                                            tempDate.getHours(), tempDate.getMinutes(), tempDate.getSeconds(), 0);
-                                    }
-                                }
-                            }
+                            obj[col.Name] = col.DataType === 'datetimeutc' ? moment.utc(obj[col.Name]) : moment(obj[col.Name]);
                         }
 
                         if (col.IsKey) {
