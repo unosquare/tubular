@@ -17,7 +17,7 @@
             var set = data;
             var requestParams = request.data;
             set = sort(requestParams, set);
-            set = filter(requestrequestParams, set);
+            set = filter(requestParams, set);
             set = search(requestParams, set);
             return format(requestParams, set);
         }
