@@ -65,7 +65,7 @@
                         obj.$addField(col.Name, value);
 
                         if (col.DataType === 'date' || col.DataType === 'datetime' || col.DataType === 'datetimeutc') {
-                            if (typeof moment == 'function') {
+                            if (angular.isFunction(moment)) {
                                 if (col.DataType === 'datetimeutc') {
                                     obj[col.Name] = moment.utc(obj[col.Name]);
                                 } else {

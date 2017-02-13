@@ -1,7 +1,7 @@
-(function(angular, moment) {
+(function (angular, tubularTemplate, moment) {
     'use strict';
 
-    var hasMoment = typeof moment == 'function';
+    var hasMoment = angular.isFunction(moment);
 
     if (hasMoment) {
         moment.fn.toJSON = function() { return this.format(); }
@@ -869,4 +869,4 @@
                 }
             ]
         });
-})(window.angular, window.moment || null);
+})(angular, tubularTemplate, moment || null);

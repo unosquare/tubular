@@ -205,7 +205,7 @@
                     }
 
                     if (angular.isString(request.requireAuthentication)) {
-                        request.requireAuthentication = request.requireAuthentication === "true";
+                        request.requireAuthentication = request.requireAuthentication === 'true';
                     }
 
                     if (!me.useRefreshTokens) {

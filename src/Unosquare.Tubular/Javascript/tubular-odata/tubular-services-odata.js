@@ -34,7 +34,7 @@
                 };
 
                 me.getByKey = function (url, key) {
-                    return me.get(url + "(" + key + ")");
+                    return me.get(url + '(' + key + ')');
                 };
 
                 me.get = tubularHttp.get;
@@ -67,7 +67,7 @@
                         .map(function (el) {
                             return me.operatorsMapping[el.Filter.Operator]
                                 .replace('{0}', el.Name)
-                                .replace('{1}', el.DataType === "string" ? "'" + el.Filter.Text + "'" : el.Filter.Text);
+                                .replace('{1}', el.DataType === 'string' ? "'" + el.Filter.Text + "'" : el.Filter.Text);
                         })
                         .filter(function (el) { return el.length > 1; });
 

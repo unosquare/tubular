@@ -36,7 +36,7 @@
                     return input.data.ExceptionMessage;
                 }
 
-                return input.statusText || "Connection Error";
+                return input.statusText || 'Connection Error';
             };
         })
         /**
@@ -47,21 +47,21 @@
          * @description
          * `numberorcurrency` is a hack to hold `currency` and `number` in a single filter.
          */
-        .filter("numberorcurrency", [
-            "$filter", function ($filter) {
+        .filter('numberorcurrency', [
+            '$filter', function ($filter) {
                 return function (input, format, symbol, fractionSize) {
                     fractionSize = fractionSize || 2;
 
-                    if (format === "C") {
-                        return $filter("currency")(input, symbol || "$", fractionSize);
+                    if (format === 'C') {
+                        return $filter('currency')(input, symbol || '$', fractionSize);
                     }
 
-                    if (format === "I") {
+                    if (format === 'I') {
                         return parseInt(input);
                     }
 
                     // default to decimal
-                    return $filter("number")(input, fractionSize);
+                    return $filter('number')(input, fractionSize);
                 };
             }
         ])
@@ -73,8 +73,8 @@
          * @description
          * `moment` is a filter to call format from moment or, if the input is a Date, call Angular's `date` filter.
          */
-        .filter("moment", [
-            "$filter", function ($filter) {
+        .filter('moment', [
+            '$filter', function ($filter) {
                 return function (input, format) {
                     if (angular.isObject(input)) {
                         if (angular.isFunction(moment) && input !== null && input instanceof moment) {

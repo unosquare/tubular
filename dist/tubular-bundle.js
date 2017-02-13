@@ -447,7 +447,7 @@ try {
                     return input.data.ExceptionMessage;
                 }
 
-                return input.statusText || "Connection Error";
+                return input.statusText || 'Connection Error';
             };
         })
         /**
@@ -458,21 +458,21 @@ try {
          * @description
          * `numberorcurrency` is a hack to hold `currency` and `number` in a single filter.
          */
-        .filter("numberorcurrency", [
-            "$filter", function ($filter) {
+        .filter('numberorcurrency', [
+            '$filter', function ($filter) {
                 return function (input, format, symbol, fractionSize) {
                     fractionSize = fractionSize || 2;
 
-                    if (format === "C") {
-                        return $filter("currency")(input, symbol || "$", fractionSize);
+                    if (format === 'C') {
+                        return $filter('currency')(input, symbol || '$', fractionSize);
                     }
 
-                    if (format === "I") {
+                    if (format === 'I') {
                         return parseInt(input);
                     }
 
                     // default to decimal
-                    return $filter("number")(input, fractionSize);
+                    return $filter('number')(input, fractionSize);
                 };
             }
         ])
@@ -484,8 +484,8 @@ try {
          * @description
          * `moment` is a filter to call format from moment or, if the input is a Date, call Angular's `date` filter.
          */
-        .filter("moment", [
-            "$filter", function ($filter) {
+        .filter('moment', [
+            '$filter', function ($filter) {
                 return function (input, format) {
                     if (angular.isObject(input)) {
                         if (angular.isFunction(moment) && input !== null && input instanceof moment) {
@@ -1394,10 +1394,10 @@ try {
             }
         ]);
 })(angular);
-(function(angular, moment) {
+(function (angular, tubularTemplate, moment) {
     'use strict';
 
-    var hasMoment = typeof moment == 'function';
+    var hasMoment = angular.isFunction(moment);
 
     if (hasMoment) {
         moment.fn.toJSON = function() { return this.format(); }
@@ -2265,7 +2265,7 @@ try {
                 }
             ]
         });
-})(window.angular, window.moment || null);
+})(angular, tubularTemplate, moment || null);
 (function(angular) {
     'use strict';
 
@@ -3058,7 +3058,7 @@ try {
                 printCss: '@',
                 caption: '@'
             },
-            controller: function() {
+            controller: ['$window', function($window) {
                 var $ctrl = this;
 
                 $ctrl.printGrid = function() {
@@ -3088,7 +3088,7 @@ try {
                             + '</tbody>'
                             + '</table>';
 
-                        var popup = window.open('about:blank', 'Print', 'menubar=0,location=0,height=500,width=800');
+                        var popup = $window.open('about:blank', 'Print', 'menubar=0,location=0,height=500,width=800');
                         popup.document.write('<link rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap/latest/css/bootstrap.min.css" />');
 
                         if ($ctrl.printCss !== '') {
@@ -3102,7 +3102,7 @@ try {
                         popup.document.close();
                     });
                 };
-            }
+            }]
         });
 })(angular);
 (function (angular) {
@@ -3273,7 +3273,7 @@ try {
                         obj.$addField(col.Name, value);
 
                         if (col.DataType === 'date' || col.DataType === 'datetime' || col.DataType === 'datetimeutc') {
-                            if (typeof moment == 'function') {
+                            if (angular.isFunction(moment)) {
                                 if (col.DataType === 'datetimeutc') {
                                     obj[col.Name] = moment.utc(obj[col.Name]);
                                 } else {
@@ -3523,7 +3523,7 @@ try {
 
             me.exportToCsv = function(filename, header, rows, visibility) {
                 var processRow = function(row) {
-                    if (typeof (row) === 'object') {
+                    if (angular.isObject(row)) {
                         row = Object.keys(row).map(function(key) { return row[key]; });
                     }
 
@@ -3590,7 +3590,7 @@ try {
                 me.getUniqueTbFormName = function() {
                     me.tbFormCounter = me.tbFormCounter || (me.tbFormCounter = -1);
                     me.tbFormCounter++;
-                    return "tbForm" + me.tbFormCounter;
+                    return 'tbForm' + me.tbFormCounter;
                 };
 
                 /**
@@ -3638,7 +3638,7 @@ try {
                         ctrl.state.$errors = [];
 
                         if ((angular.isUndefined(ctrl.value) && ctrl.required) ||
-                        (Object.prototype.toString.call(ctrl.value) === "[object Date]" && isNaN(ctrl.value.getTime()) && ctrl.required)) {
+                            (angular.isDate(ctrl.value) && isNaN(ctrl.value.getTime()) && ctrl.required)) {
                             ctrl.$valid = false;
                             ctrl.state.$errors = [$filter('translate')('EDITOR_REQUIRED')];
 
@@ -4000,7 +4000,7 @@ try {
                     }
 
                     if (angular.isString(request.requireAuthentication)) {
-                        request.requireAuthentication = request.requireAuthentication === "true";
+                        request.requireAuthentication = request.requireAuthentication === 'true';
                     }
 
                     if (!me.useRefreshTokens) {
@@ -4331,7 +4331,7 @@ try {
             };
         }]);
 })(angular);
-(function(angular) {
+(function (angular, tubularTemplate) {
     'use strict';
 
     angular.module('tubular.services')
@@ -4490,7 +4490,7 @@ try {
                     $ctrl.filter = {
                         Text: $ctrl.text || null,
                         Argument: $ctrl.argument ? [$ctrl.argument] : null,
-                        Operator: $ctrl.operator || "Contains",
+                        Operator: $ctrl.operator || 'Contains',
                         OptionsUrl: $ctrl.optionsUrl || null,
                         HasFilter: !($ctrl.text == null),
                         Name: $scope.$parent.$parent.column.Name
@@ -4597,7 +4597,7 @@ try {
 
             }
         ]);
-})(angular);
+})(angular, tubularTemplate);
 (function (angular) {
     'use strict';
 
@@ -4618,13 +4618,13 @@ try {
                 me.translationTable = {
                     'en': {
                         'EDITOR_REGEX_DOESNT_MATCH': "The field doesn't match the regular expression.",
-                        'EDITOR_REQUIRED': "The field is required.",
-                        'EDITOR_MIN_CHARS': "The field needs to be minimum {0} chars.",
-                        'EDITOR_MAX_CHARS': "The field needs to be maximum {0} chars.",
-                        'EDITOR_MIN_NUMBER': "The minimum number is {0}.",
-                        'EDITOR_MAX_NUMBER': "The maximum number is {0}.",
-                        'EDITOR_MIN_DATE': "The minimum date is {0}.",
-                        'EDITOR_MAX_DATE': "The maximum date is {0}.",
+                        'EDITOR_REQUIRED': 'The field is required.',
+                        'EDITOR_MIN_CHARS': 'The field needs to be minimum {0} chars.',
+                        'EDITOR_MAX_CHARS': 'The field needs to be maximum {0} chars.',
+                        'EDITOR_MIN_NUMBER': 'The minimum number is {0}.',
+                        'EDITOR_MAX_NUMBER': 'The maximum number is {0}.',
+                        'EDITOR_MIN_DATE': 'The minimum date is {0}.',
+                        'EDITOR_MAX_DATE': 'The maximum date is {0}.',
                         'EDITOR_MATCH': 'The field needs to match the {0} field.',
                         'CAPTION_APPLY': 'Apply',
                         'CAPTION_CLEAR': 'Clear',
@@ -4671,14 +4671,14 @@ try {
                         'OP_BETWEEN': 'Between'
                     },
                     'es': {
-                        'EDITOR_REGEX_DOESNT_MATCH': "El campo no es válido contra la expresión regular.",
-                        'EDITOR_REQUIRED': "El campo es requerido.",
-                        'EDITOR_MIN_CHARS': "El campo requiere mínimo {0} caracteres.",
-                        'EDITOR_MAX_CHARS': "El campo requiere máximo {0} caracteres.",
-                        'EDITOR_MIN_NUMBER': "El número mínimo es {0}.",
-                        'EDITOR_MAX_NUMBER': "El número maximo es {0}.",
-                        'EDITOR_MIN_DATE': "La fecha mínima es {0}.",
-                        'EDITOR_MAX_DATE': "La fecha máxima es {0}.",
+                        'EDITOR_REGEX_DOESNT_MATCH': 'El campo no es válido contra la expresión regular.',
+                        'EDITOR_REQUIRED': 'El campo es requerido.',
+                        'EDITOR_MIN_CHARS': 'El campo requiere mínimo {0} caracteres.',
+                        'EDITOR_MAX_CHARS': 'El campo requiere máximo {0} caracteres.',
+                        'EDITOR_MIN_NUMBER': 'El número mínimo es {0}.',
+                        'EDITOR_MAX_NUMBER': 'El número maximo es {0}.',
+                        'EDITOR_MIN_DATE': 'La fecha mínima es {0}.',
+                        'EDITOR_MAX_DATE': 'La fecha máxima es {0}.',
                         'EDITOR_MATCH': 'El campo debe de conincidir con el campo {0}.',
                         'CAPTION_APPLY': 'Aplicar',
                         'CAPTION_CLEAR': 'Limpiar',
@@ -4761,10 +4761,10 @@ try {
                     if (angular.isDefined(input)) {
                         var translation = tubularTranslate.translate(input);
 
-                        translation = translation.replace("{0}", param1 || '');
-                        translation = translation.replace("{1}", param2 || '');
-                        translation = translation.replace("{2}", param3 || '');
-                        translation = translation.replace("{3}", param4 || '');
+                        translation = translation.replace('{0}', param1 || '');
+                        translation = translation.replace('{1}', param2 || '');
+                        translation = translation.replace('{2}', param3 || '');
+                        translation = translation.replace('{3}', param4 || '');
 
                         return translation;
                     }

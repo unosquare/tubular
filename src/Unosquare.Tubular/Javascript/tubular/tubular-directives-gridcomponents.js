@@ -335,7 +335,7 @@
                 printCss: '@',
                 caption: '@'
             },
-            controller: function() {
+            controller: ['$window', function($window) {
                 var $ctrl = this;
 
                 $ctrl.printGrid = function() {
@@ -365,7 +365,7 @@
                             + '</tbody>'
                             + '</table>';
 
-                        var popup = window.open('about:blank', 'Print', 'menubar=0,location=0,height=500,width=800');
+                        var popup = $window.open('about:blank', 'Print', 'menubar=0,location=0,height=500,width=800');
                         popup.document.write('<link rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap/latest/css/bootstrap.min.css" />');
 
                         if ($ctrl.printCss !== '') {
@@ -379,6 +379,6 @@
                         popup.document.close();
                     });
                 };
-            }
+            }]
         });
 })(angular);
