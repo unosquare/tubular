@@ -57,15 +57,22 @@ $ npm install tubular --save
 
 You will need to reference the following JS libraries in order to use Tubular in your HTML:
 
-* <s>[jQuery](http://jquery.com/) - 2.1.4</s> jQuery is only needed in Tubular < 1.0.0
-* <s>[Twitter Bootstrap](http://getbootstrap.com/)</s> Bootstrap is only needed in Tubular < 1.0.0
+### Mandatory
+
 * [AngularJS (optionally Animate and Route)](https://angularjs.org/) - 1.5
 * [AngularJS UI Bootstrap](https://angular-ui.github.io/bootstrap/) - 2.1.2 with the Bootstrap CSS
-* [Moment.js](http://momentjs.com/) - This is optional, but we encourage to use it
+* [Moment.js](http://momentjs.com/) - 2.17
 * [AngularJS Local Storage](https://github.com/grevory/angular-local-storage)
 * [Font Awesome](http://fortawesome.github.io/Font-Awesome/)
 * [FileSaver.js](https://github.com/eligrey/FileSaver.js)
+
+### Optional
 * [Angular-filter](https://github.com/a8m/angular-filter) - Only if you need to use groupBy filter in tbGrid.
+
+### Deprecated
+
+* <s>[jQuery](http://jquery.com/) - 2.1.4</s> jQuery is only needed in Tubular < 1.0.0
+* <s>[Twitter Bootstrap](http://getbootstrap.com/)</s> Bootstrap is only needed in Tubular < 1.0.0
 
 Also, if you use the Visual Studio you will need the excellent <a href="http://vswebessentials.com/download" target="_blank">Web Essentials</a> if you are running VS2013 or [Bundler & Minifier](https://visualstudiogallery.msdn.microsoft.com/9ec27da7-e24b-4d56-8064-fd7e88ac1c40) plug-in for VS2015 in order to generate the Tubular bundles.
 

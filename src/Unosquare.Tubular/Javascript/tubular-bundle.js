@@ -1397,32 +1397,26 @@ try {
 (function (angular, tubularTemplate, moment) {
     'use strict';
 
-    var hasMoment = angular.isFunction(moment);
-
-    if (hasMoment) {
-        moment.fn.toJSON = function() { return this.format(); }
-    }
-
+    // Fix moment serialization
+    moment.fn.toJSON = function() { return this.format(); }
+    
     var changeValueFn = function($ctrl) {
         return function(val) {
             if (angular.isUndefined(val)) return;
 
             if (angular.isString(val)) {
-                $ctrl.value = hasMoment ? moment(val) : new Date(val);
+                $ctrl.value = moment(val);
             }
 
-            if (angular.isUndefined($ctrl.dateValue)) {
-                if (hasMoment) {
-                    if ($ctrl.value instanceof moment) {
-                        var tmpDate = $ctrl.value.toObject();
-                        $ctrl.dateValue = new Date(tmpDate.years, tmpDate.months, tmpDate.date, tmpDate.hours, tmpDate.minutes, tmpDate.seconds);
-                    } else {
-                        // NULL value
-                        $ctrl.dateValue = $ctrl.value;
-                    }
-                } else {
-                    $ctrl.dateValue = $ctrl.value;
-                }
+            if (angular.isDefined($ctrl.dateValue))
+                return;
+
+            if ($ctrl.value instanceof moment) {
+                var tmpDate = $ctrl.value.toObject();
+                $ctrl.dateValue = new Date(tmpDate.years, tmpDate.months, tmpDate.date, tmpDate.hours, tmpDate.minutes, tmpDate.seconds);
+            } else {
+                // NULL value
+                $ctrl.dateValue = $ctrl.value;
             }
         };
     };
@@ -1513,7 +1507,7 @@ try {
                 return $ctrl.dateValue;
             }, function (val) {
                 if (angular.isDefined(val)) {
-                    $ctrl.value = hasMoment ? moment(val) : new Date(val);
+                    $ctrl.value = moment(val);
                 }
             });
 
@@ -1549,7 +1543,7 @@ try {
 
                 tubular.setupScope($scope, $ctrl.format, $ctrl);
 
-                if (hasMoment && angular.isUndefined($ctrl.format)) {
+                if (angular.isUndefined($ctrl.format)) {
                     $ctrl.format = 'MMM D, Y';
                 }
             };
@@ -1565,7 +1559,7 @@ try {
                 return $ctrl.dateValue;
             }, function (val) {
                 if (angular.isDefined(val)) {
-                    $ctrl.value = hasMoment ? moment(val) : new Date(val);
+                    $ctrl.value = moment(val);
                 }
             });
 
@@ -1600,7 +1594,7 @@ try {
                 $ctrl.DataType = 'date';
                 tubular.setupScope($scope, $ctrl.format, $ctrl);
 
-                if (hasMoment && angular.isUndefined($ctrl.format)) {
+                if (angular.isUndefined($ctrl.format)) {
                     $ctrl.format = 'MMM D, Y';
                 }
             };
@@ -3273,28 +3267,7 @@ try {
                         obj.$addField(col.Name, value);
 
                         if (col.DataType === 'date' || col.DataType === 'datetime' || col.DataType === 'datetimeutc') {
-                            if (angular.isFunction(moment)) {
-                                if (col.DataType === 'datetimeutc') {
-                                    obj[col.Name] = moment.utc(obj[col.Name]);
-                                } else {
-                                    obj[col.Name] = moment(obj[col.Name]);
-                                }
-                            } else {
-                                if (!obj[col.Name]) {
-                                    obj[col.Name] = '';
-                                } else {
-                                    var timezone = new Date(Date.parse(obj[col.Name])).toString().match(/([-\+][0-9]+)\s/)[1];
-                                    timezone = timezone.substr(0, timezone.length - 2) + ':' + timezone.substr(timezone.length - 2, 2);
-                                    var tempDate = new Date(Date.parse(obj[col.Name].replace('Z', '') + timezone));
-
-                                    if (col.DataType === 'date') {
-                                        obj[col.Name] = new Date(tempDate.getFullYear(), tempDate.getMonth(), tempDate.getDate());
-                                    } else {
-                                        obj[col.Name] = new Date(tempDate.getFullYear(), tempDate.getMonth(), tempDate.getDate(),
-                                            tempDate.getHours(), tempDate.getMinutes(), tempDate.getSeconds(), 0);
-                                    }
-                                }
-                            }
+                            obj[col.Name] = col.DataType === 'datetimeutc' ? moment.utc(obj[col.Name]) : moment(obj[col.Name]);
                         }
 
                         if (col.IsKey) {
