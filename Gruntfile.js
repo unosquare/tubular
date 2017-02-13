@@ -105,7 +105,7 @@ module.exports = function(grunt) {
                 singleRun: false,
                 preprocessors: {
                 },
-                reporters: ['progress'],
+                reporters: ['progress']
             }
 
         }
