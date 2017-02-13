@@ -7,10 +7,7 @@
 
     function tubularLocalDataPager(filterFilter, orderByFilter) {
         return {
-            sort: sort,
-            filter: filter,
-            search: search,
-            format: format
+            page: page
         }
 
 
