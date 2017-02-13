@@ -5,6 +5,9 @@
     "angular/mocks" :  true
   },
   "plugins": [ "angular", "jasmine" ],
+  "globals": {
+    "moment" :  true
+  },
   "extends": [
     "eslint:recommended",
     "angular",
