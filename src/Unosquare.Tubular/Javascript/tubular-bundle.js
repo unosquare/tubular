@@ -489,7 +489,7 @@ try {
                 return function (input, format) {
                     if (angular.isObject(input)) {
                         if (angular.isFunction(moment) && input !== null && input instanceof moment) {
-                            return input.format(format);
+                            return input.format(format || 'M/DD/YYYY');
                         } else {
                             return $filter('date')(input);
                         }
@@ -3290,7 +3290,6 @@ try {
                     angular.forEach(obj.$state, function (val) {
                         if (angular.isUndefined(val) || val.$valid()) return;
 
-                        valid = false;
                         valid = false;
                     });
 
