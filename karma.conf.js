@@ -25,7 +25,6 @@ module.exports = function (config) {
           'bower_components/highchart-ng/dist/highcharts-ng.js',
           'bower_components/chart.js/dist/Chart.js',
           'bower_components/angular-chart.js/dist/angular-chart.js',
-          'Javascript/tubular/tubular-services-template.js',
           'Javascript/tubular/tubular-models.js',
           'Javascript/tubular/tubular-services.js',
           'Javascript/tubular/tubular-directives.js',

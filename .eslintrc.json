@@ -7,7 +7,6 @@
   "plugins": [ "angular", "jasmine" ],
   "globals": {
     "moment": true,
-    "tubularTemplate": true,
     "saveAs":  true 
   },
   "extends": [

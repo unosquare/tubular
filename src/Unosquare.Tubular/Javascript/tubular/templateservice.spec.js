@@ -119,20 +119,14 @@ describe('Module: tubular.services', function () {
     ];
 
     describe('Service: templateService', function () {
-        var columns, tubularTemplateServiceModule, sut;
+        var columns, tubularTemplateService;
 
-        beforeAll(function () {
+        beforeEach(function () {
             angular.module('ui.bootstrap', []);
             module('tubular.services');
-            module(function ($provide) {
-                tubularTemplateServiceModule = jasmine
-                    .createSpyObj('tubularTemplateServiceModule',
-                        ['get', 'getByKey', 'registerService', 'retrieveDataAsync']);
-                $provide.value('tubularTemplateServiceModule', tubularTemplateServiceModule);
-                columns = tubularTemplateServiceModule.createColumns(models);
-            });
             inject(function ($injector) {
-                sut = $injector.get('tubularTemplateServiceModule');
+                tubularTemplateService = $injector.get('tubularTemplateService');
+                columns = tubularTemplateService.createColumns(models);
             });
         });
 
@@ -148,7 +142,7 @@ describe('Module: tubular.services', function () {
         });
 
         describe('Method: generateFieldsArray', function () {
-            var fields = tubularTemplateServiceModule.generateFieldsArray(columns);
+            var fields = tubularTemplateService.generateFieldsArray(columns);
 
             it('should return an array with 7 elements', function () {
                 expect(fields).not.toBe([]);
@@ -164,7 +158,7 @@ describe('Module: tubular.services', function () {
 
         describe('Method: generatePopup', function () {
             it('should html match', function () {
-                var htmlOutput = tubularTemplateServiceModule.generatePopup(models, 'TEST');
+                var htmlOutput = tubularTemplateService.generatePopup(models, 'TEST');
                 var expectedString = '<tb-form model="Model">' +
                     '<div class="modal-header"><h3 class="modal-title">TEST</h3></div>' +
                     '<div class="modal-body">' +
@@ -186,34 +180,34 @@ describe('Module: tubular.services', function () {
         describe('Method: getEditorTypeByDateType', function () {
             it('should be tbDateTimeEditor', function () {
                 expect('tbDateTimeEditor')
-                    .toMatch(tubularTemplateServiceModule.getEditorTypeByDateType('date'));
+                    .toMatch(tubularTemplateService.getEditorTypeByDateType('date'));
             });
 
             it('should be tbNumericEditor', function () {
                 expect('tbNumericEditor')
-                    .toMatch(tubularTemplateServiceModule.getEditorTypeByDateType('numeric'));
+                    .toMatch(tubularTemplateService.getEditorTypeByDateType('numeric'));
             });
 
             it('should be tbCheckboxField', function () {
                 expect('tbCheckboxField')
-                    .toMatch(tubularTemplateServiceModule.getEditorTypeByDateType('boolean'));
+                    .toMatch(tubularTemplateService.getEditorTypeByDateType('boolean'));
             });
 
             it('should be tbSimpleEditor', function () {
-                expect('tbSimpleEditor').toMatch(tubularTemplateServiceModule.getEditorTypeByDateType(''));
+                expect('tbSimpleEditor').toMatch(tubularTemplateService.getEditorTypeByDateType(''));
             });
         });
 
         describe('Method: generateForm', function () {
-            var htmlOutput = tubularTemplateServiceModule
-                .generateForm(columns, tubularTemplateServiceModule.defaults.formOptions);
+            var htmlOutput = tubularTemplateService
+                .generateForm(columns, tubularTemplateService.defaults.formOptions);
 
-            var options = tubularTemplateServiceModule.defaults.formOptions;
+            var options = tubularTemplateService.defaults.formOptions;
             options.Layout = 'Two-columns';
-            var htmlOutputTwoCol = tubularTemplateServiceModule.generateForm(columns, options);
+            var htmlOutputTwoCol = tubularTemplateService.generateForm(columns, options);
 
             options.Layout = 'Three-columns';
-            var htmlOutputThreeCol = tubularTemplateServiceModule.generateForm(columns, options);
+            var htmlOutputThreeCol = tubularTemplateService.generateForm(columns, options);
 
             it('should single layout html match', function () {
                 var expectedString =
@@ -248,15 +242,15 @@ describe('Module: tubular.services', function () {
 
         describe('Method: generateCells', function () {
             it('should html match', function () {
-                var htmlOutput = tubularTemplateServiceModule.generateCells(columns, 'Inline');
+                var htmlOutput = tubularTemplateService.generateCells(columns, 'Inline');
                 expect(htmlOutput === genCells).toBe(true);
             });
         });
 
         describe('Method: generateGrid', function () {
             it('should html match', function () {
-                var htmlOutput = tubularTemplateServiceModule
-                    .generateGrid(columns, tubularTemplateServiceModule.defaults.gridOptions);
+                var htmlOutput = tubularTemplateService
+                    .generateGrid(columns, tubularTemplateService.defaults.gridOptions);
 
                 var expectedString =
                     '<div class="container">\r\n<tb-grid server-url="undefined" request-method="GET" class="row" page-size="10" require-authentication="false" >\r\n\t<div class="row">\r\n\t<tb-grid-pager class="col-md-6"></tb-grid-pager>\r\n\t<div class="col-md-3">\r\n\t\t<div class="btn-group">\r\n\t\t<tb-print-button title="Tubular"></tb-print-button>\r\n\t\t<tb-export-button filename="tubular.csv" css="btn-sm"></tb-export-button>\r\n\t\t</div>\r\n\t</div>\r\n\t<tb-text-search class="col-md-3" css="input-sm"></tb-text-search>\r\n\t</div>\r\n\t<div class="row">\r\n\t<div class="col-md-12">\r\n\t<div class="panel panel-default panel-rounded">\r\n\t<tb-grid-table class="table-bordered">\r\n\t<tb-column-definitions>\r\n\t\t<tb-column name="Id" label="Id" column-type="numeric" sortable="true" \r\n\t\t\tis-key="true" searchable="false" \r\n\t\t\tsort-direction="Ascending" sort-order="1" visible="true">\r\n\t\t\t<tb-column-filter></tb-column-filter>\r\n\t\t\t<tb-column-header>{{label}}</tb-column-header>\r\n\t\t</tb-column>\r\n\t\t<tb-column name="Name" label="Name" column-type="string" sortable="true" \r\n\t\t\tis-key="false" searchable="true" \r\n\t\t\tsort-direction="" sort-order="0" visible="true">\r\n\t\t\t<tb-column-filter></tb-column-filter>\r\n\t\t\t<tb-column-header>{{label}}</tb-column-header>\r\n\t\t</tb-column>\r\n\t\t<tb-column name="Company" label="Company" column-type="string" sortable="true" \r\n\t\t\tis-key="false" searchable="true" \r\n\t\t\tsort-direction="" sort-order="0" visible="true">\r\n\t\t\t<tb-column-filter></tb-column-filter>\r\n\t\t\t<tb-column-header>{{label}}</tb-column-header>\r\n\t\t</tb-column>\r\n\t\t<tb-column name="Email" label="Email" column-type="string" sortable="true" \r\n\t\t\tis-key="false" searchable="true" \r\n\t\t\tsort-direction="" sort-order="0" visible="true">\r\n\t\t\t<tb-column-filter></tb-column-filter>\r\n\t\t\t<tb-column-header>{{label}}</tb-column-header>\r\n\t\t</tb-column>\r\n\t\t<tb-column name="Phone" label="Phone" column-type="string" sortable="true" \r\n\t\t\tis-key="false" searchable="true" \r\n\t\t\tsort-direction="" sort-order="0" visible="true">\r\n\t\t\t<tb-column-filter></tb-column-filter>\r\n\t\t\t<tb-column-header>{{label}}</tb-column-header>\r\n\t\t</tb-column>\r\n\t\t<tb-column name="Birthday" label="Birthday" column-type="date" sortable="true" \r\n\t\t\tis-key="false" searchable="false" \r\n\t\t\tsort-direction="" sort-order="0" visible="true">\r\n\t\t\t<tb-column-filter></tb-column-filter>\r\n\t\t\t<tb-column-header>{{label}}</tb-column-header>\r\n\t\t</tb-column>\r\n\t\t<tb-column name="IsOwner" label="Is Owner" column-type="boolean" sortable="true" \r\n\t\t\tis-key="false" searchable="false" \r\n\t\t\tsort-direction="" sort-order="0" visible="true">\r\n\t\t\t<tb-column-filter></tb-column-filter>\r\n\t\t\t<tb-column-header>{{label}}</tb-column-header>\r\n\t\t</tb-column>\r\n\t</tb-column-definitions>\r\n\t<tb-row-set>\r\n\t<tb-row-template ng-repeat="row in $component.rows" row-model="row">\r\n\t\t<tb-cell-template column-name="Id">\r\n\t\t\t{{row.Id | number}}\r\n\t\t</tb-cell-template>\r\n\t\t<tb-cell-template column-name="Name">\r\n\t\t\t{{row.Name}}\r\n\t\t</tb-cell-template>\r\n\t\t<tb-cell-template column-name="Company">\r\n\t\t\t{{row.Company}}\r\n\t\t</tb-cell-template>\r\n\t\t<tb-cell-template column-name="Email">\r\n\t\t\t<a href="mailto:{{row.Email}}">{{row.Email}}</a>\r\n\t\t</tb-cell-template>\r\n\t\t<tb-cell-template column-name="Phone">\r\n\t\t\t{{row.Phone}}\r\n\t\t</tb-cell-template>\r\n\t\t<tb-cell-template column-name="Birthday">\r\n\t\t\t{{row.Birthday | date}}\r\n\t\t</tb-cell-template>\r\n\t\t<tb-cell-template column-name="IsOwner">\r\n\t\t\t{{row.IsOwner ? "TRUE" : "FALSE" }}\r\n\t\t</tb-cell-template>\r\n\t</tb-row-template>\r\n\t</tb-row-set>\r\n\t</tb-grid-table>\r\n\t</div>\r\n\t</div>\r\n\t</div>\r\n\t<div class="row">\r\n\t<tb-grid-pager class="col-md-6"></tb-grid-pager>\r\n\t<tb-page-size-selector class="col-md-3" selectorcss="input-sm"></tb-page-size-selector>\r\n\t<tb-grid-pager-info class="col-md-3"></tb-grid-pager-info>\r\n\t</div>\r\n</tb-grid>\r\n</div>';

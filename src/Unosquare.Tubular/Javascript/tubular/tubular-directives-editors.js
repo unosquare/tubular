@@ -1,10 +1,20 @@
-(function (angular, tubularTemplate, moment) {
+(function (angular, moment) {
     'use strict';
 
     // Fix moment serialization
     moment.fn.toJSON = function() { return this.format(); }
     
-    var changeValueFn = function($ctrl) {
+    function canUseHtml5Date() {
+        var input = document.createElement('input');
+        input.setAttribute('type', 'date');
+
+        var notADateValue = 'not-a-date';
+        input.setAttribute('value', notADateValue);
+
+        return input.value !== notADateValue;
+    }
+
+    function changeValueFn($ctrl) {
         return function(val) {
             if (angular.isUndefined(val)) return;
 
@@ -441,7 +451,7 @@
             template: '<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">' +
                 '<span ng-hide="$ctrl.isEditing">{{ $ctrl.value | date: format }}</span>' +
                 '<label ng-show="$ctrl.showLabel" ng-bind="$ctrl.label"></label>' +
-                (tubularTemplate.canUseHtml5Date() ?
+                (canUseHtml5Date() ?
                     '<input type="datetime-local" ng-show="$ctrl.isEditing" ng-model="$ctrl.dateValue" class="form-control" ' +
                     'ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}"/>' :
                     '<div class="input-group" ng-show="$ctrl.isEditing">' +
@@ -500,7 +510,7 @@
             template: '<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">' +
                 '<span ng-hide="$ctrl.isEditing">{{ $ctrl.value | moment: $ctrl.format }}</span>' +
                 '<label ng-show="$ctrl.showLabel" ng-bind="$ctrl.label"></label>' +
-                (tubularTemplate.canUseHtml5Date() ?
+                (canUseHtml5Date() ?
                     '<input type="date" ng-show="$ctrl.isEditing" ng-model="$ctrl.dateValue" class="form-control" ' +
                     'ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}"/>' : 
                     '<div class="input-group" ng-show="$ctrl.isEditing">' +
@@ -863,4 +873,4 @@
                 }
             ]
         });
-})(angular, tubularTemplate, moment);
+})(angular, moment);

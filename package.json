@@ -28,9 +28,9 @@
   ],
   "license": "MIT",
   "homepage": "http://unosquare.github.io/tubular",
-  "main": "dist/node-module.js",
+  "main": "dist/tubular-bundle.js",
   "files": [
-    "dist/node-module.js"
+    "dist/tubular-bundle.js"
   ],
   "dependencies": {},
   "devDependencies": {
