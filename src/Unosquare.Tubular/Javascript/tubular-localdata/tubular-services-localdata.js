@@ -18,8 +18,8 @@
 
     
     function registerAsLocal(tubularHttp, tubularLocalData) {
-                // register data services
-          tubularHttp.registerService('local', tubularLocalData);
+        // register data services
+        tubularHttp.registerService('local', tubularLocalData);
     }
 
     function tubularLocalData(tubularHttp, $q, $log, pager) {
@@ -28,9 +28,7 @@
             getByKey: tubularHttp.getByKey,
             get : tubularHttp.get,
             retrieveDataAsync: retrieveDataAsync
-
         }
-        
 
         function retrieveDataAsync(request) {
             request.requireAuthentication = false;
@@ -47,7 +45,7 @@
         }
 
         function getPromise(request) {
-            return $q.resolve(getData(request)).then(function gotData(data) {
+            return $q.resolve(getData(request)).then(function(data) {
                 return pageRequest(request, data);
             });
         }
@@ -59,7 +57,6 @@
         function dataFromHttp(request) {
             return tubularHttp.retrieveDataAsync(request).promise;
         }
-
 
         function dataFromUrl(request){
             if (request.serverUrl.indexOf('data:') !== 0)
@@ -75,6 +72,4 @@
             return pager.page(request, data);
         }
     }
-
-
 })(angular);
