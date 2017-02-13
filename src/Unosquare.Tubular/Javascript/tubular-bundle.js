@@ -3612,8 +3612,7 @@ try {
                     ctrl.getFormField = function() {
                         var parent = scope.$parent;
 
-                        while (true) {
-                            if (parent == null) break;
+                        while (parent != null) {
                             if (angular.isDefined(parent.tubularDirective) && parent.tubularDirective === 'tubular-form') {
                                 var formScope = parent.getFormScope();
 
@@ -3697,8 +3696,7 @@ try {
                     var parent = scope.$parent;
 
                     // We try to find a Tubular Form in the parents
-                    while (true) {
-                        if (parent == null) break;
+                    while (parent != null) {
                         if (angular.isDefined(parent.tubularDirective) &&
                         (parent.tubularDirective === 'tubular-form' ||
                             parent.tubularDirective === 'tubular-rowset')) {
@@ -3720,7 +3718,7 @@ try {
 
                                 if (angular.equals(ctrl.value, parent.model[scope.Name]) === false) {
                                     if (angular.isDefined(parent.model[scope.Name])) {
-                                        if (ctrl.DataType === 'date' && parent.model[scope.Name] != null && typeof parent.model[scope.Name] === 'string') {
+                                        if (ctrl.DataType === 'date' && parent.model[scope.Name] != null && angular.isString(parent.model[scope.Name])) {
                                             // TODO: Include MomentJS
                                             var timezone = new Date(Date.parse(parent.model[scope.Name])).toString().match(/([-\+][0-9]+)\s/)[1];
                                             timezone = timezone.substr(0, timezone.length - 2) + ':' + timezone.substr(timezone.length - 2, 2);
@@ -3808,8 +3806,8 @@ try {
          * This service provides authentication using bearer-tokens. Based on https://bitbucket.org/david.antaramian/so-21662778-spa-authentication-example
          */
         .service('tubularHttp', [
-            '$http', '$timeout', '$q', '$cacheFactory', 'localStorageService', '$filter',
-            function ($http, $timeout, $q, $cacheFactory, localStorageService, $filter) {
+            '$http', '$timeout', '$q', '$cacheFactory', 'localStorageService', '$filter', '$log', '$document',
+            function ($http, $timeout, $q, $cacheFactory, localStorageService, $filter, $log, $document) {
                 var me = this;
 
                 function isAuthenticationExpired(expirationDate) {
@@ -3986,7 +3984,7 @@ try {
 
                 me.getCancel = function (canceller) {
                     return function (reason) {
-                        console.error(reason);
+                        $log.error(reason);
                         canceller.resolve(reason);
                     }
                 };
@@ -4054,7 +4052,7 @@ try {
                             me.removeAuthentication();
 
                             // Let's trigger a refresh
-                            document.location = document.location;
+                            $document.location = $document.location;
                         }
                         return $q.reject(error);
                     });
