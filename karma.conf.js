@@ -36,7 +36,8 @@ module.exports = function (config) {
         // list of files to exclude
         exclude: [
            '*.min.js',
-           '*bundle.js'
+           '*bundle.js',
+           '*.run.js'
         ],
 
         // preprocess matching files before serving them to the browser

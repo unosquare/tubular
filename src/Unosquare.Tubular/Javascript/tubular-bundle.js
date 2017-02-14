@@ -3019,7 +3019,7 @@
      * Tubular Services module. 
      * It contains common services like HTTP client, filtering and printing services.
      */
-    angular.module('tubular.services', ['ui.bootstrap'])
+    angular.module('tubular.services', ['ui.bootstrap', 'LocalStorageModule'])
         /**
          * @ngdoc factory
          * @name tubularPopupService

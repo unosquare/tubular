@@ -46,7 +46,8 @@
   {
     "outputFileName": "Javascript/tubular-odata-bundle.js",
     "inputFiles": [
-      "Javascript/tubular-odata/tubular-services-odata.js"
+      "Javascript/tubular-odata/tubular-services-odata.js",
+      "Javascript/tubular-odata/tubular-services-odata.run.js"
     ],
     "sourceMap": false
   },
@@ -55,7 +56,8 @@
     "inputFiles": [
       "Javascript/tubular-localdata/tubular-services-localdatabase64.js",
       "Javascript/tubular-localdata/tubular-services-localdatapager.js",
-      "Javascript/tubular-localdata/tubular-services-localdata.js"
+      "Javascript/tubular-localdata/tubular-services-localdata.js",
+      "Javascript/tubular-localdata/tubular-services-localdata.run.js"
     ],
     "sourceMap": false
   }

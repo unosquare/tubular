@@ -5,7 +5,7 @@ describe('Module: tubular.services', function () {
         var sut, tubularHttp, pager, localDataBase64;
 
         beforeEach(function () {
-            angular.module('ui.bootstrap', []);
+           // angular.module('ui.bootstrap', []);
             module('tubular.services');
             module(function ($provide) {
                 tubularHttp = jasmine.createSpyObj('tubularHttp', ['get', 'getByKey', 'registerService', 'retrieveDataAsync']);

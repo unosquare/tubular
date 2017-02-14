@@ -10,17 +10,7 @@
          * Use `tubularLocalData` to connect a grid or a form to a local JSON file. This file can be 
          * stored in a BLOB as a BASE64 string.
          */
-        .factory('tubularLocalData', tubularLocalData)
-        .run(registerAsLocal);
-
-    registerAsLocal.$inject = ['tubularHttp', 'tubularLocalData'];
-    tubularLocalData.$inject = ['tubularHttp', '$q', '$log', 'tubularLocalDataPager', 'tubularLocalDataBase64'];
-
-    
-    function registerAsLocal(tubularHttp, tubularLocalData) {
-        // register data services
-        tubularHttp.registerService('local', tubularLocalData);
-    }
+        .factory('tubularLocalData', ['tubularHttp', '$q', '$log', 'tubularLocalDataPager', 'tubularLocalDataBase64',tubularLocalData])
 
     function tubularLocalData(tubularHttp, $q, $log, pager, localDataBase64) {
 

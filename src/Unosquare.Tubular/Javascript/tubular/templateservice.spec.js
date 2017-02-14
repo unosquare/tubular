@@ -122,12 +122,10 @@ describe('Module: tubular.services', function () {
         var columns, tubularTemplateService;
 
         beforeEach(function () {
-            angular.module('ui.bootstrap', []);
-            module('tubular.services', function ($provide) {
-                $provide.value('tubularHttp', jasmine.createSpyObj('tubularHttp', ['registerService']));
-            });
-            inject(function ($injector) {
-                tubularTemplateService = $injector.get('tubularTemplateService');
+            //angular.module('ui.bootstrap', []);
+            module('tubular.services');
+            inject(function (_tubularTemplateService_) {
+                tubularTemplateService = _tubularTemplateService_;
                 columns = tubularTemplateService.createColumns(models);
             });
         });

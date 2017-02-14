@@ -135,11 +135,5 @@
                 };
             }
         ])
-        .run([
-            'tubularHttp', 'tubularOData',
-            function (tubularHttp, tubularOData) {
-                // register data services
-                tubularHttp.registerService('odata', tubularOData);
-            }
-        ]);
+
 })(angular);
