@@ -37,7 +37,6 @@
     "angular-local-storage": "0.5.2",
     "font-awesome": "latest",
     "highchart-ng": "~0.0.13",
-    "chart.js": "2.5.0",
     "angular-chart.js": "1.1.1",
     "awesome-bootstrap-checkbox": "0.3.7",
     "moment": "2.17.1"
