@@ -3090,24 +3090,28 @@
          */
         .factory('tubularEditorService', [
             'translatefilter', function (translateFilter) {
-                
+                var tbFormCounter = -1;
+
                 return {
                     isValid: isValid,
                     setupScope: setupScope,
                     getUniqueTbFormName: getUniqueTbFormName
+                    
 
                 }
 
-                function isValid(value) { return !(!value); };
+                function isValid(value) {
+                    return !(!value);
+                }
 
                 /**
                 * Simple helper to generate a unique name for Tubular Forms
                 */
                 function getUniqueTbFormName() {
-                    me.tbFormCounter = me.tbFormCounter || (me.tbFormCounter = -1);
-                    me.tbFormCounter++;
-                    return 'tbForm' + me.tbFormCounter;
-                };
+                    tbFormCounter = tbFormCounter || (tbFormCounter = -1);
+                    tbFormCounter++;
+                    return 'tbForm' + tbFormCounter;
+                }
 
                 /**
                  * Setups a new Editor, this functions is like a common class constructor to be used
@@ -3307,7 +3311,7 @@
                     }
                 };
             }
-        ]);
+        ])
 
 
     function getColumns(gridScope) {
@@ -3921,14 +3925,15 @@
             '$templateCache', function ($templateCache) {
                 var me = this;
 
-                me.canUseHtml5Date = function(){
-                    var input = document.createElement('input');
-                    input.setAttribute('type', 'date');
-
+                me.canUseHtml5Date = function () {
                     var notADateValue = 'not-a-date';
-                    input.setAttribute('value', notADateValue);
+                    var input = angular.element('<input type="date" value="'+ notADateValue + '" />');
+                    //input.setAttribute('type', 'date');
 
-                    return input.value !== notADateValue;
+                   
+                    //input.setAttribute('value', notADateValue);
+
+                    return input.attr('value') !== notADateValue;
                 };
 
                 me.enums = {
