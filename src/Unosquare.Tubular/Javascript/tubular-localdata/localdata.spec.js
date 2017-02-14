@@ -129,7 +129,7 @@ describe('Module: tubular.services', function () {
 
 
                 it('should cancel with correct reason', function (done) {
-                    var reason = "cancelling";
+                    var reason = 'cancelling';
 
                     call().cancel(reason).then(function (data) {
                         expect(data).toBe(reason);
@@ -145,7 +145,7 @@ describe('Module: tubular.services', function () {
             describe('url starts with data', function () {
 
                 beforeEach(function () {
-                    request.serverUrl = "data://";
+                    request.serverUrl = 'data://';
                 })
                 it('should get data from base64', function () {
 
@@ -184,7 +184,7 @@ describe('Module: tubular.services', function () {
 
 
                 it('should cancel with correct reason', function (done) {
-                    var reason = "cancelling";
+                    var reason = 'cancelling';
 
                     call().cancel(reason).then(function (data) {
                         expect(data).toBe(reason);

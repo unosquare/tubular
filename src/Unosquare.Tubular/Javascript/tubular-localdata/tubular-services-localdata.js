@@ -10,9 +10,7 @@
          * Use `tubularLocalData` to connect a grid or a form to a local JSON file. This file can be 
          * stored in a BLOB as a BASE64 string.
          */
-        .factory('tubularLocalData', ['tubularHttp', '$q', '$log', 'tubularLocalDataPager', 'tubularLocalDataBase64',tubularLocalData])
-
-    function tubularLocalData(tubularHttp, $q, $log, pager, localDataBase64) {
+        .factory('tubularLocalData', ['tubularHttp', '$q', '$log', 'tubularLocalDataPager', 'tubularLocalDataBase64',function tubularLocalData(tubularHttp, $q, $log, pager, localDataBase64) {
 
         return {
             getByKey: tubularHttp.getByKey,
@@ -56,5 +54,5 @@
         function pageRequest(request, data) {
             return pager.page(request, data);
         }
-    }
+    }])
 })(angular);

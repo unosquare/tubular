@@ -17,6 +17,10 @@
   "rules": {
     "quotes": [ 2, "single" ],
     "angular/on-watch": "warn",
-    "angular/di": [ 2, "array" ]
+    "angular/di": [
+      2,
+      "array",
+      { "matchNames": false }
+    ]
   }
 }
