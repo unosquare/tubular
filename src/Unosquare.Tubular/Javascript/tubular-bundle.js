@@ -770,7 +770,7 @@
                     template: '<span><a title="Click to sort. Press Ctrl to sort by multiple columns" class="column-header" href ng-click="sortColumn($event)">' +
                         '<span class="column-header-default">{{ $parent.column.Label }}</span>' +
                         '<ng-transclude></ng-transclude></a> ' +
-                        '<i class="fa sort-icon" ng-class="' + '{"fa-long-arrow-up": $parent.column.SortDirection == "Ascending", "fa-long-arrow-down": $parent.column.SortDirection == "Descending"}' + '">&nbsp;</i>' +
+                        '<i class="fa sort-icon" ng-class="{\'fa-long-arrow-up\': $parent.column.SortDirection == \'Ascending\', \'fa-long-arrow-down\': $parent.column.SortDirection == \'Descending\'}">&nbsp;</i>' +
                         '</span>',
                     restrict: 'E',
                     replace: true,
