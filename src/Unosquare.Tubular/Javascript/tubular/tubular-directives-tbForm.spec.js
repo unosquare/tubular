@@ -46,6 +46,15 @@ describe('Module: tubular.directives', function () {
 
         })
 
+        it('should raise OnGreetParentController', function (done) {
+
+            scope.$on('tbForm_OnGreetParentController', function (_scope) {
+                expect(isolated).toBe(_scope);
+                done();
+            })
+
+        })
+
 
        
 

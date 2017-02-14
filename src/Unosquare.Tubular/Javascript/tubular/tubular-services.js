@@ -1,64 +1,7 @@
 ﻿(function(angular, saveAs) {
     'use strict';
 
-    function getColumns(gridScope) {
-        return gridScope.columns.map(function (c) { return c.Label; });
-    }
-
-    function getColumnsVisibility(gridScope) {
-        return gridScope.columns
-            .map(function (c) { return c.Visible; });
-    }
-
-    function exportToCsv(filename, header, rows, visibility) {
-        var processRow = function (row) {
-            if (angular.isObject(row)) {
-                row = Object.keys(row).map(function (key) { return row[key]; });
-            }
-
-            var finalVal = '';
-            for (var j = 0; j < row.length; j++) {
-                if (!visibility[j]) {
-                    continue;
-                }
-
-                var innerValue = row[j] == null ? '' : row[j].toString();
-
-                if (row[j] instanceof Date) {
-                    innerValue = row[j].toLocaleString();
-                }
-
-                var result = innerValue.replace(/"/g, '""');
-
-                if (result.search(/("|,|\n)/g) >= 0) {
-                    result = '"' + result + '"';
-                }
-
-                if (j > 0) {
-                    finalVal += ',';
-                }
-
-                finalVal += result;
-            }
-            return finalVal + '\n';
-        };
-
-        var csvFile = '';
-
-        if (header.length > 0) {
-            csvFile += processRow(header);
-        }
-
-        for (var i = 0; i < rows.length; i++) {
-            csvFile += processRow(rows[i]);
-        }
-
-        // Add "\uFEFF" (UTF-8 BOM)
-        var blob = new Blob(['\uFEFF' + csvFile], { type: 'text/csv;charset=utf-8;' });
-        saveAs(blob, filename);
-    }
-
-    /**
+     /**
      * @ngdoc module
      * @name tubular.services
      * 
@@ -198,16 +141,22 @@
          * @description
          * The `tubularEditorService` service is a internal helper to setup any `TubularModel` with a UI.
          */
-        .service('tubularEditorService', [
-            '$filter', function($filter) {
-                var me = this;
+        .factory('tubularEditorService', [
+            'translatefilter', function (translateFilter) {
+                
+                return {
+                    isValid: isValid,
+                    setupScope: setupScope,
+                    getUniqueTbFormName: getUniqueTbFormName
 
-                me.isValid = function(value) { return !(!value); };
+                }
+
+                function isValid(value) { return !(!value); };
 
                 /**
                 * Simple helper to generate a unique name for Tubular Forms
                 */
-                me.getUniqueTbFormName = function() {
+                function getUniqueTbFormName() {
                     me.tbFormCounter = me.tbFormCounter || (me.tbFormCounter = -1);
                     me.tbFormCounter++;
                     return 'tbForm' + me.tbFormCounter;
@@ -217,7 +166,7 @@
                  * Setups a new Editor, this functions is like a common class constructor to be used
                  * with all the tubularEditors.
                  */
-                me.setupScope = function(scope, defaultFormat, ctrl, setDirty) {
+                function setupScope(scope, defaultFormat, ctrl, setDirty) {
                     if (angular.isUndefined(ctrl)) {
                         ctrl = scope;
                     }
@@ -261,7 +210,7 @@
                         if ((angular.isUndefined(ctrl.value) && ctrl.required) ||
                             (angular.isDate(ctrl.value) && isNaN(ctrl.value.getTime()) && ctrl.required)) {
                             ctrl.$valid = false;
-                            ctrl.state.$errors = [$filter('translate')('EDITOR_REQUIRED')];
+                            ctrl.state.$errors = [translateFilter('EDITOR_REQUIRED')];
 
                             if (angular.isDefined(scope.$parent.Model)) {
                                 scope.$parent.Model.$state[scope.Name] = ctrl.state;
@@ -412,4 +361,62 @@
                 };
             }
         ]);
+
+
+    function getColumns(gridScope) {
+        return gridScope.columns.map(function (c) { return c.Label; });
+    }
+
+    function getColumnsVisibility(gridScope) {
+        return gridScope.columns
+            .map(function (c) { return c.Visible; });
+    }
+
+    function exportToCsv(filename, header, rows, visibility) {
+        var processRow = function (row) {
+            if (angular.isObject(row)) {
+                row = Object.keys(row).map(function (key) { return row[key]; });
+            }
+
+            var finalVal = '';
+            for (var j = 0; j < row.length; j++) {
+                if (!visibility[j]) {
+                    continue;
+                }
+
+                var innerValue = row[j] == null ? '' : row[j].toString();
+
+                if (row[j] instanceof Date) {
+                    innerValue = row[j].toLocaleString();
+                }
+
+                var result = innerValue.replace(/"/g, '""');
+
+                if (result.search(/("|,|\n)/g) >= 0) {
+                    result = '"' + result + '"';
+                }
+
+                if (j > 0) {
+                    finalVal += ',';
+                }
+
+                finalVal += result;
+            }
+            return finalVal + '\n';
+        };
+
+        var csvFile = '';
+
+        if (header.length > 0) {
+            csvFile += processRow(header);
+        }
+
+        for (var i = 0; i < rows.length; i++) {
+            csvFile += processRow(rows[i]);
+        }
+
+        // Add "\uFEFF" (UTF-8 BOM)
+        var blob = new Blob(['\uFEFF' + csvFile], { type: 'text/csv;charset=utf-8;' });
+        saveAs(blob, filename);
+    }
 })(angular, saveAs);

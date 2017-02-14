@@ -11,8 +11,7 @@
   },
   "extends": [
     "eslint:recommended",
-    "angular",
-    "plugin:jasmine/recommended"
+    "angular"
   ],
   "rules": {
     "quotes": [ 2, "single" ],

@@ -91,7 +91,7 @@ module.exports = function(grunt) {
                 outputFile: 'report/eslint/index.html',
                 silent: true
             },
-            src: ["src/Unosquare.Tubular/Javascript/tubular**/**.js"]
+            src: ["src/Unosquare.Tubular/Javascript/tubular**/**.js",  '!src/**/*.spec.js']
         },
         karma: {
             options: {
