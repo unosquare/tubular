@@ -3927,12 +3927,8 @@
 
                 me.canUseHtml5Date = function () {
                     var notADateValue = 'not-a-date';
-                    var input = angular.element('<input type="date" value="'+ notADateValue + '" />');
-                    //input.setAttribute('type', 'date');
-
-                   
-                    //input.setAttribute('value', notADateValue);
-
+                    var input = angular.element('<input type="date" />');
+                    input.attr('value', notADateValue);
                     return input.attr('value') !== notADateValue;
                 };
 
