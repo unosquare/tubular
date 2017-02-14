@@ -806,8 +806,10 @@ describe('tbForm related components', function () {
             var errorPresent = false;
 
             tbSimpleEditor_input.clear().then(function () {
-                tbSimpleEditor_input.sendKeys('1Unos', function () {
+                tbSimpleEditor_input.sendKeys('1Unos').then(function () {
+
                     tbSimpleEditor_errorMessages.getText().then(function (errorsArray) {
+
                         errorsArray.forEach(function (val) {
                             if (val == 'Check regex') {
                                 errorPresent = true;
