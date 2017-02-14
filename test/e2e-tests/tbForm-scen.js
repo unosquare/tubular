@@ -658,7 +658,7 @@ describe('tbForm related components', function () {
                         // Click button
                         tbTypeaheadEditor.$('span.input-group-btn button.btn-default i.fa.fa-times').click().then(function () {
                             tbTypeaheadEditor_input.getAttribute('value').then(function (value) {
-                                var x = value ? true : false;
+                                var x = value ? 'true' : 'false';
                                 tbTypeaheadEditor_input.sendKeys(x).then(function () {
                                     expect(tbTypeaheadEditor_input.getAttribute('value')).toMatch('false');
                                 });
