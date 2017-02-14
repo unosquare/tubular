@@ -533,7 +533,7 @@ describe('tbForm related components', function () {
         it('should be invalidated when the date is not in the range of "min" and "max" attributes', function () {
             var errorPresent = false;
             var messageCount;
-            tbDateEditor_input.sendKeys("").then(function () {
+            tbDateEditor_input.clear().then(function () {
                 // input  an invalid < min date
                 tbDateEditor_input.sendKeys("02/20/2015").then(function () {
                     tbDateEditor_errorMessages.getText().then(function (errorsArray) {
@@ -552,7 +552,7 @@ describe('tbForm related components', function () {
                         })
                             .then(function () {
                                 tbDateEditor_label.click();
-                                tbDateEditor_input.sendKeys("").then(function () {
+                                tbDateEditor_input.clear().then(function () {
                                     tbDateEditor_input.sendKeys("05/08/2016").then(function () {
                                         // Expect min date error to have been removed
                                         expect(tbDateEditor_errorMessages.count()).toBeLessThan(messageCount);
@@ -561,7 +561,7 @@ describe('tbForm related components', function () {
                             });
                     })
                     .then(function () {
-                        tbDateEditor_input.sendKeys("").then(function () {
+                        tbDateEditor_input.clear().then(function () {
                             tbDateEditor_input.sendKeys("06/11/2016").then(function () {
                                 // Expect max chars error to be displayed
                                 expect(tbDateEditor_errorMessages.count()).toBe(messageCount);
