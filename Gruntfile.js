@@ -100,10 +100,10 @@ module.exports = function(grunt) {
             },
             ci: {
                 singleRun: true
-               
             },
             dev: {
                 singleRun: false,
+                autoWatch: false,
                 preprocessors: {
                 },
                 reporters: ['progress']

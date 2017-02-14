@@ -48,6 +48,7 @@ describe('Tubular Filters', function () {
         element(by.id('tbFiltersTest')).click();
     });
 
+
     describe('tbColumnFilter', function () {
 
         beforeAll(function () {

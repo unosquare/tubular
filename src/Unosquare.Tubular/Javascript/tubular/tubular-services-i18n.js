@@ -17,7 +17,7 @@
 
                 me.translationTable = {
                     'en': {
-                        'EDITOR_REGEX_DOESNT_MATCH': "The field doesn't match the regular expression.",
+                        'EDITOR_REGEX_DOESNT_MATCH': 'The field doesn\'t match the regular expression.',
                         'EDITOR_REQUIRED': 'The field is required.',
                         'EDITOR_MIN_CHARS': 'The field needs to be minimum {0} chars.',
                         'EDITOR_MAX_CHARS': 'The field needs to be maximum {0} chars.',

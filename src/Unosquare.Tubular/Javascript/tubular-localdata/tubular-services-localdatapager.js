@@ -1,11 +1,7 @@
 ﻿(function (angular) {
     'use strict';
 
-    angular.module('tubular.services').factory('tubularLocalDataPager', tubularLocalDataPager);
-
-    tubularLocalDataPager.$inject = ['filterFilter', 'orderByFilter'];
-
-    function tubularLocalDataPager(filterFilter, orderByFilter) {
+    angular.module('tubular.services').factory('tubularLocalDataPager', ['filterFilter', 'orderByFilter',  function tubularLocalDataPager(filterFilter, orderByFilter) {
         return {
             page: page
         }
@@ -125,5 +121,5 @@
 
             return filtersPattern;
         }
-    }
+    }])
 })(angular);

@@ -1,11 +1,30 @@
 (function (angular) {
     'use strict';
 
-    angular.module('tubular.services').factory('tubularLocalDataPager', tubularLocalDataPager);
+    angular.module('tubular.services').factory('tubularLocalDataBase64', tubularLocalDataBase64);
 
-    tubularLocalDataPager.$inject = ['filterFilter', 'orderByFilter'];
+    tubularLocalDataBase64.$inject = [];
 
-    function tubularLocalDataPager(filterFilter, orderByFilter) {
+    function tubularLocalDataBase64() {
+        return {
+            getFromUrl : getFromUrl
+        }
+
+        function getFromUrl(url) {
+            if (url.indexOf('data:') !== 0)
+                return null;
+
+            var urlData = url.substr('data:application/json;base64,'.length);
+            urlData = atob(urlData);
+            return angular.fromJson(urlData);
+        }
+
+    }
+})(angular);
+(function (angular) {
+    'use strict';
+
+    angular.module('tubular.services').factory('tubularLocalDataPager', ['filterFilter', 'orderByFilter',  function tubularLocalDataPager(filterFilter, orderByFilter) {
         return {
             page: page
         }
@@ -125,7 +144,7 @@
 
             return filtersPattern;
         }
-    }
+    }])
 })(angular);
 (function (angular) {
     'use strict';
@@ -139,27 +158,13 @@
          * Use `tubularLocalData` to connect a grid or a form to a local JSON file. This file can be 
          * stored in a BLOB as a BASE64 string.
          */
-        .factory('tubularLocalData', tubularLocalData)
-        .run(registerAsLocal);
-
-    registerAsLocal.$inject = ['tubularHttp', 'tubularLocalData'];
-    tubularLocalData.$inject = ['tubularHttp', '$q', '$log', 'tubularLocalDataPager'];
-
-    
-    function registerAsLocal(tubularHttp, tubularLocalData) {
-                // register data services
-          tubularHttp.registerService('local', tubularLocalData);
-    }
-
-    function tubularLocalData(tubularHttp, $q, $log, pager) {
+        .factory('tubularLocalData', ['tubularHttp', '$q', '$log', 'tubularLocalDataPager', 'tubularLocalDataBase64',function tubularLocalData(tubularHttp, $q, $log, pager, localDataBase64) {
 
         return {
             getByKey: tubularHttp.getByKey,
             get : tubularHttp.get,
             retrieveDataAsync: retrieveDataAsync
-
         }
-        
 
         function retrieveDataAsync(request) {
             request.requireAuthentication = false;
@@ -171,12 +176,12 @@
         }
 
         function cancelFunc(reason) {
-            $log.error(reason);
-            return $q.defer().resolve(reason);
+            $log.info(reason);
+            return $q.resolve(reason);
         }
 
         function getPromise(request) {
-            return $q.resolve(getData(request)).then(function gotData(data) {
+            return $q.resolve(getData(request)).then(function onData(data) {
                 return pageRequest(request, data);
             });
         }
@@ -189,21 +194,21 @@
             return tubularHttp.retrieveDataAsync(request).promise;
         }
 
-
         function dataFromUrl(request){
-            if (request.serverUrl.indexOf('data:') !== 0)
-                return null;
-            
-            var urlData = request.serverUrl.substr('data:application/json;base64,'.length);
-            urlData = atob(urlData);
-            return angular.fromJson(urlData);
+            return localDataBase64.getFromUrl(request.serverUrl);
         }
        
 
         function pageRequest(request, data) {
             return pager.page(request, data);
         }
-    }
+    }])
+})(angular);
+(function (angular) {
+    'use strict';
 
-
+    angular.module('tubular.services').run(['tubularHttp', 'tubularLocalData', function registerAsLocal(tubularHttp, tubularLocalData) {
+        tubularHttp.registerService('local', tubularLocalData);
+    }])
+  
 })(angular);

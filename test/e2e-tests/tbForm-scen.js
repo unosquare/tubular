@@ -246,6 +246,7 @@ describe('tbForm related components', function () {
         browser.executeScript('localStorage.clear()');
     });
 
+
     describe('tbCheckboxField', function () {
         beforeAll(function () {
             //* Assign test variables *\\

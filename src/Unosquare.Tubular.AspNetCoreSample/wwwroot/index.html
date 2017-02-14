@@ -12,7 +12,7 @@
         <title ng-controller="titleController as title" ng-bind="title.content">Loading . . .</title>
 
         <!-- Favicons -->
-        <link rel="icon" href="/ui/media/favicon.ico" />
+        <link rel="icon" href="/favicon.ico" />
 
         <!-- CSS (from CDN) -->
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootswatch/latest/lumen/bootstrap.min.css" />
@@ -22,10 +22,11 @@
         <link rel="stylesheet" href="/ui/vendor/tubular/tubular-bundle.css" />
         <link rel="stylesheet" href="/ui/styles/common.css" />
 
-        <script src="//cdn.jsdelivr.net/g/angularjs@1.5.0(angular.min.js+angular-animate.min.js+angular-route.min.js),angular.bootstrap@2.1.2(ui-bootstrap.min.js+ui-bootstrap-tpls.min.js),filesaver.js,chart.js"></script>
+        <script src="//cdn.jsdelivr.net/g/angularjs@1.5.0(angular.min.js+angular-animate.min.js+angular-route.min.js),angular.bootstrap@2.1.2(ui-bootstrap.min.js+ui-bootstrap-tpls.min.js),filesaver.js,chart.js,momentjs"></script>
+        <script src="//cdn.jsdelivr.net/angular-local-storage/0.5.2/angular-local-storage.min.js"></script>
         <!-- JSDeliver HighChart's version is buggy -->
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highcharts-ng/1.0.0/highcharts-ng.min.js"></script>
         <script src="//code.highcharts.com/highcharts.js"></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/angular-local-storage/0.1.5/angular-local-storage.min.js"></script>
         <script src="//unpkg.com/angular-toastr/dist/angular-toastr.tpls.js"></script>
 
         <!-- Angular Application files -->
@@ -44,7 +45,7 @@
                     <i class="fa fa-bars"></i>
                 </button>
                 <a href="http://unosquare.github.io/tubular/" class="navbar-brand">
-                    <img src="/ui/media/tubular.png" alt="tubular" style="height: 80px; margin-top: -30px;"/>
+                    <img src="/ui/styles/tubular.png" alt="tubular" style="height: 80px; margin-top: -30px;"/>
                 </a>
             </div>
             <nav class="collapse navbar-collapse bs-navbar-collapse">

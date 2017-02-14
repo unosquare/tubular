@@ -66,6 +66,8 @@ describe('tbColumn', function () {
             element(by.id('btnClearLocalStorage')).click();
         });
 
+       
+
         var dataSetLowerId = '1',
             dataSetHigherId = '500',
             dataSetLowerCustomerName = 'Advanced Technology Systems',

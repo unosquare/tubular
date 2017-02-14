@@ -38,7 +38,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "e2e-tests", "e2e-tests", "{
 		test\e2e-tests\tbPageSizeSelector-scen.js = test\e2e-tests\tbPageSizeSelector-scen.js
 		test\e2e-tests\tbRowSelectable-scen.js = test\e2e-tests\tbRowSelectable-scen.js
 		test\e2e-tests\tbSingleForm-scen.js = test\e2e-tests\tbSingleForm-scen.js
-		test\e2e-tests\tbTemplateServiceModelSpec.js = test\e2e-tests\tbTemplateServiceModelSpec.js
 	EndProjectSection
 	ProjectSection(FolderStartupServices) = postProject
 		{82A7F48D-3B50-4B1E-B82E-3ADA8210C358} = {82A7F48D-3B50-4B1E-B82E-3ADA8210C358}
