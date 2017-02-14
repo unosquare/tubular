@@ -24,11 +24,7 @@
 (function (angular) {
     'use strict';
 
-    angular.module('tubular.services').factory('tubularLocalDataPager', tubularLocalDataPager);
-
-    tubularLocalDataPager.$inject = ['filterFilter', 'orderByFilter'];
-
-    function tubularLocalDataPager(filterFilter, orderByFilter) {
+    angular.module('tubular.services').factory('tubularLocalDataPager', ['filterFilter', 'orderByFilter',  function tubularLocalDataPager(filterFilter, orderByFilter) {
         return {
             page: page
         }
@@ -148,7 +144,7 @@
 
             return filtersPattern;
         }
-    }
+    }])
 })(angular);
 (function (angular) {
     'use strict';
@@ -162,9 +158,7 @@
          * Use `tubularLocalData` to connect a grid or a form to a local JSON file. This file can be 
          * stored in a BLOB as a BASE64 string.
          */
-        .factory('tubularLocalData', ['tubularHttp', '$q', '$log', 'tubularLocalDataPager', 'tubularLocalDataBase64',tubularLocalData])
-
-    function tubularLocalData(tubularHttp, $q, $log, pager, localDataBase64) {
+        .factory('tubularLocalData', ['tubularHttp', '$q', '$log', 'tubularLocalDataPager', 'tubularLocalDataBase64',function tubularLocalData(tubularHttp, $q, $log, pager, localDataBase64) {
 
         return {
             getByKey: tubularHttp.getByKey,
@@ -208,15 +202,13 @@
         function pageRequest(request, data) {
             return pager.page(request, data);
         }
-    }
+    }])
 })(angular);
 (function (angular) {
     'use strict';
 
-    angular.module('tubular.services').run(['tubularHttp', 'tubularLocalData', registerAsLocal]);
-
-    function registerAsLocal(tubularHttp, tubularLocalData) {
+    angular.module('tubular.services').run(['tubularHttp', 'tubularLocalData', function registerAsLocal(tubularHttp, tubularLocalData) {
         tubularHttp.registerService('local', tubularLocalData);
-    }
+    }])
   
 })(angular);
