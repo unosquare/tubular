@@ -894,7 +894,7 @@ describe('Tubular Filters', function () {
             var filteredDataCount;
 
             // Send filtering
-            tbTextSearchInput.sendKeys('uno');
+            tbTextSearchInput.sendKeys('algo');
 
             // Verify filtering
             loadData().then(function () {
