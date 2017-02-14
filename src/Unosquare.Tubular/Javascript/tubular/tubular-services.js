@@ -143,28 +143,24 @@
          */
         .factory('tubularEditorService', [
             'translatefilter', function (translateFilter) {
-                var tbFormCounter = -1;
-
+                
                 return {
                     isValid: isValid,
                     setupScope: setupScope,
                     getUniqueTbFormName: getUniqueTbFormName
-                    
 
                 }
 
-                function isValid(value) {
-                    return !(!value);
-                }
+                function isValid(value) { return !(!value); };
 
                 /**
                 * Simple helper to generate a unique name for Tubular Forms
                 */
                 function getUniqueTbFormName() {
-                    tbFormCounter = tbFormCounter || (tbFormCounter = -1);
-                    tbFormCounter++;
-                    return 'tbForm' + tbFormCounter;
-                }
+                    me.tbFormCounter = me.tbFormCounter || (me.tbFormCounter = -1);
+                    me.tbFormCounter++;
+                    return 'tbForm' + me.tbFormCounter;
+                };
 
                 /**
                  * Setups a new Editor, this functions is like a common class constructor to be used
@@ -364,7 +360,7 @@
                     }
                 };
             }
-        ])
+        ]);
 
 
     function getColumns(gridScope) {
