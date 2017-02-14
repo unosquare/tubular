@@ -39,7 +39,7 @@
     "file-saver.js": "latest",
     "angular-local-storage": "~0.2.2",
     "font-awesome": "latest",
-    "highchart-ng": "1.0.0",
+    "highchart-ng": "~0.0.13",
     "chart.js": "2.5.0",
     "angular-chart.js": "1.1.1",
     "awesome-bootstrap-checkbox": "0.3.7",
