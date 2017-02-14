@@ -37,7 +37,7 @@ gulp.task('reports', function() {
     var baseCss = '<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootswatch/latest/lumen/bootstrap.min.css" />';
     var output = '';
 
-    getDirectories('reports').forEach(function(dir) {
+    getDirectories('reports').reverse().forEach(function(dir) {
         output += "<li><a href='https://unosquare.github.io/tubular/reports/" + dir + "'>" + dir + "</a></li>";
 
         var subOutput = '';
