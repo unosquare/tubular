@@ -200,14 +200,13 @@ FakesAssemblies/
 
 # Visual Studio 6 workspace options file
 *.opt
+
 /coverage
-/dist/tubular-bundle.min.js.map
 /instrumented
-dist/tubular-bundle.min.js
 /src/Unosquare.Tubular/*.targets
 /test/Unosquare.Tubular.Tests/*.targets
 /src/Unosquare.Tubular.AspNetCoreSample/wwwroot/ui/vendor/tubular
 *.lock.json
 /.vscode
-/src/Unosquare.Tubular.EmbedioSample/html/vendor/*.js
-/src/Unosquare.Tubular.EmbedioSample/html/vendor/*.css
+/src/Unosquare.Tubular.EmbedioSample/html/vendor
+/src/Unosquare.Tubular.OwinSample/ui/vendor/tubular
