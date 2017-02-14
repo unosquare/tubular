@@ -135,11 +135,15 @@
                 };
             }
         ])
-        .run([
-            'tubularHttp', 'tubularOData',
-            function (tubularHttp, tubularOData) {
-                // register data services
-                tubularHttp.registerService('odata', tubularOData);
-            }
-        ]);
+
+})(angular);
+(function (angular) {
+    'use strict';
+
+    angular.module('tubular.services')     
+        .run(['tubularHttp', 'tubularOData', registerService]);
+
+    function registerService(tubularHttp, tubularOData) {
+        tubularHttp.registerService('odata', tubularOData);
+    }
 })(angular);

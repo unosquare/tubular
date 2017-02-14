@@ -1,16 +1,6 @@
 ﻿(function (angular) {
     'use strict';
 
-    function canUseHtml5Date() {
-        var input = document.createElement('input');
-        input.setAttribute('type', 'date');
-
-        var notADateValue = 'not-a-date';
-        input.setAttribute('value', notADateValue);
-
-        return input.value !== notADateValue;
-    };
-
     angular.module('tubular.services')
         /**
          * @ngdoc service
@@ -23,6 +13,16 @@
         [
             '$templateCache', function ($templateCache) {
                 var me = this;
+
+                me.canUseHtml5Date = function(){
+                    var input = document.createElement('input');
+                    input.setAttribute('type', 'date');
+
+                    var notADateValue = 'not-a-date';
+                    input.setAttribute('value', notADateValue);
+
+                    return input.value !== notADateValue;
+                };
 
                 me.enums = {
                     dataTypes: ['numeric', 'date', 'boolean', 'string'],
@@ -186,7 +186,7 @@
                     me.tbColumnDateTimeFilterPopoverTemplate = '<div>' +
                         '<form class="tubular-column-filter-form" onsubmit="return false;">' +
                         '<select class="form-control" ng-options="key as value for (key , value) in $ctrl.filterOperators" ng-model="$ctrl.filter.Operator" ng-hide="$ctrl.dataType == \'boolean\'"></select>&nbsp;' +
-                        (canUseHtml5Date() ? htmlDateSelector : bootstrapDateSelector) +
+                        (me.canUseHtml5Date() ? htmlDateSelector : bootstrapDateSelector) +
                         '<hr />' +
                         '<tb-column-filter-buttons></tb-column-filter-buttons>' +
                         '</form>' +
@@ -695,9 +695,7 @@
 
                     var columns = $ctrl.$component.columns.filter(function (e) { return e.Name === $ctrl.filter.Name; });
 
-                    $scope.$watch('$ctrl.filter.Operator', function (val) {
-                            if (val === 'None') $ctrl.filter.Text = '';
-                        });
+                    $scope.$watch('$ctrl.filter.Operator', function (val) { if (val === 'None') $ctrl.filter.Text = ''; });
 
                     if (columns.length === 0) return;
 
