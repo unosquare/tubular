@@ -787,7 +787,7 @@ describe('Tubular Filters', function () {
             tbTextSearchClearBtn = tbTextSearch.$('button');
             dataRows = element.all(by.repeater('row in $component.rows'));
 
-            // Always show 50 recods and go to first page
+            // Always show 50 records and go to first page
             loadData().then(setPagination);
         });
 
@@ -813,7 +813,6 @@ describe('Tubular Filters', function () {
             expect(tbTextSearch.getAttribute('min-chars')).toBe(null);
         });
 
-
         it('should filter data in searchable-column customer name to matching inputted text, starting from 3 characters', function () {
             var filterOk = true;
             var filteredCustomer = 'Microsoft';
@@ -822,7 +821,7 @@ describe('Tubular Filters', function () {
             tbTextSearchInput.sendKeys('cr');
 
             // Expect rows not to be filtered
-            dataRows.each(function (row, index) {
+            dataRows.each(function (row) {
                 row.$$('td').get(1).getText()
                     .then(function (customer) {
                         filterOk = filterOk && (customer === filteredCustomer);

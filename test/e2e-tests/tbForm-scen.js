@@ -314,7 +314,7 @@ describe('tbForm related components', function () {
             tbDropDownEditor = $('div.modal-dialog form').$('tb-dropdown-editor');
             tbDropDownEditor_select = tbDropDownEditor.$('select');
             tbDropDownEditor_label = tbDropDownEditor.$('label');
-            tbDropDownEditor_helper = tbDropDownEditor.$$('span').filter(function (elem, index) {
+            tbDropDownEditor_helper = tbDropDownEditor.$$('span').filter(function (elem) {
                 return elem.getAttribute('ng-show').then(function (val) {
                     return val != null ? val.indexOf('$ctrl.help') != -1 : false;
                 });

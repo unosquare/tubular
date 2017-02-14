@@ -462,8 +462,7 @@
                     '</span>' +
                     '</div>'+
                     '<div uib-timepicker ng-model="$ctrl.dateValue"  show-seconds="true" show-meridian="false"></div>') +
-                '{{error}}' +
-                '</span>' +
+                '<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">{{error}}</span>' +
                 '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help" ng-bind="$ctrl.help"></span>' +
                 '</div>',
             bindings: {
@@ -520,9 +519,7 @@
                     '<button type="button" class="btn btn-default" ng-click="$ctrl.open = !$ctrl.open"><i class="fa fa-calendar"></i></button>' +
                     '</span>' +
                     '</div>') +
-                '<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">' +
-                '{{error}}' +
-                '</span>' +
+                '<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">{{error}}</span>' +
                 '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help" ng-bind="$ctrl.help"></span>' +
                 '</div>',
             bindings: {
@@ -560,22 +557,19 @@
          * @param {boolean} required Set if the field is required.
          * @param {boolean} readOnly Set if the field is read-only.
          * @param {object} options Set the options to display.
-         * @param {string} optionsUrl Set the Http Url where to retrieve the values.
+         * @param {string} optionsUrl Set the Http URL where to retrieve the values.
          * @param {string} optionsMethod Set the Http Method where to retrieve the values.
          * @param {string} optionLabel Set the property to get the labels.
          * @param {string} optionKey Set the property to get the keys.
          * @param {string} defaultValue Set the default value.
          */
-
         .component('tbDropdownEditor', {
             template: '<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">' +
                 '<span ng-hide="$ctrl.isEditing" ng-bind="$ctrl.readOnlyValue"></span>' +
                 '<label ng-show="$ctrl.showLabel" ng-bind="$ctrl.label"></label>' +
                 '<select ng-options="{{ $ctrl.selectOptions }}" ng-show="$ctrl.isEditing" ng-model="$ctrl.value" class="form-control" ' +
-                'ng-required="$ctrl.required" ng-disabled="$ctrl.readOnly" name="{{$ctrl.name}}" ng-change="onChange({value: value})" />' +
-                '<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">' +
-                '{{error}}' +
-                '</span>' +
+                'ng-required="$ctrl.required" ng-disabled="$ctrl.readOnly" name="{{$ctrl.name}}" ng-change="onChange({value: value})"></select>' +
+                '<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">{{error}}</span>' +
                 '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help" ng-bind="$ctrl.help"></span>' +
                 '</div>',
             bindings: {
@@ -618,7 +612,7 @@
          * @param {string} help Set the help text.
          * @param {boolean} required Set if the field is required.
          * @param {object} options Set the options to display.
-         * @param {string} optionsUrl Set the Http Url where to retrieve the values.
+         * @param {string} optionsUrl Set the Http URL where to retrieve the values.
          * @param {string} optionsMethod Set the Http Method where to retrieve the values.
          * @param {string} optionLabel Set the property to get the labels.
          * @param {string} css Set the CSS classes for the input.
