@@ -25,9 +25,9 @@ describe('Module: tubular.services', function () {
             expect(sut).toBeDefined();
         });
 
-        it('should register itself as local', function () {
-            expect(tubularHttp.registerService).toHaveBeenCalledWith('local', sut);
-        });
+        //it('should register itself as local', function () {
+        //    expect(tubularHttp.registerService).toHaveBeenCalledWith('local', sut);
+        //});
 
         describe('Method: get', function () {
             it('should delegate to tubularHttp.get', function () {
