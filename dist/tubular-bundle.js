@@ -1018,7 +1018,7 @@
                 $ctrl.dateValue = $ctrl.value;
             }
         };
-    };
+    }
 
     var tbSimpleEditorCtrl = ['tubularEditorService', '$scope', '$filter', function(tubular, $scope, $filter) {
             var $ctrl = this;

@@ -6,7 +6,7 @@
 // It is assumed throughout the test that the data received for the main tbGrid
 // component at the related HTML file (tbColumn_tests.html) is static.
 
-describe('OData', function() {
+describe('OData', function () {
 
     var firstDataRow,
         lastDataRow,
@@ -22,7 +22,7 @@ describe('OData', function() {
         aCustomerNameSorting,
         aShippedDateSorting;
 
-    beforeAll(function() {
+    beforeAll(function () {
         // Go to test
         browser.get('index.html');
         element(by.id('testsSelector')).click();
@@ -62,7 +62,7 @@ describe('OData', function() {
             .$('a');
     });
 
-    describe('Grid OData Sorting', function() {
+    describe('Grid OData Sorting', function () {
 
         beforeAll(function () {
             // Set test variables
@@ -83,34 +83,34 @@ describe('OData', function() {
             dataSet100LowerCustomerName = 'TORTU',
             dataSetHigherCustomerName = 'WOLZA',
             dataSet100HigherCustomerName = 'BOTTM',
-            dataSetLowerDate = /7\/4\/96 */,
-            dataSet100LowerDate = /3\/26\/98 */,
-            dataSetHigherDate = /5\/6\/98 */;
-            var dataSet100HigherDate = /11\/6\/96 */;
+            dataSetLowerDate = '7/04/1996',
+            dataSet100LowerDate = '3/26/1998',
+            dataSetHigherDate = '5/06/1998';
+        var dataSet100HigherDate = '11/06/1996';
 
-        beforeEach(function() {
+        beforeEach(function () {
             // Clear possible sortings and start with default
-            aOrderIdSorting.click().then(function(){
-                iSortIcon.getAttribute('class').then(function(sortIconClass) {
-                if (sortIconClass.indexOf('arrow') !== -1) {
-                    if (sortIconClass.indexOf('arrow-up') !== -1) {
+            aOrderIdSorting.click().then(function () {
+                iSortIcon.getAttribute('class').then(function (sortIconClass) {
+                    if (sortIconClass.indexOf('arrow') !== -1) {
+                        if (sortIconClass.indexOf('arrow-up') !== -1) {
+                            aOrderIdSorting.click();
+                        }
+
                         aOrderIdSorting.click();
                     }
-
-                    aOrderIdSorting.click();
-                }
-            });
+                });
             });
         });
 
-        it('should order data in ascending order when click-sorting an unsorted numeric column', function() {
+        it('should order data in ascending order when click-sorting an unsorted numeric column', function () {
             aOrderIdSorting.click();
 
             expect(firstDataRow.$$('td').first().getText()).toBe(dataSetLowerId);
             expect(lastDataRow.$$('td').first().getText()).toBe(dataSet100HigerId);
         });
 
-        it('should order data in descending order when click-sorting an ascending-sorted numeric column', function() {
+        it('should order data in descending order when click-sorting an ascending-sorted numeric column', function () {
             aOrderIdSorting.click();
             aOrderIdSorting.click();
 
@@ -118,14 +118,14 @@ describe('OData', function() {
             expect(lastDataRow.$$('td').first().getText()).toBe(dataSet100LowerId);
         });
 
-        it('should order data in ascending order when click-sorting an unsorted text column', function() {
+        it('should order data in ascending order when click-sorting an unsorted text column', function () {
             aCustomerNameSorting.click();
 
             expect(firstDataRow.$$('td').get(1).getText()).toBe(dataSetLowerCustomerName);
             expect(lastDataRow.$$('td').get(1).getText()).toBe(dataSet100HigherCustomerName);
         });
 
-        it('should order data in descending order when click-sorting an ascending-sorted text column', function() {
+        it('should order data in descending order when click-sorting an ascending-sorted text column', function () {
             aCustomerNameSorting.click();
             aCustomerNameSorting.click();
 
@@ -133,14 +133,14 @@ describe('OData', function() {
             expect(lastDataRow.$$('td').get(1).getText()).toBe(dataSet100LowerCustomerName);
         });
 
-        it('should order data in ascending order when click-sorting an unsorted date column', function() {
+        it('should order data in ascending order when click-sorting an unsorted date column', function () {
             aShippedDateSorting.click();
 
             expect(firstDataRow.$$('td').get(2).getText()).toMatch(dataSetLowerDate);
             expect(lastDataRow.$$('td').get(2).getText()).toMatch(dataSet100HigherDate);
         });
 
-        it('should order data in descending order when click-sorting an ascending-sorted date column', function() {
+        it('should order data in descending order when click-sorting an ascending-sorted date column', function () {
             aShippedDateSorting.click();
             aShippedDateSorting.click();
 

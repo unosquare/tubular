@@ -60,7 +60,7 @@ You will need to reference the following JS libraries in order to use Tubular in
 ### Mandatory
 
 * [AngularJS (optionally Animate and Route)](https://angularjs.org/) - 1.5
-* [AngularJS UI Bootstrap](https://angular-ui.github.io/bootstrap/) - 2.1.2 with the Bootstrap CSS
+* [AngularJS UI Bootstrap](https://angular-ui.github.io/bootstrap/) - 2.5 with the Bootstrap CSS
 * [Moment.js](http://momentjs.com/) - 2.17
 * [AngularJS Local Storage](https://github.com/grevory/angular-local-storage)
 * [Font Awesome](http://fortawesome.github.io/Font-Awesome/)
