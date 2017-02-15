@@ -26,7 +26,7 @@ describe('Module: tubular.directives', function () {
 
         beforeEach(inject(function (_$controller_, $rootScope) {
             scope = $rootScope.$new();
-            $controller = _$controller;
+            $controller = _$controller_;
             
 
 
@@ -39,6 +39,9 @@ describe('Module: tubular.directives', function () {
         }
 
         describe('constructor', function () {
+
+            beforeEach(create);
+
             it('should set tubularDirective properly', function () {
                 expect(scope.tubularDirective).toBe('tubular-form');
             })
