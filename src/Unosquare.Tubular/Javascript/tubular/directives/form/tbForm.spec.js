@@ -4,8 +4,6 @@ describe('Module: tubular.directives', function () {
         var sut, scope, isolated, $routeParams, template, element, tubularHttp, tubularModel, tubularEditorService;
 
         beforeEach(function () {
-            angular.module('tubular.services', []);
-            angular.module('tubular.models', []);
             module('tubular.directives');
             module(function ($provide) {
                 tubularHttp = jasmine.createSpyObj('tubularHttp', ['getDataService', 'setRequireAuthentication']);

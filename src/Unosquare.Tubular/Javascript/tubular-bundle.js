@@ -104,481 +104,6 @@
      */
     angular.module('tubular.directives', ['tubular.services', 'tubular.models'])
         /**
-         * @ngdoc component
-         * @name tbGrid
-         * 
-         * @description
-         * The `tbGrid` directive is the base to create any grid. This is the root node where you should start
-         * designing your grid. Don't need to add a `controller`.
-         * 
-         * @param {string} serverUrl Set the HTTP URL where the data comes.
-         * @param {string} serverSaveUrl Set the HTTP URL where the data will be saved.
-         * @param {string} serverDeleteUrl Set the HTTP URL where the data will be saved.
-         * @param {string} serverSaveMethod Set HTTP Method to save data.
-         * @param {int} pageSize Define how many records to show in a page, default 20.
-         * @param {function} onBeforeGetData Callback to execute before to get data from service.
-         * @param {string} requestMethod Set HTTP Method to get data.
-         * @param {string} serviceName Define Data service (name) to retrieve data, defaults `tubularHttp`.
-         * @param {bool} requireAuthentication Set if authentication check must be executed, default true.
-         * @param {string} gridName Grid's name, used to store metainfo in localstorage.
-         * @param {string} editorMode Define if grid is read-only or it has editors (inline or popup).
-         * @param {bool} showLoading Set if an overlay will show when it's loading data, default true.
-         * @param {bool} autoRefresh Set if the grid refresh after any insertion or update, default true.
-         * @param {bool} savePage Set if the grid autosave current page, default true.
-         * @param {bool} savePageSize Set if the grid autosave page size, default true.
-         * @param {bool} saveSearch Set if the grid autosave search, default true.
-         */
-        .component('tbGrid', {
-            template: '<div>' +
-                '<div class="tubular-overlay" ng-show="$ctrl.showLoading && $ctrl.currentRequest != null">' +
-                '<div><div class="fa fa-refresh fa-2x fa-spin"></div></div></div>' +
-                '<ng-transclude></ng-transclude>' +
-                '</div>',
-            transclude: true,
-            bindings: {
-                serverUrl: '@',
-                serverSaveUrl: '@',
-                serverDeleteUrl: '@',
-                serverSaveMethod: '@',
-                pageSize: '=?',
-                onBeforeGetData: '=?',
-                requestMethod: '@',
-                dataServiceName: '@?serviceName',
-                requireAuthentication: '@?',
-                name: '@?gridName',
-                editorMode: '@?',
-                showLoading: '=?',
-                autoRefresh: '=?',
-                savePage: '=?',
-                savePageSize: '=?',
-                saveSearch: '=?'
-            },
-            controller: [
-                '$scope', 'localStorageService', 'tubularPopupService', 'tubularModel', 'tubularHttp', '$routeParams',
-                function($scope, localStorageService, tubularPopupService, TubularModel, tubularHttp, $routeParams) {
-                    var $ctrl = this;
-
-                    $ctrl.$onInit = function() {
-                        $ctrl.tubularDirective = 'tubular-grid';
-
-                        $ctrl.name = $ctrl.name || 'tbgrid';
-                        $ctrl.columns = [];
-                        $ctrl.rows = [];
-
-                        $ctrl.savePage = angular.isUndefined($ctrl.savePage) ? true : $ctrl.savePage;
-                        $ctrl.currentPage = $ctrl.savePage ? (localStorageService.get($ctrl.name + '_page') || 1) : 1;
-
-                        $ctrl.savePageSize = angular.isUndefined($ctrl.savePageSize) ? true : $ctrl.savePageSize;
-                        $ctrl.pageSize = angular.isUndefined($ctrl.pageSize) ? 20 : $ctrl.pageSize;
-                        $ctrl.saveSearch = angular.isUndefined($ctrl.saveSearch) ? true : $ctrl.saveSearch;
-                        $ctrl.totalPages = 0;
-                        $ctrl.totalRecordCount = 0;
-                        $ctrl.filteredRecordCount = 0;
-                        $ctrl.requestedPage = $ctrl.currentPage;
-                        $ctrl.hasColumnsDefinitions = false;
-                        $ctrl.requestCounter = 0;
-                        $ctrl.requestMethod = $ctrl.requestMethod || 'POST';
-                        $ctrl.serverSaveMethod = $ctrl.serverSaveMethod || 'POST';
-                        $ctrl.requestTimeout = 20000;
-                        $ctrl.currentRequest = null;
-                        $ctrl.autoSearch = $routeParams.param || ($ctrl.saveSearch ? (localStorageService.get($ctrl.name + '_search') || '') : '');
-                        $ctrl.search = {
-                            Text: $ctrl.autoSearch,
-                            Operator: $ctrl.autoSearch === '' ? 'None' : 'Auto'
-                        };
-
-                        $ctrl.isEmpty = false;
-                        $ctrl.tempRow = new TubularModel($scope, $ctrl, {}, $ctrl.dataService);
-                        $ctrl.dataService = tubularHttp.getDataService($ctrl.dataServiceName);
-                        $ctrl.requireAuthentication = $ctrl.requireAuthentication || true;
-                        tubularHttp.setRequireAuthentication($ctrl.requireAuthentication);
-                        $ctrl.editorMode = $ctrl.editorMode || 'none';
-                        $ctrl.canSaveState = false;
-                        $ctrl.groupBy = '';
-                        $ctrl.showLoading = angular.isUndefined($ctrl.showLoading) ? true : $ctrl.showLoading;
-                        $ctrl.autoRefresh = angular.isUndefined($ctrl.autoRefresh) ? true : $ctrl.autoRefresh;
-                        $ctrl.serverDeleteUrl = $ctrl.serverDeleteUrl || $ctrl.serverSaveUrl;
-
-                        // Emit a welcome message
-                        $scope.$emit('tbGrid_OnGreetParentController', $ctrl);
-                    };
-
-                    $scope.$watch('$ctrl.columns', function() {
-                        if ($ctrl.hasColumnsDefinitions === false || $ctrl.canSaveState === false) {
-                            return;
-                        }
-
-                        localStorageService.set($ctrl.name + '_columns', $ctrl.columns);
-                    }, true);
-
-                    $scope.$watch('$ctrl.serverUrl', function(newVal, prevVal) {
-                        if ($ctrl.hasColumnsDefinitions === false || $ctrl.currentRequest || newVal === prevVal) {
-                            return;
-                        }
-
-                        $ctrl.retrieveData();
-                    }, true);
-
-                    $scope.$watch('$ctrl.hasColumnsDefinitions', function(newVal) {
-                        if (newVal !== true) return;
-
-                        var isGrouping = false;
-                        // Check columns
-                        angular.forEach($ctrl.columns, function(column) {
-                            if (column.IsGrouping) {
-                                if (isGrouping) {
-                                    throw 'Only one column is allowed to grouping';
-                                }
-
-                                isGrouping = true;
-                                column.Visible = false;
-                                column.Sortable = true;
-                                column.SortOrder = 1;
-                                $ctrl.groupBy = column.Name;
-                            }
-                        });
-
-                        angular.forEach($ctrl.columns, function(column) {
-                            if ($ctrl.groupBy === column.Name) return;
-
-                            if (column.Sortable && column.SortOrder > 0) {
-                                column.SortOrder++;
-                            }
-                        });
-
-                        $ctrl.retrieveData();
-                    });
-
-                    $scope.$watch('$ctrl.pageSize', function() {
-                        if ($ctrl.hasColumnsDefinitions && $ctrl.requestCounter > 0) {
-                            if ($ctrl.savePageSize) {
-                                localStorageService.set($ctrl.name + '_pageSize', $ctrl.pageSize);
-                            }
-                            $ctrl.retrieveData();
-                        }
-                    });
-
-                    $scope.$watch('$ctrl.requestedPage', function() {
-                        if ($ctrl.hasColumnsDefinitions && $ctrl.requestCounter > 0) {
-                            $ctrl.retrieveData();
-                        }
-                    });
-
-                    $ctrl.saveSearch = function() {
-                        if ($ctrl.saveSearch) {
-                            if ($ctrl.search.Text === '') {
-                                localStorageService.remove($ctrl.name + '_search');
-                            } else {
-                                localStorageService.set($ctrl.name + '_search', $ctrl.search.Text);
-                            }
-                        }
-                    };
-
-                    $ctrl.addColumn = function(item) {
-                        if (item.Name == null) return;
-
-                        if ($ctrl.hasColumnsDefinitions !== false) {
-                            throw 'Cannot define more columns. Column definitions have been sealed';
-                        }
-
-                        $ctrl.columns.push(item);
-                    };
-
-                    $ctrl.newRow = function(template, popup, size, data) {
-                        $ctrl.tempRow = new TubularModel($scope, $ctrl, data || {}, $ctrl.dataService);
-                        $ctrl.tempRow.$isNew = true;
-                        $ctrl.tempRow.$isEditing = true;
-                        $ctrl.tempRow.$component = $ctrl;
-
-                        if (angular.isDefined(template) && angular.isDefined(popup) && popup) {
-                            tubularPopupService.openDialog(template, $ctrl.tempRow, $ctrl, size);
-                        }
-                    };
-
-                    $ctrl.deleteRow = function (row) {
-                        // TODO: Should I move this behavior to model?
-                        var urlparts = $ctrl.serverDeleteUrl.split('?');
-                        var url = urlparts[0] + '/' + row.$key;
-
-                        if (urlparts.length > 1) {
-                            url += '?' + urlparts[1];
-                        }
-
-                        var request = {
-                            serverUrl: url,
-                            requestMethod: 'DELETE',
-                            timeout: $ctrl.requestTimeout,
-                            requireAuthentication: $ctrl.requireAuthentication
-                        };
-
-                        $ctrl.currentRequest = $ctrl.dataService.retrieveDataAsync(request);
-
-                        $ctrl.currentRequest.promise.then(
-                            function(data) {
-                                row.$hasChanges = false;
-                                $scope.$emit('tbGrid_OnRemove', data);
-                            }, function(error) {
-                                $scope.$emit('tbGrid_OnConnectionError', error);
-                            }).then(function() {
-                            $ctrl.currentRequest = null;
-                            $ctrl.retrieveData();
-                        });
-                    };
-
-                    $ctrl.verifyColumns = function() {
-                        var columns = localStorageService.get($ctrl.name + '_columns');
-                        if (columns == null || columns === '') {
-                            // Nothing in settings, saving initial state
-                            localStorageService.set($ctrl.name + '_columns', $ctrl.columns);
-                            return;
-                        }
-
-                        angular.forEach(columns, function(column) {
-                            var filtered = $ctrl.columns.filter(function(el) { return el.Name === column.Name; });
-
-                            if (filtered.length === 0) return;
-
-                            var current = filtered[0];
-                            // Updates visibility by now
-                            current.Visible = column.Visible;
-
-                            // Update sorting
-                            if ($ctrl.requestCounter < 1) {
-                                current.SortOrder = column.SortOrder;
-                                current.SortDirection = column.SortDirection;
-                            }
-
-                            // Update Filters
-                            if (current.Filter != null && current.Filter.Text != null) {
-                                return;
-                            }
-
-                            if (column.Filter != null && column.Filter.Text != null && column.Filter.Operator !== 'None') {
-                                current.Filter = column.Filter;
-                            }
-                        });
-                    };
-
-                    $ctrl.retrieveData = function() {
-                        // If the ServerUrl is empty skip data load
-                        if (!$ctrl.serverUrl) return;
-
-                        $ctrl.canSaveState = true;
-                        $ctrl.verifyColumns();
-
-                        if ($ctrl.savePageSize) {
-                            $ctrl.pageSize = (localStorageService.get($ctrl.name + '_pageSize') || $ctrl.pageSize);
-                        }
-
-                        if ($ctrl.pageSize < 10) $ctrl.pageSize = 20; // default
-
-                        var skip = ($ctrl.requestedPage - 1) * $ctrl.pageSize;
-
-                        if (skip < 0) skip = 0;
-
-                        var request = {
-                            serverUrl: $ctrl.serverUrl,
-                            requestMethod: $ctrl.requestMethod || 'POST',
-                            timeout: $ctrl.requestTimeout,
-                            requireAuthentication: $ctrl.requireAuthentication,
-                            data: {
-                                Count: $ctrl.requestCounter,
-                                Columns: $ctrl.columns,
-                                Skip: skip,
-                                Take: parseInt($ctrl.pageSize),
-                                Search: $ctrl.search,
-                                TimezoneOffset: new Date().getTimezoneOffset()
-                            }
-                        };
-
-                        if ($ctrl.currentRequest !== null) {
-                            return;
-                        }
-
-                        if (angular.isUndefined($ctrl.onBeforeGetData) === false) {
-                            $ctrl.onBeforeGetData();
-                        }
-
-                        $scope.$emit('tbGrid_OnBeforeRequest', request, $ctrl);
-
-                        $ctrl.currentRequest = $ctrl.dataService.retrieveDataAsync(request);
-
-                        $ctrl.currentRequest.promise.then(function(data) {
-                                $ctrl.requestCounter += 1;
-
-                                if (angular.isUndefined(data) || data == null) {
-                                    $scope.$emit('tbGrid_OnConnectionError', {
-                                        statusText: 'Data is empty',
-                                        status: 0
-                                    });
-
-                                    return;
-                                }
-
-                                $ctrl.dataSource = data;
-
-                                if (!data.Payload)
-                                {
-                                    var errorMsg = 'tubularGrid(' + $ctrl.$id + '): response is invalid.';
-                                    $ctrl.currentRequest.cancel(errorMsg);
-                                    $scope.$emit('tbGrid_OnConnectionError', errorMsg);
-                                    return;
-                                }
-
-                                $ctrl.rows = data.Payload.map(function(el) {
-                                    var model = new TubularModel($scope, $ctrl, el, $ctrl.dataService);
-                                    model.$component = $ctrl;
-
-                                    model.editPopup = function (template, size) {
-                                        tubularPopupService.openDialog(template, new TubularModel($scope, $ctrl, el, $ctrl.dataService), $ctrl, size);
-                                    };
-
-                                    return model;
-                                });
-
-                                $scope.$emit('tbGrid_OnDataLoaded', $ctrl);
-
-                                $ctrl.aggregationFunctions = data.AggregationPayload;
-                                $ctrl.currentPage = data.CurrentPage;
-                                $ctrl.totalPages = data.TotalPages;
-                                $ctrl.totalRecordCount = data.TotalRecordCount;
-                                $ctrl.filteredRecordCount = data.FilteredRecordCount;
-                                $ctrl.isEmpty = $ctrl.filteredRecordCount === 0;
-
-                                if ($ctrl.savePage) {
-                                    localStorageService.set($ctrl.name + '_page', $ctrl.currentPage);
-                                }
-                            }, function(error) {
-                                $ctrl.requestedPage = $ctrl.currentPage;
-                                $scope.$emit('tbGrid_OnConnectionError', error);
-                            }).then(function() {
-                            $ctrl.currentRequest = null;
-                        });
-                    };
-
-                    $ctrl.sortColumn = function(columnName, multiple) {
-                        var filterColumn = $ctrl.columns.filter(function(el) {
-                            return el.Name === columnName;
-                        });
-
-                        if (filterColumn.length === 0) return;
-
-                        var column = filterColumn[0];
-
-                        if (column.Sortable === false) return;
-
-                        // need to know if it's currently sorted before we reset stuff
-                        var currentSortDirection = column.SortDirection;
-                        var toBeSortDirection = currentSortDirection === 'None' ? 'Ascending' : currentSortDirection === 'Ascending' ? 'Descending' : 'None';
-
-                        // the latest sorting takes less priority than previous sorts
-                        if (toBeSortDirection === 'None') {
-                            column.SortOrder = -1;
-                            column.SortDirection = 'None';
-                        } else {
-                            column.SortOrder = Number.MAX_VALUE;
-                            column.SortDirection = toBeSortDirection;
-                        }
-
-                        // if it's not a multiple sorting, remove the sorting from all other columns
-                        if (multiple === false) {
-                            angular.forEach($ctrl.columns.filter(function(col) { return col.Name !== columnName; }), function(col) {
-                                col.SortOrder = -1;
-                                col.SortDirection = 'None';
-                            });
-                        }
-
-                        // take the columns that actually need to be sorted in order to re-index them
-                        var currentlySortedColumns = $ctrl.columns.filter(function(col) {
-                            return col.SortOrder > 0;
-                        });
-
-                        // re-index the sort order
-                        currentlySortedColumns.sort(function(a, b) {
-                            return a.SortOrder === b.SortOrder ? 0 : a.SortOrder > b.SortOrder;
-                        });
-
-                        currentlySortedColumns.forEach(function(col, index) {
-                            col.SortOrder = index + 1;
-                        });
-
-                        $scope.$broadcast('tbGrid_OnColumnSorted');
-                        $ctrl.retrieveData();
-                    };
-
-                    $ctrl.selectedRows = function() {
-                        return localStorageService.get($ctrl.name + '_rows') || [];
-                    };
-
-                    $ctrl.clearSelection = function() {
-                        angular.forEach($ctrl.rows, function(value) {
-                            value.$selected = false;
-                        });
-
-                        localStorageService.set($ctrl.name + '_rows', []);
-                    };
-
-                    $ctrl.isEmptySelection = function() {
-                        return $ctrl.selectedRows().length === 0;
-                    };
-
-                    $ctrl.selectFromSession = function(row) {
-                        row.$selected = $ctrl.selectedRows().filter(function(el) {
-                            return el.$key === row.$key;
-                        }).length > 0;
-                    };
-
-                    $ctrl.changeSelection = function(row) {
-                        if (angular.isUndefined(row)) return;
-
-                        row.$selected = !row.$selected;
-
-                        var rows = $ctrl.selectedRows();
-
-                        if (row.$selected) {
-                            rows.push({ $key: row.$key });
-                        } else {
-                            rows = rows.filter(function(el) {
-                                return el.$key !== row.$key;
-                            });
-                        }
-
-                        localStorageService.set($ctrl.name + '_rows', rows);
-                    };
-
-                    $ctrl.getFullDataSource = function(callback) {
-                        $ctrl.dataService.retrieveDataAsync({
-                            serverUrl: $ctrl.serverUrl,
-                            requestMethod: $ctrl.requestMethod || 'POST',
-                            timeout: $ctrl.requestTimeout,
-                            requireAuthentication: $ctrl.requireAuthentication,
-                            data: {
-                                Count: $ctrl.requestCounter,
-                                Columns: $ctrl.columns,
-                                Skip: 0,
-                                Take: -1,
-                                Search: {
-                                    Text: '',
-                                    Operator: 'None'
-                                }
-                            }
-                        }).promise.then(
-                            function(data) {
-                                callback(data.Payload);
-                            }, function(error) {
-                                $scope.$emit('tbGrid_OnConnectionError', error);
-                            }).then(function() {
-                            $ctrl.currentRequest = null;
-                        });
-                    };
-
-                    $ctrl.visibleColumns = function() {
-                        return $ctrl.columns.filter(function(el) { return el.Visible; }).length;
-                    };
-                }
-            ]
-        })
-        /**
          * @ngdoc directive
          * @name tbGridTable
          * @module tubular.directives
@@ -982,6 +507,777 @@
                 };
             }
         ]);
+})(angular);
+(function (angular) {
+    'use strict';
+
+    angular.module('tubular.directives')
+        /**
+         * @ngdoc directive
+         * @name tbForm
+         * @module tubular.directives
+         * @restrict E
+         *
+         * @description
+         * The `tbForm` directive is the base to create any form powered by Tubular. Define `dataService` and 
+         * `modelKey` to auto-load a record. The `serverSaveUrl` can be used to create a new or update
+         * an existing record.
+         * 
+         * Please don't bind a controller directly to the `tbForm`, Angular will throw an exception. If you want
+         * to extend the form behavior put a controller in a upper node like a div.
+         * 
+         * The `save` method can be forced to update a model against the REST service, otherwise if the Model
+         * doesn't detect any change will ignore the save call.
+         * 
+         * @param {string} serverUrl Set the HTTP URL where the data comes.
+         * @param {string} serverSaveUrl Set the HTTP URL where the data will be saved.
+         * @param {string} serverSaveMethod Set HTTP Method to save data.
+         * @param {object} model The object model to show in the form.
+         * @param {string} modelKey Defines the fields to use like Keys.
+         * @param {string} formName Defines the form name.
+         * @param {string} serviceName Define Data service (name) to retrieve data, defaults `tubularHttp`.
+         * @param {bool} requireAuthentication Set if authentication check must be executed, default true.
+         */
+        .directive('tbForm', [function () {
+                return {
+                    template: '<form ng-transclude name="{{name}}"></form>',
+                    restrict: 'E',
+                    replace: true,
+                    transclude: true,
+                    scope: {
+                        model: '=?',
+                        serverUrl: '@',
+                        serverSaveUrl: '@',
+                        serverSaveMethod: '@',
+                        modelKey: '@?',
+                        dataServiceName: '@?serviceName',
+                        requireAuthentication: '=?',
+                        name: '@?formName'
+                    },
+                    controller: [
+                        '$scope', '$routeParams', 'tubularModel', 'tubularHttp', '$timeout', '$element', 'tubularEditorService',
+                        function ($scope, $routeParams, TubularModel, tubularHttp, $timeout, $element, tubular) {
+                            $scope.tubularDirective = 'tubular-form';
+                            $scope.serverSaveMethod = $scope.serverSaveMethod || 'POST';
+                            $scope.fields = [];
+                            $scope.hasFieldsDefinitions = false;
+                            $scope.dataService = tubularHttp.getDataService($scope.dataServiceName);
+                            $scope.name = $scope.name || tubular.getUniqueTbFormName();
+
+                            // This method is meant to provide a reference to the Angular Form
+                            // so we can get information about: $pristine, $dirty, $submitted, etc.
+                            $scope.getFormScope = function () {
+                                return $scope[$element.attr('name')];
+                            };
+
+                            // Setup require authentication
+                            $scope.requireAuthentication = angular.isUndefined($scope.requireAuthentication) ? true : $scope.requireAuthentication;
+                            tubularHttp.setRequireAuthentication($scope.requireAuthentication);
+
+                            $scope.$watch('hasFieldsDefinitions', function (newVal) {
+                                if (newVal !== true) return;
+                                $scope.retrieveData();
+                            });
+
+                            $scope.cloneModel = function(model) {
+                                var data = {};
+
+                                angular.forEach(model, function(value, key) {
+                                    if (key[0] === '$') return;
+
+                                    data[key] = value;
+                                });
+
+                                $scope.model = new TubularModel($scope, $scope, data, $scope.dataService);
+                                $scope.bindFields();
+                            };
+
+                            $scope.bindFields = function () {
+                                angular.forEach($scope.fields, function (field) {
+                                    field.bindScope();
+                                });
+                            };
+
+                            $scope.retrieveData = function () {
+                                // Try to load a key from markup or route
+                                $scope.modelKey = $scope.modelKey || $routeParams.param;
+
+                                if (angular.isDefined($scope.serverUrl)) {
+                                    if (angular.isDefined($scope.modelKey) &&
+                                        $scope.modelKey != null &&
+                                        $scope.modelKey !== '') {
+                                        $scope.dataService.getByKey($scope.serverUrl, $scope.modelKey).promise.then(
+                                            function (data) {
+                                                $scope.model = new TubularModel($scope, $scope, data, $scope.dataService);
+                                                $scope.bindFields();
+                                            }, function (error) {
+                                                $scope.$emit('tbForm_OnConnectionError', error);
+                                            });
+                                    } else {
+                                        $scope.dataService.get(tubularHttp.addTimeZoneToUrl($scope.serverUrl)).promise.then(
+                                            function (data) {
+                                                var innerScope = $scope;
+                                                var dataService = $scope.dataService;
+
+                                                if (angular.isDefined($scope.model) && angular.isDefined($scope.model.$component)) {
+                                                    innerScope = $scope.model.$component;
+                                                    dataService = $scope.model.$component.dataService;
+                                                }
+
+                                                $scope.model = new TubularModel(innerScope, innerScope, data, dataService);
+                                                $scope.bindFields();
+                                                $scope.model.$isNew = true;
+                                            }, function (error) {
+                                                $scope.$emit('tbForm_OnConnectionError', error);
+                                            });
+                                    }
+
+                                    return;
+                                }
+
+                                if (angular.isUndefined($scope.model)) {
+                                    $scope.model = new TubularModel($scope, $scope, {}, $scope.dataService);
+                                }
+
+                                $scope.bindFields();
+                            };
+
+                            $scope.save = function (forceUpdate) {
+                                if (!$scope.model.$valid()) {
+                                    return;
+                                }
+
+                                $scope.currentRequest = $scope.model.save(forceUpdate);
+
+                                if ($scope.currentRequest === false) {
+                                    $scope.$emit('tbForm_OnSavingNoChanges', $scope);
+                                    return;
+                                }
+
+                                $scope.currentRequest.then(
+                                        function (data) {
+                                            if (angular.isDefined($scope.model.$component) &&
+                                                angular.isDefined($scope.model.$component.autoRefresh) &&
+                                                $scope.model.$component.autoRefresh) {
+                                                $scope.model.$component.retrieveData();
+                                            }
+
+                                            $scope.$emit('tbForm_OnSuccessfulSave', data, $scope);
+                                            $scope.clear();
+
+                                            var formScope = $scope.getFormScope();
+                                            if (formScope) formScope.$setPristine();
+                                        }, function (error) {
+                                            $scope.$emit('tbForm_OnConnectionError', error, $scope);
+                                        })
+                                    .then(function () {
+                                        $scope.model.$isLoading = false;
+                                        $scope.currentRequest = null;
+                                    });
+                            };
+
+                            $scope.update = function (forceUpdate) {
+                                $scope.save(forceUpdate);
+                            };
+
+                            $scope.create = function () {
+                                $scope.model.$isNew = true;
+                                $scope.save();
+                            };
+
+                            $scope.cancel = function () {
+                                $scope.$emit('tbForm_OnCancel', $scope.model);
+                                $scope.clear();
+                            };
+
+                            $scope.clear = function () {
+                                angular.forEach($scope.fields, function (field) {
+                                    if (field.resetEditor) {
+                                        field.resetEditor();
+                                    } else {
+                                        field.value = field.defaultValue;
+                                    }
+                                });
+                            };
+
+                            $scope.finishDefinition = function () {
+                                var timer = $timeout(function () {
+                                    $scope.hasFieldsDefinitions = true;
+
+                                    if ($element.find('input').length) {
+                                        $element.find('input')[0].focus();
+                                    }
+                                }, 0);
+
+                                $scope.$emit('tbForm_OnGreetParentController', $scope);
+
+                                $scope.$on('$destroy', function () { $timeout.cancel(timer); });
+                            };
+                        }
+                    ],
+                    compile: function() {
+                        return {
+                            post: function (scope) {
+                                scope.finishDefinition();
+                            }
+                        };
+                    }
+                };
+            }
+        ]);
+})(angular);
+(function (angular) {
+    'use strict';
+
+    angular.module('tubular.directives')
+        /**
+         * @ngdoc component
+         * @name tbGrid
+         * 
+         * @description
+         * The `tbGrid` directive is the base to create any grid. This is the root node where you should start
+         * designing your grid. Don't need to add a `controller`.
+         * 
+         * @param {string} serverUrl Set the HTTP URL where the data comes.
+         * @param {string} serverSaveUrl Set the HTTP URL where the data will be saved.
+         * @param {string} serverDeleteUrl Set the HTTP URL where the data will be saved.
+         * @param {string} serverSaveMethod Set HTTP Method to save data.
+         * @param {int} pageSize Define how many records to show in a page, default 20.
+         * @param {function} onBeforeGetData Callback to execute before to get data from service.
+         * @param {string} requestMethod Set HTTP Method to get data.
+         * @param {string} serviceName Define Data service (name) to retrieve data, defaults `tubularHttp`.
+         * @param {bool} requireAuthentication Set if authentication check must be executed, default true.
+         * @param {string} gridName Grid's name, used to store metainfo in localstorage.
+         * @param {string} editorMode Define if grid is read-only or it has editors (inline or popup).
+         * @param {bool} showLoading Set if an overlay will show when it's loading data, default true.
+         * @param {bool} autoRefresh Set if the grid refresh after any insertion or update, default true.
+         * @param {bool} savePage Set if the grid autosave current page, default true.
+         * @param {bool} savePageSize Set if the grid autosave page size, default true.
+         * @param {bool} saveSearch Set if the grid autosave search, default true.
+         */
+        .component('tbGrid', {
+            template: '<div>' +
+                '<div class="tubular-overlay" ng-show="$ctrl.showLoading && $ctrl.currentRequest != null">' +
+                '<div><div class="fa fa-refresh fa-2x fa-spin"></div></div></div>' +
+                '<ng-transclude></ng-transclude>' +
+                '</div>',
+            transclude: true,
+            bindings: {
+                serverUrl: '@',
+                serverSaveUrl: '@',
+                serverDeleteUrl: '@',
+                serverSaveMethod: '@',
+                pageSize: '=?',
+                onBeforeGetData: '=?',
+                requestMethod: '@',
+                dataServiceName: '@?serviceName',
+                requireAuthentication: '@?',
+                name: '@?gridName',
+                editorMode: '@?',
+                showLoading: '=?',
+                autoRefresh: '=?',
+                savePage: '=?',
+                savePageSize: '=?',
+                saveSearch: '=?'
+            },
+            controller: [
+                '$scope', 'localStorageService', 'tubularPopupService', 'tubularModel', 'tubularHttp', '$routeParams',
+                function ($scope, localStorageService, tubularPopupService, TubularModel, tubularHttp, $routeParams) {
+                    var $ctrl = this;
+
+                    $ctrl.$onInit = function () {
+                        $ctrl.tubularDirective = 'tubular-grid';
+
+                        $ctrl.name = $ctrl.name || 'tbgrid';
+                        $ctrl.columns = [];
+                        $ctrl.rows = [];
+
+                        $ctrl.savePage = angular.isUndefined($ctrl.savePage) ? true : $ctrl.savePage;
+                        $ctrl.currentPage = $ctrl.savePage ? (localStorageService.get($ctrl.name + '_page') || 1) : 1;
+
+                        $ctrl.savePageSize = angular.isUndefined($ctrl.savePageSize) ? true : $ctrl.savePageSize;
+                        $ctrl.pageSize = angular.isUndefined($ctrl.pageSize) ? 20 : $ctrl.pageSize;
+                        $ctrl.saveSearch = angular.isUndefined($ctrl.saveSearch) ? true : $ctrl.saveSearch;
+                        $ctrl.totalPages = 0;
+                        $ctrl.totalRecordCount = 0;
+                        $ctrl.filteredRecordCount = 0;
+                        $ctrl.requestedPage = $ctrl.currentPage;
+                        $ctrl.hasColumnsDefinitions = false;
+                        $ctrl.requestCounter = 0;
+                        $ctrl.requestMethod = $ctrl.requestMethod || 'POST';
+                        $ctrl.serverSaveMethod = $ctrl.serverSaveMethod || 'POST';
+                        $ctrl.requestTimeout = 20000;
+                        $ctrl.currentRequest = null;
+                        $ctrl.autoSearch = $routeParams.param || ($ctrl.saveSearch ? (localStorageService.get($ctrl.name + '_search') || '') : '');
+                        $ctrl.search = {
+                            Text: $ctrl.autoSearch,
+                            Operator: $ctrl.autoSearch === '' ? 'None' : 'Auto'
+                        };
+
+                        $ctrl.isEmpty = false;
+                        $ctrl.tempRow = new TubularModel($scope, $ctrl, {}, $ctrl.dataService);
+                        $ctrl.dataService = tubularHttp.getDataService($ctrl.dataServiceName);
+                        $ctrl.requireAuthentication = $ctrl.requireAuthentication || true;
+                        tubularHttp.setRequireAuthentication($ctrl.requireAuthentication);
+                        $ctrl.editorMode = $ctrl.editorMode || 'none';
+                        $ctrl.canSaveState = false;
+                        $ctrl.groupBy = '';
+                        $ctrl.showLoading = angular.isUndefined($ctrl.showLoading) ? true : $ctrl.showLoading;
+                        $ctrl.autoRefresh = angular.isUndefined($ctrl.autoRefresh) ? true : $ctrl.autoRefresh;
+                        $ctrl.serverDeleteUrl = $ctrl.serverDeleteUrl || $ctrl.serverSaveUrl;
+
+                        // Emit a welcome message
+                        $scope.$emit('tbGrid_OnGreetParentController', $ctrl);
+                    };
+
+                    $scope.$watch('$ctrl.columns', function () {
+                        if ($ctrl.hasColumnsDefinitions === false || $ctrl.canSaveState === false) {
+                            return;
+                        }
+
+                        localStorageService.set($ctrl.name + '_columns', $ctrl.columns);
+                    }, true);
+
+                    $scope.$watch('$ctrl.serverUrl', function (newVal, prevVal) {
+                        if ($ctrl.hasColumnsDefinitions === false || $ctrl.currentRequest || newVal === prevVal) {
+                            return;
+                        }
+
+                        $ctrl.retrieveData();
+                    }, true);
+
+                    $scope.$watch('$ctrl.hasColumnsDefinitions', function (newVal) {
+                        if (newVal !== true) return;
+
+                        var isGrouping = false;
+                        // Check columns
+                        angular.forEach($ctrl.columns, function (column) {
+                            if (column.IsGrouping) {
+                                if (isGrouping) {
+                                    throw 'Only one column is allowed to grouping';
+                                }
+
+                                isGrouping = true;
+                                column.Visible = false;
+                                column.Sortable = true;
+                                column.SortOrder = 1;
+                                $ctrl.groupBy = column.Name;
+                            }
+                        });
+
+                        angular.forEach($ctrl.columns, function (column) {
+                            if ($ctrl.groupBy === column.Name) return;
+
+                            if (column.Sortable && column.SortOrder > 0) {
+                                column.SortOrder++;
+                            }
+                        });
+
+                        $ctrl.retrieveData();
+                    });
+
+                    $scope.$watch('$ctrl.pageSize', function () {
+                        if ($ctrl.hasColumnsDefinitions && $ctrl.requestCounter > 0) {
+                            if ($ctrl.savePageSize) {
+                                localStorageService.set($ctrl.name + '_pageSize', $ctrl.pageSize);
+                            }
+                            $ctrl.retrieveData();
+                        }
+                    });
+
+                    $scope.$watch('$ctrl.requestedPage', function () {
+                        if ($ctrl.hasColumnsDefinitions && $ctrl.requestCounter > 0) {
+                            $ctrl.retrieveData();
+                        }
+                    });
+
+                    $ctrl.saveSearch = function () {
+                        if ($ctrl.saveSearch) {
+                            if ($ctrl.search.Text === '') {
+                                localStorageService.remove($ctrl.name + '_search');
+                            } else {
+                                localStorageService.set($ctrl.name + '_search', $ctrl.search.Text);
+                            }
+                        }
+                    };
+
+                    $ctrl.addColumn = function (item) {
+                        if (item.Name == null) return;
+
+                        if ($ctrl.hasColumnsDefinitions !== false) {
+                            throw 'Cannot define more columns. Column definitions have been sealed';
+                        }
+
+                        $ctrl.columns.push(item);
+                    };
+
+                    $ctrl.newRow = function (template, popup, size, data) {
+                        $ctrl.tempRow = new TubularModel($scope, $ctrl, data || {}, $ctrl.dataService);
+                        $ctrl.tempRow.$isNew = true;
+                        $ctrl.tempRow.$isEditing = true;
+                        $ctrl.tempRow.$component = $ctrl;
+
+                        if (angular.isDefined(template) && angular.isDefined(popup) && popup) {
+                            tubularPopupService.openDialog(template, $ctrl.tempRow, $ctrl, size);
+                        }
+                    };
+
+                    $ctrl.deleteRow = function (row) {
+                        // TODO: Should I move this behavior to model?
+                        var urlparts = $ctrl.serverDeleteUrl.split('?');
+                        var url = urlparts[0] + '/' + row.$key;
+
+                        if (urlparts.length > 1) {
+                            url += '?' + urlparts[1];
+                        }
+
+                        var request = {
+                            serverUrl: url,
+                            requestMethod: 'DELETE',
+                            timeout: $ctrl.requestTimeout,
+                            requireAuthentication: $ctrl.requireAuthentication
+                        };
+
+                        $ctrl.currentRequest = $ctrl.dataService.retrieveDataAsync(request);
+
+                        $ctrl.currentRequest.promise.then(
+                            function (data) {
+                                row.$hasChanges = false;
+                                $scope.$emit('tbGrid_OnRemove', data);
+                            }, function (error) {
+                                $scope.$emit('tbGrid_OnConnectionError', error);
+                            }).then(function () {
+                                $ctrl.currentRequest = null;
+                                $ctrl.retrieveData();
+                            });
+                    };
+
+                    $ctrl.verifyColumns = function () {
+                        var columns = localStorageService.get($ctrl.name + '_columns');
+                        if (columns == null || columns === '') {
+                            // Nothing in settings, saving initial state
+                            localStorageService.set($ctrl.name + '_columns', $ctrl.columns);
+                            return;
+                        }
+
+                        angular.forEach(columns, function (column) {
+                            var filtered = $ctrl.columns.filter(function (el) { return el.Name === column.Name; });
+
+                            if (filtered.length === 0) return;
+
+                            var current = filtered[0];
+                            // Updates visibility by now
+                            current.Visible = column.Visible;
+
+                            // Update sorting
+                            if ($ctrl.requestCounter < 1) {
+                                current.SortOrder = column.SortOrder;
+                                current.SortDirection = column.SortDirection;
+                            }
+
+                            // Update Filters
+                            if (current.Filter != null && current.Filter.Text != null) {
+                                return;
+                            }
+
+                            if (column.Filter != null && column.Filter.Text != null && column.Filter.Operator !== 'None') {
+                                current.Filter = column.Filter;
+                            }
+                        });
+                    };
+
+                    $ctrl.retrieveData = function () {
+                        // If the ServerUrl is empty skip data load
+                        if (!$ctrl.serverUrl) return;
+
+                        $ctrl.canSaveState = true;
+                        $ctrl.verifyColumns();
+
+                        if ($ctrl.savePageSize) {
+                            $ctrl.pageSize = (localStorageService.get($ctrl.name + '_pageSize') || $ctrl.pageSize);
+                        }
+
+                        if ($ctrl.pageSize < 10) $ctrl.pageSize = 20; // default
+
+                        var skip = ($ctrl.requestedPage - 1) * $ctrl.pageSize;
+
+                        if (skip < 0) skip = 0;
+
+                        var request = {
+                            serverUrl: $ctrl.serverUrl,
+                            requestMethod: $ctrl.requestMethod || 'POST',
+                            timeout: $ctrl.requestTimeout,
+                            requireAuthentication: $ctrl.requireAuthentication,
+                            data: {
+                                Count: $ctrl.requestCounter,
+                                Columns: $ctrl.columns,
+                                Skip: skip,
+                                Take: parseInt($ctrl.pageSize),
+                                Search: $ctrl.search,
+                                TimezoneOffset: new Date().getTimezoneOffset()
+                            }
+                        };
+
+                        if ($ctrl.currentRequest !== null) {
+                            return;
+                        }
+
+                        if (angular.isUndefined($ctrl.onBeforeGetData) === false) {
+                            $ctrl.onBeforeGetData();
+                        }
+
+                        $scope.$emit('tbGrid_OnBeforeRequest', request, $ctrl);
+
+                        $ctrl.currentRequest = $ctrl.dataService.retrieveDataAsync(request);
+
+                        $ctrl.currentRequest.promise.then(function (data) {
+                            $ctrl.requestCounter += 1;
+
+                            if (angular.isUndefined(data) || data == null) {
+                                $scope.$emit('tbGrid_OnConnectionError', {
+                                    statusText: 'Data is empty',
+                                    status: 0
+                                });
+
+                                return;
+                            }
+
+                            $ctrl.dataSource = data;
+
+                            if (!data.Payload) {
+                                var errorMsg = 'tubularGrid(' + $ctrl.$id + '): response is invalid.';
+                                $ctrl.currentRequest.cancel(errorMsg);
+                                $scope.$emit('tbGrid_OnConnectionError', errorMsg);
+                                return;
+                            }
+
+                            $ctrl.rows = data.Payload.map(function (el) {
+                                var model = new TubularModel($scope, $ctrl, el, $ctrl.dataService);
+                                model.$component = $ctrl;
+
+                                model.editPopup = function (template, size) {
+                                    tubularPopupService.openDialog(template, new TubularModel($scope, $ctrl, el, $ctrl.dataService), $ctrl, size);
+                                };
+
+                                return model;
+                            });
+
+                            $scope.$emit('tbGrid_OnDataLoaded', $ctrl);
+
+                            $ctrl.aggregationFunctions = data.AggregationPayload;
+                            $ctrl.currentPage = data.CurrentPage;
+                            $ctrl.totalPages = data.TotalPages;
+                            $ctrl.totalRecordCount = data.TotalRecordCount;
+                            $ctrl.filteredRecordCount = data.FilteredRecordCount;
+                            $ctrl.isEmpty = $ctrl.filteredRecordCount === 0;
+
+                            if ($ctrl.savePage) {
+                                localStorageService.set($ctrl.name + '_page', $ctrl.currentPage);
+                            }
+                        }, function (error) {
+                            $ctrl.requestedPage = $ctrl.currentPage;
+                            $scope.$emit('tbGrid_OnConnectionError', error);
+                        }).then(function () {
+                            $ctrl.currentRequest = null;
+                        });
+                    };
+
+                    $ctrl.sortColumn = function (columnName, multiple) {
+                        var filterColumn = $ctrl.columns.filter(function (el) {
+                            return el.Name === columnName;
+                        });
+
+                        if (filterColumn.length === 0) return;
+
+                        var column = filterColumn[0];
+
+                        if (column.Sortable === false) return;
+
+                        // need to know if it's currently sorted before we reset stuff
+                        var currentSortDirection = column.SortDirection;
+                        var toBeSortDirection = currentSortDirection === 'None' ? 'Ascending' : currentSortDirection === 'Ascending' ? 'Descending' : 'None';
+
+                        // the latest sorting takes less priority than previous sorts
+                        if (toBeSortDirection === 'None') {
+                            column.SortOrder = -1;
+                            column.SortDirection = 'None';
+                        } else {
+                            column.SortOrder = Number.MAX_VALUE;
+                            column.SortDirection = toBeSortDirection;
+                        }
+
+                        // if it's not a multiple sorting, remove the sorting from all other columns
+                        if (multiple === false) {
+                            angular.forEach($ctrl.columns.filter(function (col) { return col.Name !== columnName; }), function (col) {
+                                col.SortOrder = -1;
+                                col.SortDirection = 'None';
+                            });
+                        }
+
+                        // take the columns that actually need to be sorted in order to re-index them
+                        var currentlySortedColumns = $ctrl.columns.filter(function (col) {
+                            return col.SortOrder > 0;
+                        });
+
+                        // re-index the sort order
+                        currentlySortedColumns.sort(function (a, b) {
+                            return a.SortOrder === b.SortOrder ? 0 : a.SortOrder > b.SortOrder;
+                        });
+
+                        currentlySortedColumns.forEach(function (col, index) {
+                            col.SortOrder = index + 1;
+                        });
+
+                        $scope.$broadcast('tbGrid_OnColumnSorted');
+                        $ctrl.retrieveData();
+                    };
+
+                    $ctrl.selectedRows = function () {
+                        return localStorageService.get($ctrl.name + '_rows') || [];
+                    };
+
+                    $ctrl.clearSelection = function () {
+                        angular.forEach($ctrl.rows, function (value) {
+                            value.$selected = false;
+                        });
+
+                        localStorageService.set($ctrl.name + '_rows', []);
+                    };
+
+                    $ctrl.isEmptySelection = function () {
+                        return $ctrl.selectedRows().length === 0;
+                    };
+
+                    $ctrl.selectFromSession = function (row) {
+                        row.$selected = $ctrl.selectedRows().filter(function (el) {
+                            return el.$key === row.$key;
+                        }).length > 0;
+                    };
+
+                    $ctrl.changeSelection = function (row) {
+                        if (angular.isUndefined(row)) return;
+
+                        row.$selected = !row.$selected;
+
+                        var rows = $ctrl.selectedRows();
+
+                        if (row.$selected) {
+                            rows.push({ $key: row.$key });
+                        } else {
+                            rows = rows.filter(function (el) {
+                                return el.$key !== row.$key;
+                            });
+                        }
+
+                        localStorageService.set($ctrl.name + '_rows', rows);
+                    };
+
+                    $ctrl.getFullDataSource = function (callback) {
+                        $ctrl.dataService.retrieveDataAsync({
+                            serverUrl: $ctrl.serverUrl,
+                            requestMethod: $ctrl.requestMethod || 'POST',
+                            timeout: $ctrl.requestTimeout,
+                            requireAuthentication: $ctrl.requireAuthentication,
+                            data: {
+                                Count: $ctrl.requestCounter,
+                                Columns: $ctrl.columns,
+                                Skip: 0,
+                                Take: -1,
+                                Search: {
+                                    Text: '',
+                                    Operator: 'None'
+                                }
+                            }
+                        }).promise.then(
+                            function (data) {
+                                callback(data.Payload);
+                            }, function (error) {
+                                $scope.$emit('tbGrid_OnConnectionError', error);
+                            }).then(function () {
+                                $ctrl.currentRequest = null;
+                            });
+                    };
+
+                    $ctrl.visibleColumns = function () {
+                        return $ctrl.columns.filter(function (el) { return el.Visible; }).length;
+                    };
+                }
+            ]
+        })
+})(angular);
+(function (angular) {
+    'use strict';
+
+    angular.module('tubular.directives')
+
+        /**
+        * @ngdoc component
+        * @name tbTextSearch
+        * @module tubular.directives
+        *
+        * @description
+        * The `tbTextSearch` is visual component to enable free-text search in a grid.
+        * 
+        * @param {number} minChars How many chars before to search, default 3.
+        * @param {string} placeholder The placeholder text, defaults `UI_SEARCH` i18n resource.
+        */
+    .component('tbTextSearch', {
+        require: {
+            $component: '^tbGrid'
+        },
+        template:
+            '<div class="tubular-grid-search">' +
+                '<div class="input-group input-group-sm">' +
+                '<span class="input-group-addon"><i class="fa fa-search"></i></span>' +
+                '<input type="search" class="form-control" placeholder="{{:: $ctrl.placeholder || (\'UI_SEARCH\' | translate) }}" maxlength="20" ' +
+                'ng-model="$ctrl.$component.search.Text" ng-model-options="{ debounce: 300 }">' +
+                '<span class="input-group-btn" ng-show="$ctrl.$component.search.Text.length > 0">' +
+                '<button class="btn btn-default" uib-tooltip="{{\'CAPTION_CLEAR\' | translate}}" ng-click="$ctrl.$component.search.Text = \'\'">' +
+                '<i class="fa fa-times-circle"></i>' +
+                '</button>' +
+                '</span>' +
+                '<div>' +
+                '<div>',
+        bindings: {
+            minChars: '@?',
+            placeholder: '@'
+        },
+        controller: [
+            '$scope', function ($scope) {
+                var $ctrl = this;
+
+                $ctrl.$onInit = function () {
+                    $ctrl.minChars = $ctrl.minChars || 3;
+                    $ctrl.lastSearch = $ctrl.$component.search.Text;
+                };
+
+                $scope.$watch('$ctrl.$component.search.Text', function (val, prev) {
+                    if (angular.isUndefined(val) || val === prev) {
+                        return;
+                    }
+
+                    $ctrl.$component.search.Text = val;
+
+                    if ($ctrl.lastSearch !== '' && val === '') {
+                        $ctrl.$component.saveSearch();
+                        $ctrl.$component.search.Operator = 'None';
+                        $ctrl.$component.retrieveData();
+                        return;
+                    }
+
+                    if (val === '' || val.length < $ctrl.minChars || val === $ctrl.lastSearch) {
+                        return;
+                    }
+
+                    $ctrl.lastSearch = val;
+                    $ctrl.$component.saveSearch();
+                    $ctrl.$component.search.Operator = 'Auto';
+                    $ctrl.$component.retrieveData();
+                });
+            }
+        ]
+    })
+
 })(angular);
 (function (angular, moment) {
     'use strict';
@@ -2090,295 +2386,11 @@
             ]
         });
 })(angular);
-(function (angular) {
-    'use strict';
-
-    angular.module('tubular.directives')
-        /**
-         * @ngdoc directive
-         * @name tbForm
-         * @module tubular.directives
-         * @restrict E
-         *
-         * @description
-         * The `tbForm` directive is the base to create any form powered by Tubular. Define `dataService` and 
-         * `modelKey` to auto-load a record. The `serverSaveUrl` can be used to create a new or update
-         * an existing record.
-         * 
-         * Please don't bind a controller directly to the `tbForm`, Angular will throw an exception. If you want
-         * to extend the form behavior put a controller in a upper node like a div.
-         * 
-         * The `save` method can be forced to update a model against the REST service, otherwise if the Model
-         * doesn't detect any change will ignore the save call.
-         * 
-         * @param {string} serverUrl Set the HTTP URL where the data comes.
-         * @param {string} serverSaveUrl Set the HTTP URL where the data will be saved.
-         * @param {string} serverSaveMethod Set HTTP Method to save data.
-         * @param {object} model The object model to show in the form.
-         * @param {string} modelKey Defines the fields to use like Keys.
-         * @param {string} formName Defines the form name.
-         * @param {string} serviceName Define Data service (name) to retrieve data, defaults `tubularHttp`.
-         * @param {bool} requireAuthentication Set if authentication check must be executed, default true.
-         */
-        .directive('tbForm', [function () {
-                return {
-                    template: '<form ng-transclude name="{{name}}"></form>',
-                    restrict: 'E',
-                    replace: true,
-                    transclude: true,
-                    scope: {
-                        model: '=?',
-                        serverUrl: '@',
-                        serverSaveUrl: '@',
-                        serverSaveMethod: '@',
-                        modelKey: '@?',
-                        dataServiceName: '@?serviceName',
-                        requireAuthentication: '=?',
-                        name: '@?formName'
-                    },
-                    controller: [
-                        '$scope', '$routeParams', 'tubularModel', 'tubularHttp', '$timeout', '$element', 'tubularEditorService',
-                        function ($scope, $routeParams, TubularModel, tubularHttp, $timeout, $element, tubular) {
-                            $scope.tubularDirective = 'tubular-form';
-                            $scope.serverSaveMethod = $scope.serverSaveMethod || 'POST';
-                            $scope.fields = [];
-                            $scope.hasFieldsDefinitions = false;
-                            $scope.dataService = tubularHttp.getDataService($scope.dataServiceName);
-                            $scope.name = $scope.name || tubular.getUniqueTbFormName();
-
-                            // This method is meant to provide a reference to the Angular Form
-                            // so we can get information about: $pristine, $dirty, $submitted, etc.
-                            $scope.getFormScope = function () {
-                                return $scope[$element.attr('name')];
-                            };
-
-                            // Setup require authentication
-                            $scope.requireAuthentication = angular.isUndefined($scope.requireAuthentication) ? true : $scope.requireAuthentication;
-                            tubularHttp.setRequireAuthentication($scope.requireAuthentication);
-
-                            $scope.$watch('hasFieldsDefinitions', function (newVal) {
-                                if (newVal !== true) return;
-                                $scope.retrieveData();
-                            });
-
-                            $scope.cloneModel = function(model) {
-                                var data = {};
-
-                                angular.forEach(model, function(value, key) {
-                                    if (key[0] === '$') return;
-
-                                    data[key] = value;
-                                });
-
-                                $scope.model = new TubularModel($scope, $scope, data, $scope.dataService);
-                                $scope.bindFields();
-                            };
-
-                            $scope.bindFields = function () {
-                                angular.forEach($scope.fields, function (field) {
-                                    field.bindScope();
-                                });
-                            };
-
-                            $scope.retrieveData = function () {
-                                // Try to load a key from markup or route
-                                $scope.modelKey = $scope.modelKey || $routeParams.param;
-
-                                if (angular.isDefined($scope.serverUrl)) {
-                                    if (angular.isDefined($scope.modelKey) &&
-                                        $scope.modelKey != null &&
-                                        $scope.modelKey !== '') {
-                                        $scope.dataService.getByKey($scope.serverUrl, $scope.modelKey).promise.then(
-                                            function (data) {
-                                                $scope.model = new TubularModel($scope, $scope, data, $scope.dataService);
-                                                $scope.bindFields();
-                                            }, function (error) {
-                                                $scope.$emit('tbForm_OnConnectionError', error);
-                                            });
-                                    } else {
-                                        $scope.dataService.get(tubularHttp.addTimeZoneToUrl($scope.serverUrl)).promise.then(
-                                            function (data) {
-                                                var innerScope = $scope;
-                                                var dataService = $scope.dataService;
-
-                                                if (angular.isDefined($scope.model) && angular.isDefined($scope.model.$component)) {
-                                                    innerScope = $scope.model.$component;
-                                                    dataService = $scope.model.$component.dataService;
-                                                }
-
-                                                $scope.model = new TubularModel(innerScope, innerScope, data, dataService);
-                                                $scope.bindFields();
-                                                $scope.model.$isNew = true;
-                                            }, function (error) {
-                                                $scope.$emit('tbForm_OnConnectionError', error);
-                                            });
-                                    }
-
-                                    return;
-                                }
-
-                                if (angular.isUndefined($scope.model)) {
-                                    $scope.model = new TubularModel($scope, $scope, {}, $scope.dataService);
-                                }
-
-                                $scope.bindFields();
-                            };
-
-                            $scope.save = function (forceUpdate) {
-                                if (!$scope.model.$valid()) {
-                                    return;
-                                }
-
-                                $scope.currentRequest = $scope.model.save(forceUpdate);
-
-                                if ($scope.currentRequest === false) {
-                                    $scope.$emit('tbForm_OnSavingNoChanges', $scope);
-                                    return;
-                                }
-
-                                $scope.currentRequest.then(
-                                        function (data) {
-                                            if (angular.isDefined($scope.model.$component) &&
-                                                angular.isDefined($scope.model.$component.autoRefresh) &&
-                                                $scope.model.$component.autoRefresh) {
-                                                $scope.model.$component.retrieveData();
-                                            }
-
-                                            $scope.$emit('tbForm_OnSuccessfulSave', data, $scope);
-                                            $scope.clear();
-
-                                            var formScope = $scope.getFormScope();
-                                            if (formScope) formScope.$setPristine();
-                                        }, function (error) {
-                                            $scope.$emit('tbForm_OnConnectionError', error, $scope);
-                                        })
-                                    .then(function () {
-                                        $scope.model.$isLoading = false;
-                                        $scope.currentRequest = null;
-                                    });
-                            };
-
-                            $scope.update = function (forceUpdate) {
-                                $scope.save(forceUpdate);
-                            };
-
-                            $scope.create = function () {
-                                $scope.model.$isNew = true;
-                                $scope.save();
-                            };
-
-                            $scope.cancel = function () {
-                                $scope.$emit('tbForm_OnCancel', $scope.model);
-                                $scope.clear();
-                            };
-
-                            $scope.clear = function () {
-                                angular.forEach($scope.fields, function (field) {
-                                    if (field.resetEditor) {
-                                        field.resetEditor();
-                                    } else {
-                                        field.value = field.defaultValue;
-                                    }
-                                });
-                            };
-
-                            $scope.finishDefinition = function () {
-                                var timer = $timeout(function () {
-                                    $scope.hasFieldsDefinitions = true;
-
-                                    if ($element.find('input').length) {
-                                        $element.find('input')[0].focus();
-                                    }
-                                }, 0);
-
-                                $scope.$emit('tbForm_OnGreetParentController', $scope);
-
-                                $scope.$on('$destroy', function () { $timeout.cancel(timer); });
-                            };
-                        }
-                    ],
-                    compile: function() {
-                        return {
-                            post: function (scope) {
-                                scope.finishDefinition();
-                            }
-                        };
-                    }
-                };
-            }
-        ]);
-})(angular);
 (function(angular) {
     'use strict';
 
     angular.module('tubular.directives')
-        /**
-         * @ngdoc component
-         * @name tbTextSearch
-         * @module tubular.directives
-         *
-         * @description
-         * The `tbTextSearch` is visual component to enable free-text search in a grid.
-         * 
-         * @param {number} minChars How many chars before to search, default 3.
-         * @param {string} placeholder The placeholder text, defaults `UI_SEARCH` i18n resource.
-         */
-        .component('tbTextSearch', {
-            require: {
-                $component: '^tbGrid'
-            },
-            template:
-                '<div class="tubular-grid-search">' +
-                    '<div class="input-group input-group-sm">' +
-                    '<span class="input-group-addon"><i class="fa fa-search"></i></span>' +
-                    '<input type="search" class="form-control" placeholder="{{:: $ctrl.placeholder || (\'UI_SEARCH\' | translate) }}" maxlength="20" ' +
-                    'ng-model="$ctrl.$component.search.Text" ng-model-options="{ debounce: 300 }">' +
-                    '<span class="input-group-btn" ng-show="$ctrl.$component.search.Text.length > 0">' +
-                    '<button class="btn btn-default" uib-tooltip="{{\'CAPTION_CLEAR\' | translate}}" ng-click="$ctrl.$component.search.Text = \'\'">' +
-                    '<i class="fa fa-times-circle"></i>' +
-                    '</button>' +
-                    '</span>' +
-                    '<div>' +
-                    '<div>',
-            bindings: {
-                minChars: '@?',
-                placeholder: '@'
-            },
-            controller: [
-                '$scope', function($scope) {
-                    var $ctrl = this;
-
-                    $ctrl.$onInit = function() {
-                        $ctrl.minChars = $ctrl.minChars || 3;
-                        $ctrl.lastSearch = $ctrl.$component.search.Text;
-                    };
-
-                    $scope.$watch('$ctrl.$component.search.Text', function(val, prev) {
-                        if (angular.isUndefined(val) || val === prev) {
-                            return;
-                        }
-
-                        $ctrl.$component.search.Text = val;
-
-                        if ($ctrl.lastSearch !== '' && val === '') {
-                            $ctrl.$component.saveSearch();
-                            $ctrl.$component.search.Operator = 'None';
-                            $ctrl.$component.retrieveData();
-                            return;
-                        }
-
-                        if (val === '' || val.length < $ctrl.minChars || val === $ctrl.lastSearch) {
-                            return;
-                        }
-
-                        $ctrl.lastSearch = val;
-                        $ctrl.$component.saveSearch();
-                        $ctrl.$component.search.Operator = 'Auto';
-                        $ctrl.$component.retrieveData();
-                    });
-                }
-            ]
-        })
+       
         /**
          * @ngdoc component
          * @name tbRemoveButton
@@ -3014,107 +3026,7 @@
      * It contains common services like HTTP client, filtering and printing services.
      */
     angular.module('tubular.services', ['ui.bootstrap', 'LocalStorageModule'])
-        /**
-         * @ngdoc factory
-         * @name tubularPopupService
-         *
-         * @description
-         * Use `tubularPopupService` to show or generate popups with a `tbForm` inside.
-         */
-        .factory('tubularPopupService', [
-            '$uibModal', '$rootScope', 'tubularTemplateService',
-            function ($uibModal, $rootScope, tubularTemplateService) {
-                
-                return {
-                    onSuccessForm: function(callback) {
-                        var successHandle = $rootScope.$on('tbForm_OnSuccessfulSave', callback);
-
-                        $rootScope.$on('$destroy', successHandle);
-                    },
-
-                    onConnectionError: function(callback) {
-                        var errorHandle = $rootScope.$on('tbForm_OnConnectionError', callback);
-
-                        $rootScope.$on('$destroy', errorHandle);
-                    },
-
-                    /**
-                     * Opens a new Popup
-                     * 
-                     * @param {string} template 
-                     * @param {object} model 
-                     * @param {object} gridScope 
-                     * @param {string} size 
-                     * @returns {object} The Popup instance
-                     */
-                    openDialog: function(template, model, gridScope, size) {
-                        if (angular.isUndefined(template)) {
-                            template = tubularTemplateService.generatePopup(model);
-                        }
-
-                        var dialog = $uibModal.open({
-                            templateUrl: template,
-                            backdropClass: 'fullHeight',
-                            animation: false,
-                            size: size,
-                            controller:
-                                // TODO: Move out of this scope
-                                [
-                                '$scope', function($scope) {
-                                    $scope.Model = model;
-
-                                    $scope.savePopup = function(innerModel, forceUpdate) {
-                                        innerModel = innerModel || $scope.Model;
-
-                                        // If we have nothing to save and it's not a new record, just close
-                                        if (!forceUpdate && !innerModel.$isNew && !innerModel.$hasChanges) {
-                                            $scope.closePopup();
-                                            return null;
-                                        }
-
-                                        var result = innerModel.save(forceUpdate);
-
-                                        if (angular.isUndefined(result) || result === false) {
-                                            return null;
-                                        }
-
-                                        result.then(
-                                            function(data) {
-                                                $scope.$emit('tbForm_OnSuccessfulSave', data);
-                                                $rootScope.$broadcast('tbForm_OnSuccessfulSave', data);
-                                                $scope.Model.$isLoading = false;
-                                                if (gridScope.autoRefresh) gridScope.retrieveData();
-                                                dialog.close();
-
-                                                return data;
-                                            },
-                                            function(error) {
-                                                $scope.$emit('tbForm_OnConnectionError', error);
-                                                $rootScope.$broadcast('tbForm_OnConnectionError', error);
-                                                $scope.Model.$isLoading = false;
-
-                                                return error;
-                                            });
-
-                                        return result;
-                                    };
-
-                                    $scope.closePopup = function() {
-                                        if (angular.isDefined($scope.Model.revertChanges)) {
-                                            $scope.Model.revertChanges();
-                                        }
-
-                                        dialog.close();
-                                    };
-                                }
-                            ]
-                        });
-
-                        return dialog;
-                    }
-                };
-            }
-        ])
+        
         /**
          * @ngdoc factory
          * @name tubularGridExportService
@@ -3143,7 +3055,13 @@
                 }
             };
         })
-        /**
+       
+})(angular, saveAs);
+(function (angular) {
+    'use strict';
+
+    angular.module('tubular.services')
+         /**
          * @ngdoc service
          * @name tubularEditorService
          *
@@ -3151,15 +3069,15 @@
          * The `tubularEditorService` service is a internal helper to setup any `TubularModel` with a UI.
          */
         .service('tubularEditorService', [
-            '$filter', function($filter) {
+            '$filter', function ($filter) {
                 var me = this;
 
-                me.isValid = function(value) { return !(!value); };
+                me.isValid = function (value) { return !(!value); };
 
                 /**
                 * Simple helper to generate a unique name for Tubular Forms
                 */
-                me.getUniqueTbFormName = function() {
+                me.getUniqueTbFormName = function () {
                     me.tbFormCounter = me.tbFormCounter || (me.tbFormCounter = -1);
                     me.tbFormCounter++;
                     return 'tbForm' + me.tbFormCounter;
@@ -3169,7 +3087,7 @@
                  * Setups a new Editor, this functions is like a common class constructor to be used
                  * with all the tubularEditors.
                  */
-                me.setupScope = function(scope, defaultFormat, ctrl, setDirty) {
+                me.setupScope = function (scope, defaultFormat, ctrl, setDirty) {
                     if (angular.isUndefined(ctrl)) {
                         ctrl = scope;
                     }
@@ -3183,7 +3101,7 @@
                     ctrl.$valid = true;
 
                     // Get the field reference using the Angular way
-                    ctrl.getFormField = function() {
+                    ctrl.getFormField = function () {
                         var parent = scope.$parent;
 
                         while (parent != null) {
@@ -3199,14 +3117,14 @@
                         return null;
                     };
 
-                    ctrl.$dirty = function() {
+                    ctrl.$dirty = function () {
                         // Just forward the property
                         var formField = ctrl.getFormField();
 
                         return formField == null ? true : formField.$dirty;
                     };
 
-                    ctrl.checkValid = function() {
+                    ctrl.checkValid = function () {
                         ctrl.$valid = true;
                         ctrl.state.$errors = [];
 
@@ -3230,16 +3148,16 @@
                         ctrl.validate();
                     };
 
-                    scope.$watch(function() {
+                    scope.$watch(function () {
                         return ctrl.value;
-                    }, function(newValue, oldValue) {
+                    }, function (newValue, oldValue) {
                         if (angular.isUndefined(oldValue) && angular.isUndefined(newValue)) {
                             return;
                         }
 
                         // This is the state API for every property in the Model
                         ctrl.state = {
-                            $valid: function() {
+                            $valid: function () {
                                 ctrl.checkValid();
                                 return this.$errors.length === 0;
                             },
@@ -3287,7 +3205,7 @@
 
                             scope.Name = ctrl.name;
 
-                            ctrl.bindScope = function() {
+                            ctrl.bindScope = function () {
                                 scope.$parent.Model = parent.model;
 
                                 if (angular.equals(ctrl.value, parent.model[scope.Name]) === false) {
@@ -3302,18 +3220,18 @@
                                         }
                                     }
 
-                                    parent.$watch(function() {
+                                    parent.$watch(function () {
                                         return ctrl.value;
-                                    }, function(value) {
+                                    }, function (value) {
                                         if (value === parent.model[scope.Name]) return;
 
                                         parent.model[scope.Name] = value;
                                     });
                                 }
 
-                                scope.$watch(function() {
+                                scope.$watch(function () {
                                     return parent.model[scope.Name];
-                                }, function(value) {
+                                }, function (value) {
                                     if (value === ctrl.value) return;
 
                                     ctrl.value = value;
@@ -3336,7 +3254,7 @@
 
                                 // This is the state API for every property in the Model
                                 parent.model.$state[scope.Name] = {
-                                    $valid: function() {
+                                    $valid: function () {
                                         ctrl.checkValid();
                                         return this.$errors.length === 0;
                                     },
@@ -3364,544 +3282,112 @@
                 };
             }
         ]);
-})(angular, saveAs);
+})(angular);
 (function (angular) {
     'use strict';
 
     angular.module('tubular.services')
         /**
-         * @ngdoc service
-         * @name tubularHttp
+         * @ngdoc factory
+         * @name tubularPopupService
          *
          * @description
-         * Use `tubularHttp` to connect a grid or a form to a HTTP Resource. Internally this service is
-         * using `$http` to make all the request.
-         * 
-         * This service provides authentication using bearer-tokens. Based on https://bitbucket.org/david.antaramian/so-21662778-spa-authentication-example
+         * Use `tubularPopupService` to show or generate popups with a `tbForm` inside.
          */
-        .service('tubularHttp', [
-            '$http', '$timeout', '$q', '$cacheFactory', 'localStorageService', '$filter', '$log', '$document',
-            function ($http, $timeout, $q, $cacheFactory, localStorageService, $filter, $log, $document) {
-                var me = this;
+        .factory('tubularPopupService', [
+            '$uibModal', '$rootScope', 'tubularTemplateService',
+            function ($uibModal, $rootScope, tubularTemplateService) {
 
-                function isAuthenticationExpired(expirationDate) {
-                    var now = new Date();
-                    expirationDate = new Date(expirationDate);
+                return {
+                    onSuccessForm: function (callback) {
+                        var successHandle = $rootScope.$on('tbForm_OnSuccessfulSave', callback);
 
-                    return expirationDate - now <= 0;
-                }
+                        $rootScope.$on('$destroy', successHandle);
+                    },
 
-                function removeData() {
-                    localStorageService.remove('auth_data');
-                }
+                    onConnectionError: function (callback) {
+                        var errorHandle = $rootScope.$on('tbForm_OnConnectionError', callback);
 
-                function saveData() {
-                    removeData();
-                    localStorageService.set('auth_data', me.userData);
-                }
+                        $rootScope.$on('$destroy', errorHandle);
+                    },
 
-                function setHttpAuthHeader() {
-                    $http.defaults.headers.common.Authorization = 'Bearer ' + me.userData.bearerToken;
-                }
-
-                function retrieveSavedData() {
-                    var savedData = localStorageService.get('auth_data');
-
-                    if (angular.isUndefined(savedData)) {
-                        throw 'No authentication data exists';
-                    } else if (isAuthenticationExpired(savedData.expirationDate)) {
-                        throw 'Authentication token has already expired';
-                    } else {
-                        me.userData = savedData;
-                        setHttpAuthHeader();
-                    }
-                }
-
-                function clearUserData() {
-                    me.userData.isAuthenticated = false;
-                    me.userData.username = '';
-                    me.userData.bearerToken = '';
-                    me.userData.expirationDate = null;
-                    me.userData.refreshToken = null;
-                }
-
-                me.userData = {
-                    isAuthenticated: false,
-                    username: '',
-                    bearerToken: '',
-                    expirationDate: null
-                };
-
-                me.isBearerTokenExpired = function () {
-                    return isAuthenticationExpired(me.userData.expirationDate);
-                }
-
-                me.useRefreshTokens = false;
-                me.cache = $cacheFactory('tubularHttpCache');
-                me.useCache = false;
-                me.requireAuthentication = true;
-                me.refreshTokenUrl = me.tokenUrl = '/api/token';
-                me.apiBaseUrl = '/api';
-
-                me.setRequireAuthentication = function (val) { me.requireAuthentication = val; };
-                me.setTokenUrl = function (val) { me.tokenUrl = val; };
-                me.setRefreshTokenUrl = function (val) { me.refreshTokenUrl = val; };
-                me.setApiBaseUrl = function (val) { me.apiBaseUrl = val; };
-
-                me.isAuthenticated = function () {
-                    if (!me.userData.isAuthenticated || isAuthenticationExpired(me.userData.expirationDate)) {
-                        try {
-                            retrieveSavedData();
-                        } catch (e) {
-                            return false;
-                        }
-                    }
-
-                    return true;
-                };
-
-
-                me.setAccessTokenAsExpired = function () {
-                    me.userData.expirationDate = new Date(new Date().getTime() - 10 * 1000);
-                    saveData();
-                };
-
-                me.removeAuthentication = function () {
-                    removeData();
-                    clearUserData();
-                    $http.defaults.headers.common.Authorization = null;
-                };
-
-                me.authenticate = function (username, password, successCallback, errorCallback) {
-                    this.removeAuthentication();
-
-                    $http({
-                        method: 'POST',
-                        url: me.tokenUrl,
-                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                        data: 'grant_type=password&username=' + encodeURIComponent(username) + '&password=' + encodeURIComponent(password)
-                    }).then(function (response) {
-                        me.handleSuccessCallback(successCallback, response.data, username);
-                    }, function (errorResponse) {
-                        if (angular.isFunction(errorCallback)) {
-                            errorCallback(errorResponse.data.error_description || $filter('translate')('UI_HTTPERROR'));
-                        }
-                    });
-                };
-
-                me.handleSuccessCallback = function (successCallback, data, username) {
-                    me.userData.isAuthenticated = true;
-                    me.userData.username = data.userName || username || me.userData.username;
-                    me.userData.bearerToken = data.access_token;
-                    me.userData.expirationDate = new Date();
-                    me.userData.expirationDate = new Date(me.userData.expirationDate.getTime() + data.expires_in * 1000);
-                    me.userData.role = data.role;
-                    me.userData.refreshToken = data.refresh_token;
-
-                    setHttpAuthHeader();
-                    saveData();
-
-                    if (angular.isFunction(successCallback)) {
-                        successCallback(data);
-                    }
-                };
-
-                me.addTimeZoneToUrl = function (url) {
-                    return url + (url.indexOf('?') === -1 ? '?' : '&') + 'timezoneOffset=' + new Date().getTimezoneOffset();
-                }
-
-                me.saveDataAsync = function (model, request) {
-                    var component = model.$component;
-                    model.$component = null;
-                    var clone = angular.copy(model);
-                    model.$component = component;
-
-                    var originalClone = angular.copy(model.$original);
-
-                    delete clone.$isEditing;
-                    delete clone.$hasChanges;
-                    delete clone.$selected;
-                    delete clone.$original;
-                    delete clone.$state;
-                    delete clone.$valid;
-                    delete clone.$component;
-                    delete clone.$isLoading;
-                    delete clone.$isNew;
-
-                    if (model.$isNew) {
-                        request.serverUrl = me.addTimeZoneToUrl(request.serverUrl);
-                        request.data = clone;
-                    } else {
-                        request.data = {
-                            Old: originalClone,
-                            New: clone,
-                            TimezoneOffset: new Date().getTimezoneOffset()
-                        };
-                    }
-
-                    var dataRequest = me.retrieveDataAsync(request);
-
-                    dataRequest.promise.then(function (data) {
-                        model.$hasChanges = false;
-                        model.resetOriginal();
-
-                        return data;
-                    });
-
-                    return dataRequest;
-                };
-
-                me.getExpirationDate = function () {
-                    var date = new Date();
-                    return new Date(date.getTime() + 5 * 60000); // Add 5 minutes
-                };
-
-                me.getCancel = function (canceller) {
-                    return function (reason) {
-                        $log.error(reason);
-                        canceller.resolve(reason);
-                    }
-                };
-
-                me.retrieveDataAsync = function (request) {
-                    var canceller = $q.defer();
-                    var cancel = me.getCancel(canceller);
-
-                    if (angular.isUndefined(request.requireAuthentication)) {
-                        request.requireAuthentication = me.requireAuthentication;
-                    }
-
-                    if (angular.isString(request.requireAuthentication)) {
-                        request.requireAuthentication = request.requireAuthentication === 'true';
-                    }
-
-                    if (!me.useRefreshTokens) {
-                        if (request.requireAuthentication && me.isAuthenticated() === false) {
-
-                            return {
-                                promise: $q(function (resolve) {
-                                    resolve(null);
-                                }),
-                                cancel: cancel
-                            };
-                        }
-                    }
-
-                    var checksum = angular.toJson(request);
-
-                    if ((request.requestMethod === 'GET' || request.requestMethod === 'POST') && me.useCache) {
-                        var data = me.cache.get(checksum);
-
-                        if (angular.isDefined(data) && data.Expiration.getTime() > new Date().getTime()) {
-                            return {
-                                promise: $q(function (resolve) {
-                                    resolve(data.Set);
-                                }),
-                                cancel: cancel
-                            };
-                        }
-                    }
-
-                    request.timeout = request.timeout || 17000;
-
-                    var timeoutHanlder = $timeout(function () {
-                        cancel('Timed out');
-                    }, request.timeout);
-
-                    var promise = $http({
-                        url: request.serverUrl,
-                        method: request.requestMethod,
-                        data: request.data,
-                        timeout: canceller.promise
-                    }).then(function (response) {
-                        $timeout.cancel(timeoutHanlder);
-
-                        if (me.useCache) {
-                            me.cache.put(checksum, { Expiration: me.getExpirationDate(), Set: response.data });
+                    /**
+                     * Opens a new Popup
+                     * 
+                     * @param {string} template 
+                     * @param {object} model 
+                     * @param {object} gridScope 
+                     * @param {string} size 
+                     * @returns {object} The Popup instance
+                     */
+                    openDialog: function (template, model, gridScope, size) {
+                        if (angular.isUndefined(template)) {
+                            template = tubularTemplateService.generatePopup(model);
                         }
 
-                        return response.data;
-                    }, function (error) {
-                        if (error.status === 401) {
-                            me.removeAuthentication();
+                        var dialog = $uibModal.open({
+                            templateUrl: template,
+                            backdropClass: 'fullHeight',
+                            animation: false,
+                            size: size,
+                            controller:
+                                // TODO: Move out of this scope
+                                [
+                                '$scope', function ($scope) {
+                                    $scope.Model = model;
 
-                            // Let's trigger a refresh
-                            $document.location = $document.location;
-                        }
-                        return $q.reject(error);
-                    });
+                                    $scope.savePopup = function (innerModel, forceUpdate) {
+                                        innerModel = innerModel || $scope.Model;
 
-                    return {
-                        promise: promise,
-                        cancel: cancel
-                    };
-                };
+                                        // If we have nothing to save and it's not a new record, just close
+                                        if (!forceUpdate && !innerModel.$isNew && !innerModel.$hasChanges) {
+                                            $scope.closePopup();
+                                            return null;
+                                        }
 
-                me.get = function (url, params) {
-                    if (!me.useRefreshTokens) {
-                        if (me.requireAuthentication && !me.isAuthenticated()) {
-                            var canceller = $q.defer();
+                                        var result = innerModel.save(forceUpdate);
 
-                            // Return empty dataset
-                            return {
-                                promise: $q(function (resolve) {
-                                    resolve(null);
-                                }),
-                                cancel: me.getCancel(canceller)
-                            };
-                        }
+                                        if (angular.isUndefined(result) || result === false) {
+                                            return null;
+                                        }
+
+                                        result.then(
+                                            function (data) {
+                                                $scope.$emit('tbForm_OnSuccessfulSave', data);
+                                                $rootScope.$broadcast('tbForm_OnSuccessfulSave', data);
+                                                $scope.Model.$isLoading = false;
+                                                if (gridScope.autoRefresh) gridScope.retrieveData();
+                                                dialog.close();
+
+                                                return data;
+                                            },
+                                            function (error) {
+                                                $scope.$emit('tbForm_OnConnectionError', error);
+                                                $rootScope.$broadcast('tbForm_OnConnectionError', error);
+                                                $scope.Model.$isLoading = false;
+
+                                                return error;
+                                            });
+
+                                        return result;
+                                    };
+
+                                    $scope.closePopup = function () {
+                                        if (angular.isDefined($scope.Model.revertChanges)) {
+                                            $scope.Model.revertChanges();
+                                        }
+
+                                        dialog.close();
+                                    };
+                                }
+                                ]
+                        });
+
+                        return dialog;
                     }
-
-                    return { promise: $http.get(url, params).then(function (data) { return data.data; }) };
-                };
-
-                me.getBinary = function (url) {
-                    return me.get(url, { responseType: 'arraybuffer' });
-                };
-
-                me.delete = function (url) {
-                    if (!me.useRefreshTokens) {
-                        if (me.requireAuthentication && !me.isAuthenticated()) {
-                            var canceller = $q.defer();
-
-                            // Return empty dataset
-                            return {
-                                promise: $q(function (resolve) {
-                                    resolve(null);
-                                }),
-                                cancel: me.getCancel(canceller)
-                            };
-                        }
-                    }
-
-                    return me.retrieveDataAsync({
-                        serverUrl: url,
-                        requestMethod: 'DELETE'
-                    });
-                };
-
-                me.post = function (url, data) {
-                    if (!me.useRefreshTokens) {
-                        if (me.requireAuthentication && !me.isAuthenticated()) {
-                            var canceller = $q.defer();
-
-                            // Return empty dataset
-                            return {
-                                promise: $q(function (resolve) {
-                                    resolve(null);
-                                }),
-                                cancel: me.getCancel(canceller)
-                            };
-                        }
-                    }
-                    return me.retrieveDataAsync({
-                        serverUrl: url,
-                        requestMethod: 'POST',
-                        data: data
-                    });
-                };
-
-                /*
-                 * @function postBinary
-                 * 
-                 * @description
-                 * Allow to post a `FormData` object with `$http`. You need to append the files
-                 * in your own FormData.
-                 */
-                me.postBinary = function (url, formData) {
-                    var canceller = $q.defer();
-                    var cancel = me.getCancel(canceller);
-
-                    if (!me.useRefreshTokens) {
-                        if (me.requireAuthentication && !me.isAuthenticated()) {
-                            // Return empty dataset
-                            return {
-                                promise: $q(function (resolve) {
-                                    resolve(null);
-                                }),
-                                cancel: cancel
-                            };
-                        }
-                    }
-
-                    var promise = $http({
-                        url: url,
-                        method: 'POST',
-                        headers: { 'Content-Type': undefined },
-                        transformRequest: function (data) { return data; }, // TODO: Remove
-                        data: formData
-                    });
-
-                    return {
-                        promise: promise,
-                        cancel: cancel
-                    };
-                };
-
-                me.put = function (url, data) {
-                    if (!me.useRefreshTokens) {
-                        if (me.requireAuthentication && !me.isAuthenticated()) {
-                            var canceller = $q.defer();
-
-                            // Return empty dataset
-                            return {
-                                promise: $q(function (resolve) {
-                                    resolve(null);
-                                }),
-                                cancel: me.getCancel(canceller)
-                            };
-                        }
-                    }
-
-                    return me.retrieveDataAsync({
-                        serverUrl: url,
-                        requestMethod: 'PUT',
-                        data: data
-                    });
-                };
-
-                me.getByKey = function (url, key) {
-                    var urlData = me.addTimeZoneToUrl(url).split('?');
-                    var getUrl = urlData[0] + key;
-
-                    if (urlData.length > 1) getUrl += '?' + urlData[1];
-
-                    return me.get(getUrl);
-                };
-
-                // This is a kind of factory to retrieve a DataService
-                me.instances = [];
-
-                me.registerService = function (name, instance) {
-                    me.instances[name] = instance;
-                };
-
-                me.getDataService = function (name) {
-                    if (angular.isUndefined(name) || name == null || name === 'tubularHttp') {
-                        return me;
-                    }
-
-                    var instance = me.instances[name];
-
-                    return instance == null ? me : instance;
                 };
             }
         ]);
-})(angular);
-(function (angular) {
-    'use strict';
-    /**
-     * @ngdoc function
-     * @name tubularAuthInterceptor
-     * @description
-     *
-     * Implement a httpInterceptor to handle authorization using bearer tokens
-     *
-     * @constructor
-     * @returns {Object} A httpInterceptor
-     * 
-     */   
-    angular.module('tubular.services')
-        .factory('tubularAuthInterceptor', ['$q', '$injector', function ($q, $injector) {
-            var authRequestRunning = null;
-            return {
-
-                request: function (config) {
-                    // Get the service here because otherwise, a circular dependency injection will be detected
-                    var tubularHttp = $injector.get('tubularHttp');
-                    var apiBaseUrl = tubularHttp.apiBaseUrl;
-
-                    config.headers = config.headers || {};
-
-                    if (
-                        config.url.substring(0, apiBaseUrl.length) === apiBaseUrl &&
-                        tubularHttp.tokenUrl !== config.url &&
-                        tubularHttp.useRefreshTokens &&
-                        tubularHttp.requireAuthentication &&
-                        tubularHttp.userData.refreshToken) {
-
-                        if (tubularHttp.isBearerTokenExpired()) {
-                            // Let's force an error to automatically go directly to the refresh token stuff
-                            return $q.reject({ error: 'expired token', status: 401, config: config });
-                        }
-                    }
-
-                    return config;
-                },
-
-                requestError: function (rejection) {
-
-                    return $q.reject(rejection);
-                },
-
-                // optional method
-                response: function (response) {
-                    return response;
-                },
-
-                // optional method
-                responseError: function (rejection) {
-                    var deferred = $q.defer();
-
-                    switch (rejection.status) {
-                        case 401:
-                            var tubularHttp = $injector.get('tubularHttp');
-                            var apiBaseUrl = tubularHttp.apiBaseUrl;
-
-                            if (
-                                rejection.config.url.substring(0, apiBaseUrl.length) === apiBaseUrl &&
-                                tubularHttp.tokenUrl !== rejection.config.url &&
-                                tubularHttp.useRefreshTokens &&
-                                tubularHttp.requireAuthentication &&
-                                tubularHttp.userData.refreshToken) {
-
-
-                                if (!authRequestRunning) {
-                                    authRequestRunning = $injector.get('$http')({
-                                        method: 'POST',
-                                        url: tubularHttp.refreshTokenUrl,
-                                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                                        data: 'grant_type=refresh_token&refresh_token=' + tubularHttp.userData.refreshToken
-                                    });
-                                }
-
-                                authRequestRunning.then(function (r) {
-                                    authRequestRunning = null;
-                                    tubularHttp.handleSuccessCallback(null, r.data);
-
-                                    if (tubularHttp.requireAuthentication && tubularHttp.isAuthenticated()) {
-                                        $injector.get('$http')(rejection.config).then(function (resp) {
-                                            deferred.resolve(resp);
-                                        }, function () {
-                                            deferred.reject(r);
-                                        });
-                                    }
-                                    else {
-                                        deferred.reject(rejection);
-                                    }
-                                }, function (response) {
-                                    authRequestRunning = null;
-                                    deferred.reject(response);
-                                    tubularHttp.removeAuthentication();
-                                    $injector.get('$state').go('/Login');
-                                    return;
-                                });
-
-                            }
-                            else {
-                                deferred.reject(rejection);
-                            }
-
-                            return deferred.promise;
-                        default:
-                            break;
-                    }
-
-                    deferred.reject(rejection);
-                    return deferred.promise;
-                }
-            };
-        }]);
 })(angular);
 (function (angular) {
     'use strict';
@@ -4638,6 +4124,523 @@
 
             }
         ]);
+})(angular);
+(function (angular) {
+    'use strict';
+
+    angular.module('tubular.services')
+        /**
+         * @ngdoc service
+         * @name tubularHttp
+         *
+         * @description
+         * Use `tubularHttp` to connect a grid or a form to a HTTP Resource. Internally this service is
+         * using `$http` to make all the request.
+         * 
+         * This service provides authentication using bearer-tokens. Based on https://bitbucket.org/david.antaramian/so-21662778-spa-authentication-example
+         */
+        .service('tubularHttp', [
+            '$http', '$timeout', '$q', 'localStorageService', '$filter', '$log', '$document',
+            function ($http, $timeout, $q, localStorageService, $filter, $log, $document) {
+                var me = this;
+
+                function isAuthenticationExpired(expirationDate) {
+                    var now = new Date();
+                    expirationDate = new Date(expirationDate);
+
+                    return expirationDate - now <= 0;
+                }
+
+                function removeData() {
+                    localStorageService.remove('auth_data');
+                }
+
+                function saveData() {
+                    removeData();
+                    localStorageService.set('auth_data', me.userData);
+                }
+
+                function setHttpAuthHeader() {
+                    $http.defaults.headers.common.Authorization = 'Bearer ' + me.userData.bearerToken;
+                }
+
+                function retrieveSavedData() {
+                    var savedData = localStorageService.get('auth_data');
+
+                    if (angular.isUndefined(savedData)) {
+                        throw 'No authentication data exists';
+                    } else if (isAuthenticationExpired(savedData.expirationDate)) {
+                        throw 'Authentication token has already expired';
+                    } else {
+                        me.userData = savedData;
+                        setHttpAuthHeader();
+                    }
+                }
+
+                function clearUserData() {
+                    me.userData.isAuthenticated = false;
+                    me.userData.username = '';
+                    me.userData.bearerToken = '';
+                    me.userData.expirationDate = null;
+                    me.userData.refreshToken = null;
+                }
+
+                me.userData = {
+                    isAuthenticated: false,
+                    username: '',
+                    bearerToken: '',
+                    expirationDate: null
+                };
+
+                me.isBearerTokenExpired = function () {
+                    return isAuthenticationExpired(me.userData.expirationDate);
+                }
+
+                me.useRefreshTokens = false;
+                me.requireAuthentication = true;
+                me.refreshTokenUrl = me.tokenUrl = '/api/token';
+                me.apiBaseUrl = '/api';
+
+                me.setRequireAuthentication = function (val) { me.requireAuthentication = val; };
+                me.setTokenUrl = function (val) { me.tokenUrl = val; };
+                me.setRefreshTokenUrl = function (val) { me.refreshTokenUrl = val; };
+                me.setApiBaseUrl = function (val) { me.apiBaseUrl = val; };
+
+                me.isAuthenticated = function () {
+                    if (!me.userData.isAuthenticated || isAuthenticationExpired(me.userData.expirationDate)) {
+                        try {
+                            retrieveSavedData();
+                        } catch (e) {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                };
+
+
+                me.setAccessTokenAsExpired = function () {
+                    me.userData.expirationDate = new Date(new Date().getTime() - 10 * 1000);
+                    saveData();
+                };
+
+                me.removeAuthentication = function () {
+                    removeData();
+                    clearUserData();
+                    $http.defaults.headers.common.Authorization = null;
+                };
+
+                me.authenticate = function (username, password, successCallback, errorCallback) {
+                    this.removeAuthentication();
+
+                    $http({
+                        method: 'POST',
+                        url: me.tokenUrl,
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        data: 'grant_type=password&username=' + encodeURIComponent(username) + '&password=' + encodeURIComponent(password)
+                    }).then(function (response) {
+                        me.handleSuccessCallback(successCallback, response.data, username);
+                    }, function (errorResponse) {
+                        if (angular.isFunction(errorCallback)) {
+                            errorCallback(errorResponse.data.error_description || $filter('translate')('UI_HTTPERROR'));
+                        }
+                    });
+                };
+
+                me.handleSuccessCallback = function (successCallback, data, username) {
+                    me.userData.isAuthenticated = true;
+                    me.userData.username = data.userName || username || me.userData.username;
+                    me.userData.bearerToken = data.access_token;
+                    me.userData.expirationDate = new Date();
+                    me.userData.expirationDate = new Date(me.userData.expirationDate.getTime() + data.expires_in * 1000);
+                    me.userData.role = data.role;
+                    me.userData.refreshToken = data.refresh_token;
+
+                    setHttpAuthHeader();
+                    saveData();
+
+                    if (angular.isFunction(successCallback)) {
+                        successCallback(data);
+                    }
+                };
+
+                me.addTimeZoneToUrl = function (url) {
+                    return url + (url.indexOf('?') === -1 ? '?' : '&') + 'timezoneOffset=' + new Date().getTimezoneOffset();
+                }
+
+                me.saveDataAsync = function (model, request) {
+                    var component = model.$component;
+                    model.$component = null;
+                    var clone = angular.copy(model);
+                    model.$component = component;
+
+                    var originalClone = angular.copy(model.$original);
+
+                    delete clone.$isEditing;
+                    delete clone.$hasChanges;
+                    delete clone.$selected;
+                    delete clone.$original;
+                    delete clone.$state;
+                    delete clone.$valid;
+                    delete clone.$component;
+                    delete clone.$isLoading;
+                    delete clone.$isNew;
+
+                    if (model.$isNew) {
+                        request.serverUrl = me.addTimeZoneToUrl(request.serverUrl);
+                        request.data = clone;
+                    } else {
+                        request.data = {
+                            Old: originalClone,
+                            New: clone,
+                            TimezoneOffset: new Date().getTimezoneOffset()
+                        };
+                    }
+
+                    var dataRequest = me.retrieveDataAsync(request);
+
+                    dataRequest.promise.then(function (data) {
+                        model.$hasChanges = false;
+                        model.resetOriginal();
+
+                        return data;
+                    });
+
+                    return dataRequest;
+                };
+
+                me.getExpirationDate = function () {
+                    var date = new Date();
+                    return new Date(date.getTime() + 5 * 60000); // Add 5 minutes
+                };
+
+                me.getCancel = function (canceller) {
+                    return function (reason) {
+                        $log.error(reason);
+                        canceller.resolve(reason);
+                    }
+                };
+
+                me.retrieveDataAsync = function (request) {
+                    var canceller = $q.defer();
+                    var cancel = me.getCancel(canceller);
+
+                    if (angular.isUndefined(request.requireAuthentication)) {
+                        request.requireAuthentication = me.requireAuthentication;
+                    }
+
+                    if (angular.isString(request.requireAuthentication)) {
+                        request.requireAuthentication = request.requireAuthentication === 'true';
+                    }
+
+                    if (!me.useRefreshTokens) {
+                        if (request.requireAuthentication && me.isAuthenticated() === false) {
+
+                            return {
+                                promise: $q(function (resolve) {
+                                    resolve(null);
+                                }),
+                                cancel: cancel
+                            };
+                        }
+                    }
+
+                    request.timeout = request.timeout || 17000;
+
+                    var timeoutHanlder = $timeout(function () {
+                        cancel('Timed out');
+                    }, request.timeout);
+
+                    var promise = $http({
+                        url: request.serverUrl,
+                        method: request.requestMethod,
+                        data: request.data,
+                        timeout: canceller.promise
+                    }).then(function (response) {
+                        $timeout.cancel(timeoutHanlder);
+
+                        return response.data;
+                    }, function (error) {
+                        if (error.status === 401) {
+                            me.removeAuthentication();
+
+                            // Let's trigger a refresh
+                            $document.location = $document.location;
+                        }
+                        return $q.reject(error);
+                    });
+
+                    return {
+                        promise: promise,
+                        cancel: cancel
+                    };
+                };
+
+                me.get = function (url, params) {
+                    if (!me.useRefreshTokens) {
+                        if (me.requireAuthentication && !me.isAuthenticated()) {
+                            var canceller = $q.defer();
+
+                            // Return empty dataset
+                            return {
+                                promise: $q(function (resolve) {
+                                    resolve(null);
+                                }),
+                                cancel: me.getCancel(canceller)
+                            };
+                        }
+                    }
+
+                    return { promise: $http.get(url, params).then(function (data) { return data.data; }) };
+                };
+
+                me.getBinary = function (url) {
+                    return me.get(url, { responseType: 'arraybuffer' });
+                };
+
+                me.delete = function (url) {
+                    if (!me.useRefreshTokens) {
+                        if (me.requireAuthentication && !me.isAuthenticated()) {
+                            var canceller = $q.defer();
+
+                            // Return empty dataset
+                            return {
+                                promise: $q(function (resolve) {
+                                    resolve(null);
+                                }),
+                                cancel: me.getCancel(canceller)
+                            };
+                        }
+                    }
+
+                    return me.retrieveDataAsync({
+                        serverUrl: url,
+                        requestMethod: 'DELETE'
+                    });
+                };
+
+                me.post = function (url, data) {
+                    if (!me.useRefreshTokens) {
+                        if (me.requireAuthentication && !me.isAuthenticated()) {
+                            var canceller = $q.defer();
+
+                            // Return empty dataset
+                            return {
+                                promise: $q(function (resolve) {
+                                    resolve(null);
+                                }),
+                                cancel: me.getCancel(canceller)
+                            };
+                        }
+                    }
+                    return me.retrieveDataAsync({
+                        serverUrl: url,
+                        requestMethod: 'POST',
+                        data: data
+                    });
+                };
+
+                /*
+                 * @function postBinary
+                 * 
+                 * @description
+                 * Allow to post a `FormData` object with `$http`. You need to append the files
+                 * in your own FormData.
+                 */
+                me.postBinary = function (url, formData) {
+                    var canceller = $q.defer();
+                    var cancel = me.getCancel(canceller);
+
+                    if (!me.useRefreshTokens) {
+                        if (me.requireAuthentication && !me.isAuthenticated()) {
+                            // Return empty dataset
+                            return {
+                                promise: $q(function (resolve) {
+                                    resolve(null);
+                                }),
+                                cancel: cancel
+                            };
+                        }
+                    }
+
+                    var promise = $http({
+                        url: url,
+                        method: 'POST',
+                        headers: { 'Content-Type': undefined },
+                        transformRequest: function (data) { return data; }, // TODO: Remove
+                        data: formData
+                    });
+
+                    return {
+                        promise: promise,
+                        cancel: cancel
+                    };
+                };
+
+                me.put = function (url, data) {
+                    if (!me.useRefreshTokens) {
+                        if (me.requireAuthentication && !me.isAuthenticated()) {
+                            var canceller = $q.defer();
+
+                            // Return empty dataset
+                            return {
+                                promise: $q(function (resolve) {
+                                    resolve(null);
+                                }),
+                                cancel: me.getCancel(canceller)
+                            };
+                        }
+                    }
+
+                    return me.retrieveDataAsync({
+                        serverUrl: url,
+                        requestMethod: 'PUT',
+                        data: data
+                    });
+                };
+
+                me.getByKey = function (url, key) {
+                    var urlData = me.addTimeZoneToUrl(url).split('?');
+                    var getUrl = urlData[0] + key;
+
+                    if (urlData.length > 1) getUrl += '?' + urlData[1];
+
+                    return me.get(getUrl);
+                };
+
+                // This is a kind of factory to retrieve a DataService
+                me.instances = [];
+
+                me.registerService = function (name, instance) {
+                    me.instances[name] = instance;
+                };
+
+                me.getDataService = function (name) {
+                    if (angular.isUndefined(name) || name == null || name === 'tubularHttp') {
+                        return me;
+                    }
+
+                    var instance = me.instances[name];
+
+                    return instance == null ? me : instance;
+                };
+            }
+        ]);
+})(angular);
+(function (angular) {
+    'use strict';
+    /**
+     * @ngdoc function
+     * @name tubularAuthInterceptor
+     * @description
+     *
+     * Implement a httpInterceptor to handle authorization using bearer tokens
+     *
+     * @constructor
+     * @returns {Object} A httpInterceptor
+     * 
+     */   
+    angular.module('tubular.services')
+        .factory('tubularAuthInterceptor', ['$q', '$injector', function ($q, $injector) {
+            var authRequestRunning = null;
+            return {
+
+                request: function (config) {
+                    // Get the service here because otherwise, a circular dependency injection will be detected
+                    var tubularHttp = $injector.get('tubularHttp');
+                    var apiBaseUrl = tubularHttp.apiBaseUrl;
+
+                    config.headers = config.headers || {};
+
+                    if (
+                        config.url.substring(0, apiBaseUrl.length) === apiBaseUrl &&
+                        tubularHttp.tokenUrl !== config.url &&
+                        tubularHttp.useRefreshTokens &&
+                        tubularHttp.requireAuthentication &&
+                        tubularHttp.userData.refreshToken) {
+
+                        if (tubularHttp.isBearerTokenExpired()) {
+                            // Let's force an error to automatically go directly to the refresh token stuff
+                            return $q.reject({ error: 'expired token', status: 401, config: config });
+                        }
+                    }
+
+                    return config;
+                },
+
+                requestError: function (rejection) {
+
+                    return $q.reject(rejection);
+                },
+
+                // optional method
+                response: function (response) {
+                    return response;
+                },
+
+                // optional method
+                responseError: function (rejection) {
+                    var deferred = $q.defer();
+
+                    switch (rejection.status) {
+                        case 401:
+                            var tubularHttp = $injector.get('tubularHttp');
+                            var apiBaseUrl = tubularHttp.apiBaseUrl;
+
+                            if (
+                                rejection.config.url.substring(0, apiBaseUrl.length) === apiBaseUrl &&
+                                tubularHttp.tokenUrl !== rejection.config.url &&
+                                tubularHttp.useRefreshTokens &&
+                                tubularHttp.requireAuthentication &&
+                                tubularHttp.userData.refreshToken) {
+
+
+                                if (!authRequestRunning) {
+                                    authRequestRunning = $injector.get('$http')({
+                                        method: 'POST',
+                                        url: tubularHttp.refreshTokenUrl,
+                                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                                        data: 'grant_type=refresh_token&refresh_token=' + tubularHttp.userData.refreshToken
+                                    });
+                                }
+
+                                authRequestRunning.then(function (r) {
+                                    authRequestRunning = null;
+                                    tubularHttp.handleSuccessCallback(null, r.data);
+
+                                    if (tubularHttp.requireAuthentication && tubularHttp.isAuthenticated()) {
+                                        $injector.get('$http')(rejection.config).then(function (resp) {
+                                            deferred.resolve(resp);
+                                        }, function () {
+                                            deferred.reject(r);
+                                        });
+                                    }
+                                    else {
+                                        deferred.reject(rejection);
+                                    }
+                                }, function (response) {
+                                    authRequestRunning = null;
+                                    deferred.reject(response);
+                                    tubularHttp.removeAuthentication();
+                                    $injector.get('$state').go('/Login');
+                                    return;
+                                });
+
+                            }
+                            else {
+                                deferred.reject(rejection);
+                            }
+
+                            return deferred.promise;
+                        default:
+                            break;
+                    }
+
+                    deferred.reject(rejection);
+                    return deferred.promise;
+                }
+            };
+        }]);
 })(angular);
 (function (angular) {
     'use strict';
