@@ -209,6 +209,7 @@
 
     angular.module('app', [
         'tubular',
+        'ngMockE2E',
         'testApp.routes'
     ]);
 })();
