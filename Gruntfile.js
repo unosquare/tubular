@@ -54,7 +54,7 @@ module.exports = function(grunt) {
                     coverageDir: 'coverage',
                     args: {
                         baseUrl: 'http://localhost:9000/instrumented/test/Unosquare.Tubular.WebTest/',
-                        browser: "chrome"
+                        browser: process.env.TRAVIS_OS_NAME == "osx" ? "chrome" : "firefox"
                         
                     }
                 }
