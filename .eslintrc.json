@@ -4,15 +4,14 @@
     "jasmine": true,
     "angular/mocks" :  true
   },
-  "plugins": [ "angular", "jasmine" ],
+  "plugins": [ "angular"],
   "globals": {
     "moment": true,
     "saveAs":  true 
   },
   "extends": [
     "eslint:recommended",
-    "angular",
-    "plugin:jasmine/recommended"
+    "angular"
   ],
   "rules": {
     "quotes": [ 2, "single" ],

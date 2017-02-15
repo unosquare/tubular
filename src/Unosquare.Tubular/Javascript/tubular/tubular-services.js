@@ -77,13 +77,18 @@
         .factory('tubularPopupService', [
             '$uibModal', '$rootScope', 'tubularTemplateService',
             function ($uibModal, $rootScope, tubularTemplateService) {
+                
                 return {
                     onSuccessForm: function(callback) {
-                        $rootScope.$on('tbForm_OnSuccessfulSave', callback);
+                        var successHandle = $rootScope.$on('tbForm_OnSuccessfulSave', callback);
+
+                        $rootScope.$on('$destroy', successHandle);
                     },
 
                     onConnectionError: function(callback) {
-                        $rootScope.$on('tbForm_OnConnectionError', callback);
+                        var errorHandle = $rootScope.$on('tbForm_OnConnectionError', callback);
+
+                        $rootScope.$on('$destroy', errorHandle);
                     },
 
                     /**

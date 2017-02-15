@@ -1447,8 +1447,7 @@
                     '</span>' +
                     '</div>'+
                     '<div uib-timepicker ng-model="$ctrl.dateValue"  show-seconds="true" show-meridian="false"></div>') +
-                '{{error}}' +
-                '</span>' +
+                '<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">{{error}}</span>' +
                 '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help" ng-bind="$ctrl.help"></span>' +
                 '</div>',
             bindings: {
@@ -1505,9 +1504,7 @@
                     '<button type="button" class="btn btn-default" ng-click="$ctrl.open = !$ctrl.open"><i class="fa fa-calendar"></i></button>' +
                     '</span>' +
                     '</div>') +
-                '<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">' +
-                '{{error}}' +
-                '</span>' +
+                '<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">{{error}}</span>' +
                 '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help" ng-bind="$ctrl.help"></span>' +
                 '</div>',
             bindings: {
@@ -1545,22 +1542,19 @@
          * @param {boolean} required Set if the field is required.
          * @param {boolean} readOnly Set if the field is read-only.
          * @param {object} options Set the options to display.
-         * @param {string} optionsUrl Set the Http Url where to retrieve the values.
+         * @param {string} optionsUrl Set the Http URL where to retrieve the values.
          * @param {string} optionsMethod Set the Http Method where to retrieve the values.
          * @param {string} optionLabel Set the property to get the labels.
          * @param {string} optionKey Set the property to get the keys.
          * @param {string} defaultValue Set the default value.
          */
-
         .component('tbDropdownEditor', {
             template: '<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">' +
                 '<span ng-hide="$ctrl.isEditing" ng-bind="$ctrl.readOnlyValue"></span>' +
                 '<label ng-show="$ctrl.showLabel" ng-bind="$ctrl.label"></label>' +
                 '<select ng-options="{{ $ctrl.selectOptions }}" ng-show="$ctrl.isEditing" ng-model="$ctrl.value" class="form-control" ' +
-                'ng-required="$ctrl.required" ng-disabled="$ctrl.readOnly" name="{{$ctrl.name}}" ng-change="onChange({value: value})" />' +
-                '<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">' +
-                '{{error}}' +
-                '</span>' +
+                'ng-required="$ctrl.required" ng-disabled="$ctrl.readOnly" name="{{$ctrl.name}}" ng-change="onChange({value: value})"></select>' +
+                '<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">{{error}}</span>' +
                 '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help" ng-bind="$ctrl.help"></span>' +
                 '</div>',
             bindings: {
@@ -1603,7 +1597,7 @@
          * @param {string} help Set the help text.
          * @param {boolean} required Set if the field is required.
          * @param {object} options Set the options to display.
-         * @param {string} optionsUrl Set the Http Url where to retrieve the values.
+         * @param {string} optionsUrl Set the Http URL where to retrieve the values.
          * @param {string} optionsMethod Set the Http Method where to retrieve the values.
          * @param {string} optionLabel Set the property to get the labels.
          * @param {string} css Set the CSS classes for the input.
@@ -2402,7 +2396,7 @@
         .component('tbRemoveButton', {
             require: '^tbGrid',
             template: '<button class="btn btn-danger btn-xs btn-popover" uib-popover-template="$ctrl.templateName" popover-placement="right" ' +
-                'popover-title="{{ $ctrl.legend || (\'UI_REMOVEROW\' | translate) }}" popover-is-open="$ctrl.isOpen" popover-trigger=\'click outsideClick\' ' +
+                'popover-title="{{ $ctrl.legend || (\'UI_REMOVEROW\' | translate) }}" popover-is-open="$ctrl.isOpen" popover-trigger="\'click outsideClick\'"  ' +
                 'ng-hide="$ctrl.model.$isEditing">' +
                 '<span ng-show="$ctrl.showIcon" class="{{::$ctrl.icon}}"></span>' +
                 '<span ng-show="$ctrl.showCaption">{{:: $ctrl.caption || (\'CAPTION_REMOVE\' | translate) }}</span>' +
@@ -3030,13 +3024,18 @@
         .factory('tubularPopupService', [
             '$uibModal', '$rootScope', 'tubularTemplateService',
             function ($uibModal, $rootScope, tubularTemplateService) {
+                
                 return {
                     onSuccessForm: function(callback) {
-                        $rootScope.$on('tbForm_OnSuccessfulSave', callback);
+                        var successHandle = $rootScope.$on('tbForm_OnSuccessfulSave', callback);
+
+                        $rootScope.$on('$destroy', successHandle);
                     },
 
                     onConnectionError: function(callback) {
-                        $rootScope.$on('tbForm_OnConnectionError', callback);
+                        var errorHandle = $rootScope.$on('tbForm_OnConnectionError', callback);
+
+                        $rootScope.$on('$destroy', errorHandle);
                     },
 
                     /**
@@ -3920,14 +3919,11 @@
             '$templateCache', function ($templateCache) {
                 var me = this;
 
-                me.canUseHtml5Date = function(){
-                    var input = document.createElement('input');
-                    input.setAttribute('type', 'date');
-
+                me.canUseHtml5Date = function () {
                     var notADateValue = 'not-a-date';
-                    input.setAttribute('value', notADateValue);
-
-                    return input.value !== notADateValue;
+                    var input = angular.element('<input type="date" />');
+                    input.attr('value', notADateValue);
+                    return input.attr('value') !== notADateValue;
                 };
 
                 me.enums = {

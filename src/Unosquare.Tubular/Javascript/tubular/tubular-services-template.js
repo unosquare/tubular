@@ -14,14 +14,11 @@
             '$templateCache', function ($templateCache) {
                 var me = this;
 
-                me.canUseHtml5Date = function(){
-                    var input = document.createElement('input');
-                    input.setAttribute('type', 'date');
-
+                me.canUseHtml5Date = function () {
                     var notADateValue = 'not-a-date';
-                    input.setAttribute('value', notADateValue);
-
-                    return input.value !== notADateValue;
+                    var input = angular.element('<input type="date" />');
+                    input.attr('value', notADateValue);
+                    return input.attr('value') !== notADateValue;
                 };
 
                 me.enums = {

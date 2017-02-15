@@ -5,23 +5,18 @@ exports.config = {
 
     specs: [ './test/e2e-tests/*.js' ],
 
-    capabilities: {
-        'browserName': 'firefox',
-        'loggingPrefs': {
-            "driver": "INFO", 
-            "server": "OFF", 
-            "browser": "FINE"
+    capabilities: 
+    {
+        'browserName': 'chrome',
+        'chromeOptions': {
+            'args': ['no-sandbox']
         }
     },
     
-
     framework: 'jasmine',
 
     directConnect : true,
     jasmineNodeOpts: { defaultTimeoutInterval: 3000000 },
-
-    
-
 
     onPrepare: function() {
       jasmine.getEnv().addReporter(
