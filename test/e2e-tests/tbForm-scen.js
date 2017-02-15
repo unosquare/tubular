@@ -239,11 +239,11 @@ describe('tbForm related components', function () {
     });
 
     beforeEach(function () {
-        browser.executeScript('localStorage.clear()');
+        browser.executeScript('window.localStorage.clear();window.sessionStorage.clear()');
     });
 
     afterAll(function () {
-        browser.executeScript('localStorage.clear()');
+        browser.executeScript('window.localStorage.clear()');
     });
 
 
@@ -513,13 +513,13 @@ describe('tbForm related components', function () {
                 });
             }).first();
 
-            tbSimpleEditor_input = $('div.modal-dialog form').$('tb-simple-editor').$('input');
+            //tbSimpleEditor_input = $('div.modal-dialog form').$('tb-simple-editor').$('input');
 
-            //* Restore default value and open form popup *\\
-            tbDateEditorRestore().then(tbFormEditBtn1.click);
+            ////* Restore default value and open form popup *\\
+            //tbDateEditorRestore().then(tbFormEditBtn1.click);
         });
 
-        afterEach(function () {
+        beforeEach(function () {
             //* Restore default value and open form popup *\\    
             tbDateEditorRestore().then(tbFormEditBtn1.click);
         });
