@@ -9,14 +9,10 @@ exports.config = {
         'browserName': 'firefox'
     },
     
-
     framework: 'jasmine',
 
     directConnect : true,
     jasmineNodeOpts: { defaultTimeoutInterval: 3000000 },
-
-    
-
 
     onPrepare: function() {
       jasmine.getEnv().addReporter(
