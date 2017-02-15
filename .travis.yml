@@ -15,6 +15,7 @@ install:
   - nuget install NUnit.ConsoleRunner -OutputDirectory testrunner
   - nuget restore Unosquare.Tubular.Lib.sln
   - npm install
+  - npm install -g bower
   - bower update
 before_script:
   - touch ./src/Unosquare.Tubular/Javascript/tubular-bundle.js
