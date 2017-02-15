@@ -4,6 +4,7 @@
     "inputFiles": [
       "Javascript/tubular/tubular.js",
       "Javascript/tubular/tubular-directives.js",
+      "Javascript/tubular/directives/**/*.js",
       "Javascript/tubular/tubular-directives-editors.js",
       "Javascript/tubular/tubular-directives-filters.js",
       "Javascript/tubular/tubular-directives-forms.js",
@@ -11,10 +12,11 @@
       "Javascript/tubular/tubular-directives-gridpager.js",
       "Javascript/tubular/tubular-models.js",
       "Javascript/tubular/tubular-services.js",
+      "Javascript/tubular/services/**/*.js",
       "Javascript/tubular/tubular-services-http.js",
       "Javascript/tubular/tubular-auth-interceptor.js",
-      "Javascript/tubular/tubular-services-template.js",
-      "Javascript/tubular/tubular-services-i18n.js"
+      "Javascript/tubular/tubular-services-i18n.js",
+      "!Javascript/tubular/**/*.spec.js"
     ],
     "sourceMap": false
   },

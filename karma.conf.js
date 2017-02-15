@@ -19,7 +19,6 @@ module.exports = function (config) {
           'bower_components/angular-loader/angular-loader.js',
           'bower_components/angular-local-storage/dist/angular-local-storage.js',
           'bower_components/moment/moment.js',
-          'bower_components/angular-bootstrap/ui-bootstrap.js',
           'bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
           'bower_components/file-saver.js/FileSaver.js',
           'bower_components/highchart-ng/dist/highcharts-ng.js',
@@ -27,9 +26,12 @@ module.exports = function (config) {
           'bower_components/angular-chart.js/dist/angular-chart.js',
           'Javascript/tubular/tubular-models.js',
           'Javascript/tubular/tubular-services.js',
+          'Javascript/tubular/services/**/*.js',
           'Javascript/tubular/tubular-directives.js',
+          'Javascript/tubular/directives/**/*.js',
           'Javascript/tubular/tubular.js',
-          'Javascript/tubular*/**/*.js',
+          'Javascript/tubular-localdata/**/*.js',
+          'Javascript/tubular-odata/**/*.js',
           'Javascript/tubular*/**/*.spec.js'
         ],
 
