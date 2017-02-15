@@ -13,8 +13,8 @@
          * This service provides authentication using bearer-tokens. Based on https://bitbucket.org/david.antaramian/so-21662778-spa-authentication-example
          */
         .service('tubularHttp', [
-            '$http', '$timeout', '$q', '$cacheFactory', 'localStorageService', '$filter', '$log', '$document',
-            function ($http, $timeout, $q, $cacheFactory, localStorageService, $filter, $log, $document) {
+            '$http', '$timeout', '$q', 'localStorageService', '$filter', '$log', '$document',
+            function ($http, $timeout, $q, localStorageService, $filter, $log, $document) {
                 var me = this;
 
                 function isAuthenticationExpired(expirationDate) {
@@ -70,8 +70,6 @@
                 }
 
                 me.useRefreshTokens = false;
-                me.cache = $cacheFactory('tubularHttpCache');
-                me.useCache = false;
                 me.requireAuthentication = true;
                 me.refreshTokenUrl = me.tokenUrl = '/api/token';
                 me.apiBaseUrl = '/api';
@@ -220,21 +218,6 @@
                         }
                     }
 
-                    var checksum = angular.toJson(request);
-
-                    if ((request.requestMethod === 'GET' || request.requestMethod === 'POST') && me.useCache) {
-                        var data = me.cache.get(checksum);
-
-                        if (angular.isDefined(data) && data.Expiration.getTime() > new Date().getTime()) {
-                            return {
-                                promise: $q(function (resolve) {
-                                    resolve(data.Set);
-                                }),
-                                cancel: cancel
-                            };
-                        }
-                    }
-
                     request.timeout = request.timeout || 17000;
 
                     var timeoutHanlder = $timeout(function () {
@@ -248,10 +231,6 @@
                         timeout: canceller.promise
                     }).then(function (response) {
                         $timeout.cancel(timeoutHanlder);
-
-                        if (me.useCache) {
-                            me.cache.put(checksum, { Expiration: me.getExpirationDate(), Set: response.data });
-                        }
 
                         return response.data;
                     }, function (error) {
