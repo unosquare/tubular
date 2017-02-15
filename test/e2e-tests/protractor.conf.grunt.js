@@ -5,16 +5,13 @@ exports.config = {
 
     specs: [ './test/e2e-tests/*.js' ],
 
-    multiCapabilities: [
-    {
-        'browserName': 'firefox'
-    },
+    capabilities: 
     {
         'browserName': 'chrome',
         'chromeOptions': {
             'args': ['no-sandbox']
         }
-    }],
+    },
     
     framework: 'jasmine',
 
