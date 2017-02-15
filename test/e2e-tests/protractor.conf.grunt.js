@@ -3,7 +3,7 @@ var Jasmine2HtmlReporter = require('protractor-jasmine2-html-reporter');
 exports.config = {
     allScriptsTimeout: 11000000,
 
-    specs: [ './test/e2e-tests/tbForm-scen.js' ],
+    specs: [ './test/e2e-tests/*.js' ],
 
     capabilities: {
         'browserName': 'firefox'
