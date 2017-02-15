@@ -539,23 +539,38 @@
          * @param {bool} requireAuthentication Set if authentication check must be executed, default true.
          */
         .directive('tbForm', [function () {
-                return {
-                    template: '<form ng-transclude name="{{name}}"></form>',
-                    restrict: 'E',
-                    replace: true,
-                    transclude: true,
-                    scope: {
-                        model: '=?',
-                        serverUrl: '@',
-                        serverSaveUrl: '@',
-                        serverSaveMethod: '@',
-                        modelKey: '@?',
-                        dataServiceName: '@?serviceName',
-                        requireAuthentication: '=?',
-                        name: '@?formName'
-                    },
-                    controller: [
-                        '$scope', '$routeParams', 'tubularModel', 'tubularHttp', '$timeout', '$element', 'tubularEditorService',
+            return {
+                template: '<form ng-transclude name="{{name}}"></form>',
+                restrict: 'E',
+                replace: true,
+                transclude: true,
+                scope: {
+                    model: '=?',
+                    serverUrl: '@',
+                    serverSaveUrl: '@',
+                    serverSaveMethod: '@',
+                    modelKey: '@?',
+                    dataServiceName: '@?serviceName',
+                    requireAuthentication: '=?',
+                    name: '@?formName'
+                },
+                controller: 'tbFormController',
+                compile: function () {
+                    return {
+                        post: function (scope) {
+                            scope.finishDefinition();
+                        }
+                    };
+                }
+            }
+        }])
+
+})(angular);
+(function (angular) {
+    'use strict';
+
+    angular.module('tubular.directives')
+        .controller('tbFormController',['$scope', '$routeParams', 'tubularModel', 'tubularHttp', '$timeout', '$element', 'tubularEditorService',
                         function ($scope, $routeParams, TubularModel, tubularHttp, $timeout, $element, tubular) {
                             $scope.tubularDirective = 'tubular-form';
                             $scope.serverSaveMethod = $scope.serverSaveMethod || 'POST';
@@ -714,17 +729,9 @@
                                 $scope.$on('$destroy', function () { $timeout.cancel(timer); });
                             };
                         }
-                    ],
-                    compile: function() {
-                        return {
-                            post: function (scope) {
-                                scope.finishDefinition();
-                            }
-                        };
-                    }
-                };
-            }
         ]);
+
+
 })(angular);
 (function (angular) {
     'use strict';
@@ -1242,7 +1249,9 @@
             minChars: '@?',
             placeholder: '@'
         },
-        controller: [
+        controller: 'tbTextSearchController'
+    })
+    .controller('tbTextSearchController', [
             '$scope', function ($scope) {
                 var $ctrl = this;
 
@@ -1275,8 +1284,7 @@
                     $ctrl.$component.retrieveData();
                 });
             }
-        ]
-    })
+    ])
 
 })(angular);
 (function (angular, moment) {

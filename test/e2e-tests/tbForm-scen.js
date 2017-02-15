@@ -516,7 +516,7 @@ describe('tbForm related components', function () {
             //tbSimpleEditor_input = $('div.modal-dialog form').$('tb-simple-editor').$('input');
 
             ////* Restore default value and open form popup *\\
-            //tbDateEditorRestore().then(tbFormEditBtn1.click);
+            tbDateEditorRestore().then(tbFormEditBtn1.click);
         });
 
         beforeEach(function () {
