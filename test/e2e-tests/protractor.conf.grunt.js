@@ -6,12 +6,7 @@ exports.config = {
     specs: [ './test/e2e-tests/*.js' ],
 
     capabilities: {
-        'browserName': 'firefox',
-        'loggingPrefs': {
-            "driver": "INFO", 
-            "server": "OFF", 
-            "browser": "FINE"
-        }
+        'browserName': 'firefox'
     },
     
 

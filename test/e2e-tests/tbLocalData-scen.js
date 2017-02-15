@@ -57,7 +57,10 @@ describe('LocalData', function () {
             .$('a');
     });
 
-   
+    beforeEach(function () {
+        browser.executeScript('window.sessionStorage.clear();window.localStorage.clear();');
+        
+    });
 
 
     describe('Grid Local Data Sorting', function () {
@@ -91,10 +94,7 @@ describe('LocalData', function () {
             });
         });
 
-        afterEach(function() {
-            browser.executeScript('window.sessionStorage.clear();');
-            browser.executeScript('window.localStorage.clear();');
-        });
+        
 
         it('should order data in ascending order when click-sorting an unsorted text column', function () {
             aCustomerNameSorting.click();
