@@ -35,7 +35,9 @@
             minChars: '@?',
             placeholder: '@'
         },
-        controller: [
+        controller: 'tbTextSearchController'
+    })
+    .controller('tbTextSearchController', [
             '$scope', function ($scope) {
                 var $ctrl = this;
 
@@ -68,7 +70,6 @@
                     $ctrl.$component.retrieveData();
                 });
             }
-        ]
-    })
+    ])
 
 })(angular);
