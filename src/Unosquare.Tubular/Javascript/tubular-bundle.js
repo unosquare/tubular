@@ -710,7 +710,7 @@
                             };
 
                             $scope.clear = function () {
-                                angular.forEach($ctrl.fields, function (field) {
+                                angular.forEach($scope.fields, function (field) {
                                     if (field.resetEditor) {
                                         field.resetEditor();
                                     } else {
