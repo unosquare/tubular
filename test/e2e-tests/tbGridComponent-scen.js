@@ -15,7 +15,6 @@ describe('tbGridComponents', function () {
         browser.executeScript('window.sessionStorage.clear();window.localStorage.clear();');
         element(by.id('testsSelector')).click();
         element(by.id('tbGridComponentsTest')).click();
-
     });
 
     it('should add item with newRow method', function () {

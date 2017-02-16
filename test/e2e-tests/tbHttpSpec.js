@@ -35,7 +35,7 @@ describe('tbHttp', function () {
         element(by.model('password')).sendKeys('pass.');
 
         element(by.id('submitBtn')).click().then(function () {
-            expect(by.id('isAuth').getText()).toBe('false');
+            expect(element(by.id('isAuth')).getText()).toBe('false');
         });
     });
 
@@ -63,6 +63,7 @@ describe('tbHttp', function () {
     it('get method-Is not authenticated', function () {
         element(by.model('username')).sendKeys('admin');
         element(by.model('password')).sendKeys('pass.word');
+
         element(by.id('submitBtn')).click().then(function () {
             element(by.id('btnRemoveAuth')).click();
             element(by.id('btnGet')).click().then(function () {
@@ -74,6 +75,7 @@ describe('tbHttp', function () {
     it('post method-Is not authenticated', function () {
         element(by.model('username')).sendKeys('admin');
         element(by.model('password')).sendKeys('pass.word');
+
         element(by.id('submitBtn')).click().then(function () {
             element(by.id('btnRemoveAuth')).click();
             element(by.id('btnPost')).click().then(function () {
