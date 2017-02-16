@@ -76,15 +76,11 @@
         .filter('moment', [
             '$filter', function ($filter) {
                 return function (input, format) {
-                    if (angular.isObject(input)) {
-                        if (angular.isFunction(moment) && input !== null && input instanceof moment) {
-                            return input.format(format || 'M/DD/YYYY');
-                        } else {
-                            return $filter('date')(input);
-                        }
+                    if (moment.isMoment(input)) {
+                        return input.format(format || 'M/DD/YYYY');
+                    } else {
+                        return $filter('date')(input);
                     }
-
-                    return input;
                 };
             }
         ]);
@@ -1328,7 +1324,7 @@
             if (angular.isDefined($ctrl.dateValue))
                 return;
 
-            if ($ctrl.value instanceof moment) {
+            if (moment.isMoment($ctrl.value)) {
                 var tmpDate = $ctrl.value.toObject();
                 $ctrl.dateValue = new Date(tmpDate.years, tmpDate.months, tmpDate.date, tmpDate.hours, tmpDate.minutes, tmpDate.seconds);
             } else {
@@ -3011,7 +3007,7 @@
 
                 var innerValue = row[j] == null ? '' : row[j].toString();
 
-                if (row[j] instanceof Date) {
+                if (angular.isDate(row[j])) {
                     innerValue = row[j].toLocaleString();
                 }
 
@@ -3807,7 +3803,7 @@
                  * @returns {array} The Columns
                  */
                 me.createColumns = function (model) {
-                    var jsonModel = (model instanceof Array && model.length > 0) ? model[0] : model;
+                    var jsonModel = (angular.isArray(model) && model.length > 0) ? model[0] : model;
                     var columns = [];
 
                     for (var prop in jsonModel) {

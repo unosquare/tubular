@@ -76,15 +76,11 @@
         .filter('moment', [
             '$filter', function ($filter) {
                 return function (input, format) {
-                    if (angular.isObject(input)) {
-                        if (angular.isFunction(moment) && input !== null && input instanceof moment) {
-                            return input.format(format || 'M/DD/YYYY');
-                        } else {
-                            return $filter('date')(input);
-                        }
+                    if (moment.isMoment(input)) {
+                        return input.format(format || 'M/DD/YYYY');
+                    } else {
+                        return $filter('date')(input);
                     }
-
-                    return input;
                 };
             }
         ]);

@@ -384,7 +384,7 @@
                  * @returns {array} The Columns
                  */
                 me.createColumns = function (model) {
-                    var jsonModel = (model instanceof Array && model.length > 0) ? model[0] : model;
+                    var jsonModel = (angular.isArray(model) && model.length > 0) ? model[0] : model;
                     var columns = [];
 
                     for (var prop in jsonModel) {

@@ -25,7 +25,7 @@
             if (angular.isDefined($ctrl.dateValue))
                 return;
 
-            if ($ctrl.value instanceof moment) {
+            if (moment.isMoment($ctrl.value)) {
                 var tmpDate = $ctrl.value.toObject();
                 $ctrl.dateValue = new Date(tmpDate.years, tmpDate.months, tmpDate.date, tmpDate.hours, tmpDate.minutes, tmpDate.seconds);
             } else {

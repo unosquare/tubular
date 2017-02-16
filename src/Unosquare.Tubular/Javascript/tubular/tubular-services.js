@@ -24,7 +24,7 @@
 
                 var innerValue = row[j] == null ? '' : row[j].toString();
 
-                if (row[j] instanceof Date) {
+                if (angular.isDate(row[j])) {
                     innerValue = row[j].toLocaleString();
                 }
 
