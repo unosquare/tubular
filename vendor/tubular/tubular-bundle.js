@@ -1256,8 +1256,15 @@
             placeholder: '@'
         },
         controller: 'tbTextSearchController'
-    })
-    .controller('tbTextSearchController', [
+    });
+    
+
+})(angular);
+(function (angular) {
+    'use strict';
+
+    angular.module('tubular.directives')
+        .controller('tbTextSearchController', [
             '$scope', function ($scope) {
                 var $ctrl = this;
 
@@ -1290,7 +1297,8 @@
                     $ctrl.$component.retrieveData();
                 });
             }
-    ])
+        ]);
+
 
 })(angular);
 (function (angular, moment) {
@@ -4553,7 +4561,7 @@
      * @constructor
      * @returns {Object} A httpInterceptor
      * 
-     */   
+     */
     angular.module('tubular.services')
         .factory('tubularAuthInterceptor', ['$q', '$injector', function ($q, $injector) {
             var authRequestRunning = null;
@@ -4623,6 +4631,7 @@
                                     tubularHttp.handleSuccessCallback(null, r.data);
 
                                     if (tubularHttp.requireAuthentication && tubularHttp.isAuthenticated()) {
+                                        rejection.config.headers.Authorization = "Bearer " + tubularHttp.userData.bearerToken;
                                         $injector.get('$http')(rejection.config).then(function (resp) {
                                             deferred.resolve(resp);
                                         }, function () {
