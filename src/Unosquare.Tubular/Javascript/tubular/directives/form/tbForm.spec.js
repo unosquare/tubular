@@ -15,14 +15,14 @@ describe('Module: tubular.directives', function () {
             })
            
 
-        });
+        })
 
         beforeEach(inject(function (_$compile_, _$rootScope_) {
             scope = _$rootScope_.$new();
             scope.modelProp = 'x';
             compile = _$compile_;
             
-        }));
+        }))
 
         function generate(tpl) {
             template = angular.element();
