@@ -658,7 +658,7 @@ describe('tbForm related components', function () {
                         // Click button
                         tbTypeaheadEditor.$('span.input-group-btn button.btn-default i.fa.fa-times').click().then(function () {
                             tbTypeaheadEditor_input.getAttribute('value').then(function (value) {
-                                var x = value ? true : false;
+                                var x = value ? 'true' : 'false';
                                 tbTypeaheadEditor_input.sendKeys(x).then(function () {
                                     expect(tbTypeaheadEditor_input.getAttribute('value')).toMatch('false');
                                 });
@@ -806,8 +806,10 @@ describe('tbForm related components', function () {
             var errorPresent = false;
 
             tbSimpleEditor_input.clear().then(function () {
-                tbSimpleEditor_input.sendKeys('1Unos', function () {
+                tbSimpleEditor_input.sendKeys('1Unos').then(function () {
+
                     tbSimpleEditor_errorMessages.getText().then(function (errorsArray) {
+
                         errorsArray.forEach(function (val) {
                             if (val == 'Check regex') {
                                 errorPresent = true;
