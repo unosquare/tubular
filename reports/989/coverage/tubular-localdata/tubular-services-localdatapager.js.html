@@ -1,0 +1,437 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for tubular-localdata/tubular-services-localdatapager.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../prettify.css" />
+    <link rel="stylesheet" href="../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../index.html">all files</a> / <a href="index.html">tubular-localdata/</a> tubular-services-localdatapager.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">13.24% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>9/68</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>0/33</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">5.88% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>1/17</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">13.43% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>9/67</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line low'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">﻿(function (angular) {
+    'use strict';
+&nbsp;
+    angular.module('tubular.services').factory('tubularLocalDataPager', ['filterFilter', 'orderByFilter',  <span class="fstat-no" title="function not covered" >function tubularLocalDataPager(filterFilter, orderByFilter) {</span>
+<span class="cstat-no" title="statement not covered" >        return {</span>
+            page: page
+        }
+&nbsp;
+&nbsp;
+<span class="fstat-no" title="function not covered" >        function page(request, data) {</span>
+<span class="cstat-no" title="statement not covered" >            if (data.length === 0)</span>
+<span class="cstat-no" title="statement not covered" >                return createEmptyResponse();</span>
+<span class="cstat-no" title="statement not covered" >            var set = data;</span>
+<span class="cstat-no" title="statement not covered" >            var requestParams = request.data;</span>
+<span class="cstat-no" title="statement not covered" >            set = sort(requestParams, set);</span>
+<span class="cstat-no" title="statement not covered" >            set = filter(requestParams, set);</span>
+<span class="cstat-no" title="statement not covered" >            set = search(requestParams, set);</span>
+<span class="cstat-no" title="statement not covered" >            return format(requestParams, set);</span>
+        }
+&nbsp;
+<span class="fstat-no" title="function not covered" >        function sort(request, set) {</span>
+            // Get columns with sort
+            // TODO: Check SortOrder 
+<span class="cstat-no" title="statement not covered" >            var sorts = request.Columns</span>
+                .filter(<span class="fstat-no" title="function not covered" >function (el) {</span> <span class="cstat-no" title="statement not covered" >return el.SortOrder &gt; 0; </span>})
+                .map(<span class="fstat-no" title="function not covered" >function (el) {</span> <span class="cstat-no" title="statement not covered" >return (el.SortDirection === 'Descending' ? '-' : '') + el.Name; </span>});
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            for (var sort in sorts) {</span>
+<span class="cstat-no" title="statement not covered" >                if (sorts.hasOwnProperty(sort)) {</span>
+<span class="cstat-no" title="statement not covered" >                    set = orderByFilter(set, sorts[sort]);</span>
+                }
+            }
+<span class="cstat-no" title="statement not covered" >            return set;</span>
+        }
+&nbsp;
+<span class="fstat-no" title="function not covered" >        function search(request, set) {</span>
+<span class="cstat-no" title="statement not covered" >            if (request.Search &amp;&amp; request.Search.Operator === 'Auto' &amp;&amp; request.Search.Text) {</span>
+<span class="cstat-no" title="statement not covered" >                var searchables = request.Columns</span>
+                    .filter(<span class="fstat-no" title="function not covered" >function (el) {</span> <span class="cstat-no" title="statement not covered" >return el.Searchable; </span>})
+                    .map(<span class="fstat-no" title="function not covered" >function (el) {</span>
+<span class="cstat-no" title="statement not covered" >                        var obj = {};</span>
+<span class="cstat-no" title="statement not covered" >                        obj[el.Name] = request.Search.Text;</span>
+<span class="cstat-no" title="statement not covered" >                        return obj;</span>
+                    });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                if (searchables.length &gt; 0) {</span>
+<span class="cstat-no" title="statement not covered" >                    return filterFilter(set, <span class="fstat-no" title="function not covered" >function (value) {</span></span>
+<span class="cstat-no" title="statement not covered" >                        var filters = reduceFilterArray(searchables);</span>
+<span class="cstat-no" title="statement not covered" >                        var result = false;</span>
+<span class="cstat-no" title="statement not covered" >                        angular.forEach(filters, <span class="fstat-no" title="function not covered" >function (filter, column) {</span></span>
+<span class="cstat-no" title="statement not covered" >                            if (value[column] &amp;&amp; value[column].toLocaleLowerCase().indexOf(filter) &gt;= 0) {</span>
+<span class="cstat-no" title="statement not covered" >                                result = true;</span>
+                            }
+                        });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                        return result;</span>
+                    });
+                }
+            }
+<span class="cstat-no" title="statement not covered" >            return set;</span>
+        }
+&nbsp;
+<span class="fstat-no" title="function not covered" >        function filter(request, set) {</span>
+            // Get filters (only Contains)
+            // TODO: Implement all operators
+<span class="cstat-no" title="statement not covered" >            var filters = request.Columns</span>
+                .filter(<span class="fstat-no" title="function not covered" >function (el) {</span> <span class="cstat-no" title="statement not covered" >return el.Filter &amp;&amp; el.Filter.Text; </span>})
+                .map(<span class="fstat-no" title="function not covered" >function (el) {</span>
+<span class="cstat-no" title="statement not covered" >                    var obj = {};</span>
+<span class="cstat-no" title="statement not covered" >                    if (el.Filter.Operator === 'Contains') {</span>
+<span class="cstat-no" title="statement not covered" >                        obj[el.Name] = el.Filter.Text;</span>
+                    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    return obj;</span>
+                });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            if (filters.length &gt; 0) {</span>
+<span class="cstat-no" title="statement not covered" >                return filterFilter(set, reduceFilterArray(filters));</span>
+            }
+<span class="cstat-no" title="statement not covered" >            return set;</span>
+        }
+&nbsp;
+<span class="fstat-no" title="function not covered" >        function format(request, set) {</span>
+<span class="cstat-no" title="statement not covered" >            var response = createEmptyResponse();</span>
+<span class="cstat-no" title="statement not covered" >            response.FilteredRecordCount = set.length;</span>
+<span class="cstat-no" title="statement not covered" >            response.TotalRecordCount = set.length;</span>
+<span class="cstat-no" title="statement not covered" >            response.Payload = set.slice(request.Skip, request.Take + request.Skip);</span>
+<span class="cstat-no" title="statement not covered" >            response.TotalPages = (response.FilteredRecordCount + request.Take - 1) / request.Take;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            if (response.TotalPages &gt; 0) {</span>
+<span class="cstat-no" title="statement not covered" >                var shift = Math.pow(10, 0);</span>
+<span class="cstat-no" title="statement not covered" >                var number = 1 + ((request.Skip / response.FilteredRecordCount) * response.TotalPages);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                response.CurrentPage = ((number * shift) || 0) / shift;</span>
+<span class="cstat-no" title="statement not covered" >                if (response.CurrentPage &lt; 1) <span class="cstat-no" title="statement not covered" >response.CurrentPage = 1;</span></span>
+            }
+        }
+&nbsp;
+<span class="fstat-no" title="function not covered" >        function createEmptyResponse() {</span>
+<span class="cstat-no" title="statement not covered" >            return {</span>
+                Counter: 0,
+                CurrentPage: 1,
+                FilteredRecordCount: 0,
+                TotalRecordCount: 0,
+                Payload: [],
+                TotalPages: 0
+            };
+        }
+<span class="fstat-no" title="function not covered" >        function reduceFilterArray(filters) {</span>
+<span class="cstat-no" title="statement not covered" >            var filtersPattern = {};</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            for (var i in filters) {</span>
+<span class="cstat-no" title="statement not covered" >                if (filters.hasOwnProperty(i)) {</span>
+<span class="cstat-no" title="statement not covered" >                    for (var k in filters[i]) {</span>
+<span class="cstat-no" title="statement not covered" >                        if (filters[i].hasOwnProperty(k)) {</span>
+<span class="cstat-no" title="statement not covered" >                            filtersPattern[k] = filters[i][k].toLocaleLowerCase();</span>
+                        }
+                    }
+                }
+            }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            return filtersPattern;</span>
+        }
+    }])
+})(angular);</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Thu Feb 16 2017 21:19:53 GMT+0000 (UTC)
+</div>
+</div>
+<script src="../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../sorter.js"></script>
+</body>
+</html>
