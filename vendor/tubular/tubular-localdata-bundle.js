@@ -114,7 +114,7 @@
                 var shift = Math.pow(10, 0);
                 var number = 1 + ((request.Skip / response.FilteredRecordCount) * response.TotalPages);
 
-                response.CurrentPage = ((number * shift) | 0) / shift;
+                response.CurrentPage = ((number * shift) || 0) / shift;
                 if (response.CurrentPage < 1) response.CurrentPage = 1;
             }
         }
