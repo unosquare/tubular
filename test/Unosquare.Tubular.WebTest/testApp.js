@@ -90,7 +90,30 @@
             '$scope', '$location', 'tubularHttp',
             function ($scope, $location, tubularHttp) {
                 $scope.loading = false;
-                tubularHttp.tokenUrl = 'http://tubular.azurewebsites.net/token';
+                tubularHttp.tokenUrl = 'http://tubular.azurewebsites.net/api/token';
+
+                $scope.submitForm = function () {
+                    $scope.loading = true;
+
+                    tubularHttp.authenticate($scope.username,
+                        $scope.password,
+                        function () { $location.path("/expirationDate"); },
+                        function (error) {
+                            $scope.isAuth = tubularHttp.isAuthenticated();
+                            $scope.loading = false;
+                            toastr.error(error);
+                            $location.path("/expirationDate");
+                        });
+                };
+            }
+        ]).controller('GridCtrl', [
+            '$scope', '$location', 'tubularHttp',
+            function ($scope, $location, tubularHttp) {
+                $scope.loading = false;
+                tubularHttp.useRefreshTokens = true;
+                tubularHttp.setRefreshTokenUrl('http://tubular.azurewebsites.net/api/token');
+                tubularHttp.setTokenUrl('http://tubular.azurewebsites.net/api/token');
+                tubularHttp.setApiBaseUrl('http://tubular.azurewebsites.net/api');
 
                 $scope.submitForm = function () {
                     $scope.loading = true;
@@ -116,8 +139,8 @@
         }).controller('expDate', [
             '$scope', 'tubularHttp', 'localStorageService',
             function ($scope, tubularHttp, localStorageService) {
-                tubularHttp.setRefreshTokenUrl('http://tubular.azurewebsites.net/token');
-                tubularHttp.setTokenUrl('http://tubular.azurewebsites.net/token');
+                tubularHttp.setRefreshTokenUrl('http://tubular.azurewebsites.net/api/token');
+                tubularHttp.setTokenUrl('http://tubular.azurewebsites.net/api/token');
                 tubularHttp.setApiBaseUrl('http://tubular.azurewebsites.net/api');
 
                 $scope.isAuthenticated = function () {

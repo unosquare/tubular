@@ -27,11 +27,6 @@ describe('Module: tubular.directives', function () {
         beforeEach(inject(function (_$controller_, $rootScope) {
             scope = $rootScope.$new();
             $controller = _$controller_;
-            
-
-
-
-
         }));
 
         function create() {
@@ -47,7 +42,7 @@ describe('Module: tubular.directives', function () {
             })
 
             it('should set default request method', function () {
-                expect(scope.serverSaveMethod).toBe('POST');
+                expect(sut.serverSaveMethod).toBe('POST');
             })
 
             it('should set default require authentication', function () {

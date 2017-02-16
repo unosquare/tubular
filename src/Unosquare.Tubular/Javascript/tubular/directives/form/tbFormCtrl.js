@@ -2,14 +2,18 @@
     'use strict';
 
     angular.module('tubular.directives')
-        .controller('tbFormController',['$scope', '$routeParams', 'tubularModel', 'tubularHttp', '$timeout', '$element', 'tubularEditorService',
+        .controller('tbFormController', ['$scope', '$routeParams', 'tubularModel', 'tubularHttp', '$timeout', '$element', 'tubularEditorService',
                         function ($scope, $routeParams, TubularModel, tubularHttp, $timeout, $element, tubular) {
+                            // we need this to find the parent of a field
                             $scope.tubularDirective = 'tubular-form';
-                            $scope.serverSaveMethod = $scope.serverSaveMethod || 'POST';
-                            $scope.fields = [];
                             $scope.hasFieldsDefinitions = false;
-                            $scope.dataService = tubularHttp.getDataService($scope.dataServiceName);
-                            $scope.name = $scope.name || tubular.getUniqueTbFormName();
+                            $scope.fields = [];
+
+                            var $ctrl = this;
+
+                            $ctrl.serverSaveMethod = $scope.serverSaveMethod || 'POST'; // TODO: we are not using it
+                            $ctrl.dataService = tubularHttp.getDataService($scope.dataServiceName);
+                            $ctrl.name = $scope.name || tubular.getUniqueTbFormName();
 
                             // This method is meant to provide a reference to the Angular Form
                             // so we can get information about: $pristine, $dirty, $submitted, etc.
@@ -18,34 +22,39 @@
                             };
 
                             // Setup require authentication
-                            $scope.requireAuthentication = angular.isUndefined($scope.requireAuthentication) ? true : $scope.requireAuthentication;
-                            tubularHttp.setRequireAuthentication($scope.requireAuthentication);
+                            $ctrl.requireAuthentication = angular.isUndefined($scope.requireAuthentication) ? true : $scope.requireAuthentication;
+                            tubularHttp.setRequireAuthentication($ctrl.requireAuthentication);
 
                             $scope.$watch('hasFieldsDefinitions', function (newVal) {
-                                if (newVal !== true) return;
-                                $scope.retrieveData();
+                                if (newVal !== true) {
+                                    return;
+                                }
+
+                                $ctrl.retrieveData();
                             });
 
-                            $scope.cloneModel = function(model) {
+                            $scope.cloneModel = function (model) {
                                 var data = {};
 
-                                angular.forEach(model, function(value, key) {
-                                    if (key[0] === '$') return;
+                                angular.forEach(model, function (value, key) {
+                                    if (key[0] === '$') {
+                                        return;
+                                    }
 
                                     data[key] = value;
                                 });
 
-                                $scope.model = new TubularModel($scope, $scope, data, $scope.dataService);
-                                $scope.bindFields();
+                                $scope.model = new TubularModel($scope, $scope, data, $ctrl.dataService);
+                                $ctrl.bindFields();
                             };
 
-                            $scope.bindFields = function () {
+                            $ctrl.bindFields = function () {
                                 angular.forEach($scope.fields, function (field) {
                                     field.bindScope();
                                 });
                             };
 
-                            $scope.retrieveData = function () {
+                           $ctrl.retrieveData = function () {
                                 // Try to load a key from markup or route
                                 $scope.modelKey = $scope.modelKey || $routeParams.param;
 
@@ -53,18 +62,18 @@
                                     if (angular.isDefined($scope.modelKey) &&
                                         $scope.modelKey != null &&
                                         $scope.modelKey !== '') {
-                                        $scope.dataService.getByKey($scope.serverUrl, $scope.modelKey).promise.then(
+                                        $ctrl.dataService.getByKey($scope.serverUrl, $scope.modelKey).promise.then(
                                             function (data) {
-                                                $scope.model = new TubularModel($scope, $scope, data, $scope.dataService);
-                                                $scope.bindFields();
+                                                $scope.model = new TubularModel($scope, $scope, data, $ctrl.dataService);
+                                                $ctrl.bindFields();
                                             }, function (error) {
                                                 $scope.$emit('tbForm_OnConnectionError', error);
                                             });
                                     } else {
-                                        $scope.dataService.get(tubularHttp.addTimeZoneToUrl($scope.serverUrl)).promise.then(
+                                        $ctrl.dataService.get(tubularHttp.addTimeZoneToUrl($scope.serverUrl)).promise.then(
                                             function (data) {
                                                 var innerScope = $scope;
-                                                var dataService = $scope.dataService;
+                                                var dataService = $ctrl.dataService;
 
                                                 if (angular.isDefined($scope.model) && angular.isDefined($scope.model.$component)) {
                                                     innerScope = $scope.model.$component;
@@ -72,7 +81,7 @@
                                                 }
 
                                                 $scope.model = new TubularModel(innerScope, innerScope, data, dataService);
-                                                $scope.bindFields();
+                                                $ctrl.bindFields();
                                                 $scope.model.$isNew = true;
                                             }, function (error) {
                                                 $scope.$emit('tbForm_OnConnectionError', error);
@@ -83,10 +92,10 @@
                                 }
 
                                 if (angular.isUndefined($scope.model)) {
-                                    $scope.model = new TubularModel($scope, $scope, {}, $scope.dataService);
+                                    $scope.model = new TubularModel($scope, $scope, {}, $ctrl.dataService);
                                 }
 
-                                $scope.bindFields();
+                                $ctrl.bindFields();
                             };
 
                             $scope.save = function (forceUpdate) {
@@ -123,9 +132,8 @@
                                     });
                             };
 
-                            $scope.update = function (forceUpdate) {
-                                $scope.save(forceUpdate);
-                            };
+                            // alias to save
+                            $scope.update = $scope.save;
 
                             $scope.create = function () {
                                 $scope.model.$isNew = true;
@@ -138,7 +146,7 @@
                             };
 
                             $scope.clear = function () {
-                                angular.forEach($scope.fields, function (field) {
+                                angular.forEach($ctrl.fields, function (field) {
                                     if (field.resetEditor) {
                                         field.resetEditor();
                                     } else {
@@ -156,12 +164,10 @@
                                     }
                                 }, 0);
 
-                                $scope.$emit('tbForm_OnGreetParentController', $scope);
+                                $scope.$emit('tbForm_OnGreetParentController', { controller: $ctrl, scope: $scope });
 
                                 $scope.$on('$destroy', function () { $timeout.cancel(timer); });
                             };
                         }
         ]);
-
-
 })(angular);
