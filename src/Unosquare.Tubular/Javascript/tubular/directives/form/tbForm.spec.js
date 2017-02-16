@@ -1,7 +1,7 @@
 ﻿'use strict';
 describe('Module: tubular.directives', function () {
     describe('Directive: tb-form', function () {
-        var sut, ctrl, scope, isolated, $routeParams, template, element, tubularHttp, tubularModel, tubularEditorService;
+        var sut, ctrl, scope, compile, isolated, $routeParams, template, element;
 
         beforeEach(function () {
             module('tubular.directives');
@@ -17,60 +17,70 @@ describe('Module: tubular.directives', function () {
 
         });
 
-        beforeEach(inject(function (_$compile_, _$rootScope_, _$templateCache_) {
+        beforeEach(inject(function (_$compile_, _$rootScope_) {
             scope = _$rootScope_.$new();
             scope.modelProp = 'x';
-            
-            template = angular.element("<tb-form form-name='nombre_de_forma' server-url='http://tubular.azurewebsites.net/api/orders/' require-authentication='false' model='modelProp' model-key='1' service-name='local' server-save-url='http://tubular.azurewebsites.net/api/orders/save'><div id='inner'></div></tb-form>");
-            element = _$compile_(template)(scope)
-            
-            
-            scope.$digest();
-            isolated = element.isolateScope()
+            compile = _$compile_;
             
         }));
 
+        function generate(tpl) {
+            template = angular.element();
+            element = compile(template)(scope)
+
+            scope.$digest();
+            isolated = element.isolateScope()
+        }
+
+       
         
-        it('should call finishDefinition after compile', function () {
-            expect(ctrl.finishDefinition).toHaveBeenCalled();
-        })
+            beforeEach(generate("<tb-form form-name='nombre_de_forma' server-url='http://tubular.azurewebsites.net/api/orders/' require-authentication='false' model='modelProp' model-key='1' service-name='local' server-save-url='http://tubular.azurewebsites.net/api/orders/save'><div id='inner'></div></tb-form>"))
 
-        it('should set serverSaveUrl', function () {
-            expect(isolated.serverSaveUrl).toBe('http://tubular.azurewebsites.net/api/orders/save');
-        })
+            it('should call finishDefinition after compile', function () {
+                expect(ctrl.finishDefinition).toHaveBeenCalled();
+            })
 
-        it('should set serverUrl', function () {
-            expect(isolated.serverUrl).toBe('http://tubular.azurewebsites.net/api/orders/');
-        })
+            it('should set serverSaveUrl', function () {
+                expect(isolated.serverSaveUrl).toBe('http://tubular.azurewebsites.net/api/orders/save');
+            })
 
-        it('should set requireAuthentication', function () {
-            expect(isolated.requireAuthentication).toBe(false);
-        })
+            it('should set serverUrl', function () {
+                expect(isolated.serverUrl).toBe('http://tubular.azurewebsites.net/api/orders/');
+            })
 
-        it('should set name', function () {
-            expect(isolated.name).toBe('nombre_de_forma');
-        })
+            it('should set requireAuthentication', function () {
+                expect(isolated.requireAuthentication).toBe(false);
+            })
 
-        it('should set data service name', function () {
-            expect(isolated.dataServiceName).toBe('local');
-        })
-        it('should set model key', function () {
-            expect(isolated.modelKey).toBe('1');
-        })
+            it('should set name', function () {
+                expect(isolated.name).toBe('nombre_de_forma');
+            })
 
-        it('should set model', function () {
-            expect(isolated.model).toBe('x');
-        })
+            it('should set data service name', function () {
+                expect(isolated.dataServiceName).toBe('local');
+            })
+            it('should set model key', function () {
+                expect(isolated.modelKey).toBe('1');
+            })
 
-        it('should replace', function () {
-            expect(element.find("tb-form").length).toBe(0, 'should remove tbForm element');
-            expect(element.attr("name")).toBe('nombre_de_forma', 'should place form element');
-        })
+            it('should set model', function () {
+                expect(isolated.model).toBe('x');
+            })
 
-        it('should transclude', function () {
-            
-            expect(element.find("div").length).toBe(1);
-        })
+            it('should replace', function () {
+                expect(element.find("tb-form").length).toBe(0, 'should remove tbForm element');
+                expect(element.attr("name")).toBe('nombre_de_forma', 'should place form element');
+            })
+
+            it('should transclude', function () {
+                var divs = element.find("div");
+                expect(divs.length).toBe(1);
+                expect(divs[0].id).toBe('inner');
+            })
+        
+        
+
+        
         
 
 

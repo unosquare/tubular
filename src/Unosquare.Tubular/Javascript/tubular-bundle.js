@@ -1250,8 +1250,15 @@
             placeholder: '@'
         },
         controller: 'tbTextSearchController'
-    })
-    .controller('tbTextSearchController', [
+    });
+    
+
+})(angular);
+(function (angular) {
+    'use strict';
+
+    angular.module('tubular.directives')
+        .controller('tbTextSearchController', [
             '$scope', function ($scope) {
                 var $ctrl = this;
 
@@ -1284,7 +1291,8 @@
                     $ctrl.$component.retrieveData();
                 });
             }
-    ])
+        ]);
+
 
 })(angular);
 (function (angular, moment) {

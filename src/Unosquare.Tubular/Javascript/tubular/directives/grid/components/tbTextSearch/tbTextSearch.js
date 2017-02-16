@@ -36,40 +36,7 @@
             placeholder: '@'
         },
         controller: 'tbTextSearchController'
-    })
-    .controller('tbTextSearchController', [
-            '$scope', function ($scope) {
-                var $ctrl = this;
-
-                $ctrl.$onInit = function () {
-                    $ctrl.minChars = $ctrl.minChars || 3;
-                    $ctrl.lastSearch = $ctrl.$component.search.Text;
-                };
-
-                $scope.$watch('$ctrl.$component.search.Text', function (val, prev) {
-                    if (angular.isUndefined(val) || val === prev) {
-                        return;
-                    }
-
-                    $ctrl.$component.search.Text = val;
-
-                    if ($ctrl.lastSearch !== '' && val === '') {
-                        $ctrl.$component.saveSearch();
-                        $ctrl.$component.search.Operator = 'None';
-                        $ctrl.$component.retrieveData();
-                        return;
-                    }
-
-                    if (val === '' || val.length < $ctrl.minChars || val === $ctrl.lastSearch) {
-                        return;
-                    }
-
-                    $ctrl.lastSearch = val;
-                    $ctrl.$component.saveSearch();
-                    $ctrl.$component.search.Operator = 'Auto';
-                    $ctrl.$component.retrieveData();
-                });
-            }
-    ])
+    });
+    
 
 })(angular);
