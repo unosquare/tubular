@@ -14,6 +14,7 @@
     angular.module('tubular.services')
         .factory('tubularAuthInterceptor', ['$q', '$injector', function ($q, $injector) {
             var authRequestRunning = null;
+
             return {
 
                 request: function (config) {
