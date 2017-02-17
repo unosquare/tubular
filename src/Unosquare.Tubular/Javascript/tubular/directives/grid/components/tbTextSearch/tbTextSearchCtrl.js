@@ -8,7 +8,7 @@
 
                 $ctrl.$onInit = function () {
                     $ctrl.minChars = $ctrl.minChars || 3;
-                    $ctrl.lastSearch = $ctrl.$component.search.Text;
+                    $ctrl.lastSearch = $scope.$component.search.Text;
                 };
 
                 $scope.$watch('$ctrl.$component.search.Text', function (val, prev) {
@@ -18,10 +18,8 @@
 
                     $ctrl.$component.search.Text = val;
 
-                    if ($ctrl.lastSearch !== '' && val === '') {
-                        $ctrl.$component.saveSearch();
-                        $ctrl.$component.search.Operator = 'None';
-                        $ctrl.$component.retrieveData();
+                    if ($ctrl.lastSearch && val === '') {
+                        search('None');
                         return;
                     }
 
@@ -30,10 +28,14 @@
                     }
 
                     $ctrl.lastSearch = val;
-                    $ctrl.$component.saveSearch();
-                    $ctrl.$component.search.Operator = 'Auto';
-                    $ctrl.$component.retrieveData();
+                    search('Auto');
                 });
+
+                function search(operator) {
+                    $ctrl.$component.saveSearch();
+                    $ctrl.$component.search.Operator = operator;
+                    $ctrl.$component.retrieveData();
+                }
             }
         ]);
 
