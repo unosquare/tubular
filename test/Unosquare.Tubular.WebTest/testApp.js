@@ -30,14 +30,6 @@
                         templateUrl: '/test/Unosquare.Tubular.WebTest/common/tbGridComponent_tests.html',
                         title: 'Tubular Grid Components Tests'
                     })
-                    .when('/tbODataTests', {
-                        templateUrl: '/test/Unosquare.Tubular.WebTest/common/tbOData_tests.html',
-                        title: 'Tubular Grid OData Tests'
-                    })
-                    .when('/tbLocalDataTests', {
-                        templateUrl: '/test/Unosquare.Tubular.WebTest/common/tbLocalData_tests.html',
-                        title: 'Tubular Grid Local Data Tests'
-                    })
                     .when('/tbSingleFormTests', {
                         templateUrl: '/test/Unosquare.Tubular.WebTest/common/tbSingleForm_tests.html',
                         title: 'Tubular Single Form Tests'
@@ -57,10 +49,6 @@
                     .when('/tbFormConnErrorNoServerUrlTests', {
                         templateUrl: '/test/Unosquare.Tubular.WebTest/common/tbFormConnErrorNoServerUrl_tests.html',
                         title: 'Tubular Form Loading Test'
-                    })
-                    .when('/tbFormConnErrorNoServerUrlTests2', {
-                        templateUrl: '/test/Unosquare.Tubular.WebTest/common/tbFormConnErrorNoServerUrl_tests2.html',
-                        title: 'Tubular Form Loading Test 2'
                     })
                     .when('/expirationDate', {
                         templateUrl: '/test/Unosquare.Tubular.WebTest/common/expiration.html',

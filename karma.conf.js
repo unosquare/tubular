@@ -30,8 +30,6 @@ module.exports = function (config) {
           'Javascript/tubular/tubular-directives.js',
           'Javascript/tubular/directives/**/*.js',
           'Javascript/tubular/tubular.js',
-          'Javascript/tubular-localdata/**/*.js',
-          'Javascript/tubular-odata/**/*.js',
           'Javascript/tubular*/**/*.spec.js'
         ],
 
