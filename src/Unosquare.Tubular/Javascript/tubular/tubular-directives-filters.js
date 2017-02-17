@@ -115,13 +115,13 @@
                 onlyContains: '=?'
             },
             controller: [
-                '$scope', '$element', '$compile', '$filter', 'tubularTemplateService', function($scope, $element, $compile, $filter, tubular) {
+                '$scope', 'tubularTemplateService', function($scope, tubular) {
                     var $ctrl = this;
 
                     $ctrl.$onInit = function() {
                         $ctrl.onlyContains = angular.isUndefined($ctrl.onlyContains) ? false : $ctrl.onlyContains;
                         $ctrl.templateName = tubular.tbColumnFilterPopoverTemplateName;
-                        tubular.setupFilter($scope, $element, $compile, $filter, $ctrl);
+                        tubular.setupFilter($scope, $ctrl);
                     };
                 }
             ]
@@ -159,12 +159,12 @@
                 title: '@'
             },
             controller: [
-                '$scope', '$element', '$compile', '$filter', 'tubularTemplateService', function($scope, $element, $compile, $filter, tubular) {
+                '$scope', 'tubularTemplateService', function($scope, tubular) {
                     var $ctrl = this;
 
                     $ctrl.$onInit = function() {
                         $ctrl.templateName = tubular.tbColumnDateTimeFilterPopoverTemplateName;
-                        tubular.setupFilter($scope, $element, $compile, $filter, $ctrl);
+                        tubular.setupFilter($scope, $ctrl);
                     };
                 }
             ]
@@ -200,7 +200,7 @@
                 title: '@'
             },
             controller: [
-                '$scope', '$element', '$compile', '$filter', 'tubularTemplateService', function ($scope, $element, $compile, $filter, tubular) {
+                '$scope', 'tubularTemplateService', function ($scope, tubular) {
                     var $ctrl = this;
 
                     $ctrl.getOptionsFromUrl = function() {
@@ -226,7 +226,7 @@
                     $ctrl.$onInit = function() {
                         $ctrl.dataIsLoaded = false;
                         $ctrl.templateName = tubular.tbColumnOptionsFilterPopoverTemplateName;
-                        tubular.setupFilter($scope, $element, $compile, $filter, $ctrl);
+                        tubular.setupFilter($scope, $ctrl);
                         $ctrl.getOptionsFromUrl();
 
                         $ctrl.filter.Operator = 'Multiple';

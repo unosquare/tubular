@@ -48,12 +48,12 @@
          * `numberorcurrency` is a hack to hold `currency` and `number` in a single filter.
          */
         .filter('numberorcurrency', [
-            '$filter', function ($filter) {
+            'numberFilter', 'currencyFilter', function (numberFilter, currencyFilter) {
                 return function (input, format, symbol, fractionSize) {
                     fractionSize = fractionSize || 2;
 
                     if (format === 'C') {
-                        return $filter('currency')(input, symbol || '$', fractionSize);
+                        return currencyFilter(input, symbol || '$', fractionSize);
                     }
 
                     if (format === 'I') {
@@ -61,7 +61,7 @@
                     }
 
                     // default to decimal
-                    return $filter('number')(input, fractionSize);
+                    return numberFilter(input, fractionSize);
                 };
             }
         ])
@@ -74,12 +74,12 @@
          * `moment` is a filter to call format from moment or, if the input is a Date, call Angular's `date` filter.
          */
         .filter('moment', [
-            '$filter', function ($filter) {
+            'dateFilter', function (dateFilter) {
                 return function (input, format) {
                     if (moment.isMoment(input)) {
                         return input.format(format || 'M/DD/YYYY');
                     } else {
-                        return $filter('date')(input);
+                        return dateFilter(input);
                     }
                 };
             }
@@ -1238,10 +1238,10 @@
             '<div class="tubular-grid-search">' +
                 '<div class="input-group input-group-sm">' +
                 '<span class="input-group-addon"><i class="fa fa-search"></i></span>' +
-                '<input type="search" class="form-control" placeholder="{{:: $ctrl.placeholder || (\'UI_SEARCH\' | translate) }}" maxlength="20" ' +
-                'ng-model="$ctrl.$component.search.Text" ng-model-options="{ debounce: 300 }">' +
-                '<span class="input-group-btn" ng-show="$ctrl.$component.search.Text.length > 0">' +
-                '<button class="btn btn-default" uib-tooltip="{{\'CAPTION_CLEAR\' | translate}}" ng-click="$ctrl.$component.search.Text = \'\'">' +
+                '<input type="search" name="tbTextSearchInput" class="form-control" placeholder="{{:: $ctrl.placeholder || (\'UI_SEARCH\' | translate) }}" maxlength="20" ' +
+                'ng-model="$ctrl.$component.search.Text" >' +
+                '<span id="tb-text-search-reset-panel" class="input-group-btn" ng-show="$ctrl.$component.search.Text.length > 0">' +
+                '<button id="tb-text-search-reset-button" class="btn btn-default" uib-tooltip="{{\'CAPTION_CLEAR\' | translate}}" ng-click="$ctrl.$component.search.Text = \'\'">' +
                 '<i class="fa fa-times-circle"></i>' +
                 '</button>' +
                 '</span>' +
@@ -2290,13 +2290,13 @@
                 onlyContains: '=?'
             },
             controller: [
-                '$scope', '$element', '$compile', '$filter', 'tubularTemplateService', function($scope, $element, $compile, $filter, tubular) {
+                '$scope', 'tubularTemplateService', function($scope, tubular) {
                     var $ctrl = this;
 
                     $ctrl.$onInit = function() {
                         $ctrl.onlyContains = angular.isUndefined($ctrl.onlyContains) ? false : $ctrl.onlyContains;
                         $ctrl.templateName = tubular.tbColumnFilterPopoverTemplateName;
-                        tubular.setupFilter($scope, $element, $compile, $filter, $ctrl);
+                        tubular.setupFilter($scope, $ctrl);
                     };
                 }
             ]
@@ -2334,12 +2334,12 @@
                 title: '@'
             },
             controller: [
-                '$scope', '$element', '$compile', '$filter', 'tubularTemplateService', function($scope, $element, $compile, $filter, tubular) {
+                '$scope', 'tubularTemplateService', function($scope, tubular) {
                     var $ctrl = this;
 
                     $ctrl.$onInit = function() {
                         $ctrl.templateName = tubular.tbColumnDateTimeFilterPopoverTemplateName;
-                        tubular.setupFilter($scope, $element, $compile, $filter, $ctrl);
+                        tubular.setupFilter($scope, $ctrl);
                     };
                 }
             ]
@@ -2375,7 +2375,7 @@
                 title: '@'
             },
             controller: [
-                '$scope', '$element', '$compile', '$filter', 'tubularTemplateService', function ($scope, $element, $compile, $filter, tubular) {
+                '$scope', 'tubularTemplateService', function ($scope, tubular) {
                     var $ctrl = this;
 
                     $ctrl.getOptionsFromUrl = function() {
@@ -2401,7 +2401,7 @@
                     $ctrl.$onInit = function() {
                         $ctrl.dataIsLoaded = false;
                         $ctrl.templateName = tubular.tbColumnOptionsFilterPopoverTemplateName;
-                        tubular.setupFilter($scope, $element, $compile, $filter, $ctrl);
+                        tubular.setupFilter($scope, $ctrl);
                         $ctrl.getOptionsFromUrl();
 
                         $ctrl.filter.Operator = 'Multiple';
@@ -3430,7 +3430,7 @@
          */
         .service('tubularTemplateService',
         [
-            '$templateCache', function ($templateCache) {
+            '$templateCache', 'translateFilter', function ($templateCache, translateFilter) {
                 var me = this;
 
                 me.canUseHtml5Date = function () {
@@ -3996,12 +3996,12 @@
                     });
                 };
 
-                me.setupFilter = function ($scope, $element, $compile, $filter, $ctrl) {
+                me.setupFilter = function ($scope, $ctrl) {
                     var dateOps = {
-                        'None': $filter('translate')('OP_NONE'),
-                        'Equals': $filter('translate')('OP_EQUALS'),
-                        'NotEquals': $filter('translate')('OP_NOTEQUALS'),
-                        'Between': $filter('translate')('OP_BETWEEN'),
+                        'None': translateFilter('OP_NONE'),
+                        'Equals': translateFilter('OP_EQUALS'),
+                        'NotEquals': translateFilter('OP_NOTEQUALS'),
+                        'Between': translateFilter('OP_BETWEEN'),
                         'Gte': '>=',
                         'Gt': '>',
                         'Lte': '<=',
@@ -4010,20 +4010,20 @@
 
                     var filterOperators = {
                         'string': {
-                            'None': $filter('translate')('OP_NONE'),
-                            'Equals': $filter('translate')('OP_EQUALS'),
-                            'NotEquals': $filter('translate')('OP_NOTEQUALS'),
-                            'Contains': $filter('translate')('OP_CONTAINS'),
-                            'NotContains': $filter('translate')('OP_NOTCONTAINS'),
-                            'StartsWith': $filter('translate')('OP_STARTSWITH'),
-                            'NotStartsWith': $filter('translate')('OP_NOTSTARTSWITH'),
-                            'EndsWith': $filter('translate')('OP_ENDSWITH'),
-                            'NotEndsWith': $filter('translate')('OP_NOTENDSWITH')
+                            'None': translateFilter('OP_NONE'),
+                            'Equals': translateFilter('OP_EQUALS'),
+                            'NotEquals': translateFilter('OP_NOTEQUALS'),
+                            'Contains': translateFilter('OP_CONTAINS'),
+                            'NotContains': translateFilter('OP_NOTCONTAINS'),
+                            'StartsWith': translateFilter('OP_STARTSWITH'),
+                            'NotStartsWith': translateFilter('OP_NOTSTARTSWITH'),
+                            'EndsWith': translateFilter('OP_ENDSWITH'),
+                            'NotEndsWith': translateFilter('OP_NOTENDSWITH')
                         },
                         'numeric': {
-                            'None': $filter('translate')('OP_NONE'),
-                            'Equals': $filter('translate')('OP_EQUALS'),
-                            'Between': $filter('translate')('OP_BETWEEN'),
+                            'None': translateFilter('OP_NONE'),
+                            'Equals': translateFilter('OP_EQUALS'),
+                            'Between': translateFilter('OP_BETWEEN'),
                             'Gte': '>=',
                             'Gt': '>',
                             'Lte': '<=',
@@ -4033,9 +4033,9 @@
                         'datetime': dateOps,
                         'datetimeutc': dateOps,
                         'boolean': {
-                            'None': $filter('translate')('OP_NONE'),
-                            'Equals': $filter('translate')('OP_EQUALS'),
-                            'NotEquals': $filter('translate')('OP_NOTEQUALS')
+                            'None': translateFilter('OP_NONE'),
+                            'Equals': translateFilter('OP_EQUALS'),
+                            'NotEquals': translateFilter('OP_NOTEQUALS')
                         }
                     };
 
@@ -4048,7 +4048,7 @@
                         Name: $scope.$parent.$parent.column.Name
                     };
 
-                    $ctrl.filterTitle = $ctrl.title || $filter('translate')('CAPTION_FILTER');
+                    $ctrl.filterTitle = $ctrl.title || translateFilter('CAPTION_FILTER');
 
                     $scope.$watch(function () {
                         var c = $ctrl.$component.columns

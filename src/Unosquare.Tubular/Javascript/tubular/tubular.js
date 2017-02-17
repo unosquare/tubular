@@ -48,12 +48,12 @@
          * `numberorcurrency` is a hack to hold `currency` and `number` in a single filter.
          */
         .filter('numberorcurrency', [
-            '$filter', function ($filter) {
+            'numberFilter', 'currencyFilter', function (numberFilter, currencyFilter) {
                 return function (input, format, symbol, fractionSize) {
                     fractionSize = fractionSize || 2;
 
                     if (format === 'C') {
-                        return $filter('currency')(input, symbol || '$', fractionSize);
+                        return currencyFilter(input, symbol || '$', fractionSize);
                     }
 
                     if (format === 'I') {
@@ -61,7 +61,7 @@
                     }
 
                     // default to decimal
-                    return $filter('number')(input, fractionSize);
+                    return numberFilter(input, fractionSize);
                 };
             }
         ])
@@ -74,12 +74,12 @@
          * `moment` is a filter to call format from moment or, if the input is a Date, call Angular's `date` filter.
          */
         .filter('moment', [
-            '$filter', function ($filter) {
+            'dateFilter', function (dateFilter) {
                 return function (input, format) {
                     if (moment.isMoment(input)) {
                         return input.format(format || 'M/DD/YYYY');
                     } else {
-                        return $filter('date')(input);
+                        return dateFilter(input);
                     }
                 };
             }
