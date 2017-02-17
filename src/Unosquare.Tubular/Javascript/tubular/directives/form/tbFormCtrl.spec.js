@@ -48,13 +48,6 @@ describe('Module: tubular.directives', function () {
             it('should set default require authentication', function () {
                 expect(tubularHttp.setRequireAuthentication).toHaveBeenCalledWith(true);
             })
-        })
-       
-
-
-
-
-
-
+        });
     });
 });

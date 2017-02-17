@@ -25,7 +25,7 @@
             if (angular.isDefined($ctrl.dateValue))
                 return;
 
-            if ($ctrl.value instanceof moment) {
+            if (moment.isMoment($ctrl.value)) {
                 var tmpDate = $ctrl.value.toObject();
                 $ctrl.dateValue = new Date(tmpDate.years, tmpDate.months, tmpDate.date, tmpDate.hours, tmpDate.minutes, tmpDate.seconds);
             } else {
@@ -237,7 +237,9 @@
                 }
                 if (angular.isDefined($ctrl.optionsUrl)) {
                     $scope.$watch('optionsUrl', function(val, prev) {
-                        if (val === prev) return;
+                        if (val === prev) {
+                            return;
+                        }
 
                         $ctrl.dataIsLoaded = false;
                         $ctrl.loadData();
@@ -257,7 +259,9 @@
 
             $scope.updateReadonlyValue = function () {
                 $ctrl.readOnlyValue = $ctrl.value;
-                if (!$ctrl.value) return;
+                if (!$ctrl.value) {
+                    return;
+                }
 
                 if (angular.isDefined($ctrl.optionLabel) && $ctrl.options) {
                     if (angular.isDefined($ctrl.optionKey)) {
@@ -276,7 +280,9 @@
             });
 
             $ctrl.loadData = function() {
-                if ($ctrl.dataIsLoaded) return;
+                if ($ctrl.dataIsLoaded) {
+                    return;
+                }
 
                 if (angular.isUndefined($ctrl.$component) || $ctrl.$component == null) {
                     throw 'You need to define a parent Form or Grid';

@@ -8,11 +8,11 @@
                             $scope.tubularDirective = 'tubular-form';
                             $scope.hasFieldsDefinitions = false;
                             $scope.fields = [];
+                            $scope.dataService = tubularHttp.getDataService($scope.dataServiceName);
 
                             var $ctrl = this;
 
                             $ctrl.serverSaveMethod = $scope.serverSaveMethod || 'POST'; // TODO: we are not using it
-                            $ctrl.dataService = tubularHttp.getDataService($scope.dataServiceName);
                             $ctrl.name = $scope.name || tubular.getUniqueTbFormName();
 
                             // This method is meant to provide a reference to the Angular Form
@@ -44,7 +44,7 @@
                                     data[key] = value;
                                 });
 
-                                $scope.model = new TubularModel($scope, $scope, data, $ctrl.dataService);
+                                $scope.model = new TubularModel($scope, $scope, data, $scope.dataService);
                                 $ctrl.bindFields();
                             };
 
@@ -62,18 +62,18 @@
                                     if (angular.isDefined($scope.modelKey) &&
                                         $scope.modelKey != null &&
                                         $scope.modelKey !== '') {
-                                        $ctrl.dataService.getByKey($scope.serverUrl, $scope.modelKey).promise.then(
+                                        $scope.dataService.getByKey($scope.serverUrl, $scope.modelKey).promise.then(
                                             function (data) {
-                                                $scope.model = new TubularModel($scope, $scope, data, $ctrl.dataService);
+                                                $scope.model = new TubularModel($scope, $scope, data, $scope.dataService);
                                                 $ctrl.bindFields();
                                             }, function (error) {
                                                 $scope.$emit('tbForm_OnConnectionError', error);
                                             });
                                     } else {
-                                        $ctrl.dataService.get(tubularHttp.addTimeZoneToUrl($scope.serverUrl)).promise.then(
+                                        $scope.dataService.get(tubularHttp.addTimeZoneToUrl($scope.serverUrl)).promise.then(
                                             function (data) {
                                                 var innerScope = $scope;
-                                                var dataService = $ctrl.dataService;
+                                                var dataService = $scope.dataService;
 
                                                 if (angular.isDefined($scope.model) && angular.isDefined($scope.model.$component)) {
                                                     innerScope = $scope.model.$component;
@@ -92,7 +92,7 @@
                                 }
 
                                 if (angular.isUndefined($scope.model)) {
-                                    $scope.model = new TubularModel($scope, $scope, {}, $ctrl.dataService);
+                                    $scope.model = new TubularModel($scope, $scope, {}, $scope.dataService);
                                 }
 
                                 $ctrl.bindFields();
@@ -146,7 +146,7 @@
                             };
 
                             $scope.clear = function () {
-                                angular.forEach($ctrl.fields, function (field) {
+                                angular.forEach($scope.fields, function (field) {
                                     if (field.resetEditor) {
                                         field.resetEditor();
                                     } else {

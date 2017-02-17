@@ -164,7 +164,9 @@
                                     parent.$watch(function () {
                                         return ctrl.value;
                                     }, function (value) {
-                                        if (value === parent.model[scope.Name]) return;
+                                        if (value === parent.model[scope.Name]) {
+                                            return;
+                                        }
 
                                         parent.model[scope.Name] = value;
                                     });
@@ -173,7 +175,9 @@
                                 scope.$watch(function () {
                                     return parent.model[scope.Name];
                                 }, function (value) {
-                                    if (value === ctrl.value) return;
+                                    if (value === ctrl.value) {
+                                        return;
+                                    }
 
                                     ctrl.value = value;
                                 }, true);
