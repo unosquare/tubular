@@ -16,7 +16,7 @@
   "rules": {
     "quotes": [ 2, "single" ],
     "angular/on-watch": "warn",
-    "angular/controller-as-vm": [ 2, "$ctrl" ],
+    //"angular/controller-as-vm": [ 2, "$ctrl" ],
     "angular/di": [
       2,
       "array",
