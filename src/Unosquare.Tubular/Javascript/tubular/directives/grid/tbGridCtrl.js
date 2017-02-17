@@ -37,8 +37,8 @@
                         };
 
                         $ctrl.isEmpty = false;
-                        $ctrl.tempRow = new TubularModel($scope, $ctrl, {}, $ctrl.dataService);
                         $ctrl.dataService = tubularHttp.getDataService($ctrl.dataServiceName);
+                        $ctrl.tempRow = new TubularModel($scope, $ctrl, {}, $ctrl.dataService);
                         $ctrl.requireAuthentication = $ctrl.requireAuthentication || true;
                         tubularHttp.setRequireAuthentication($ctrl.requireAuthentication);
                         $ctrl.editorMode = $ctrl.editorMode || 'none';
