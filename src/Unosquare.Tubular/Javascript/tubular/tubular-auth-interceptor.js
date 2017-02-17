@@ -9,7 +9,6 @@
      *
      * @constructor
      * @returns {Object} A httpInterceptor
-     * 
      */
     angular.module('tubular.services')
         .factory('tubularAuthInterceptor', ['$q', '$injector', function ($q, $injector) {
@@ -41,7 +40,6 @@
                 },
 
                 requestError: function (rejection) {
-
                     return $q.reject(rejection);
                 },
 
@@ -66,7 +64,6 @@
                                 tubularHttp.requireAuthentication &&
                                 tubularHttp.userData.refreshToken) {
 
-
                                 if (!authRequestRunning) {
                                     authRequestRunning = $injector.get('$http')({
                                         method: 'POST',
@@ -81,7 +78,7 @@
                                     tubularHttp.handleSuccessCallback(null, r.data);
 
                                     if (tubularHttp.requireAuthentication && tubularHttp.isAuthenticated()) {
-                                        rejection.config.headers.Authorization = "Bearer " + tubularHttp.userData.bearerToken;
+                                        rejection.config.headers.Authorization = 'Bearer ' + tubularHttp.userData.bearerToken;
                                         $injector.get('$http')(rejection.config).then(function (resp) {
                                             deferred.resolve(resp);
                                         }, function () {
@@ -98,7 +95,6 @@
                                     $injector.get('$state').go('/Login');
                                     return;
                                 });
-
                             }
                             else {
                                 deferred.reject(rejection);

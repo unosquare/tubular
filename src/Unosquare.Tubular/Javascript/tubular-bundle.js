@@ -48,12 +48,12 @@
          * `numberorcurrency` is a hack to hold `currency` and `number` in a single filter.
          */
         .filter('numberorcurrency', [
-            '$filter', function ($filter) {
+            'numberFilter', 'currencyFilter', function (numberFilter, currencyFilter) {
                 return function (input, format, symbol, fractionSize) {
                     fractionSize = fractionSize || 2;
 
                     if (format === 'C') {
-                        return $filter('currency')(input, symbol || '$', fractionSize);
+                        return currencyFilter(input, symbol || '$', fractionSize);
                     }
 
                     if (format === 'I') {
@@ -61,7 +61,7 @@
                     }
 
                     // default to decimal
-                    return $filter('number')(input, fractionSize);
+                    return numberFilter(input, fractionSize);
                 };
             }
         ])
@@ -74,12 +74,12 @@
          * `moment` is a filter to call format from moment or, if the input is a Date, call Angular's `date` filter.
          */
         .filter('moment', [
-            '$filter', function ($filter) {
+            'dateFilter', function (dateFilter) {
                 return function (input, format) {
                     if (moment.isMoment(input)) {
                         return input.format(format || 'M/DD/YYYY');
                     } else {
-                        return $filter('date')(input);
+                        return dateFilter(input);
                     }
                 };
             }
@@ -789,7 +789,14 @@
                 savePageSize: '=?',
                 saveSearch: '=?'
             },
-            controller: [
+            controller: 'tbGridController'
+        })
+})(angular);
+(function (angular) {
+    'use strict';
+
+    angular.module('tubular.directives')
+        .controller('tbGridController', [
                 '$scope', 'localStorageService', 'tubularPopupService', 'tubularModel', 'tubularHttp', '$routeParams',
                 function ($scope, localStorageService, tubularPopupService, TubularModel, tubularHttp, $routeParams) {
                     var $ctrl = this;
@@ -824,8 +831,8 @@
                         };
 
                         $ctrl.isEmpty = false;
-                        $ctrl.tempRow = new TubularModel($scope, $ctrl, {}, $ctrl.dataService);
                         $ctrl.dataService = tubularHttp.getDataService($ctrl.dataServiceName);
+                        $ctrl.tempRow = new TubularModel($scope, $ctrl, {}, $ctrl.dataService);
                         $ctrl.requireAuthentication = $ctrl.requireAuthentication || true;
                         tubularHttp.setRequireAuthentication($ctrl.requireAuthentication);
                         $ctrl.editorMode = $ctrl.editorMode || 'none';
@@ -1211,8 +1218,9 @@
                         return $ctrl.columns.filter(function (el) { return el.Visible; }).length;
                     };
                 }
-            ]
-        })
+        ]);
+
+
 })(angular);
 (function (angular) {
     'use strict';
@@ -1266,7 +1274,7 @@
 
                 $ctrl.$onInit = function () {
                     $ctrl.minChars = $ctrl.minChars || 3;
-                    $ctrl.lastSearch = $scope.$component.search.Text;
+                    $ctrl.lastSearch = $ctrl.$component.search.Text;
                 };
 
                 $scope.$watch('$ctrl.$component.search.Text', function (val, prev) {
@@ -1317,14 +1325,17 @@
 
     function changeValueFn($ctrl) {
         return function(val) {
-            if (angular.isUndefined(val)) return;
+            if (angular.isUndefined(val)) {
+                return;
+            }
 
             if (angular.isString(val)) {
                 $ctrl.value = moment(val);
             }
 
-            if (angular.isDefined($ctrl.dateValue))
+            if (angular.isDefined($ctrl.dateValue)) {
                 return;
+            }
 
             if (moment.isMoment($ctrl.value)) {
                 var tmpDate = $ctrl.value.toObject();
@@ -1336,7 +1347,7 @@
         };
     }
 
-    var tbSimpleEditorCtrl = ['tubularEditorService', '$scope', '$filter', function(tubular, $scope, $filter) {
+    var tbSimpleEditorCtrl = ['tubularEditorService', '$scope', 'translateFilter', 'filterFilter', function (tubular, $scope, translateFilter, filterFilter) {
             var $ctrl = this;
 
             $ctrl.validate = function() {
@@ -1345,16 +1356,16 @@
 
                     if (patt.test($ctrl.value) === false) {
                         $ctrl.$valid = false;
-                        $ctrl.state.$errors = [$ctrl.regexErrorMessage || $filter('translate')('EDITOR_REGEX_DOESNT_MATCH')];
+                        $ctrl.state.$errors = [$ctrl.regexErrorMessage || translateFilter('EDITOR_REGEX_DOESNT_MATCH')];
                         return;
                     }
                 }
 
                 if (tubular.isValid($ctrl.match)) {
                     if ($ctrl.value !== $ctrl.$component.model[$ctrl.match]) {
-                        var label = $filter('filter')($ctrl.$component.fields, { name: $ctrl.match }, true)[0].label;
+                        var label = filterFilter($ctrl.$component.fields, { name: $ctrl.match }, true)[0].label;
                         $ctrl.$valid = false;
-                        $ctrl.state.$errors = [$filter('translate')('EDITOR_MATCH', label)];
+                        $ctrl.state.$errors = [translateFilter('EDITOR_MATCH', label)];
                         return;
                     }
                 }
@@ -1362,7 +1373,7 @@
                 if (angular.isDefined($ctrl.min) && angular.isDefined($ctrl.value) && $ctrl.value != null) {
                     if ($ctrl.value.length < parseInt($ctrl.min)) {
                         $ctrl.$valid = false;
-                        $ctrl.state.$errors = [$filter('translate')('EDITOR_MIN_CHARS', $ctrl.min)];
+                        $ctrl.state.$errors = [translateFilter('EDITOR_MIN_CHARS', $ctrl.min)];
                         return;
                     }
                 }
@@ -1370,7 +1381,7 @@
                 if (angular.isDefined($ctrl.max) && angular.isDefined($ctrl.value) && $ctrl.value != null) {
                     if ($ctrl.value.length > parseInt($ctrl.max)) {
                         $ctrl.$valid = false;
-                        $ctrl.state.$errors = [$filter('translate')('EDITOR_MAX_CHARS', $ctrl.max)];
+                        $ctrl.state.$errors = [translateFilter('EDITOR_MAX_CHARS', $ctrl.max)];
                         return;
                     }
                 }
@@ -1382,7 +1393,7 @@
         }
     ];
 
-    var tbNumericEditorCtrl = ['tubularEditorService', '$scope', '$filter', function(tubular, $scope, $filter) {
+    var tbNumericEditorCtrl = ['tubularEditorService', '$scope', 'translateFilter', function (tubular, $scope, translateFilter) {
             var $ctrl = this;
 
             $ctrl.validate = function () {
@@ -1390,7 +1401,7 @@
                     $ctrl.$valid = $ctrl.value >= $ctrl.min;
 
                     if (!$ctrl.$valid) {
-                        $ctrl.state.$errors = [$filter('translate')('EDITOR_MIN_NUMBER', $ctrl.min)];
+                        $ctrl.state.$errors = [translateFilter('EDITOR_MIN_NUMBER', $ctrl.min)];
                         return;
                     }
                 }
@@ -1399,20 +1410,20 @@
                     $ctrl.$valid = $ctrl.value <= $ctrl.max;
 
                     if (!$ctrl.$valid) {
-                        $ctrl.state.$errors = [$filter('translate')('EDITOR_MAX_NUMBER', $ctrl.max)];
+                        $ctrl.state.$errors = [translateFilter('EDITOR_MAX_NUMBER', $ctrl.max)];
                     }
                 }
             };
 
             $ctrl.$onInit = function() {
                 $ctrl.DataType = 'numeric';
-
                 tubular.setupScope($scope, 0, $ctrl, false);
             };
         }
     ];
 
-    var tbDateTimeEditorCtrl = ['$scope', '$element', 'tubularEditorService', '$filter', function ($scope, $element, tubular, $filter) {
+    var tbDateTimeEditorCtrl = ['$scope', '$element', 'tubularEditorService', 'translateFilter', 'dateFilter',
+        function ($scope, $element, tubular, translateFilter, dateFilter) {
             var $ctrl = this;
             
             // This could be $onChange??
@@ -1435,7 +1446,7 @@
                     $ctrl.$valid = $ctrl.value >= $ctrl.min;
 
                     if (!$ctrl.$valid) {
-                        $ctrl.state.$errors = [$filter('translate')('EDITOR_MIN_DATE', $filter('date')($ctrl.min, $ctrl.format))];
+                        $ctrl.state.$errors = [translateFilter('EDITOR_MIN_DATE', dateFilter($ctrl.min, $ctrl.format))];
                         return;
                     }
                 }
@@ -1448,14 +1459,13 @@
                     $ctrl.$valid = $ctrl.value <= $ctrl.max;
 
                     if (!$ctrl.$valid) {
-                        $ctrl.state.$errors = [$filter('translate')('EDITOR_MAX_DATE', $filter('date')($ctrl.max, $ctrl.format))];
+                        $ctrl.state.$errors = [translateFilter('EDITOR_MAX_DATE', dateFilter($ctrl.max, $ctrl.format))];
                     }
                 }
             };
 
             $ctrl.$onInit = function() {
                 $ctrl.DataType = 'date';
-
                 tubular.setupScope($scope, $ctrl.format, $ctrl);
 
                 if (angular.isUndefined($ctrl.format)) {
@@ -1465,7 +1475,8 @@
         }
     ];
 
-    var tbDateEditorCtrl = ['$scope', '$element', 'tubularEditorService', '$filter', function($scope, $element, tubular, $filter) {
+    var tbDateEditorCtrl = ['$scope', '$element', 'tubularEditorService', 'translateFilter', 'dateFilter',
+        function ($scope, $element, tubular, translateFilter, dateFilter) {
             var $ctrl = this;
             
             $scope.$watch(function () { return $ctrl.value; }, changeValueFn($ctrl));
@@ -1487,7 +1498,7 @@
                     $ctrl.$valid = $ctrl.dateValue >= $ctrl.min;
 
                     if (!$ctrl.$valid) {
-                        $ctrl.state.$errors = [$filter('translate')('EDITOR_MIN_DATE', $filter('date')($ctrl.min, $ctrl.format))];
+                        $ctrl.state.$errors = [translateFilter('EDITOR_MIN_DATE', dateFilter($ctrl.min, $ctrl.format))];
                         return;
                     }
                 }
@@ -1500,7 +1511,7 @@
                     $ctrl.$valid = $ctrl.dateValue <= $ctrl.max;
 
                     if (!$ctrl.$valid) {
-                        $ctrl.state.$errors = [$filter('translate')('EDITOR_MAX_DATE', $filter('date')($ctrl.max, $ctrl.format))];
+                        $ctrl.state.$errors = [translateFilter('EDITOR_MAX_DATE', dateFilter($ctrl.max, $ctrl.format))];
                     }
                 }
             };
@@ -1536,6 +1547,7 @@
                         }
                     }
                 }
+
                 if (angular.isDefined($ctrl.optionsUrl)) {
                     $scope.$watch('optionsUrl', function(val, prev) {
                         if (val === prev) {
@@ -2147,14 +2159,14 @@
                 help: '@?'
             },
             controller: [
-                'tubularEditorService', '$scope', '$filter', function (tubular, $scope, $filter) {
+                'tubularEditorService', '$scope', 'translateFilter', function (tubular, $scope, translateFilter) {
                     var $ctrl = this;
 
                     $ctrl.validate = function () {
                         if (tubular.isValid($ctrl.min) && tubular.isValid($ctrl.value)) {
                             if ($ctrl.value.length < parseInt($ctrl.min)) {
                                 $ctrl.$valid = false;
-                                $ctrl.state.$errors = [$filter('translate')('EDITOR_MIN_CHARS', +$ctrl.min)];
+                                $ctrl.state.$errors = [translateFilter('EDITOR_MIN_CHARS', +$ctrl.min)];
                                 return;
                             }
                         }
@@ -2162,7 +2174,7 @@
                         if (tubular.isValid($ctrl.max) && tubular.isValid($ctrl.value)) {
                             if ($ctrl.value.length > parseInt($ctrl.max)) {
                                 $ctrl.$valid = false;
-                                $ctrl.state.$errors = [$filter('translate')('EDITOR_MAX_CHARS', +$ctrl.max)];
+                                $ctrl.state.$errors = [translateFilter('EDITOR_MAX_CHARS', +$ctrl.max)];
                                 return;
                             }
                         }
@@ -2292,13 +2304,13 @@
                 onlyContains: '=?'
             },
             controller: [
-                '$scope', '$element', '$compile', '$filter', 'tubularTemplateService', function($scope, $element, $compile, $filter, tubular) {
+                '$scope', 'tubularTemplateService', function($scope, tubular) {
                     var $ctrl = this;
 
                     $ctrl.$onInit = function() {
                         $ctrl.onlyContains = angular.isUndefined($ctrl.onlyContains) ? false : $ctrl.onlyContains;
                         $ctrl.templateName = tubular.tbColumnFilterPopoverTemplateName;
-                        tubular.setupFilter($scope, $element, $compile, $filter, $ctrl);
+                        tubular.setupFilter($scope, $ctrl);
                     };
                 }
             ]
@@ -2336,12 +2348,12 @@
                 title: '@'
             },
             controller: [
-                '$scope', '$element', '$compile', '$filter', 'tubularTemplateService', function($scope, $element, $compile, $filter, tubular) {
+                '$scope', 'tubularTemplateService', function($scope, tubular) {
                     var $ctrl = this;
 
                     $ctrl.$onInit = function() {
                         $ctrl.templateName = tubular.tbColumnDateTimeFilterPopoverTemplateName;
-                        tubular.setupFilter($scope, $element, $compile, $filter, $ctrl);
+                        tubular.setupFilter($scope, $ctrl);
                     };
                 }
             ]
@@ -2377,7 +2389,7 @@
                 title: '@'
             },
             controller: [
-                '$scope', '$element', '$compile', '$filter', 'tubularTemplateService', function ($scope, $element, $compile, $filter, tubular) {
+                '$scope', 'tubularTemplateService', function ($scope, tubular) {
                     var $ctrl = this;
 
                     $ctrl.getOptionsFromUrl = function() {
@@ -2403,7 +2415,7 @@
                     $ctrl.$onInit = function() {
                         $ctrl.dataIsLoaded = false;
                         $ctrl.templateName = tubular.tbColumnOptionsFilterPopoverTemplateName;
-                        tubular.setupFilter($scope, $element, $compile, $filter, $ctrl);
+                        tubular.setupFilter($scope, $ctrl);
                         $ctrl.getOptionsFromUrl();
 
                         $ctrl.filter.Operator = 'Multiple';
@@ -3432,7 +3444,7 @@
          */
         .service('tubularTemplateService',
         [
-            '$templateCache', function ($templateCache) {
+            '$templateCache', 'translateFilter', function ($templateCache, translateFilter) {
                 var me = this;
 
                 me.canUseHtml5Date = function () {
@@ -3653,9 +3665,7 @@
                         var editorTag = el.EditorType
                             .replace(/([A-Z])/g, function ($1) { return '-' + $1.toLowerCase(); });
 
-                        return '\r\n\t\t<tb-cell-template column-name="' +
-                            el.Name +
-                            '">' +
+                        return '\r\n\t\t<tb-cell-template column-name="' + el.Name + '">' +
                             '\r\n\t\t\t' +
                             (mode === 'Inline'
                                 ? '<' +
@@ -3998,12 +4008,12 @@
                     });
                 };
 
-                me.setupFilter = function ($scope, $element, $compile, $filter, $ctrl) {
+                me.setupFilter = function ($scope, $ctrl) {
                     var dateOps = {
-                        'None': $filter('translate')('OP_NONE'),
-                        'Equals': $filter('translate')('OP_EQUALS'),
-                        'NotEquals': $filter('translate')('OP_NOTEQUALS'),
-                        'Between': $filter('translate')('OP_BETWEEN'),
+                        'None': translateFilter('OP_NONE'),
+                        'Equals': translateFilter('OP_EQUALS'),
+                        'NotEquals': translateFilter('OP_NOTEQUALS'),
+                        'Between': translateFilter('OP_BETWEEN'),
                         'Gte': '>=',
                         'Gt': '>',
                         'Lte': '<=',
@@ -4012,20 +4022,20 @@
 
                     var filterOperators = {
                         'string': {
-                            'None': $filter('translate')('OP_NONE'),
-                            'Equals': $filter('translate')('OP_EQUALS'),
-                            'NotEquals': $filter('translate')('OP_NOTEQUALS'),
-                            'Contains': $filter('translate')('OP_CONTAINS'),
-                            'NotContains': $filter('translate')('OP_NOTCONTAINS'),
-                            'StartsWith': $filter('translate')('OP_STARTSWITH'),
-                            'NotStartsWith': $filter('translate')('OP_NOTSTARTSWITH'),
-                            'EndsWith': $filter('translate')('OP_ENDSWITH'),
-                            'NotEndsWith': $filter('translate')('OP_NOTENDSWITH')
+                            'None': translateFilter('OP_NONE'),
+                            'Equals': translateFilter('OP_EQUALS'),
+                            'NotEquals': translateFilter('OP_NOTEQUALS'),
+                            'Contains': translateFilter('OP_CONTAINS'),
+                            'NotContains': translateFilter('OP_NOTCONTAINS'),
+                            'StartsWith': translateFilter('OP_STARTSWITH'),
+                            'NotStartsWith': translateFilter('OP_NOTSTARTSWITH'),
+                            'EndsWith': translateFilter('OP_ENDSWITH'),
+                            'NotEndsWith': translateFilter('OP_NOTENDSWITH')
                         },
                         'numeric': {
-                            'None': $filter('translate')('OP_NONE'),
-                            'Equals': $filter('translate')('OP_EQUALS'),
-                            'Between': $filter('translate')('OP_BETWEEN'),
+                            'None': translateFilter('OP_NONE'),
+                            'Equals': translateFilter('OP_EQUALS'),
+                            'Between': translateFilter('OP_BETWEEN'),
                             'Gte': '>=',
                             'Gt': '>',
                             'Lte': '<=',
@@ -4035,9 +4045,9 @@
                         'datetime': dateOps,
                         'datetimeutc': dateOps,
                         'boolean': {
-                            'None': $filter('translate')('OP_NONE'),
-                            'Equals': $filter('translate')('OP_EQUALS'),
-                            'NotEquals': $filter('translate')('OP_NOTEQUALS')
+                            'None': translateFilter('OP_NONE'),
+                            'Equals': translateFilter('OP_EQUALS'),
+                            'NotEquals': translateFilter('OP_NOTEQUALS')
                         }
                     };
 
@@ -4050,7 +4060,7 @@
                         Name: $scope.$parent.$parent.column.Name
                     };
 
-                    $ctrl.filterTitle = $ctrl.title || $filter('translate')('CAPTION_FILTER');
+                    $ctrl.filterTitle = $ctrl.title || translateFilter('CAPTION_FILTER');
 
                     $scope.$watch(function () {
                         var c = $ctrl.$component.columns
@@ -4059,7 +4069,9 @@
                         return c.length !== 0 ? c[0] : null;
                     },
                         function (val) {
-                            if (!val) return;
+                            if (!val) {
+                                return;
+                            }
 
                             if ($ctrl.filter.HasFilter !== val.Filter.HasFilter) {
                                 $ctrl.filter.HasFilter = val.Filter.HasFilter;
@@ -4568,7 +4580,6 @@
      *
      * @constructor
      * @returns {Object} A httpInterceptor
-     * 
      */
     angular.module('tubular.services')
         .factory('tubularAuthInterceptor', ['$q', '$injector', function ($q, $injector) {
@@ -4600,7 +4611,6 @@
                 },
 
                 requestError: function (rejection) {
-
                     return $q.reject(rejection);
                 },
 
@@ -4625,7 +4635,6 @@
                                 tubularHttp.requireAuthentication &&
                                 tubularHttp.userData.refreshToken) {
 
-
                                 if (!authRequestRunning) {
                                     authRequestRunning = $injector.get('$http')({
                                         method: 'POST',
@@ -4640,7 +4649,7 @@
                                     tubularHttp.handleSuccessCallback(null, r.data);
 
                                     if (tubularHttp.requireAuthentication && tubularHttp.isAuthenticated()) {
-                                        rejection.config.headers.Authorization = "Bearer " + tubularHttp.userData.bearerToken;
+                                        rejection.config.headers.Authorization = 'Bearer ' + tubularHttp.userData.bearerToken;
                                         $injector.get('$http')(rejection.config).then(function (resp) {
                                             deferred.resolve(resp);
                                         }, function () {
@@ -4657,7 +4666,6 @@
                                     $injector.get('$state').go('/Login');
                                     return;
                                 });
-
                             }
                             else {
                                 deferred.reject(rejection);

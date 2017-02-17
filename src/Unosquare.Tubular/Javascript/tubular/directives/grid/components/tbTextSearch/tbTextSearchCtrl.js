@@ -8,7 +8,7 @@
 
                 $ctrl.$onInit = function () {
                     $ctrl.minChars = $ctrl.minChars || 3;
-                    $ctrl.lastSearch = $scope.$component.search.Text;
+                    $ctrl.lastSearch = $ctrl.$component.search.Text;
                 };
 
                 $scope.$watch('$ctrl.$component.search.Text', function (val, prev) {

@@ -11,7 +11,7 @@
          */
         .service('tubularTemplateService',
         [
-            '$templateCache', function ($templateCache) {
+            '$templateCache', 'translateFilter', function ($templateCache, translateFilter) {
                 var me = this;
 
                 me.canUseHtml5Date = function () {
@@ -232,9 +232,7 @@
                         var editorTag = el.EditorType
                             .replace(/([A-Z])/g, function ($1) { return '-' + $1.toLowerCase(); });
 
-                        return '\r\n\t\t<tb-cell-template column-name="' +
-                            el.Name +
-                            '">' +
+                        return '\r\n\t\t<tb-cell-template column-name="' + el.Name + '">' +
                             '\r\n\t\t\t' +
                             (mode === 'Inline'
                                 ? '<' +
@@ -577,12 +575,12 @@
                     });
                 };
 
-                me.setupFilter = function ($scope, $element, $compile, $filter, $ctrl) {
+                me.setupFilter = function ($scope, $ctrl) {
                     var dateOps = {
-                        'None': $filter('translate')('OP_NONE'),
-                        'Equals': $filter('translate')('OP_EQUALS'),
-                        'NotEquals': $filter('translate')('OP_NOTEQUALS'),
-                        'Between': $filter('translate')('OP_BETWEEN'),
+                        'None': translateFilter('OP_NONE'),
+                        'Equals': translateFilter('OP_EQUALS'),
+                        'NotEquals': translateFilter('OP_NOTEQUALS'),
+                        'Between': translateFilter('OP_BETWEEN'),
                         'Gte': '>=',
                         'Gt': '>',
                         'Lte': '<=',
@@ -591,20 +589,20 @@
 
                     var filterOperators = {
                         'string': {
-                            'None': $filter('translate')('OP_NONE'),
-                            'Equals': $filter('translate')('OP_EQUALS'),
-                            'NotEquals': $filter('translate')('OP_NOTEQUALS'),
-                            'Contains': $filter('translate')('OP_CONTAINS'),
-                            'NotContains': $filter('translate')('OP_NOTCONTAINS'),
-                            'StartsWith': $filter('translate')('OP_STARTSWITH'),
-                            'NotStartsWith': $filter('translate')('OP_NOTSTARTSWITH'),
-                            'EndsWith': $filter('translate')('OP_ENDSWITH'),
-                            'NotEndsWith': $filter('translate')('OP_NOTENDSWITH')
+                            'None': translateFilter('OP_NONE'),
+                            'Equals': translateFilter('OP_EQUALS'),
+                            'NotEquals': translateFilter('OP_NOTEQUALS'),
+                            'Contains': translateFilter('OP_CONTAINS'),
+                            'NotContains': translateFilter('OP_NOTCONTAINS'),
+                            'StartsWith': translateFilter('OP_STARTSWITH'),
+                            'NotStartsWith': translateFilter('OP_NOTSTARTSWITH'),
+                            'EndsWith': translateFilter('OP_ENDSWITH'),
+                            'NotEndsWith': translateFilter('OP_NOTENDSWITH')
                         },
                         'numeric': {
-                            'None': $filter('translate')('OP_NONE'),
-                            'Equals': $filter('translate')('OP_EQUALS'),
-                            'Between': $filter('translate')('OP_BETWEEN'),
+                            'None': translateFilter('OP_NONE'),
+                            'Equals': translateFilter('OP_EQUALS'),
+                            'Between': translateFilter('OP_BETWEEN'),
                             'Gte': '>=',
                             'Gt': '>',
                             'Lte': '<=',
@@ -614,9 +612,9 @@
                         'datetime': dateOps,
                         'datetimeutc': dateOps,
                         'boolean': {
-                            'None': $filter('translate')('OP_NONE'),
-                            'Equals': $filter('translate')('OP_EQUALS'),
-                            'NotEquals': $filter('translate')('OP_NOTEQUALS')
+                            'None': translateFilter('OP_NONE'),
+                            'Equals': translateFilter('OP_EQUALS'),
+                            'NotEquals': translateFilter('OP_NOTEQUALS')
                         }
                     };
 
@@ -629,7 +627,7 @@
                         Name: $scope.$parent.$parent.column.Name
                     };
 
-                    $ctrl.filterTitle = $ctrl.title || $filter('translate')('CAPTION_FILTER');
+                    $ctrl.filterTitle = $ctrl.title || translateFilter('CAPTION_FILTER');
 
                     $scope.$watch(function () {
                         var c = $ctrl.$component.columns
@@ -638,7 +636,9 @@
                         return c.length !== 0 ? c[0] : null;
                     },
                         function (val) {
-                            if (!val) return;
+                            if (!val) {
+                                return;
+                            }
 
                             if ($ctrl.filter.HasFilter !== val.Filter.HasFilter) {
                                 $ctrl.filter.HasFilter = val.Filter.HasFilter;
