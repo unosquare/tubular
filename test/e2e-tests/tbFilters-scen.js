@@ -649,10 +649,9 @@ describe('Tubular Filters', function () {
     });
 
     describe('tbColumnOptionsFilter', function () {
-
         beforeAll(function () {
             // Set test variables
-            tbColumnOptionsFilter = element(by.tagName('tb-column-options-filter'));
+            var tbColumnOptionsFilter = element(by.tagName('tb-column-options-filter'));
             filterBtn = tbColumnOptionsFilter.$('.btn-popover');
             popoverForm = $('tb-column-options-filter form.tubular-column-filter-form');
             applyBtn = popoverForm.$('tb-column-filter-buttons').$('.btn-success');
@@ -714,7 +713,7 @@ describe('Tubular Filters', function () {
                 .then(function () {
                     dataRows.getText()
                         .then(function (modifiedText) {
-                            equalData = (originalData.length == modifiedText.length) && originalData.every(function (element, index) {
+                            equalData = (originalData.length === modifiedText.length) && originalData.every(function (element, index) {
                                 return element === modifiedText[index];
                             });
 
@@ -839,7 +838,7 @@ describe('Tubular Filters', function () {
                     dataRows.each(function (row, index) {
                         row.$$('td').get(1).getText()
                             .then(function (customer) {
-                                filterOk = filterOk && (customer == filteredCustomer);
+                                filterOk = filterOk && (customer === filteredCustomer);
                             });
                     }).then(function () {
                         expect(filterOk).toBe(true);
@@ -859,7 +858,7 @@ describe('Tubular Filters', function () {
             dataRows.each(function (row) {
                 row.$$('td').get(3).getText()
                     .then(function (customer) {
-                        filterOk = filterOk && (customer == filteredCity);
+                        filterOk = filterOk && (customer === filteredCity);
                     });
             }).then(function () {
                 expect(filterOk).toBe(false);
@@ -874,7 +873,7 @@ describe('Tubular Filters', function () {
                     dataRows.each(function (row, index) {
                         row.$$('td').get(3).getText()
                             .then(function (customer) {
-                                filterOk = filterOk && (customer == filteredCity);
+                                filterOk = filterOk && (customer === filteredCity);
                             });
                     }).then(function () {
                         expect(filterOk).toBe(true);

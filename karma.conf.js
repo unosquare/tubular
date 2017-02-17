@@ -59,10 +59,8 @@ module.exports = function (config) {
 
             // experimental 
             preserveDescribeNesting: false, // folded suites stay folded  
-            foldAll: false, // reports start folded (only with preserveDescribeNesting) 
+            foldAll: false // reports start folded (only with preserveDescribeNesting) 
         },
-
-        
 
         // optionally, configure the reporter
         coverageReporter: {

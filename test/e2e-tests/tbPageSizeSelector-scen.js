@@ -13,6 +13,8 @@ describe('tbPageSizeSelctor', function () {
         firstDataRow,
         lastDataRow,
         tbPageSizeSelector;
+    var firstNavBtn;
+    var nextNavBtn;
 
     beforeAll(function () {
         // Go to test
@@ -24,7 +26,7 @@ describe('tbPageSizeSelctor', function () {
         // * Test variables * //
         /**********************/
         // Get component
-        tbGridPager = element(by.tagName('tb-grid-pager'));
+        var tbGridPager = element(by.tagName('tb-grid-pager'));
         // tbPageSizeSelector element
         tbPageSizeSelector = element(by.tagName('tb-page-size-selector'));
         // All showing rows
