@@ -534,33 +534,35 @@
          * @param {string} serviceName Define Data service (name) to retrieve data, defaults `tubularHttp`.
          * @param {bool} requireAuthentication Set if authentication check must be executed, default true.
          */
-        .directive('tbForm', [function () {
-            return {
-                template: '<form ng-transclude name="{{name}}"></form>',
-                restrict: 'E',
-                replace: true,
-                transclude: true,
-                scope: {
-                    model: '=?',
-                    serverUrl: '@',
-                    serverSaveUrl: '@',
-                    serverSaveMethod: '@',
-                    modelKey: '@?',
-                    dataServiceName: '@?serviceName',
-                    requireAuthentication: '=?',
-                    name: '@?formName'
-                },
-                controller: 'tbFormController',
-                compile: function () {
-                    return {
-                        post: function (scope) {
-                            scope.finishDefinition();
-                        }
-                    };
+        .directive('tbForm',
+        [
+            function() {
+                return {
+                    template: '<form ng-transclude name="{{name}}"></form>',
+                    restrict: 'E',
+                    replace: true,
+                    transclude: true,
+                    scope: {
+                        model: '=?',
+                        serverUrl: '@',
+                        serverSaveUrl: '@',
+                        serverSaveMethod: '@',
+                        modelKey: '@?',
+                        dataServiceName: '@?serviceName',
+                        requireAuthentication: '=?',
+                        name: '@?formName'
+                    },
+                    controller: 'tbFormController',
+                    compile: function() {
+                        return {
+                            post: function(scope) {
+                                scope.finishDefinition();
+                            }
+                        };
+                    }
                 }
             }
-        }])
-
+        ]);
 })(angular);
 (function (angular) {
     'use strict';
@@ -764,7 +766,8 @@
          * @param {bool} savePageSize Set if the grid autosave page size, default true.
          * @param {bool} saveSearch Set if the grid autosave search, default true.
          */
-        .component('tbGrid', {
+        .component('tbGrid',
+        {
             template: '<div>' +
                 '<div class="tubular-overlay" ng-show="$ctrl.showLoading && $ctrl.currentRequest != null">' +
                 '<div><div class="fa fa-refresh fa-2x fa-spin"></div></div></div>' +
@@ -789,7 +792,14 @@
                 savePageSize: '=?',
                 saveSearch: '=?'
             },
-            controller: [
+            controller: 'tbGridController'
+        });
+})(angular);
+(function (angular) {
+    'use strict';
+
+    angular.module('tubular.directives')
+        .controller('tbGridController', [
                 '$scope', 'localStorageService', 'tubularPopupService', 'tubularModel', 'tubularHttp', '$routeParams',
                 function ($scope, localStorageService, tubularPopupService, TubularModel, tubularHttp, $routeParams) {
                     var $ctrl = this;
@@ -824,8 +834,8 @@
                         };
 
                         $ctrl.isEmpty = false;
-                        $ctrl.tempRow = new TubularModel($scope, $ctrl, {}, $ctrl.dataService);
                         $ctrl.dataService = tubularHttp.getDataService($ctrl.dataServiceName);
+                        $ctrl.tempRow = new TubularModel($scope, $ctrl, {}, $ctrl.dataService);
                         $ctrl.requireAuthentication = $ctrl.requireAuthentication || true;
                         tubularHttp.setRequireAuthentication($ctrl.requireAuthentication);
                         $ctrl.editorMode = $ctrl.editorMode || 'none';
@@ -1211,8 +1221,9 @@
                         return $ctrl.columns.filter(function (el) { return el.Visible; }).length;
                     };
                 }
-            ]
-        })
+        ]);
+
+
 })(angular);
 (function (angular) {
     'use strict';
@@ -1276,10 +1287,8 @@
 
                     $ctrl.$component.search.Text = val;
 
-                    if ($ctrl.lastSearch !== '' && val === '') {
-                        $ctrl.$component.saveSearch();
-                        $ctrl.$component.search.Operator = 'None';
-                        $ctrl.$component.retrieveData();
+                    if ($ctrl.lastSearch && val === '') {
+                        search('None');
                         return;
                     }
 
@@ -1288,10 +1297,14 @@
                     }
 
                     $ctrl.lastSearch = val;
-                    $ctrl.$component.saveSearch();
-                    $ctrl.$component.search.Operator = 'Auto';
-                    $ctrl.$component.retrieveData();
+                    search('Auto');
                 });
+
+                function search(operator) {
+                    $ctrl.$component.saveSearch();
+                    $ctrl.$component.search.Operator = operator;
+                    $ctrl.$component.retrieveData();
+                }
             }
         ]);
 
@@ -4176,6 +4189,15 @@
             function ($http, $timeout, $q, localStorageService, translateFilter, $log, $document) {
                 var me = this;
 
+                function init() {
+                    var savedData = localStorageService.get('auth_data');
+
+                    if (angular.isDefined(savedData) && savedData != null) {
+                        me.userData = savedData;
+                        setHttpAuthHeader();
+                    }
+                }
+
                 function isAuthenticationExpired(expirationDate) {
                     var now = new Date();
                     expirationDate = new Date(expirationDate);
@@ -4556,6 +4578,8 @@
 
                     return instance == null ? me : instance;
                 };
+
+                init();
             }
         ]);
 })(angular);
