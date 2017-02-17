@@ -3,16 +3,28 @@
 describe('Module: tubular.services', function () {
   
     describe('Service: editor', function () {
-        var columns, popupService;
+        var filter, editor;
 
         beforeEach(function () {
             module('tubular.services');
-            //inject(function (_tubularTemplateService_) {
-            //    tubularTemplateService = _tubularTemplateService_;
-            //    columns = tubularTemplateService.createColumns(models);
-            //});
+            module(function ($filterProvider) {
+                
+                filter = jasmine.createSpy().and.returnValue('translated');
+                $filterProvider.register('translate', function () { return filter;});
+
+            });
+
+            inject(function (_tubularEditorService_) {
+                editor = _tubularEditorService_;
+                
+            });
         });
 
-      
+         
+
+        it('should be defined', function () {
+            expect(editor).toBeDefined();
+        })
+
     });
 });
