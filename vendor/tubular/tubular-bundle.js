@@ -789,14 +789,7 @@
                 savePageSize: '=?',
                 saveSearch: '=?'
             },
-            controller: 'tbGridController'
-        })
-})(angular);
-(function (angular) {
-    'use strict';
-
-    angular.module('tubular.directives')
-        .controller('tbGridController', [
+            controller: [
                 '$scope', 'localStorageService', 'tubularPopupService', 'tubularModel', 'tubularHttp', '$routeParams',
                 function ($scope, localStorageService, tubularPopupService, TubularModel, tubularHttp, $routeParams) {
                     var $ctrl = this;
@@ -831,8 +824,8 @@
                         };
 
                         $ctrl.isEmpty = false;
-                        $ctrl.dataService = tubularHttp.getDataService($ctrl.dataServiceName);
                         $ctrl.tempRow = new TubularModel($scope, $ctrl, {}, $ctrl.dataService);
+                        $ctrl.dataService = tubularHttp.getDataService($ctrl.dataServiceName);
                         $ctrl.requireAuthentication = $ctrl.requireAuthentication || true;
                         tubularHttp.setRequireAuthentication($ctrl.requireAuthentication);
                         $ctrl.editorMode = $ctrl.editorMode || 'none';
@@ -1218,9 +1211,8 @@
                         return $ctrl.columns.filter(function (el) { return el.Visible; }).length;
                     };
                 }
-        ]);
-
-
+            ]
+        })
 })(angular);
 (function (angular) {
     'use strict';
@@ -1284,8 +1276,10 @@
 
                     $ctrl.$component.search.Text = val;
 
-                    if ($ctrl.lastSearch && val === '') {
-                        search('None');
+                    if ($ctrl.lastSearch !== '' && val === '') {
+                        $ctrl.$component.saveSearch();
+                        $ctrl.$component.search.Operator = 'None';
+                        $ctrl.$component.retrieveData();
                         return;
                     }
 
@@ -1294,14 +1288,10 @@
                     }
 
                     $ctrl.lastSearch = val;
-                    search('Auto');
-                });
-
-                function search(operator) {
                     $ctrl.$component.saveSearch();
-                    $ctrl.$component.search.Operator = operator;
+                    $ctrl.$component.search.Operator = 'Auto';
                     $ctrl.$component.retrieveData();
-                }
+                });
             }
         ]);
 
@@ -4186,15 +4176,6 @@
             function ($http, $timeout, $q, localStorageService, translateFilter, $log, $document) {
                 var me = this;
 
-                function init() {
-                    var savedData = localStorageService.get('auth_data');
-
-                    if (angular.isDefined(savedData) && savedData != null) {
-                        me.userData = savedData;
-                        setHttpAuthHeader();
-                    }
-                }
-
                 function isAuthenticationExpired(expirationDate) {
                     var now = new Date();
                     expirationDate = new Date(expirationDate);
@@ -4575,8 +4556,6 @@
 
                     return instance == null ? me : instance;
                 };
-
-                init();
             }
         ]);
 })(angular);
