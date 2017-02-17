@@ -4176,6 +4176,15 @@
             function ($http, $timeout, $q, localStorageService, translateFilter, $log, $document) {
                 var me = this;
 
+                function init() {
+                    var savedData = localStorageService.get('auth_data');
+
+                    if (!angular.isUndefined(savedData) && savedData != null) {
+                        me.userData = savedData;
+                        setHttpAuthHeader();
+                    }
+                }
+
                 function isAuthenticationExpired(expirationDate) {
                     var now = new Date();
                     expirationDate = new Date(expirationDate);
@@ -4556,6 +4565,8 @@
 
                     return instance == null ? me : instance;
                 };
+
+                init();
             }
         ]);
 })(angular);
