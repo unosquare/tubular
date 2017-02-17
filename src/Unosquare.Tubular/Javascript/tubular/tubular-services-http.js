@@ -20,7 +20,7 @@
                 function init() {
                     var savedData = localStorageService.get('auth_data');
 
-                    if (!angular.isUndefined(savedData) && savedData != null) {
+                    if (angular.isDefined(savedData) && savedData != null) {
                         me.userData = savedData;
                         setHttpAuthHeader();
                     }
