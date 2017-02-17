@@ -123,6 +123,11 @@ describe('Module: tubular.services', function () {
 
         beforeEach(function () {
             module('tubular.services');
+            module(function ($filterProvider) {
+                var filter = jasmine.createSpy().and.returnValue('translated');
+                $filterProvider.register('translate', function () { return filter; });
+            });
+
             inject(function (_tubularTemplateService_) {
                 tubularTemplateService = _tubularTemplateService_;
                 columns = tubularTemplateService.createColumns(models);
