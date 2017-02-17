@@ -3097,7 +3097,7 @@
          * The `tubularEditorService` service is a internal helper to setup any `TubularModel` with a UI.
          */
         .service('tubularEditorService', [
-            '$filter', function ($filter) {
+            'translateFilter', function (translateFilter) {
                 var me = this;
 
                 me.isValid = function (value) { return !(!value); };
@@ -3159,7 +3159,7 @@
                         if ((angular.isUndefined(ctrl.value) && ctrl.required) ||
                             (angular.isDate(ctrl.value) && isNaN(ctrl.value.getTime()) && ctrl.required)) {
                             ctrl.$valid = false;
-                            ctrl.state.$errors = [$filter('translate')('EDITOR_REQUIRED')];
+                            ctrl.state.$errors = [translateFilter('EDITOR_REQUIRED')];
 
                             if (angular.isDefined(scope.$parent.Model)) {
                                 scope.$parent.Model.$state[scope.Name] = ctrl.state;
@@ -4172,8 +4172,8 @@
          * This service provides authentication using bearer-tokens. Based on https://bitbucket.org/david.antaramian/so-21662778-spa-authentication-example
          */
         .service('tubularHttp', [
-            '$http', '$timeout', '$q', 'localStorageService', '$filter', '$log', '$document',
-            function ($http, $timeout, $q, localStorageService, $filter, $log, $document) {
+            '$http', '$timeout', '$q', 'localStorageService', 'translateFilter', '$log', '$document',
+            function ($http, $timeout, $q, localStorageService, translateFilter, $log, $document) {
                 var me = this;
 
                 function isAuthenticationExpired(expirationDate) {
@@ -4274,7 +4274,7 @@
                         me.handleSuccessCallback(successCallback, response.data, username);
                     }, function (errorResponse) {
                         if (angular.isFunction(errorCallback)) {
-                            errorCallback(errorResponse.data.error_description || $filter('translate')('UI_HTTPERROR'));
+                            errorCallback(errorResponse.data.error_description || translateFilter('UI_HTTPERROR'));
                         }
                     });
                 };
