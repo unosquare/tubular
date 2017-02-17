@@ -7,10 +7,7 @@ describe('Module: tubular.directives', function () {
 
         beforeEach(function () {
             module('tubular.directives');
-           
-
-
-        })
+        });
 
         beforeEach(inject(function (_$controller_, $rootScope) {
             scope = $rootScope.$new();
@@ -22,7 +19,7 @@ describe('Module: tubular.directives', function () {
             sut = $controller('tbTextSearchController', { '$scope': scope });
             sut.$component = {
                 search: {}
-            }
+            };
         }
 
         describe('Method: $onInit', function () {
@@ -33,25 +30,21 @@ describe('Module: tubular.directives', function () {
                 sut.$onInit();
 
                 expect(sut.minChars).toBe(3);
-            })
-
+            });
             it('should not modify minChars if specified', function () {
                 sut.minChars = 5;
 
                 sut.$onInit();
 
                 expect(sut.minChars).toBe(5);
-            })
-
+            });
             it('should set lastSearch properly', function () {
                 sut.$component.search.Text = "sometext";
 
                 sut.$onInit();
 
                 expect(sut.lastSearch).toBe("sometext");
-            })
-
-
+            });
         });
 
 
@@ -62,13 +55,6 @@ describe('Module: tubular.directives', function () {
            
 
 
-        })
-       
-
-
-
-
-
-
+        });
     });
 });

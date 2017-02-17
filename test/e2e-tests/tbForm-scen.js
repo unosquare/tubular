@@ -112,8 +112,7 @@ describe('tbForm related components', function () {
         tbDateEditor_helper,
         tbDateEditor_errorMessages,
         tbDateEditorDate_modified = "05/08/2016",
-        tbDateEditorDate_original = "01/30/2016";
-
+        tbDateEditorDate_original = "03/05/2016";
 
     var tbDateEditorRestore = function () {
         return browser.wait(restoreCancelClickFn().then(function () {

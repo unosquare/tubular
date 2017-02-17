@@ -28,31 +28,33 @@
          * @param {string} serviceName Define Data service (name) to retrieve data, defaults `tubularHttp`.
          * @param {bool} requireAuthentication Set if authentication check must be executed, default true.
          */
-        .directive('tbForm', [function () {
-            return {
-                template: '<form ng-transclude name="{{name}}"></form>',
-                restrict: 'E',
-                replace: true,
-                transclude: true,
-                scope: {
-                    model: '=?',
-                    serverUrl: '@',
-                    serverSaveUrl: '@',
-                    serverSaveMethod: '@',
-                    modelKey: '@?',
-                    dataServiceName: '@?serviceName',
-                    requireAuthentication: '=?',
-                    name: '@?formName'
-                },
-                controller: 'tbFormController',
-                compile: function () {
-                    return {
-                        post: function (scope) {
-                            scope.finishDefinition();
-                        }
-                    };
+        .directive('tbForm',
+        [
+            function() {
+                return {
+                    template: '<form ng-transclude name="{{name}}"></form>',
+                    restrict: 'E',
+                    replace: true,
+                    transclude: true,
+                    scope: {
+                        model: '=?',
+                        serverUrl: '@',
+                        serverSaveUrl: '@',
+                        serverSaveMethod: '@',
+                        modelKey: '@?',
+                        dataServiceName: '@?serviceName',
+                        requireAuthentication: '=?',
+                        name: '@?formName'
+                    },
+                    controller: 'tbFormController',
+                    compile: function() {
+                        return {
+                            post: function(scope) {
+                                scope.finishDefinition();
+                            }
+                        };
+                    }
                 }
             }
-        }])
-
+        ]);
 })(angular);

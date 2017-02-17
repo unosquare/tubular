@@ -19,11 +19,8 @@ describe('Module: tubular.directives', function () {
                 $provide.value('tubularEditorService', tubularEditorService);
                 $provide.value('$routeParams', $routeParams);
                 $provide.value('$element', $element);
-            })
-
-
-        })
-
+            });
+        });
         beforeEach(inject(function (_$controller_, $rootScope) {
             scope = $rootScope.$new();
             $controller = _$controller_;
@@ -39,15 +36,13 @@ describe('Module: tubular.directives', function () {
 
             it('should set tubularDirective properly', function () {
                 expect(scope.tubularDirective).toBe('tubular-form');
-            })
-
+            });
             it('should set default request method', function () {
                 expect(sut.serverSaveMethod).toBe('POST');
-            })
-
+            });
             it('should set default require authentication', function () {
                 expect(tubularHttp.setRequireAuthentication).toHaveBeenCalledWith(true);
-            })
+            });
         });
     });
 });

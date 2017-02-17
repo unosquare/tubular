@@ -27,7 +27,8 @@
          * @param {bool} savePageSize Set if the grid autosave page size, default true.
          * @param {bool} saveSearch Set if the grid autosave search, default true.
          */
-        .component('tbGrid', {
+        .component('tbGrid',
+        {
             template: '<div>' +
                 '<div class="tubular-overlay" ng-show="$ctrl.showLoading && $ctrl.currentRequest != null">' +
                 '<div><div class="fa fa-refresh fa-2x fa-spin"></div></div></div>' +
@@ -53,5 +54,5 @@
                 saveSearch: '=?'
             },
             controller: 'tbGridController'
-        })
+        });
 })(angular);

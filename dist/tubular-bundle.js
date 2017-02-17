@@ -534,33 +534,35 @@
          * @param {string} serviceName Define Data service (name) to retrieve data, defaults `tubularHttp`.
          * @param {bool} requireAuthentication Set if authentication check must be executed, default true.
          */
-        .directive('tbForm', [function () {
-            return {
-                template: '<form ng-transclude name="{{name}}"></form>',
-                restrict: 'E',
-                replace: true,
-                transclude: true,
-                scope: {
-                    model: '=?',
-                    serverUrl: '@',
-                    serverSaveUrl: '@',
-                    serverSaveMethod: '@',
-                    modelKey: '@?',
-                    dataServiceName: '@?serviceName',
-                    requireAuthentication: '=?',
-                    name: '@?formName'
-                },
-                controller: 'tbFormController',
-                compile: function () {
-                    return {
-                        post: function (scope) {
-                            scope.finishDefinition();
-                        }
-                    };
+        .directive('tbForm',
+        [
+            function() {
+                return {
+                    template: '<form ng-transclude name="{{name}}"></form>',
+                    restrict: 'E',
+                    replace: true,
+                    transclude: true,
+                    scope: {
+                        model: '=?',
+                        serverUrl: '@',
+                        serverSaveUrl: '@',
+                        serverSaveMethod: '@',
+                        modelKey: '@?',
+                        dataServiceName: '@?serviceName',
+                        requireAuthentication: '=?',
+                        name: '@?formName'
+                    },
+                    controller: 'tbFormController',
+                    compile: function() {
+                        return {
+                            post: function(scope) {
+                                scope.finishDefinition();
+                            }
+                        };
+                    }
                 }
             }
-        }])
-
+        ]);
 })(angular);
 (function (angular) {
     'use strict';
@@ -764,7 +766,8 @@
          * @param {bool} savePageSize Set if the grid autosave page size, default true.
          * @param {bool} saveSearch Set if the grid autosave search, default true.
          */
-        .component('tbGrid', {
+        .component('tbGrid',
+        {
             template: '<div>' +
                 '<div class="tubular-overlay" ng-show="$ctrl.showLoading && $ctrl.currentRequest != null">' +
                 '<div><div class="fa fa-refresh fa-2x fa-spin"></div></div></div>' +
@@ -790,7 +793,7 @@
                 saveSearch: '=?'
             },
             controller: 'tbGridController'
-        })
+        });
 })(angular);
 (function (angular) {
     'use strict';
