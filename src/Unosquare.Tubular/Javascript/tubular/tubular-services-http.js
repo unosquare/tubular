@@ -13,8 +13,8 @@
          * This service provides authentication using bearer-tokens. Based on https://bitbucket.org/david.antaramian/so-21662778-spa-authentication-example
          */
         .service('tubularHttp', [
-            '$http', '$timeout', '$q', 'localStorageService', '$filter', '$log', '$document',
-            function ($http, $timeout, $q, localStorageService, $filter, $log, $document) {
+            '$http', '$timeout', '$q', 'localStorageService', 'translateFilter', '$log', '$document',
+            function ($http, $timeout, $q, localStorageService, translateFilter, $log, $document) {
                 var me = this;
 
                 function isAuthenticationExpired(expirationDate) {
@@ -115,7 +115,7 @@
                         me.handleSuccessCallback(successCallback, response.data, username);
                     }, function (errorResponse) {
                         if (angular.isFunction(errorCallback)) {
-                            errorCallback(errorResponse.data.error_description || $filter('translate')('UI_HTTPERROR'));
+                            errorCallback(errorResponse.data.error_description || translateFilter('UI_HTTPERROR'));
                         }
                     });
                 };

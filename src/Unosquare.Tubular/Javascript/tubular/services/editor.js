@@ -10,7 +10,7 @@
          * The `tubularEditorService` service is a internal helper to setup any `TubularModel` with a UI.
          */
         .service('tubularEditorService', [
-            '$filter', function ($filter) {
+            'translateFilter', function (translateFilter) {
                 var me = this;
 
                 me.isValid = function (value) { return !(!value); };
@@ -72,7 +72,7 @@
                         if ((angular.isUndefined(ctrl.value) && ctrl.required) ||
                             (angular.isDate(ctrl.value) && isNaN(ctrl.value.getTime()) && ctrl.required)) {
                             ctrl.$valid = false;
-                            ctrl.state.$errors = [$filter('translate')('EDITOR_REQUIRED')];
+                            ctrl.state.$errors = [translateFilter('EDITOR_REQUIRED')];
 
                             if (angular.isDefined(scope.$parent.Model)) {
                                 scope.$parent.Model.$state[scope.Name] = ctrl.state;
