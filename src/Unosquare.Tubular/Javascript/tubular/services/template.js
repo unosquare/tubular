@@ -232,9 +232,7 @@
                         var editorTag = el.EditorType
                             .replace(/([A-Z])/g, function ($1) { return '-' + $1.toLowerCase(); });
 
-                        return '\r\n\t\t<tb-cell-template column-name="' +
-                            el.Name +
-                            '">' +
+                        return '\r\n\t\t<tb-cell-template column-name="' + el.Name + '">' +
                             '\r\n\t\t\t' +
                             (mode === 'Inline'
                                 ? '<' +
@@ -638,7 +636,9 @@
                         return c.length !== 0 ? c[0] : null;
                     },
                         function (val) {
-                            if (!val) return;
+                            if (!val) {
+                                return;
+                            }
 
                             if ($ctrl.filter.HasFilter !== val.Filter.HasFilter) {
                                 $ctrl.filter.HasFilter = val.Filter.HasFilter;
