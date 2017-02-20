@@ -66,8 +66,6 @@ describe('tbColumn', function () {
             element(by.id('btnClearLocalStorage')).click();
         });
 
-       
-
         var dataSetLowerId = '1',
             dataSetHigherId = '500',
             dataSetLowerCustomerName = 'Advanced Technology Systems',
@@ -123,42 +121,6 @@ describe('tbColumn', function () {
                     expect(firstDataRow.$$('td').get(3).getText()).toMatch(dataSetHigherDate);
                 });
             });
-        });
-    });
-
-    describe('Grid Components', function () {
-
-        it('should print grid', function () {
-            var mainWindow;
-            browser.getAllWindowHandles().then(function (handles) {
-                mainWindow = handles[0]; //at this point there should be only 1 window
-            }).then(function () {
-                element(by.tagName('tb-print-button')).click().then(function () {
-                    browser.getAllWindowHandles().then(function (handles) {
-                        handles.forEach(function (handle) {
-                            if (handle !== mainWindow) {
-                                browser.switchTo().window(handle).then(function () { expect(browser.getCurrentUrl()).toMatch(/about/); });
-                            }
-                        });
-                    });
-                });
-            });
-        });
-
-        it('should export grid', function () {
-            element(by.tagName('tb-export-button')).click().then(function () {
-                element(by.tagName('tb-export-button')).$$('a').first().click().then(function () {
-                });
-            });
-        });
-
-        it('should show column selector', function () {
-            element(by.tagName('tb-column-selector')).click();
-
-            expect(element(by.css('div.modal')).isDisplayed()).toBe(true);
-
-            // Send escape to close
-            element(by.css('div.modal')).sendKeys('\uE00C');
         });
     });
 });

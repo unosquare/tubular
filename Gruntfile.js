@@ -1,6 +1,7 @@
-module.exports = function(grunt) {
+module.exports = function (grunt) {
     // Load grunt tasks automatically
     require('load-grunt-tasks')(grunt);
+
     grunt.loadNpmTasks('grunt-coveralls');
     grunt.loadNpmTasks("gruntify-eslint");
     grunt.loadNpmTasks('grunt-karma');
@@ -53,7 +54,7 @@ module.exports = function(grunt) {
                     args: {
                         baseUrl: 'http://localhost:9000/instrumented/test/Unosquare.Tubular.WebTest/',
                         browser: process.env.TRAVIS_OS_NAME == "osx" ? "chrome" : "firefox"
-                        
+
                     }
                 }
             },
@@ -89,7 +90,7 @@ module.exports = function(grunt) {
                 outputFile: 'report/eslint/index.html',
                 silent: true
             },
-            src: ["src/Unosquare.Tubular/Javascript/tubular*/**/*.js",  '!src/**/*.spec.js']
+            src: ["src/Unosquare.Tubular/Javascript/tubular*/**/*.js", '!src/**/*.spec.js']
         },
         karma: {
             options: {
@@ -125,7 +126,6 @@ module.exports = function(grunt) {
     ]);
 
     grunt.registerTask("lint", ["eslint"]);
-    // Default task.
     grunt.registerTask('unit', ['karma:dev']);
     grunt.registerTask('unit:ci', ['karma:ci']);
 };

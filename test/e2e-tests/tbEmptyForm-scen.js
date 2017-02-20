@@ -11,8 +11,6 @@ describe('tbSingleForm', function () {
 
     });
 
-
-
     describe("Form validations", function(){
         it('should have an empty required field', function() {
             expect($('input').getAttribute('value')).toBe('');
