@@ -16,9 +16,6 @@ install:
   - npm install
   - bower update
 before_script:
-  - touch ./src/Unosquare.Tubular/Javascript/tubular-bundle.js
-  - touch ./src/Unosquare.Tubular/Javascript/tubular-bundle.min.js
-  - if [[ $TRAVIS_OS_NAME == "linux" ]]; then export CHROME_BIN=chromium-browser; fi
   - if [[ $TRAVIS_OS_NAME == "linux" ]]; then export DISPLAY=:99.0; fi
   - if [[ $TRAVIS_OS_NAME == "linux" ]]; then sh -e /etc/init.d/xvfb start; fi
 script:
