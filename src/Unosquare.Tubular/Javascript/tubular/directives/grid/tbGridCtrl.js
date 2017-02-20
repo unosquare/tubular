@@ -221,6 +221,9 @@
 
                         if ($ctrl.pageSize < 10) $ctrl.pageSize = 20; // default
 
+                        var newPages = Math.ceil($ctrl.totalRecordCount / $ctrl.pageSize);
+                        if ($ctrl.requestedPage > newPages) $ctrl.requestedPage = newPages;
+
                         var skip = ($ctrl.requestedPage - 1) * $ctrl.pageSize;
 
                         if (skip < 0) skip = 0;
