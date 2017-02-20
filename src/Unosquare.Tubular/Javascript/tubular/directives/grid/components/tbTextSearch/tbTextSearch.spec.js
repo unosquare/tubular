@@ -58,14 +58,21 @@ describe('Module: tubular.directives', function () {
             expect(filter).toHaveBeenCalledWith('CAPTION_CLEAR');
 
         });
-        it('input should set the parent search text', function () {
+
+        it('input should debounce (part1)', function () {
             generate('<form name="form1"><tb-text-search ></tb-text-search></form>');
             gridCtrl.search.Text = '';
-            timeout(function () {
-                scope.form1.tbTextSearchInput.$setViewValue('google');
-            }, 350);
-            scope.$digest();
-            timeout.flush();
+            scope.form1.tbTextSearchInput.$setViewValue('google');
+            timeout.flush(299);
+            scope.$apply();
+            expect(gridCtrl.search.Text).toBe('');
+        });
+        it('input should debounce (part2)', function () {
+            generate('<form name="form1"><tb-text-search ></tb-text-search></form>');
+            gridCtrl.search.Text = '';
+            scope.form1.tbTextSearchInput.$setViewValue('google');
+            timeout.flush(300);
+            scope.$apply();
             expect(gridCtrl.search.Text).toBe('google');
             
             
