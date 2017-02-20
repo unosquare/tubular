@@ -119,7 +119,7 @@ describe('tbForm related components', function () {
             return tbFormEditBtn1.click().then(function () {
                 return tbDateEditor_input.getAttribute('value').then(function (val) {
                     if (val != tbDateEditorDate_original) {
-                        return tbDateEditor_input.sendKeys(tbDateEditorDate_original).then(function () {
+                        return tbDateEditor_input.clear().sendKeys(tbDateEditorDate_original).then(function () {
                             return tbFormSaveBtn.click().then(trueFunc);
                         });
                     }
