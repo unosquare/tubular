@@ -573,7 +573,7 @@ describe('tbForm related components', function () {
             expect(tbDateEditor_helper.getText()).toMatch("Date help");
         });
         it('should submit modifications to item/server when clicking form "Save"', function () {
-            tbDateEditor_input.sendKeys(tbDateEditorDate_modified).then(function () {
+            tbDateEditor_input.clear().sendKeys(tbDateEditorDate_modified).then(function () {
                 tbFormSaveBtn.click().then(function () {
                     tbFormEditBtn1.click().then(function () {
                         tbDateEditor_input.getAttribute('value').then(function (value) {
@@ -585,7 +585,7 @@ describe('tbForm related components', function () {
         });
 
         it('should NOT submit modifications to item/server when clicking form "Cancel"', function () {
-            tbDateEditor_input.sendKeys(tbDateEditorDate_modified).then(function () {
+            tbDateEditor_input.clear().sendKeys(tbDateEditorDate_modified).then(function () {
                 tbFormCancelBtn.click().then(function () {
                     tbFormEditBtn1.click().then(function () {
                         tbDateEditor_input.getAttribute('value').then(function (value) {
