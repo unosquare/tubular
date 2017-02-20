@@ -65,7 +65,10 @@
                         obj.$addField(col.Name, value);
 
                         if (col.DataType === 'date' || col.DataType === 'datetime' || col.DataType === 'datetimeutc') {
-                            obj[col.Name] = col.DataType === 'datetimeutc' ? moment.utc(obj[col.Name]) : moment(obj[col.Name]);
+                            if (obj[col.Name] === null || obj[col.Name] === '')
+                                obj[col.Name] = '';
+                            else
+                                obj[col.Name] = col.DataType === 'datetimeutc' ? moment.utc(obj[col.Name]) : moment(obj[col.Name]);
                         }
 
                         if (col.IsKey) {
