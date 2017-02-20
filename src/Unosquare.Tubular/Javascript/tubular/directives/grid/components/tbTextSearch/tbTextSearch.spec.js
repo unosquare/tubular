@@ -59,7 +59,7 @@ describe('Module: tubular.directives', function () {
 
         });
 
-        it('input should debounce (part1)', function () {
+        it('input should debounce (before)', function () {
             generate('<form name="form1"><tb-text-search ></tb-text-search></form>');
             gridCtrl.search.Text = '';
             scope.form1.tbTextSearchInput.$setViewValue('google');
@@ -67,15 +67,13 @@ describe('Module: tubular.directives', function () {
             scope.$apply();
             expect(gridCtrl.search.Text).toBe('');
         });
-        it('input should debounce (part2)', function () {
+        it('input should debounce (after)', function () {
             generate('<form name="form1"><tb-text-search ></tb-text-search></form>');
             gridCtrl.search.Text = '';
             scope.form1.tbTextSearchInput.$setViewValue('google');
             timeout.flush(300);
             scope.$apply();
             expect(gridCtrl.search.Text).toBe('google');
-            
-            
 
         });
         it('reset button should be visible only when the input has text', function () {
