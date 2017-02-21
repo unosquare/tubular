@@ -345,6 +345,7 @@
          * @param {string} regex Set the regex validation text.
          * @param {string} regexErrorMessage Set the regex validation error message.
          * @param {string} match Set the field name to match values.
+         * @param {string} defaultValue Set the default value.
          */
         .component('tbSimpleEditor', {
             template: '<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">' +
@@ -370,6 +371,7 @@
                 placeholder: '@?',
                 readOnly: '=?',
                 help: '@?',
+                defaultValue: '@?',
                 match: '@?'
             },
             controller: tbSimpleEditorCtrl
@@ -401,6 +403,7 @@
          * @param {number} min Set the minimum value.
          * @param {number} max Set the maximum value.
          * @param {number} step Set the step setting, default 'any'.
+         * @param {string} defaultValue Set the default value.
          */
         .component('tbNumericEditor', {
             template: '<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">' +
@@ -430,6 +433,7 @@
                 placeholder: '@?',
                 readOnly: '=?',
                 help: '@?',
+                defaultValue: '@?',
                 step: '=?'
             },
             controller: tbNumericEditorCtrl
@@ -456,6 +460,7 @@
          * @param {boolean} readOnly Set if the field is read-only.
          * @param {number} min Set the minimum value.
          * @param {number} max Set the maximum value.
+         * @param {string} defaultValue Set the default value.
          */
         .component('tbDateTimeEditor', {
             template: '<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">' +
@@ -486,6 +491,7 @@
                 max: '=?',
                 name: '@',
                 readOnly: '=?',
+                defaultValue: '@?',
                 help: '@?'
             },
             controller: tbDateTimeEditorCtrl
@@ -514,6 +520,7 @@
          * @param {boolean} readOnly Set if the field is read-only.
          * @param {number} min Set the minimum value.
          * @param {number} max Set the maximum value.
+         * @param {string} defaultValue Set the default value.
          */
         .component('tbDateEditor', {
             template: '<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">' +
@@ -543,6 +550,7 @@
                 max: '=?',
                 name: '@',
                 readOnly: '=?',
+                defaultValue: '@?',
                 help: '@?'
             },
             controller: tbDateEditorCtrl

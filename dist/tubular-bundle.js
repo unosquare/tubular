@@ -1018,6 +1018,9 @@
 
                         if ($ctrl.pageSize < 10) $ctrl.pageSize = 20; // default
 
+                        var newPages = Math.ceil($ctrl.totalRecordCount / $ctrl.pageSize);
+                        if ($ctrl.requestedPage > newPages) $ctrl.requestedPage = newPages;
+
                         var skip = ($ctrl.requestedPage - 1) * $ctrl.pageSize;
 
                         if (skip < 0) skip = 0;
@@ -1250,7 +1253,7 @@
                 '<div class="input-group input-group-sm">' +
                 '<span class="input-group-addon"><i class="fa fa-search"></i></span>' +
                 '<input type="search" name="tbTextSearchInput" class="form-control" placeholder="{{:: $ctrl.placeholder || (\'UI_SEARCH\' | translate) }}" maxlength="20" ' +
-                'ng-model="$ctrl.$component.search.Text" >' +
+                'ng-model="$ctrl.$component.search.Text" ng-model-options="{ debounce: 300 }">' +
                 '<span id="tb-text-search-reset-panel" class="input-group-btn" ng-show="$ctrl.$component.search.Text.length > 0">' +
                 '<button id="tb-text-search-reset-button" class="btn btn-default" uib-tooltip="{{\'CAPTION_CLEAR\' | translate}}" ng-click="$ctrl.$component.search.Text = \'\'">' +
                 '<i class="fa fa-times-circle"></i>' +
@@ -1657,6 +1660,7 @@
          * @param {string} regex Set the regex validation text.
          * @param {string} regexErrorMessage Set the regex validation error message.
          * @param {string} match Set the field name to match values.
+         * @param {string} defaultValue Set the default value.
          */
         .component('tbSimpleEditor', {
             template: '<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">' +
@@ -1682,6 +1686,7 @@
                 placeholder: '@?',
                 readOnly: '=?',
                 help: '@?',
+                defaultValue: '@?',
                 match: '@?'
             },
             controller: tbSimpleEditorCtrl
@@ -1713,6 +1718,7 @@
          * @param {number} min Set the minimum value.
          * @param {number} max Set the maximum value.
          * @param {number} step Set the step setting, default 'any'.
+         * @param {string} defaultValue Set the default value.
          */
         .component('tbNumericEditor', {
             template: '<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">' +
@@ -1742,6 +1748,7 @@
                 placeholder: '@?',
                 readOnly: '=?',
                 help: '@?',
+                defaultValue: '@?',
                 step: '=?'
             },
             controller: tbNumericEditorCtrl
@@ -1768,6 +1775,7 @@
          * @param {boolean} readOnly Set if the field is read-only.
          * @param {number} min Set the minimum value.
          * @param {number} max Set the maximum value.
+         * @param {string} defaultValue Set the default value.
          */
         .component('tbDateTimeEditor', {
             template: '<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">' +
@@ -1798,6 +1806,7 @@
                 max: '=?',
                 name: '@',
                 readOnly: '=?',
+                defaultValue: '@?',
                 help: '@?'
             },
             controller: tbDateTimeEditorCtrl
@@ -1826,6 +1835,7 @@
          * @param {boolean} readOnly Set if the field is read-only.
          * @param {number} min Set the minimum value.
          * @param {number} max Set the maximum value.
+         * @param {string} defaultValue Set the default value.
          */
         .component('tbDateEditor', {
             template: '<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">' +
@@ -1855,6 +1865,7 @@
                 max: '=?',
                 name: '@',
                 readOnly: '=?',
+                defaultValue: '@?',
                 help: '@?'
             },
             controller: tbDateEditorCtrl
@@ -3285,11 +3296,12 @@
                                     ctrl.value = value;
                                 }, true);
 
-                                if ((!ctrl.value || ctrl.value == null) && (ctrl.defaultValue && ctrl.defaultValue != null)) {
-                                    if (ctrl.DataType === 'date' && ctrl.defaultValue != null) {
+                                if (ctrl.value == null && (ctrl.defaultValue && ctrl.defaultValue != null)) {
+                                    if (ctrl.DataType === 'date' && angular.isString(ctrl.defaultValue)) {
                                         ctrl.defaultValue = new Date(ctrl.defaultValue);
                                     }
-                                    if (ctrl.DataType === 'numeric' && ctrl.defaultValue != null) {
+
+                                    if (ctrl.DataType === 'numeric' && angular.isString(ctrl.defaultValue)) {
                                         ctrl.defaultValue = parseFloat(ctrl.defaultValue);
                                     }
 
