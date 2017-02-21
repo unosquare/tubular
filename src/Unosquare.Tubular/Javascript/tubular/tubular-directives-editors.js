@@ -5,13 +5,10 @@
     moment.fn.toJSON = function() { return this.format(); }
     
     function canUseHtml5Date() {
-        var input = document.createElement('input');
-        input.setAttribute('type', 'date');
-
         var notADateValue = 'not-a-date';
-        input.setAttribute('value', notADateValue);
-
-        return input.value !== notADateValue;
+        var input = angular.element('<input type="date" />');
+        input.attr('value', notADateValue);
+        return input.attr('value') !== notADateValue;
     }
 
     function changeValueFn($ctrl) {

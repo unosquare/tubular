@@ -65,20 +65,20 @@
                 $locationProvider.html5Mode(true);
             }
         ])
-        .controller("tbFormCtrl", function ($scope) {
+        .controller("tbFormCtrl", function ($scope, toastr) {
             $scope.$on('tbForm_OnSuccessfulSave', function (event, data) {
                 toastr.success(data || "Updated");
                 alert("saved");
             });
-            $scope.$on('tbForm_OnConnectionError', function (event, data) {
+            $scope.$on('tbForm_OnConnectionError', function () {
                 $scope.Error = "No data found";
                 toastr.error('No data found');
             });
         }).controller('LoginCtrl', [
-            '$scope', '$location', 'tubularHttp',
-            function ($scope, $location, tubularHttp) {
+            '$scope', '$location', 'tubularHttp', 'toastr',
+            function ($scope, $location, tubularHttp, toastr) {
                 $scope.loading = false;
-                tubularHttp.tokenUrl = 'http://tubular.azurewebsites.net/api/token';
+                tubularHttp.setTokenUrl('http://tubular.azurewebsites.net/api/token');
 
                 $scope.submitForm = function () {
                     $scope.loading = true;
@@ -95,8 +95,8 @@
                 };
             }
         ]).controller('GridCtrl', [
-            '$scope', '$location', 'tubularHttp',
-            function ($scope, $location, tubularHttp) {
+            '$scope', '$location', 'tubularHttp', 'toastr',
+            function ($scope, $location, tubularHttp, toastr) {
                 $scope.loading = false;
                 tubularHttp.useRefreshTokens = true;
                 tubularHttp.setRefreshTokenUrl('http://tubular.azurewebsites.net/api/token');
@@ -220,6 +220,7 @@
 
     angular.module('app', [
         'tubular',
+        'toastr',
         'testApp.routes'
     ]);
 })();

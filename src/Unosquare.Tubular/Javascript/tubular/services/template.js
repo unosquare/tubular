@@ -308,19 +308,10 @@
                             ? '\r\n\t\t<tb-column label="Actions"><tb-column-header>{{label}}</tb-column-header></tb-column>'
                             : '') +
                         columns.map(function (el) {
-                            return '\r\n\t\t<tb-column name="' +
-                                el.Name +
-                                '" label="' +
-                                el.Label +
-                                '" column-type="' +
-                                el.DataType +
-                                '" sortable="' +
-                                el.Sortable +
+                            return '\r\n\t\t<tb-column name="' + el.Name + '" label="' + el.Label +
+                                '" column-type="' + el.DataType + '" sortable="' + el.Sortable +
                                 '" ' +
-                                '\r\n\t\t\tis-key="' +
-                                el.IsKey +
-                                '" searchable="' +
-                                el.Searchable +
+                                '\r\n\t\t\tis-key="' + el.IsKey + '" searchable="' + el.Searchable +
                                 '" ' +
                                 (el.Sortable
                                     ? '\r\n\t\t\tsort-direction="' +
