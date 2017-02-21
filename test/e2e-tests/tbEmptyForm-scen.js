@@ -12,7 +12,7 @@ describe('tbEmptyForm', function () {
     });
 
     it('should have an empty required field', function () {
-        expect($('input').getAttribute('value')).toBe('');
+        expect($('input[name=CustomerName]').getAttribute('value')).toBe('');
     });
 
     it('should not be able to click on save', function () {
@@ -21,6 +21,6 @@ describe('tbEmptyForm', function () {
     });
 
     it('should load default value for numeric field', function () {
-        expect($('input[name=MinimumOrders]').getAttribute('value')).toBe('5');
+        expect($('input[name=MinimumOrders]').getAttribute('value')).toBe('1');
     });
 });
