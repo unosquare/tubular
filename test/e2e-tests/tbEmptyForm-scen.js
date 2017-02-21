@@ -20,5 +20,10 @@ describe('tbSingleForm', function () {
             expect($('#btnSave').getAttribute('disabled')).not.toBeNull(null);
             expect($('#btnSave').getAttribute('disabled')).not.toBe('');
         });
+
+        it('should load default value for numeric field', function () {
+            expect($('input[name=MinimumOrders]').getAttribute('value')).toBe('5');
+        });
+
     });
 });
