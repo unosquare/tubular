@@ -72,15 +72,13 @@
                                     } else {
                                         $scope.dataService.get(tubularHttp.addTimeZoneToUrl($scope.serverUrl)).promise.then(
                                             function (data) {
-                                                var innerScope = $scope;
-                                                var dataService = $scope.dataService;
-
-                                                if (angular.isDefined($scope.model) && angular.isDefined($scope.model.$component)) {
-                                                    innerScope = $scope.model.$component;
-                                                    dataService = $scope.model.$component.dataService;
+                                                if (angular.isDefined($scope.model) &&
+                                                    angular.isDefined($scope.model.$component)) {
+                                                    $scope.model = new TubularModel($scope, $scope.model.$component, data, $scope.model.$component.dataService);
+                                                } else {
+                                                    $scope.model = new TubularModel($scope, $scope, data, $scope.dataService);
                                                 }
 
-                                                $scope.model = new TubularModel(innerScope, innerScope, data, dataService);
                                                 $ctrl.bindFields();
                                                 $scope.model.$isNew = true;
                                             }, function (error) {

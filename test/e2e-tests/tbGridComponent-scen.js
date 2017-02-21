@@ -23,7 +23,7 @@ describe('tbGridComponents', function () {
             var newRow = $('tr[ng-show]');
             expect(newRow.isDisplayed()).toBe(true, 'should add a new row');
 
-            newRow.$('input').sendKeys(new Date().valueOf());
+            newRow.$('input').sendKeys(new Date().toString());
 
             newRow.$$('button').first().click().then(function () {
                 var newLastItem = element.all(by.repeater('row in $component.rows')).last().getText();
