@@ -4,6 +4,7 @@
     "inputFiles": [
       "Javascript/tubular/tubular.js",
       "Javascript/tubular/tubular-directives.js",
+      "Javascript/tubular/templates.js",
       "Javascript/tubular/directives/**/*.js",
       "Javascript/tubular/tubular-directives-editors.js",
       "Javascript/tubular/tubular-directives-filters.js",

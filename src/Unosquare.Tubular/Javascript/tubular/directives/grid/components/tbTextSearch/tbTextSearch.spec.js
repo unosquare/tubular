@@ -14,14 +14,15 @@ describe('Module: tubular.directives', function () {
                 $filterProvider.register('translate', function () { return filter;});
                 gridCtrl = jasmine.createSpyObj('grid', ['search']);
                 $controllerProvider.register('tbTextSearchController', function ($scope) { });
-
+                
             });
         });
 
-        beforeEach(inject(function (_$compile_, _$rootScope_, _$timeout_) {
+        beforeEach(inject(function (_$compile_, _$rootScope_, _$timeout_, _$templateCache_) {
             scope = _$rootScope_.$new();
             $compile = _$compile_;
             timeout = _$timeout_;
+            
         }));
 
         function generate(tpl) {

@@ -504,6 +504,14 @@
             }
         ]);
 })(angular);
+(function(angular){
+angular.module('tubular.directives').run(['$templateCache', function ($templateCache) {
+  "use strict";
+  $templateCache.put("tbTextSearch.tpl.html",
+    "<div class=tubular-grid-search><div class=\"input-group input-group-sm\"><span class=input-group-addon><i class=\"fa fa-search\"></i> </span><input type=search name=tbTextSearchInput class=form-control placeholder=\"{{:: $ctrl.placeholder || ('UI_SEARCH' | translate) }}\" maxlength=20 ng-model=$ctrl.$component.search.Text ng-model-options=\"{ debounce: 300 }\"> <span id=tb-text-search-reset-panel class=input-group-btn ng-show=\"$ctrl.$component.search.Text.length > 0\"><button id=tb-text-search-reset-button class=\"btn btn-default\" uib-tooltip=\"{{'CAPTION_CLEAR' | translate}}\" ng-click=\"$ctrl.$component.search.Text = ''\"><i class=\"fa fa-times-circle\"></i></button></span></div></div>");
+}]);
+})(angular);
+
 (function (angular) {
     'use strict';
 
@@ -1248,19 +1256,7 @@
         require: {
             $component: '^tbGrid'
         },
-        template:
-            '<div class="tubular-grid-search">' +
-                '<div class="input-group input-group-sm">' +
-                '<span class="input-group-addon"><i class="fa fa-search"></i></span>' +
-                '<input type="search" name="tbTextSearchInput" class="form-control" placeholder="{{:: $ctrl.placeholder || (\'UI_SEARCH\' | translate) }}" maxlength="20" ' +
-                'ng-model="$ctrl.$component.search.Text" ng-model-options="{ debounce: 300 }">' +
-                '<span id="tb-text-search-reset-panel" class="input-group-btn" ng-show="$ctrl.$component.search.Text.length > 0">' +
-                '<button id="tb-text-search-reset-button" class="btn btn-default" uib-tooltip="{{\'CAPTION_CLEAR\' | translate}}" ng-click="$ctrl.$component.search.Text = \'\'">' +
-                '<i class="fa fa-times-circle"></i>' +
-                '</button>' +
-                '</span>' +
-                '<div>' +
-                '<div>',
+        templateUrl: 'tbTextSearch.tpl.html',
         bindings: {
             minChars: '@?',
             placeholder: '@'

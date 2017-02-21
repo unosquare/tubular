@@ -28,6 +28,7 @@ module.exports = function (config) {
           'Javascript/tubular/tubular-services.js',
           'Javascript/tubular/services/**/*.js',
           'Javascript/tubular/tubular-directives.js',
+          'Javascript/tubular*/**/*tpl.html',
           'Javascript/tubular/directives/**/*.js',
           'Javascript/tubular/tubular.js',
           'Javascript/tubular*/**/*.spec.js'
@@ -43,7 +44,16 @@ module.exports = function (config) {
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
-             'Javascript/tubular*/**/!(*spec|*bundle).js': ['coverage']
+            'Javascript/tubular*/**/!(*spec|*bundle).js': ['coverage'],
+            'Javascript/tubular*/**/*tpl.html': ['ng-html2js']
+        },
+
+        ngHtml2JsPreprocessor: {
+            moduleName: 'tubular.directives',
+            cacheIdFromPath: function (filepath) {
+                var pieces = filepath.split('/');
+                return pieces[pieces.length -1];
+            },
         },
 
         // test results reporter to use

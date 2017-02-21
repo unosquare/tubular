@@ -1,3 +1,4 @@
+/// <binding BeforeBuild='html2js:main' />
 module.exports = function (grunt) {
     // Load grunt tasks automatically
     require('load-grunt-tasks')(grunt);
@@ -5,6 +6,8 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-coveralls');
     grunt.loadNpmTasks("gruntify-eslint");
     grunt.loadNpmTasks('grunt-karma');
+    grunt.loadNpmTasks('grunt-html2js');
+    
 
     // Project configuration.
     grunt.initConfig({
@@ -108,7 +111,37 @@ module.exports = function (grunt) {
                 reporters: ['progress']
             }
 
+        },
+        html2js: {
+            options: {
+                base: 'src/Unosquare.Tubular/Javascript/tubular/',
+                module: 'tubular.directives',
+                singleModule: true,
+                useStrict: true,
+                existingModule: true,
+                rename: function(name){
+                    var pieces = name.split('/');
+                    return pieces[pieces.length - 1];
+                },
+                fileHeaderString: '(function(angular){',
+                fileFooterString: '})(angular);',
+                htmlmin: {
+                    collapseBooleanAttributes: true,
+                    collapseWhitespace: true,
+                    removeAttributeQuotes: true,
+                    removeComments: true,
+                    removeEmptyAttributes: true,
+                    removeRedundantAttributes: true,
+                    removeScriptTypeAttributes: true,
+                    removeStyleLinkTypeAttributes: true
+                }
+            },
+            main: {
+                src: ['src/Unosquare.Tubular/Javascript/tubular/**/*.tpl.html'],
+                dest: 'src/Unosquare.Tubular/Javascript/tubular/templates.js'
+            }
         }
+
     });
 
     grunt.registerTask('test', [
@@ -124,6 +157,8 @@ module.exports = function (grunt) {
         'connect:server',
         'protractor_coverage:local'
     ]);
+
+   
 
     grunt.registerTask("lint", ["eslint"]);
     grunt.registerTask('unit', ['karma:dev']);

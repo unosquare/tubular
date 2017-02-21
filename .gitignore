@@ -210,3 +210,4 @@ FakesAssemblies/
 /.vscode
 /src/Unosquare.Tubular.EmbedioSample/html/vendor
 /src/Unosquare.Tubular.OwinSample/ui/vendor/tubular
+/src/Unosquare.Tubular/Javascript/tubular/templates.js
