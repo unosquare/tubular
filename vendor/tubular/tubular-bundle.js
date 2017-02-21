@@ -1318,13 +1318,10 @@
     moment.fn.toJSON = function() { return this.format(); }
     
     function canUseHtml5Date() {
-        var input = document.createElement('input');
-        input.setAttribute('type', 'date');
-
         var notADateValue = 'not-a-date';
-        input.setAttribute('value', notADateValue);
-
-        return input.value !== notADateValue;
+        var input = angular.element('<input type="date" />');
+        input.attr('value', notADateValue);
+        return input.attr('value') !== notADateValue;
     }
 
     function changeValueFn($ctrl) {
@@ -3757,19 +3754,10 @@
                             ? '\r\n\t\t<tb-column label="Actions"><tb-column-header>{{label}}</tb-column-header></tb-column>'
                             : '') +
                         columns.map(function (el) {
-                            return '\r\n\t\t<tb-column name="' +
-                                el.Name +
-                                '" label="' +
-                                el.Label +
-                                '" column-type="' +
-                                el.DataType +
-                                '" sortable="' +
-                                el.Sortable +
+                            return '\r\n\t\t<tb-column name="' + el.Name + '" label="' + el.Label +
+                                '" column-type="' + el.DataType + '" sortable="' + el.Sortable +
                                 '" ' +
-                                '\r\n\t\t\tis-key="' +
-                                el.IsKey +
-                                '" searchable="' +
-                                el.Searchable +
+                                '\r\n\t\t\tis-key="' + el.IsKey + '" searchable="' + el.Searchable +
                                 '" ' +
                                 (el.Sortable
                                     ? '\r\n\t\t\tsort-direction="' +
