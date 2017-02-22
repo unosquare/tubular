@@ -1314,10 +1314,8 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
     moment.fn.toJSON = function() { return this.format(); }
     
     function canUseHtml5Date() {
-        var notADateValue = 'not-a-date';
-        var input = angular.element('<input type="date" />');
-        input.attr('value', notADateValue);
-        return input.attr('value') !== notADateValue;
+        var el = angular.element('<input type="date" value=":)" />');
+        return el.attr('type') === 'date' && el.val() === '';
     }
 
     function changeValueFn($ctrl) {
@@ -3457,10 +3455,8 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 var me = this;
 
                 me.canUseHtml5Date = function () {
-                    var notADateValue = 'not-a-date';
-                    var input = angular.element('<input type="date" />');
-                    input.attr('value', notADateValue);
-                    return input.attr('value') !== notADateValue;
+                    var el = angular.element('<input type="date" value=":)" />');
+                    return el.attr('type') === 'date' && el.val() === '';
                 };
 
                 me.enums = {
@@ -4595,12 +4591,13 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
     angular.module('tubular.services')
         .factory('tubularAuthInterceptor', ['$q', '$injector', function ($q, $injector) {
             var authRequestRunning = null;
+            var tubularHttpName = 'tubularHttp';
 
             return {
 
                 request: function (config) {
                     // Get the service here because otherwise, a circular dependency injection will be detected
-                    var tubularHttp = $injector.get('tubularHttp');
+                    var tubularHttp = $injector.get(tubularHttpName);
                     var apiBaseUrl = tubularHttp.apiBaseUrl;
 
                     config.headers = config.headers || {};
@@ -4636,7 +4633,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
                     switch (rejection.status) {
                         case 401:
-                            var tubularHttp = $injector.get('tubularHttp');
+                            var tubularHttp = $injector.get(tubularHttpName);
                             var apiBaseUrl = tubularHttp.apiBaseUrl;
 
                             if (
