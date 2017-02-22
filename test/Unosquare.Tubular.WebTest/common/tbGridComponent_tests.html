@@ -29,6 +29,11 @@
                 <div class="panel panel-default panel-rounded">
                     <tb-grid-table class="table-bordered">
                         <tb-column-definitions>
+                            <tb-column name="WarehouseID" sortable="true">
+                                <tb-column-header>
+                                    <span>{{label}}</span>
+                                </tb-column-header>
+                            </tb-column>
                             <tb-column class="text-center" style="display:table-cell">
                                 <button class="btn btn-default" ng-click="$component.newRow()" id="newButton"
                                         ng-hide="$component.tempRow.$isEditing">
@@ -57,6 +62,9 @@
                                 </tb-cell-template>
                             </tb-row-template>
                             <tb-row-template ng-repeat="row in $component.rows" row-model="row" selectable="false">
+                                <tb-cell-template visible="false">
+                                    {{row.WarehouseID}}
+                                </tb-cell-template>
                                 <tb-cell-template class="text-center">
                                     <tb-save-button model="row" save-css="btn-xs"
                                                     cancel-css="btn-danger btn-xs">
