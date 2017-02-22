@@ -74,8 +74,6 @@ You will need to reference the following JS libraries in order to use Tubular in
 * <s>[jQuery](http://jquery.com/) - 2.1.4</s> jQuery is only needed in Tubular < 1.0.0
 * <s>[Twitter Bootstrap](http://getbootstrap.com/)</s> Bootstrap is only needed in Tubular < 1.0.0
 
-Also, if you use the Visual Studio you will need the excellent <a href="http://vswebessentials.com/download" target="_blank">Web Essentials</a> if you are running VS2013 or [Bundler & Minifier](https://visualstudiogallery.msdn.microsoft.com/9ec27da7-e24b-4d56-8064-fd7e88ac1c40) plug-in for VS2015 in order to generate the Tubular bundles.
-
 ### Charts
 
 An experimental support to chart is running with Tubular and you can choose between [ChartJS](http://www.chartjs.org/) or [Highcharts](http://www.highcharts.com/). If you want to use any of them, be sure to load the library before Tubular and check [Tubular Sample](https://github.com/unosquare/tubular/tree/master/Unosquare.Tubular.Sample) with easy to understand code on how to start using charts.
@@ -120,7 +118,7 @@ You can access to global settings by using the static object <i>TubularDefaultSe
 Depending in your environment you must use the solution **Unosquare.Tubular.sln** if you want to build with DOTNET or **Unosquare.Tubular.Lib.sln** if you use msbuild or xbuild.
 In other words, use first solution file for VS2015 with .NET Core support or the second one for any other environment.
 
-##Boilerplate
+## Boilerplate
 
 We have 3 boilerplates ready to seed your project:
 

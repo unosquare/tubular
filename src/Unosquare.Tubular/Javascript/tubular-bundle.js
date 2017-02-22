@@ -747,6 +747,79 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
     'use strict';
 
     angular.module('tubular.directives')
+
+        /**
+        * @ngdoc component
+        * @name tbTextSearch
+        * @module tubular.directives
+        *
+        * @description
+        * The `tbTextSearch` is visual component to enable free-text search in a grid.
+        * 
+        * @param {number} minChars How many chars before to search, default 3.
+        * @param {string} placeholder The placeholder text, defaults `UI_SEARCH` i18n resource.
+        */
+    .component('tbTextSearch', {
+        require: {
+            $component: '^tbGrid'
+        },
+        templateUrl: 'tbTextSearch.tpl.html',
+        bindings: {
+            minChars: '@?',
+            placeholder: '@'
+        },
+        controller: 'tbTextSearchController'
+    });
+    
+
+})(angular);
+(function (angular) {
+    'use strict';
+
+    angular.module('tubular.directives')
+        .controller('tbTextSearchController', [
+            '$scope', function ($scope) {
+                var $ctrl = this;
+
+                $ctrl.$onInit = function () {
+                    $ctrl.minChars = $ctrl.minChars || 3;
+                    $ctrl.lastSearch = $ctrl.$component.search.Text;
+                };
+
+                $scope.$watch('$ctrl.$component.search.Text', function (val, prev) {
+                    if (angular.isUndefined(val) || val === prev) {
+                        return;
+                    }
+
+                    $ctrl.$component.search.Text = val;
+
+                    if ($ctrl.lastSearch && val === '') {
+                        search('None');
+                        return;
+                    }
+
+                    if (val === '' || val.length < $ctrl.minChars || val === $ctrl.lastSearch) {
+                        return;
+                    }
+
+                    $ctrl.lastSearch = val;
+                    search('Auto');
+                });
+
+                function search(operator) {
+                    $ctrl.$component.saveSearch();
+                    $ctrl.$component.search.Operator = operator;
+                    $ctrl.$component.retrieveData();
+                }
+            }
+        ]);
+
+
+})(angular);
+(function (angular) {
+    'use strict';
+
+    angular.module('tubular.directives')
         /**
          * @ngdoc component
          * @name tbGrid
@@ -1234,182 +1307,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
 
 })(angular);
-'use strict';
-
-describe('e2e - Module: tubular.directives', function () {
-    describe('tbTextSearch', function () {
-        var sut, ctrl, scope, gridCtrl, $compile, element, timeout, filter;
-
-        beforeEach(function () {
-            module('tubular.directives');
-
-            // registering only external dependencies
-            module(function ($filterProvider) {
-
-                filter = jasmine.createSpy().and.returnValue('translated');
-                $filterProvider.register('translate', function () { return filter; });
-                gridCtrl = jasmine.createSpyObj('grid', ['search']);
-            });
-            
-        });
-
-        beforeEach(inject(function (_$compile_, _$rootScope_, _$timeout_) {
-            scope = _$rootScope_.$new();
-            $compile = _$compile_;
-            timeout = _$timeout_;
-            
-        }));
-
-        function generate(tpl) {
-            element = angular.element(tpl);
-            element.data('$tbGridController', gridCtrl);
-            element = $compile(element)(scope);
-            scope.$digest();
-            
-        }
-
-        it('should set placeholder correctly', function () {
-            generate('<tb-text-search placeholder="search me" ></tb-text-search>');
-            element.find('')
-            expect(filter).not.toHaveBeenCalledWith('UI_SEARCH');
-
-        });
-        //it('should set default minChars correctly', function () {
-        //    generate('<tb-text-search placeholder="search me"></tb-text-search>');
-        //    expect(ctrl.minChars).toBeUndefined();
-
-        //});
-        //it('should set minChars correctly', function () {
-        //    generate('<tb-text-search min-chars="6" placeholder="search me"></tb-text-search>');
-        //    expect(ctrl.minChars).toBe('6');
-
-        //});
-        //it('should translate the input placeholder', function () {
-        //    generate('<tb-text-search ></tb-text-search>');
-        //    expect(filter).toHaveBeenCalledWith('UI_SEARCH');
-
-        //});
-        //it('should translate the input placeholder', function () {
-        //    generate('<tb-text-search ></tb-text-search>');
-        //    expect(filter).toHaveBeenCalledWith('CAPTION_CLEAR');
-
-        //});
-
-        //it('input should debounce (before)', function () {
-        //    generate('<form name="form1"><tb-text-search ></tb-text-search></form>');
-        //    gridCtrl.search.Text = '';
-        //    scope.form1.tbTextSearchInput.$setViewValue('google');
-        //    timeout.flush(299);
-        //    scope.$apply();
-        //    expect(gridCtrl.search.Text).toBe('');
-        //});
-        //it('input should debounce (after)', function () {
-        //    generate('<form name="form1"><tb-text-search ></tb-text-search></form>');
-        //    gridCtrl.search.Text = '';
-        //    scope.form1.tbTextSearchInput.$setViewValue('google');
-        //    timeout.flush(300);
-        //    scope.$apply();
-        //    expect(gridCtrl.search.Text).toBe('google');
-
-        //});
-        //it('reset button should be visible only when the input has text', function () {
-        //    generate('<tb-text-search ></tb-text-search>');
-        //    gridCtrl.search.Text = "search me";
-        //    scope.$apply();
-        //    var panel = angular.element(element[0].querySelector('#tb-text-search-reset-panel'));
-        //    expect(panel.hasClass('ng-hide')).toBe(false);
-        //    gridCtrl.search.Text = "";
-        //    scope.$apply();
-        //    expect(panel.hasClass('ng-hide')).toBe(true);
-            
-            
-
-        //});
-        //it('reset button should reset the search input', function () {
-        //    generate('<tb-text-search ></tb-text-search>');
-        //    gridCtrl.search.Text = "search me";
-        //    element.find('button')[0].click();
-        //    scope.$apply();
-        //    expect(gridCtrl.search.Text).toBe('');
-
-
-
-        //});
-    });
-});
-(function (angular) {
-    'use strict';
-
-    angular.module('tubular.directives')
-
-        /**
-        * @ngdoc component
-        * @name tbTextSearch
-        * @module tubular.directives
-        *
-        * @description
-        * The `tbTextSearch` is visual component to enable free-text search in a grid.
-        * 
-        * @param {number} minChars How many chars before to search, default 3.
-        * @param {string} placeholder The placeholder text, defaults `UI_SEARCH` i18n resource.
-        */
-    .component('tbTextSearch', {
-        require: {
-            $component: '^tbGrid'
-        },
-        templateUrl: 'tbTextSearch.tpl.html',
-        bindings: {
-            minChars: '@?',
-            placeholder: '@'
-        },
-        controller: 'tbTextSearchController'
-    });
-    
-
-})(angular);
-(function (angular) {
-    'use strict';
-
-    angular.module('tubular.directives')
-        .controller('tbTextSearchController', [
-            '$scope', function ($scope) {
-                var $ctrl = this;
-
-                $ctrl.$onInit = function () {
-                    $ctrl.minChars = $ctrl.minChars || 3;
-                    $ctrl.lastSearch = $ctrl.$component.search.Text;
-                };
-
-                $scope.$watch('$ctrl.$component.search.Text', function (val, prev) {
-                    if (angular.isUndefined(val) || val === prev) {
-                        return;
-                    }
-
-                    $ctrl.$component.search.Text = val;
-
-                    if ($ctrl.lastSearch && val === '') {
-                        search('None');
-                        return;
-                    }
-
-                    if (val === '' || val.length < $ctrl.minChars || val === $ctrl.lastSearch) {
-                        return;
-                    }
-
-                    $ctrl.lastSearch = val;
-                    search('Auto');
-                });
-
-                function search(operator) {
-                    $ctrl.$component.saveSearch();
-                    $ctrl.$component.search.Operator = operator;
-                    $ctrl.$component.retrieveData();
-                }
-            }
-        ]);
-
-
-})(angular);
 (function (angular, moment) {
     'use strict';
 
@@ -1417,10 +1314,8 @@ describe('e2e - Module: tubular.directives', function () {
     moment.fn.toJSON = function() { return this.format(); }
     
     function canUseHtml5Date() {
-        var notADateValue = 'not-a-date';
-        var input = angular.element('<input type="date" />');
-        input.attr('value', notADateValue);
-        return input.attr('value') !== notADateValue;
+        var el = angular.element('<input type="date" value=":)" />');
+        return el.attr('type') === 'date' && el.val() === '';
     }
 
     function changeValueFn($ctrl) {
@@ -3560,10 +3455,8 @@ describe('e2e - Module: tubular.directives', function () {
                 var me = this;
 
                 me.canUseHtml5Date = function () {
-                    var notADateValue = 'not-a-date';
-                    var input = angular.element('<input type="date" />');
-                    input.attr('value', notADateValue);
-                    return input.attr('value') !== notADateValue;
+                    var el = angular.element('<input type="date" value=":)" />');
+                    return el.attr('type') === 'date' && el.val() === '';
                 };
 
                 me.enums = {
@@ -4698,12 +4591,13 @@ describe('e2e - Module: tubular.directives', function () {
     angular.module('tubular.services')
         .factory('tubularAuthInterceptor', ['$q', '$injector', function ($q, $injector) {
             var authRequestRunning = null;
+            var tubularHttpName = 'tubularHttp';
 
             return {
 
                 request: function (config) {
                     // Get the service here because otherwise, a circular dependency injection will be detected
-                    var tubularHttp = $injector.get('tubularHttp');
+                    var tubularHttp = $injector.get(tubularHttpName);
                     var apiBaseUrl = tubularHttp.apiBaseUrl;
 
                     config.headers = config.headers || {};
@@ -4739,7 +4633,7 @@ describe('e2e - Module: tubular.directives', function () {
 
                     switch (rejection.status) {
                         case 401:
-                            var tubularHttp = $injector.get('tubularHttp');
+                            var tubularHttp = $injector.get(tubularHttpName);
                             var apiBaseUrl = tubularHttp.apiBaseUrl;
 
                             if (
