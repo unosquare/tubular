@@ -24,7 +24,7 @@ module.exports = function(grunt) {
                 basePath: 'instrumented/'
             }
         },
-        string_replace: {
+        'string-replace': {
             dist: {
                 files: { 'instrumented/': 'test/Unosquare.Tubular.WebTest/index*.html' },
                 options: {
@@ -236,7 +236,7 @@ module.exports = function(grunt) {
     grunt.registerTask('test',
     [
         'instrument',
-        'string_replace',
+        'string-replace',
         'connect:server',
         'protractor_coverage:remote',
         'makeReport',
