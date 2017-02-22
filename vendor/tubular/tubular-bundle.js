@@ -3447,7 +3447,11 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         me.handleSuccessCallback(successCallback, response.data, username);
                     }, function (errorResponse) {
                         if (angular.isFunction(errorCallback)) {
-                            errorCallback(errorResponse.data.error_description || translateFilter('UI_HTTPERROR'));
+                            var errorMessage = translateFilter('UI_HTTPERROR');
+                            if (errorResponse && errorResponse.data && errorResponse.data.error_description)
+                                errorMessage = errorResponse.data.error_description;
+
+                            errorCallback(errorMessage);
                         }
                     });
                 };
