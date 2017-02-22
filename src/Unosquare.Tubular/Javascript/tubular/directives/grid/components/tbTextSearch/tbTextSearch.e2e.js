@@ -12,7 +12,13 @@ describe('e2e - Module: tubular.directives', function () {
 
                 filter = jasmine.createSpy().and.returnValue('translated');
                 $filterProvider.register('translate', function () { return filter; });
-                gridCtrl = jasmine.createSpyObj('grid', ['search']);
+                gridCtrl = {
+                    search: {
+                        Text : ''
+                    },
+                    saveSearch: jasmine.createSpy(),
+                    retrieveData: jasmine.createSpy()
+                };
             });
             
         });
@@ -24,16 +30,23 @@ describe('e2e - Module: tubular.directives', function () {
             
         }));
 
-        function generate(tpl) {
-            element = angular.element(tpl);
+        function generate(options) {
+            options = options || { placeholder: 'search me', minChars: 6}
+            element = angular.element('<tb-text-search></tb-text-search>');
+            if (options.placeholder) element.attr('placeholder', options.placeholder);
+            if (options.minChars) element.attr('min-chars', options.minChars);
+
             element.data('$tbGridController', gridCtrl);
             element = $compile(element)(scope);
             scope.$digest();
             
         }
 
-        it('empty input and placeholder is set', function () {
-            generate('<tb-text-search placeholder="search me" ></tb-text-search>');
+        it('default state', function () {
+
+            gridCtrl.search.Text = '';
+
+            generate();
 
             expect(element.find('input').attr('placeholder')).toBe('search me');
             expect(filter).not.toHaveBeenCalledWith('UI_SEARCH');
@@ -43,15 +56,34 @@ describe('e2e - Module: tubular.directives', function () {
 
         });
 
-        it('input and placeholder is set', function () {
-            generate('<tb-text-search placeholder="search me" ></tb-text-search>');
+        it('searching for a phrase (visual)', function () {
+            gridCtrl.search.Text = '';
+                
+            generate();
+            gridCtrl.search.Text = 'google';
+            scope.$apply();
+            timeout.flush(300);
 
-            expect(element.find('input').attr('placeholder')).toBe('search me');
             expect(filter).not.toHaveBeenCalledWith('UI_SEARCH');
             expect(filter).toHaveBeenCalledWith('CAPTION_CLEAR');
             var panel = angular.element(element[0].querySelector('#tb-text-search-reset-panel'));
-            expect(panel.hasClass('ng-hide')).toBe(true);
+            expect(panel.hasClass('ng-hide')).toBe(false);
 
+        });
+
+        it('searching for a phrase (backend)', function () {
+            
+            generate();
+
+            gridCtrl.search.Text = 'google sometimes';
+            scope.$apply();
+            timeout.flush(300);
+
+
+            
+            expect(gridCtrl.saveSearch).toHaveBeenCalled();
+            expect(gridCtrl.search.Operator).toBe('Auto');
+            expect(gridCtrl.retrieveData).toHaveBeenCalled();
         });
        
     });
