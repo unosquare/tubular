@@ -13,12 +13,13 @@
     angular.module('tubular.services')
         .factory('tubularAuthInterceptor', ['$q', '$injector', function ($q, $injector) {
             var authRequestRunning = null;
+            var tubularHttpName = 'tubularHttp';
 
             return {
 
                 request: function (config) {
                     // Get the service here because otherwise, a circular dependency injection will be detected
-                    var tubularHttp = $injector.get('tubularHttp');
+                    var tubularHttp = $injector.get(tubularHttpName);
                     var apiBaseUrl = tubularHttp.apiBaseUrl;
 
                     config.headers = config.headers || {};
@@ -54,7 +55,7 @@
 
                     switch (rejection.status) {
                         case 401:
-                            var tubularHttp = $injector.get('tubularHttp');
+                            var tubularHttp = $injector.get(tubularHttpName);
                             var apiBaseUrl = tubularHttp.apiBaseUrl;
 
                             if (

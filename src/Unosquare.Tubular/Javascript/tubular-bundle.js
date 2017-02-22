@@ -504,6 +504,20 @@
             }
         ]);
 })(angular);
+(function(angular){
+angular.module('tubular.directives').run(['$templateCache', function ($templateCache) {
+  "use strict";
+  $templateCache.put("tbRemoveButton.tpl.html",
+    "<button class=\"btn btn-danger btn-xs btn-popover\" uib-popover-template=$ctrl.templateName popover-placement=right popover-title=\"{{ $ctrl.legend || (\\'UI_REMOVEROW\\' | translate) }}\" popover-is-open=$ctrl.isOpen popover-trigger=\"'click outsideClick'\" ng-hide=$ctrl.model.$isEditing><span ng-show=$ctrl.showIcon class={{::$ctrl.icon}}></span> <span ng-show=$ctrl.showCaption>{{:: $ctrl.caption || (\\'CAPTION_REMOVE\\' | translate) }}</span></button>");
+  $templateCache.put("tbSaveButton.tpl.html",
+    "<div ng-show=model.$isEditing><button ng-click=save() class=\"btn btn-default {{:: saveCss || '' }}\" ng-disabled=!model.$valid()>{{:: saveCaption || ('CAPTION_SAVE' | translate) }}</button> <button ng-click=cancel() class=\"btn {{:: cancelCss || 'btn-default' }}\">{{:: cancelCaption || ('CAPTION_CANCEL' | translate) }}</button></div>");
+  $templateCache.put("tbTextSearch.tpl.html",
+    "<div class=tubular-grid-search><div class=\"input-group input-group-sm\"><span class=input-group-addon><i class=\"fa fa-search\"></i> </span><input type=search name=tbTextSearchInput class=form-control placeholder=\"{{:: $ctrl.placeholder || ('UI_SEARCH' | translate) }}\" maxlength=20 ng-model=$ctrl.$component.search.Text ng-model-options=\"{ debounce: 300 }\"> <span id=tb-text-search-reset-panel class=input-group-btn ng-show=\"$ctrl.$component.search.Text.length > 0\"><button id=tb-text-search-reset-button class=\"btn btn-default\" uib-tooltip=\"{{'CAPTION_CLEAR' | translate}}\" ng-click=\"$ctrl.$component.search.Text = ''\"><i class=\"fa fa-times-circle\"></i></button></span></div></div>");
+  $templateCache.put("tbGrid.tpl.html",
+    "<div><div class=tubular-overlay ng-show=\"$ctrl.showLoading && $ctrl.currentRequest != null\"><div><div class=\"fa fa-refresh fa-2x fa-spin\"></div></div></div><ng-transclude></ng-transclude></div>");
+}]);
+})(angular);
+
 (function (angular) {
     'use strict';
 
@@ -638,15 +652,13 @@
                                     } else {
                                         $scope.dataService.get(tubularHttp.addTimeZoneToUrl($scope.serverUrl)).promise.then(
                                             function (data) {
-                                                var innerScope = $scope;
-                                                var dataService = $scope.dataService;
-
-                                                if (angular.isDefined($scope.model) && angular.isDefined($scope.model.$component)) {
-                                                    innerScope = $scope.model.$component;
-                                                    dataService = $scope.model.$component.dataService;
+                                                if (angular.isDefined($scope.model) &&
+                                                    angular.isDefined($scope.model.$component)) {
+                                                    $scope.model = new TubularModel($scope, $scope.model.$component, data, $scope.model.$component.dataService);
+                                                } else {
+                                                    $scope.model = new TubularModel($scope, $scope, data, $scope.dataService);
                                                 }
 
-                                                $scope.model = new TubularModel(innerScope, innerScope, data, dataService);
                                                 $ctrl.bindFields();
                                                 $scope.model.$isNew = true;
                                             }, function (error) {
@@ -741,6 +753,79 @@
     'use strict';
 
     angular.module('tubular.directives')
+
+        /**
+        * @ngdoc component
+        * @name tbTextSearch
+        * @module tubular.directives
+        *
+        * @description
+        * The `tbTextSearch` is visual component to enable free-text search in a grid.
+        * 
+        * @param {number} minChars How many chars before to search, default 3.
+        * @param {string} placeholder The placeholder text, defaults `UI_SEARCH` i18n resource.
+        */
+    .component('tbTextSearch', {
+        require: {
+            $component: '^tbGrid'
+        },
+        templateUrl: 'tbTextSearch.tpl.html',
+        bindings: {
+            minChars: '@?',
+            placeholder: '@'
+        },
+        controller: 'tbTextSearchController'
+    });
+    
+
+})(angular);
+(function (angular) {
+    'use strict';
+
+    angular.module('tubular.directives')
+        .controller('tbTextSearchController', [
+            '$scope', function ($scope) {
+                var $ctrl = this;
+
+                $ctrl.$onInit = function () {
+                    $ctrl.minChars = $ctrl.minChars || 3;
+                    $ctrl.lastSearch = $ctrl.$component.search.Text;
+                };
+
+                $scope.$watch('$ctrl.$component.search.Text', function (val, prev) {
+                    if (angular.isUndefined(val) || val === prev) {
+                        return;
+                    }
+
+                    $ctrl.$component.search.Text = val;
+
+                    if ($ctrl.lastSearch && val === '') {
+                        search('None');
+                        return;
+                    }
+
+                    if (val === '' || val.length < $ctrl.minChars || val === $ctrl.lastSearch) {
+                        return;
+                    }
+
+                    $ctrl.lastSearch = val;
+                    search('Auto');
+                });
+
+                function search(operator) {
+                    $ctrl.$component.saveSearch();
+                    $ctrl.$component.search.Operator = operator;
+                    $ctrl.$component.retrieveData();
+                }
+            }
+        ]);
+
+
+})(angular);
+(function (angular) {
+    'use strict';
+
+    angular.module('tubular.directives')
         /**
          * @ngdoc component
          * @name tbGrid
@@ -768,11 +853,7 @@
          */
         .component('tbGrid',
         {
-            template: '<div>' +
-                '<div class="tubular-overlay" ng-show="$ctrl.showLoading && $ctrl.currentRequest != null">' +
-                '<div><div class="fa fa-refresh fa-2x fa-spin"></div></div></div>' +
-                '<ng-transclude></ng-transclude>' +
-                '</div>',
+            templateUrl: 'tbGrid.tpl.html',
             transclude: true,
             bindings: {
                 serverUrl: '@',
@@ -1228,91 +1309,6 @@
 
 
 })(angular);
-(function (angular) {
-    'use strict';
-
-    angular.module('tubular.directives')
-
-        /**
-        * @ngdoc component
-        * @name tbTextSearch
-        * @module tubular.directives
-        *
-        * @description
-        * The `tbTextSearch` is visual component to enable free-text search in a grid.
-        * 
-        * @param {number} minChars How many chars before to search, default 3.
-        * @param {string} placeholder The placeholder text, defaults `UI_SEARCH` i18n resource.
-        */
-    .component('tbTextSearch', {
-        require: {
-            $component: '^tbGrid'
-        },
-        template:
-            '<div class="tubular-grid-search">' +
-                '<div class="input-group input-group-sm">' +
-                '<span class="input-group-addon"><i class="fa fa-search"></i></span>' +
-                '<input type="search" name="tbTextSearchInput" class="form-control" placeholder="{{:: $ctrl.placeholder || (\'UI_SEARCH\' | translate) }}" maxlength="20" ' +
-                'ng-model="$ctrl.$component.search.Text" ng-model-options="{ debounce: 300 }">' +
-                '<span id="tb-text-search-reset-panel" class="input-group-btn" ng-show="$ctrl.$component.search.Text.length > 0">' +
-                '<button id="tb-text-search-reset-button" class="btn btn-default" uib-tooltip="{{\'CAPTION_CLEAR\' | translate}}" ng-click="$ctrl.$component.search.Text = \'\'">' +
-                '<i class="fa fa-times-circle"></i>' +
-                '</button>' +
-                '</span>' +
-                '<div>' +
-                '<div>',
-        bindings: {
-            minChars: '@?',
-            placeholder: '@'
-        },
-        controller: 'tbTextSearchController'
-    });
-    
-
-})(angular);
-(function (angular) {
-    'use strict';
-
-    angular.module('tubular.directives')
-        .controller('tbTextSearchController', [
-            '$scope', function ($scope) {
-                var $ctrl = this;
-
-                $ctrl.$onInit = function () {
-                    $ctrl.minChars = $ctrl.minChars || 3;
-                    $ctrl.lastSearch = $ctrl.$component.search.Text;
-                };
-
-                $scope.$watch('$ctrl.$component.search.Text', function (val, prev) {
-                    if (angular.isUndefined(val) || val === prev) {
-                        return;
-                    }
-
-                    $ctrl.$component.search.Text = val;
-
-                    if ($ctrl.lastSearch && val === '') {
-                        search('None');
-                        return;
-                    }
-
-                    if (val === '' || val.length < $ctrl.minChars || val === $ctrl.lastSearch) {
-                        return;
-                    }
-
-                    $ctrl.lastSearch = val;
-                    search('Auto');
-                });
-
-                function search(operator) {
-                    $ctrl.$component.saveSearch();
-                    $ctrl.$component.search.Operator = operator;
-                    $ctrl.$component.retrieveData();
-                }
-            }
-        ]);
-
-
-})(angular);
 (function (angular, moment) {
     'use strict';
 
@@ -1320,13 +1316,8 @@
     moment.fn.toJSON = function() { return this.format(); }
     
     function canUseHtml5Date() {
-        var input = document.createElement('input');
-        input.setAttribute('type', 'date');
-
-        var notADateValue = 'not-a-date';
-        input.setAttribute('value', notADateValue);
-
-        return input.value !== notADateValue;
+        var el = angular.element('<input type="date" value=":)" />');
+        return el.attr('type') === 'date' && el.val() === '';
     }
 
     function changeValueFn($ctrl) {
@@ -1660,6 +1651,7 @@
          * @param {string} regex Set the regex validation text.
          * @param {string} regexErrorMessage Set the regex validation error message.
          * @param {string} match Set the field name to match values.
+         * @param {string} defaultValue Set the default value.
          */
         .component('tbSimpleEditor', {
             template: '<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">' +
@@ -1685,6 +1677,7 @@
                 placeholder: '@?',
                 readOnly: '=?',
                 help: '@?',
+                defaultValue: '@?',
                 match: '@?'
             },
             controller: tbSimpleEditorCtrl
@@ -1716,6 +1709,7 @@
          * @param {number} min Set the minimum value.
          * @param {number} max Set the maximum value.
          * @param {number} step Set the step setting, default 'any'.
+         * @param {string} defaultValue Set the default value.
          */
         .component('tbNumericEditor', {
             template: '<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">' +
@@ -1745,6 +1739,7 @@
                 placeholder: '@?',
                 readOnly: '=?',
                 help: '@?',
+                defaultValue: '@?',
                 step: '=?'
             },
             controller: tbNumericEditorCtrl
@@ -1771,6 +1766,7 @@
          * @param {boolean} readOnly Set if the field is read-only.
          * @param {number} min Set the minimum value.
          * @param {number} max Set the maximum value.
+         * @param {string} defaultValue Set the default value.
          */
         .component('tbDateTimeEditor', {
             template: '<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">' +
@@ -1801,6 +1797,7 @@
                 max: '=?',
                 name: '@',
                 readOnly: '=?',
+                defaultValue: '@?',
                 help: '@?'
             },
             controller: tbDateTimeEditorCtrl
@@ -1829,6 +1826,7 @@
          * @param {boolean} readOnly Set if the field is read-only.
          * @param {number} min Set the minimum value.
          * @param {number} max Set the maximum value.
+         * @param {string} defaultValue Set the default value.
          */
         .component('tbDateEditor', {
             template: '<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">' +
@@ -1858,6 +1856,7 @@
                 max: '=?',
                 name: '@',
                 readOnly: '=?',
+                defaultValue: '@?',
                 help: '@?'
             },
             controller: tbDateEditorCtrl
@@ -2451,12 +2450,7 @@
          */
         .component('tbRemoveButton', {
             require: '^tbGrid',
-            template: '<button class="btn btn-danger btn-xs btn-popover" uib-popover-template="$ctrl.templateName" popover-placement="right" ' +
-                'popover-title="{{ $ctrl.legend || (\'UI_REMOVEROW\' | translate) }}" popover-is-open="$ctrl.isOpen" popover-trigger="\'click outsideClick\'"  ' +
-                'ng-hide="$ctrl.model.$isEditing">' +
-                '<span ng-show="$ctrl.showIcon" class="{{::$ctrl.icon}}"></span>' +
-                '<span ng-show="$ctrl.showCaption">{{:: $ctrl.caption || (\'CAPTION_REMOVE\' | translate) }}</span>' +
-                '</button>',
+            templateUrl: 'tbRemoveButton.tpl.html' ,
             bindings: {
                 model: '=',
                 caption: '@',
@@ -2498,14 +2492,7 @@
 
                 return {
                     require: '^tbGrid',
-                    template: '<div ng-show="model.$isEditing">' +
-                        '<button ng-click="save()" class="btn btn-default {{:: saveCss || \'\' }}" ' +
-                        'ng-disabled="!model.$valid()">' +
-                        '{{:: saveCaption || (\'CAPTION_SAVE\' | translate) }}' +
-                        '</button>' +
-                        '<button ng-click="cancel()" class="btn {{:: cancelCss || \'btn-default\' }}">' +
-                        '{{:: cancelCaption || (\'CAPTION_CANCEL\' | translate) }}' +
-                        '</button></div>',
+                    templateUrl: 'tbSaveButton.tpl.html',
                     restrict: 'E',
                     replace: true,
                     scope: {
@@ -3288,11 +3275,12 @@
                                     ctrl.value = value;
                                 }, true);
 
-                                if ((!ctrl.value || ctrl.value == null) && (ctrl.defaultValue && ctrl.defaultValue != null)) {
-                                    if (ctrl.DataType === 'date' && ctrl.defaultValue != null) {
+                                if (ctrl.value == null && (ctrl.defaultValue && ctrl.defaultValue != null)) {
+                                    if (ctrl.DataType === 'date' && angular.isString(ctrl.defaultValue)) {
                                         ctrl.defaultValue = new Date(ctrl.defaultValue);
                                     }
-                                    if (ctrl.DataType === 'numeric' && ctrl.defaultValue != null) {
+
+                                    if (ctrl.DataType === 'numeric' && angular.isString(ctrl.defaultValue)) {
                                         ctrl.defaultValue = parseFloat(ctrl.defaultValue);
                                     }
 
@@ -3457,10 +3445,8 @@
                 var me = this;
 
                 me.canUseHtml5Date = function () {
-                    var notADateValue = 'not-a-date';
-                    var input = angular.element('<input type="date" />');
-                    input.attr('value', notADateValue);
-                    return input.attr('value') !== notADateValue;
+                    var el = angular.element('<input type="date" value=":)" />');
+                    return el.attr('type') === 'date' && el.val() === '';
                 };
 
                 me.enums = {
@@ -3750,19 +3736,10 @@
                             ? '\r\n\t\t<tb-column label="Actions"><tb-column-header>{{label}}</tb-column-header></tb-column>'
                             : '') +
                         columns.map(function (el) {
-                            return '\r\n\t\t<tb-column name="' +
-                                el.Name +
-                                '" label="' +
-                                el.Label +
-                                '" column-type="' +
-                                el.DataType +
-                                '" sortable="' +
-                                el.Sortable +
+                            return '\r\n\t\t<tb-column name="' + el.Name + '" label="' + el.Label +
+                                '" column-type="' + el.DataType + '" sortable="' + el.Sortable +
                                 '" ' +
-                                '\r\n\t\t\tis-key="' +
-                                el.IsKey +
-                                '" searchable="' +
-                                el.Searchable +
+                                '\r\n\t\t\tis-key="' + el.IsKey + '" searchable="' + el.Searchable +
                                 '" ' +
                                 (el.Sortable
                                     ? '\r\n\t\t\tsort-direction="' +
@@ -4604,12 +4581,13 @@
     angular.module('tubular.services')
         .factory('tubularAuthInterceptor', ['$q', '$injector', function ($q, $injector) {
             var authRequestRunning = null;
+            var tubularHttpName = 'tubularHttp';
 
             return {
 
                 request: function (config) {
                     // Get the service here because otherwise, a circular dependency injection will be detected
-                    var tubularHttp = $injector.get('tubularHttp');
+                    var tubularHttp = $injector.get(tubularHttpName);
                     var apiBaseUrl = tubularHttp.apiBaseUrl;
 
                     config.headers = config.headers || {};
@@ -4645,7 +4623,7 @@
 
                     switch (rejection.status) {
                         case 401:
-                            var tubularHttp = $injector.get('tubularHttp');
+                            var tubularHttp = $injector.get(tubularHttpName);
                             var apiBaseUrl = tubularHttp.apiBaseUrl;
 
                             if (

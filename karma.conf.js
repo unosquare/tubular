@@ -13,24 +13,26 @@ module.exports = function (config) {
 
         // list of files / patterns to load in the browser
         files: [
-          'bower_components/angular/angular.js',
-          'bower_components/angular-mocks/angular-mocks.js',
-          'bower_components/angular-route/angular-route.js',
-          'bower_components/angular-loader/angular-loader.js',
-          'bower_components/angular-local-storage/dist/angular-local-storage.js',
-          'bower_components/moment/moment.js',
-          'bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
-          'bower_components/file-saver.js/FileSaver.js',
-          'bower_components/highchart-ng/dist/highcharts-ng.js',
-          'bower_components/chart.js/dist/Chart.js',
-          'bower_components/angular-chart.js/dist/angular-chart.js',
+          '../../bower_components/angular/angular.js',
+          '../../bower_components/angular-mocks/angular-mocks.js',
+          '../../bower_components/angular-route/angular-route.js',
+          '../../bower_components/angular-loader/angular-loader.js',
+          '../../bower_components/angular-local-storage/dist/angular-local-storage.js',
+          '../../bower_components/moment/moment.js',
+          '../../bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
+          '../../bower_components/file-saver.js/FileSaver.js',
+          '../../bower_components/highchart-ng/dist/highcharts-ng.js',
+          '../../bower_components/chart.js/dist/Chart.js',
+          '../../bower_components/angular-chart.js/dist/angular-chart.js',
           'Javascript/tubular/tubular-models.js',
           'Javascript/tubular/tubular-services.js',
           'Javascript/tubular/services/**/*.js',
           'Javascript/tubular/tubular-directives.js',
+          'Javascript/tubular*/**/*tpl.html',
           'Javascript/tubular/directives/**/*.js',
           'Javascript/tubular/tubular.js',
-          'Javascript/tubular*/**/*.spec.js'
+          'Javascript/tubular*/**/*.spec.js',
+          'Javascript/tubular*/**/*.e2e.js'
         ],
 
         // list of files to exclude
@@ -43,7 +45,16 @@ module.exports = function (config) {
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
-             'Javascript/tubular*/**/!(*spec|*bundle).js': ['coverage']
+            'Javascript/tubular*/**/!(*spec|*bundle).js': ['coverage'],
+            'Javascript/tubular*/**/*tpl.html': ['ng-html2js']
+        },
+
+        ngHtml2JsPreprocessor: {
+            moduleName: 'tubular.directives',
+            cacheIdFromPath: function (filepath) {
+                var pieces = filepath.split('/');
+                return pieces[pieces.length -1];
+            },
         },
 
         // test results reporter to use

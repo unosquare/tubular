@@ -182,11 +182,12 @@
                                     ctrl.value = value;
                                 }, true);
 
-                                if ((!ctrl.value || ctrl.value == null) && (ctrl.defaultValue && ctrl.defaultValue != null)) {
-                                    if (ctrl.DataType === 'date' && ctrl.defaultValue != null) {
+                                if (ctrl.value == null && (ctrl.defaultValue && ctrl.defaultValue != null)) {
+                                    if (ctrl.DataType === 'date' && angular.isString(ctrl.defaultValue)) {
                                         ctrl.defaultValue = new Date(ctrl.defaultValue);
                                     }
-                                    if (ctrl.DataType === 'numeric' && ctrl.defaultValue != null) {
+
+                                    if (ctrl.DataType === 'numeric' && angular.isString(ctrl.defaultValue)) {
                                         ctrl.defaultValue = parseFloat(ctrl.defaultValue);
                                     }
 

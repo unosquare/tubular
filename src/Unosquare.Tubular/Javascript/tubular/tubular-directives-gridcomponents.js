@@ -19,12 +19,7 @@
          */
         .component('tbRemoveButton', {
             require: '^tbGrid',
-            template: '<button class="btn btn-danger btn-xs btn-popover" uib-popover-template="$ctrl.templateName" popover-placement="right" ' +
-                'popover-title="{{ $ctrl.legend || (\'UI_REMOVEROW\' | translate) }}" popover-is-open="$ctrl.isOpen" popover-trigger="\'click outsideClick\'"  ' +
-                'ng-hide="$ctrl.model.$isEditing">' +
-                '<span ng-show="$ctrl.showIcon" class="{{::$ctrl.icon}}"></span>' +
-                '<span ng-show="$ctrl.showCaption">{{:: $ctrl.caption || (\'CAPTION_REMOVE\' | translate) }}</span>' +
-                '</button>',
+            templateUrl: 'tbRemoveButton.tpl.html' ,
             bindings: {
                 model: '=',
                 caption: '@',
@@ -66,14 +61,7 @@
 
                 return {
                     require: '^tbGrid',
-                    template: '<div ng-show="model.$isEditing">' +
-                        '<button ng-click="save()" class="btn btn-default {{:: saveCss || \'\' }}" ' +
-                        'ng-disabled="!model.$valid()">' +
-                        '{{:: saveCaption || (\'CAPTION_SAVE\' | translate) }}' +
-                        '</button>' +
-                        '<button ng-click="cancel()" class="btn {{:: cancelCss || \'btn-default\' }}">' +
-                        '{{:: cancelCaption || (\'CAPTION_CANCEL\' | translate) }}' +
-                        '</button></div>',
+                    templateUrl: 'tbSaveButton.tpl.html',
                     restrict: 'E',
                     replace: true,
                     scope: {

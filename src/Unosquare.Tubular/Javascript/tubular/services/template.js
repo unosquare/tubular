@@ -15,10 +15,8 @@
                 var me = this;
 
                 me.canUseHtml5Date = function () {
-                    var notADateValue = 'not-a-date';
-                    var input = angular.element('<input type="date" />');
-                    input.attr('value', notADateValue);
-                    return input.attr('value') !== notADateValue;
+                    var el = angular.element('<input type="date" value=":)" />');
+                    return el.attr('type') === 'date' && el.val() === '';
                 };
 
                 me.enums = {
@@ -308,19 +306,10 @@
                             ? '\r\n\t\t<tb-column label="Actions"><tb-column-header>{{label}}</tb-column-header></tb-column>'
                             : '') +
                         columns.map(function (el) {
-                            return '\r\n\t\t<tb-column name="' +
-                                el.Name +
-                                '" label="' +
-                                el.Label +
-                                '" column-type="' +
-                                el.DataType +
-                                '" sortable="' +
-                                el.Sortable +
+                            return '\r\n\t\t<tb-column name="' + el.Name + '" label="' + el.Label +
+                                '" column-type="' + el.DataType + '" sortable="' + el.Sortable +
                                 '" ' +
-                                '\r\n\t\t\tis-key="' +
-                                el.IsKey +
-                                '" searchable="' +
-                                el.Searchable +
+                                '\r\n\t\t\tis-key="' + el.IsKey + '" searchable="' + el.Searchable +
                                 '" ' +
                                 (el.Sortable
                                     ? '\r\n\t\t\tsort-direction="' +

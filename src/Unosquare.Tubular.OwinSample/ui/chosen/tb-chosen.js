@@ -1,213 +1,206 @@
-﻿(function() {
-    "use strict";
+(function (angular) {
+    'use strict';
 
     var chosenCtrl = [
-        '$scope', 'tubularEditorService', '$timeout', '$element',
-        function ($scope, tubularEditorService, $timeout, $element) {
-            tubularEditorService.setupScope($scope);
-            $scope.dataIsLoaded = false;
-            $scope.alreadyChosen = false;
-            $scope.selectOptions = "d for d in options";
+        '$scope', 'tubularEditorService', '$timeout', '$element', function ($scope, tubular, $timeout, $element) {
+            var $ctrl = this;
 
-            if (angular.isDefined($scope.optionLabel)) {
-                $scope.selectOptions = "d." + $scope.optionLabel + " for d in options";
+            $ctrl.$onInit = function() {
+                tubular.setupScope($scope, null, $ctrl);
+                $ctrl.dataIsLoaded = false;
+                $ctrl.alreadyChosen = false;
+                $ctrl.selectOptions = 'd for d in $ctrl.options';
 
-                if (angular.isDefined($scope.optionKey)) {
-                    $scope.selectOptions = 'd.' + $scope.optionKey + ' as ' + $scope.selectOptions;
+                if (angular.isDefined($ctrl.optionLabel)) {
+                    $ctrl.selectOptions = 'd.' + $ctrl.optionLabel + ' for d in $ctrl.options';
+
+                    if (angular.isDefined($ctrl.optionTrack)) {
+                        $ctrl.selectOptions = 'd as d.' +
+                            $ctrl.optionLabel +
+                            ' for d in $ctrl.options track by d.' +
+                            $ctrl.optionTrack;
+                    } else {
+                        if (angular.isDefined($ctrl.optionKey)) {
+                            $ctrl.selectOptions = 'd.' + $ctrl.optionKey + ' as ' + $ctrl.selectOptions;
+                        }
+                    }
                 }
-            }
-
-            $scope.updateMetaData = function(val) {
-                if (angular.isDefined($scope.$component.model) && angular.isDefined($scope.options)) {
-                    if (angular.isUndefined($scope.$component.model.$metadata))
-                        $scope.$component.model.$metadata = {};
-
-                    if (angular.isDefined($scope.options.filter))
-                        $scope.$component.model.$metadata[$scope.name] = $scope.options.filter(function(el) { return el[$scope.optionKey] == val });
-                }
-            }
-
-            $scope.$watch('value', function(val) {
-                $scope.$emit('tbForm_OnFieldChange', $scope.$component, $scope.name, val);
-                $scope.updateMetaData(val);
-            });
-
-            $scope.resetEditor = function() {
-                $scope.dataIsLoaded = false;
-                $scope.value = null;
-                $scope.options = [];
-                // TODO: Retrive default value?
-                $scope.loadData();
             };
 
-            $scope.loadData = function() {
-                if ($scope.dataIsLoaded || !$scope.optionsUrl) {
+            $ctrl.updateMetaData = function (val) {
+                if (angular.isDefined($ctrl.$component.model) && angular.isDefined($ctrl.options)) {
+                    if (angular.isUndefined($ctrl.$component.model.$metadata)) {
+                        $ctrl.$component.model.$metadata = {};
+                    }
+
+                    if (angular.isDefined($ctrl.options.filter)) {
+                        $ctrl.$component.model.$metadata[$ctrl.name] = $ctrl.options
+                            .filter(function(el) { return el[$ctrl.optionKey] === val });
+                    }
+                }
+            }
+
+            $scope.$watch('value', function (val) {
+                $scope.$emit('tbForm_OnFieldChange', $ctrl.$component, $ctrl.name, val);
+                $ctrl.updateMetaData(val);
+            });
+
+            $ctrl.resetEditor = function () {
+                $ctrl.dataIsLoaded = false;
+                $ctrl.value = null;
+                $ctrl.options = [];
+                // TODO: Retrive default value?
+                $ctrl.loadData();
+            };
+
+            $ctrl.loadData = function () {
+                if ($ctrl.dataIsLoaded || !$ctrl.optionsUrl) {
                     return;
                 }
 
-                if (angular.isUndefined($scope.$component) || $scope.$component == null) {
+                if (angular.isUndefined($ctrl.$component) || $ctrl.$component == null) {
                     throw 'You need to define a parent Form or Grid';
                 }
 
-                var separator = $scope.optionsUrl.indexOf('?') === -1 ? '?' : '&';
+                var separator = $ctrl.optionsUrl.indexOf('?') === -1 ? '?' : '&';
 
-                var currentRequest = $scope.$component.dataService.retrieveDataAsync({
-                    serverUrl: $scope.optionsUrl + separator + '_=' + new Date().getTime(),
-                    requestMethod: $scope.optionsMethod || 'GET'
+                var currentRequest = $ctrl.$component.dataService.retrieveDataAsync({
+                    serverUrl: $ctrl.optionsUrl + separator + '_=' + new Date().getTime(),
+                    requestMethod: $ctrl.optionsMethod || 'GET'
                 });
 
-                var value = $scope.value;
-                $scope.value = $scope.multiple ? [] : '';
+                var value = $ctrl.value;
+                $ctrl.value = $ctrl.multiple ? [] : '';
 
                 currentRequest.promise.then(
-                    function(data) {
-                        $scope.options = data;
+                    function (data) {
+                        $ctrl.options = data;
 
-                        if ($scope.allowEmpty) {
-                            if (angular.isDefined($scope.optionLabel)) {
+                        if ($ctrl.allowEmpty) {
+                            if (angular.isDefined($ctrl.optionLabel)) {
                                 var model = {};
-                                model[$scope.optionLabel] = "";
-                                if (angular.isDefined($scope.optionKey)) {
-                                    model[$scope.optionKey] = "";
+                                model[$ctrl.optionLabel] = '';
+                                if (angular.isDefined($ctrl.optionKey)) {
+                                    model[$ctrl.optionKey] = '';
                                 }
-                                $scope.options.push(model);
+                                $ctrl.options.push(model);
                             } else {
-                                $scope.options.push("");
+                                $ctrl.options.push('');
                             }
                         }
 
-                        $scope.dataIsLoaded = true;
+                        $ctrl.dataIsLoaded = true;
 
-                        if ($scope.multiple) {
-                            $scope.value = value;
+                        if ($ctrl.multiple) {
+                            $ctrl.value = value;
                         } else {
-                            if ($scope.allowEmpty) {
-                                $scope.value = value || $scope.defaultValue;
+                            if ($ctrl.allowEmpty) {
+                                $ctrl.value = value || $ctrl.defaultValue;
                             } else {
-                                var possibleValue = $scope.options && $scope.options.length > 0 ?
-                                    angular.isDefined($scope.optionKey) ? $scope.options[0][$scope.optionKey] : $scope.options[0]
+                                var possibleValue = $ctrl.options && $ctrl.options.length > 0 ?
+                                    angular.isDefined($ctrl.optionKey) ? $ctrl.options[0][$ctrl.optionKey] : $ctrl.options[0]
                                     : '';
 
-                                if (angular.isDefined(value) && value != null && $scope.options && $scope.options.length > 0 && angular.isDefined($scope.optionKey)) {
+                                if (angular.isDefined(value) && value != null && $ctrl.options && $ctrl.options.length > 0 && angular.isDefined($ctrl.optionKey)) {
                                     value = undefined;
                                 }
 
-                                $scope.value = value || $scope.defaultValue || possibleValue;
-                                $scope.updateMetaData($scope.value);
+                                $ctrl.value = value || $ctrl.defaultValue || possibleValue;
+                                $ctrl.updateMetaData($ctrl.value);
                             }
                         }
-                    }, function(error) {
+                    }, function (error) {
                         $scope.$emit('tbGrid_OnConnectionError', error);
-                    }).then(function() {
-                    $timeout(function() {
-                        if ($scope.alreadyChosen) {
-                            $element.find('select').trigger("chosen:updated");
-                        } else {
-                            $element.find('select').chosen();
-                            $scope.alreadyChosen = true;
-                        }
-                    }, 1000);
-                });
+                    }).then(function () {
+                        $timeout(function () {
+                            if ($ctrl.alreadyChosen) {
+                                $element.find('select').trigger('chosen:updated');
+                            } else {
+                                $element.find('select').chosen();
+                                $ctrl.alreadyChosen = true;
+                            }
+                        }, 1000);
+                    });
             };
 
-            if (angular.isDefined($scope.optionsUrl)) {
-                $scope.$watch('optionsUrl', function() {
-                    $scope.dataIsLoaded = false;
-                    $scope.loadData();
+            if (angular.isDefined($ctrl.optionsUrl)) {
+                $scope.$watch('optionsUrl', function () {
+                    $ctrl.dataIsLoaded = false;
+                    $ctrl.loadData();
                 });
 
-                if ($scope.isEditing) {
-                    $scope.loadData();
+                if ($ctrl.isEditing) {
+                    $ctrl.loadData();
                 } else {
-                    $scope.$watch('isEditing', function() {
-                        if ($scope.isEditing) {
-                            $scope.loadData();
+                    $scope.$watch('isEditing', function () {
+                        if ($ctrl.isEditing) {
+                            $ctrl.loadData();
                         }
                     });
                 }
             } else {
-                $timeout(function() {
+                $timeout(function () {
                     $element.find('select').chosen();
-                    $scope.alreadyChosen = true;
+                    $ctrl.alreadyChosen = true;
                 }, 1500);
             }
         }
     ];
 
-    angular.module('tubular.chosen', ['tubular.services', 'tubular.models']).directive('tbChosen', [
-        function() {
-
-            return {
-                template: '<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid }">' +
-                    '<span ng-hide="isEditing">{{ value }}</span>' +
-                    '<label ng-show="showLabel">{{ label }} <a href="{{helpLink}}" ng-show="helpLink" class="small">{{helpText}}</a></label>' +
-                    '<select ng-options="{{ selectOptions }}" ng-show="isEditing" ng-model="value" class="form-control" ' +
-                    'ng-required="required" ng-disabled="readOnly" />' +
-                    '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">' +
-                    '{{error}}' +
-                    '</span>' +
-                    '<span class="help-block" ng-show="isEditing && help">{{help}}</span>' +
-                    '</div>',
-                restrict: 'E',
-                replace: true,
-                transclude: true,
-                scope: {
-                    value: '=?',
-                    isEditing: '=?',
-                    showLabel: '=?',
-                    label: '@?',
-                    required: '=?',
-                    name: '@',
-                    readOnly: '=?',
-                    help: '@?',
-                    options: '=?',
-                    optionsUrl: '@',
-                    optionsMethod: '@?',
-                    optionLabel: '@?',
-                    optionKey: '@?',
-                    defaultValue: '@?',
-                    allowEmpty: '=?',
-                    helpLink: '@?',
-                    helpText: '@?'
-                },
-                controller: chosenCtrl
-            };
-        }
-    ]).directive('tbChosenMultiple', [
-        function() {
-
-            return {
-                template: '<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid }">' +
-                    '<span ng-hide="isEditing">{{ value }}</span>' +
-                    '<label ng-show="showLabel">{{ label }}</label>' +
-                    '<select multiple ng-options="{{ selectOptions }}" ng-show="isEditing" ng-model="value" class="form-control" ' +
-                    'ng-required="required" ng-disabled="readOnly" />' +
-                    '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">' +
-                    '{{error}}' +
-                    '</span>' +
-                    '<span class="help-block" ng-show="isEditing && help">{{help}}</span>' +
-                    '</div>',
-                restrict: 'E',
-                replace: true,
-                transclude: true,
-                scope: {
-                    value: '=?',
-                    isEditing: '=?',
-                    showLabel: '=?',
-                    label: '@?',
-                    required: '=?',
-                    name: '@',
-                    readOnly: '=?',
-                    help: '@?',
-                    options: '=?',
-                    optionsUrl: '@',
-                    optionsMethod: '@?',
-                    optionLabel: '@?',
-                    optionKey: '@?',
-                    defaultValue: '@?'
-                },
-                controller: chosenCtrl
-            };
-        }
-    ]);
-})();
+    angular.module('tubular.chosen', ['tubular.services', 'tubular.models']).component('tbChosen', {
+        template: '<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid }">' +
+            '<span ng-hide="$ctrl.isEditing">{{ $ctrl.value }}</span>' +
+            '<label ng-show="$ctrl.showLabel">{{ $ctrl.label }} <a href="{{$ctrl.helpLink}}" ng-show="$ctrl.helpLink" class="small">{{$ctrl.helpText}}</a></label>' +
+            '<select ng-options="{{ $ctrl.selectOptions }}" ng-show="$ctrl.isEditing" ng-model="$ctrl.value" class="form-control" ' +
+            'ng-required="$ctrl.required" ng-disabled="$ctrl.readOnly" />' +
+            '<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">{{error}}</span>' +
+            '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help" ng-bind="$ctrl.help"></span>' +
+            '</div>',
+        bindings: {
+            value: '=?',
+            isEditing: '=?',
+            showLabel: '=?',
+            label: '@?',
+            required: '=?',
+            name: '@',
+            readOnly: '=?',
+            help: '@?',
+            options: '=?',
+            optionsUrl: '@',
+            optionsMethod: '@?',
+            optionLabel: '@?',
+            optionKey: '@?',
+            defaultValue: '@?',
+            allowEmpty: '=?',
+            helpLink: '@?',
+            helpText: '@?'
+        },
+        controller: chosenCtrl
+    }).component('tbChosenMultiple', {
+        template: '<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid }">' +
+            '<span ng-hide="$ctrl.isEditing">{{ $ctrl.value }}</span>' +
+            '<label ng-show="$ctrl.showLabel">{{ $ctrl.label }}</label>' +
+            '<select multiple ng-options="{{ $ctrl.selectOptions }}" ng-show="$ctrl.isEditing" ng-model="$ctrl.value" class="form-control" ' +
+            'ng-required="$ctrl.required" ng-disabled="$ctrl.readOnly" />' +
+            '<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">{{error}}</span>' +
+            '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help" ng-bind="$ctrl.help"></span>' +
+            '</div>',
+        bindings: {
+            value: '=?',
+            isEditing: '=?',
+            showLabel: '=?',
+            label: '@?',
+            required: '=?',
+            name: '@',
+            readOnly: '=?',
+            help: '@?',
+            options: '=?',
+            optionsUrl: '@',
+            optionsMethod: '@?',
+            optionLabel: '@?',
+            optionKey: '@?',
+            defaultValue: '@?'
+        }, 
+        controller: chosenCtrl
+    });
+})(angular);
