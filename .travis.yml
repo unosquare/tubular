@@ -19,7 +19,7 @@ before_script:
   - if [[ $TRAVIS_OS_NAME == "linux" ]]; then export DISPLAY=:99.0; fi
   - if [[ $TRAVIS_OS_NAME == "linux" ]]; then sh -e /etc/init.d/xvfb start; fi
 script:
-  - grunt html2js:main
+  - grunt min
   - xbuild /p:Configuration=Release Unosquare.Tubular.Lib.sln
   - mono --debug ./testrunner/NUnit.ConsoleRunner.*/tools/nunit3-console.exe --process=Single ./test/Unosquare.Tubular.Tests/bin/Release/Unosquare.Tubular.Tests.dll
   - npm test
