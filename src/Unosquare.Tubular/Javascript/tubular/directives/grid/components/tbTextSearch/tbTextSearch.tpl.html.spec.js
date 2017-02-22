@@ -27,82 +27,85 @@ describe('Module: tubular.directives', function () {
         }));
 
         function generate() {
-            element = angular.element(template);
+            element = angular.element('<form name="form1">' + template + '</form>');
             element = $compile(element)(scope);
             scope.$digest();
         }
 
         it('should exist', function () {
             generate();
-           expect(element).toBeDefined();
+
+            expect(element).toBeDefined();
         });
 
         it('should set placeholder correctly', function () {
             scope.$ctrl.placeholder = 'search me'
+
             generate();
+
             expect(filter).not.toHaveBeenCalledWith('UI_SEARCH');
 
         });
-        //it('should set default minChars correctly', function () {
-        //    generate('<tb-text-search placeholder="search me"></tb-text-search>');
-        //    expect(ctrl.minChars).toBeUndefined();
 
-        //});
-        //it('should set minChars correctly', function () {
-        //    generate('<tb-text-search min-chars="6" placeholder="search me"></tb-text-search>');
-        //    expect(ctrl.minChars).toBe('6');
+        it('should fallback placeholder to UI_SEARCH', function () {
+            scope.$ctrl.placeholder = ''
 
-        //});
-        //it('should translate the input placeholder', function () {
-        //    generate('<tb-text-search ></tb-text-search>');
-        //    expect(filter).toHaveBeenCalledWith('UI_SEARCH');
+            generate();
 
-        //});
-        //it('should translate the input placeholder', function () {
-        //    generate('<tb-text-search ></tb-text-search>');
-        //    expect(filter).toHaveBeenCalledWith('CAPTION_CLEAR');
+            expect(filter).toHaveBeenCalledWith('UI_SEARCH');
 
-        //});
+        });
 
-        //it('input should debounce (before)', function () {
-        //    generate('<form name="form1"><tb-text-search ></tb-text-search></form>');
-        //    gridCtrl.search.Text = '';
-        //    scope.form1.tbTextSearchInput.$setViewValue('google');
-        //    timeout.flush(299);
-        //    scope.$apply();
-        //    expect(gridCtrl.search.Text).toBe('');
-        //});
-        //it('input should debounce (after)', function () {
-        //    generate('<form name="form1"><tb-text-search ></tb-text-search></form>');
-        //    gridCtrl.search.Text = '';
-        //    scope.form1.tbTextSearchInput.$setViewValue('google');
-        //    timeout.flush(300);
-        //    scope.$apply();
-        //    expect(gridCtrl.search.Text).toBe('google');
 
-        //});
-        //it('reset button should be visible only when the input has text', function () {
-        //    generate('<tb-text-search ></tb-text-search>');
-        //    gridCtrl.search.Text = "search me";
-        //    scope.$apply();
-        //    var panel = angular.element(element[0].querySelector('#tb-text-search-reset-panel'));
-        //    expect(panel.hasClass('ng-hide')).toBe(false);
-        //    gridCtrl.search.Text = "";
-        //    scope.$apply();
-        //    expect(panel.hasClass('ng-hide')).toBe(true);
+        
+       
+       
+        it('should translate the input placeholder', function () {
+            generate();
+            expect(filter).toHaveBeenCalledWith('CAPTION_CLEAR');
+
+        });
+
+        it('input should debounce (before)', function () {
+            generate();
+
+            scope.form1.tbTextSearchInput.$setViewValue('google');
+            timeout.flush(299);
+            scope.$apply();
+            expect(scope.form1.tbTextSearchInput.$modelValue).not.toBeDefined();
+        });
+        it('input should debounce (after)', function () {
+            generate();
+            scope.form1.tbTextSearchInput.$setViewValue('google');
+            timeout.flush(300);
+            scope.$apply();
+            expect(scope.form1.tbTextSearchInput.$modelValue).toBe('google');
+
+        });
+        it('reset button should be visible only when the input has text', function () {
+            generate();
+            scope.form1.tbTextSearchInput.$setViewValue('google');
+            timeout.flush(300);
+            scope.$apply();
+            var panel = angular.element(element[0].querySelector('#tb-text-search-reset-panel'));
+            expect(panel.hasClass('ng-hide')).toBe(false);
+            scope.form1.tbTextSearchInput.$setViewValue('');
+            timeout.flush(300);
+            scope.$apply();
+            expect(panel.hasClass('ng-hide')).toBe(true);
             
             
 
-        //});
-        //it('reset button should reset the search input', function () {
-        //    generate('<tb-text-search ></tb-text-search>');
-        //    gridCtrl.search.Text = "search me";
-        //    element.find('button')[0].click();
-        //    scope.$apply();
-        //    expect(gridCtrl.search.Text).toBe('');
+        });
+        it('reset button should reset the search input', function () {
+            generate();
+            scope.form1.tbTextSearchInput.$setViewValue('google');
+            element.find('button')[0].click();
+            scope.$apply();
+            expect(scope.form1.tbTextSearchInput.$viewValue).toBe('');
 
 
 
-        //});
+        });
     });
 });

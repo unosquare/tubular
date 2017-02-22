@@ -7,7 +7,7 @@ describe('e2e - Module: tubular.directives', function () {
         beforeEach(function () {
             module('tubular.directives');
 
-            // registering only external dependencies
+            // registering only external dependencies (grid and filter)
             module(function ($filterProvider) {
 
                 filter = jasmine.createSpy().and.returnValue('translated');
@@ -32,72 +32,27 @@ describe('e2e - Module: tubular.directives', function () {
             
         }
 
-        it('should set placeholder correctly', function () {
+        it('empty input and placeholder is set', function () {
             generate('<tb-text-search placeholder="search me" ></tb-text-search>');
-            element.find('')
+
+            expect(element.find('input').attr('placeholder')).toBe('search me');
             expect(filter).not.toHaveBeenCalledWith('UI_SEARCH');
+            expect(filter).toHaveBeenCalledWith('CAPTION_CLEAR');
+            var panel = angular.element(element[0].querySelector('#tb-text-search-reset-panel'));
+            expect(panel.hasClass('ng-hide')).toBe(true);
 
         });
-        //it('should set default minChars correctly', function () {
-        //    generate('<tb-text-search placeholder="search me"></tb-text-search>');
-        //    expect(ctrl.minChars).toBeUndefined();
 
-        //});
-        //it('should set minChars correctly', function () {
-        //    generate('<tb-text-search min-chars="6" placeholder="search me"></tb-text-search>');
-        //    expect(ctrl.minChars).toBe('6');
+        it('input and placeholder is set', function () {
+            generate('<tb-text-search placeholder="search me" ></tb-text-search>');
 
-        //});
-        //it('should translate the input placeholder', function () {
-        //    generate('<tb-text-search ></tb-text-search>');
-        //    expect(filter).toHaveBeenCalledWith('UI_SEARCH');
+            expect(element.find('input').attr('placeholder')).toBe('search me');
+            expect(filter).not.toHaveBeenCalledWith('UI_SEARCH');
+            expect(filter).toHaveBeenCalledWith('CAPTION_CLEAR');
+            var panel = angular.element(element[0].querySelector('#tb-text-search-reset-panel'));
+            expect(panel.hasClass('ng-hide')).toBe(true);
 
-        //});
-        //it('should translate the input placeholder', function () {
-        //    generate('<tb-text-search ></tb-text-search>');
-        //    expect(filter).toHaveBeenCalledWith('CAPTION_CLEAR');
-
-        //});
-
-        //it('input should debounce (before)', function () {
-        //    generate('<form name="form1"><tb-text-search ></tb-text-search></form>');
-        //    gridCtrl.search.Text = '';
-        //    scope.form1.tbTextSearchInput.$setViewValue('google');
-        //    timeout.flush(299);
-        //    scope.$apply();
-        //    expect(gridCtrl.search.Text).toBe('');
-        //});
-        //it('input should debounce (after)', function () {
-        //    generate('<form name="form1"><tb-text-search ></tb-text-search></form>');
-        //    gridCtrl.search.Text = '';
-        //    scope.form1.tbTextSearchInput.$setViewValue('google');
-        //    timeout.flush(300);
-        //    scope.$apply();
-        //    expect(gridCtrl.search.Text).toBe('google');
-
-        //});
-        //it('reset button should be visible only when the input has text', function () {
-        //    generate('<tb-text-search ></tb-text-search>');
-        //    gridCtrl.search.Text = "search me";
-        //    scope.$apply();
-        //    var panel = angular.element(element[0].querySelector('#tb-text-search-reset-panel'));
-        //    expect(panel.hasClass('ng-hide')).toBe(false);
-        //    gridCtrl.search.Text = "";
-        //    scope.$apply();
-        //    expect(panel.hasClass('ng-hide')).toBe(true);
-            
-            
-
-        //});
-        //it('reset button should reset the search input', function () {
-        //    generate('<tb-text-search ></tb-text-search>');
-        //    gridCtrl.search.Text = "search me";
-        //    element.find('button')[0].click();
-        //    scope.$apply();
-        //    expect(gridCtrl.search.Text).toBe('');
-
-
-
-        //});
+        });
+       
     });
 });
