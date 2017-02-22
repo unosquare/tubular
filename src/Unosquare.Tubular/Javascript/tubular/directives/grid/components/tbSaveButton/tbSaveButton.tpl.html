@@ -1,0 +1,8 @@
+﻿<div ng-show="model.$isEditing">
+    <button ng-click="save()" class="btn btn-default {{:: saveCss || '' }}" ng-disabled="!model.$valid()">
+        {{:: saveCaption || ('CAPTION_SAVE' | translate) }}
+    </button>
+    <button ng-click="cancel()" class="btn {{:: cancelCss || 'btn-default' }}">
+        {{:: cancelCaption || ('CAPTION_CANCEL' | translate) }}
+    </button>
+</div>

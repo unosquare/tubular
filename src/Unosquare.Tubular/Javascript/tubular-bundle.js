@@ -507,6 +507,10 @@
 (function(angular){
 angular.module('tubular.directives').run(['$templateCache', function ($templateCache) {
   "use strict";
+  $templateCache.put("tbRemoveButton.tpl.html",
+    "<button class=\"btn btn-danger btn-xs btn-popover\" uib-popover-template=$ctrl.templateName popover-placement=right popover-title=\"{{ $ctrl.legend || (\\'UI_REMOVEROW\\' | translate) }}\" popover-is-open=$ctrl.isOpen popover-trigger=\"'click outsideClick'\" ng-hide=$ctrl.model.$isEditing><span ng-show=$ctrl.showIcon class={{::$ctrl.icon}}></span> <span ng-show=$ctrl.showCaption>{{:: $ctrl.caption || (\\'CAPTION_REMOVE\\' | translate) }}</span></button>");
+  $templateCache.put("tbSaveButton.tpl.html",
+    "<div ng-show=model.$isEditing><button ng-click=save() class=\"btn btn-default {{:: saveCss || '' }}\" ng-disabled=!model.$valid()>{{:: saveCaption || ('CAPTION_SAVE' | translate) }}</button> <button ng-click=cancel() class=\"btn {{:: cancelCss || 'btn-default' }}\">{{:: cancelCaption || ('CAPTION_CANCEL' | translate) }}</button></div>");
   $templateCache.put("tbTextSearch.tpl.html",
     "<div class=tubular-grid-search><div class=\"input-group input-group-sm\"><span class=input-group-addon><i class=\"fa fa-search\"></i> </span><input type=search name=tbTextSearchInput class=form-control placeholder=\"{{:: $ctrl.placeholder || ('UI_SEARCH' | translate) }}\" maxlength=20 ng-model=$ctrl.$component.search.Text ng-model-options=\"{ debounce: 300 }\"> <span id=tb-text-search-reset-panel class=input-group-btn ng-show=\"$ctrl.$component.search.Text.length > 0\"><button id=tb-text-search-reset-button class=\"btn btn-default\" uib-tooltip=\"{{'CAPTION_CLEAR' | translate}}\" ng-click=\"$ctrl.$component.search.Text = ''\"><i class=\"fa fa-times-circle\"></i></button></span></div></div>");
   $templateCache.put("tbGrid.tpl.html",
@@ -2446,12 +2450,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
          */
         .component('tbRemoveButton', {
             require: '^tbGrid',
-            template: '<button class="btn btn-danger btn-xs btn-popover" uib-popover-template="$ctrl.templateName" popover-placement="right" ' +
-                'popover-title="{{ $ctrl.legend || (\'UI_REMOVEROW\' | translate) }}" popover-is-open="$ctrl.isOpen" popover-trigger="\'click outsideClick\'"  ' +
-                'ng-hide="$ctrl.model.$isEditing">' +
-                '<span ng-show="$ctrl.showIcon" class="{{::$ctrl.icon}}"></span>' +
-                '<span ng-show="$ctrl.showCaption">{{:: $ctrl.caption || (\'CAPTION_REMOVE\' | translate) }}</span>' +
-                '</button>',
+            templateUrl: 'tbRemoveButton.tpl.html' ,
             bindings: {
                 model: '=',
                 caption: '@',
@@ -2493,14 +2492,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
                 return {
                     require: '^tbGrid',
-                    template: '<div ng-show="model.$isEditing">' +
-                        '<button ng-click="save()" class="btn btn-default {{:: saveCss || \'\' }}" ' +
-                        'ng-disabled="!model.$valid()">' +
-                        '{{:: saveCaption || (\'CAPTION_SAVE\' | translate) }}' +
-                        '</button>' +
-                        '<button ng-click="cancel()" class="btn {{:: cancelCss || \'btn-default\' }}">' +
-                        '{{:: cancelCaption || (\'CAPTION_CANCEL\' | translate) }}' +
-                        '</button></div>',
+                    templateUrl: 'tbSaveButton.tpl.html',
                     restrict: 'E',
                     replace: true,
                     scope: {
