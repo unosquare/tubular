@@ -12,11 +12,9 @@ describe('Module: tubular.services', function () {
                 $filterProvider.register('translate', function () { return filter; });
             });
 
-            inject(function ($injector, _tubularHttp_) {
-                $httpBackend = $injector.get('$httpBackend');
+            inject(function (_$httpBackend_, _tubularHttp_) {
+                $httpBackend = _$httpBackend_;
 
-                $httpBackend.whenRoute('GET', '/api/get')
-                    .respond(function () { return [200, { result: true }]; });
                 tubularHttp = _tubularHttp_;
             });
         });
@@ -41,16 +39,46 @@ describe('Module: tubular.services', function () {
 
         it('should retrieve a promise when GET', function() {
             var getPromise = tubularHttp.get('/api/get');
+
             expect(getPromise).toBeDefined();
             expect(getPromise.promise).toBeDefined();
         });
 
-        it('should retrieve data when GET', function () {
+        it('should retrieve data when GET', function (done) {
+            $httpBackend.expectGET('/api/get').respond(200, { result: true });
+
             tubularHttp.get('/api/get')
                 .promise.then(function(data) {
                     expect(data).toBeDefined();
                     expect(data.result).toBe(true);
-                });
+                }).finally(done);
+
+            $httpBackend.flush();
+        });
+
+        it('should not retrieve data when GET', function (done) {
+            $httpBackend.expectGET('/api/get').respond(500, '');
+
+            tubularHttp.get('/api/get')
+                .promise.then(function () { }, function (error) {
+                    expect(error).toBeDefined();
+                }).finally(done);
+
+            $httpBackend.flush();
+        });
+
+        it('should authenticate', function () {
+            $httpBackend.expectPOST('/api/token', function(data) {
+                return data === 'grant_type=password&username=user&password=password';
+            }).respond(200, { access_token: 'HOLA' });
+
+            tubularHttp.authenticate('user', 'password', function(data) {
+                expect(data).toBeDefined();
+            }, function(error) {
+                expect(error).toBeUndefined();
+            });
+
+            $httpBackend.flush();
         });
     });
 });
