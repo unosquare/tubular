@@ -19,7 +19,7 @@
          */
         .component('tbRemoveButton', {
             require: '^tbGrid',
-            templateUrl: 'tbRemoveButton.tpl.html' ,
+            templateUrl: 'tbRemoveButton.tpl.html',
             bindings: {
                 model: '=',
                 caption: '@',
@@ -108,9 +108,7 @@
                                     });
                             };
 
-                            $scope.cancel = function() {
-                                $scope.model.revertChanges();
-                            };
+                            $scope.cancel = $scope.model.revertChanges;
                         }
                     ]
                 };

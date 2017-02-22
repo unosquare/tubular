@@ -67,7 +67,7 @@
      * It contains common services like HTTP client, filtering and printing services.
      */
     angular.module('tubular.services', ['ui.bootstrap', 'LocalStorageModule'])
-        
+
         /**
          * @ngdoc factory
          * @name tubularGridExportService
@@ -75,26 +75,26 @@
          * @description
          * Use `tubularGridExportService` to export your `tbGrid` to a CSV file.
          */
-        .factory('tubularGridExportService', function () {
-            return {
-                exportAllGridToCsv: function(filename, gridScope) {
-                    var columns = getColumns(gridScope);
-                    var visibility = getColumnsVisibility(gridScope);
+        .factory('tubularGridExportService',
+            function() {
+                return {
+                    exportAllGridToCsv: function(filename, gridScope) {
+                        var columns = getColumns(gridScope);
+                        var visibility = getColumnsVisibility(gridScope);
 
-                    gridScope.getFullDataSource(function(data) {
-                        exportToCsv(filename, columns, data, visibility);
-                    });
-                },
+                        gridScope.getFullDataSource(function(data) {
+                            exportToCsv(filename, columns, data, visibility);
+                        });
+                    },
 
-                exportGridToCsv: function(filename, gridScope) {
-                    var columns = getColumns(gridScope);
-                    var visibility = getColumnsVisibility(gridScope);
+                    exportGridToCsv: function(filename, gridScope) {
+                        var columns = getColumns(gridScope);
+                        var visibility = getColumnsVisibility(gridScope);
 
-                    gridScope.currentRequest = {};
-                    exportToCsv(filename, columns, gridScope.dataSource.Payload, visibility);
-                    gridScope.currentRequest = null;
-                }
-            };
-        })
-       
+                        gridScope.currentRequest = {};
+                        exportToCsv(filename, columns, gridScope.dataSource.Payload, visibility);
+                        gridScope.currentRequest = null;
+                    }
+                };
+            });
 })(angular, saveAs);

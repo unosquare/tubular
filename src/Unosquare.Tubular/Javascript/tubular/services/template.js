@@ -368,82 +368,76 @@
                  * Create a columns array using a model.
                  * 
                  * @param {object} model
-                 * @returns {array} The Columns
+                 * @returns {array} The columns
                  */
                 me.createColumns = function (model) {
                     var jsonModel = (angular.isArray(model) && model.length > 0) ? model[0] : model;
                     var columns = [];
 
-                    for (var prop in jsonModel) {
-                        if (jsonModel.hasOwnProperty(prop)) {
-                            var value = jsonModel[prop];
+                    angular.forEach(Object.keys(jsonModel), function (prop) {
+                        var value = jsonModel[prop];
 
-                            // Ignore functions and  null value, but maybe evaluate another item if there is anymore
-                            if (prop[0] === '$' || angular.isFunction(value) || value == null) {
-                                continue;
-                            }
-
-                            if (angular.isNumber(value) || parseFloat(value).toString() === value) {
-                                columns.push({
-                                    Name: prop,
-                                    DataType: 'numeric',
-                                    Template: '{{row.' + prop + ' | number}}'
-                                });
-                            } else if (toString.call(value) === '[object Date]' ||
-                                isNaN((new Date(value)).getTime()) === false) {
-                                columns.push({ Name: prop, DataType: 'date', Template: '{{row.' + prop + ' | date}}' });
-                            } else if (value.toLowerCase() === 'true' || value.toLowerCase() === 'false') {
-                                columns.push({
-                                    Name: prop,
-                                    DataType: 'boolean',
-                                    Template: '{{row.' + prop + ' ? "TRUE" : "FALSE" }}'
-                                });
-                            } else {
-                                var newColumn = { Name: prop, DataType: 'string', Template: '{{row.' + prop + '}}' };
-
-                                if ((/e(-|)mail/ig).test(newColumn.Name)) {
-                                    newColumn.Template = '<a href="mailto:' +
-                                        newColumn.Template +
-                                        '">' +
-                                        newColumn.Template +
-                                        '</a>';
-                                }
-
-                                columns.push(newColumn);
-                            }
+                        // Ignore functions and  null value, but maybe evaluate another item if there is anymore
+                        if (prop[0] === '$' || angular.isFunction(value) || value == null) {
+                            return;
                         }
-                    }
+
+                        if (angular.isNumber(value) || parseFloat(value).toString() === value) {
+                            columns.push({
+                                Name: prop,
+                                DataType: 'numeric',
+                                Template: '{{row.' + prop + ' | number}}'
+                            });
+                        } else if (angular.isDate(value) || !isNaN((new Date(value)).getTime())) {
+                            columns.push({ Name: prop, DataType: 'date', Template: '{{row.' + prop + ' | moment }}' });
+                        } else if (value.toLowerCase() === 'true' || value.toLowerCase() === 'false') {
+                            columns.push({
+                                Name: prop,
+                                DataType: 'boolean',
+                                Template: '{{row.' + prop + ' ? "TRUE" : "FALSE" }}'
+                            });
+                        } else {
+                            var newColumn = { Name: prop, DataType: 'string', Template: '{{row.' + prop + '}}' };
+
+                            if ((/e(-|)mail/ig).test(newColumn.Name)) {
+                                newColumn.Template = '<a href="mailto:' + newColumn.Template + '">' + newColumn.Template + '</a>';
+                            }
+
+                            columns.push(newColumn);
+                        }
+                    });
 
                     var firstSort = false;
 
-                    angular.forEach(columns,
-                        function(columnObj) {
-                            columnObj.Label = columnObj.Name.replace(/([a-z])([A-Z])/g, '$1 $2');
-                            columnObj.EditorType = me.getEditorTypeByDateType(columnObj.DataType);
+                    angular.forEach(columns, function (columnObj) {
+                        columnObj.Label = columnObj.Name.replace(/([a-z])([A-Z])/g, '$1 $2');
+                        columnObj.EditorType = me.getEditorTypeByDateType(columnObj.DataType);
 
-                            // Grid attributes
-                            columnObj.Searchable = columnObj.DataType === 'string';
-                            columnObj.Filter = true;
-                            columnObj.Visible = true;
-                            columnObj.Sortable = true;
-                            columnObj.IsKey = false;
-                            columnObj.SortOrder = 0;
-                            columnObj.SortDirection = '';
-                            // Form attributes
-                            columnObj.ShowLabel = true;
-                            columnObj.Placeholder = '';
-                            columnObj.Format = '';
-                            columnObj.Help = '';
-                            columnObj.Required = true;
-                            columnObj.ReadOnly = false;
+                        // Grid attributes
+                        columnObj.Searchable = columnObj.DataType === 'string';
+                        columnObj.Filter = true;
+                        columnObj.Visible = true;
+                        columnObj.Sortable = true;
+                        columnObj.IsKey = false;
+                        columnObj.SortOrder = 0;
+                        columnObj.SortDirection = '';
+                        // Form attributes
+                        columnObj.ShowLabel = true;
+                        columnObj.Placeholder = '';
+                        columnObj.Format = '';
+                        columnObj.Help = '';
+                        columnObj.Required = true;
+                        columnObj.ReadOnly = false;
 
-                            if (!firstSort) {
-                                columnObj.IsKey = true;
-                                columnObj.SortOrder = 1;
-                                columnObj.SortDirection = 'Ascending';
-                                firstSort = true;
-                            }
-                        });
+                        if (firstSort) {
+                            return;
+                        }
+
+                        columnObj.IsKey = true;
+                        columnObj.SortOrder = 1;
+                        columnObj.SortDirection = 'Ascending';
+                        firstSort = true;
+                    });
 
                     return columns;
                 };
