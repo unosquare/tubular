@@ -29,7 +29,7 @@
                 <div class="panel panel-default panel-rounded">
                     <tb-grid-table class="table-bordered">
                         <tb-column-definitions>
-                            <tb-column name="WarehouseID" sortable="true">
+                            <tb-column name="WarehouseID" column-type="numeric" sortable="true" is-key="true">
                                 <tb-column-header>
                                     <span>{{label}}</span>
                                 </tb-column-header>
@@ -62,7 +62,7 @@
                                 </tb-cell-template>
                             </tb-row-template>
                             <tb-row-template ng-repeat="row in $component.rows" row-model="row" selectable="false">
-                                <tb-cell-template visible="false">
+                                <tb-cell-template visible="false" is-key="true">
                                     {{row.WarehouseID}}
                                 </tb-cell-template>
                                 <tb-cell-template class="text-center">
@@ -71,7 +71,7 @@
                                     </tb-save-button>
                                     <tb-edit-button model="row" class="btn btn-xs">
                                     </tb-edit-button>
-                                    <tb-remove-button model="row">
+                                    <tb-remove-button model="row" is-key="true">
                                     </tb-remove-button>
                                 </tb-cell-template>
                                 <tb-cell-template>

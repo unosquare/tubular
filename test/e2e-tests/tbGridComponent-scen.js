@@ -5,10 +5,13 @@
 
 describe('tbGridComponents', function () {
 
+    var datarows;
+
     beforeAll(function () {
         // Go to test
+        dataRows = element.all(by.repeater('row in $component.rows'));
         browser.get('index.html');
-        
+
     });
 
     beforeEach(function () {
@@ -18,16 +21,19 @@ describe('tbGridComponents', function () {
     });
 
     it('should add item with newRow method', function () {
-        var lastItem = element.all(by.repeater('row in $component.rows')).last().getText();
+        var lastItem = dataRows.last().getText();
         element(by.id('newButton')).click().then(function () {
             var newRow = $('tr[ng-show]');
             expect(newRow.isDisplayed()).toBe(true, 'should add a new row');
 
-            newRow.$('input').sendKeys(new Date().toString());
+            newRow.$('input').sendKeys(new Date().toString()).then(function () {
 
-            newRow.$$('button').first().click().then(function () {
-                var newLastItem = element.all(by.repeater('row in $component.rows')).last().getText();
-                expect(lastItem).not.toBe(newLastItem);
+                newRow.$$('button').first().click().then(function () {
+
+
+                    var newLastItem = dataRows.last().getText();
+                    expect(lastItem).not.toBe(newLastItem);
+                });
             });
         });
     });
@@ -44,20 +50,20 @@ describe('tbGridComponents', function () {
     });
 
     it('should update item with tbSaveButton', function () {
-        var lastItem = element.all(by.repeater('row in $component.rows')).last();
-        lastItem.$$('td').last().getText().then(function () {
-            lastItem.$$('button').get(2).click().then(function () {
-                lastItem.$$('input').clear().sendKeys('TEST').then(function () {
-                    lastItem.$$('button').first().click().then(function () {
-                        expect(lastItem.$$('td').last().getText()).toBe("TEST");
-                    });
+        var lastItem = dataRows.last();
+
+        lastItem.$$('button').first().click().then(function () {
+            lastItem.$('input').clear().sendKeys('TEST').then(function () {
+
+                lastItem.$$('button').first().click().then(function () {
+                    expect(lastItem.$$('td').last().getText()).toBe("TEST");
                 });
             });
         });
     });
 
     it('should NOT update item on cancel Update action', function () {
-        var lastItem = element.all(by.repeater('row in $component.rows')).last();
+        var lastItem = dataRows.last();
 
         lastItem.$$('td').last().getText().then(function (originalValue) {
             lastItem.$$('button').get(2).click().then(function () {
@@ -70,13 +76,13 @@ describe('tbGridComponents', function () {
     });
 
     it('should remove item with tbRemoveButton', function () {
-        var originalCount = element.all(by.repeater('row in $component.rows')).count();
-        var rowToRemove = element.all(by.repeater('row in $component.rows')).first();
+        var originalCount = dataRows.count();
+        var rowToRemove = dataRows.first();
         rowToRemove.$('tb-remove-button').click().then(function () {
             expect($('div.popover').isDisplayed()).toBe(true, 'should display popover');
 
             $('div.popover').$$('button').first().click().then(function () {
-                element.all(by.repeater('row in $component.rows')).count().then(function (count) {
+                dataRows.count().then(function (count) {
                     expect(count).not.toBe(originalCount, 'should remove the row from the table');
                 });
             });
@@ -84,7 +90,7 @@ describe('tbGridComponents', function () {
     });
 
     it('should NOT remove item on cancel Remove action', function () {
-        var rowToRemove = element.all(by.repeater('row in $component.rows')).first();
+        var rowToRemove = dataRows.first();
 
         rowToRemove.$('tb-remove-button').click().then(function () {
             expect($('div.popover').isDisplayed()).toBe(true, 'should display popover');
