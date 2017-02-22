@@ -3,7 +3,6 @@
   "copyright": "Unosquare 2016",
   "version": "1.1.3-*",
   "dependencies": {
-    "BuildBundlerMinifier": "2.3.327",
     "System.Linq.Dynamic.Core": "1.0.6.10"
   },
   "frameworks": {
@@ -21,11 +20,7 @@
   "buildOptions": {
     "xmlDoc": true
   },
-  "tools": {
-    "BundlerMinifier.Core": "2.3.327"
-  },
   "scripts": {
-    "precompile": [ "dotnet bundle" ],
     "postcompile": "publish-content.cmd"
   },
   "runtimes": {
