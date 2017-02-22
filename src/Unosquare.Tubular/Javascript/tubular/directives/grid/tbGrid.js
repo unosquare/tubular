@@ -29,11 +29,7 @@
          */
         .component('tbGrid',
         {
-            template: '<div>' +
-                '<div class="tubular-overlay" ng-show="$ctrl.showLoading && $ctrl.currentRequest != null">' +
-                '<div><div class="fa fa-refresh fa-2x fa-spin"></div></div></div>' +
-                '<ng-transclude></ng-transclude>' +
-                '</div>',
+            templateUrl: 'tbGrid.tpl.html',
             transclude: true,
             bindings: {
                 serverUrl: '@',
