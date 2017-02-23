@@ -27,10 +27,7 @@
                  * with all the tubularEditors.
                  */
                 me.setupScope = function (scope, defaultFormat, ctrl, setDirty) {
-                    if (angular.isUndefined(ctrl)) {
-                        ctrl = scope;
-                    }
-
+                    ctrl = ctrl || scope;
                     ctrl.isEditing = angular.isUndefined(ctrl.isEditing) ? true : ctrl.isEditing;
                     ctrl.showLabel = ctrl.showLabel || false;
                     ctrl.label = ctrl.label || (ctrl.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');

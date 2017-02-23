@@ -507,6 +507,14 @@
 (function(angular){
 angular.module('tubular.directives').run(['$templateCache', function ($templateCache) {
   "use strict";
+  $templateCache.put("tbCheckboxField.tpl.html",
+    "<div ng-class=\"{ 'checkbox' : $ctrl.isEditing, 'has-error' : !$ctrl.$valid && $ctrl.$dirty() }\" class=tubular-checkbox><input type=checkbox ng-model=$ctrl.value ng-disabled=\"$ctrl.readOnly || !$ctrl.isEditing\" class=tubular-checkbox id={{$ctrl.name}} name={{$ctrl.name}}><label ng-show=$ctrl.isEditing for={{$ctrl.name}} ng-bind=$ctrl.label></label><span class=\"help-block error-block\" ng-show=$ctrl.isEditing ng-repeat=\"error in $ctrl.state.$errors\">{{error}}</span> <span class=help-block ng-show=\"$ctrl.isEditing && $ctrl.help\" ng-bind=$ctrl.help></span></div>");
+  $templateCache.put("tbDropdownEditor.tpl.html",
+    "<div ng-class=\"{ 'form-group' : $ctrl.showLabel && $ctrl.isEditing, 'has-error' : !$ctrl.$valid && $ctrl.$dirty() }\"><span ng-hide=$ctrl.isEditing ng-bind=$ctrl.readOnlyValue></span><label ng-show=$ctrl.showLabel ng-bind=$ctrl.label></label><select ng-options=\"{{ $ctrl.selectOptions }}\" ng-show=$ctrl.isEditing ng-model=$ctrl.value class=form-control ng-required=$ctrl.required ng-disabled=$ctrl.readOnly name={{$ctrl.name}} ng-change=\"onChange({value: value})\"></select><span class=\"help-block error-block\" ng-show=$ctrl.isEditing ng-repeat=\"error in $ctrl.state.$errors\">{{error}}</span> <span class=help-block ng-show=\"$ctrl.isEditing && $ctrl.help\" ng-bind=$ctrl.help></span></div>");
+  $templateCache.put("tbHiddenField.tpl.html",
+    "<input type=hidden ng-model=$ctrl.value class=form-control name={{$ctrl.name}}>");
+  $templateCache.put("tbNumericEditor.tpl.html",
+    "<div ng-class=\"{ 'form-group' : $ctrl.showLabel && $ctrl.isEditing, 'has-error' : !$ctrl.$valid && $ctrl.$dirty() }\"><span ng-hide=$ctrl.isEditing>{{$ctrl.value | numberorcurrency: format }}</span><label ng-show=$ctrl.showLabel ng-bind=$ctrl.label></label><div class=input-group ng-show=$ctrl.isEditing><div class=input-group-addon ng-hide=\"$ctrl.format == 'I'\"><i ng-class=\"{ 'fa': true, 'fa-calculator': $ctrl.format != 'C', 'fa-usd': $ctrl.format == 'C'}\"></i></div><input type=number placeholder={{$ctrl.placeholder}} ng-model=$ctrl.value class=form-control ng-required=$ctrl.required ng-hide=$ctrl.readOnly step=\"{{$ctrl.step || \\'any\\'}}\" name={{$ctrl.name}}><p class=\"form-control form-control-static text-right\" ng-show=$ctrl.readOnly>{{$ctrl.value | numberorcurrency: format}}</p></div><span class=\"help-block error-block\" ng-show=$ctrl.isEditing ng-repeat=\"error in $ctrl.state.$errors\">{{error}}</span> <span class=help-block ng-show=\"$ctrl.isEditing && $ctrl.help\" ng-bind=$ctrl.help></span></div>");
   $templateCache.put("tbSimpleEditor.tpl.html",
     "<div ng-class=\"{ 'form-group' : $ctrl.showLabel && $ctrl.isEditing, 'has-error' : !$ctrl.$valid && $ctrl.$dirty() }\"><span ng-hide=$ctrl.isEditing ng-bind=$ctrl.value></span><label ng-show=$ctrl.showLabel ng-bind=$ctrl.label></label><input type={{$ctrl.editorType}} placeholder={{$ctrl.placeholder}} ng-show=$ctrl.isEditing ng-model=$ctrl.value class=form-control ng-required=$ctrl.required ng-readonly=$ctrl.readOnly name={{$ctrl.name}}> <span class=\"help-block error-block\" ng-show=$ctrl.isEditing ng-repeat=\"error in $ctrl.state.$errors\">{{error}}</span> <span class=help-block ng-show=\"$ctrl.isEditing && $ctrl.help\" ng-bind=$ctrl.help></span></div>");
   $templateCache.put("tbRemoveButton.tpl.html",
@@ -1421,7 +1429,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
         var $ctrl = this;
 
         $ctrl.validate = function () {
-            if (tubular.isDefined($ctrl.regex) && tubular.isDefined($ctrl.value)) {
+            if ($ctrl.regex && $ctrl.value) {
                 var patt = new RegExp($ctrl.regex);
 
                 if (patt.test($ctrl.value) === false) {
@@ -1431,7 +1439,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 }
             }
 
-            if (tubular.isDefined($ctrl.match)) {
+            if ($ctrl.match) {
                 if ($ctrl.value !== $ctrl.$component.model[$ctrl.match]) {
                     var label = filterFilter($ctrl.$component.fields, { name: $ctrl.match }, true)[0].label;
                     $ctrl.$valid = false;
@@ -1440,7 +1448,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 }
             }
 
-            if (angular.isDefined($ctrl.min) && angular.isDefined($ctrl.value) && $ctrl.value != null) {
+            if ($ctrl.min && $ctrl.value) {
                 if ($ctrl.value.length < parseInt($ctrl.min)) {
                     $ctrl.$valid = false;
                     $ctrl.state.$errors = [translateFilter('EDITOR_MIN_CHARS', $ctrl.min)];
@@ -1448,7 +1456,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 }
             }
 
-            if (angular.isDefined($ctrl.max) && angular.isDefined($ctrl.value) && $ctrl.value != null) {
+            if ($ctrl.max && $ctrl.value) {
                 if ($ctrl.value.length > parseInt($ctrl.max)) {
                     $ctrl.$valid = false;
                     $ctrl.state.$errors = [translateFilter('EDITOR_MAX_CHARS', $ctrl.max)];
@@ -1732,20 +1740,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
          * @param {string} defaultValue Set the default value.
          */
         .component('tbNumericEditor', {
-            template: '<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">' +
-                '<span ng-hide="$ctrl.isEditing">{{$ctrl.value | numberorcurrency: format }}</span>' +
-                '<label ng-show="$ctrl.showLabel" ng-bind="$ctrl.label"></label>' +
-                '<div class="input-group" ng-show="$ctrl.isEditing">' +
-                '<div class="input-group-addon" ng-hide="$ctrl.format == \'I\'">' +
-                '<i ng-class="{ \'fa\': true, \'fa-calculator\': $ctrl.format != \'C\', \'fa-usd\': $ctrl.format == \'C\'}"></i>' +
-                '</div>' +
-                '<input type="number" placeholder="{{$ctrl.placeholder}}" ng-model="$ctrl.value" class="form-control" ' +
-                'ng-required="$ctrl.required" ng-hide="$ctrl.readOnly" step="{{$ctrl.step || \'any\'}}"  name="{{$ctrl.name}}" />' +
-                '<p class="form-control form-control-static text-right" ng-show="$ctrl.readOnly">{{$ctrl.value | numberorcurrency: format}}</span></p>' +
-                '</div>' +
-                '<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">{{error}}</span>' +
-                '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help" ng-bind="$ctrl.help"></span>' +
-                '</div>',
+            templateUrl: 'tbNumericEditor.tpl.html',
             bindings: {
                 value: '=?',
                 isEditing: '=?',
@@ -1908,14 +1903,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
          * @param {string} defaultValue Set the default value.
          */
         .component('tbDropdownEditor', {
-            template: '<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">' +
-                '<span ng-hide="$ctrl.isEditing" ng-bind="$ctrl.readOnlyValue"></span>' +
-                '<label ng-show="$ctrl.showLabel" ng-bind="$ctrl.label"></label>' +
-                '<select ng-options="{{ $ctrl.selectOptions }}" ng-show="$ctrl.isEditing" ng-model="$ctrl.value" class="form-control" ' +
-                'ng-required="$ctrl.required" ng-disabled="$ctrl.readOnly" name="{{$ctrl.name}}" ng-change="onChange({value: value})"></select>' +
-                '<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">{{error}}</span>' +
-                '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help" ng-bind="$ctrl.help"></span>' +
-                '</div>',
+            templateUrl: 'tbDropdownEditor.tpl.html',
             bindings: {
                 value: '=?',
                 isEditing: '=?',
@@ -2068,7 +2056,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
          * @param {object} value Set the value.
          */
         .component('tbHiddenField', {
-            template: '<input type="hidden" ng-model="$ctrl.value" class="form-control" name="{{$ctrl.name}}"  />',
+            templateUrl: 'tbHiddenField.tpl.html',
             bindings: {
                 value: '=?',
                 name: '@'
@@ -2101,15 +2089,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
          * @param {string} help Set the help text.
          */
         .component('tbCheckboxField', {
-            template: '<div ng-class="{ \'checkbox\' : $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }" class="tubular-checkbox">' +
-                '<input type="checkbox" ng-model="$ctrl.value" ng-disabled="$ctrl.readOnly || !$ctrl.isEditing"' +
-                'class="tubular-checkbox" id="{{$ctrl.name}}" name="{{$ctrl.name}}" /> ' +
-                '<label ng-show="$ctrl.isEditing" for="{{$ctrl.name}}" ng-bind="$ctrl.label"></label>' +
-                '<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">' +
-                '{{error}}' +
-                '</span>' +
-                '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help" ng-bind="$ctrl.help"></span>' +
-                '</div>',
+            templateUrl: 'tbCheckboxField.tpl.html',
             bindings: {
                 value: '=?',
                 isEditing: '=?',
@@ -3137,10 +3117,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                  * with all the tubularEditors.
                  */
                 me.setupScope = function (scope, defaultFormat, ctrl, setDirty) {
-                    if (angular.isUndefined(ctrl)) {
-                        ctrl = scope;
-                    }
-
+                    ctrl = ctrl || scope;
                     ctrl.isEditing = angular.isUndefined(ctrl.isEditing) ? true : ctrl.isEditing;
                     ctrl.showLabel = ctrl.showLabel || false;
                     ctrl.label = ctrl.label || (ctrl.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');

@@ -18,7 +18,6 @@ module.exports = function(grunt) {
             files: [
                 'test/Unosquare.Tubular.WebTest/testApp.js',
                 'src/Unosquare.Tubular/Javascript/tubular*-bundle.js'
-                //'src/Unosquare.Tubular/Javascript/tubular/*.js',
             ],
             options: {
                 basePath: 'instrumented/'
@@ -96,7 +95,7 @@ module.exports = function(grunt) {
                 outputFile: 'report/eslint/index.html',
                 silent: true
             },
-            src: ['src/Unosquare.Tubular/Javascript/tubular*/**/*.js', '!src/**/*.spec.js']
+            src: ['src/Unosquare.Tubular/Javascript/tubular*/**/*.js', '!src/**/*.spec.js', '!src/**/templates.js']
         },
         karma: {
             options: {
@@ -114,7 +113,6 @@ module.exports = function(grunt) {
                 },
                 reporters: ['progress']
             }
-
         },
         html2js: {
             options: {
