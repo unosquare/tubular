@@ -27,6 +27,7 @@ describe('tbColumn', function () {
         beforeEach(function () {
             // Go to test
             browser.get('index.html');
+            browser.executeScript('window.sessionStorage.clear();window.localStorage.clear();');
             element(by.id('testsSelector')).click();
             element(by.id('tbColumnSortingTest')).click();
 
@@ -60,10 +61,6 @@ describe('tbColumn', function () {
             aCreationDateSorting = element(by.tagName('thead'))
                 .$$('tr th').get(3)
                 .$('a');
-        });
-
-        afterEach(function () {
-            element(by.id('btnClearLocalStorage')).click();
         });
 
         var dataSetLowerId = '1',

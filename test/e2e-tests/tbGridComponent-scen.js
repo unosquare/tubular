@@ -4,14 +4,12 @@
 // This protractor scen file tests the tbGridComponents.
 
 describe('tbGridComponents', function () {
-
-    var datarows;
+    var dataRows;
 
     beforeAll(function () {
         // Go to test
         dataRows = element.all(by.repeater('row in $component.rows'));
         browser.get('index.html');
-
     });
 
     beforeEach(function () {
@@ -29,8 +27,6 @@ describe('tbGridComponents', function () {
             newRow.$('input').sendKeys(new Date().toString()).then(function () {
 
                 newRow.$$('button').first().click().then(function () {
-
-
                     var newLastItem = dataRows.last().getText();
                     expect(lastItem).not.toBe(newLastItem);
                 });
