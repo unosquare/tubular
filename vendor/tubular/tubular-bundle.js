@@ -1549,7 +1549,9 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 }
 
                 if (angular.isDefined($ctrl.optionsUrl)) {
-                    $scope.$watch('optionsUrl', function(val, prev) {
+                    $scope.$watch(function () {
+                        return $ctrl.optionsUrl;
+                    }, function (val, prev) {
                         if (val === prev) {
                             return;
                         }
@@ -1578,7 +1580,12 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
                 if (angular.isDefined($ctrl.optionLabel) && $ctrl.options) {
                     if (angular.isDefined($ctrl.optionKey)) {
-                        $ctrl.readOnlyValue = $ctrl.options.filter(function (el) { return el[$ctrl.optionKey] === $ctrl.value; })[0][$ctrl.optionLabel];
+                        var filteredOption = $ctrl.options
+                            .filter(function (el) { return el[$ctrl.optionKey] === $ctrl.value; });
+
+                        if (filteredOption.length > 0) {
+                            $ctrl.readOnlyValue = filteredOption[0][$ctrl.optionLabel];
+                        }
                     } else {
                         $ctrl.readOnlyValue = $ctrl.options[$ctrl.optionLabel];
                     }
