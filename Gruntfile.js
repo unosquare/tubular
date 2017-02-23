@@ -159,9 +159,10 @@ module.exports = function(grunt) {
                     'src/Unosquare.Tubular/Javascript/tubular/tubular-directives-gridpager.js',
                     'src/Unosquare.Tubular/Javascript/tubular/tubular-models.js',
                     'src/Unosquare.Tubular/Javascript/tubular/tubular-services.js',
+                    'src/Unosquare.Tubular/Javascript/tubular/interceptors/**/*.js',
                     'src/Unosquare.Tubular/Javascript/tubular/services/**/*.js',
                     'src/Unosquare.Tubular/Javascript/tubular/tubular-services-http.js',
-                    'src/Unosquare.Tubular/Javascript/tubular/tubular-auth-interceptor.js',
+                    'src/Unosquare.Tubular/Javascript/tubular/interceptors/auth.js',
                     'src/Unosquare.Tubular/Javascript/tubular/tubular-services-i18n.js',
                     '!src/Unosquare.Tubular/Javascript/tubular/**/*.spec.js',
                     '!src/Unosquare.Tubular/Javascript/tubular/**/*.e2e.js'
