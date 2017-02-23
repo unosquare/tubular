@@ -13,8 +13,6 @@
             'translateFilter', function (translateFilter) {
                 var me = this;
 
-                me.isValid = function (value) { return !(!value); };
-
                 /**
                 * Simple helper to generate a unique name for Tubular Forms
                 */

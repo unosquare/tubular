@@ -507,6 +507,8 @@
 (function(angular){
 angular.module('tubular.directives').run(['$templateCache', function ($templateCache) {
   "use strict";
+  $templateCache.put("tbSimpleEditor.tpl.html",
+    "<div ng-class=\"{ 'form-group' : $ctrl.showLabel && $ctrl.isEditing, 'has-error' : !$ctrl.$valid && $ctrl.$dirty() }\"><span ng-hide=$ctrl.isEditing ng-bind=$ctrl.value></span><label ng-show=$ctrl.showLabel ng-bind=$ctrl.label></label><input type={{$ctrl.editorType}} placeholder={{$ctrl.placeholder}} ng-show=$ctrl.isEditing ng-model=$ctrl.value class=form-control ng-required=$ctrl.required ng-readonly=$ctrl.readOnly name={{$ctrl.name}}> <span class=\"help-block error-block\" ng-show=$ctrl.isEditing ng-repeat=\"error in $ctrl.state.$errors\">{{error}}</span> <span class=help-block ng-show=\"$ctrl.isEditing && $ctrl.help\" ng-bind=$ctrl.help></span></div>");
   $templateCache.put("tbRemoveButton.tpl.html",
     "<button class=\"btn btn-danger btn-xs btn-popover\" uib-popover-template=$ctrl.templateName popover-placement=right popover-title=\"{{ $ctrl.legend || ('UI_REMOVEROW' | translate) }}\" popover-is-open=$ctrl.isOpen popover-trigger=\"'click outsideClick'\" ng-hide=$ctrl.model.$isEditing><span ng-show=$ctrl.showIcon class={{::$ctrl.icon}}></span> <span ng-show=$ctrl.showCaption>{{:: $ctrl.caption || ('CAPTION_REMOVE' | translate) }}</span></button>");
   $templateCache.put("tbSaveButton.tpl.html",
@@ -1388,11 +1390,38 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
         };
     }
 
+    function validateDate($ctrl, translateFilter, dateFilter) {
+        if (angular.isDefined($ctrl.min)) {
+            if (!angular.isDate($ctrl.min)) {
+                $ctrl.min = new Date($ctrl.min);
+            }
+
+            $ctrl.$valid = $ctrl.dateValue >= $ctrl.min;
+
+            if (!$ctrl.$valid) {
+                $ctrl.state.$errors = [translateFilter('EDITOR_MIN_DATE', dateFilter($ctrl.min, $ctrl.format))];
+                return;
+            }
+        }
+
+        if (angular.isDefined($ctrl.max)) {
+            if (!angular.isDate($ctrl.max)) {
+                $ctrl.max = new Date($ctrl.max);
+            }
+
+            $ctrl.$valid = $ctrl.dateValue <= $ctrl.max;
+
+            if (!$ctrl.$valid) {
+                $ctrl.state.$errors = [translateFilter('EDITOR_MAX_DATE', dateFilter($ctrl.max, $ctrl.format))];
+            }
+        }
+    }
+
     var tbSimpleEditorCtrl = ['tubularEditorService', '$scope', 'translateFilter', 'filterFilter', function (tubular, $scope, translateFilter, filterFilter) {
         var $ctrl = this;
 
         $ctrl.validate = function () {
-            if (tubular.isValid($ctrl.regex) && tubular.isValid($ctrl.value)) {
+            if (tubular.isDefined($ctrl.regex) && tubular.isDefined($ctrl.value)) {
                 var patt = new RegExp($ctrl.regex);
 
                 if (patt.test($ctrl.value) === false) {
@@ -1402,7 +1431,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 }
             }
 
-            if (tubular.isValid($ctrl.match)) {
+            if (tubular.isDefined($ctrl.match)) {
                 if ($ctrl.value !== $ctrl.$component.model[$ctrl.match]) {
                     var label = filterFilter($ctrl.$component.fields, { name: $ctrl.match }, true)[0].label;
                     $ctrl.$valid = false;
@@ -1479,39 +1508,13 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             });
 
             $ctrl.validate = function () {
-                if (tubular.isValid($ctrl.min)) {
-                    if (!angular.isDate($ctrl.min)) {
-                        $ctrl.min = new Date($ctrl.min);
-                    }
-
-                    $ctrl.$valid = $ctrl.value >= $ctrl.min;
-
-                    if (!$ctrl.$valid) {
-                        $ctrl.state.$errors = [translateFilter('EDITOR_MIN_DATE', dateFilter($ctrl.min, $ctrl.format))];
-                        return;
-                    }
-                }
-
-                if (tubular.isValid($ctrl.max)) {
-                    if (!angular.isDate($ctrl.max)) {
-                        $ctrl.max = new Date($ctrl.max);
-                    }
-
-                    $ctrl.$valid = $ctrl.value <= $ctrl.max;
-
-                    if (!$ctrl.$valid) {
-                        $ctrl.state.$errors = [translateFilter('EDITOR_MAX_DATE', dateFilter($ctrl.max, $ctrl.format))];
-                    }
-                }
+                validateDate($ctrl, translateFilter, dateFilter);
             };
 
             $ctrl.$onInit = function () {
-                $ctrl.DataType = 'date';
+                $ctrl.DataType = 'datetime';
                 tubular.setupScope($scope, $ctrl.format, $ctrl);
-
-                if (angular.isUndefined($ctrl.format)) {
-                    $ctrl.format = 'MMM D, Y';
-                }
+                $ctrl.format = $ctrl.format || 'MMM D, Y';
             };
         }
     ];
@@ -1531,39 +1534,13 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             });
 
             $ctrl.validate = function () {
-                if (angular.isDefined($ctrl.min)) {
-                    if (!angular.isDate($ctrl.min)) {
-                        $ctrl.min = new Date($ctrl.min);
-                    }
-
-                    $ctrl.$valid = $ctrl.dateValue >= $ctrl.min;
-
-                    if (!$ctrl.$valid) {
-                        $ctrl.state.$errors = [translateFilter('EDITOR_MIN_DATE', dateFilter($ctrl.min, $ctrl.format))];
-                        return;
-                    }
-                }
-
-                if (angular.isDefined($ctrl.max)) {
-                    if (!angular.isDate($ctrl.max)) {
-                        $ctrl.max = new Date($ctrl.max);
-                    }
-
-                    $ctrl.$valid = $ctrl.dateValue <= $ctrl.max;
-
-                    if (!$ctrl.$valid) {
-                        $ctrl.state.$errors = [translateFilter('EDITOR_MAX_DATE', dateFilter($ctrl.max, $ctrl.format))];
-                    }
-                }
+                validateDate($ctrl, translateFilter, dateFilter);
             };
 
             $ctrl.$onInit = function () {
                 $ctrl.DataType = 'date';
                 tubular.setupScope($scope, $ctrl.format, $ctrl);
-
-                if (angular.isUndefined($ctrl.format)) {
-                    $ctrl.format = 'MMM D, Y';
-                }
+                $ctrl.format = $ctrl.format || 'MMM D, Y'; // TODO: Add hours?
             };
         }
     ];
@@ -1613,6 +1590,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
         $scope.updateReadonlyValue = function () {
             $ctrl.readOnlyValue = $ctrl.value;
+
             if (!$ctrl.value) {
                 return;
             }
@@ -1703,14 +1681,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
          * @param {string} defaultValue Set the default value.
          */
         .component('tbSimpleEditor', {
-            template: '<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">' +
-                '<span ng-hide="$ctrl.isEditing" ng-bind="$ctrl.value"></span>' +
-                '<label ng-show="$ctrl.showLabel" ng-bind="$ctrl.label"></label>' +
-                '<input type="{{$ctrl.editorType}}" placeholder="{{$ctrl.placeholder}}" ng-show="$ctrl.isEditing" ng-model="$ctrl.value" class="form-control" ' +
-                ' ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}" />' +
-                '<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">{{error}}</span>' +
-                '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help" ng-bind="$ctrl.help"></span>' +
-                '</div>',
+            templateUrl: 'tbSimpleEditor.tpl.html',
             bindings: {
                 regex: '@?',
                 regexErrorMessage: '@?',
@@ -2054,28 +2025,29 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                             });
 
                             $scope.getValues = function (val) {
-                                if (angular.isDefined($scope.optionsUrl)) {
-                                    if (angular.isUndefined($scope.$component) || $scope.$component == null) {
-                                        throw 'You need to define a parent Form or Grid';
-                                    }
+                                if (angular.isUndefined($scope.optionsUrl)) {
 
-                                    var p = $scope.$component.dataService.retrieveDataAsync({
-                                        serverUrl: $scope.optionsUrl + '?search=' + val,
-                                        requestMethod: $scope.optionsMethod || 'GET'
-                                    }).promise;
-
-                                    p.then(function (data) {
-                                        $scope.lastSet = data;
-                                        return data;
+                                    return $q(function (resolve) {
+                                        $scope.lastSet = $scope.options;
+                                        resolve($scope.options);
                                     });
-
-                                    return p;
                                 }
 
-                                return $q(function (resolve) {
-                                    $scope.lastSet = $scope.options;
-                                    resolve($scope.options);
+                                if (angular.isUndefined($scope.$component) || $scope.$component == null) {
+                                    throw 'You need to define a parent Form or Grid';
+                                }
+
+                                var p = $scope.$component.dataService.retrieveDataAsync({
+                                    serverUrl: $scope.optionsUrl + '?search=' + val,
+                                    requestMethod: $scope.optionsMethod || 'GET'
+                                }).promise;
+
+                                p.then(function (data) {
+                                    $scope.lastSet = data;
+                                    return data;
                                 });
+
+                                return p;
                             };
                         }
                     ]
@@ -2217,7 +2189,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     var $ctrl = this;
 
                     $ctrl.validate = function () {
-                        if (tubular.isValid($ctrl.min) && tubular.isValid($ctrl.value)) {
+                        if (tubular.isDefined($ctrl.min) && tubular.isDefined($ctrl.value)) {
                             if ($ctrl.value.length < parseInt($ctrl.min)) {
                                 $ctrl.$valid = false;
                                 $ctrl.state.$errors = [translateFilter('EDITOR_MIN_CHARS', +$ctrl.min)];
@@ -2225,7 +2197,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                             }
                         }
 
-                        if (tubular.isValid($ctrl.max) && tubular.isValid($ctrl.value)) {
+                        if (tubular.isDefined($ctrl.max) && tubular.isDefined($ctrl.value)) {
                             if ($ctrl.value.length > parseInt($ctrl.max)) {
                                 $ctrl.$valid = false;
                                 $ctrl.state.$errors = [translateFilter('EDITOR_MAX_CHARS', +$ctrl.max)];
@@ -3150,8 +3122,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
         .service('tubularEditorService', [
             'translateFilter', function (translateFilter) {
                 var me = this;
-
-                me.isValid = function (value) { return !(!value); };
 
                 /**
                 * Simple helper to generate a unique name for Tubular Forms
