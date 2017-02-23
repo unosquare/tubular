@@ -15,6 +15,7 @@
             'localStorageServiceProvider', '$httpProvider', function (localStorageServiceProvider, $httpProvider) {
                 localStorageServiceProvider.setPrefix('tubular');
                 $httpProvider.interceptors.push('tubularAuthInterceptor');
+                $httpProvider.interceptors.push('tubularNoCacheInterceptor');
             }
         ])
         /**
