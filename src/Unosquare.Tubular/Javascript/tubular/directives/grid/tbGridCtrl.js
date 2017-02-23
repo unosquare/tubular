@@ -18,7 +18,7 @@
                         $ctrl.currentPage = $ctrl.savePage ? (localStorageService.get($ctrl.name + '_page') || 1) : 1;
 
                         $ctrl.savePageSize = angular.isUndefined($ctrl.savePageSize) ? true : $ctrl.savePageSize;
-                        $ctrl.pageSize = angular.isUndefined($ctrl.pageSize) ? 20 : $ctrl.pageSize;
+                        $ctrl.pageSize = $ctrl.pageSize || 20;
                         $ctrl.saveSearch = angular.isUndefined($ctrl.saveSearch) ? true : $ctrl.saveSearch;
                         $ctrl.totalPages = 0;
                         $ctrl.totalRecordCount = 0;
@@ -380,7 +380,9 @@
                     };
 
                     $ctrl.changeSelection = function (row) {
-                        if (angular.isUndefined(row)) return;
+                        if (angular.isUndefined(row)) {
+                            return;
+                        }
 
                         row.$selected = !row.$selected;
 

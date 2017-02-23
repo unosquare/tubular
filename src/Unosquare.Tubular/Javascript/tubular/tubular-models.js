@@ -25,9 +25,7 @@
                     $key: '',
                     $addField: function (key, value, ignoreOriginal) {
                         this[key] = value;
-                        if (angular.isUndefined(this.$original)) {
-                            this.$original = {};
-                        }
+                        this.$original = this.$original || {};
 
                         this.$original[key] = ignoreOriginal ? undefined : value;
 
@@ -35,9 +33,7 @@
                             this.$hasChanges = true;
                         }
 
-                        if (angular.isUndefined(this.$state)) {
-                            this.$state = {};
-                        }
+                        this.$state = this.$state || {};
 
                         $scope.$watch(function () {
                             return obj[key];

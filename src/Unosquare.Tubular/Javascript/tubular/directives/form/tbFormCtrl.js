@@ -111,7 +111,6 @@
                                 $scope.currentRequest.then(
                                         function (data) {
                                             if (angular.isDefined($scope.model.$component) &&
-                                                angular.isDefined($scope.model.$component.autoRefresh) &&
                                                 $scope.model.$component.autoRefresh) {
                                                 $scope.model.$component.retrieveData();
                                             }
@@ -120,7 +119,9 @@
                                             $scope.clear();
 
                                             var formScope = $scope.getFormScope();
-                                            if (formScope) formScope.$setPristine();
+                                            if (formScope) {
+                                                formScope.$setPristine();
+                                            }
                                         }, function (error) {
                                             $scope.$emit('tbForm_OnConnectionError', error, $scope);
                                         })
