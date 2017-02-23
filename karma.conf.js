@@ -27,6 +27,7 @@ module.exports = function (config) {
           'Javascript/tubular/tubular-models.js',
           'Javascript/tubular/tubular-services.js',
           'Javascript/tubular/services/**/*.js',
+          'Javascript/tubular/interceptors/**/*.js',
           'Javascript/tubular/tubular-directives.js',
           'Javascript/tubular*/**/*tpl.html',
           'Javascript/tubular/directives/**/*.js',
