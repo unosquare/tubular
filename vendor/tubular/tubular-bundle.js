@@ -1313,7 +1313,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
     'use strict';
 
     // Fix moment serialization
-    moment.fn.toJSON = function() { return this.format(); }
+    moment.fn.toJSON = function () { return this.isValid() ? this.format() : null; }
     
     function canUseHtml5Date() {
         var el = angular.element('<input type="date" value=":)" />');
