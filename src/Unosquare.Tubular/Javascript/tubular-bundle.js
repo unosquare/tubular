@@ -2539,7 +2539,9 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                                     });
                             };
 
-                            $scope.cancel = $scope.model.revertChanges;
+                            $scope.cancel = function() {
+                                $scope.model.revertChanges();
+                            };
                         }
                     ]
                 };
@@ -3389,6 +3391,13 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     me.userData.refreshToken = null;
                 }
 
+                function getCancel(canceller) {
+                    return function (reason) {
+                        $log.error(reason);
+                        canceller.resolve(reason);
+                    }
+                }
+
                 me.userData = {
                     isAuthenticated: false,
                     username: '',
@@ -3521,16 +3530,9 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     return new Date(date.getTime() + 5 * 60000); // Add 5 minutes
                 };
 
-                me.getCancel = function (canceller) {
-                    return function (reason) {
-                        $log.error(reason);
-                        canceller.resolve(reason);
-                    }
-                };
-
                 me.retrieveDataAsync = function (request) {
                     var canceller = $q.defer();
-                    var cancel = me.getCancel(canceller);
+                    var cancel = getCancel(canceller);
 
                     if (angular.isUndefined(request.requireAuthentication)) {
                         request.requireAuthentication = me.requireAuthentication;
@@ -3593,7 +3595,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                                 promise: $q(function (resolve) {
                                     resolve(null);
                                 }),
-                                cancel: me.getCancel(canceller)
+                                cancel: getCancel(canceller)
                             };
                         }
                     }
@@ -3615,7 +3617,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                                 promise: $q(function (resolve) {
                                     resolve(null);
                                 }),
-                                cancel: me.getCancel(canceller)
+                                cancel: getCancel(canceller)
                             };
                         }
                     }
@@ -3636,7 +3638,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                                 promise: $q(function (resolve) {
                                     resolve(null);
                                 }),
-                                cancel: me.getCancel(canceller)
+                                cancel: getCancel(canceller)
                             };
                         }
                     }
@@ -3656,7 +3658,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                  */
                 me.postBinary = function (url, formData) {
                     var canceller = $q.defer();
-                    var cancel = me.getCancel(canceller);
+                    var cancel = getCancel(canceller);
 
                     if (!me.useRefreshTokens) {
                         if (me.requireAuthentication && !me.isAuthenticated()) {

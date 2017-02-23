@@ -108,7 +108,9 @@
                                     });
                             };
 
-                            $scope.cancel = $scope.model.revertChanges;
+                            $scope.cancel = function() {
+                                $scope.model.revertChanges();
+                            };
                         }
                     ]
                 };
