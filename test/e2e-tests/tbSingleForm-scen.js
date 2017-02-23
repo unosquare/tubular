@@ -61,7 +61,7 @@ describe('tbSingleForm', function() {
     });
 
     it('should reset editor', function(){
-        $("#btnClear").click().then(function(){
+        $('#btnClear').click().then(function(){
             expect($('input').getAttribute('value')).toBe('');
             expect($('select').$('option:checked').getText()).toEqual('');
         });
@@ -69,6 +69,7 @@ describe('tbSingleForm', function() {
 
     it('should not save if not Changes', function(){
         var text = $('input').getAttribute('value');
+
         $('#btnSave').click().then(function(){
             expect($('input').getAttribute('value')).toEqual(text);
         });
