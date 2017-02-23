@@ -96,7 +96,7 @@
                                 $ctrl.bindFields();
                             };
 
-                            $scope.save = function (forceUpdate) {
+                           $scope.save = function (forceUpdate, keepData) {
                                 if (!$scope.model.$valid()) {
                                     return;
                                 }
@@ -116,7 +116,10 @@
                                             }
 
                                             $scope.$emit('tbForm_OnSuccessfulSave', data, $scope);
-                                            $scope.clear();
+
+                                            if (!keepData) {
+                                                $scope.clear();
+                                            }
 
                                             var formScope = $scope.getFormScope();
                                             if (formScope) {
