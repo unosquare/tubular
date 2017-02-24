@@ -35,7 +35,7 @@ module.exports = function(grunt) {
             remote: {
                 options: {
                     args: {
-                        baseUrl: 'http://localhost:9000/instrumented/test/Unosquare.Tubular.WebTest/',
+                        baseUrl: 'http://localhost:9000/test/Unosquare.Tubular.WebTest/',
                         browser: process.env.TRAVIS_OS_NAME == 'osx' ? 'chrome' : 'firefox'
 
                     }
