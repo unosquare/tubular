@@ -100,7 +100,7 @@
 
                     $ctrl.$onInit = function() {
                         $ctrl.onlyContains = angular.isUndefined($ctrl.onlyContains) ? false : $ctrl.onlyContains;
-                        $ctrl.templateName = tubular.tbColumnFilterPopoverTemplateName;
+                        $ctrl.templateName = 'tbColumnFilterPopover.tpl.html';
                         tubular.setupFilter($scope, $ctrl);
                     };
                 }
@@ -195,7 +195,7 @@
 
                     $ctrl.$onInit = function() {
                         $ctrl.dataIsLoaded = false;
-                        $ctrl.templateName = tubular.tbColumnOptionsFilterPopoverTemplateName;
+                        $ctrl.templateName = 'tbColumnOptionsFilter.tpl.html';
                         tubular.setupFilter($scope, $ctrl);
                         $ctrl.getOptionsFromUrl();
 

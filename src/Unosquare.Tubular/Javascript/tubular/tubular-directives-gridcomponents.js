@@ -1,8 +1,8 @@
-﻿(function(angular) {
+﻿(function (angular) {
     'use strict';
 
     angular.module('tubular.directives')
-       
+
         /**
          * @ngdoc component
          * @name tbRemoveButton
@@ -27,18 +27,16 @@
                 legend: '@',
                 icon: '@'
             },
-            controller: [
-                'tubularTemplateService', function(tubularTemplateService) {
-                    var $ctrl = this;
+            controller: function () {
+                var $ctrl = this;
 
-                    $ctrl.$onInit = function() {
-                        $ctrl.showIcon = angular.isDefined($ctrl.icon);
-                        $ctrl.showCaption = !($ctrl.showIcon && angular.isUndefined($ctrl.caption));
+                $ctrl.$onInit = function () {
+                    $ctrl.showIcon = angular.isDefined($ctrl.icon);
+                    $ctrl.showCaption = !($ctrl.showIcon && angular.isUndefined($ctrl.caption));
 
-                        $ctrl.templateName = tubularTemplateService.tbRemoveButtonrPopoverTemplateName;
-                    };
-                }
-            ]
+                    $ctrl.templateName = 'tbRemoveButtonPopover.tpl.html';
+                };
+            }
         })
         /**
          * @ngdoc directive
@@ -57,7 +55,7 @@
          * @param {string} cancelCss Add a CSS class to Cancel button.
          */
         .directive('tbSaveButton', [
-            function() {
+            function () {
 
                 return {
                     require: '^tbGrid',
@@ -73,10 +71,10 @@
                         cancelCss: '@'
                     },
                     controller: [
-                        '$scope', function($scope) {
+                        '$scope', function ($scope) {
                             $scope.isNew = $scope.isNew || false;
 
-                            $scope.save = function() {
+                            $scope.save = function () {
                                 if ($scope.isNew) {
                                     $scope.model.$isNew = true;
                                 }
@@ -93,7 +91,7 @@
                                 }
 
                                 $scope.currentRequest.then(
-                                    function(data) {
+                                    function (data) {
                                         $scope.model.$isEditing = false;
 
                                         if (angular.isDefined($scope.model.$component) &&
@@ -103,12 +101,12 @@
                                         }
 
                                         $scope.$emit('tbGrid_OnSuccessfulSave', data, $scope.model.$component);
-                                    }, function(error) {
+                                    }, function (error) {
                                         $scope.$emit('tbGrid_OnConnectionError', error);
                                     });
                             };
 
-                            $scope.cancel = function() {
+                            $scope.cancel = function () {
                                 $scope.model.revertChanges();
                             };
                         }
@@ -136,10 +134,10 @@
                 model: '=',
                 caption: '@'
             },
-            controller: function() {
+            controller: function () {
                 var $ctrl = this;
 
-                $ctrl.edit = function() {
+                $ctrl.edit = function () {
                     if ($ctrl.$component.editorMode === 'popup') {
                         $ctrl.model.editPopup();
                     } else {
@@ -173,7 +171,7 @@
                 options: '=?'
             },
             controller: [
-                '$scope', function($scope) {
+                '$scope', function ($scope) {
                     $scope.options = angular.isDefined($scope.$ctrl.options) ? $scope.$ctrl.options : [10, 20, 50, 100];
                 }
             ]
@@ -204,17 +202,17 @@
                 captionMenuCurrent: '@',
                 captionMenuAll: '@'
             },
-            controller: ['tubularGridExportService', function(tubular) {
-                    var $ctrl = this;
+            controller: ['tubularGridExportService', function (tubular) {
+                var $ctrl = this;
 
-                    $ctrl.downloadCsv = function() {
-                        tubular.exportGridToCsv($ctrl.filename, $ctrl.$component);
-                    };
+                $ctrl.downloadCsv = function () {
+                    tubular.exportGridToCsv($ctrl.filename, $ctrl.$component);
+                };
 
-                    $ctrl.downloadAllCsv = function() {
-                        tubular.exportAllGridToCsv($ctrl.filename, $ctrl.$component);
-                    };
-                }
+                $ctrl.downloadAllCsv = function () {
+                    tubular.exportAllGridToCsv($ctrl.filename, $ctrl.$component);
+                };
+            }
             ]
         })
         /**
@@ -239,25 +237,25 @@
                 printCss: '@',
                 caption: '@'
             },
-            controller: ['$window', function($window) {
+            controller: ['$window', function ($window) {
                 var $ctrl = this;
 
-                $ctrl.printGrid = function() {
-                    $ctrl.$component.getFullDataSource(function(data) {
+                $ctrl.printGrid = function () {
+                    $ctrl.$component.getFullDataSource(function (data) {
                         var tableHtml = '<table class="table table-bordered table-striped"><thead><tr>'
                             + $ctrl.$component.columns
-                            .filter(function(c) { return c.Visible; })
-                            .map(function(el) {
+                            .filter(function (c) { return c.Visible; })
+                            .map(function (el) {
                                 return '<th>' + (el.Label || el.Name) + '</th>';
                             }).join(' ')
                             + '</tr></thead>'
                             + '<tbody>'
-                            + data.map(function(row) {
+                            + data.map(function (row) {
                                 if (angular.isObject(row)) {
-                                    row = Object.keys(row).map(function(key) { return row[key] });
+                                    row = Object.keys(row).map(function (key) { return row[key] });
                                 }
 
-                                return '<tr>' + row.map(function(cell, index) {
+                                return '<tr>' + row.map(function (cell, index) {
                                     if (angular.isDefined($ctrl.$component.columns[index]) &&
                                         !$ctrl.$component.columns[index].Visible) {
                                         return '';

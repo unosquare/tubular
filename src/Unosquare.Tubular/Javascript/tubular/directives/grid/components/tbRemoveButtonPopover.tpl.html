@@ -1,0 +1,9 @@
+﻿<div class="tubular-remove-popover">
+    <button ng-click="$ctrl.model.delete()" class="btn btn-danger btn-xs">
+        {{:: $ctrl.caption || (\'CAPTION_REMOVE\' | translate) }}
+    </button>
+    &nbsp;
+    <button ng-click="$ctrl.isOpen = false;" class="btn btn-default btn-xs">
+        {{:: $ctrl.cancelCaption || (\'CAPTION_CANCEL\' | translate) }}
+    </button>
+</div>

@@ -526,6 +526,8 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
     "<button class=\"btn btn-default btn-sm\" ng-click=$ctrl.printGrid()><span class=\"fa fa-print\"></span>&nbsp;{{:: $ctrl.caption || ('CAPTION_PRINT' | translate)}}</button>");
   $templateCache.put("tbRemoveButton.tpl.html",
     "<button class=\"btn btn-danger btn-xs btn-popover\" uib-popover-template=$ctrl.templateName popover-placement=right popover-title=\"{{ $ctrl.legend || ('UI_REMOVEROW' | translate) }}\" popover-is-open=$ctrl.isOpen popover-trigger=\"'click outsideClick'\" ng-hide=$ctrl.model.$isEditing><span ng-show=$ctrl.showIcon class={{::$ctrl.icon}}></span> <span ng-show=$ctrl.showCaption>{{:: $ctrl.caption || ('CAPTION_REMOVE' | translate) }}</span></button>");
+  $templateCache.put("tbRemoveButtonPopover.tpl.html",
+    "<div class=tubular-remove-popover><button ng-click=$ctrl.model.delete() class=\"btn btn-danger btn-xs\">{{:: $ctrl.caption || (\\'CAPTION_REMOVE\\' | translate) }}</button> &nbsp; <button ng-click=\"$ctrl.isOpen = false;\" class=\"btn btn-default btn-xs\">{{:: $ctrl.cancelCaption || (\\'CAPTION_CANCEL\\' | translate) }}</button></div>");
   $templateCache.put("tbSaveButton.tpl.html",
     "<div ng-show=model.$isEditing><button ng-click=save() class=\"btn btn-default {{:: saveCss || '' }}\" ng-disabled=!model.$valid()>{{:: saveCaption || ('CAPTION_SAVE' | translate) }}</button> <button ng-click=cancel() class=\"btn {{:: cancelCss || 'btn-default' }}\">{{:: cancelCaption || ('CAPTION_CANCEL' | translate) }}</button></div>");
   $templateCache.put("tbTextSearch.tpl.html",
@@ -534,6 +536,10 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
     "<div class=tubular-column-menu><button class=\"btn btn-xs btn-default btn-popover\" uib-popover-template=$ctrl.templateName popover-placement=bottom popover-title={{$ctrl.filterTitle}} popover-is-open=$ctrl.isOpen popover-trigger=\"'outsideClick'\" ng-class=\"{ 'btn-success': $ctrl.filter.HasFilter }\"><i class=\"fa fa-filter\"></i></button></div>");
   $templateCache.put("tbColumnFilter.tpl.html",
     "<div class=tubular-column-menu><button class=\"btn btn-xs btn-default btn-popover\" uib-popover-template=$ctrl.templateName popover-placement=bottom popover-title={{$ctrl.filterTitle}} popover-is-open=$ctrl.isOpen popover-trigger=\"'click outsideClick'\" ng-class=\"{ 'btn-success': $ctrl.filter.HasFilter }\"><i class=\"fa fa-filter\"></i></button></div>");
+  $templateCache.put("tbColumnFilterPopover.tpl.html",
+    "<div><form class=tubular-column-filter-form onsubmit=\"return false;\"><select class=form-control ng-options=\"key as value for (key , value) in $ctrl.filterOperators\" ng-model=$ctrl.filter.Operator ng-hide=\"$ctrl.dataType == ' boolean' || $ctrl.onlyContains\"></select>&nbsp; <input class=form-control type=search ng-model=$ctrl.filter.Text autofocus ng-keypress=$ctrl.checkEvent($event) ng-hide=\"$ctrl.dataType == 'boolean'\" placeholder=\"{{'CAPTION_VALUE' | translate}}\" ng-disabled=\"$ctrl.filter.Operator == ' None'\"><div class=text-center ng-show=\"$ctrl.dataType == 'boolean'\"><button type=button class=\"btn btn-default btn-md\" ng-disabled=\"$ctrl.filter.Text === true\" ng-click=\"$ctrl.filter.Text = true; $ctrl.filter.Operator = 'Equals';\"><i class=\"fa fa-check\"></i></button>&nbsp; <button type=button class=\"btn btn-default btn-md\" ng-disabled=\"$ctrl.filter.Text === false\" ng-click=\"$ctrl.filter.Text = false; $ctrl.filter.Operator = 'Equals';\"><i class=\"fa fa-times\"></i></button></div><input type=search class=form-control ng-model=$ctrl.filter.Argument[0] ng-keypress=$ctrl.checkEvent($event) ng-show=\"$ctrl.filter.Operator == 'Between'\"><hr><tb-column-filter-buttons></tb-column-filter-buttons></form></div>");
+  $templateCache.put("tbColumnOptionsFilter.tpl.html",
+    "<div><form class=tubular-column-filter-form onsubmit=\"return false;\"><select class=\"form-control checkbox-list\" ng-options=\"item.Key as item.Label for item in $ctrl.optionsItems\" ng-model=$ctrl.filter.Argument multiple ng-disabled=\"$ctrl.dataIsLoaded == false\"></select>&nbsp;<hr><tb-column-filter-buttons></tb-column-filter-buttons></form></div>");
   $templateCache.put("tbColumnSelector.tpl.html",
     "<button class=\"btn btn-sm btn-default\" ng-click=$ctrl.openColumnsSelector() ng-bind=\"'CAPTION_SELECTCOLUMNS' | translate\"></button>");
   $templateCache.put("tbColumnSelectorDialog.tpl.html",
@@ -2288,7 +2294,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
                     $ctrl.$onInit = function() {
                         $ctrl.onlyContains = angular.isUndefined($ctrl.onlyContains) ? false : $ctrl.onlyContains;
-                        $ctrl.templateName = tubular.tbColumnFilterPopoverTemplateName;
+                        $ctrl.templateName = 'tbColumnFilterPopover.tpl.html';
                         tubular.setupFilter($scope, $ctrl);
                     };
                 }
@@ -2383,7 +2389,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
                     $ctrl.$onInit = function() {
                         $ctrl.dataIsLoaded = false;
-                        $ctrl.templateName = tubular.tbColumnOptionsFilterPopoverTemplateName;
+                        $ctrl.templateName = 'tbColumnOptionsFilter.tpl.html';
                         tubular.setupFilter($scope, $ctrl);
                         $ctrl.getOptionsFromUrl();
 
@@ -2393,11 +2399,11 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             ]
         });
 })(angular);
-(function(angular) {
+(function (angular) {
     'use strict';
 
     angular.module('tubular.directives')
-       
+
         /**
          * @ngdoc component
          * @name tbRemoveButton
@@ -2422,18 +2428,16 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 legend: '@',
                 icon: '@'
             },
-            controller: [
-                'tubularTemplateService', function(tubularTemplateService) {
-                    var $ctrl = this;
+            controller: function () {
+                var $ctrl = this;
 
-                    $ctrl.$onInit = function() {
-                        $ctrl.showIcon = angular.isDefined($ctrl.icon);
-                        $ctrl.showCaption = !($ctrl.showIcon && angular.isUndefined($ctrl.caption));
+                $ctrl.$onInit = function () {
+                    $ctrl.showIcon = angular.isDefined($ctrl.icon);
+                    $ctrl.showCaption = !($ctrl.showIcon && angular.isUndefined($ctrl.caption));
 
-                        $ctrl.templateName = tubularTemplateService.tbRemoveButtonrPopoverTemplateName;
-                    };
-                }
-            ]
+                    $ctrl.templateName = 'tbRemoveButtonPopover.tpl.html';
+                };
+            }
         })
         /**
          * @ngdoc directive
@@ -2452,7 +2456,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
          * @param {string} cancelCss Add a CSS class to Cancel button.
          */
         .directive('tbSaveButton', [
-            function() {
+            function () {
 
                 return {
                     require: '^tbGrid',
@@ -2468,10 +2472,10 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         cancelCss: '@'
                     },
                     controller: [
-                        '$scope', function($scope) {
+                        '$scope', function ($scope) {
                             $scope.isNew = $scope.isNew || false;
 
-                            $scope.save = function() {
+                            $scope.save = function () {
                                 if ($scope.isNew) {
                                     $scope.model.$isNew = true;
                                 }
@@ -2488,7 +2492,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                                 }
 
                                 $scope.currentRequest.then(
-                                    function(data) {
+                                    function (data) {
                                         $scope.model.$isEditing = false;
 
                                         if (angular.isDefined($scope.model.$component) &&
@@ -2498,12 +2502,12 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                                         }
 
                                         $scope.$emit('tbGrid_OnSuccessfulSave', data, $scope.model.$component);
-                                    }, function(error) {
+                                    }, function (error) {
                                         $scope.$emit('tbGrid_OnConnectionError', error);
                                     });
                             };
 
-                            $scope.cancel = function() {
+                            $scope.cancel = function () {
                                 $scope.model.revertChanges();
                             };
                         }
@@ -2531,10 +2535,10 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 model: '=',
                 caption: '@'
             },
-            controller: function() {
+            controller: function () {
                 var $ctrl = this;
 
-                $ctrl.edit = function() {
+                $ctrl.edit = function () {
                     if ($ctrl.$component.editorMode === 'popup') {
                         $ctrl.model.editPopup();
                     } else {
@@ -2568,7 +2572,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 options: '=?'
             },
             controller: [
-                '$scope', function($scope) {
+                '$scope', function ($scope) {
                     $scope.options = angular.isDefined($scope.$ctrl.options) ? $scope.$ctrl.options : [10, 20, 50, 100];
                 }
             ]
@@ -2599,17 +2603,17 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 captionMenuCurrent: '@',
                 captionMenuAll: '@'
             },
-            controller: ['tubularGridExportService', function(tubular) {
-                    var $ctrl = this;
+            controller: ['tubularGridExportService', function (tubular) {
+                var $ctrl = this;
 
-                    $ctrl.downloadCsv = function() {
-                        tubular.exportGridToCsv($ctrl.filename, $ctrl.$component);
-                    };
+                $ctrl.downloadCsv = function () {
+                    tubular.exportGridToCsv($ctrl.filename, $ctrl.$component);
+                };
 
-                    $ctrl.downloadAllCsv = function() {
-                        tubular.exportAllGridToCsv($ctrl.filename, $ctrl.$component);
-                    };
-                }
+                $ctrl.downloadAllCsv = function () {
+                    tubular.exportAllGridToCsv($ctrl.filename, $ctrl.$component);
+                };
+            }
             ]
         })
         /**
@@ -2634,25 +2638,25 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 printCss: '@',
                 caption: '@'
             },
-            controller: ['$window', function($window) {
+            controller: ['$window', function ($window) {
                 var $ctrl = this;
 
-                $ctrl.printGrid = function() {
-                    $ctrl.$component.getFullDataSource(function(data) {
+                $ctrl.printGrid = function () {
+                    $ctrl.$component.getFullDataSource(function (data) {
                         var tableHtml = '<table class="table table-bordered table-striped"><thead><tr>'
                             + $ctrl.$component.columns
-                            .filter(function(c) { return c.Visible; })
-                            .map(function(el) {
+                            .filter(function (c) { return c.Visible; })
+                            .map(function (el) {
                                 return '<th>' + (el.Label || el.Name) + '</th>';
                             }).join(' ')
                             + '</tr></thead>'
                             + '<tbody>'
-                            + data.map(function(row) {
+                            + data.map(function (row) {
                                 if (angular.isObject(row)) {
-                                    row = Object.keys(row).map(function(key) { return row[key] });
+                                    row = Object.keys(row).map(function (key) { return row[key] });
                                 }
 
-                                return '<tr>' + row.map(function(cell, index) {
+                                return '<tr>' + row.map(function (cell, index) {
                                     if (angular.isDefined($ctrl.$component.columns[index]) &&
                                         !$ctrl.$component.columns[index].Visible) {
                                         return '';
@@ -3353,11 +3357,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     return true;
                 };
 
-                me.setAccessTokenAsExpired = function () {
-                    me.userData.expirationDate = new Date(new Date().getTime() - 10 * 1000);
-                    saveData();
-                };
-
                 me.removeAuthentication = function () {
                     removeData();
                     clearUserData();
@@ -3907,31 +3906,8 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 };
 
                 // Loading popovers templates
-                me.tbColumnFilterPopoverTemplateName = 'tbColumnFilterPopoverTemplate.html';
                 me.tbColumnDateTimeFilterPopoverTemplateName = 'tbColumnDateTimeFilterPopoverTemplate.html';
-                me.tbColumnOptionsFilterPopoverTemplateName = 'tbColumnOptionsFilterPopoverTemplate.html';
-                me.tbRemoveButtonrPopoverTemplateName = 'tbRemoveButtonrPopoverTemplate.html';
-
-                if (!$templateCache.get(me.tbColumnFilterPopoverTemplateName)) {
-                    me.tbColumnFilterPopoverTemplate = '<div>' +
-                        '<form class="tubular-column-filter-form" onsubmit="return false;">' +
-                        '<select class="form-control" ng-options="key as value for (key , value) in $ctrl.filterOperators" ng-model="$ctrl.filter.Operator" ' +
-                        'ng-hide="$ctrl.dataType == \'boolean\' || $ctrl.onlyContains"></select>&nbsp;' +
-                        '<input class="form-control" type="search" ng-model="$ctrl.filter.Text" autofocus ng-keypress="$ctrl.checkEvent($event)" ng-hide="$ctrl.dataType == \'boolean\'"' +
-                        'placeholder="{{\'CAPTION_VALUE\' | translate}}" ng-disabled="$ctrl.filter.Operator == \'None\'" />' +
-                        '<div class="text-center" ng-show="$ctrl.dataType == \'boolean\'">' +
-                        '<button type="button" class="btn btn-default btn-md" ng-disabled="$ctrl.filter.Text === true" ng-click="$ctrl.filter.Text = true; $ctrl.filter.Operator = \'Equals\';">' +
-                        '<i class="fa fa-check"></i></button>&nbsp;' +
-                        '<button type="button" class="btn btn-default btn-md" ng-disabled="$ctrl.filter.Text === false" ng-click="$ctrl.filter.Text = false; $ctrl.filter.Operator = \'Equals\';">' +
-                        '<i class="fa fa-times"></i></button></div>' +
-                        '<input type="search" class="form-control" ng-model="$ctrl.filter.Argument[0]" ng-keypress="$ctrl.checkEvent($event)" ng-show="$ctrl.filter.Operator == \'Between\'" />' +
-                        '<hr />' +
-                        '<tb-column-filter-buttons></tb-column-filter-buttons>' +
-                        '</form></div>';
-
-                    $templateCache.put(me.tbColumnFilterPopoverTemplateName, me.tbColumnFilterPopoverTemplate);
-                }
-
+                
                 if (!$templateCache.get(me.tbColumnDateTimeFilterPopoverTemplateName)) {
                     var htmlDateSelector =
                         '<input class="form-control" type="date" ng-model="$ctrl.filter.Text" autofocus ng-keypress="$ctrl.checkEvent($event)" ' +
@@ -3957,34 +3933,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
                     $templateCache.put(me.tbColumnDateTimeFilterPopoverTemplateName,
                         me.tbColumnDateTimeFilterPopoverTemplate);
-                }
-
-                if (!$templateCache.get(me.tbColumnOptionsFilterPopoverTemplateName)) {
-                    // TODO: we need to expose the Key and Label as binding
-                    me.tbColumnOptionsFilterPopoverTemplate = '<div>' +
-                        '<form class="tubular-column-filter-form" onsubmit="return false;">' +
-                        '<select class="form-control checkbox-list" ng-options="item.Key as item.Label for item in $ctrl.optionsItems" ' +
-                        'ng-model="$ctrl.filter.Argument" multiple ng-disabled="$ctrl.dataIsLoaded == false"></select>&nbsp;' +
-                        '<hr />' +
-                        '<tb-column-filter-buttons></tb-column-filter-buttons>' +
-                        '</form></div>';
-
-                    $templateCache.put(me.tbColumnOptionsFilterPopoverTemplateName,
-                        me.tbColumnOptionsFilterPopoverTemplate);
-                }
-
-                if (!$templateCache.get(me.tbRemoveButtonrPopoverTemplateName)) {
-                    me.tbRemoveButtonrPopoverTemplate = '<div class="tubular-remove-popover">' +
-                        '<button ng-click="$ctrl.model.delete()" class="btn btn-danger btn-xs">' +
-                        '{{:: $ctrl.caption || (\'CAPTION_REMOVE\' | translate) }}' +
-                        '</button>' +
-                        '&nbsp;' +
-                        '<button ng-click="$ctrl.isOpen = false;" class="btn btn-default btn-xs">' +
-                        '{{:: $ctrl.cancelCaption || (\'CAPTION_CANCEL\' | translate) }}' +
-                        '</button>' +
-                        '</div>';
-
-                    $templateCache.put(me.tbRemoveButtonrPopoverTemplateName, me.tbRemoveButtonrPopoverTemplate);
                 }
 
                 /**
@@ -4268,11 +4216,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                             '\r\n\t</div>';
                     }
 
-                    return '<tb-form server-save-method="' +
-                        options.SaveMethod +
-                        '" ' +
-                        'model-key="' +
-                        options.ModelKey +
+                    return '<tb-form server-save-method="' + options.SaveMethod + '" model-key="' + options.ModelKey +
                         '" require-authentication="' +
                         options.RequireAuthentication +
                         '" ' +
