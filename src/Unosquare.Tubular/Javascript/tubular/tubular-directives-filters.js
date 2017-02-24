@@ -16,11 +16,7 @@
                 $columnDateTimeFilter: '^?tbColumnDateTimeFilter',
                 $columnOptionsFilter: '^?tbColumnOptionsFilter'
             },
-            template: '<div class="text-right">' +
-                '<button class="btn btn-sm btn-success" ng-click="$ctrl.currentFilter.applyFilter()"' +
-                'ng-disabled="$ctrl.currentFilter.filter.Operator == \'None\'">{{::\'CAPTION_APPLY\' | translate}}</button>&nbsp;' +
-                '<button class="btn btn-sm btn-danger" ng-click="$ctrl.currentFilter.clearFilter()">{{::\'CAPTION_CLEAR\' | translate}}</button>' +
-                '</div>',
+            templateUrl: 'tbColumnFilterButtons.tpl.html',
             controller: ['$scope', function($scope) {
                     var $ctrl = this;
 

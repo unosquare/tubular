@@ -45,7 +45,6 @@
                     tubularHttp.setRequireAuthentication($ctrl.requireAuthentication);
                     $ctrl.editorMode = $ctrl.editorMode || 'none';
                     $ctrl.canSaveState = false;
-                    $ctrl.groupBy = '';
                     $ctrl.showLoading = angular.isUndefined($ctrl.showLoading) ? true : $ctrl.showLoading;
                     $ctrl.autoRefresh = angular.isUndefined($ctrl.autoRefresh) ? true : $ctrl.autoRefresh;
                     $ctrl.serverDeleteUrl = $ctrl.serverDeleteUrl || $ctrl.serverSaveUrl;
@@ -69,44 +68,17 @@
                         }
 
                         $ctrl.retrieveData();
-                    },
-                    true);
+                    });
 
-                $scope.$watch('$ctrl.hasColumnsDefinitions',
-                    function(newVal) {
-                        if (newVal !== true) return;
-
-                        var isGrouping = false;
-                        // Check columns
-                        angular.forEach($ctrl.columns,
-                            function(column) {
-                                if (column.IsGrouping) {
-                                    if (isGrouping) {
-                                        throw 'Only one column is allowed to grouping';
-                                    }
-
-                                    isGrouping = true;
-                                    column.Visible = false;
-                                    column.Sortable = true;
-                                    column.SortOrder = 1;
-                                    $ctrl.groupBy = column.Name;
-                                }
-                            });
-
-                        angular.forEach($ctrl.columns,
-                            function(column) {
-                                if ($ctrl.groupBy === column.Name) return;
-
-                                if (column.Sortable && column.SortOrder > 0) {
-                                    column.SortOrder++;
-                                }
-                            });
+                $scope.$watch('$ctrl.hasColumnsDefinitions', function(newVal) {
+                        if (newVal !== true) {
+                            return;
+                        }
 
                         $ctrl.retrieveData();
                     });
 
-                $scope.$watch('$ctrl.pageSize',
-                    function() {
+                $scope.$watch('$ctrl.pageSize', function() {
                         if ($ctrl.hasColumnsDefinitions && $ctrl.requestCounter > 0) {
                             if ($ctrl.savePageSize) {
                                 localStorageService.set($ctrl.name + '_pageSize', $ctrl.pageSize);
@@ -115,8 +87,7 @@
                         }
                     });
 
-                $scope.$watch('$ctrl.requestedPage',
-                    function() {
+                $scope.$watch('$ctrl.requestedPage', function() {
                         if ($ctrl.hasColumnsDefinitions && $ctrl.requestCounter > 0) {
                             $ctrl.retrieveData();
                         }

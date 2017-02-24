@@ -112,16 +112,16 @@
          * This directive is replace by a `table` HTML element.
          */
         .directive('tbGridTable', [
-            function() {
+            function () {
                 return {
                     require: '^tbGrid',
-                    template: '<table ng-transclude class="table tubular-grid-table"></table>',
+                    templateUrl: 'tbGridTable.tpl.html',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
                     scope: true,
                     controller: [
-                        '$scope', function($scope) {
+                        '$scope', function ($scope) {
                             $scope.$component = $scope.$parent.$parent.$ctrl;
                             $scope.tubularDirective = 'tubular-grid-table';
                         }
@@ -141,24 +141,24 @@
          * This directive is replace by a `thead` HTML element.
          */
         .directive('tbColumnDefinitions', [
-            function() {
+            function () {
 
                 return {
                     require: '^tbGridTable',
-                    template: '<thead><tr ng-transclude></tr></thead>',
+                    templateUrl: 'tbColumnDefinitions.tpl.html',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
                     scope: true,
                     controller: [
-                        '$scope', function($scope) {
+                        '$scope', function ($scope) {
                             $scope.$component = $scope.$parent.$parent.$component;
                             $scope.tubularDirective = 'tubular-column-definitions';
                         }
                     ],
-                    compile: function() {
+                    compile: function () {
                         return {
-                            post: function(scope) {
+                            post: function (scope) {
                                 scope.$component.hasColumnsDefinitions = true;
                             }
                         };
@@ -187,7 +187,6 @@
          * @param {boolean} searchable Set if column is searchable.
          * @param {boolean} visible Set if column is visible.
          * @param {string} columnType Set the column data type. Values: string, numeric, date, datetime, or boolean.
-         * @param {boolean} isGrouping Define a group key.
          */
         .directive('tbColumn', [
             function () {
@@ -206,9 +205,7 @@
                         isKey: '=?',
                         searchable: '=?',
                         columnType: '@?',
-                        isGrouping: '=?',
                         aggregate: '@?',
-                        metaAggregate: '@?',
                         sortDirection: '@?'
                     },
                     controller: [
@@ -228,7 +225,7 @@
                                 }
                             });
 
-                            $scope.$watch('label', function() {
+                            $scope.$watch('label', function () {
                                 $scope.column.Label = $scope.label;
                                 // this broadcast here is used for backwards compatibility with tbColumnHeader requiring a scope.label value on its own
                                 $scope.$broadcast('tbColumn_LabelChanged', $scope.label);
@@ -260,11 +257,9 @@
                                 this.Visible = $scope.visible === 'false' ? false : true;
                                 this.Filter = null;
                                 this.DataType = $scope.columnType || 'string';
-                                this.IsGrouping = $scope.isGrouping === 'true';
                                 this.Aggregate = $scope.aggregate || 'none';
-                                this.MetaAggregate = $scope.metaAggregate || 'none';
                             };
-                            
+
                             $scope.$component.addColumn(column);
                             $scope.column = column;
                             $scope.label = column.Label;
@@ -285,30 +280,26 @@
          * This directive is replace by an `a` HTML element.
          */
         .directive('tbColumnHeader', [
-            function() {
+            function () {
                 return {
                     require: '^tbColumn',
-                    template: '<span><a title="Click to sort. Press Ctrl to sort by multiple columns" class="column-header" href ng-click="sortColumn($event)">' +
-                        '<span class="column-header-default">{{ $parent.column.Label }}</span>' +
-                        '<ng-transclude></ng-transclude></a> ' +
-                        '<i class="fa sort-icon" ng-class="{\'fa-long-arrow-up\': $parent.column.SortDirection == \'Ascending\', \'fa-long-arrow-down\': $parent.column.SortDirection == \'Descending\'}">&nbsp;</i>' +
-                        '</span>',
+                    templateUrl: 'tbColumnHeader.tpl.html',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
                     scope: false,
                     controller: [
-                        '$scope', function($scope) {
-                            $scope.sortColumn = function($event) {
+                        '$scope', function ($scope) {
+                            $scope.sortColumn = function ($event) {
                                 $scope.$parent.sortColumn($event.ctrlKey);
                             };
                             // this listener here is used for backwards compatibility with tbColumnHeader requiring a scope.label value on its own
-                            $scope.$on('tbColumn_LabelChanged', function($event, value) {
+                            $scope.$on('tbColumn_LabelChanged', function ($event, value) {
                                 $scope.label = value;
                             });
                         }
                     ],
-                    link: function($scope, $element) {
+                    link: function ($scope, $element) {
                         if ($element.find('ng-transclude').length > 0) {
                             $element.find('span')[0].remove();
                         }
@@ -332,17 +323,17 @@
          * This directive is replace by an `tbody` HTML element.
          */
         .directive('tbRowSet', [
-            function() {
+            function () {
 
                 return {
                     require: '^tbGrid',
-                    template: '<tbody ng-transclude></tbody>',
+                    templateUrl: 'tbRowSet.tpl.html',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
                     scope: false,
                     controller: [
-                        '$scope', function($scope) {
+                        '$scope', function ($scope) {
                             $scope.$component = $scope.$parent.$component || $scope.$parent.$parent.$component;
                             $scope.tubularDirective = 'tubular-row-set';
                         }
@@ -362,17 +353,17 @@
          * This directive is replace by an `tfoot` HTML element.
          */
         .directive('tbFootSet', [
-            function() {
+            function () {
 
                 return {
                     require: '^tbGrid',
-                    template: '<tfoot ng-transclude></tfoot>',
+                    templateUrl: 'tbFootSet.tpl.html',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
                     scope: false,
                     controller: [
-                        '$scope', function($scope) {
+                        '$scope', function ($scope) {
                             $scope.$component = $scope.$parent.$component || $scope.$parent.$parent.$component;
                             $scope.tubularDirective = 'tubular-foot-set';
                         }
@@ -395,11 +386,10 @@
          * @param {bool} selectable Flag the rowset to allow user to select rows.
          */
         .directive('tbRowTemplate', [
-            function() {
+            function () {
 
                 return {
-                    template: '<tr ng-transclude ng-class="{\'info\': selectableBool && model.$selected}"' +
-                        ' ng-click="changeSelection(model)"></tr>',
+                    templateUrl: 'tbRowTemplate.tpl.html',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
@@ -408,14 +398,14 @@
                         selectable: '@'
                     },
                     controller: [
-                        '$scope', function($scope) {
+                        '$scope', function ($scope) {
                             $scope.tubularDirective = 'tubular-rowset';
                             $scope.fields = [];
                             $scope.hasFieldsDefinitions = false;
                             $scope.selectableBool = $scope.selectable === 'true';
                             $scope.$component = $scope.$parent.$parent.$parent.$component;
 
-                            $scope.$watch('hasFieldsDefinitions', function(newVal) {
+                            $scope.$watch('hasFieldsDefinitions', function (newVal) {
                                 if (newVal !== true || angular.isUndefined($scope.model)) {
                                     return;
                                 }
@@ -423,8 +413,8 @@
                                 $scope.bindFields();
                             });
 
-                            $scope.bindFields = function() {
-                                angular.forEach($scope.fields, function(field) {
+                            $scope.bindFields = function () {
+                                angular.forEach($scope.fields, function (field) {
                                     field.bindScope();
                                 });
                             };
@@ -433,7 +423,7 @@
                                 $scope.$component.selectFromSession($scope.model);
                             }
 
-                            $scope.changeSelection = function(rowModel) {
+                            $scope.changeSelection = function (rowModel) {
                                 if (!$scope.selectableBool) {
                                     return;
                                 }
@@ -442,9 +432,9 @@
                             };
                         }
                     ],
-                    compile: function() {
+                    compile: function () {
                         return {
-                            post: function(scope) {
+                            post: function (scope) {
                                 scope.hasFieldsDefinitions = true;
                             }
                         };
@@ -472,7 +462,7 @@
 
                 return {
                     require: '^tbRowTemplate',
-                    template: '<td ng-transclude ng-show="column.Visible" data-label="{{::column.Label}}"></td>',
+                    templateUrl: 'tbCellTemplate.tpl.html',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
@@ -514,17 +504,37 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
   $templateCache.put("tbHiddenField.tpl.html",
     "<input type=hidden ng-model=$ctrl.value class=form-control name={{$ctrl.name}}>");
   $templateCache.put("tbNumericEditor.tpl.html",
-    "<div ng-class=\"{ 'form-group' : $ctrl.showLabel && $ctrl.isEditing, 'has-error' : !$ctrl.$valid && $ctrl.$dirty() }\"><span ng-hide=$ctrl.isEditing>{{$ctrl.value | numberorcurrency: format }}</span><label ng-show=$ctrl.showLabel ng-bind=$ctrl.label></label><div class=input-group ng-show=$ctrl.isEditing><div class=input-group-addon ng-hide=\"$ctrl.format == 'I'\"><i ng-class=\"{ 'fa': true, 'fa-calculator': $ctrl.format != 'C', 'fa-usd': $ctrl.format == 'C'}\"></i></div><input type=number placeholder={{$ctrl.placeholder}} ng-model=$ctrl.value class=form-control ng-required=$ctrl.required ng-hide=$ctrl.readOnly step=\"{{$ctrl.step || \\'any\\'}}\" name={{$ctrl.name}}><p class=\"form-control form-control-static text-right\" ng-show=$ctrl.readOnly>{{$ctrl.value | numberorcurrency: format}}</p></div><span class=\"help-block error-block\" ng-show=$ctrl.isEditing ng-repeat=\"error in $ctrl.state.$errors\">{{error}}</span> <span class=help-block ng-show=\"$ctrl.isEditing && $ctrl.help\" ng-bind=$ctrl.help></span></div>");
+    "<div ng-class=\"{ 'form-group' : $ctrl.showLabel && $ctrl.isEditing, 'has-error' : !$ctrl.$valid && $ctrl.$dirty() }\"><span ng-hide=$ctrl.isEditing>{{$ctrl.value | numberorcurrency: format }}</span><label ng-show=$ctrl.showLabel ng-bind=$ctrl.label></label><div class=input-group ng-show=$ctrl.isEditing><div class=input-group-addon ng-hide=\"$ctrl.format == 'I'\"><i ng-class=\"{ 'fa': true, 'fa-calculator': $ctrl.format != 'C', 'fa-usd': $ctrl.format == 'C'}\"></i></div><input type=number placeholder={{$ctrl.placeholder}} ng-model=$ctrl.value class=form-control ng-required=$ctrl.required ng-hide=$ctrl.readOnly step=\"{{$ctrl.step || 'any'}}\" name={{$ctrl.name}}><p class=\"form-control form-control-static text-right\" ng-show=$ctrl.readOnly>{{$ctrl.value | numberorcurrency: format}}</p></div><span class=\"help-block error-block\" ng-show=$ctrl.isEditing ng-repeat=\"error in $ctrl.state.$errors\">{{error}}</span> <span class=help-block ng-show=\"$ctrl.isEditing && $ctrl.help\" ng-bind=$ctrl.help></span></div>");
   $templateCache.put("tbSimpleEditor.tpl.html",
     "<div ng-class=\"{ 'form-group' : $ctrl.showLabel && $ctrl.isEditing, 'has-error' : !$ctrl.$valid && $ctrl.$dirty() }\"><span ng-hide=$ctrl.isEditing ng-bind=$ctrl.value></span><label ng-show=$ctrl.showLabel ng-bind=$ctrl.label></label><input type={{$ctrl.editorType}} placeholder={{$ctrl.placeholder}} ng-show=$ctrl.isEditing ng-model=$ctrl.value class=form-control ng-required=$ctrl.required ng-readonly=$ctrl.readOnly name={{$ctrl.name}}> <span class=\"help-block error-block\" ng-show=$ctrl.isEditing ng-repeat=\"error in $ctrl.state.$errors\">{{error}}</span> <span class=help-block ng-show=\"$ctrl.isEditing && $ctrl.help\" ng-bind=$ctrl.help></span></div>");
+  $templateCache.put("tbTextArea.tpl.html",
+    "<div ng-class=\"{ 'form-group' : $ctrl.showLabel && $ctrl.isEditing, 'has-error' : !$ctrl.$valid && $ctrl.$dirty() }\"><span ng-hide=$ctrl.isEditing ng-bind=$ctrl.value></span><label ng-show=$ctrl.showLabel ng-bind=$ctrl.label></label><textarea ng-show=$ctrl.isEditing placeholder={{$ctrl.placeholder}} ng-model=$ctrl.value class=form-control ng-required=$ctrl.required ng-readonly=$ctrl.readOnly name={{$ctrl.name}}></textarea><span class=\"help-block error-block\" ng-show=$ctrl.isEditing ng-repeat=\"error in $ctrl.state.$errors\">{{error}}</span> <span class=help-block ng-show=\"$ctrl.isEditing && $ctrl.help\" ng-bind=$ctrl.help></span></div>");
   $templateCache.put("tbRemoveButton.tpl.html",
     "<button class=\"btn btn-danger btn-xs btn-popover\" uib-popover-template=$ctrl.templateName popover-placement=right popover-title=\"{{ $ctrl.legend || ('UI_REMOVEROW' | translate) }}\" popover-is-open=$ctrl.isOpen popover-trigger=\"'click outsideClick'\" ng-hide=$ctrl.model.$isEditing><span ng-show=$ctrl.showIcon class={{::$ctrl.icon}}></span> <span ng-show=$ctrl.showCaption>{{:: $ctrl.caption || ('CAPTION_REMOVE' | translate) }}</span></button>");
   $templateCache.put("tbSaveButton.tpl.html",
     "<div ng-show=model.$isEditing><button ng-click=save() class=\"btn btn-default {{:: saveCss || '' }}\" ng-disabled=!model.$valid()>{{:: saveCaption || ('CAPTION_SAVE' | translate) }}</button> <button ng-click=cancel() class=\"btn {{:: cancelCss || 'btn-default' }}\">{{:: cancelCaption || ('CAPTION_CANCEL' | translate) }}</button></div>");
   $templateCache.put("tbTextSearch.tpl.html",
     "<div class=tubular-grid-search><div class=\"input-group input-group-sm\"><span class=input-group-addon><i class=\"fa fa-search\"></i> </span><input type=search name=tbTextSearchInput class=form-control placeholder=\"{{:: $ctrl.placeholder || ('UI_SEARCH' | translate) }}\" maxlength=20 ng-model=$ctrl.$component.search.Text ng-model-options=\"{ debounce: 300 }\"> <span id=tb-text-search-reset-panel class=input-group-btn ng-show=\"$ctrl.$component.search.Text.length > 0\"><button id=tb-text-search-reset-button class=\"btn btn-default\" uib-tooltip=\"{{'CAPTION_CLEAR' | translate}}\" ng-click=\"$ctrl.$component.search.Text = ''\"><i class=\"fa fa-times-circle\"></i></button></span></div></div>");
+  $templateCache.put("tbCellTemplate.tpl.html",
+    "<td ng-transclude ng-show=column.Visible data-label={{::column.Label}}></td>");
+  $templateCache.put("tbColumn.tpl.html",
+    "<th ng-transclude ng-class=\"{sortable: column.Sortable}\" ng-show=column.Visible></th>");
+  $templateCache.put("tbColumnDefinitions.tpl.html",
+    "<thead><tr ng-transclude></tr></thead>");
+  $templateCache.put("tbColumnFilterButtons.tpl.html",
+    "<div class=text-right><button class=\"btn btn-sm btn-success\" ng-click=$ctrl.currentFilter.applyFilter() ng-disabled=\"$ctrl.currentFilter.filter.Operator == 'None'\" ng-bind=\"'CAPTION_APPLY' | translate\"></button>&nbsp; <button class=\"btn btn-sm btn-danger\" ng-click=$ctrl.currentFilter.clearFilter() ng-bind=\"'CAPTION_CLEAR' | translate\"></button></div>");
+  $templateCache.put("tbColumnHeader.tpl.html",
+    "<span><a title=\"Click to sort. Press Ctrl to sort by multiple columns\" class=column-header href ng-click=sortColumn($event)><span class=column-header-default>{{ $parent.column.Label }}</span><ng-transclude></ng-transclude></a><i class=\"fa sort-icon\" ng-class=\"{'fa-long-arrow-up': $parent.column.SortDirection == 'Ascending', 'fa-long-arrow-down': $parent.column.SortDirection == 'Descending'}\">&nbsp;</i></span>");
+  $templateCache.put("tbFootSet.tpl.html",
+    "<tfoot ng-transclude></tfoot>");
   $templateCache.put("tbGrid.tpl.html",
     "<div><div class=tubular-overlay ng-show=\"$ctrl.showLoading && $ctrl.currentRequest != null\"><div><div class=\"fa fa-refresh fa-2x fa-spin\"></div></div></div><ng-transclude></ng-transclude></div>");
+  $templateCache.put("tbGridTable.tpl.html",
+    "<table ng-transclude class=\"table tubular-grid-table\"></table>");
+  $templateCache.put("tbRowSet.tpl.html",
+    "<tbody ng-transclude></tbody>");
+  $templateCache.put("tbRowTemplate.tpl.html",
+    "<tr ng-transclude ng-class=\"{'info': selectableBool && model.$selected}\" ng-click=changeSelection(model)></tr>");
 }]);
 })(angular);
 
@@ -956,7 +966,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     tubularHttp.setRequireAuthentication($ctrl.requireAuthentication);
                     $ctrl.editorMode = $ctrl.editorMode || 'none';
                     $ctrl.canSaveState = false;
-                    $ctrl.groupBy = '';
                     $ctrl.showLoading = angular.isUndefined($ctrl.showLoading) ? true : $ctrl.showLoading;
                     $ctrl.autoRefresh = angular.isUndefined($ctrl.autoRefresh) ? true : $ctrl.autoRefresh;
                     $ctrl.serverDeleteUrl = $ctrl.serverDeleteUrl || $ctrl.serverSaveUrl;
@@ -980,44 +989,17 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         }
 
                         $ctrl.retrieveData();
-                    },
-                    true);
+                    });
 
-                $scope.$watch('$ctrl.hasColumnsDefinitions',
-                    function(newVal) {
-                        if (newVal !== true) return;
-
-                        var isGrouping = false;
-                        // Check columns
-                        angular.forEach($ctrl.columns,
-                            function(column) {
-                                if (column.IsGrouping) {
-                                    if (isGrouping) {
-                                        throw 'Only one column is allowed to grouping';
-                                    }
-
-                                    isGrouping = true;
-                                    column.Visible = false;
-                                    column.Sortable = true;
-                                    column.SortOrder = 1;
-                                    $ctrl.groupBy = column.Name;
-                                }
-                            });
-
-                        angular.forEach($ctrl.columns,
-                            function(column) {
-                                if ($ctrl.groupBy === column.Name) return;
-
-                                if (column.Sortable && column.SortOrder > 0) {
-                                    column.SortOrder++;
-                                }
-                            });
+                $scope.$watch('$ctrl.hasColumnsDefinitions', function(newVal) {
+                        if (newVal !== true) {
+                            return;
+                        }
 
                         $ctrl.retrieveData();
                     });
 
-                $scope.$watch('$ctrl.pageSize',
-                    function() {
+                $scope.$watch('$ctrl.pageSize', function() {
                         if ($ctrl.hasColumnsDefinitions && $ctrl.requestCounter > 0) {
                             if ($ctrl.savePageSize) {
                                 localStorageService.set($ctrl.name + '_pageSize', $ctrl.pageSize);
@@ -1026,8 +1008,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         }
                     });
 
-                $scope.$watch('$ctrl.requestedPage',
-                    function() {
+                $scope.$watch('$ctrl.requestedPage', function() {
                         if ($ctrl.hasColumnsDefinitions && $ctrl.requestCounter > 0) {
                             $ctrl.retrieveData();
                         }
@@ -1399,7 +1380,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
     }
 
     function validateDate($ctrl, translateFilter, dateFilter) {
-        if (angular.isDefined($ctrl.min)) {
+        if ($ctrl.min) {
             if (!angular.isDate($ctrl.min)) {
                 $ctrl.min = new Date($ctrl.min);
             }
@@ -1412,7 +1393,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             }
         }
 
-        if (angular.isDefined($ctrl.max)) {
+        if ($ctrl.max) {
             if (!angular.isDate($ctrl.max)) {
                 $ctrl.max = new Date($ctrl.max);
             }
@@ -2141,16 +2122,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
          * @param {number} max Set the maximum characters.
          */
         .component('tbTextArea', {
-            template: '<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">' +
-                '<span ng-hide="$ctrl.isEditing" ng-bind="$ctrl.value"></span>' +
-                '<label ng-show="$ctrl.showLabel" ng-bind="$ctrl.label"></label>' +
-                '<textarea ng-show="$ctrl.isEditing" placeholder="{{$ctrl.placeholder}}" ng-model="$ctrl.value" class="form-control" ' +
-                ' ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}"></textarea>' +
-                '<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">' +
-                '{{error}}' +
-                '</span>' +
-                '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help" ng-bind="$ctrl.help"></span>' +
-                '</div>',
+            templateUrl: 'tbTextArea.tpl.html',
             bindings: {
                 value: '=?',
                 isEditing: '=?',
@@ -2169,7 +2141,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     var $ctrl = this;
 
                     $ctrl.validate = function () {
-                        if (tubular.isDefined($ctrl.min) && tubular.isDefined($ctrl.value)) {
+                        if ($ctrl.min && $ctrl.value) {
                             if ($ctrl.value.length < parseInt($ctrl.min)) {
                                 $ctrl.$valid = false;
                                 $ctrl.state.$errors = [translateFilter('EDITOR_MIN_CHARS', +$ctrl.min)];
@@ -2177,7 +2149,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                             }
                         }
 
-                        if (tubular.isDefined($ctrl.max) && tubular.isDefined($ctrl.value)) {
+                        if ($ctrl.max && $ctrl.value) {
                             if ($ctrl.value.length > parseInt($ctrl.max)) {
                                 $ctrl.$valid = false;
                                 $ctrl.state.$errors = [translateFilter('EDITOR_MAX_CHARS', +$ctrl.max)];
@@ -2211,11 +2183,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 $columnDateTimeFilter: '^?tbColumnDateTimeFilter',
                 $columnOptionsFilter: '^?tbColumnOptionsFilter'
             },
-            template: '<div class="text-right">' +
-                '<button class="btn btn-sm btn-success" ng-click="$ctrl.currentFilter.applyFilter()"' +
-                'ng-disabled="$ctrl.currentFilter.filter.Operator == \'None\'">{{::\'CAPTION_APPLY\' | translate}}</button>&nbsp;' +
-                '<button class="btn btn-sm btn-danger" ng-click="$ctrl.currentFilter.clearFilter()">{{::\'CAPTION_CLEAR\' | translate}}</button>' +
-                '</div>',
+            templateUrl: 'tbColumnFilterButtons.tpl.html',
             controller: ['$scope', function($scope) {
                     var $ctrl = this;
 

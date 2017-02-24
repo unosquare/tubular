@@ -66,9 +66,6 @@ You will need to reference the following JS libraries in order to use Tubular in
 * [Font Awesome](http://fortawesome.github.io/Font-Awesome/)
 * [FileSaver.js](https://github.com/eligrey/FileSaver.js)
 
-### Optional
-* [Angular-filter](https://github.com/a8m/angular-filter) - Only if you need to use groupBy filter in tbGrid.
-
 ### Deprecated
 
 * <s>[jQuery](http://jquery.com/) - 2.1.4</s> jQuery is only needed in Tubular < 1.0.0
