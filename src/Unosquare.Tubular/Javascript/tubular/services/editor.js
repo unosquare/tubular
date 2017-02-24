@@ -13,8 +13,6 @@
             'translateFilter', function (translateFilter) {
                 var me = this;
 
-                me.isValid = function (value) { return !(!value); };
-
                 /**
                 * Simple helper to generate a unique name for Tubular Forms
                 */
@@ -29,10 +27,7 @@
                  * with all the tubularEditors.
                  */
                 me.setupScope = function (scope, defaultFormat, ctrl, setDirty) {
-                    if (angular.isUndefined(ctrl)) {
-                        ctrl = scope;
-                    }
-
+                    ctrl = ctrl || scope;
                     ctrl.isEditing = angular.isUndefined(ctrl.isEditing) ? true : ctrl.isEditing;
                     ctrl.showLabel = ctrl.showLabel || false;
                     ctrl.label = ctrl.label || (ctrl.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
@@ -41,12 +36,22 @@
                     ctrl.format = ctrl.format || defaultFormat;
                     ctrl.$valid = true;
 
+                    // This is the state API for every property in the Model
+                    ctrl.state = {
+                        $valid: function () {
+                            ctrl.checkValid();
+                            return this.$errors.length === 0;
+                        },
+                        $dirty: ctrl.$dirty,
+                        $errors: []
+                    };
+
                     // Get the field reference using the Angular way
                     ctrl.getFormField = function () {
                         var parent = scope.$parent;
 
                         while (parent != null) {
-                            if (angular.isDefined(parent.tubularDirective) && parent.tubularDirective === 'tubular-form') {
+                            if (parent.tubularDirective === 'tubular-form') {
                                 var formScope = parent.getFormScope();
 
                                 return formScope == null ? null : formScope[scope.Name];
@@ -96,27 +101,13 @@
                             return;
                         }
 
-                        // This is the state API for every property in the Model
-                        ctrl.state = {
-                            $valid: function () {
-                                ctrl.checkValid();
-                                return this.$errors.length === 0;
-                            },
-                            $dirty: ctrl.$dirty,
-                            $errors: []
-                        };
-
                         ctrl.$valid = true;
 
                         // Try to match the model to the parent, if it exists
                         if (angular.isDefined(scope.$parent.Model)) {
                             if (angular.isDefined(scope.$parent.Model[ctrl.name])) {
                                 scope.$parent.Model[ctrl.name] = newValue;
-
-                                if (angular.isUndefined(scope.$parent.Model.$state)) {
-                                    scope.$parent.Model.$state = [];
-                                }
-
+                                scope.$parent.Model.$state = scope.$parent.Model.$state || [];
                                 scope.$parent.Model.$state[scope.Name] = ctrl.state;
                             } else if (angular.isDefined(scope.$parent.Model.$addField)) {
                                 scope.$parent.Model.$addField(ctrl.name, newValue, true);
@@ -130,9 +121,8 @@
 
                     // We try to find a Tubular Form in the parents
                     while (parent != null) {
-                        if (angular.isDefined(parent.tubularDirective) &&
-                        (parent.tubularDirective === 'tubular-form' ||
-                            parent.tubularDirective === 'tubular-rowset')) {
+                        if (parent.tubularDirective === 'tubular-form' ||
+                            parent.tubularDirective === 'tubular-rowset') {
 
                             if (ctrl.name === null) {
                                 return;
@@ -194,18 +184,16 @@
                                     ctrl.value = ctrl.defaultValue;
                                 }
 
-                                if (angular.isUndefined(parent.model.$state)) {
-                                    parent.model.$state = {};
-                                }
+                                parent.model.$state = parent.model.$state || {};
 
                                 // This is the state API for every property in the Model
                                 parent.model.$state[scope.Name] = {
                                     $valid: function () {
                                         ctrl.checkValid();
-                                        return this.$errors.length === 0;
+                                        return ctrl.state.$errors.length === 0;
                                     },
                                     $dirty: ctrl.$dirty,
-                                    $errors: []
+                                    $errors: ctrl.state.$errors
                                 };
 
                                 if (angular.equals(ctrl.state, parent.model.$state[scope.Name]) === false) {
@@ -214,7 +202,10 @@
 
                                 if (setDirty) {
                                     var formScope = ctrl.getFormField();
-                                    if (formScope) formScope.$setDirty();
+
+                                    if (formScope) {
+                                        formScope.$setDirty();
+                                    }
                                 }
                             };
 

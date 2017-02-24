@@ -1,0 +1,7 @@
+﻿<div ng-class="{ 'checkbox' : $ctrl.isEditing, 'has-error' : !$ctrl.$valid && $ctrl.$dirty() }" class="tubular-checkbox">
+    <input type="checkbox" ng-model="$ctrl.value" ng-disabled="$ctrl.readOnly || !$ctrl.isEditing"
+           class="tubular-checkbox" id="{{$ctrl.name}}" name="{{$ctrl.name}}" />
+    <label ng-show="$ctrl.isEditing" for="{{$ctrl.name}}" ng-bind="$ctrl.label"></label>
+    <span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">{{error}}</span>
+    <span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help" ng-bind="$ctrl.help"></span>
+</div>

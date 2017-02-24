@@ -46,19 +46,19 @@ describe('tbForm related components', function () {
     //  * tbNumericEditor * //
     /************************/
     var tbNumericEditor,
-        tbNumericEditor_input,
-        tbNumericEditor_label,
-        tbNumericEditor_helper,
-        tbNumericEditor_errorMessages,
-        tbNumericEditorValue_original = '300';
+        tbNumericEditorInput,
+        tbNumericEditorLabel,
+        tbNumericEditorHelper,
+        tbNumericEditorErrorMessages,
+        tbNumericEditorValueOriginal = '300';
 
     var tbNumericEditorRestore = function () {
         return browser.wait(restoreCancelClickFn().then(function () {
             return tbFormEditBtn1.click().then(function () {
-                return tbNumericEditor_input.getAttribute('value').then(function (val) {
-                    if (val !== tbNumericEditorValue_original) {
-                        return tbNumericEditor_input.clear().then(function () {
-                            return tbNumericEditor_input.sendKeys(tbNumericEditorValue_original).then(function () {
+                return tbNumericEditorInput.getAttribute('value').then(function (val) {
+                    if (val !== tbNumericEditorValueOriginal) {
+                        return tbNumericEditorInput.clear().then(function () {
+                            return tbNumericEditorInput.sendKeys(tbNumericEditorValueOriginal).then(function () {
                                 return tbFormSaveBtn.click().then(trueFunc);
                             });
                         });
@@ -75,7 +75,7 @@ describe('tbForm related components', function () {
     //  * tbTypeaheadEditor * //
     /**************************/
     var tbTypeaheadEditor,
-        tbTypeaheadEditor_input,
+        tbTypeaheadEditorInput,
         tbTypeaheadEditor_label,
         tbTypeaheadEditor_errorMessages,
         tbTypeaheadEditor_options,
@@ -86,10 +86,10 @@ describe('tbForm related components', function () {
     var tbTypeaheadEditorRestore = function () {
         return browser.wait(restoreCancelClickFn().then(function () {
             return tbFormEditBtn1.click().then(function () {
-                return tbTypeaheadEditor_input.getAttribute('value').then(function (val) {
+                return tbTypeaheadEditorInput.getAttribute('value').then(function (val) {
                     if (val !== tbTypeaheadEditorCity_original) {
-                        return tbTypeaheadEditor_input.clear().then(function () {
-                            return tbTypeaheadEditor_input.sendKeys(tbTypeaheadEditorCity_originalMatcher).then(function () {
+                        return tbTypeaheadEditorInput.clear().then(function () {
+                            return tbTypeaheadEditorInput.sendKeys(tbTypeaheadEditorCity_originalMatcher).then(function () {
                                 return tbTypeaheadEditor_options.first().click().then(function () {
                                     return tbFormSaveBtn.click().then(trueFunc);
                                 });
@@ -107,7 +107,7 @@ describe('tbForm related components', function () {
     /**************************/
     //    * tbDateEditor *    //
     /**************************/
-    var tbDateEditor_input,
+    var tbDateEditorInput,
         tbDateEditor_label,
         tbDateEditor_helper,
         tbDateEditor_errorMessages,
@@ -117,9 +117,9 @@ describe('tbForm related components', function () {
     var tbDateEditorRestore = function () {
         return browser.wait(restoreCancelClickFn().then(function () {
             return tbFormEditBtn1.click().then(function () {
-                return tbDateEditor_input.getAttribute('value').then(function (val) {
+                return tbDateEditorInput.getAttribute('value').then(function (val) {
                     if (val != tbDateEditorDate_original) {
-                        return tbDateEditor_input.clear().sendKeys(tbDateEditorDate_original).then(function () {
+                        return tbDateEditorInput.clear().sendKeys(tbDateEditorDate_original).then(function () {
                             return tbFormSaveBtn.click().then(trueFunc);
                         });
                     }
@@ -175,7 +175,7 @@ describe('tbForm related components', function () {
         tbDropDownEditor_select,
         tbDropDownEditor_label,
         tbDropDownEditor_helper,
-        tbDropDownEditorCity_original = 'string:Guadalajara, JAL, Mexico';
+        tbDropDownEditorCityOriginal = 'string:Guadalajara, JAL, Mexico';
 
     function selectDropDownOption(filterText) {
         return tbDropDownEditor.$$('option').filter(function (elem) {
@@ -189,7 +189,7 @@ describe('tbForm related components', function () {
         return browser.wait(restoreCancelClickFn().then(function () {
             return tbFormEditBtn2.click().then(function () {
                 return tbDropDownEditor_select.getAttribute('value').then(function (val) {
-                    if (val != tbDropDownEditorCity_original) {
+                    if (val != tbDropDownEditorCityOriginal) {
                         return selectDropDownOption('Guadalajara').click().then(function () {
                             return tbFormSaveBtn.click().then(trueFunc);
                         });
@@ -309,7 +309,7 @@ describe('tbForm related components', function () {
             tbDropDownEditor_label = tbDropDownEditor.$('label');
             tbDropDownEditor_helper = tbDropDownEditor.$$('span').filter(function (elem) {
                 return elem.getAttribute('ng-show').then(function (val) {
-                    return val != null ? val.indexOf('$ctrl.help') != -1 : false;
+                    return val != null ? val.indexOf('$ctrl.help') !== -1 : false;
                 });
             }).first();
 
@@ -324,7 +324,7 @@ describe('tbForm related components', function () {
         });
 
         it('should set initial input value to the value of "value" attribute when defined', function () {
-            expect(tbDropDownEditor_select.getAttribute('value')).toMatch(tbDropDownEditorCity_original);
+            expect(tbDropDownEditor_select.getAttribute('value')).toMatch(tbDropDownEditorCityOriginal);
         });
 
         it('should show the component name value in a label field when "showLabel" attribute is true', function () {
@@ -337,7 +337,7 @@ describe('tbForm related components', function () {
 
         it('should submit modifications to item/server when clicking form "Save"', function () {
             tbDropDownEditor_select.getAttribute('value').then(function (option) {
-                expect(option).toMatch(tbDropDownEditorCity_original);
+                expect(option).toMatch(tbDropDownEditorCityOriginal);
             })
                 .then(function () {
                     selectDropDownOption('Portland').click().then(function () {
@@ -352,13 +352,13 @@ describe('tbForm related components', function () {
 
         it('should NOT submit modifications to item/server when clicking form "Cancel"', function () {
             tbDropDownEditor_select.getAttribute('value').then(function (option) {
-                expect(option).toMatch(tbDropDownEditorCity_original);
+                expect(option).toMatch(tbDropDownEditorCityOriginal);
             })
                 .then(function () {
                     selectDropDownOption('Portland').click().then(function () {
                         tbFormCancelBtn.click().then(function () {
                             tbFormEditBtn2.click().then(function () {
-                                expect(tbDropDownEditor_select.getAttribute('value')).toMatch(tbDropDownEditorCity_original);
+                                expect(tbDropDownEditor_select.getAttribute('value')).toMatch(tbDropDownEditorCityOriginal);
                             });
                         });
                     });
@@ -379,7 +379,7 @@ describe('tbForm related components', function () {
             tbTextAreaErrorMessages = tbTextArea.all(by.repeater('error in $ctrl.state.$errors'));
             tbTextAreaHelper = tbTextArea.$$('span').filter(function (elem) {
                 return elem.getAttribute('ng-show').then(function (val) {
-                    return val != null ? val.indexOf('$ctrl.help') != -1 : false;
+                    return val != null ? val.indexOf('$ctrl.help') !== -1 : false;
                 });
             }).first();
 
@@ -449,7 +449,7 @@ describe('tbForm related components', function () {
                     .then(function(errorsArray) {
                         errorsArray.forEach(function(val) {
                             tbTextAreaInput.sendKeys(val);
-                            if (val == 'The field is required.') {
+                            if (val === 'The field is required.') {
                                 errorPresent = true;
                             }
                         });
@@ -498,28 +498,25 @@ describe('tbForm related components', function () {
             //* Assign test variables *\\
             // 4th element in list, should be: <OrderID = 4 , Customer Name = Unosquare LLC, Shipped Date = 1/30/16  ... >
             tbFormEditBtn1 = element.all(by.repeater('row in $component.rows')).get(1).$$('td').first().$$('button').first();
-            tbDateEditor_input = $('tb-date-editor').$('input');
+            tbDateEditorInput = $('tb-date-editor').$('input');
             tbDateEditor_label = $('div.modal-dialog form').$('tb-date-editor').$('label');
             tbDateEditor_errorMessages = $('div.modal-dialog form').$('tb-date-editor').all(by.repeater('error in $ctrl.state.$errors'));
             tbDateEditor_helper = $('div.modal-dialog form').$('tb-date-editor').$$('span').filter(function (elem) {
                 return elem.getAttribute('ng-show').then(function (val) {
-                    return val != null ? val.indexOf('$ctrl.help') != -1 : false;
+                    return val != null ? val.indexOf('$ctrl.help') !== -1 : false;
                 });
             }).first();
 
-            //tbSimpleEditor_input = $('div.modal-dialog form').$('tb-simple-editor').$('input');
-
-            ////* Restore default value and open form popup *\\
+            // Restore default value and open form popup
             tbDateEditorRestore().then(tbFormEditBtn1.click);
         });
 
         beforeEach(function () {
-            //* Restore default value and open form popup *\\    
             tbDateEditorRestore().then(tbFormEditBtn1.click);
         });
 
         it('should set initial date value to the value of "value" attribute when defined', function () {
-            tbDateEditor_input.getAttribute('value').then(function (value) {
+            tbDateEditorInput.getAttribute('value').then(function (value) {
                 expect(compareDates(value, tbDateEditorDate_original)).toBe(true);
             });
         });
@@ -527,9 +524,9 @@ describe('tbForm related components', function () {
         it('should be invalidated when the date is not in the range of "min" and "max" attributes', function () {
             var errorPresent = false;
             var messageCount;
-            tbDateEditor_input.clear().then(function () {
+            tbDateEditorInput.clear().then(function () {
                 // input  an invalid < min date
-                tbDateEditor_input.sendKeys('02/20/2015').then(function () {
+                tbDateEditorInput.sendKeys('02/20/2015').then(function () {
                     tbDateEditor_errorMessages.getText().then(function (errorsArray) {
                         errorsArray.forEach(function (val) {
                             if (val === 'The minimum date is 01/28/2016.') {
@@ -546,8 +543,8 @@ describe('tbForm related components', function () {
                         })
                             .then(function () {
                                 tbDateEditor_label.click();
-                                tbDateEditor_input.clear().then(function () {
-                                    tbDateEditor_input.sendKeys('05/08/2016').then(function () {
+                                tbDateEditorInput.clear().then(function () {
+                                    tbDateEditorInput.sendKeys('05/08/2016').then(function () {
                                         // Expect min date error to have been removed
                                         expect(tbDateEditor_errorMessages.count()).toBeLessThan(messageCount);
                                     });
@@ -555,8 +552,8 @@ describe('tbForm related components', function () {
                             });
                     })
                     .then(function () {
-                        tbDateEditor_input.clear().then(function () {
-                            tbDateEditor_input.sendKeys('06/11/2016').then(function () {
+                        tbDateEditorInput.clear().then(function () {
+                            tbDateEditorInput.sendKeys('06/11/2016').then(function () {
                                 // Expect max chars error to be displayed
                                 expect(tbDateEditor_errorMessages.count()).toBe(messageCount);
                             });
@@ -570,13 +567,13 @@ describe('tbForm related components', function () {
         });
 
         it('should show a help field equal to this attribute, is present', function () {
-            expect(tbDateEditor_helper.getText()).toMatch("Date help");
+            expect(tbDateEditor_helper.getText()).toMatch('Date help');
         });
         it('should submit modifications to item/server when clicking form "Save"', function () {
-            tbDateEditor_input.clear().sendKeys(tbDateEditorDate_modified).then(function () {
+            tbDateEditorInput.clear().sendKeys(tbDateEditorDate_modified).then(function () {
                 tbFormSaveBtn.click().then(function () {
                     tbFormEditBtn1.click().then(function () {
-                        tbDateEditor_input.getAttribute('value').then(function (value) {
+                        tbDateEditorInput.getAttribute('value').then(function (value) {
                             expect(compareDates(tbDateEditorDate_modified, value)).toBe(true);
                         });
                     });
@@ -585,10 +582,10 @@ describe('tbForm related components', function () {
         });
 
         it('should NOT submit modifications to item/server when clicking form "Cancel"', function () {
-            tbDateEditor_input.clear().sendKeys(tbDateEditorDate_modified).then(function () {
+            tbDateEditorInput.clear().sendKeys(tbDateEditorDate_modified).then(function () {
                 tbFormCancelBtn.click().then(function () {
                     tbFormEditBtn1.click().then(function () {
-                        tbDateEditor_input.getAttribute('value').then(function (value) {
+                        tbDateEditorInput.getAttribute('value').then(function (value) {
                             expect(compareDates(tbDateEditorDate_original, value)).toBe(true);
                         });
                     });
@@ -604,7 +601,7 @@ describe('tbForm related components', function () {
             tbFormEditBtn1 = element.all(by.repeater('row in $component.rows')).get(1).$$('td').first().$$('button').first();
             // tbSimpleEditor component and subcomponents
             tbTypeaheadEditor = $('div.modal-dialog').$('tb-typeahead-editor');
-            tbTypeaheadEditor_input = tbTypeaheadEditor.$('input');
+            tbTypeaheadEditorInput = tbTypeaheadEditor.$('input');
             tbTypeaheadEditor_label = tbTypeaheadEditor.$('label');
             tbTypeaheadEditor_errorMessages = tbTypeaheadEditor.all(by.repeater('error in state.$errors'));
             tbTypeaheadEditor_options = tbTypeaheadEditor.all(by.repeater('match in matches track by $index'));
@@ -619,30 +616,30 @@ describe('tbForm related components', function () {
         });
 
         it('should show an options list when there is an API-info/component entered-data', function () {
-            tbTypeaheadEditor_input.clear().then(function () {
+            tbTypeaheadEditorInput.clear().then(function () {
                 expect(tbTypeaheadEditor_options.count()).toBe(0);
             })
             .then(function () {
-                tbTypeaheadEditor_input.sendKeys('l').then(function () {
+                tbTypeaheadEditorInput.sendKeys('l').then(function () {
                     expect(tbTypeaheadEditor_options.count()).toBeGreaterThan(0);
                 });
             });
         });
 
         it('should select the option clicked', function () {
-            tbTypeaheadEditor_input.clear().then(function () {
-                tbTypeaheadEditor_input.sendKeys('la').then(function () {
+            tbTypeaheadEditorInput.clear().then(function () {
+                tbTypeaheadEditorInput.sendKeys('la').then(function () {
                     // Select second option, should be "Portrland..."
                     tbTypeaheadEditor_options.get(1).click().then(function () {
-                        expect(tbTypeaheadEditor_input.getAttribute('value')).toMatch('Portland, OR, USA');
+                        expect(tbTypeaheadEditorInput.getAttribute('value')).toMatch('Portland, OR, USA');
                     });
                 });
             });
         });
 
         it('should show a "delete" button when an option/match is selected, and delete the option if button is clicked', function () {
-            tbTypeaheadEditor_input.clear().then(function () {
-                tbTypeaheadEditor_input.sendKeys('guad').then(function () {
+            tbTypeaheadEditorInput.clear().then(function () {
+                tbTypeaheadEditorInput.sendKeys('guad').then(function () {
                     tbTypeaheadEditor_options.first().click().then(function () {
                         // Evaluate button appearence
                         expect(tbTypeaheadEditor.$('span.input-group-btn button.btn-default i.fa.fa-times').isPresent())
@@ -651,10 +648,10 @@ describe('tbForm related components', function () {
                     .then(function () {
                         // Click button
                         tbTypeaheadEditor.$('span.input-group-btn button.btn-default i.fa.fa-times').click().then(function () {
-                            tbTypeaheadEditor_input.getAttribute('value').then(function (value) {
+                            tbTypeaheadEditorInput.getAttribute('value').then(function (value) {
                                 var x = value ? 'true' : 'false';
-                                tbTypeaheadEditor_input.sendKeys(x).then(function () {
-                                    expect(tbTypeaheadEditor_input.getAttribute('value')).toMatch('false');
+                                tbTypeaheadEditorInput.sendKeys(x).then(function () {
+                                    expect(tbTypeaheadEditorInput.getAttribute('value')).toMatch('false');
                                 });
                             });
                         });
@@ -670,10 +667,10 @@ describe('tbForm related components', function () {
         it('should require a value when "require" attribute is true', function () {
             var errorPresent = false;
 
-            tbTypeaheadEditor_input.clear().then(function () {
+            tbTypeaheadEditorInput.clear().then(function () {
                 tbTypeaheadEditor_errorMessages.getText().then(function (errorsArray) {
                     errorsArray.forEach(function (val) {
-                        tbTypeaheadEditor_input.sendKeys(val);
+                        tbTypeaheadEditorInput.sendKeys(val);
                         if (val === 'The field is required.') {
                             errorPresent = true;
                         }
@@ -685,8 +682,8 @@ describe('tbForm related components', function () {
         });
 
         it('should submit modifications to item/server when clicking form "Save"', function () {
-            tbTypeaheadEditor_input.clear().then(function () {
-                tbTypeaheadEditor_input.sendKeys('por').then(function () {
+            tbTypeaheadEditorInput.clear().then(function () {
+                tbTypeaheadEditorInput.sendKeys('por').then(function () {
                     tbTypeaheadEditor_options.first().click().then(function () {
                         tbFormSaveBtn.click().then(function () {
                             // Evaluate city was updated to Portland...
@@ -699,8 +696,8 @@ describe('tbForm related components', function () {
         });
 
         it('should NOT submit modifications to item/server when clicking form "Cancel"', function () {
-            tbTypeaheadEditor_input.clear().then(function () {
-                tbTypeaheadEditor_input.sendKeys('por').then(function () {
+            tbTypeaheadEditorInput.clear().then(function () {
+                tbTypeaheadEditorInput.sendKeys('por').then(function () {
                     tbTypeaheadEditor_options.first().click().then(function () {
                         tbFormCancelBtn.click().then(function () {
                             // Evaluate city was NOT updated
@@ -724,23 +721,19 @@ describe('tbForm related components', function () {
             tbSimpleEditorInput = $('div.modal-dialog form').$('tb-simple-editor').$('input');
             tbSimpleEditorLabel = $('div.modal-dialog form').$('tb-simple-editor').$('label');
             tbSimpleEditorErrorMessages = $('div.modal-dialog form').$('tb-simple-editor').all(by.repeater('error in $ctrl.state.$errors'));
-            tbSimpleEditorHelper = $('div.modal-dialog form').$('tb-simple-editor').$$('span').filter(function (elem, index) {
+            tbSimpleEditorHelper = $('div.modal-dialog form').$('tb-simple-editor').$$('span').filter(function (elem) {
                 return elem.getAttribute('ng-show').then(function (val) {
-                    return val != null ? val.indexOf('$ctrl.help') != -1 : false;
+                    return val != null ? val.indexOf('$ctrl.help') !== -1 : false;
                 });
             }).first();
 
             //* Restore default value and open form popup *\\
-            tbSimpleEditorRestore().then(function () {
-                tbFormEditBtn1.click();
-            });
+            tbSimpleEditorRestore().then(tbFormEditBtn1.click);
         });
 
         afterEach(function () {
             //* Restore default value and open form popup *\\    
-            tbSimpleEditorRestore().then(function () {
-                tbFormEditBtn1.click();
-            });
+            tbSimpleEditorRestore().then(tbFormEditBtn1.click);
         });
 
         it('should set initial input value to the value of "value" attribute when defined', function () {
@@ -756,7 +749,7 @@ describe('tbForm related components', function () {
                 tbSimpleEditorInput.sendKeys('kk').then(function () {
                     tbSimpleEditorErrorMessages.getText().then(function (errorsArray) {
                         errorsArray.forEach(function (val) {
-                            if (val == 'The field needs to be minimum 3 chars.') {
+                            if (val === 'The field needs to be minimum 3 chars.') {
                                 errorPresent = true;
                             }
                         });
@@ -816,7 +809,7 @@ describe('tbForm related components', function () {
         });
 
         it('should show a help field equal to this attribute, is present', function () {
-            expect(tbSimpleEditorHelper.getText()).toMatch("This doesn't help at all");
+            expect(tbSimpleEditorHelper.getText()).toMatch('This does not help at all');
         });
 
 
@@ -827,7 +820,7 @@ describe('tbForm related components', function () {
                 tbSimpleEditorErrorMessages.getText().then(function (errorsArray) {
                     errorsArray.forEach(function (val) {
                         tbSimpleEditorInput.sendKeys(val);
-                        if (val == 'The field is required.') {
+                        if (val === 'The field is required.') {
                             errorPresent = true;
                         }
                     });
@@ -878,40 +871,36 @@ describe('tbForm related components', function () {
             tbFormEditBtn1 = element.all(by.repeater('row in $component.rows')).first().$$('td').first().$$('button').first();
             // tbNumericEditor component and subcomponents
             tbNumericEditor = $('div.modal-dialog form').$('tb-numeric-editor');
-            tbNumericEditor_input = tbNumericEditor.$('input');
-            tbNumericEditor_label = tbNumericEditor.$('label');
-            tbNumericEditor_helper = tbNumericEditor.$$('span').filter(function (elem) {
+            tbNumericEditorInput = tbNumericEditor.$('input');
+            tbNumericEditorLabel = tbNumericEditor.$('label');
+            tbNumericEditorHelper = tbNumericEditor.$$('span').filter(function (elem) {
                 return elem.getAttribute('ng-show').then(function (val) {
                     return val != null ? val.indexOf('$ctrl.help') != -1 : false;
                 });
             }).first();
-            tbNumericEditor_errorMessages = tbNumericEditor.all(by.repeater('error in $ctrl.state.$errors'));
+            tbNumericEditorErrorMessages = tbNumericEditor.all(by.repeater('error in $ctrl.state.$errors'));
 
             //* Restore default value and open form popup *\\
-            tbNumericEditorRestore().then(function () {
-                tbFormEditBtn1.click();
-            });
+            tbNumericEditorRestore().then(tbFormEditBtn1.click);
         });
 
         afterEach(function () {
             //* Restore default value and open form popup *\\
-            tbNumericEditorRestore().then(function () {
-                tbFormEditBtn1.click();
-            });
+            tbNumericEditorRestore().then(tbFormEditBtn1.click);
         });
 
         it('should set initial component value to the value of "value" attribute when defined', function () {
-            expect(tbNumericEditor_input.getAttribute('value')).toMatch('300');
+            expect(tbNumericEditorInput.getAttribute('value')).toMatch('300');
         });
 
         it('should be invalidated when the entered number is not in the range of "min" and "max" attributes', function () {
             var errorPresent = false;
             var messageCount;
 
-            tbNumericEditor_input.clear().then(function () {
+            tbNumericEditorInput.clear().then(function () {
                 // input '0'
-                tbNumericEditor_input.sendKeys('0').then(function () {
-                    tbNumericEditor_errorMessages.getText().then(function (errorsArray) {
+                tbNumericEditorInput.sendKeys('0').then(function () {
+                    tbNumericEditorErrorMessages.getText().then(function (errorsArray) {
                         errorsArray.forEach(function (val) {
                             if (val == 'The minimum number is 1.') {
                                 errorPresent = true;
@@ -922,43 +911,43 @@ describe('tbForm related components', function () {
                     });
                 })
                     .then(function () {
-                        tbNumericEditor_errorMessages.count().then(function (count) {
+                        tbNumericEditorErrorMessages.count().then(function (count) {
                             messageCount = count;
                         })
                             .then(function () {
-                                tbNumericEditor_input.clear().then(function () {
-                                    tbNumericEditor_input.sendKeys('100').then(function () {
+                                tbNumericEditorInput.clear().then(function () {
+                                    tbNumericEditorInput.sendKeys('100').then(function () {
                                         // Expect min value error to have been removed
-                                        expect(tbNumericEditor_errorMessages.count()).toBeLessThan(messageCount);
+                                        expect(tbNumericEditorErrorMessages.count()).toBeLessThan(messageCount);
                                     });
                                 });
                             });
                     })
                     .then(function () {
-                        tbNumericEditor_input.sendKeys('0').then(function () {
+                        tbNumericEditorInput.sendKeys('0').then(function () {
                             // Expect max value error to be displayed
-                            expect(tbNumericEditor_errorMessages.count()).toBe(messageCount);
+                            expect(tbNumericEditorErrorMessages.count()).toBe(messageCount);
                         });
                     });
             });
         });
 
         it('should show the component name value in a label field when "showLabel" attribute is true', function () {
-            expect(tbNumericEditor_label.getText()).toMatch('Num Editor Test');
+            expect(tbNumericEditorLabel.getText()).toMatch('Num Editor Test');
         });
 
         it('should show a help field equal to this attribute, is present', function () {
-            expect(tbNumericEditor_helper.getText()).toMatch('Useless help');
+            expect(tbNumericEditorHelper.getText()).toMatch('Useless help');
         });
 
         it('should require the field when the attribute "required" is true', function () {
             var errorPresent = false;
 
-            tbNumericEditor_input.clear().then(function () {
-                tbNumericEditor_errorMessages.getText().then(function (errorsArray) {
+            tbNumericEditorInput.clear().then(function () {
+                tbNumericEditorErrorMessages.getText().then(function (errorsArray) {
                     errorsArray.forEach(function (val) {
                         var x = val === 'The field is required.' ? '1' : '0';
-                        tbNumericEditor_input.sendKeys(x);
+                        tbNumericEditorInput.sendKeys(x);
                         if (val === 'The field is required.') {
                             errorPresent = true;
                         }
@@ -970,11 +959,11 @@ describe('tbForm related components', function () {
         });
 
         it('should submit modifications to item/server when clicking form "Save"', function () {
-            tbNumericEditor_input.clear().then(function () {
-                tbNumericEditor_input.sendKeys('100').then(function () {
+            tbNumericEditorInput.clear().then(function () {
+                tbNumericEditorInput.sendKeys('100').then(function () {
                     tbFormSaveBtn.click().then(function () {
                         tbFormEditBtn1.click().then(function () {
-                            tbNumericEditor_input.getAttribute('value').then(function (text) {
+                            tbNumericEditorInput.getAttribute('value').then(function (text) {
                                 expect(text).toMatch('100');
                             });
                         });
@@ -984,15 +973,15 @@ describe('tbForm related components', function () {
         });
 
         it('should NOT submit modifications to item/server when clicking form "Cancel"', function () {
-            tbNumericEditor_input.getAttribute('value').then(function (val) {
-                expect(val).toMatch(tbNumericEditorValue_original);
+            tbNumericEditorInput.getAttribute('value').then(function (val) {
+                expect(val).toMatch(tbNumericEditorValueOriginal);
             })
                 .then(function () {
-                    tbNumericEditor_input.sendKeys('220').then(function () {
+                    tbNumericEditorInput.sendKeys('220').then(function () {
                         tbFormCancelBtn.click().then(function () {
                             tbFormEditBtn1.click().then(function () {
-                                tbNumericEditor_input.getAttribute('value').then(function (val) {
-                                    expect(val).toMatch(tbNumericEditorValue_original);
+                                tbNumericEditorInput.getAttribute('value').then(function (val) {
+                                    expect(val).toMatch(tbNumericEditorValueOriginal);
                                 });
                             });
                         });

@@ -11,7 +11,6 @@ describe('tbColumn', function () {
 
     var firstDataRow,
         lastDataRow,
-        iSortIcon,
         aOrderIdSorting,
         aCustomerNameSorting,
         aCreationDateSorting;
@@ -45,10 +44,6 @@ describe('tbColumn', function () {
 
             updateFirstAndLastRow();
 
-            // Font-awesome sort icon (indicates sort-enabled and sort order)
-            iSortIcon = element(by.tagName('thead'))
-                .$$('tr th').first()
-                .$('i');
             // Sort Order ID column link
             aOrderIdSorting = element(by.tagName('thead'))
                 .$$('tr th').first()
