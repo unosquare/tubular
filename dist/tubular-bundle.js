@@ -216,7 +216,7 @@
                             $scope.column = { Label: '' };
                             $scope.$component = $scope.$parent.$parent.$component;
                             $scope.tubularDirective = 'tubular-column';
-                            $scope.label = angular.isDefined($scope.label) ? $scope.label : ($scope.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
+                            $scope.label = $scope.label || ($scope.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
 
                             $scope.sortColumn = function (multiple) {
                                 $scope.$component.sortColumn($scope.column.Name, multiple);
@@ -507,6 +507,16 @@
 (function(angular){
 angular.module('tubular.directives').run(['$templateCache', function ($templateCache) {
   "use strict";
+  $templateCache.put("tbCheckboxField.tpl.html",
+    "<div ng-class=\"{ 'checkbox' : $ctrl.isEditing, 'has-error' : !$ctrl.$valid && $ctrl.$dirty() }\" class=tubular-checkbox><input type=checkbox ng-model=$ctrl.value ng-disabled=\"$ctrl.readOnly || !$ctrl.isEditing\" class=tubular-checkbox id={{$ctrl.name}} name={{$ctrl.name}}><label ng-show=$ctrl.isEditing for={{$ctrl.name}} ng-bind=$ctrl.label></label><span class=\"help-block error-block\" ng-show=$ctrl.isEditing ng-repeat=\"error in $ctrl.state.$errors\">{{error}}</span> <span class=help-block ng-show=\"$ctrl.isEditing && $ctrl.help\" ng-bind=$ctrl.help></span></div>");
+  $templateCache.put("tbDropdownEditor.tpl.html",
+    "<div ng-class=\"{ 'form-group' : $ctrl.showLabel && $ctrl.isEditing, 'has-error' : !$ctrl.$valid && $ctrl.$dirty() }\"><span ng-hide=$ctrl.isEditing ng-bind=$ctrl.readOnlyValue></span><label ng-show=$ctrl.showLabel ng-bind=$ctrl.label></label><select ng-options=\"{{ $ctrl.selectOptions }}\" ng-show=$ctrl.isEditing ng-model=$ctrl.value class=form-control ng-required=$ctrl.required ng-disabled=$ctrl.readOnly name={{$ctrl.name}} ng-change=\"onChange({value: value})\"></select><span class=\"help-block error-block\" ng-show=$ctrl.isEditing ng-repeat=\"error in $ctrl.state.$errors\">{{error}}</span> <span class=help-block ng-show=\"$ctrl.isEditing && $ctrl.help\" ng-bind=$ctrl.help></span></div>");
+  $templateCache.put("tbHiddenField.tpl.html",
+    "<input type=hidden ng-model=$ctrl.value class=form-control name={{$ctrl.name}}>");
+  $templateCache.put("tbNumericEditor.tpl.html",
+    "<div ng-class=\"{ 'form-group' : $ctrl.showLabel && $ctrl.isEditing, 'has-error' : !$ctrl.$valid && $ctrl.$dirty() }\"><span ng-hide=$ctrl.isEditing>{{$ctrl.value | numberorcurrency: format }}</span><label ng-show=$ctrl.showLabel ng-bind=$ctrl.label></label><div class=input-group ng-show=$ctrl.isEditing><div class=input-group-addon ng-hide=\"$ctrl.format == 'I'\"><i ng-class=\"{ 'fa': true, 'fa-calculator': $ctrl.format != 'C', 'fa-usd': $ctrl.format == 'C'}\"></i></div><input type=number placeholder={{$ctrl.placeholder}} ng-model=$ctrl.value class=form-control ng-required=$ctrl.required ng-hide=$ctrl.readOnly step=\"{{$ctrl.step || \\'any\\'}}\" name={{$ctrl.name}}><p class=\"form-control form-control-static text-right\" ng-show=$ctrl.readOnly>{{$ctrl.value | numberorcurrency: format}}</p></div><span class=\"help-block error-block\" ng-show=$ctrl.isEditing ng-repeat=\"error in $ctrl.state.$errors\">{{error}}</span> <span class=help-block ng-show=\"$ctrl.isEditing && $ctrl.help\" ng-bind=$ctrl.help></span></div>");
+  $templateCache.put("tbSimpleEditor.tpl.html",
+    "<div ng-class=\"{ 'form-group' : $ctrl.showLabel && $ctrl.isEditing, 'has-error' : !$ctrl.$valid && $ctrl.$dirty() }\"><span ng-hide=$ctrl.isEditing ng-bind=$ctrl.value></span><label ng-show=$ctrl.showLabel ng-bind=$ctrl.label></label><input type={{$ctrl.editorType}} placeholder={{$ctrl.placeholder}} ng-show=$ctrl.isEditing ng-model=$ctrl.value class=form-control ng-required=$ctrl.required ng-readonly=$ctrl.readOnly name={{$ctrl.name}}> <span class=\"help-block error-block\" ng-show=$ctrl.isEditing ng-repeat=\"error in $ctrl.state.$errors\">{{error}}</span> <span class=help-block ng-show=\"$ctrl.isEditing && $ctrl.help\" ng-bind=$ctrl.help></span></div>");
   $templateCache.put("tbRemoveButton.tpl.html",
     "<button class=\"btn btn-danger btn-xs btn-popover\" uib-popover-template=$ctrl.templateName popover-placement=right popover-title=\"{{ $ctrl.legend || ('UI_REMOVEROW' | translate) }}\" popover-is-open=$ctrl.isOpen popover-trigger=\"'click outsideClick'\" ng-hide=$ctrl.model.$isEditing><span ng-show=$ctrl.showIcon class={{::$ctrl.icon}}></span> <span ng-show=$ctrl.showCaption>{{:: $ctrl.caption || ('CAPTION_REMOVE' | translate) }}</span></button>");
   $templateCache.put("tbSaveButton.tpl.html",
@@ -578,175 +588,198 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             }
         ]);
 })(angular);
-(function (angular) {
+(function(angular) {
     'use strict';
 
     angular.module('tubular.directives')
-        .controller('tbFormController', ['$scope', '$routeParams', 'tubularModel', 'tubularHttp', '$timeout', '$element', 'tubularEditorService',
-                        function ($scope, $routeParams, TubularModel, tubularHttp, $timeout, $element, tubular) {
-                            // we need this to find the parent of a field
-                            $scope.tubularDirective = 'tubular-form';
-                            $scope.hasFieldsDefinitions = false;
-                            $scope.fields = [];
-                            $scope.dataService = tubularHttp.getDataService($scope.dataServiceName);
+        .controller('tbFormController',
+        [
+            '$scope', '$routeParams', 'tubularModel', 'tubularHttp', '$timeout', '$element', 'tubularEditorService',
+            function($scope, $routeParams, TubularModel, tubularHttp, $timeout, $element, tubular) {
+                // we need this to find the parent of a field
+                $scope.tubularDirective = 'tubular-form';
+                $scope.hasFieldsDefinitions = false;
+                $scope.fields = [];
+                $scope.dataService = tubularHttp.getDataService($scope.dataServiceName);
 
-                            var $ctrl = this;
+                var $ctrl = this;
 
-                            $ctrl.serverSaveMethod = $scope.serverSaveMethod || 'POST'; // TODO: we are not using it
-                            $ctrl.name = $scope.name || tubular.getUniqueTbFormName();
+                $ctrl.serverSaveMethod = $scope.serverSaveMethod || 'POST'; // TODO: we are not using it
+                $ctrl.name = $scope.name || tubular.getUniqueTbFormName();
 
-                            // This method is meant to provide a reference to the Angular Form
-                            // so we can get information about: $pristine, $dirty, $submitted, etc.
-                            $scope.getFormScope = function () {
-                                return $scope[$element.attr('name')];
-                            };
+                // This method is meant to provide a reference to the Angular Form
+                // so we can get information about: $pristine, $dirty, $submitted, etc.
+                $scope.getFormScope = function() {
+                    return $scope[$element.attr('name')];
+                };
 
-                            // Setup require authentication
-                            $ctrl.requireAuthentication = angular.isUndefined($scope.requireAuthentication) ? true : $scope.requireAuthentication;
-                            tubularHttp.setRequireAuthentication($ctrl.requireAuthentication);
+                // Setup require authentication
+                $ctrl.requireAuthentication = angular.isUndefined($scope.requireAuthentication)
+                    ? true
+                    : $scope.requireAuthentication;
+                tubularHttp.setRequireAuthentication($ctrl.requireAuthentication);
 
-                            $scope.$watch('hasFieldsDefinitions', function (newVal) {
-                                if (newVal !== true) {
-                                    return;
-                                }
-
-                                $ctrl.retrieveData();
-                            });
-
-                            $scope.cloneModel = function (model) {
-                                var data = {};
-
-                                angular.forEach(model, function (value, key) {
-                                    if (key[0] === '$') {
-                                        return;
-                                    }
-
-                                    data[key] = value;
-                                });
-
-                                $scope.model = new TubularModel($scope, $scope, data, $scope.dataService);
-                                $ctrl.bindFields();
-                            };
-
-                            $ctrl.bindFields = function () {
-                                angular.forEach($scope.fields, function (field) {
-                                    field.bindScope();
-                                });
-                            };
-
-                           $ctrl.retrieveData = function () {
-                                // Try to load a key from markup or route
-                                $scope.modelKey = $scope.modelKey || $routeParams.param;
-
-                                if (angular.isDefined($scope.serverUrl)) {
-                                    if (angular.isDefined($scope.modelKey) &&
-                                        $scope.modelKey != null &&
-                                        $scope.modelKey !== '') {
-                                        $scope.dataService.getByKey($scope.serverUrl, $scope.modelKey).promise.then(
-                                            function (data) {
-                                                $scope.model = new TubularModel($scope, $scope, data, $scope.dataService);
-                                                $ctrl.bindFields();
-                                            }, function (error) {
-                                                $scope.$emit('tbForm_OnConnectionError', error);
-                                            });
-                                    } else {
-                                        $scope.dataService.get(tubularHttp.addTimeZoneToUrl($scope.serverUrl)).promise.then(
-                                            function (data) {
-                                                if (angular.isDefined($scope.model) &&
-                                                    angular.isDefined($scope.model.$component)) {
-                                                    $scope.model = new TubularModel($scope, $scope.model.$component, data, $scope.model.$component.dataService);
-                                                } else {
-                                                    $scope.model = new TubularModel($scope, $scope, data, $scope.dataService);
-                                                }
-
-                                                $ctrl.bindFields();
-                                                $scope.model.$isNew = true;
-                                            }, function (error) {
-                                                $scope.$emit('tbForm_OnConnectionError', error);
-                                            });
-                                    }
-
-                                    return;
-                                }
-
-                                if (angular.isUndefined($scope.model)) {
-                                    $scope.model = new TubularModel($scope, $scope, {}, $scope.dataService);
-                                }
-
-                                $ctrl.bindFields();
-                            };
-
-                            $scope.save = function (forceUpdate) {
-                                if (!$scope.model.$valid()) {
-                                    return;
-                                }
-
-                                $scope.currentRequest = $scope.model.save(forceUpdate);
-
-                                if ($scope.currentRequest === false) {
-                                    $scope.$emit('tbForm_OnSavingNoChanges', $scope);
-                                    return;
-                                }
-
-                                $scope.currentRequest.then(
-                                        function (data) {
-                                            if (angular.isDefined($scope.model.$component) &&
-                                                angular.isDefined($scope.model.$component.autoRefresh) &&
-                                                $scope.model.$component.autoRefresh) {
-                                                $scope.model.$component.retrieveData();
-                                            }
-
-                                            $scope.$emit('tbForm_OnSuccessfulSave', data, $scope);
-                                            $scope.clear();
-
-                                            var formScope = $scope.getFormScope();
-                                            if (formScope) formScope.$setPristine();
-                                        }, function (error) {
-                                            $scope.$emit('tbForm_OnConnectionError', error, $scope);
-                                        })
-                                    .then(function () {
-                                        $scope.model.$isLoading = false;
-                                        $scope.currentRequest = null;
-                                    });
-                            };
-
-                            // alias to save
-                            $scope.update = $scope.save;
-
-                            $scope.create = function () {
-                                $scope.model.$isNew = true;
-                                $scope.save();
-                            };
-
-                            $scope.cancel = function () {
-                                $scope.$emit('tbForm_OnCancel', $scope.model);
-                                $scope.clear();
-                            };
-
-                            $scope.clear = function () {
-                                angular.forEach($scope.fields, function (field) {
-                                    if (field.resetEditor) {
-                                        field.resetEditor();
-                                    } else {
-                                        field.value = field.defaultValue;
-                                    }
-                                });
-                            };
-
-                            $scope.finishDefinition = function () {
-                                var timer = $timeout(function () {
-                                    $scope.hasFieldsDefinitions = true;
-
-                                    if ($element.find('input').length) {
-                                        $element.find('input')[0].focus();
-                                    }
-                                }, 0);
-
-                                $scope.$emit('tbForm_OnGreetParentController', { controller: $ctrl, scope: $scope });
-
-                                $scope.$on('$destroy', function () { $timeout.cancel(timer); });
-                            };
+                $scope.$watch('hasFieldsDefinitions',
+                    function(newVal) {
+                        if (newVal !== true) {
+                            return;
                         }
+
+                        $ctrl.retrieveData();
+                    });
+
+                $scope.cloneModel = function(model) {
+                    var data = {};
+
+                    angular.forEach(model,
+                        function(value, key) {
+                            if (key[0] === '$') {
+                                return;
+                            }
+
+                            data[key] = value;
+                        });
+
+                    $scope.model = new TubularModel($scope, $scope, data, $scope.dataService);
+                    $ctrl.bindFields();
+                };
+
+                $ctrl.bindFields = function() {
+                    angular.forEach($scope.fields,
+                        function(field) {
+                            field.bindScope();
+                        });
+                };
+
+                $ctrl.retrieveData = function() {
+                    // Try to load a key from markup or route
+                    $scope.modelKey = $scope.modelKey || $routeParams.param;
+
+                    if (angular.isDefined($scope.serverUrl)) {
+                        if (angular.isDefined($scope.modelKey) &&
+                            $scope.modelKey != null &&
+                            $scope.modelKey !== '') {
+                            $scope.dataService.getByKey($scope.serverUrl, $scope.modelKey)
+                                .promise.then(
+                                    function(data) {
+                                        $scope.model = new TubularModel($scope, $scope, data, $scope.dataService);
+                                        $ctrl.bindFields();
+                                    },
+                                    function(error) {
+                                        $scope.$emit('tbForm_OnConnectionError', error);
+                                    });
+                        } else {
+                            $scope.dataService.get(tubularHttp.addTimeZoneToUrl($scope.serverUrl))
+                                .promise.then(
+                                    function(data) {
+                                        if (angular.isDefined($scope.model) &&
+                                            angular.isDefined($scope.model.$component)) {
+                                            $scope
+                                                .model = new
+                                                TubularModel($scope,
+                                                    $scope.model.$component,
+                                                    data,
+                                                    $scope.model.$component.dataService);
+                                        } else {
+                                            $scope.model = new TubularModel($scope, $scope, data, $scope.dataService);
+                                        }
+
+                                        $ctrl.bindFields();
+                                        $scope.model.$isNew = true;
+                                    },
+                                    function(error) {
+                                        $scope.$emit('tbForm_OnConnectionError', error);
+                                    });
+                        }
+
+                        return;
+                    }
+
+                    if (angular.isUndefined($scope.model)) {
+                        $scope.model = new TubularModel($scope, $scope, {}, $scope.dataService);
+                    }
+
+                    $ctrl.bindFields();
+                };
+
+                $scope.save = function(forceUpdate, keepData) {
+                    if (!$scope.model.$valid()) {
+                        return;
+                    }
+
+                    $scope.currentRequest = $scope.model.save(forceUpdate);
+
+                    if ($scope.currentRequest === false) {
+                        $scope.$emit('tbForm_OnSavingNoChanges', $scope);
+                        return;
+                    }
+
+                    $scope.currentRequest.then(
+                            function(data) {
+                                if (angular.isDefined($scope.model.$component) &&
+                                    $scope.model.$component.autoRefresh) {
+                                    $scope.model.$component.retrieveData();
+                                }
+
+                                $scope.$emit('tbForm_OnSuccessfulSave', data, $scope);
+
+                                if (!keepData) {
+                                    $scope.clear();
+                                }
+
+                                var formScope = $scope.getFormScope();
+                                if (formScope) {
+                                    formScope.$setPristine();
+                                }
+                            },
+                            function(error) {
+                                $scope.$emit('tbForm_OnConnectionError', error, $scope);
+                            })
+                        .then(function() {
+                            $scope.model.$isLoading = false;
+                            $scope.currentRequest = null;
+                        });
+                };
+
+                // alias to save
+                $scope.update = $scope.save;
+
+                $scope.create = function() {
+                    $scope.model.$isNew = true;
+                    $scope.save();
+                };
+
+                $scope.cancel = function() {
+                    $scope.$emit('tbForm_OnCancel', $scope.model);
+                    $scope.clear();
+                };
+
+                $scope.clear = function() {
+                    angular.forEach($scope.fields,
+                        function(field) {
+                            if (field.resetEditor) {
+                                field.resetEditor();
+                            } else {
+                                field.value = field.defaultValue;
+                            }
+                        });
+                };
+
+                $scope.finishDefinition = function() {
+                    var timer = $timeout(function() {
+                            $scope.hasFieldsDefinitions = true;
+
+                            if ($element.find('input').length) {
+                                $element.find('input')[0].focus();
+                            }
+                        },
+                        0);
+
+                    $scope.$emit('tbForm_OnGreetParentController', { controller: $ctrl, scope: $scope });
+
+                    $scope.$on('$destroy', function() { $timeout.cancel(timer); });
+                };
+            }
         ]);
 })(angular);
 (function (angular) {
@@ -876,107 +909,115 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             controller: 'tbGridController'
         });
 })(angular);
-(function (angular) {
+(function(angular) {
     'use strict';
 
     angular.module('tubular.directives')
-        .controller('tbGridController', [
-                '$scope', 'localStorageService', 'tubularPopupService', 'tubularModel', 'tubularHttp', '$routeParams',
-                function ($scope, localStorageService, tubularPopupService, TubularModel, tubularHttp, $routeParams) {
-                    var $ctrl = this;
+        .controller('tbGridController',
+        [
+            '$scope', 'localStorageService', 'tubularPopupService', 'tubularModel', 'tubularHttp', '$routeParams',
+            function($scope, localStorageService, tubularPopupService, TubularModel, tubularHttp, $routeParams) {
+                var $ctrl = this;
 
-                    $ctrl.$onInit = function () {
-                        $ctrl.tubularDirective = 'tubular-grid';
+                $ctrl.$onInit = function() {
+                    $ctrl.tubularDirective = 'tubular-grid';
 
-                        $ctrl.name = $ctrl.name || 'tbgrid';
-                        $ctrl.columns = [];
-                        $ctrl.rows = [];
+                    $ctrl.name = $ctrl.name || 'tbgrid';
+                    $ctrl.columns = [];
+                    $ctrl.rows = [];
 
-                        $ctrl.savePage = angular.isUndefined($ctrl.savePage) ? true : $ctrl.savePage;
-                        $ctrl.currentPage = $ctrl.savePage ? (localStorageService.get($ctrl.name + '_page') || 1) : 1;
+                    $ctrl.savePage = angular.isUndefined($ctrl.savePage) ? true : $ctrl.savePage;
+                    $ctrl.currentPage = $ctrl.savePage ? (localStorageService.get($ctrl.name + '_page') || 1) : 1;
 
-                        $ctrl.savePageSize = angular.isUndefined($ctrl.savePageSize) ? true : $ctrl.savePageSize;
-                        $ctrl.pageSize = angular.isUndefined($ctrl.pageSize) ? 20 : $ctrl.pageSize;
-                        $ctrl.saveSearch = angular.isUndefined($ctrl.saveSearch) ? true : $ctrl.saveSearch;
-                        $ctrl.totalPages = 0;
-                        $ctrl.totalRecordCount = 0;
-                        $ctrl.filteredRecordCount = 0;
-                        $ctrl.requestedPage = $ctrl.currentPage;
-                        $ctrl.hasColumnsDefinitions = false;
-                        $ctrl.requestCounter = 0;
-                        $ctrl.requestMethod = $ctrl.requestMethod || 'POST';
-                        $ctrl.serverSaveMethod = $ctrl.serverSaveMethod || 'POST';
-                        $ctrl.requestTimeout = 20000;
-                        $ctrl.currentRequest = null;
-                        $ctrl.autoSearch = $routeParams.param || ($ctrl.saveSearch ? (localStorageService.get($ctrl.name + '_search') || '') : '');
-                        $ctrl.search = {
-                            Text: $ctrl.autoSearch,
-                            Operator: $ctrl.autoSearch === '' ? 'None' : 'Auto'
-                        };
-
-                        $ctrl.isEmpty = false;
-                        $ctrl.dataService = tubularHttp.getDataService($ctrl.dataServiceName);
-                        $ctrl.tempRow = new TubularModel($scope, $ctrl, {}, $ctrl.dataService);
-                        $ctrl.requireAuthentication = $ctrl.requireAuthentication || true;
-                        tubularHttp.setRequireAuthentication($ctrl.requireAuthentication);
-                        $ctrl.editorMode = $ctrl.editorMode || 'none';
-                        $ctrl.canSaveState = false;
-                        $ctrl.groupBy = '';
-                        $ctrl.showLoading = angular.isUndefined($ctrl.showLoading) ? true : $ctrl.showLoading;
-                        $ctrl.autoRefresh = angular.isUndefined($ctrl.autoRefresh) ? true : $ctrl.autoRefresh;
-                        $ctrl.serverDeleteUrl = $ctrl.serverDeleteUrl || $ctrl.serverSaveUrl;
-
-                        // Emit a welcome message
-                        $scope.$emit('tbGrid_OnGreetParentController', $ctrl);
+                    $ctrl.savePageSize = angular.isUndefined($ctrl.savePageSize) ? true : $ctrl.savePageSize;
+                    $ctrl.pageSize = $ctrl.pageSize || 20;
+                    $ctrl.saveSearch = angular.isUndefined($ctrl.saveSearch) ? true : $ctrl.saveSearch;
+                    $ctrl.totalPages = 0;
+                    $ctrl.totalRecordCount = 0;
+                    $ctrl.filteredRecordCount = 0;
+                    $ctrl.requestedPage = $ctrl.currentPage;
+                    $ctrl.hasColumnsDefinitions = false;
+                    $ctrl.requestCounter = 0;
+                    $ctrl.requestMethod = $ctrl.requestMethod || 'POST';
+                    $ctrl.serverSaveMethod = $ctrl.serverSaveMethod || 'POST';
+                    $ctrl.requestTimeout = 20000;
+                    $ctrl.currentRequest = null;
+                    $ctrl.autoSearch = $routeParams.param ||
+                        ($ctrl.saveSearch ? (localStorageService.get($ctrl.name + '_search') || '') : '');
+                    $ctrl.search = {
+                        Text: $ctrl.autoSearch,
+                        Operator: $ctrl.autoSearch === '' ? 'None' : 'Auto'
                     };
 
-                    $scope.$watch('$ctrl.columns', function () {
+                    $ctrl.isEmpty = false;
+                    $ctrl.dataService = tubularHttp.getDataService($ctrl.dataServiceName);
+                    $ctrl.tempRow = new TubularModel($scope, $ctrl, {}, $ctrl.dataService);
+                    $ctrl.requireAuthentication = $ctrl.requireAuthentication || true;
+                    tubularHttp.setRequireAuthentication($ctrl.requireAuthentication);
+                    $ctrl.editorMode = $ctrl.editorMode || 'none';
+                    $ctrl.canSaveState = false;
+                    $ctrl.groupBy = '';
+                    $ctrl.showLoading = angular.isUndefined($ctrl.showLoading) ? true : $ctrl.showLoading;
+                    $ctrl.autoRefresh = angular.isUndefined($ctrl.autoRefresh) ? true : $ctrl.autoRefresh;
+                    $ctrl.serverDeleteUrl = $ctrl.serverDeleteUrl || $ctrl.serverSaveUrl;
+
+                    // Emit a welcome message
+                    $scope.$emit('tbGrid_OnGreetParentController', $ctrl);
+                };
+
+                $scope.$watch('$ctrl.columns', function() {
                         if ($ctrl.hasColumnsDefinitions === false || $ctrl.canSaveState === false) {
                             return;
                         }
 
                         localStorageService.set($ctrl.name + '_columns', $ctrl.columns);
-                    }, true);
+                    },
+                    true);
 
-                    $scope.$watch('$ctrl.serverUrl', function (newVal, prevVal) {
+                $scope.$watch('$ctrl.serverUrl', function(newVal, prevVal) {
                         if ($ctrl.hasColumnsDefinitions === false || $ctrl.currentRequest || newVal === prevVal) {
                             return;
                         }
 
                         $ctrl.retrieveData();
-                    }, true);
+                    },
+                    true);
 
-                    $scope.$watch('$ctrl.hasColumnsDefinitions', function (newVal) {
+                $scope.$watch('$ctrl.hasColumnsDefinitions',
+                    function(newVal) {
                         if (newVal !== true) return;
 
                         var isGrouping = false;
                         // Check columns
-                        angular.forEach($ctrl.columns, function (column) {
-                            if (column.IsGrouping) {
-                                if (isGrouping) {
-                                    throw 'Only one column is allowed to grouping';
+                        angular.forEach($ctrl.columns,
+                            function(column) {
+                                if (column.IsGrouping) {
+                                    if (isGrouping) {
+                                        throw 'Only one column is allowed to grouping';
+                                    }
+
+                                    isGrouping = true;
+                                    column.Visible = false;
+                                    column.Sortable = true;
+                                    column.SortOrder = 1;
+                                    $ctrl.groupBy = column.Name;
                                 }
+                            });
 
-                                isGrouping = true;
-                                column.Visible = false;
-                                column.Sortable = true;
-                                column.SortOrder = 1;
-                                $ctrl.groupBy = column.Name;
-                            }
-                        });
+                        angular.forEach($ctrl.columns,
+                            function(column) {
+                                if ($ctrl.groupBy === column.Name) return;
 
-                        angular.forEach($ctrl.columns, function (column) {
-                            if ($ctrl.groupBy === column.Name) return;
-
-                            if (column.Sortable && column.SortOrder > 0) {
-                                column.SortOrder++;
-                            }
-                        });
+                                if (column.Sortable && column.SortOrder > 0) {
+                                    column.SortOrder++;
+                                }
+                            });
 
                         $ctrl.retrieveData();
                     });
 
-                    $scope.$watch('$ctrl.pageSize', function () {
+                $scope.$watch('$ctrl.pageSize',
+                    function() {
                         if ($ctrl.hasColumnsDefinitions && $ctrl.requestCounter > 0) {
                             if ($ctrl.savePageSize) {
                                 localStorageService.set($ctrl.name + '_pageSize', $ctrl.pageSize);
@@ -985,85 +1026,91 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         }
                     });
 
-                    $scope.$watch('$ctrl.requestedPage', function () {
+                $scope.$watch('$ctrl.requestedPage',
+                    function() {
                         if ($ctrl.hasColumnsDefinitions && $ctrl.requestCounter > 0) {
                             $ctrl.retrieveData();
                         }
                     });
 
-                    $ctrl.saveSearch = function () {
-                        if ($ctrl.saveSearch) {
-                            if ($ctrl.search.Text === '') {
-                                localStorageService.remove($ctrl.name + '_search');
-                            } else {
-                                localStorageService.set($ctrl.name + '_search', $ctrl.search.Text);
-                            }
+                $ctrl.saveSearch = function() {
+                    if ($ctrl.saveSearch) {
+                        if ($ctrl.search.Text === '') {
+                            localStorageService.remove($ctrl.name + '_search');
+                        } else {
+                            localStorageService.set($ctrl.name + '_search', $ctrl.search.Text);
                         }
+                    }
+                };
+
+                $ctrl.addColumn = function(item) {
+                    if (item.Name == null) return;
+
+                    if ($ctrl.hasColumnsDefinitions !== false) {
+                        throw 'Cannot define more columns. Column definitions have been sealed';
+                    }
+
+                    $ctrl.columns.push(item);
+                };
+
+                $ctrl.newRow = function(template, popup, size, data) {
+                    $ctrl.tempRow = new TubularModel($scope, $ctrl, data || {}, $ctrl.dataService);
+                    $ctrl.tempRow.$isNew = true;
+                    $ctrl.tempRow.$isEditing = true;
+                    $ctrl.tempRow.$component = $ctrl;
+
+                    if (angular.isDefined(template) && angular.isDefined(popup) && popup) {
+                        tubularPopupService.openDialog(template, $ctrl.tempRow, $ctrl, size);
+                    }
+                };
+
+                $ctrl.deleteRow = function(row) {
+                    // TODO: Should I move this behavior to model?
+                    var urlparts = $ctrl.serverDeleteUrl.split('?');
+                    var url = urlparts[0] + '/' + row.$key;
+
+                    if (urlparts.length > 1) {
+                        url += '?' + urlparts[1];
+                    }
+
+                    var request = {
+                        serverUrl: url,
+                        requestMethod: 'DELETE',
+                        timeout: $ctrl.requestTimeout,
+                        requireAuthentication: $ctrl.requireAuthentication
                     };
 
-                    $ctrl.addColumn = function (item) {
-                        if (item.Name == null) return;
+                    $ctrl.currentRequest = $ctrl.dataService.retrieveDataAsync(request);
 
-                        if ($ctrl.hasColumnsDefinitions !== false) {
-                            throw 'Cannot define more columns. Column definitions have been sealed';
-                        }
-
-                        $ctrl.columns.push(item);
-                    };
-
-                    $ctrl.newRow = function (template, popup, size, data) {
-                        $ctrl.tempRow = new TubularModel($scope, $ctrl, data || {}, $ctrl.dataService);
-                        $ctrl.tempRow.$isNew = true;
-                        $ctrl.tempRow.$isEditing = true;
-                        $ctrl.tempRow.$component = $ctrl;
-
-                        if (angular.isDefined(template) && angular.isDefined(popup) && popup) {
-                            tubularPopupService.openDialog(template, $ctrl.tempRow, $ctrl, size);
-                        }
-                    };
-
-                    $ctrl.deleteRow = function (row) {
-                        // TODO: Should I move this behavior to model?
-                        var urlparts = $ctrl.serverDeleteUrl.split('?');
-                        var url = urlparts[0] + '/' + row.$key;
-
-                        if (urlparts.length > 1) {
-                            url += '?' + urlparts[1];
-                        }
-
-                        var request = {
-                            serverUrl: url,
-                            requestMethod: 'DELETE',
-                            timeout: $ctrl.requestTimeout,
-                            requireAuthentication: $ctrl.requireAuthentication
-                        };
-
-                        $ctrl.currentRequest = $ctrl.dataService.retrieveDataAsync(request);
-
-                        $ctrl.currentRequest.promise.then(
-                            function (data) {
+                    $ctrl.currentRequest.promise.then(
+                            function(data) {
                                 row.$hasChanges = false;
                                 $scope.$emit('tbGrid_OnRemove', data);
-                            }, function (error) {
+                            },
+                            function(error) {
                                 $scope.$emit('tbGrid_OnConnectionError', error);
-                            }).then(function () {
-                                $ctrl.currentRequest = null;
-                                $ctrl.retrieveData();
-                            });
-                    };
+                            })
+                        .then(function() {
+                            $ctrl.currentRequest = null;
+                            $ctrl.retrieveData();
+                        });
+                };
 
-                    $ctrl.verifyColumns = function () {
-                        var columns = localStorageService.get($ctrl.name + '_columns');
-                        if (columns == null || columns === '') {
-                            // Nothing in settings, saving initial state
-                            localStorageService.set($ctrl.name + '_columns', $ctrl.columns);
-                            return;
-                        }
+                $ctrl.verifyColumns = function() {
+                    var columns = localStorageService.get($ctrl.name + '_columns');
+                    if (columns == null || columns === '') {
+                        // Nothing in settings, saving initial state
+                        localStorageService.set($ctrl.name + '_columns', $ctrl.columns);
+                        return;
+                    }
 
-                        angular.forEach(columns, function (column) {
-                            var filtered = $ctrl.columns.filter(function (el) { return el.Name === column.Name; });
+                    angular.forEach(columns,
+                        function(column) {
+                            var filtered = $ctrl.columns.filter(function(el) { return el.Name === column.Name; });
 
-                            if (filtered.length === 0) return;
+                            if (filtered.length === 0) {
+                                return;
+                            }
 
                             var current = filtered[0];
                             // Updates visibility by now
@@ -1080,248 +1127,255 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                                 return;
                             }
 
-                            if (column.Filter != null && column.Filter.Text != null && column.Filter.Operator !== 'None') {
+                            if (column.Filter != null &&
+                                column.Filter.Text != null &&
+                                column.Filter.Operator !== 'None') {
                                 current.Filter = column.Filter;
                             }
                         });
+                };
+
+                $ctrl.getRequestObject = function(skip) {
+                    return {
+                        serverUrl: $ctrl.serverUrl,
+                        requestMethod: $ctrl.requestMethod || 'POST',
+                        timeout: $ctrl.requestTimeout,
+                        requireAuthentication: $ctrl.requireAuthentication,
+                        data: {
+                            Count: $ctrl.requestCounter,
+                            Columns: $ctrl.columns,
+                            Skip: skip,
+                            Take: parseInt($ctrl.pageSize),
+                            Search: $ctrl.search,
+                            TimezoneOffset: new Date().getTimezoneOffset()
+                        }
                     };
+                }
 
-                    $ctrl.retrieveData = function () {
-                        // If the ServerUrl is empty skip data load
-                        if (!$ctrl.serverUrl) return;
+                $ctrl.retrieveData = function() {
+                    // If the ServerUrl is empty skip data load
+                    if (!$ctrl.serverUrl || $ctrl.currentRequest !== null) {
+                        return;
+                    }
 
-                        $ctrl.canSaveState = true;
-                        $ctrl.verifyColumns();
+                    $ctrl.canSaveState = true;
+                    $ctrl.verifyColumns();
 
-                        if ($ctrl.savePageSize) {
-                            $ctrl.pageSize = (localStorageService.get($ctrl.name + '_pageSize') || $ctrl.pageSize);
-                        }
+                    if ($ctrl.savePageSize) {
+                        $ctrl.pageSize = (localStorageService.get($ctrl.name + '_pageSize') || $ctrl.pageSize);
+                    }
 
-                        if ($ctrl.pageSize < 10) $ctrl.pageSize = 20; // default
+                    if ($ctrl.pageSize < 10) $ctrl.pageSize = 20; // default
 
-                        var newPages = Math.ceil($ctrl.totalRecordCount / $ctrl.pageSize);
-                        if ($ctrl.requestedPage > newPages) $ctrl.requestedPage = newPages;
+                    var newPages = Math.ceil($ctrl.totalRecordCount / $ctrl.pageSize);
+                    if ($ctrl.requestedPage > newPages) $ctrl.requestedPage = newPages;
 
-                        var skip = ($ctrl.requestedPage - 1) * $ctrl.pageSize;
+                    var skip = ($ctrl.requestedPage - 1) * $ctrl.pageSize;
 
-                        if (skip < 0) skip = 0;
+                    if (skip < 0) skip = 0;
 
-                        var request = {
-                            serverUrl: $ctrl.serverUrl,
-                            requestMethod: $ctrl.requestMethod || 'POST',
-                            timeout: $ctrl.requestTimeout,
-                            requireAuthentication: $ctrl.requireAuthentication,
-                            data: {
-                                Count: $ctrl.requestCounter,
-                                Columns: $ctrl.columns,
-                                Skip: skip,
-                                Take: parseInt($ctrl.pageSize),
-                                Search: $ctrl.search,
-                                TimezoneOffset: new Date().getTimezoneOffset()
-                            }
-                        };
+                    var request = $ctrl.getRequestObject(skip);
 
-                        if ($ctrl.currentRequest !== null) {
-                            return;
-                        }
+                    if (angular.isUndefined($ctrl.onBeforeGetData) === false) {
+                        $ctrl.onBeforeGetData();
+                    }
 
-                        if (angular.isUndefined($ctrl.onBeforeGetData) === false) {
-                            $ctrl.onBeforeGetData();
-                        }
+                    $scope.$emit('tbGrid_OnBeforeRequest', request, $ctrl);
 
-                        $scope.$emit('tbGrid_OnBeforeRequest', request, $ctrl);
+                    $ctrl.currentRequest = $ctrl.dataService.retrieveDataAsync(request);
 
-                        $ctrl.currentRequest = $ctrl.dataService.retrieveDataAsync(request);
-
-                        $ctrl.currentRequest.promise.then(function (data) {
-                            $ctrl.requestCounter += 1;
-
-                            if (angular.isUndefined(data) || data == null) {
-                                $scope.$emit('tbGrid_OnConnectionError', {
-                                    statusText: 'Data is empty',
-                                    status: 0
-                                });
-
-                                return;
-                            }
-
-                            $ctrl.dataSource = data;
-
-                            if (!data.Payload) {
-                                var errorMsg = 'tubularGrid(' + $ctrl.$id + '): response is invalid.';
-                                $ctrl.currentRequest.cancel(errorMsg);
-                                $scope.$emit('tbGrid_OnConnectionError', errorMsg);
-                                return;
-                            }
-
-                            $ctrl.rows = data.Payload.map(function (el) {
-                                var model = new TubularModel($scope, $ctrl, el, $ctrl.dataService);
-                                model.$component = $ctrl;
-
-                                model.editPopup = function (template, size) {
-                                    tubularPopupService.openDialog(template, new TubularModel($scope, $ctrl, el, $ctrl.dataService), $ctrl, size);
-                                };
-
-                                return model;
-                            });
-
-                            $scope.$emit('tbGrid_OnDataLoaded', $ctrl);
-
-                            $ctrl.aggregationFunctions = data.AggregationPayload;
-                            $ctrl.currentPage = data.CurrentPage;
-                            $ctrl.totalPages = data.TotalPages;
-                            $ctrl.totalRecordCount = data.TotalRecordCount;
-                            $ctrl.filteredRecordCount = data.FilteredRecordCount;
-                            $ctrl.isEmpty = $ctrl.filteredRecordCount === 0;
-
-                            if ($ctrl.savePage) {
-                                localStorageService.set($ctrl.name + '_page', $ctrl.currentPage);
-                            }
-                        }, function (error) {
-                            $ctrl.requestedPage = $ctrl.currentPage;
-                            $scope.$emit('tbGrid_OnConnectionError', error);
-                        }).then(function () {
+                    $ctrl.currentRequest.promise.then($ctrl.processPayload, function(error) {
+                                $ctrl.requestedPage = $ctrl.currentPage;
+                                $scope.$emit('tbGrid_OnConnectionError', error);
+                            }).then(function() {
                             $ctrl.currentRequest = null;
                         });
-                    };
+                };
 
-                    $ctrl.sortColumn = function (columnName, multiple) {
-                        var filterColumn = $ctrl.columns.filter(function (el) {
-                            return el.Name === columnName;
+                $ctrl.processPayload = function(data) {
+                    $ctrl.requestCounter += 1;
+
+                    if (angular.isUndefined(data) || data == null) {
+                        $scope.$emit('tbGrid_OnConnectionError',
+                        {
+                            statusText: 'Data is empty',
+                            status: 0
                         });
 
-                        if (filterColumn.length === 0) return;
+                        return;
+                    }
 
-                        var column = filterColumn[0];
+                    $ctrl.dataSource = data;
 
-                        if (column.Sortable === false) return;
+                    if (!data.Payload) {
+                        var errorMsg = 'tubularGrid(' + $ctrl.$id + '): response is invalid.';
+                        $ctrl.currentRequest.cancel(errorMsg);
+                        $scope.$emit('tbGrid_OnConnectionError', errorMsg);
+                        return;
+                    }
 
-                        // need to know if it's currently sorted before we reset stuff
-                        var currentSortDirection = column.SortDirection;
-                        var toBeSortDirection = currentSortDirection === 'None' ? 'Ascending' : currentSortDirection === 'Ascending' ? 'Descending' : 'None';
+                    $ctrl.rows = data.Payload.map(function(el) {
+                        var model = new TubularModel($scope, $ctrl, el, $ctrl.dataService);
+                        model.$component = $ctrl;
 
-                        // the latest sorting takes less priority than previous sorts
-                        if (toBeSortDirection === 'None') {
-                            column.SortOrder = -1;
-                            column.SortDirection = 'None';
-                        } else {
-                            column.SortOrder = Number.MAX_VALUE;
-                            column.SortDirection = toBeSortDirection;
-                        }
+                        model.editPopup = function(template, size) {
+                            tubularPopupService
+                                .openDialog(template,
+                                    new TubularModel($scope, $ctrl, el, $ctrl.dataService),
+                                    $ctrl,
+                                    size);
+                        };
 
-                        // if it's not a multiple sorting, remove the sorting from all other columns
-                        if (multiple === false) {
-                            angular.forEach($ctrl.columns.filter(function (col) { return col.Name !== columnName; }), function (col) {
+                        return model;
+                    });
+
+                    $scope.$emit('tbGrid_OnDataLoaded', $ctrl);
+
+                    $ctrl.aggregationFunctions = data.AggregationPayload;
+                    $ctrl.currentPage = data.CurrentPage;
+                    $ctrl.totalPages = data.TotalPages;
+                    $ctrl.totalRecordCount = data.TotalRecordCount;
+                    $ctrl.filteredRecordCount = data.FilteredRecordCount;
+                    $ctrl.isEmpty = $ctrl.filteredRecordCount === 0;
+
+                    if ($ctrl.savePage) {
+                        localStorageService.set($ctrl.name + '_page', $ctrl.currentPage);
+                    }
+                };
+
+                $ctrl.sortColumn = function(columnName, multiple) {
+                    var filterColumn = $ctrl.columns.filter(function(el) {
+                        return el.Name === columnName;
+                    });
+
+                    if (filterColumn.length === 0) return;
+
+                    var column = filterColumn[0];
+
+                    if (column.Sortable === false) return;
+
+                    // need to know if it's currently sorted before we reset stuff
+                    var currentSortDirection = column.SortDirection;
+                    var toBeSortDirection = currentSortDirection === 'None'
+                        ? 'Ascending'
+                        : currentSortDirection === 'Ascending' ? 'Descending' : 'None';
+
+                    // the latest sorting takes less priority than previous sorts
+                    if (toBeSortDirection === 'None') {
+                        column.SortOrder = -1;
+                        column.SortDirection = 'None';
+                    } else {
+                        column.SortOrder = Number.MAX_VALUE;
+                        column.SortDirection = toBeSortDirection;
+                    }
+
+                    // if it's not a multiple sorting, remove the sorting from all other columns
+                    if (multiple === false) {
+                        angular.forEach($ctrl.columns.filter(function(col) { return col.Name !== columnName; }),
+                            function(col) {
                                 col.SortOrder = -1;
                                 col.SortDirection = 'None';
                             });
-                        }
+                    }
 
-                        // take the columns that actually need to be sorted in order to re-index them
-                        var currentlySortedColumns = $ctrl.columns.filter(function (col) {
-                            return col.SortOrder > 0;
-                        });
+                    // take the columns that actually need to be sorted in order to re-index them
+                    var currentlySortedColumns = $ctrl.columns.filter(function(col) {
+                        return col.SortOrder > 0;
+                    });
 
-                        // re-index the sort order
-                        currentlySortedColumns.sort(function (a, b) {
-                            return a.SortOrder === b.SortOrder ? 0 : a.SortOrder > b.SortOrder;
-                        });
+                    // re-index the sort order
+                    currentlySortedColumns.sort(function(a, b) {
+                        return a.SortOrder === b.SortOrder ? 0 : a.SortOrder > b.SortOrder;
+                    });
 
-                        currentlySortedColumns.forEach(function (col, index) {
-                            col.SortOrder = index + 1;
-                        });
+                    currentlySortedColumns.forEach(function(col, index) {
+                        col.SortOrder = index + 1;
+                    });
 
-                        $scope.$broadcast('tbGrid_OnColumnSorted');
-                        $ctrl.retrieveData();
-                    };
+                    $scope.$broadcast('tbGrid_OnColumnSorted');
+                    $ctrl.retrieveData();
+                };
 
-                    $ctrl.selectedRows = function () {
-                        return localStorageService.get($ctrl.name + '_rows') || [];
-                    };
+                $ctrl.selectedRows = function() {
+                    return localStorageService.get($ctrl.name + '_rows') || [];
+                };
 
-                    $ctrl.clearSelection = function () {
-                        angular.forEach($ctrl.rows, function (value) {
+                $ctrl.clearSelection = function() {
+                    angular.forEach($ctrl.rows,
+                        function(value) {
                             value.$selected = false;
                         });
 
-                        localStorageService.set($ctrl.name + '_rows', []);
+                    localStorageService.set($ctrl.name + '_rows', []);
+                };
+
+                $ctrl.isEmptySelection = function() {
+                    return $ctrl.selectedRows().length === 0;
+                };
+
+                $ctrl.selectFromSession = function(row) {
+                    row.$selected = $ctrl.selectedRows().filter(function(el) { return el.$key === row.$key; }).length > 0;
+                };
+
+                $ctrl.changeSelection = function(row) {
+                    if (angular.isUndefined(row)) {
+                        return;
+                    }
+
+                    row.$selected = !row.$selected;
+
+                    var rows = $ctrl.selectedRows();
+
+                    if (row.$selected) {
+                        rows.push({ $key: row.$key });
+                    } else {
+                        rows = rows.filter(function(el) {
+                            return el.$key !== row.$key;
+                        });
+                    }
+
+                    localStorageService.set($ctrl.name + '_rows', rows);
+                };
+
+                $ctrl.getFullDataSource = function(callback) {
+                    var request = $ctrl.getRequestObject(0);
+                    request.data.Take = -1;
+                    request.data.Search = {
+                        Text: '',
+                        Operator: 'None'
                     };
-
-                    $ctrl.isEmptySelection = function () {
-                        return $ctrl.selectedRows().length === 0;
-                    };
-
-                    $ctrl.selectFromSession = function (row) {
-                        row.$selected = $ctrl.selectedRows().filter(function (el) {
-                            return el.$key === row.$key;
-                        }).length > 0;
-                    };
-
-                    $ctrl.changeSelection = function (row) {
-                        if (angular.isUndefined(row)) return;
-
-                        row.$selected = !row.$selected;
-
-                        var rows = $ctrl.selectedRows();
-
-                        if (row.$selected) {
-                            rows.push({ $key: row.$key });
-                        } else {
-                            rows = rows.filter(function (el) {
-                                return el.$key !== row.$key;
-                            });
-                        }
-
-                        localStorageService.set($ctrl.name + '_rows', rows);
-                    };
-
-                    $ctrl.getFullDataSource = function (callback) {
-                        $ctrl.dataService.retrieveDataAsync({
-                            serverUrl: $ctrl.serverUrl,
-                            requestMethod: $ctrl.requestMethod || 'POST',
-                            timeout: $ctrl.requestTimeout,
-                            requireAuthentication: $ctrl.requireAuthentication,
-                            data: {
-                                Count: $ctrl.requestCounter,
-                                Columns: $ctrl.columns,
-                                Skip: 0,
-                                Take: -1,
-                                Search: {
-                                    Text: '',
-                                    Operator: 'None'
-                                }
-                            }
-                        }).promise.then(
-                            function (data) {
+                    $ctrl.dataService.retrieveDataAsync(request)
+                        .promise.then(
+                            function(data) {
                                 callback(data.Payload);
-                            }, function (error) {
+                            },
+                            function(error) {
                                 $scope.$emit('tbGrid_OnConnectionError', error);
-                            }).then(function () {
-                                $ctrl.currentRequest = null;
-                            });
-                    };
+                            })
+                        .then(function() {
+                            $ctrl.currentRequest = null;
+                        });
+                };
 
-                    $ctrl.visibleColumns = function () {
-                        return $ctrl.columns.filter(function (el) { return el.Visible; }).length;
-                    };
-                }
+                $ctrl.visibleColumns = function() {
+                    return $ctrl.columns.filter(function(el) { return el.Visible; }).length;
+                };
+            }
         ]);
-
-
 })(angular);
 (function (angular, moment) {
     'use strict';
 
     // Fix moment serialization
-    moment.fn.toJSON = function() { return this.format(); }
-    
+    moment.fn.toJSON = function () { return this.isValid() ? this.format() : null; }
+
     function canUseHtml5Date() {
         var el = angular.element('<input type="date" value=":)" />');
         return el.attr('type') === 'date' && el.val() === '';
     }
 
     function changeValueFn($ctrl) {
-        return function(val) {
+        return function (val) {
             if (angular.isUndefined(val)) {
                 return;
             }
@@ -1344,138 +1398,113 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
         };
     }
 
-    var tbSimpleEditorCtrl = ['tubularEditorService', '$scope', 'translateFilter', 'filterFilter', function (tubular, $scope, translateFilter, filterFilter) {
-            var $ctrl = this;
+    function validateDate($ctrl, translateFilter, dateFilter) {
+        if (angular.isDefined($ctrl.min)) {
+            if (!angular.isDate($ctrl.min)) {
+                $ctrl.min = new Date($ctrl.min);
+            }
 
-            $ctrl.validate = function() {
-                if (tubular.isValid($ctrl.regex) && tubular.isValid($ctrl.value)) {
-                    var patt = new RegExp($ctrl.regex);
+            $ctrl.$valid = $ctrl.dateValue >= $ctrl.min;
 
-                    if (patt.test($ctrl.value) === false) {
-                        $ctrl.$valid = false;
-                        $ctrl.state.$errors = [$ctrl.regexErrorMessage || translateFilter('EDITOR_REGEX_DOESNT_MATCH')];
-                        return;
-                    }
-                }
-
-                if (tubular.isValid($ctrl.match)) {
-                    if ($ctrl.value !== $ctrl.$component.model[$ctrl.match]) {
-                        var label = filterFilter($ctrl.$component.fields, { name: $ctrl.match }, true)[0].label;
-                        $ctrl.$valid = false;
-                        $ctrl.state.$errors = [translateFilter('EDITOR_MATCH', label)];
-                        return;
-                    }
-                }
-
-                if (angular.isDefined($ctrl.min) && angular.isDefined($ctrl.value) && $ctrl.value != null) {
-                    if ($ctrl.value.length < parseInt($ctrl.min)) {
-                        $ctrl.$valid = false;
-                        $ctrl.state.$errors = [translateFilter('EDITOR_MIN_CHARS', $ctrl.min)];
-                        return;
-                    }
-                }
-
-                if (angular.isDefined($ctrl.max) && angular.isDefined($ctrl.value) && $ctrl.value != null) {
-                    if ($ctrl.value.length > parseInt($ctrl.max)) {
-                        $ctrl.$valid = false;
-                        $ctrl.state.$errors = [translateFilter('EDITOR_MAX_CHARS', $ctrl.max)];
-                        return;
-                    }
-                }
-            };
-
-            $ctrl.$onInit = function() {
-                tubular.setupScope($scope, null, $ctrl, false);
-            };
+            if (!$ctrl.$valid) {
+                $ctrl.state.$errors = [translateFilter('EDITOR_MIN_DATE', dateFilter($ctrl.min, $ctrl.format))];
+                return;
+            }
         }
+
+        if (angular.isDefined($ctrl.max)) {
+            if (!angular.isDate($ctrl.max)) {
+                $ctrl.max = new Date($ctrl.max);
+            }
+
+            $ctrl.$valid = $ctrl.dateValue <= $ctrl.max;
+
+            if (!$ctrl.$valid) {
+                $ctrl.state.$errors = [translateFilter('EDITOR_MAX_DATE', dateFilter($ctrl.max, $ctrl.format))];
+            }
+        }
+    }
+
+    var tbSimpleEditorCtrl = ['tubularEditorService', '$scope', 'translateFilter', 'filterFilter', function (tubular, $scope, translateFilter, filterFilter) {
+        var $ctrl = this;
+
+        $ctrl.validate = function () {
+            if ($ctrl.regex && $ctrl.value) {
+                var patt = new RegExp($ctrl.regex);
+
+                if (patt.test($ctrl.value) === false) {
+                    $ctrl.$valid = false;
+                    $ctrl.state.$errors = [$ctrl.regexErrorMessage || translateFilter('EDITOR_REGEX_DOESNT_MATCH')];
+                    return;
+                }
+            }
+
+            if ($ctrl.match) {
+                if ($ctrl.value !== $ctrl.$component.model[$ctrl.match]) {
+                    var label = filterFilter($ctrl.$component.fields, { name: $ctrl.match }, true)[0].label;
+                    $ctrl.$valid = false;
+                    $ctrl.state.$errors = [translateFilter('EDITOR_MATCH', label)];
+                    return;
+                }
+            }
+
+            if ($ctrl.min && $ctrl.value) {
+                if ($ctrl.value.length < parseInt($ctrl.min)) {
+                    $ctrl.$valid = false;
+                    $ctrl.state.$errors = [translateFilter('EDITOR_MIN_CHARS', $ctrl.min)];
+                    return;
+                }
+            }
+
+            if ($ctrl.max && $ctrl.value) {
+                if ($ctrl.value.length > parseInt($ctrl.max)) {
+                    $ctrl.$valid = false;
+                    $ctrl.state.$errors = [translateFilter('EDITOR_MAX_CHARS', $ctrl.max)];
+                    return;
+                }
+            }
+        };
+
+        $ctrl.$onInit = function () {
+            tubular.setupScope($scope, null, $ctrl, false);
+        };
+    }
     ];
 
     var tbNumericEditorCtrl = ['tubularEditorService', '$scope', 'translateFilter', function (tubular, $scope, translateFilter) {
-            var $ctrl = this;
+        var $ctrl = this;
 
-            $ctrl.validate = function () {
-                if (angular.isDefined($ctrl.min) && $ctrl.min != null && angular.isDefined($ctrl.value) && $ctrl.value != null) {
-                    $ctrl.$valid = $ctrl.value >= $ctrl.min;
+        $ctrl.validate = function () {
+            if (angular.isDefined($ctrl.min) && $ctrl.min != null && angular.isDefined($ctrl.value) && $ctrl.value != null) {
+                $ctrl.$valid = $ctrl.value >= $ctrl.min;
 
-                    if (!$ctrl.$valid) {
-                        $ctrl.state.$errors = [translateFilter('EDITOR_MIN_NUMBER', $ctrl.min)];
-                        return;
-                    }
+                if (!$ctrl.$valid) {
+                    $ctrl.state.$errors = [translateFilter('EDITOR_MIN_NUMBER', $ctrl.min)];
+                    return;
                 }
+            }
 
-                if (angular.isDefined($ctrl.max) && $ctrl.max != null && angular.isDefined($ctrl.value) && $ctrl.value != null) {
-                    $ctrl.$valid = $ctrl.value <= $ctrl.max;
+            if (angular.isDefined($ctrl.max) && $ctrl.max != null && angular.isDefined($ctrl.value) && $ctrl.value != null) {
+                $ctrl.$valid = $ctrl.value <= $ctrl.max;
 
-                    if (!$ctrl.$valid) {
-                        $ctrl.state.$errors = [translateFilter('EDITOR_MAX_NUMBER', $ctrl.max)];
-                    }
+                if (!$ctrl.$valid) {
+                    $ctrl.state.$errors = [translateFilter('EDITOR_MAX_NUMBER', $ctrl.max)];
                 }
-            };
+            }
+        };
 
-            $ctrl.$onInit = function() {
-                $ctrl.DataType = 'numeric';
-                tubular.setupScope($scope, 0, $ctrl, false);
-            };
-        }
+        $ctrl.$onInit = function () {
+            $ctrl.DataType = 'numeric';
+            tubular.setupScope($scope, 0, $ctrl, false);
+        };
+    }
     ];
 
     var tbDateTimeEditorCtrl = ['$scope', '$element', 'tubularEditorService', 'translateFilter', 'dateFilter',
         function ($scope, $element, tubular, translateFilter, dateFilter) {
             var $ctrl = this;
-            
+
             // This could be $onChange??
-            $scope.$watch(function() { return $ctrl.value; }, changeValueFn($ctrl));
-
-            $scope.$watch(function () {
-                return $ctrl.dateValue;
-            }, function (val) {
-                if (angular.isDefined(val)) {
-                    $ctrl.value = moment(val);
-                }
-            });
-
-            $ctrl.validate = function() {
-                if (tubular.isValid($ctrl.min)) {
-                    if (!angular.isDate($ctrl.min)) {
-                        $ctrl.min = new Date($ctrl.min);
-                    }
-
-                    $ctrl.$valid = $ctrl.value >= $ctrl.min;
-
-                    if (!$ctrl.$valid) {
-                        $ctrl.state.$errors = [translateFilter('EDITOR_MIN_DATE', dateFilter($ctrl.min, $ctrl.format))];
-                        return;
-                    }
-                }
-
-                if (tubular.isValid($ctrl.max)) {
-                    if (!angular.isDate($ctrl.max)) {
-                        $ctrl.max = new Date($ctrl.max);
-                    }
-
-                    $ctrl.$valid = $ctrl.value <= $ctrl.max;
-
-                    if (!$ctrl.$valid) {
-                        $ctrl.state.$errors = [translateFilter('EDITOR_MAX_DATE', dateFilter($ctrl.max, $ctrl.format))];
-                    }
-                }
-            };
-
-            $ctrl.$onInit = function() {
-                $ctrl.DataType = 'date';
-                tubular.setupScope($scope, $ctrl.format, $ctrl);
-
-                if (angular.isUndefined($ctrl.format)) {
-                    $ctrl.format = 'MMM D, Y';
-                }
-            };
-        }
-    ];
-
-    var tbDateEditorCtrl = ['$scope', '$element', 'tubularEditorService', 'translateFilter', 'dateFilter',
-        function ($scope, $element, tubular, translateFilter, dateFilter) {
-            var $ctrl = this;
-            
             $scope.$watch(function () { return $ctrl.value; }, changeValueFn($ctrl));
 
             $scope.$watch(function () {
@@ -1486,144 +1515,150 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 }
             });
 
-            $ctrl.validate = function() {
-                if (angular.isDefined($ctrl.min)) {
-                    if (!angular.isDate($ctrl.min)) {
-                        $ctrl.min = new Date($ctrl.min);
-                    }
-
-                    $ctrl.$valid = $ctrl.dateValue >= $ctrl.min;
-
-                    if (!$ctrl.$valid) {
-                        $ctrl.state.$errors = [translateFilter('EDITOR_MIN_DATE', dateFilter($ctrl.min, $ctrl.format))];
-                        return;
-                    }
-                }
-
-                if (angular.isDefined($ctrl.max)) {
-                    if (!angular.isDate($ctrl.max)) {
-                        $ctrl.max = new Date($ctrl.max);
-                    }
-
-                    $ctrl.$valid = $ctrl.dateValue <= $ctrl.max;
-
-                    if (!$ctrl.$valid) {
-                        $ctrl.state.$errors = [translateFilter('EDITOR_MAX_DATE', dateFilter($ctrl.max, $ctrl.format))];
-                    }
-                }
+            $ctrl.validate = function () {
+                validateDate($ctrl, translateFilter, dateFilter);
             };
 
-            $ctrl.$onInit = function() {
+            $ctrl.$onInit = function () {
+                $ctrl.DataType = 'datetime';
+                tubular.setupScope($scope, $ctrl.format, $ctrl);
+                $ctrl.format = $ctrl.format || 'MMM D, Y';
+            };
+        }
+    ];
+
+    var tbDateEditorCtrl = ['$scope', '$element', 'tubularEditorService', 'translateFilter', 'dateFilter',
+        function ($scope, $element, tubular, translateFilter, dateFilter) {
+            var $ctrl = this;
+
+            $scope.$watch(function () { return $ctrl.value; }, changeValueFn($ctrl));
+
+            $scope.$watch(function () {
+                return $ctrl.dateValue;
+            }, function (val) {
+                if (angular.isDefined(val)) {
+                    $ctrl.value = moment(val);
+                }
+            });
+
+            $ctrl.validate = function () {
+                validateDate($ctrl, translateFilter, dateFilter);
+            };
+
+            $ctrl.$onInit = function () {
                 $ctrl.DataType = 'date';
                 tubular.setupScope($scope, $ctrl.format, $ctrl);
-
-                if (angular.isUndefined($ctrl.format)) {
-                    $ctrl.format = 'MMM D, Y';
-                }
+                $ctrl.format = $ctrl.format || 'MMM D, Y'; // TODO: Add hours?
             };
         }
     ];
 
 
-    var tbDropdownEditorCtrl = ['tubularEditorService', '$scope', function(tubular, $scope) {
-            var $ctrl = this;
+    var tbDropdownEditorCtrl = ['tubularEditorService', '$scope', function (tubular, $scope) {
+        var $ctrl = this;
 
-            $ctrl.$onInit = function() {
-                tubular.setupScope($scope, null, $ctrl);
-                $ctrl.dataIsLoaded = false;
-                $ctrl.selectOptions = 'd for d in $ctrl.options';
+        $ctrl.$onInit = function () {
+            tubular.setupScope($scope, null, $ctrl);
+            $ctrl.dataIsLoaded = false;
+            $ctrl.selectOptions = 'd for d in $ctrl.options';
 
-                if (angular.isDefined($ctrl.optionLabel)) {
-                    $ctrl.selectOptions = 'd.' + $ctrl.optionLabel + ' for d in $ctrl.options';
+            if (angular.isDefined($ctrl.optionLabel)) {
+                $ctrl.selectOptions = 'd.' + $ctrl.optionLabel + ' for d in $ctrl.options';
 
-                    if (angular.isDefined($ctrl.optionTrack)) {
-                        $ctrl.selectOptions = 'd as d.' + $ctrl.optionLabel + ' for d in $ctrl.options track by d.' + $ctrl.optionTrack;
-                    } else {
-                        if (angular.isDefined($ctrl.optionKey)) {
-                            $ctrl.selectOptions = 'd.' + $ctrl.optionKey + ' as ' + $ctrl.selectOptions;
-                        }
-                    }
+                if (angular.isDefined($ctrl.optionTrack)) {
+                    $ctrl.selectOptions = 'd as d.' + $ctrl.optionLabel + ' for d in $ctrl.options track by d.' + $ctrl.optionTrack;
+                } else if (angular.isDefined($ctrl.optionKey)) {
+                    $ctrl.selectOptions = 'd.' + $ctrl.optionKey + ' as ' + $ctrl.selectOptions;
                 }
+            }
 
-                if (angular.isDefined($ctrl.optionsUrl)) {
-                    $scope.$watch('optionsUrl', function(val, prev) {
-                        if (val === prev) {
-                            return;
-                        }
+            if (angular.isUndefined($ctrl.optionsUrl)) {
+                return;
+            }
 
-                        $ctrl.dataIsLoaded = false;
-                        $ctrl.loadData();
-                    });
-
-                    if ($ctrl.isEditing) {
-                        $ctrl.loadData();
-                    } else {
-                        $scope.$watch('$ctrl.isEditing', function() {
-                            if ($ctrl.isEditing) {
-                                $ctrl.loadData();
-                            }
-                        });
-                    }
-                }
-            };
-
-            $scope.updateReadonlyValue = function () {
-                $ctrl.readOnlyValue = $ctrl.value;
-                if (!$ctrl.value) {
+            $scope.$watch(function () { return $ctrl.optionsUrl; }, function (val, prev) {
+                if (val === prev) {
                     return;
                 }
 
-                if (angular.isDefined($ctrl.optionLabel) && $ctrl.options) {
-                    if (angular.isDefined($ctrl.optionKey)) {
-                        $ctrl.readOnlyValue = $ctrl.options.filter(function (el) { return el[$ctrl.optionKey] === $ctrl.value; })[0][$ctrl.optionLabel];
-                    } else {
-                        $ctrl.readOnlyValue = $ctrl.options[$ctrl.optionLabel];
-                    }
-                }
-            };
-
-            $scope.$watch(function() {
-                return $ctrl.value;
-            }, function(val) {
-                $scope.$emit('tbForm_OnFieldChange', $ctrl.$component, $ctrl.name, val, $ctrl.options);
-                $scope.updateReadonlyValue();
+                $ctrl.dataIsLoaded = false;
+                $ctrl.loadData();
             });
 
-            $ctrl.loadData = function() {
-                if ($ctrl.dataIsLoaded) {
-                    return;
-                }
-
-                if (angular.isUndefined($ctrl.$component) || $ctrl.$component == null) {
-                    throw 'You need to define a parent Form or Grid';
-                }
-
-                var currentRequest = $ctrl.$component.dataService.retrieveDataAsync({
-                    serverUrl: $ctrl.optionsUrl,
-                    requestMethod: $ctrl.optionsMethod || 'GET'
+            if ($ctrl.isEditing) {
+                $ctrl.loadData();
+            } else {
+                $scope.$watch(function () { return $ctrl.isEditing; }, function () {
+                    if ($ctrl.isEditing) {
+                        $ctrl.loadData();
+                    }
                 });
+            }
+        };
 
-                var value = $ctrl.value;
-                $ctrl.value = '';
+        $scope.updateReadonlyValue = function () {
+            $ctrl.readOnlyValue = $ctrl.value;
 
-                currentRequest.promise.then(
-                    function(data) {
-                        $ctrl.options = data;
-                        $ctrl.dataIsLoaded = true;
-                        // TODO: Add an attribute to define if autoselect is OK
-                        var possibleValue = $ctrl.options && $ctrl.options.length > 0 ?
-                            angular.isDefined($ctrl.optionKey) ? $ctrl.options[0][$ctrl.optionKey] : $ctrl.options[0]
-                            : '';
-                        $ctrl.value = value || $ctrl.defaultValue || possibleValue;
+            if (!$ctrl.value) {
+                return;
+            }
 
-                        // Set the field dirty
-                        var formScope = $ctrl.getFormField();
-                        if (formScope) formScope.$setDirty();
-                    }, function(error) {
-                        $scope.$emit('tbGrid_OnConnectionError', error);
-                    });
-            };
-        }
+            if (angular.isDefined($ctrl.optionLabel) && $ctrl.options) {
+                if (angular.isDefined($ctrl.optionKey)) {
+                    var filteredOption = $ctrl.options
+                        .filter(function (el) { return el[$ctrl.optionKey] === $ctrl.value; });
+
+                    if (filteredOption.length > 0) {
+                        $ctrl.readOnlyValue = filteredOption[0][$ctrl.optionLabel];
+                    }
+                } else {
+                    $ctrl.readOnlyValue = $ctrl.options[$ctrl.optionLabel];
+                }
+            }
+        };
+
+        $scope.$watch(function () {
+            return $ctrl.value;
+        }, function (val) {
+            $scope.$emit('tbForm_OnFieldChange', $ctrl.$component, $ctrl.name, val, $ctrl.options);
+            $scope.updateReadonlyValue();
+        });
+
+        $ctrl.loadData = function () {
+            if ($ctrl.dataIsLoaded) {
+                return;
+            }
+
+            if (angular.isUndefined($ctrl.$component) || $ctrl.$component == null) {
+                throw 'You need to define a parent Form or Grid';
+            }
+
+            var currentRequest = $ctrl.$component.dataService.retrieveDataAsync({
+                serverUrl: $ctrl.optionsUrl,
+                requestMethod: $ctrl.optionsMethod || 'GET'
+            });
+
+            var value = $ctrl.value;
+            $ctrl.value = '';
+
+            currentRequest.promise.then(
+                function (data) {
+                    $ctrl.options = data;
+                    $ctrl.dataIsLoaded = true;
+                    // TODO: Add an attribute to define if autoselect is OK
+                    var possibleValue = $ctrl.options && $ctrl.options.length > 0 ?
+                        angular.isDefined($ctrl.optionKey) ? $ctrl.options[0][$ctrl.optionKey] : $ctrl.options[0]
+                        : '';
+                    $ctrl.value = value || $ctrl.defaultValue || possibleValue;
+
+                    // Set the field dirty
+                    var formScope = $ctrl.getFormField();
+                    if (formScope) formScope.$setDirty();
+                }, function (error) {
+                    $scope.$emit('tbGrid_OnConnectionError', error);
+                });
+        };
+    }
     ];
 
     angular.module('tubular.directives')
@@ -1654,14 +1689,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
          * @param {string} defaultValue Set the default value.
          */
         .component('tbSimpleEditor', {
-            template: '<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">' +
-                '<span ng-hide="$ctrl.isEditing" ng-bind="$ctrl.value"></span>' +
-                '<label ng-show="$ctrl.showLabel" ng-bind="$ctrl.label"></label>' +
-                '<input type="{{$ctrl.editorType}}" placeholder="{{$ctrl.placeholder}}" ng-show="$ctrl.isEditing" ng-model="$ctrl.value" class="form-control" ' +
-                ' ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}" />' +
-                '<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">{{error}}</span>' +
-                '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help" ng-bind="$ctrl.help"></span>' +
-                '</div>',
+            templateUrl: 'tbSimpleEditor.tpl.html',
             bindings: {
                 regex: '@?',
                 regexErrorMessage: '@?',
@@ -1712,20 +1740,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
          * @param {string} defaultValue Set the default value.
          */
         .component('tbNumericEditor', {
-            template: '<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">' +
-                '<span ng-hide="$ctrl.isEditing">{{$ctrl.value | numberorcurrency: format }}</span>' +
-                '<label ng-show="$ctrl.showLabel" ng-bind="$ctrl.label"></label>' +
-                '<div class="input-group" ng-show="$ctrl.isEditing">' +
-                '<div class="input-group-addon" ng-hide="$ctrl.format == \'I\'">' +
-                '<i ng-class="{ \'fa\': true, \'fa-calculator\': $ctrl.format != \'C\', \'fa-usd\': $ctrl.format == \'C\'}"></i>' +
-                '</div>' +
-                '<input type="number" placeholder="{{$ctrl.placeholder}}" ng-model="$ctrl.value" class="form-control" ' +
-                'ng-required="$ctrl.required" ng-hide="$ctrl.readOnly" step="{{$ctrl.step || \'any\'}}"  name="{{$ctrl.name}}" />' +
-                '<p class="form-control form-control-static text-right" ng-show="$ctrl.readOnly">{{$ctrl.value | numberorcurrency: format}}</span></p>' +
-                '</div>' +
-                '<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">{{error}}</span>' +
-                '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help" ng-bind="$ctrl.help"></span>' +
-                '</div>',
+            templateUrl: 'tbNumericEditor.tpl.html',
             bindings: {
                 value: '=?',
                 isEditing: '=?',
@@ -1781,7 +1796,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     '<span class="input-group-btn">' +
                     '<button type="button" class="btn btn-default" ng-click="$ctrl.open = !$ctrl.open"><i class="fa fa-calendar"></i></button>' +
                     '</span>' +
-                    '</div>'+
+                    '</div>' +
                     '<div uib-timepicker ng-model="$ctrl.dateValue"  show-seconds="true" show-meridian="false"></div>') +
                 '<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">{{error}}</span>' +
                 '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help" ng-bind="$ctrl.help"></span>' +
@@ -1834,7 +1849,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 '<label ng-show="$ctrl.showLabel" ng-bind="$ctrl.label"></label>' +
                 (canUseHtml5Date() ?
                     '<input type="date" ng-show="$ctrl.isEditing" ng-model="$ctrl.dateValue" class="form-control" ' +
-                    'ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}"/>' : 
+                    'ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}"/>' :
                     '<div class="input-group" ng-show="$ctrl.isEditing">' +
                     '<input type="text" uib-datepicker-popup="{{$ctrl.format}}" ng-model="$ctrl.dateValue" class="form-control" ' +
                     'ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}" is-open="$ctrl.open" />' +
@@ -1888,14 +1903,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
          * @param {string} defaultValue Set the default value.
          */
         .component('tbDropdownEditor', {
-            template: '<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">' +
-                '<span ng-hide="$ctrl.isEditing" ng-bind="$ctrl.readOnlyValue"></span>' +
-                '<label ng-show="$ctrl.showLabel" ng-bind="$ctrl.label"></label>' +
-                '<select ng-options="{{ $ctrl.selectOptions }}" ng-show="$ctrl.isEditing" ng-model="$ctrl.value" class="form-control" ' +
-                'ng-required="$ctrl.required" ng-disabled="$ctrl.readOnly" name="{{$ctrl.name}}" ng-change="onChange({value: value})"></select>' +
-                '<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">{{error}}</span>' +
-                '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help" ng-bind="$ctrl.help"></span>' +
-                '</div>',
+            templateUrl: 'tbDropdownEditor.tpl.html',
             bindings: {
                 value: '=?',
                 isEditing: '=?',
@@ -2005,28 +2013,29 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                             });
 
                             $scope.getValues = function (val) {
-                                if (angular.isDefined($scope.optionsUrl)) {
-                                    if (angular.isUndefined($scope.$component) || $scope.$component == null) {
-                                        throw 'You need to define a parent Form or Grid';
-                                    }
+                                if (angular.isUndefined($scope.optionsUrl)) {
 
-                                    var p = $scope.$component.dataService.retrieveDataAsync({
-                                        serverUrl: $scope.optionsUrl + '?search=' + val,
-                                        requestMethod: $scope.optionsMethod || 'GET'
-                                    }).promise;
-
-                                    p.then(function (data) {
-                                        $scope.lastSet = data;
-                                        return data;
+                                    return $q(function (resolve) {
+                                        $scope.lastSet = $scope.options;
+                                        resolve($scope.options);
                                     });
-
-                                    return p;
                                 }
 
-                                return $q(function (resolve) {
-                                    $scope.lastSet = $scope.options;
-                                    resolve($scope.options);
+                                if (angular.isUndefined($scope.$component) || $scope.$component == null) {
+                                    throw 'You need to define a parent Form or Grid';
+                                }
+
+                                var p = $scope.$component.dataService.retrieveDataAsync({
+                                    serverUrl: $scope.optionsUrl + '?search=' + val,
+                                    requestMethod: $scope.optionsMethod || 'GET'
+                                }).promise;
+
+                                p.then(function (data) {
+                                    $scope.lastSet = data;
+                                    return data;
                                 });
+
+                                return p;
                             };
                         }
                     ]
@@ -2047,16 +2056,16 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
          * @param {object} value Set the value.
          */
         .component('tbHiddenField', {
-            template: '<input type="hidden" ng-model="$ctrl.value" class="form-control" name="{{$ctrl.name}}"  />',
+            templateUrl: 'tbHiddenField.tpl.html',
             bindings: {
                 value: '=?',
                 name: '@'
             },
             controller: [
-                'tubularEditorService', '$scope', function(tubular, $scope) {
+                'tubularEditorService', '$scope', function (tubular, $scope) {
                     var $ctrl = this;
 
-                    $ctrl.$onInit = function() { tubular.setupScope($scope, null, $ctrl, true); };
+                    $ctrl.$onInit = function () { tubular.setupScope($scope, null, $ctrl, true); };
                 }
             ]
         })
@@ -2080,15 +2089,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
          * @param {string} help Set the help text.
          */
         .component('tbCheckboxField', {
-            template: '<div ng-class="{ \'checkbox\' : $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }" class="tubular-checkbox">' +
-                '<input type="checkbox" ng-model="$ctrl.value" ng-disabled="$ctrl.readOnly || !$ctrl.isEditing"' +
-                'class="tubular-checkbox" id="{{$ctrl.name}}" name="{{$ctrl.name}}" /> ' +
-                '<label ng-show="$ctrl.isEditing" for="{{$ctrl.name}}" ng-bind="$ctrl.label"></label>' +
-                '<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">' +
-                '{{error}}' +
-                '</span>' +
-                '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help" ng-bind="$ctrl.help"></span>' +
-                '</div>',
+            templateUrl: 'tbCheckboxField.tpl.html',
             bindings: {
                 value: '=?',
                 isEditing: '=?',
@@ -2168,7 +2169,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     var $ctrl = this;
 
                     $ctrl.validate = function () {
-                        if (tubular.isValid($ctrl.min) && tubular.isValid($ctrl.value)) {
+                        if (tubular.isDefined($ctrl.min) && tubular.isDefined($ctrl.value)) {
                             if ($ctrl.value.length < parseInt($ctrl.min)) {
                                 $ctrl.$valid = false;
                                 $ctrl.state.$errors = [translateFilter('EDITOR_MIN_CHARS', +$ctrl.min)];
@@ -2176,7 +2177,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                             }
                         }
 
-                        if (tubular.isValid($ctrl.max) && tubular.isValid($ctrl.value)) {
+                        if (tubular.isDefined($ctrl.max) && tubular.isDefined($ctrl.value)) {
                             if ($ctrl.value.length > parseInt($ctrl.max)) {
                                 $ctrl.$valid = false;
                                 $ctrl.state.$errors = [translateFilter('EDITOR_MAX_CHARS', +$ctrl.max)];
@@ -2185,7 +2186,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         }
                     };
 
-                    $ctrl.$onInit = function() {
+                    $ctrl.$onInit = function () {
                         tubular.setupScope($scope, null, $ctrl, false);
                     };
                 }
@@ -2450,7 +2451,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
          */
         .component('tbRemoveButton', {
             require: '^tbGrid',
-            templateUrl: 'tbRemoveButton.tpl.html' ,
+            templateUrl: 'tbRemoveButton.tpl.html',
             bindings: {
                 model: '=',
                 caption: '@',
@@ -2863,9 +2864,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     $key: '',
                     $addField: function (key, value, ignoreOriginal) {
                         this[key] = value;
-                        if (angular.isUndefined(this.$original)) {
-                            this.$original = {};
-                        }
+                        this.$original = this.$original || {};
 
                         this.$original[key] = ignoreOriginal ? undefined : value;
 
@@ -2873,9 +2872,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                             this.$hasChanges = true;
                         }
 
-                        if (angular.isUndefined(this.$state)) {
-                            this.$state = {};
-                        }
+                        this.$state = this.$state || {};
 
                         $scope.$watch(function () {
                             return obj[key];
@@ -3060,7 +3057,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
      * It contains common services like HTTP client, filtering and printing services.
      */
     angular.module('tubular.services', ['ui.bootstrap', 'LocalStorageModule'])
-        
+
         /**
          * @ngdoc factory
          * @name tubularGridExportService
@@ -3068,28 +3065,28 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
          * @description
          * Use `tubularGridExportService` to export your `tbGrid` to a CSV file.
          */
-        .factory('tubularGridExportService', function () {
-            return {
-                exportAllGridToCsv: function(filename, gridScope) {
-                    var columns = getColumns(gridScope);
-                    var visibility = getColumnsVisibility(gridScope);
+        .factory('tubularGridExportService',
+            function() {
+                return {
+                    exportAllGridToCsv: function(filename, gridScope) {
+                        var columns = getColumns(gridScope);
+                        var visibility = getColumnsVisibility(gridScope);
 
-                    gridScope.getFullDataSource(function(data) {
-                        exportToCsv(filename, columns, data, visibility);
-                    });
-                },
+                        gridScope.getFullDataSource(function(data) {
+                            exportToCsv(filename, columns, data, visibility);
+                        });
+                    },
 
-                exportGridToCsv: function(filename, gridScope) {
-                    var columns = getColumns(gridScope);
-                    var visibility = getColumnsVisibility(gridScope);
+                    exportGridToCsv: function(filename, gridScope) {
+                        var columns = getColumns(gridScope);
+                        var visibility = getColumnsVisibility(gridScope);
 
-                    gridScope.currentRequest = {};
-                    exportToCsv(filename, columns, gridScope.dataSource.Payload, visibility);
-                    gridScope.currentRequest = null;
-                }
-            };
-        })
-       
+                        gridScope.currentRequest = {};
+                        exportToCsv(filename, columns, gridScope.dataSource.Payload, visibility);
+                        gridScope.currentRequest = null;
+                    }
+                };
+            });
 })(angular, saveAs);
 (function (angular) {
     'use strict';
@@ -3106,8 +3103,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             'translateFilter', function (translateFilter) {
                 var me = this;
 
-                me.isValid = function (value) { return !(!value); };
-
                 /**
                 * Simple helper to generate a unique name for Tubular Forms
                 */
@@ -3122,10 +3117,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                  * with all the tubularEditors.
                  */
                 me.setupScope = function (scope, defaultFormat, ctrl, setDirty) {
-                    if (angular.isUndefined(ctrl)) {
-                        ctrl = scope;
-                    }
-
+                    ctrl = ctrl || scope;
                     ctrl.isEditing = angular.isUndefined(ctrl.isEditing) ? true : ctrl.isEditing;
                     ctrl.showLabel = ctrl.showLabel || false;
                     ctrl.label = ctrl.label || (ctrl.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
@@ -3134,12 +3126,22 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     ctrl.format = ctrl.format || defaultFormat;
                     ctrl.$valid = true;
 
+                    // This is the state API for every property in the Model
+                    ctrl.state = {
+                        $valid: function () {
+                            ctrl.checkValid();
+                            return this.$errors.length === 0;
+                        },
+                        $dirty: ctrl.$dirty,
+                        $errors: []
+                    };
+
                     // Get the field reference using the Angular way
                     ctrl.getFormField = function () {
                         var parent = scope.$parent;
 
                         while (parent != null) {
-                            if (angular.isDefined(parent.tubularDirective) && parent.tubularDirective === 'tubular-form') {
+                            if (parent.tubularDirective === 'tubular-form') {
                                 var formScope = parent.getFormScope();
 
                                 return formScope == null ? null : formScope[scope.Name];
@@ -3189,27 +3191,13 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                             return;
                         }
 
-                        // This is the state API for every property in the Model
-                        ctrl.state = {
-                            $valid: function () {
-                                ctrl.checkValid();
-                                return this.$errors.length === 0;
-                            },
-                            $dirty: ctrl.$dirty,
-                            $errors: []
-                        };
-
                         ctrl.$valid = true;
 
                         // Try to match the model to the parent, if it exists
                         if (angular.isDefined(scope.$parent.Model)) {
                             if (angular.isDefined(scope.$parent.Model[ctrl.name])) {
                                 scope.$parent.Model[ctrl.name] = newValue;
-
-                                if (angular.isUndefined(scope.$parent.Model.$state)) {
-                                    scope.$parent.Model.$state = [];
-                                }
-
+                                scope.$parent.Model.$state = scope.$parent.Model.$state || [];
                                 scope.$parent.Model.$state[scope.Name] = ctrl.state;
                             } else if (angular.isDefined(scope.$parent.Model.$addField)) {
                                 scope.$parent.Model.$addField(ctrl.name, newValue, true);
@@ -3223,9 +3211,8 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
                     // We try to find a Tubular Form in the parents
                     while (parent != null) {
-                        if (angular.isDefined(parent.tubularDirective) &&
-                        (parent.tubularDirective === 'tubular-form' ||
-                            parent.tubularDirective === 'tubular-rowset')) {
+                        if (parent.tubularDirective === 'tubular-form' ||
+                            parent.tubularDirective === 'tubular-rowset') {
 
                             if (ctrl.name === null) {
                                 return;
@@ -3287,18 +3274,16 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                                     ctrl.value = ctrl.defaultValue;
                                 }
 
-                                if (angular.isUndefined(parent.model.$state)) {
-                                    parent.model.$state = {};
-                                }
+                                parent.model.$state = parent.model.$state || {};
 
                                 // This is the state API for every property in the Model
                                 parent.model.$state[scope.Name] = {
                                     $valid: function () {
                                         ctrl.checkValid();
-                                        return this.$errors.length === 0;
+                                        return ctrl.state.$errors.length === 0;
                                     },
                                     $dirty: ctrl.$dirty,
-                                    $errors: []
+                                    $errors: ctrl.state.$errors
                                 };
 
                                 if (angular.equals(ctrl.state, parent.model.$state[scope.Name]) === false) {
@@ -3307,7 +3292,10 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
                                 if (setDirty) {
                                     var formScope = ctrl.getFormField();
-                                    if (formScope) formScope.$setDirty();
+
+                                    if (formScope) {
+                                        formScope.$setDirty();
+                                    }
                                 }
                             };
 
@@ -3389,6 +3377,13 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     me.userData.bearerToken = '';
                     me.userData.expirationDate = null;
                     me.userData.refreshToken = null;
+                }
+
+                function getCancel(canceller) {
+                    return function (reason) {
+                        $log.error(reason);
+                        canceller.resolve(reason);
+                    }
                 }
 
                 me.userData = {
@@ -3523,16 +3518,9 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     return new Date(date.getTime() + 5 * 60000); // Add 5 minutes
                 };
 
-                me.getCancel = function (canceller) {
-                    return function (reason) {
-                        $log.error(reason);
-                        canceller.resolve(reason);
-                    }
-                };
-
                 me.retrieveDataAsync = function (request) {
                     var canceller = $q.defer();
-                    var cancel = me.getCancel(canceller);
+                    var cancel = getCancel(canceller);
 
                     if (angular.isUndefined(request.requireAuthentication)) {
                         request.requireAuthentication = me.requireAuthentication;
@@ -3595,7 +3583,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                                 promise: $q(function (resolve) {
                                     resolve(null);
                                 }),
-                                cancel: me.getCancel(canceller)
+                                cancel: getCancel(canceller)
                             };
                         }
                     }
@@ -3617,7 +3605,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                                 promise: $q(function (resolve) {
                                     resolve(null);
                                 }),
-                                cancel: me.getCancel(canceller)
+                                cancel: getCancel(canceller)
                             };
                         }
                     }
@@ -3638,7 +3626,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                                 promise: $q(function (resolve) {
                                     resolve(null);
                                 }),
-                                cancel: me.getCancel(canceller)
+                                cancel: getCancel(canceller)
                             };
                         }
                     }
@@ -3658,7 +3646,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                  */
                 me.postBinary = function (url, formData) {
                     var canceller = $q.defer();
-                    var cancel = me.getCancel(canceller);
+                    var cancel = getCancel(canceller);
 
                     if (!me.useRefreshTokens) {
                         if (me.requireAuthentication && !me.isAuthenticated()) {
@@ -4214,82 +4202,76 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                  * Create a columns array using a model.
                  * 
                  * @param {object} model
-                 * @returns {array} The Columns
+                 * @returns {array} The columns
                  */
                 me.createColumns = function (model) {
                     var jsonModel = (angular.isArray(model) && model.length > 0) ? model[0] : model;
                     var columns = [];
 
-                    for (var prop in jsonModel) {
-                        if (jsonModel.hasOwnProperty(prop)) {
-                            var value = jsonModel[prop];
+                    angular.forEach(Object.keys(jsonModel), function (prop) {
+                        var value = jsonModel[prop];
 
-                            // Ignore functions and  null value, but maybe evaluate another item if there is anymore
-                            if (prop[0] === '$' || angular.isFunction(value) || value == null) {
-                                continue;
-                            }
-
-                            if (angular.isNumber(value) || parseFloat(value).toString() === value) {
-                                columns.push({
-                                    Name: prop,
-                                    DataType: 'numeric',
-                                    Template: '{{row.' + prop + ' | number}}'
-                                });
-                            } else if (toString.call(value) === '[object Date]' ||
-                                isNaN((new Date(value)).getTime()) === false) {
-                                columns.push({ Name: prop, DataType: 'date', Template: '{{row.' + prop + ' | date}}' });
-                            } else if (value.toLowerCase() === 'true' || value.toLowerCase() === 'false') {
-                                columns.push({
-                                    Name: prop,
-                                    DataType: 'boolean',
-                                    Template: '{{row.' + prop + ' ? "TRUE" : "FALSE" }}'
-                                });
-                            } else {
-                                var newColumn = { Name: prop, DataType: 'string', Template: '{{row.' + prop + '}}' };
-
-                                if ((/e(-|)mail/ig).test(newColumn.Name)) {
-                                    newColumn.Template = '<a href="mailto:' +
-                                        newColumn.Template +
-                                        '">' +
-                                        newColumn.Template +
-                                        '</a>';
-                                }
-
-                                columns.push(newColumn);
-                            }
+                        // Ignore functions and  null value, but maybe evaluate another item if there is anymore
+                        if (prop[0] === '$' || angular.isFunction(value) || value == null) {
+                            return;
                         }
-                    }
+
+                        if (angular.isNumber(value) || parseFloat(value).toString() === value) {
+                            columns.push({
+                                Name: prop,
+                                DataType: 'numeric',
+                                Template: '{{row.' + prop + ' | number}}'
+                            });
+                        } else if (angular.isDate(value) || !isNaN((new Date(value)).getTime())) {
+                            columns.push({ Name: prop, DataType: 'date', Template: '{{row.' + prop + ' | moment }}' });
+                        } else if (value.toLowerCase() === 'true' || value.toLowerCase() === 'false') {
+                            columns.push({
+                                Name: prop,
+                                DataType: 'boolean',
+                                Template: '{{row.' + prop + ' ? "TRUE" : "FALSE" }}'
+                            });
+                        } else {
+                            var newColumn = { Name: prop, DataType: 'string', Template: '{{row.' + prop + '}}' };
+
+                            if ((/e(-|)mail/ig).test(newColumn.Name)) {
+                                newColumn.Template = '<a href="mailto:' + newColumn.Template + '">' + newColumn.Template + '</a>';
+                            }
+
+                            columns.push(newColumn);
+                        }
+                    });
 
                     var firstSort = false;
 
-                    angular.forEach(columns,
-                        function(columnObj) {
-                            columnObj.Label = columnObj.Name.replace(/([a-z])([A-Z])/g, '$1 $2');
-                            columnObj.EditorType = me.getEditorTypeByDateType(columnObj.DataType);
+                    angular.forEach(columns, function (columnObj) {
+                        columnObj.Label = columnObj.Name.replace(/([a-z])([A-Z])/g, '$1 $2');
+                        columnObj.EditorType = me.getEditorTypeByDateType(columnObj.DataType);
 
-                            // Grid attributes
-                            columnObj.Searchable = columnObj.DataType === 'string';
-                            columnObj.Filter = true;
-                            columnObj.Visible = true;
-                            columnObj.Sortable = true;
-                            columnObj.IsKey = false;
-                            columnObj.SortOrder = 0;
-                            columnObj.SortDirection = '';
-                            // Form attributes
-                            columnObj.ShowLabel = true;
-                            columnObj.Placeholder = '';
-                            columnObj.Format = '';
-                            columnObj.Help = '';
-                            columnObj.Required = true;
-                            columnObj.ReadOnly = false;
+                        // Grid attributes
+                        columnObj.Searchable = columnObj.DataType === 'string';
+                        columnObj.Filter = true;
+                        columnObj.Visible = true;
+                        columnObj.Sortable = true;
+                        columnObj.IsKey = false;
+                        columnObj.SortOrder = 0;
+                        columnObj.SortDirection = '';
+                        // Form attributes
+                        columnObj.ShowLabel = true;
+                        columnObj.Placeholder = '';
+                        columnObj.Format = '';
+                        columnObj.Help = '';
+                        columnObj.Required = true;
+                        columnObj.ReadOnly = false;
 
-                            if (!firstSort) {
-                                columnObj.IsKey = true;
-                                columnObj.SortOrder = 1;
-                                columnObj.SortDirection = 'Ascending';
-                                firstSort = true;
-                            }
-                        });
+                        if (firstSort) {
+                            return;
+                        }
+
+                        columnObj.IsKey = true;
+                        columnObj.SortOrder = 1;
+                        columnObj.SortDirection = 'Ascending';
+                        firstSort = true;
+                    });
 
                     return columns;
                 };
@@ -4571,6 +4553,182 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 })(angular);
 (function (angular) {
     'use strict';
+
+    angular.module('tubular.services')
+        /**
+         * @ngdoc service
+         * @name tubularTranslate
+         *
+         * @description
+         * Use `tubularTranslate` to translate strings.
+         */
+        .service('tubularTranslate', [function () {
+            var me = this;
+
+            me.currentLanguage = 'en';
+            me.defaultLanguage = 'en';
+
+            me.translationTable = {
+                'en': {
+                    'EDITOR_REGEX_DOESNT_MATCH': 'The field doesn\'t match the regular expression.',
+                    'EDITOR_REQUIRED': 'The field is required.',
+                    'EDITOR_MIN_CHARS': 'The field needs to be minimum {0} chars.',
+                    'EDITOR_MAX_CHARS': 'The field needs to be maximum {0} chars.',
+                    'EDITOR_MIN_NUMBER': 'The minimum number is {0}.',
+                    'EDITOR_MAX_NUMBER': 'The maximum number is {0}.',
+                    'EDITOR_MIN_DATE': 'The minimum date is {0}.',
+                    'EDITOR_MAX_DATE': 'The maximum date is {0}.',
+                    'EDITOR_MATCH': 'The field needs to match the {0} field.',
+                    'CAPTION_APPLY': 'Apply',
+                    'CAPTION_CLEAR': 'Clear',
+                    'CAPTION_CLOSE': 'Close',
+                    'CAPTION_SELECTCOLUMNS': 'Select Columns',
+                    'CAPTION_FILTER': 'Filter',
+                    'CAPTION_VALUE': 'Value',
+                    'CAPTION_REMOVE': 'Remove',
+                    'CAPTION_CANCEL': 'Cancel',
+                    'CAPTION_EDIT': 'Edit',
+                    'CAPTION_SAVE': 'Save',
+                    'CAPTION_PRINT': 'Print',
+                    'CAPTION_LOAD': 'Load',
+                    'CAPTION_ADD': 'Add',
+                    'UI_SEARCH': 'search . . .',
+                    'UI_PAGESIZE': 'Page size:',
+                    'UI_EXPORTCSV': 'Export CSV',
+                    'UI_CURRENTROWS': 'Current rows',
+                    'UI_ALLROWS': 'All rows',
+                    'UI_REMOVEROW': 'Do you want to delete this row?',
+                    'UI_SHOWINGRECORDS': 'Showing {0} to {1} of {2} records',
+                    'UI_FILTEREDRECORDS': '(Filtered from {0} total records)',
+                    'UI_HTTPERROR': 'Unable to contact server; please, try again later.',
+                    'UI_GENERATEREPORT': 'Generate Report',
+                    'UI_TWOCOLS': 'Two columns',
+                    'UI_ONECOL': 'One column',
+                    'UI_MAXIMIZE': 'Maximize',
+                    'UI_RESTORE': 'Restore',
+                    'UI_MOVEUP': 'Move Up',
+                    'UI_MOVEDOWN': 'Move Down',
+                    'UI_MOVELEFT': 'Move Left',
+                    'UI_MOVERIGHT': 'Move Right',
+                    'UI_COLLAPSE': 'Collapse',
+                    'UI_EXPAND': 'Expand',
+                    'OP_NONE': 'None',
+                    'OP_EQUALS': 'Equals',
+                    'OP_NOTEQUALS': 'Not Equals',
+                    'OP_CONTAINS': 'Contains',
+                    'OP_NOTCONTAINS': 'Not Contains',
+                    'OP_STARTSWITH': 'Starts With',
+                    'OP_NOTSTARTSWITH': 'Not Starts With',
+                    'OP_ENDSWITH': 'Ends With',
+                    'OP_NOTENDSWITH': 'Not Ends With',
+                    'OP_BETWEEN': 'Between'
+                },
+                'es': {
+                    'EDITOR_REGEX_DOESNT_MATCH': 'El campo no es válido contra la expresión regular.',
+                    'EDITOR_REQUIRED': 'El campo es requerido.',
+                    'EDITOR_MIN_CHARS': 'El campo requiere mínimo {0} caracteres.',
+                    'EDITOR_MAX_CHARS': 'El campo requiere máximo {0} caracteres.',
+                    'EDITOR_MIN_NUMBER': 'El número mínimo es {0}.',
+                    'EDITOR_MAX_NUMBER': 'El número maximo es {0}.',
+                    'EDITOR_MIN_DATE': 'La fecha mínima es {0}.',
+                    'EDITOR_MAX_DATE': 'La fecha máxima es {0}.',
+                    'EDITOR_MATCH': 'El campo debe de conincidir con el campo {0}.',
+                    'CAPTION_APPLY': 'Aplicar',
+                    'CAPTION_CLEAR': 'Limpiar',
+                    'CAPTION_CLOSE': 'Cerrar',
+                    'CAPTION_SELECTCOLUMNS': 'Seleccionar columnas',
+                    'CAPTION_FILTER': 'Filtro',
+                    'CAPTION_VALUE': 'Valor',
+                    'CAPTION_REMOVE': 'Remover',
+                    'CAPTION_CANCEL': 'Cancelar',
+                    'CAPTION_EDIT': 'Editar',
+                    'CAPTION_SAVE': 'Guardar',
+                    'CAPTION_PRINT': 'Imprimir',
+                    'CAPTION_LOAD': 'Cargar',
+                    'CAPTION_ADD': 'Agregar',
+                    'UI_SEARCH': 'buscar . . .',
+                    'UI_PAGESIZE': '# Registros:',
+                    'UI_EXPORTCSV': 'Exportar CSV',
+                    'UI_CURRENTROWS': 'Esta página',
+                    'UI_ALLROWS': 'Todo',
+                    'UI_REMOVEROW': '¿Desea eliminar el registro?',
+                    'UI_SHOWINGRECORDS': 'Mostrando registros {0} al {1} de {2}',
+                    'UI_FILTEREDRECORDS': '(De un total de {0} registros)',
+                    'UI_HTTPERROR': 'No se logro contactar el servidor, intente más tarde.',
+                    'UI_GENERATEREPORT': 'Generar Reporte',
+                    'UI_TWOCOLS': 'Dos columnas',
+                    'UI_ONECOL': 'Una columna',
+                    'UI_MAXIMIZE': 'Maximizar',
+                    'UI_RESTORE': 'Restaurar',
+                    'UI_MOVEUP': 'Mover Arriba',
+                    'UI_MOVEDOWN': 'Mover Abajo',
+                    'UI_MOVELEFT': 'Mover Izquierda',
+                    'UI_MOVERIGHT': 'Mover Derecha',
+                    'UI_COLLAPSE': 'Colapsar',
+                    'UI_EXPAND': 'Expandir',
+                    'OP_NONE': 'Ninguno',
+                    'OP_EQUALS': 'Igual',
+                    'OP_NOTEQUALS': 'No Igual',
+                    'OP_CONTAINS': 'Contiene',
+                    'OP_NOTCONTAINS': 'No Contiene',
+                    'OP_STARTSWITH': 'Comienza Con',
+                    'OP_NOTSTARTSWITH': 'No Comienza Con',
+                    'OP_ENDSWITH': 'Termina Con',
+                    'OP_NOTENDSWITH': 'No Termina Con',
+                    'OP_BETWEEN': 'Entre'
+                }
+            };
+
+            me.setLanguage = function (language) {
+                // TODO: Check translationTable first
+                me.currentLanguage = language;
+
+                return me;
+            };
+
+            me.addTranslation = function (language, key, value) {
+                var languageTable = me.translationTable[language] || me.translationTable[me.currentLanguage] || me.translationTable[me.defaultLanguage];
+                languageTable[key] = value;
+
+                return me;
+            }
+
+            me.translate = function (key) {
+                var languageTable = me.translationTable[me.currentLanguage] || me.translationTable[me.defaultLanguage];
+
+                return languageTable[key] || key;
+            };
+        }
+        ])
+        /**
+         * @ngdoc filter
+         * @name translate
+         *
+         * @description
+         * Translate a key to the current language
+         */
+        .filter('translate', [
+            'tubularTranslate', function (tubularTranslate) {
+                return function (input, param1, param2, param3, param4) {
+                    // TODO: Probably send an optional param to define language
+                    if (angular.isDefined(input)) {
+                        var translation = tubularTranslate.translate(input);
+
+                        translation = translation.replace('{0}', param1 || '');
+                        translation = translation.replace('{1}', param2 || '');
+                        translation = translation.replace('{2}', param3 || '');
+                        translation = translation.replace('{3}', param4 || '');
+
+                        return translation;
+                    }
+
+                    return input;
+                };
+            }
+        ]);
+})(angular);
+(function (angular) {
+    'use strict';
     /**
      * @ngdoc function
      * @name tubularAuthInterceptor
@@ -4682,180 +4840,4 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 }
             };
         }]);
-})(angular);
-(function (angular) {
-    'use strict';
-
-    angular.module('tubular.services')
-        /**
-         * @ngdoc service
-         * @name tubularTranslate
-         *
-         * @description
-         * Use `tubularTranslate` to translate strings.
-         */
-        .service('tubularTranslate', [function () {
-                var me = this;
-
-                me.currentLanguage = 'en';
-                me.defaultLanguage = 'en';
-
-                me.translationTable = {
-                    'en': {
-                        'EDITOR_REGEX_DOESNT_MATCH': 'The field doesn\'t match the regular expression.',
-                        'EDITOR_REQUIRED': 'The field is required.',
-                        'EDITOR_MIN_CHARS': 'The field needs to be minimum {0} chars.',
-                        'EDITOR_MAX_CHARS': 'The field needs to be maximum {0} chars.',
-                        'EDITOR_MIN_NUMBER': 'The minimum number is {0}.',
-                        'EDITOR_MAX_NUMBER': 'The maximum number is {0}.',
-                        'EDITOR_MIN_DATE': 'The minimum date is {0}.',
-                        'EDITOR_MAX_DATE': 'The maximum date is {0}.',
-                        'EDITOR_MATCH': 'The field needs to match the {0} field.',
-                        'CAPTION_APPLY': 'Apply',
-                        'CAPTION_CLEAR': 'Clear',
-                        'CAPTION_CLOSE': 'Close',
-                        'CAPTION_SELECTCOLUMNS': 'Select Columns',
-                        'CAPTION_FILTER': 'Filter',
-                        'CAPTION_VALUE': 'Value',
-                        'CAPTION_REMOVE': 'Remove',
-                        'CAPTION_CANCEL': 'Cancel',
-                        'CAPTION_EDIT': 'Edit',
-                        'CAPTION_SAVE': 'Save',
-                        'CAPTION_PRINT': 'Print',
-                        'CAPTION_LOAD': 'Load',
-                        'CAPTION_ADD': 'Add',
-                        'UI_SEARCH': 'search . . .',
-                        'UI_PAGESIZE': 'Page size:',
-                        'UI_EXPORTCSV': 'Export CSV',
-                        'UI_CURRENTROWS': 'Current rows',
-                        'UI_ALLROWS': 'All rows',
-                        'UI_REMOVEROW': 'Do you want to delete this row?',
-                        'UI_SHOWINGRECORDS': 'Showing {0} to {1} of {2} records',
-                        'UI_FILTEREDRECORDS': '(Filtered from {0} total records)',
-                        'UI_HTTPERROR': 'Unable to contact server; please, try again later.',
-                        'UI_GENERATEREPORT': 'Generate Report',
-                        'UI_TWOCOLS': 'Two columns',
-                        'UI_ONECOL': 'One column',
-                        'UI_MAXIMIZE': 'Maximize',
-                        'UI_RESTORE': 'Restore',
-                        'UI_MOVEUP': 'Move Up',
-                        'UI_MOVEDOWN': 'Move Down',
-                        'UI_MOVELEFT': 'Move Left',
-                        'UI_MOVERIGHT': 'Move Right',
-                        'UI_COLLAPSE': 'Collapse',
-                        'UI_EXPAND': 'Expand',
-                        'OP_NONE': 'None',
-                        'OP_EQUALS': 'Equals',
-                        'OP_NOTEQUALS': 'Not Equals',
-                        'OP_CONTAINS': 'Contains',
-                        'OP_NOTCONTAINS': 'Not Contains',
-                        'OP_STARTSWITH': 'Starts With',
-                        'OP_NOTSTARTSWITH': 'Not Starts With',
-                        'OP_ENDSWITH': 'Ends With',
-                        'OP_NOTENDSWITH': 'Not Ends With',
-                        'OP_BETWEEN': 'Between'
-                    },
-                    'es': {
-                        'EDITOR_REGEX_DOESNT_MATCH': 'El campo no es válido contra la expresión regular.',
-                        'EDITOR_REQUIRED': 'El campo es requerido.',
-                        'EDITOR_MIN_CHARS': 'El campo requiere mínimo {0} caracteres.',
-                        'EDITOR_MAX_CHARS': 'El campo requiere máximo {0} caracteres.',
-                        'EDITOR_MIN_NUMBER': 'El número mínimo es {0}.',
-                        'EDITOR_MAX_NUMBER': 'El número maximo es {0}.',
-                        'EDITOR_MIN_DATE': 'La fecha mínima es {0}.',
-                        'EDITOR_MAX_DATE': 'La fecha máxima es {0}.',
-                        'EDITOR_MATCH': 'El campo debe de conincidir con el campo {0}.',
-                        'CAPTION_APPLY': 'Aplicar',
-                        'CAPTION_CLEAR': 'Limpiar',
-                        'CAPTION_CLOSE': 'Cerrar',
-                        'CAPTION_SELECTCOLUMNS': 'Seleccionar columnas',
-                        'CAPTION_FILTER': 'Filtro',
-                        'CAPTION_VALUE': 'Valor',
-                        'CAPTION_REMOVE': 'Remover',
-                        'CAPTION_CANCEL': 'Cancelar',
-                        'CAPTION_EDIT': 'Editar',
-                        'CAPTION_SAVE': 'Guardar',
-                        'CAPTION_PRINT': 'Imprimir',
-                        'CAPTION_LOAD': 'Cargar',
-                        'CAPTION_ADD': 'Agregar',
-                        'UI_SEARCH': 'buscar . . .',
-                        'UI_PAGESIZE': '# Registros:',
-                        'UI_EXPORTCSV': 'Exportar CSV',
-                        'UI_CURRENTROWS': 'Esta página',
-                        'UI_ALLROWS': 'Todo',
-                        'UI_REMOVEROW': '¿Desea eliminar el registro?',
-                        'UI_SHOWINGRECORDS': 'Mostrando registros {0} al {1} de {2}',
-                        'UI_FILTEREDRECORDS': '(De un total de {0} registros)',
-                        'UI_HTTPERROR': 'No se logro contactar el servidor, intente más tarde.',
-                        'UI_GENERATEREPORT': 'Generar Reporte',
-                        'UI_TWOCOLS': 'Dos columnas',
-                        'UI_ONECOL': 'Una columna',
-                        'UI_MAXIMIZE': 'Maximizar',
-                        'UI_RESTORE': 'Restaurar',
-                        'UI_MOVEUP': 'Mover Arriba',
-                        'UI_MOVEDOWN': 'Mover Abajo',
-                        'UI_MOVELEFT': 'Mover Izquierda',
-                        'UI_MOVERIGHT': 'Mover Derecha',
-                        'UI_COLLAPSE': 'Colapsar',
-                        'UI_EXPAND': 'Expandir',
-                        'OP_NONE': 'Ninguno',
-                        'OP_EQUALS': 'Igual',
-                        'OP_NOTEQUALS': 'No Igual',
-                        'OP_CONTAINS': 'Contiene',
-                        'OP_NOTCONTAINS': 'No Contiene',
-                        'OP_STARTSWITH': 'Comienza Con',
-                        'OP_NOTSTARTSWITH': 'No Comienza Con',
-                        'OP_ENDSWITH': 'Termina Con',
-                        'OP_NOTENDSWITH': 'No Termina Con',
-                        'OP_BETWEEN': 'Entre'
-                    }
-                };
-
-                me.setLanguage = function(language) {
-                    // TODO: Check translationTable first
-                    me.currentLanguage = language;
-
-                    return me;
-                };
-
-                me.addTranslation = function(language, key, value) {
-                    var languageTable = me.translationTable[language] || me.translationTable[me.currentLanguage] || me.translationTable[me.defaultLanguage];
-                    languageTable[key] = value;
-
-                    return me;
-                }
-
-                me.translate = function(key) {
-                    var languageTable = me.translationTable[me.currentLanguage] || me.translationTable[me.defaultLanguage];
-
-                    return languageTable[key] || key;
-                };
-            }
-        ])
-        /**
-         * @ngdoc filter
-         * @name translate
-         *
-         * @description
-         * Translate a key to the current language
-         */
-        .filter('translate', [
-            'tubularTranslate', function(tubularTranslate) {
-                return function(input, param1, param2, param3, param4) {
-                    // TODO: Probably send an optional param to define language
-                    if (angular.isDefined(input)) {
-                        var translation = tubularTranslate.translate(input);
-
-                        translation = translation.replace('{0}', param1 || '');
-                        translation = translation.replace('{1}', param2 || '');
-                        translation = translation.replace('{2}', param3 || '');
-                        translation = translation.replace('{3}', param4 || '');
-
-                        return translation;
-                    }
-
-                    return input;
-                };
-            }
-        ]);
 })(angular);

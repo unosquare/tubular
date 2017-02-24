@@ -1,4 +1,4 @@
-describe("tbForm Connection Error NoModelKey",function() {
+describe('tbForm Connection Error NoModelKey',function() {
     var errorText;
 
     beforeAll(function () {
@@ -14,7 +14,7 @@ describe("tbForm Connection Error NoModelKey",function() {
         errorText = element(by.id('error')).getText();
     });
 
-    it("tbForm connection error functionality",function(){
+    it('tbForm connection error functionality',function(){
         expect(errorText).toEqual('No data found');
     });
 });

@@ -67,6 +67,13 @@
                     me.userData.refreshToken = null;
                 }
 
+                function getCancel(canceller) {
+                    return function (reason) {
+                        $log.error(reason);
+                        canceller.resolve(reason);
+                    }
+                }
+
                 me.userData = {
                     isAuthenticated: false,
                     username: '',
@@ -199,16 +206,9 @@
                     return new Date(date.getTime() + 5 * 60000); // Add 5 minutes
                 };
 
-                me.getCancel = function (canceller) {
-                    return function (reason) {
-                        $log.error(reason);
-                        canceller.resolve(reason);
-                    }
-                };
-
                 me.retrieveDataAsync = function (request) {
                     var canceller = $q.defer();
-                    var cancel = me.getCancel(canceller);
+                    var cancel = getCancel(canceller);
 
                     if (angular.isUndefined(request.requireAuthentication)) {
                         request.requireAuthentication = me.requireAuthentication;
@@ -271,7 +271,7 @@
                                 promise: $q(function (resolve) {
                                     resolve(null);
                                 }),
-                                cancel: me.getCancel(canceller)
+                                cancel: getCancel(canceller)
                             };
                         }
                     }
@@ -293,7 +293,7 @@
                                 promise: $q(function (resolve) {
                                     resolve(null);
                                 }),
-                                cancel: me.getCancel(canceller)
+                                cancel: getCancel(canceller)
                             };
                         }
                     }
@@ -314,7 +314,7 @@
                                 promise: $q(function (resolve) {
                                     resolve(null);
                                 }),
-                                cancel: me.getCancel(canceller)
+                                cancel: getCancel(canceller)
                             };
                         }
                     }
@@ -334,7 +334,7 @@
                  */
                 me.postBinary = function (url, formData) {
                     var canceller = $q.defer();
-                    var cancel = me.getCancel(canceller);
+                    var cancel = getCancel(canceller);
 
                     if (!me.useRefreshTokens) {
                         if (me.requireAuthentication && !me.isAuthenticated()) {
