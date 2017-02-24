@@ -11,6 +11,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-protractor-runner');
 
     // Project configuration.
     grunt.initConfig({
@@ -45,7 +46,7 @@ module.exports = function(grunt) {
                 }
             }
         },
-        protractor_coverage: {
+        protractor: {
             options: {
                 noColor: false,
                 keepAlive: false,
@@ -55,7 +56,6 @@ module.exports = function(grunt) {
             },
             remote: {
                 options: {
-                    coverageDir: 'coverage',
                     args: {
                         baseUrl: 'http://localhost:9000/instrumented/test/Unosquare.Tubular.WebTest/',
                         browser: process.env.TRAVIS_OS_NAME == 'osx' ? 'chrome' : 'firefox'
@@ -72,20 +72,12 @@ module.exports = function(grunt) {
                 }
             }
         },
-        //makeReport: {
-        //    src: 'coverage/*.json',
-        //    options: {
-        //        type: 'lcov',
-        //        dir: 'coverage',
-        //        print: 'detail'
-        //    }
-        //},
         coveralls: {
             options: {
                 force: true
             },
             local: {
-                src: 'coverage/*.info'
+                src: 'report/coverage/*.info'
             }
         },
         eslint: {
@@ -236,15 +228,14 @@ module.exports = function(grunt) {
         'instrument',
         'string-replace',
         'connect:server',
-        'protractor_coverage:remote',
-        //'makeReport',
+        'protractor:remote',
         'coveralls:local'
     ]);
 
     grunt.registerTask('test-local',
     [
         'connect:server',
-        'protractor_coverage:local'
+        'protractor:local'
     ]);
 
     grunt.registerTask('build-js', ['concat:tubular_js', 'concat:chart_js', 'concat:highchart_js']);
