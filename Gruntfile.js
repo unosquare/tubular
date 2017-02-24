@@ -85,7 +85,7 @@ module.exports = function(grunt) {
                 force: true
             },
             local: {
-                src: 'coverage/*.info'
+                src: 'report/coverage/*.info'
             }
         },
         eslint: {
