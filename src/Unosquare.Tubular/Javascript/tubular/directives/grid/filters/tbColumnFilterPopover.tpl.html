@@ -3,7 +3,7 @@
         <select class="form-control" ng-options="key as value for (key , value) in $ctrl.filterOperators" ng-model="$ctrl.filter.Operator"
                 ng-hide="$ctrl.dataType == ' boolean' || $ctrl.onlyContains"></select>&nbsp;
         <input class="form-control" type="search" ng-model="$ctrl.filter.Text" autofocus ng-keypress="$ctrl.checkEvent($event)" ng-hide="$ctrl.dataType == 'boolean'"
-               placeholder="{{'CAPTION_VALUE' | translate}}" ng-disabled="$ctrl.filter.Operator == ' None'" />
+               placeholder="{{'CAPTION_VALUE' | translate}}" ng-disabled="$ctrl.filter.Operator == 'None'" />
         <div class="text-center" ng-show="$ctrl.dataType == 'boolean'">
             <button type="button" class="btn btn-default btn-md" ng-disabled="$ctrl.filter.Text === true" ng-click="$ctrl.filter.Text = true; $ctrl.filter.Operator = 'Equals';">
                 <i class="fa fa-check"></i>

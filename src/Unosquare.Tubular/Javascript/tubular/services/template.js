@@ -622,7 +622,9 @@
 
                     $scope.$watch('$ctrl.filter.Operator', function (val) { if (val === 'None') $ctrl.filter.Text = ''; });
 
-                    if (columns.length === 0) return;
+                    if (columns.length === 0) {
+                        return;
+                    }
 
                     $scope.$watch('$ctrl.filter', function (n) {
                         if (columns[0].Filter.Text !== n.Text) {
