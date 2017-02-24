@@ -107,11 +107,6 @@
                     return true;
                 };
 
-                me.setAccessTokenAsExpired = function () {
-                    me.userData.expirationDate = new Date(new Date().getTime() - 10 * 1000);
-                    saveData();
-                };
-
                 me.removeAuthentication = function () {
                     removeData();
                     clearUserData();
