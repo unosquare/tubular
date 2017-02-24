@@ -352,7 +352,178 @@
             '$sceDelegateProvider', function ($sceDelegateProvider) {
                 $sceDelegateProvider.resourceUrlWhitelist(['self', 'blob:**', 'http://services.odata.org/**']);
             }
-        ]);
+        ]).filter('groupBy', ['$parse', 'filterWatcher', function ($parse, filterWatcher) {
+            return function (collection, property) {
+
+                if (!angular.isObject(collection) || angular.isUndefined(property)) {
+                    return collection;
+                }
+
+                return filterWatcher.isMemoized('groupBy', arguments) ||
+                  filterWatcher.memoize('groupBy', arguments, this,
+                    _groupBy(collection, $parse(property)));
+
+                /**
+                 * groupBy function
+                 * @param collection
+                 * @param getter
+                 * @returns {{}}
+                 */
+                function _groupBy(collection, getter) {
+                    var result = {};
+                    var prop;
+
+                    angular.forEach(collection, function (elm) {
+                        prop = getter(elm);
+
+                        if (!result[prop]) {
+                            result[prop] = [];
+                        }
+                        result[prop].push(elm);
+                    });
+                    return result;
+                }
+            }
+        }]).provider('filterWatcher', function () {
+
+            this.$get = ['$window', '$rootScope', function ($window, $rootScope) {
+
+                /**
+                 * Cache storing
+                 * @type {Object}
+                 */
+                var $$cache = {};
+
+                /**
+                 * Scope listeners container
+                 * scope.$destroy => remove all cache keys
+                 * bind to current scope.
+                 * @type {Object}
+                 */
+                var $$listeners = {};
+
+                /**
+                 * $timeout without triggering the digest cycle
+                 * @type {function}
+                 */
+                var $$timeout = $window.setTimeout;
+
+                function isScope(obj) {
+                    return obj && obj.$evalAsync && obj.$watch;
+                }
+
+                /**
+                 * @description
+                 * get `HashKey` string based on the given arguments.
+                 * @param fName
+                 * @param args
+                 * @returns {string}
+                 */
+                function getHashKey(fName, args) {
+                    function replacerFactory() {
+                        var cache = [];
+                        return function (key, val) {
+                            if (angular.isObject(val) && !(val === null)) {
+                                if (~cache.indexOf(val)) return '[Circular]';
+                                cache.push(val);
+                            }
+                            if ($window == val) return '$WINDOW';
+                            if ($window.document == val) return '$DOCUMENT';
+                            if (isScope(val)) return '$SCOPE';
+                            return val;
+                        }
+                    }
+                    return [fName, JSON.stringify(args, replacerFactory())]
+                      .join('#')
+                      .replace(/"/g, '');
+                }
+
+                /**
+                 * @description
+                 * fir on $scope.$destroy,
+                 * remove cache based scope from `$$cache`,
+                 * and remove itself from `$$listeners`
+                 * @param event
+                 */
+                function removeCache(event) {
+                    var id = event.targetScope.$id;
+                    angular.forEach($$listeners[id], function (key) {
+                        delete $$cache[key];
+                    });
+                    delete $$listeners[id];
+                }
+
+                /**
+                 * @description
+                 * for angular version that greater than v.1.3.0
+                 * it clear cache when the digest cycle is end.
+                 */
+                function cleanStateless() {
+                    $$timeout(function () {
+                        if (!$rootScope.$$phase)
+                            $$cache = {};
+                    }, 2000);
+                }
+
+                /**
+                 * @description
+                 * Store hashKeys in $$listeners container
+                 * on scope.$destroy, remove them all(bind an event).
+                 * @param scope
+                 * @param hashKey
+                 * @returns {*}
+                 */
+                function addListener(scope, hashKey) {
+                    var id = scope.$id;
+                    if (angular.isUndefined($$listeners[id])) {
+                        scope.$on('$destroy', removeCache);
+                        $$listeners[id] = [];
+                    }
+                    return $$listeners[id].push(hashKey);
+                }
+
+                /**
+                 * @description
+                 * return the `cacheKey` or undefined.
+                 * @param filterName
+                 * @param args
+                 * @returns {*}
+                 */
+                function $$isMemoized(filterName, args) {
+                    var hashKey = getHashKey(filterName, args);
+                    return $$cache[hashKey];
+                }
+
+                /**
+                 * @description
+                 * store `result` in `$$cache` container, based on the hashKey.
+                 * add $destroy listener and return result
+                 * @param filterName
+                 * @param args
+                 * @param scope
+                 * @param result
+                 * @returns {*}
+                 */
+                function $$memoize(filterName, args, scope, result) {
+                    var hashKey = getHashKey(filterName, args);
+                    //store result in `$$cache` container
+                    $$cache[hashKey] = result;
+                    // for angular versions that less than 1.3
+                    // add to `$destroy` listener, a cleaner callback
+                    if (isScope(scope)) {
+                        addListener(scope, hashKey);
+                    } else {
+                        cleanStateless();
+                    }
+                    return result;
+                }
+
+                return {
+                    isMemoized: $$isMemoized,
+                    memoize: $$memoize
+                }
+            }];
+        });
 
     angular.module('app', [
         'hljs',

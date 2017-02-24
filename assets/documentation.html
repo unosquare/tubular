@@ -12,18 +12,18 @@
             </div>
             <h3>Introduction</h3>
             <div class="list-group">
-                <a class="list-group-item" href="#/Documentation">General Information</a>
-                <a class="list-group-item" href="#/Documentation/StartGrid">Getting Started - Grids</a>
-                <a class="list-group-item" href="#/Documentation/WebApi">Tubular Grids with .NET assembly</a>
-                <a class="list-group-item" href="#/Documentation/StartForm">Getting Started - Forms</a>
-                <a class="list-group-item" href="#/Documentation/StartChart">Getting Started - Charts</a>
-                <a class="list-group-item" href="#/Documentation/StartReporting">Getting Started - Reporting</a>
+                <a class="list-group-item" href="#!/Documentation">General Information</a>
+                <a class="list-group-item" href="#!/Documentation/StartGrid">Getting Started - Grids</a>
+                <a class="list-group-item" href="#!/Documentation/WebApi">Tubular Grids with .NET assembly</a>
+                <a class="list-group-item" href="#!/Documentation/StartForm">Getting Started - Forms</a>
+                <a class="list-group-item" href="#!/Documentation/StartChart">Getting Started - Charts</a>
+                <a class="list-group-item" href="#!/Documentation/StartReporting">Getting Started - Reporting</a>
             </div>
             <div ng-repeat="(key, group) in items | filter: { docType: '!external', name: search } | groupBy: 'docType'">
                 <h3>{{key}}</h3>
                 <div class="list-group">
                     <a class="list-group-item" ng-repeat="item in group | orderBy: 'name'"
-                       href="#/Documentation/{{item.name}}">{{item.name}}</a>
+                       href="#!/Documentation/{{item.name}}">{{item.name}}</a>
                 </div>
             </div>
         </div>
@@ -51,7 +51,7 @@
                             to different data sources like REST Services (using .NET Connector), OData web services or local JSON arrays. You can learn more with the following links:
                         </p>
                         <ul>
-                            <a href="#/Documentation/StartGrid">Getting Started - Grids</a>
+                            <a href="#!/Documentation/StartGrid">Getting Started - Grids</a>
                         </ul>
                     </div>
                     <div class="col-xs-6">
@@ -64,7 +64,7 @@
                             Learn more at:
                         </p>
                         <ul>
-                            <a href="#/Documentation/StartForm">Getting Started - Forms</a>
+                            <a href="#!/Documentation/StartForm">Getting Started - Forms</a>
                         </ul>
                     </div>
                 </div>
@@ -78,7 +78,7 @@
                             This module is new and it is work in progress.
                         </p>
                         <ul>
-                            <a href="#/Documentation/StartChart">Getting Started - Charts</a>
+                            <a href="#!/Documentation/StartChart">Getting Started - Charts</a>
                         </ul>
                     </div>
                 </div>

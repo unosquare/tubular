@@ -1,8 +1,8 @@
 ﻿<h1>Getting Started - Forms</h1>
 
 <p>
-    The <a href="#/Documentation/tbForm">tbForm</a> is a central piece in Tubular. You can design your forms with several controls,
-    and also you can create your own, and put your form in a page, modal or inside a <a href="#/Documentation/tbGrid">tbGrid</a>. Let's start
+    The <a href="#!/Documentation/tbForm">tbForm</a> is a central piece in Tubular. You can design your forms with several controls,
+    and also you can create your own, and put your form in a page, modal or inside a <a href="#!/Documentation/tbGrid">tbGrid</a>. Let's start
     how to create a basic form, you can use or not a <code>ngController</code> wrapping your form but you should start
     with a <code>tbForm</code>.
 </p>
@@ -12,7 +12,7 @@
 </a>
 
 <p>
-    The <code>tbForm</code> component contains several parameters that you can check <a href="#/Documentation/tbForm">here</a>. One important attribute is 
+    The <code>tbForm</code> component contains several parameters that you can check <a href="#!/Documentation/tbForm">here</a>. One important attribute is 
     <code>requireAuthentication</code> because it determines if the <code>tbForm</code> will connect to a REST service using Bearer token or not. The default value
     is true, and you should disable it if you are not using securited connection.
 </p>
@@ -21,18 +21,18 @@
     Now you can start adding any control that you need. Tubular provides the next control, but as we told before you can create your own.
 </p>
 <ul>
-    <li><a href="#/Documentation/tbSimpleEditor">tbSimpleEditor</a> - A default editor with some options, it's like a <code>input type=text</code>.</li>
-    <li><a href="#/Documentation/tbNumericEditor">tbNumericEditor</a> - A numeric editor with support to format to number or currency, the control is wrapping an <code>input type=number</code>, if you target browser doesn't support this HTML5 tag you need to add a <a href="https://github.com/jonstipe/number-polyfill" target="_blank">polyfill</a>.</li>
-    <li><a href="#/Documentation/tbDateTimeEditor">tbDateTimeEditor</a> and <a href="#/Documentation/tbDateEditor">tbDateEditor</a> - A datetime and date editors using <code>input type=date</code> elements and when they are not available fallbacks to a jQuery date picker.</li>
-    <li><a href="#/Documentation/tbDropdownEditor">tbDropdownEditor</a> - Using a <code>select</code> but with extra options like load the options from a Url using the internal <a href="#/Documentation/tubularHttp">tubularHttp</a>.</li>
-    <li><a href="#/Documentation/tbTypeaheadEditor">tbTypeaheadEditor</a> - This is a wrapper around the <a href="https://angular-ui.github.io/bootstrap/#/typeahead">Angular UI Typeahead</a> with easy to setup REST service using <code>tubularHttp</code>.</li>
-    <li><a href="#/Documentation/tbHiddenField">tbHiddenField</a> - A <code>input type=hidden</code>.</li>
-    <li><a href="#/Documentation/tbCheckboxField">tbCheckboxField</a> - Represents a common checkbox but connected to a data model.</li>
-    <li><a href="#/Documentation/tbTextArea">tbTextArea</a> - Similar to <code>textarea</code> element but with validations and binding.</li>
+    <li><a href="#!/Documentation/tbSimpleEditor">tbSimpleEditor</a> - A default editor with some options, it's like a <code>input type=text</code>.</li>
+    <li><a href="#!/Documentation/tbNumericEditor">tbNumericEditor</a> - A numeric editor with support to format to number or currency, the control is wrapping an <code>input type=number</code>, if you target browser doesn't support this HTML5 tag you need to add a <a href="https://github.com/jonstipe/number-polyfill" target="_blank">polyfill</a>.</li>
+    <li><a href="#!/Documentation/tbDateTimeEditor">tbDateTimeEditor</a> and <a href="#!/Documentation/tbDateEditor">tbDateEditor</a> - A datetime and date editors using <code>input type=date</code> elements and when they are not available fallbacks to a jQuery date picker.</li>
+    <li><a href="#!/Documentation/tbDropdownEditor">tbDropdownEditor</a> - Using a <code>select</code> but with extra options like load the options from a Url using the internal <a href="#!/Documentation/tubularHttp">tubularHttp</a>.</li>
+    <li><a href="#!/Documentation/tbTypeaheadEditor">tbTypeaheadEditor</a> - This is a wrapper around the <a href="https://angular-ui.github.io/bootstrap/#/typeahead">Angular UI Typeahead</a> with easy to setup REST service using <code>tubularHttp</code>.</li>
+    <li><a href="#!/Documentation/tbHiddenField">tbHiddenField</a> - A <code>input type=hidden</code>.</li>
+    <li><a href="#!/Documentation/tbCheckboxField">tbCheckboxField</a> - Represents a common checkbox but connected to a data model.</li>
+    <li><a href="#!/Documentation/tbTextArea">tbTextArea</a> - Similar to <code>textarea</code> element but with validations and binding.</li>
 </ul>
 
 <p>
-    Tubular has a common service <a href="#/Documentation/tubularEditorService">tubularEditorService</a> with some common logic and directive attributes if you want to start
+    Tubular has a common service <a href="#!/Documentation/tubularEditorService">tubularEditorService</a> with some common logic and directive attributes if you want to start
     your own control. For example you can check <a href="https://github.com/unosquare/tubular/blob/master/Unosquare.Tubular.Sample/ui/chosen/tb-chosen.js">tbChosen</a>, a
     wrapper around a popular dropdown control in <b>Bootstrap</b>.
 </p>
@@ -65,7 +65,7 @@
 <p>
     Try to submit your form, if you follow all the instructions right you should be able to connect to your REST service and create/update records. You can
     move your form to a modal or a <code>tbGrid</code>. Please check the next tutorials to understand how to use <strong>tbGrid and tbForm</strong> to deliver
-    a great UX. Continue with <a href="#/Documenation/ModalGrid">Modals and Grid</a> and <a href="#/Documentation/InlineEditor">Grid with in-line editor</a>.
+    a great UX. Continue with <a href="#/Documenation/ModalGrid">Modals and Grid</a> and <a href="#!/Documentation/InlineEditor">Grid with in-line editor</a>.
 </p>
 
 <div class="panel panel-default">
