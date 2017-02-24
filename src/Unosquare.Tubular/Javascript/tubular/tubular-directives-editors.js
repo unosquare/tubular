@@ -776,16 +776,7 @@
          * @param {number} max Set the maximum characters.
          */
         .component('tbTextArea', {
-            template: '<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">' +
-                '<span ng-hide="$ctrl.isEditing" ng-bind="$ctrl.value"></span>' +
-                '<label ng-show="$ctrl.showLabel" ng-bind="$ctrl.label"></label>' +
-                '<textarea ng-show="$ctrl.isEditing" placeholder="{{$ctrl.placeholder}}" ng-model="$ctrl.value" class="form-control" ' +
-                ' ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}"></textarea>' +
-                '<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">' +
-                '{{error}}' +
-                '</span>' +
-                '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help" ng-bind="$ctrl.help"></span>' +
-                '</div>',
+            templateUrl: 'tbTextArea.tpl.html',
             bindings: {
                 value: '=?',
                 isEditing: '=?',
@@ -804,7 +795,7 @@
                     var $ctrl = this;
 
                     $ctrl.validate = function () {
-                        if (tubular.isDefined($ctrl.min) && tubular.isDefined($ctrl.value)) {
+                        if ($ctrl.min && $ctrl.value) {
                             if ($ctrl.value.length < parseInt($ctrl.min)) {
                                 $ctrl.$valid = false;
                                 $ctrl.state.$errors = [translateFilter('EDITOR_MIN_CHARS', +$ctrl.min)];
@@ -812,7 +803,7 @@
                             }
                         }
 
-                        if (tubular.isDefined($ctrl.max) && tubular.isDefined($ctrl.value)) {
+                        if ($ctrl.max && $ctrl.value) {
                             if ($ctrl.value.length > parseInt($ctrl.max)) {
                                 $ctrl.$valid = false;
                                 $ctrl.state.$errors = [translateFilter('EDITOR_MAX_CHARS', +$ctrl.max)];
