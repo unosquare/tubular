@@ -28,7 +28,7 @@
             function() {
                 return {
                     require: '^tbGrid',
-                    template: '<table ng-transclude class="table tubular-grid-table"></table>',
+                    templateUrl: 'tbGridTable.tpl.html',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
@@ -55,10 +55,9 @@
          */
         .directive('tbColumnDefinitions', [
             function() {
-
                 return {
                     require: '^tbGridTable',
-                    template: '<thead><tr ng-transclude></tr></thead>',
+                    templateUrl: 'tbColumnDefinitions.tpl.html',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
@@ -100,13 +99,12 @@
          * @param {boolean} searchable Set if column is searchable.
          * @param {boolean} visible Set if column is visible.
          * @param {string} columnType Set the column data type. Values: string, numeric, date, datetime, or boolean.
-         * @param {boolean} isGrouping Define a group key.
          */
         .directive('tbColumn', [
             function () {
                 return {
                     require: '^tbColumnDefinitions',
-                    template: '<th ng-transclude ng-class="{sortable: column.Sortable}" ng-show="column.Visible"></th>',
+                    templateUrl: 'tbColumn.tmp.html',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
@@ -119,7 +117,6 @@
                         isKey: '=?',
                         searchable: '=?',
                         columnType: '@?',
-                        isGrouping: '=?',
                         aggregate: '@?',
                         metaAggregate: '@?',
                         sortDirection: '@?'
@@ -173,7 +170,6 @@
                                 this.Visible = $scope.visible === 'false' ? false : true;
                                 this.Filter = null;
                                 this.DataType = $scope.columnType || 'string';
-                                this.IsGrouping = $scope.isGrouping === 'true';
                                 this.Aggregate = $scope.aggregate || 'none';
                                 this.MetaAggregate = $scope.metaAggregate || 'none';
                             };
@@ -201,11 +197,7 @@
             function() {
                 return {
                     require: '^tbColumn',
-                    template: '<span><a title="Click to sort. Press Ctrl to sort by multiple columns" class="column-header" href ng-click="sortColumn($event)">' +
-                        '<span class="column-header-default">{{ $parent.column.Label }}</span>' +
-                        '<ng-transclude></ng-transclude></a> ' +
-                        '<i class="fa sort-icon" ng-class="{\'fa-long-arrow-up\': $parent.column.SortDirection == \'Ascending\', \'fa-long-arrow-down\': $parent.column.SortDirection == \'Descending\'}">&nbsp;</i>' +
-                        '</span>',
+                    templateUrl: 'tbColumnHeader.tpl.html',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
@@ -215,6 +207,7 @@
                             $scope.sortColumn = function($event) {
                                 $scope.$parent.sortColumn($event.ctrlKey);
                             };
+
                             // this listener here is used for backwards compatibility with tbColumnHeader requiring a scope.label value on its own
                             $scope.$on('tbColumn_LabelChanged', function($event, value) {
                                 $scope.label = value;
@@ -246,10 +239,9 @@
          */
         .directive('tbRowSet', [
             function() {
-
                 return {
                     require: '^tbGrid',
-                    template: '<tbody ng-transclude></tbody>',
+                    templateUrl: 'tbRowSet.tpl.html',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
@@ -276,10 +268,9 @@
          */
         .directive('tbFootSet', [
             function() {
-
                 return {
                     require: '^tbGrid',
-                    template: '<tfoot ng-transclude></tfoot>',
+                    templateUrl: 'tbFootSet.tpl.html',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
@@ -311,8 +302,7 @@
             function() {
 
                 return {
-                    template: '<tr ng-transclude ng-class="{\'info\': selectableBool && model.$selected}"' +
-                        ' ng-click="changeSelection(model)"></tr>',
+                    templateUrl: 'tbRowTemplate.tpl.html',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
@@ -385,7 +375,7 @@
 
                 return {
                     require: '^tbRowTemplate',
-                    template: '<td ng-transclude ng-show="column.Visible" data-label="{{::column.Label}}"></td>',
+                    templateUrl: 'tbCellTemplate.tpl.html',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
