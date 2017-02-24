@@ -42,7 +42,9 @@ gulp.task('reports', function() {
 
         var subOutput = '';
         getDirectories('reports/' + dir).forEach(function(subDir) {
-            subOutput += "<li><a href='https://unosquare.github.io/tubular/reports/" + dir + "/" + subDir + "'>" + subDir + "</a></li>";
+            var link = subDir;
+            if (subDir == 'coverage') link = 'coverage/lcov-report';
+            subOutput += "<li><a href='https://unosquare.github.io/tubular/reports/" + dir + "/" + link + "'>" + subDir + "</a></li>";
         });
 
         fs.writeFile('reports/' + dir + '/index.html', baseCss + "<h1>Travis Build #" + dir +" Reports</h1><ul>" + subOutput + "</ul>");
