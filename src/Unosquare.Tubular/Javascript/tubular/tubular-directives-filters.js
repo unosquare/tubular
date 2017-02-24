@@ -39,7 +39,7 @@
             require: {
                 $component: '^tbGrid'
             },
-            template: '<button class="btn btn-sm btn-default" ng-click="$ctrl.openColumnsSelector()">{{::\'CAPTION_SELECTCOLUMNS\' | translate}}</button></div>',
+            templateUrl: 'tbColumnSelector.tpl.html',
             controller: ['$uibModal', function($modal) {
                     var $ctrl = this;
 
@@ -47,18 +47,7 @@
                         var model = $ctrl.$component.columns;
 
                         var dialog = $modal.open({
-                            template: '<div class="modal-header">' +
-                                '<h3 class="modal-title">{{::\'CAPTION_SELECTCOLUMNS\' | translate}}</h3>' +
-                                '</div>' +
-                                '<div class="modal-body">' +
-                                '<table class="table table-bordered table-responsive table-striped table-hover table-condensed">' +
-                                '<thead><tr><th>Visible?</th><th>Name</th></tr></thead>' +
-                                '<tbody><tr ng-repeat="col in Model">' +
-                                '<td><input type="checkbox" ng-model="col.Visible" ng-disabled="col.Visible && isInvalid()" /></td>' +
-                                '<td>{{col.Label}}</td>' +
-                                '</tr></tbody></table></div>' +
-                                '</div>' +
-                                '<div class="modal-footer"><button class="btn btn-warning" ng-click="closePopup()">{{::\'CAPTION_CLOSE\' | translate}}</button></div>',
+                            templateUrl: 'tbColumnSelectorDialog.tpl.html',
                             backdropClass: 'fullHeight',
                             animation: false,
                             controller: [
@@ -97,12 +86,7 @@
             require: {
                 $component: '^tbGrid'
             },
-            template: '<div class="tubular-column-menu">' +
-                '<button class="btn btn-xs btn-default btn-popover" ' +
-                'uib-popover-template="$ctrl.templateName" popover-placement="bottom" popover-title="{{$ctrl.filterTitle}}" popover-is-open="$ctrl.isOpen"' +
-                ' popover-trigger="\'click outsideClick\'" ng-class="{ \'btn-success\': $ctrl.filter.HasFilter }">' +
-                '<i class="fa fa-filter"></i></button>' +
-                '</div>',
+            templateUrl: 'tbColumnFilter.tpl.html',
             bindings: {
                 text: '@',
                 argument: '@',
@@ -142,12 +126,7 @@
             require: {
                 $component: '^tbGrid'
             },
-            template: '<div class="tubular-column-menu">' +
-                '<button class="btn btn-xs btn-default btn-popover" ' +
-                'uib-popover-template="$ctrl.templateName" popover-placement="bottom" popover-title="{{$ctrl.filterTitle}}" popover-is-open="$ctrl.isOpen" ' +
-                'popover-trigger="\'outsideClick\'" ng-class="{ \'btn-success\': $ctrl.filter.HasFilter }">' +
-                '<i class="fa fa-filter"></i></button>' +
-                '</div>',
+            templateUrl: 'tbColumnDateTimeFilter.tpl.html', // TODO: Check if can use tbColumnFilter tempalte
             bindings: {
                 text: '@',
                 argument: '@',
@@ -183,12 +162,7 @@
             require: {
                 $component: '^tbGrid'
             },
-            template: '<div class="tubular-column-menu">' +
-                '<button class="btn btn-xs btn-default btn-popover" uib-popover-template="$ctrl.templateName" popover-placement="bottom" ' +
-                'popover-title="{{$ctrl.filterTitle}}" popover-is-open="$ctrl.isOpen" popover-trigger="\'click outsideClick\'" ' +
-                'ng-class="{ \'btn-success\': $ctrl.filter.HasFilter }">' +
-                '<i class="fa fa-filter"></i></button>' +
-                '</div>',
+            templateUrl: 'tbColumnFilter.tpl.html',
             bindings: {
                 argument: '@',
                 operator: '@',

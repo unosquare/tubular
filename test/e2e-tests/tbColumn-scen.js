@@ -7,7 +7,7 @@
 // component at the related HTML file (tbColumn_tests.html) is static and constrained
 // to 53 records with consecutive ID's.
 
-describe('tbColumn', function () {
+describe('tbColumn', () => {
 
     var firstDataRow,
         lastDataRow,
@@ -22,8 +22,8 @@ describe('tbColumn', function () {
         lastDataRow = element.all(by.repeater('row in $component.rows')).last();
     }
 
-    describe('Grid Sorting', function () {
-        beforeEach(function () {
+    describe('Grid Sorting', () => {
+        beforeEach(() => {
             // Go to test
             browser.get('index.html');
             browser.executeScript('window.sessionStorage.clear();window.localStorage.clear();');
@@ -38,10 +38,7 @@ describe('tbColumn', function () {
             // Select '100' on tbPageSizeSelector
             element(by.model('$ctrl.$component.pageSize'))
                 .$('[value="number:100"]').click();
-            /**********************/
-            // * Test variables * //
-            /**********************/
-
+            
             updateFirstAndLastRow();
 
             // Sort Order ID column link
@@ -65,13 +62,13 @@ describe('tbColumn', function () {
             dataSetLowerDate = /12\/30\/2015/,
             dataSetHigherDate = /1\/01\/2016/;
 
-        it('should sort data in ascending order then on descending order when sorting by Order Id column', function () {
-            aOrderIdSorting.click().then(function () {
+        it('should sort data in ascending order then on descending order when sorting by Order Id column', () => {
+            aOrderIdSorting.click().then(() => {
                 updateFirstAndLastRow();
                 expect(firstDataRow.$$('td').first().getText()).toBe(dataSetLowerId);
                 expect(lastDataRow.$$('td').first().getText()).toBe('100');
 
-                aOrderIdSorting.click().then(function () {
+                aOrderIdSorting.click().then(() => {
                     updateFirstAndLastRow();
                     expect(firstDataRow.$$('td').first().getText()).toBe(dataSetHigherId);
                     expect(lastDataRow.$$('td').first().getText()).toBe('401');
@@ -79,36 +76,33 @@ describe('tbColumn', function () {
             });
         });
 
-
-        it('should order data in ascending order when click-sorting an unsorted text column', function () {
-
-            aCustomerNameSorting.click().then(function () {
+        it('should order data in ascending order when click-sorting an unsorted text column', () => {
+            aCustomerNameSorting.click().then(() => {
                 updateFirstAndLastRow();
                 expect(firstDataRow.$$('td').get(1).getText()).toBe(dataSetLowerCustomerName);
             });
 
         });
 
-        it('should order data in descending order when click-sorting an ascending-sorted text column', function () {
-
-            aCustomerNameSorting.click().then(function () {
-                aCustomerNameSorting.click().then(function () {
+        it('should order data in descending order when click-sorting an ascending-sorted text column', () => {
+            aCustomerNameSorting.click().then(() => {
+                aCustomerNameSorting.click().then(() => {
                     updateFirstAndLastRow();
                     expect(firstDataRow.$$('td').get(1).getText()).toBe(dataSetHigherCustomerName);
                 });
             });
         });
 
-        it('should order data in ascending order when click-sorting an unsorted date column', function () {
-            aCreationDateSorting.click().then(function () {
+        it('should order data in ascending order when click-sorting an unsorted date column', () => {
+            aCreationDateSorting.click().then(() => {
                 updateFirstAndLastRow();
                 expect(firstDataRow.$$('td').get(3).getText()).toMatch(dataSetLowerDate);
             });
         });
 
-        it('should order data in descending order when click-sorting twice an unsorted date column', function () {
-            aCreationDateSorting.click().then(function () {
-                aCreationDateSorting.click().then(function () {
+        it('should order data in descending order when click-sorting twice an unsorted date column', () => {
+            aCreationDateSorting.click().then(() => {
+                aCreationDateSorting.click().then(() => {
                     updateFirstAndLastRow();
                     expect(firstDataRow.$$('td').get(3).getText()).toMatch(dataSetHigherDate);
                 });

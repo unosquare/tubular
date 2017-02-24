@@ -98,7 +98,7 @@
      * 
      * It depends upon {@link tubular.services} and {@link tubular.models}.
      */
-    angular.module('tubular.directives', ['tubular.services', 'tubular.models'])
+    angular.module('tubular.directives', ['tubular.models','tubular.services'])
         /**
          * @ngdoc directive
          * @name tbGridTable
@@ -192,6 +192,7 @@
             function () {
                 return {
                     require: '^tbColumnDefinitions',
+                    // TODO: I was not able to move to templateUrl, I need to research
                     template: '<th ng-transclude ng-class="{sortable: column.Sortable}" ng-show="column.Visible"></th>',
                     restrict: 'E',
                     replace: true,
@@ -509,16 +510,24 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
     "<div ng-class=\"{ 'form-group' : $ctrl.showLabel && $ctrl.isEditing, 'has-error' : !$ctrl.$valid && $ctrl.$dirty() }\"><span ng-hide=$ctrl.isEditing ng-bind=$ctrl.value></span><label ng-show=$ctrl.showLabel ng-bind=$ctrl.label></label><input type={{$ctrl.editorType}} placeholder={{$ctrl.placeholder}} ng-show=$ctrl.isEditing ng-model=$ctrl.value class=form-control ng-required=$ctrl.required ng-readonly=$ctrl.readOnly name={{$ctrl.name}}> <span class=\"help-block error-block\" ng-show=$ctrl.isEditing ng-repeat=\"error in $ctrl.state.$errors\">{{error}}</span> <span class=help-block ng-show=\"$ctrl.isEditing && $ctrl.help\" ng-bind=$ctrl.help></span></div>");
   $templateCache.put("tbTextArea.tpl.html",
     "<div ng-class=\"{ 'form-group' : $ctrl.showLabel && $ctrl.isEditing, 'has-error' : !$ctrl.$valid && $ctrl.$dirty() }\"><span ng-hide=$ctrl.isEditing ng-bind=$ctrl.value></span><label ng-show=$ctrl.showLabel ng-bind=$ctrl.label></label><textarea ng-show=$ctrl.isEditing placeholder={{$ctrl.placeholder}} ng-model=$ctrl.value class=form-control ng-required=$ctrl.required ng-readonly=$ctrl.readOnly name={{$ctrl.name}}></textarea><span class=\"help-block error-block\" ng-show=$ctrl.isEditing ng-repeat=\"error in $ctrl.state.$errors\">{{error}}</span> <span class=help-block ng-show=\"$ctrl.isEditing && $ctrl.help\" ng-bind=$ctrl.help></span></div>");
+  $templateCache.put("tbForm.tpl.html",
+    "<form ng-transclude name={{name}}></form>");
   $templateCache.put("tbRemoveButton.tpl.html",
     "<button class=\"btn btn-danger btn-xs btn-popover\" uib-popover-template=$ctrl.templateName popover-placement=right popover-title=\"{{ $ctrl.legend || ('UI_REMOVEROW' | translate) }}\" popover-is-open=$ctrl.isOpen popover-trigger=\"'click outsideClick'\" ng-hide=$ctrl.model.$isEditing><span ng-show=$ctrl.showIcon class={{::$ctrl.icon}}></span> <span ng-show=$ctrl.showCaption>{{:: $ctrl.caption || ('CAPTION_REMOVE' | translate) }}</span></button>");
   $templateCache.put("tbSaveButton.tpl.html",
     "<div ng-show=model.$isEditing><button ng-click=save() class=\"btn btn-default {{:: saveCss || '' }}\" ng-disabled=!model.$valid()>{{:: saveCaption || ('CAPTION_SAVE' | translate) }}</button> <button ng-click=cancel() class=\"btn {{:: cancelCss || 'btn-default' }}\">{{:: cancelCaption || ('CAPTION_CANCEL' | translate) }}</button></div>");
   $templateCache.put("tbTextSearch.tpl.html",
     "<div class=tubular-grid-search><div class=\"input-group input-group-sm\"><span class=input-group-addon><i class=\"fa fa-search\"></i> </span><input type=search name=tbTextSearchInput class=form-control placeholder=\"{{:: $ctrl.placeholder || ('UI_SEARCH' | translate) }}\" maxlength=20 ng-model=$ctrl.$component.search.Text ng-model-options=\"{ debounce: 300 }\"> <span id=tb-text-search-reset-panel class=input-group-btn ng-show=\"$ctrl.$component.search.Text.length > 0\"><button id=tb-text-search-reset-button class=\"btn btn-default\" uib-tooltip=\"{{'CAPTION_CLEAR' | translate}}\" ng-click=\"$ctrl.$component.search.Text = ''\"><i class=\"fa fa-times-circle\"></i></button></span></div></div>");
+  $templateCache.put("tbColumnDateTimeFilter.tpl.html",
+    "<div class=tubular-column-menu><button class=\"btn btn-xs btn-default btn-popover\" uib-popover-template=$ctrl.templateName popover-placement=bottom popover-title={{$ctrl.filterTitle}} popover-is-open=$ctrl.isOpen popover-trigger=\"'outsideClick'\" ng-class=\"{ 'btn-success': $ctrl.filter.HasFilter }\"><i class=\"fa fa-filter\"></i></button></div>");
+  $templateCache.put("tbColumnFilter.tpl.html",
+    "<div class=tubular-column-menu><button class=\"btn btn-xs btn-default btn-popover\" uib-popover-template=$ctrl.templateName popover-placement=bottom popover-title={{$ctrl.filterTitle}} popover-is-open=$ctrl.isOpen popover-trigger=\"'click outsideClick'\" ng-class=\"{ 'btn-success': $ctrl.filter.HasFilter }\"><i class=\"fa fa-filter\"></i></button></div>");
+  $templateCache.put("tbColumnSelector.tpl.html",
+    "<button class=\"btn btn-sm btn-default\" ng-click=$ctrl.openColumnsSelector() ng-bind=\"'CAPTION_SELECTCOLUMNS' | translate\"></button>");
+  $templateCache.put("tbColumnSelectorDialog.tpl.html",
+    "<div class=modal-header><h3 class=modal-title ng-bind=\"'CAPTION_SELECTCOLUMNS' | translate\"></h3></div><div class=modal-body><table class=\"table table-bordered table-responsive table-striped table-hover table-condensed\"><thead><tr><th>Visible?</th><th>Name</th></tr></thead><tbody><tr ng-repeat=\"col in Model\"><td><input type=checkbox ng-model=col.Visible ng-disabled=\"col.Visible && isInvalid()\"></td><td ng-bind=col.Label></td></tr></tbody></table></div><div class=modal-footer><button class=\"btn btn-warning\" ng-click=closePopup() ng-bind=\"'CAPTION_CLOSE' | translate\"></button></div>");
   $templateCache.put("tbCellTemplate.tpl.html",
     "<td ng-transclude ng-show=column.Visible data-label={{::column.Label}}></td>");
-  $templateCache.put("tbColumn.tpl.html",
-    "<th ng-transclude ng-class=\"{sortable: column.Sortable}\" ng-show=column.Visible></th>");
   $templateCache.put("tbColumnDefinitions.tpl.html",
     "<thead><tr ng-transclude></tr></thead>");
   $templateCache.put("tbColumnFilterButtons.tpl.html",
@@ -572,7 +581,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
         [
             function() {
                 return {
-                    template: '<form ng-transclude name="{{name}}"></form>',
+                    templateUrl: 'tbForm.tpl.html',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
@@ -594,7 +603,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                             }
                         };
                     }
-                }
+                };
             }
         ]);
 })(angular);
@@ -2206,7 +2215,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             require: {
                 $component: '^tbGrid'
             },
-            template: '<button class="btn btn-sm btn-default" ng-click="$ctrl.openColumnsSelector()">{{::\'CAPTION_SELECTCOLUMNS\' | translate}}</button></div>',
+            templateUrl: 'tbColumnSelector.tpl.html',
             controller: ['$uibModal', function($modal) {
                     var $ctrl = this;
 
@@ -2214,18 +2223,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         var model = $ctrl.$component.columns;
 
                         var dialog = $modal.open({
-                            template: '<div class="modal-header">' +
-                                '<h3 class="modal-title">{{::\'CAPTION_SELECTCOLUMNS\' | translate}}</h3>' +
-                                '</div>' +
-                                '<div class="modal-body">' +
-                                '<table class="table table-bordered table-responsive table-striped table-hover table-condensed">' +
-                                '<thead><tr><th>Visible?</th><th>Name</th></tr></thead>' +
-                                '<tbody><tr ng-repeat="col in Model">' +
-                                '<td><input type="checkbox" ng-model="col.Visible" ng-disabled="col.Visible && isInvalid()" /></td>' +
-                                '<td>{{col.Label}}</td>' +
-                                '</tr></tbody></table></div>' +
-                                '</div>' +
-                                '<div class="modal-footer"><button class="btn btn-warning" ng-click="closePopup()">{{::\'CAPTION_CLOSE\' | translate}}</button></div>',
+                            templateUrl: 'tbColumnSelectorDialog.tpl.html',
                             backdropClass: 'fullHeight',
                             animation: false,
                             controller: [
@@ -2264,12 +2262,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             require: {
                 $component: '^tbGrid'
             },
-            template: '<div class="tubular-column-menu">' +
-                '<button class="btn btn-xs btn-default btn-popover" ' +
-                'uib-popover-template="$ctrl.templateName" popover-placement="bottom" popover-title="{{$ctrl.filterTitle}}" popover-is-open="$ctrl.isOpen"' +
-                ' popover-trigger="\'click outsideClick\'" ng-class="{ \'btn-success\': $ctrl.filter.HasFilter }">' +
-                '<i class="fa fa-filter"></i></button>' +
-                '</div>',
+            templateUrl: 'tbColumnFilter.tpl.html',
             bindings: {
                 text: '@',
                 argument: '@',
@@ -2309,12 +2302,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             require: {
                 $component: '^tbGrid'
             },
-            template: '<div class="tubular-column-menu">' +
-                '<button class="btn btn-xs btn-default btn-popover" ' +
-                'uib-popover-template="$ctrl.templateName" popover-placement="bottom" popover-title="{{$ctrl.filterTitle}}" popover-is-open="$ctrl.isOpen" ' +
-                'popover-trigger="\'outsideClick\'" ng-class="{ \'btn-success\': $ctrl.filter.HasFilter }">' +
-                '<i class="fa fa-filter"></i></button>' +
-                '</div>',
+            templateUrl: 'tbColumnDateTimeFilter.tpl.html', // TODO: Check if can use tbColumnFilter tempalte
             bindings: {
                 text: '@',
                 argument: '@',
@@ -2350,12 +2338,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             require: {
                 $component: '^tbGrid'
             },
-            template: '<div class="tubular-column-menu">' +
-                '<button class="btn btn-xs btn-default btn-popover" uib-popover-template="$ctrl.templateName" popover-placement="bottom" ' +
-                'popover-title="{{$ctrl.filterTitle}}" popover-is-open="$ctrl.isOpen" popover-trigger="\'click outsideClick\'" ' +
-                'ng-class="{ \'btn-success\': $ctrl.filter.HasFilter }">' +
-                '<i class="fa fa-filter"></i></button>' +
-                '</div>',
+            templateUrl: 'tbColumnFilter.tpl.html',
             bindings: {
                 argument: '@',
                 operator: '@',
@@ -2431,12 +2414,12 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 'tubularTemplateService', function(tubularTemplateService) {
                     var $ctrl = this;
 
-                    $ctrl.$onInit = function () {
+                    $ctrl.$onInit = function() {
                         $ctrl.showIcon = angular.isDefined($ctrl.icon);
                         $ctrl.showCaption = !($ctrl.showIcon && angular.isUndefined($ctrl.caption));
 
                         $ctrl.templateName = tubularTemplateService.tbRemoveButtonrPopoverTemplateName;
-                    }
+                    };
                 }
             ]
         })

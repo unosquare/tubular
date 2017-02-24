@@ -72,14 +72,6 @@ module.exports = function(grunt) {
                 }
             }
         },
-        //makeReport: {
-        //    src: 'coverage/*.json',
-        //    options: {
-        //        type: 'lcov',
-        //        dir: 'coverage',
-        //        print: 'detail'
-        //    }
-        //},
         coveralls: {
             options: {
                 force: true
@@ -237,7 +229,6 @@ module.exports = function(grunt) {
         'string-replace',
         'connect:server',
         'protractor_coverage:remote',
-        //'makeReport',
         'coveralls:local'
     ]);
 

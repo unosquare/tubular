@@ -66,31 +66,7 @@
                 $scope.Error = "No data found";
                 toastr.error('No data found');
             });
-        }).controller('GridCtrl', [
-            '$scope', '$location', 'tubularHttp', 'toastr',
-            function ($scope, $location, tubularHttp, toastr) {
-                $scope.loading = false;
-                // TODO: Do we need this?
-                tubularHttp.useRefreshTokens = true;
-                tubularHttp.setRefreshTokenUrl('http://tubular.azurewebsites.net/api/token');
-                tubularHttp.setTokenUrl('http://tubular.azurewebsites.net/api/token');
-                tubularHttp.setApiBaseUrl('http://tubular.azurewebsites.net/api');
-
-                $scope.submitForm = function () {
-                    $scope.loading = true;
-
-                    tubularHttp.authenticate($scope.username,
-                        $scope.password,
-                        function () { $location.path("/expirationDate"); },
-                        function (error) {
-                            $scope.isAuth = tubularHttp.isAuthenticated();
-                            $scope.loading = false;
-                            toastr.error(error);
-                            $location.path("/expirationDate");
-                        });
-                };
-            }
-        ]).controller('onSaved', function ($scope) {
+        }).controller('onSaved', function ($scope) {
             $scope.$on('tbForm_OnSuccessfulSave', function () {
                 $scope.textSave = "Saved";
             });

@@ -72,19 +72,15 @@ describe('e2e - Module: tubular.directives', function () {
         });
 
         it('searching for a phrase (backend)', function () {
-            
             generate();
 
             gridCtrl.search.Text = 'google sometimes';
             scope.$apply();
             timeout.flush(300);
 
-
-            
             expect(gridCtrl.saveSearch).toHaveBeenCalled();
             expect(gridCtrl.search.Operator).toBe('Auto');
             expect(gridCtrl.retrieveData).toHaveBeenCalled();
         });
-       
     });
 });
