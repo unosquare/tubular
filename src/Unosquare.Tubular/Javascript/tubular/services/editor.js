@@ -13,8 +13,6 @@
             'translateFilter', function (translateFilter) {
                 var me = this;
 
-                me.isValid = function (value) { return !(!value); };
-
                 /**
                 * Simple helper to generate a unique name for Tubular Forms
                 */
@@ -29,10 +27,7 @@
                  * with all the tubularEditors.
                  */
                 me.setupScope = function (scope, defaultFormat, ctrl, setDirty) {
-                    if (angular.isUndefined(ctrl)) {
-                        ctrl = scope;
-                    }
-
+                    ctrl = ctrl || scope;
                     ctrl.isEditing = angular.isUndefined(ctrl.isEditing) ? true : ctrl.isEditing;
                     ctrl.showLabel = ctrl.showLabel || false;
                     ctrl.label = ctrl.label || (ctrl.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
@@ -40,6 +35,16 @@
                     ctrl.readOnly = ctrl.readOnly || false;
                     ctrl.format = ctrl.format || defaultFormat;
                     ctrl.$valid = true;
+
+                    // This is the state API for every property in the Model
+                    ctrl.state = {
+                        $valid: function () {
+                            ctrl.checkValid();
+                            return this.$errors.length === 0;
+                        },
+                        $dirty: ctrl.$dirty,
+                        $errors: []
+                    };
 
                     // Get the field reference using the Angular way
                     ctrl.getFormField = function () {
@@ -95,16 +100,6 @@
                         if (angular.isUndefined(oldValue) && angular.isUndefined(newValue)) {
                             return;
                         }
-
-                        // This is the state API for every property in the Model
-                        ctrl.state = {
-                            $valid: function () {
-                                ctrl.checkValid();
-                                return this.$errors.length === 0;
-                            },
-                            $dirty: ctrl.$dirty,
-                            $errors: []
-                        };
 
                         ctrl.$valid = true;
 
@@ -195,10 +190,10 @@
                                 parent.model.$state[scope.Name] = {
                                     $valid: function () {
                                         ctrl.checkValid();
-                                        return this.$errors.length === 0;
+                                        return ctrl.state.$errors.length === 0;
                                     },
                                     $dirty: ctrl.$dirty,
-                                    $errors: []
+                                    $errors: ctrl.state.$errors
                                 };
 
                                 if (angular.equals(ctrl.state, parent.model.$state[scope.Name]) === false) {

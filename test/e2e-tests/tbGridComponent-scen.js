@@ -52,7 +52,7 @@ describe('tbGridComponents', function () {
             lastItem.$('input').clear().sendKeys('TEST').then(function () {
 
                 lastItem.$$('button').first().click().then(function () {
-                    expect(lastItem.$$('td').last().getText()).toBe("TEST");
+                    expect(lastItem.$$('td').last().getText()).toBe('TEST');
                 });
             });
         });

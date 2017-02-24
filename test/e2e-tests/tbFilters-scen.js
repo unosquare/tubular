@@ -496,7 +496,7 @@ describe('Tubular Filters', function () {
             applyBtn.click()
                 .then(function () {
                     // Verify filtering
-                    dataRows.each(function (row, index) {
+                    dataRows.each(function (row) {
                         row.$$('td').get(2).getText()
                             .then(function (date) {
                                 filterOk = filterOk && (filterMatcher.test(date));

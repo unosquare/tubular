@@ -1,4 +1,4 @@
-﻿.panel.panel-rounded {
+﻿.panel-rounded {
     margin: 0;
 }
 
@@ -347,7 +347,7 @@ select.checkbox-list:hover option:checked, select.checkbox-list:focus option:che
             }
 }
 
-div.input-group-addon.fa {
+.input-group-addon.fa {
     font-size: 10px;
 }
 
