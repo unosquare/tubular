@@ -11,10 +11,31 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-watch');
-    grunt.loadNpmTasks('grunt-protractor-runner');
 
     // Project configuration.
     grunt.initConfig({
+        instrument: {
+            files: [
+                'test/Unosquare.Tubular.WebTest/testApp.js',
+                'src/Unosquare.Tubular/Javascript/tubular*-bundle.js'
+            ],
+            options: {
+                basePath: 'instrumented/'
+            }
+        },
+        'string-replace': {
+            dist: {
+                files: { 'instrumented/': 'test/Unosquare.Tubular.WebTest/index*.html' },
+                options: {
+                    replacements: [
+                        {
+                            pattern: /\.\.\/\.\.\/src\/Unosquare\.Tubular\/Javascript\/tubular/g,
+                            replacement: '/instrumented/src/Unosquare.Tubular/Javascript/tubular'
+                        }
+                    ]
+                }
+            }
+        },
         connect: {
             server: {
                 options: {
@@ -24,7 +45,7 @@ module.exports = function(grunt) {
                 }
             }
         },
-        protractor: {
+        protractor_coverage: {
             options: {
                 noColor: false,
                 keepAlive: false,
@@ -34,8 +55,9 @@ module.exports = function(grunt) {
             },
             remote: {
                 options: {
+                    coverageDir: 'coverage',
                     args: {
-                        baseUrl: 'http://localhost:9000/test/Unosquare.Tubular.WebTest/',
+                        baseUrl: 'http://localhost:9000/instrumented/test/Unosquare.Tubular.WebTest/',
                         browser: process.env.TRAVIS_OS_NAME == 'osx' ? 'chrome' : 'firefox'
 
                     }
@@ -203,15 +225,17 @@ module.exports = function(grunt) {
 
     grunt.registerTask('test',
     [
+        'instrument',
+        'string-replace',
         'connect:server',
-        'protractor:remote',
+        'protractor_coverage:remote',
         'coveralls:local'
     ]);
 
     grunt.registerTask('test-local',
     [
         'connect:server',
-        'protractor:local'
+        'protractor_coverage:local'
     ]);
 
     grunt.registerTask('build-js', ['concat:tubular_js', 'concat:chart_js', 'concat:highchart_js']);
