@@ -1,0 +1,7 @@
+﻿<div class="text-right">
+    <button class="btn btn-sm btn-success" ng-click="$ctrl.currentFilter.applyFilter()"
+            ng-disabled="$ctrl.currentFilter.filter.Operator == 'None'"
+            ng-bind="'CAPTION_APPLY' | translate">
+    </button>&nbsp;
+    <button class="btn btn-sm btn-danger" ng-click="$ctrl.currentFilter.clearFilter()" ng-bind="'CAPTION_CLEAR' | translate"></button>
+</div>

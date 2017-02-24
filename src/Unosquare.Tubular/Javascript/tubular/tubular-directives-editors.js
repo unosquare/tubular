@@ -34,7 +34,7 @@
     }
 
     function validateDate($ctrl, translateFilter, dateFilter) {
-        if (angular.isDefined($ctrl.min)) {
+        if ($ctrl.min) {
             if (!angular.isDate($ctrl.min)) {
                 $ctrl.min = new Date($ctrl.min);
             }
@@ -47,7 +47,7 @@
             }
         }
 
-        if (angular.isDefined($ctrl.max)) {
+        if ($ctrl.max) {
             if (!angular.isDate($ctrl.max)) {
                 $ctrl.max = new Date($ctrl.max);
             }

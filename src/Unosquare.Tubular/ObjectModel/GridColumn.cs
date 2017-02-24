@@ -44,9 +44,5 @@
         /// The Aggregation Function
         /// </summary>
         public AggregationFunction Aggregate { get; set; }
-        /// <summary>
-        /// The Aggregation Function to perform in the column
-        /// </summary>
-        public AggregationFunction MetaAggregate { get; set; }
     }
 }

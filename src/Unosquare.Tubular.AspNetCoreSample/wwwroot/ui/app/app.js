@@ -93,7 +93,7 @@
                     toastr.error(error.statusText || "Connection error");
                 });
 
-                $scope.$on('tbGrid_OnSuccessfulSave', function (event, data, gridScope) {
+                $scope.$on('tbGrid_OnSuccessfulSave', function () {
                     toastr.success("Record updated");
                 });
 
