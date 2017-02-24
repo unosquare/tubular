@@ -118,10 +118,9 @@
         };
 
         $scope.openCode = function (tag) {
-            $http.get('generator/index.html').
-                success(function (data) {
+            $http.get('generator/index.html').then(function (response) {
                     tubularGenerator.exportPluker([
-                        { name: 'index.html', content: data },
+                        { name: 'index.html', content: response.data },
                         { name: 'README.md', content: tubularGenerator.DefaultReadme },
                         { name: 'app.js', content: tubularGenerator.DefaultJs },
                         { name: 'grid.html', content: $templateCache.get('assets/' + tag + '.html') }
@@ -156,8 +155,8 @@
                     if ($scope.basemodel.indexOf('http') === 0) {
                         $scope.dataUrl = $scope.basemodel;
 
-                        $http.get($scope.basemodel).success(function (data) {
-                            tubularGenerator.createColumns(data.value, $scope);
+                        $http.get($scope.basemodel).then(function (response) {
+                            tubularGenerator.createColumns(response.data.value, $scope);
                             $scope.uiOptions.ServiceName = 'odata';
                             $scope.formOptions.ServiceName = 'odata';
 
@@ -193,9 +192,8 @@
                 };
 
                 $scope.useSample = function () {
-                    $http.get('data/generatorsample.json').
-                        success(function (data) {
-                            $scope.basemodel = angular.toJson(data);
+                    $http.get('data/generatorsample.json').then(function (response) {
+                            $scope.basemodel = angular.toJson(response.data);
                             $scope.generateModel();
                         });
                 };
@@ -216,15 +214,14 @@
                 }
 
                 $scope.plunker = function (filename) {
-                    $http.get('generator/index.html').
-                        success(function (data) {
+                    $http.get('generator/index.html').then(function (response) {
                             var appJs = tubularGenerator.DefaultJs;
                             var files = [
-                                { name: 'index.html', content: data },
+                                { name: 'index.html', content: response.data },
                                 { name: 'README.md', content: tubularGenerator.DefaultReadme }
                             ];
 
-                            if ($scope.views.length == 0) {
+                            if ($scope.views.length === 0) {
                                 var tempUrl = $scope.dataUrl;
 
                                 if (angular.isDefined($scope.jsonstring) && $scope.jsonstring !== '') {
