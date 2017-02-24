@@ -15,28 +15,6 @@ module.exports = function(grunt) {
 
     // Project configuration.
     grunt.initConfig({
-        instrument: {
-            files: [
-                'test/Unosquare.Tubular.WebTest/testApp.js',
-                'src/Unosquare.Tubular/Javascript/tubular*-bundle.js'
-            ],
-            options: {
-                basePath: 'instrumented/'
-            }
-        },
-        'string-replace': {
-            dist: {
-                files: { 'instrumented/': 'test/Unosquare.Tubular.WebTest/index*.html' },
-                options: {
-                    replacements: [
-                        {
-                            pattern: /\.\.\/\.\.\/src\/Unosquare\.Tubular\/Javascript\/tubular/g,
-                            replacement: '/instrumented/src/Unosquare.Tubular/Javascript/tubular'
-                        }
-                    ]
-                }
-            }
-        },
         connect: {
             server: {
                 options: {
@@ -225,8 +203,6 @@ module.exports = function(grunt) {
 
     grunt.registerTask('test',
     [
-        'instrument',
-        'string-replace',
         'connect:server',
         'protractor:remote',
         'coveralls:local'
