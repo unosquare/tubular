@@ -85,7 +85,7 @@ module.exports = function(grunt) {
                 configFile: '.eslintrc.json',
                 format: 'html',
                 outputFile: 'report/eslint/index.html',
-                silent: true
+                silent: false
             },
             src: ['src/Unosquare.Tubular/Javascript/tubular*/**/*.js', '!src/**/*.spec.js', '!src/**/templates.js']
         },
