@@ -11,7 +11,7 @@
      * 
      * It depends upon {@link tubular.services} and {@link tubular.models}.
      */
-    angular.module('tubular.directives', ['tubular.services', 'tubular.models'])
+    angular.module('tubular.directives', ['tubular.models','tubular.services'])
         /**
          * @ngdoc directive
          * @name tbGridTable

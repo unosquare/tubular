@@ -180,10 +180,10 @@ describe('tbForm related components', function () {
     function selectDropDownOption(filterText) {
         return tbDropDownEditor.$$('option').filter(function (elem) {
             return elem.getText().then(function (text) {
-                return text.indexOf(filterText) != -1;
+                return text.indexOf(filterText) !== -1;
             });
         }).first();
-    };
+    }
 
     var tbDropDownEditorRestore = function () {
         return browser.wait(restoreCancelClickFn().then(function () {
@@ -351,7 +351,7 @@ describe('tbForm related components', function () {
         });
 
         it('should NOT submit modifications to item/server when clicking form "Cancel"', function () {
-            tbDropDownEditor_select.getAttribute('value').then(function (option) {
+            tbDropDownEditor_select.getAttribute('value').then(option => {
                 expect(option).toMatch(tbDropDownEditorCityOriginal);
             })
                 .then(function () {

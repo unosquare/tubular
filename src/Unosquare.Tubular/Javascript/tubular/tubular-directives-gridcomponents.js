@@ -31,12 +31,12 @@
                 'tubularTemplateService', function(tubularTemplateService) {
                     var $ctrl = this;
 
-                    $ctrl.$onInit = function () {
+                    $ctrl.$onInit = function() {
                         $ctrl.showIcon = angular.isDefined($ctrl.icon);
                         $ctrl.showCaption = !($ctrl.showIcon && angular.isUndefined($ctrl.caption));
 
                         $ctrl.templateName = tubularTemplateService.tbRemoveButtonrPopoverTemplateName;
-                    }
+                    };
                 }
             ]
         })
