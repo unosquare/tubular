@@ -131,8 +131,7 @@
             require: {
                 $component: '^tbGrid'
             },
-            template: '<button ng-click="$ctrl.edit()" class="btn btn-xs btn-default" ' +
-                'ng-hide="$ctrl.model.$isEditing">{{:: $ctrl.caption || (\'CAPTION_EDIT\' | translate) }}</button>',
+            templateUrl: 'tbEditButton.tpl.html',
             bindings: {
                 model: '=',
                 caption: '@'
@@ -166,14 +165,7 @@
             require: {
                 $component: '^tbGrid'
             },
-            template: '<div class="{{::$ctrl.css}}"><form class="form-inline">' +
-                '<div class="form-group">' +
-                '<label class="small">{{:: $ctrl.caption || (\'UI_PAGESIZE\' | translate) }} </label>&nbsp;' +
-                '<select ng-model="$ctrl.$component.pageSize" class="form-control input-sm {{::$ctrl.selectorCss}}" ' +
-                'ng-options="item for item in options">' +
-                '</select>' +
-                '</div>' +
-                '</form></div>',
+            templateUrl: 'tbPageSizeSelector.tpl.html',
             bindings: {
                 caption: '@',
                 css: '@',
@@ -204,15 +196,7 @@
             require: {
                 $component: '^tbGrid'
             },
-            template: '<div class="btn-group" uib-dropdown>' +
-                '<button class="btn btn-info btn-sm {{::$ctrl.css}}" uib-dropdown-toggle>' +
-                '<span class="fa fa-download"></span>&nbsp;{{:: $ctrl.caption || (\'UI_EXPORTCSV\' | translate)}}&nbsp;<span class="caret"></span>' +
-                '</button>' +
-                '<ul class="dropdown-menu" uib-dropdown-menu>' +
-                '<li><a href="javascript:void(0)" ng-click="$ctrl.downloadCsv($parent)">{{:: $ctrl.captionMenuCurrent || (\'UI_CURRENTROWS\' | translate)}}</a></li>' +
-                '<li><a href="javascript:void(0)" ng-click="$ctrl.downloadAllCsv($parent)">{{:: $ctrl.captionMenuAll || (\'UI_ALLROWS\' | translate)}}</a></li>' +
-                '</ul>' +
-                '</div>',
+            templateUrl: 'tbExportButton.tpl.html',
             bindings: {
                 filename: '@',
                 css: '@',
@@ -249,9 +233,7 @@
             require: {
                 $component: '^tbGrid'
             },
-            template: '<button class="btn btn-default btn-sm" ng-click="$ctrl.printGrid()">' +
-                '<span class="fa fa-print"></span>&nbsp;{{:: $ctrl.caption || (\'CAPTION_PRINT\' | translate)}}' +
-                '</button>',
+            templateUrl: 'tbPrintButton.tpl.html',
             bindings: {
                 title: '@',
                 printCss: '@',

@@ -1,0 +1,9 @@
+﻿<div class="{{::$ctrl.css}}">
+    <form class="form-inline">
+        <div class="form-group">
+            <label class="small">{{:: $ctrl.caption || ('UI_PAGESIZE' | translate) }} </label>&nbsp;
+            <select ng-model="$ctrl.$component.pageSize" class="form-control input-sm {{::$ctrl.selectorCss}}"
+                    ng-options="item for item in options"></select>
+        </div>
+    </form>
+</div>
