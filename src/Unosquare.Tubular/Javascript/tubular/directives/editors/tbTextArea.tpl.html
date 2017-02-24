@@ -1,0 +1,8 @@
+﻿<div ng-class="{ 'form-group' : $ctrl.showLabel && $ctrl.isEditing, 'has-error' : !$ctrl.$valid && $ctrl.$dirty() }">
+    <span ng-hide="$ctrl.isEditing" ng-bind="$ctrl.value"></span>
+    <label ng-show="$ctrl.showLabel" ng-bind="$ctrl.label"></label>
+    <textarea ng-show="$ctrl.isEditing" placeholder="{{$ctrl.placeholder}}" ng-model="$ctrl.value" class="form-control"
+              ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}"></textarea>
+    <span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">{{error}}</span>
+    <span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help" ng-bind="$ctrl.help"></span>
+</div>
