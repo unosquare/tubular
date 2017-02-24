@@ -191,7 +191,7 @@
             function () {
                 return {
                     require: '^tbColumnDefinitions',
-                    templateUrl: 'tbColumn.tmp.html',
+                    templateUrl: 'tbColumn.tpl.html',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
