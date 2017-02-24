@@ -512,6 +512,18 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
     "<div ng-class=\"{ 'form-group' : $ctrl.showLabel && $ctrl.isEditing, 'has-error' : !$ctrl.$valid && $ctrl.$dirty() }\"><span ng-hide=$ctrl.isEditing ng-bind=$ctrl.value></span><label ng-show=$ctrl.showLabel ng-bind=$ctrl.label></label><textarea ng-show=$ctrl.isEditing placeholder={{$ctrl.placeholder}} ng-model=$ctrl.value class=form-control ng-required=$ctrl.required ng-readonly=$ctrl.readOnly name={{$ctrl.name}}></textarea><span class=\"help-block error-block\" ng-show=$ctrl.isEditing ng-repeat=\"error in $ctrl.state.$errors\">{{error}}</span> <span class=help-block ng-show=\"$ctrl.isEditing && $ctrl.help\" ng-bind=$ctrl.help></span></div>");
   $templateCache.put("tbForm.tpl.html",
     "<form ng-transclude name={{name}}></form>");
+  $templateCache.put("tbEditButton.tpl.html",
+    "<button ng-click=$ctrl.edit() class=\"btn btn-xs btn-default\" ng-hide=$ctrl.model.$isEditing>{{:: $ctrl.caption || ('CAPTION_EDIT' | translate) }}</button>");
+  $templateCache.put("tbExportButton.tpl.html",
+    "<div class=btn-group uib-dropdown><button class=\"btn btn-info btn-sm {{::$ctrl.css}}\" uib-dropdown-toggle><span class=\"fa fa-download\"></span>&nbsp;{{:: $ctrl.caption || ('UI_EXPORTCSV' | translate)}}&nbsp;<span class=caret></span></button><ul class=dropdown-menu uib-dropdown-menu><li><a href=javascript:void(0) ng-click=$ctrl.downloadCsv($parent)>{{:: $ctrl.captionMenuCurrent || ('UI_CURRENTROWS' | translate)}}</a></li><li><a href=javascript:void(0) ng-click=$ctrl.downloadAllCsv($parent)>{{:: $ctrl.captionMenuAll || ('UI_ALLROWS' | translate)}}</a></li></ul></div>");
+  $templateCache.put("tbGridPager.tpl.html",
+    "<div class=tubular-pager><ul uib-pagination ng-disabled=$ctrl.$component.isEmpty direction-links=true first-text=&#xf049; previous-text=&#xf04a; next-text=&#xf04e; last-text=&#xf050; boundary-links=true total-items=$ctrl.$component.filteredRecordCount items-per-page=$ctrl.$component.pageSize max-size=5 ng-model=$ctrl.$component.currentPage ng-change=$ctrl.pagerPageChanged()></ul></div>");
+  $templateCache.put("tbGridPagerInfo.tpl.html",
+    "<div class=\"pager-info small\" ng-hide=$ctrl.$component.isEmpty>{{'UI_SHOWINGRECORDS' | translate: $ctrl.currentInitial:$ctrl.currentTop:$ctrl.$component.filteredRecordCount}} <span ng-show=$ctrl.filtered>{{'UI_FILTEREDRECORDS' | translate: $ctrl.$component.totalRecordCount}}</span></div>");
+  $templateCache.put("tbPageSizeSelector.tpl.html",
+    "<div class={{::$ctrl.css}}><form class=form-inline><div class=form-group><label class=small>{{:: $ctrl.caption || ('UI_PAGESIZE' | translate) }}</label>&nbsp;<select ng-model=$ctrl.$component.pageSize class=\"form-control input-sm {{::$ctrl.selectorCss}}\" ng-options=\"item for item in options\"></select></div></form></div>");
+  $templateCache.put("tbPrintButton.tpl.html",
+    "<button class=\"btn btn-default btn-sm\" ng-click=$ctrl.printGrid()><span class=\"fa fa-print\"></span>&nbsp;{{:: $ctrl.caption || ('CAPTION_PRINT' | translate)}}</button>");
   $templateCache.put("tbRemoveButton.tpl.html",
     "<button class=\"btn btn-danger btn-xs btn-popover\" uib-popover-template=$ctrl.templateName popover-placement=right popover-title=\"{{ $ctrl.legend || ('UI_REMOVEROW' | translate) }}\" popover-is-open=$ctrl.isOpen popover-trigger=\"'click outsideClick'\" ng-hide=$ctrl.model.$isEditing><span ng-show=$ctrl.showIcon class={{::$ctrl.icon}}></span> <span ng-show=$ctrl.showCaption>{{:: $ctrl.caption || ('CAPTION_REMOVE' | translate) }}</span></button>");
   $templateCache.put("tbSaveButton.tpl.html",
@@ -2514,8 +2526,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             require: {
                 $component: '^tbGrid'
             },
-            template: '<button ng-click="$ctrl.edit()" class="btn btn-xs btn-default" ' +
-                'ng-hide="$ctrl.model.$isEditing">{{:: $ctrl.caption || (\'CAPTION_EDIT\' | translate) }}</button>',
+            templateUrl: 'tbEditButton.tpl.html',
             bindings: {
                 model: '=',
                 caption: '@'
@@ -2549,14 +2560,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             require: {
                 $component: '^tbGrid'
             },
-            template: '<div class="{{::$ctrl.css}}"><form class="form-inline">' +
-                '<div class="form-group">' +
-                '<label class="small">{{:: $ctrl.caption || (\'UI_PAGESIZE\' | translate) }} </label>&nbsp;' +
-                '<select ng-model="$ctrl.$component.pageSize" class="form-control input-sm {{::$ctrl.selectorCss}}" ' +
-                'ng-options="item for item in options">' +
-                '</select>' +
-                '</div>' +
-                '</form></div>',
+            templateUrl: 'tbPageSizeSelector.tpl.html',
             bindings: {
                 caption: '@',
                 css: '@',
@@ -2587,15 +2591,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             require: {
                 $component: '^tbGrid'
             },
-            template: '<div class="btn-group" uib-dropdown>' +
-                '<button class="btn btn-info btn-sm {{::$ctrl.css}}" uib-dropdown-toggle>' +
-                '<span class="fa fa-download"></span>&nbsp;{{:: $ctrl.caption || (\'UI_EXPORTCSV\' | translate)}}&nbsp;<span class="caret"></span>' +
-                '</button>' +
-                '<ul class="dropdown-menu" uib-dropdown-menu>' +
-                '<li><a href="javascript:void(0)" ng-click="$ctrl.downloadCsv($parent)">{{:: $ctrl.captionMenuCurrent || (\'UI_CURRENTROWS\' | translate)}}</a></li>' +
-                '<li><a href="javascript:void(0)" ng-click="$ctrl.downloadAllCsv($parent)">{{:: $ctrl.captionMenuAll || (\'UI_ALLROWS\' | translate)}}</a></li>' +
-                '</ul>' +
-                '</div>',
+            templateUrl: 'tbExportButton.tpl.html',
             bindings: {
                 filename: '@',
                 css: '@',
@@ -2632,9 +2628,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             require: {
                 $component: '^tbGrid'
             },
-            template: '<button class="btn btn-default btn-sm" ng-click="$ctrl.printGrid()">' +
-                '<span class="fa fa-print"></span>&nbsp;{{:: $ctrl.caption || (\'CAPTION_PRINT\' | translate)}}' +
-                '</button>',
+            templateUrl: 'tbPrintButton.tpl.html',
             bindings: {
                 title: '@',
                 printCss: '@',
@@ -2703,14 +2697,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             require: {
                 $component : '^tbGrid'
             },
-            template:
-                '<div class="tubular-pager">' +
-                    '<ul uib-pagination ng-disabled="$ctrl.$component.isEmpty" direction-links="true" ' +
-                    'first-text="&#xf049;" previous-text="&#xf04a;" next-text="&#xf04e;" last-text="&#xf050;"' +
-                    'boundary-links="true" total-items="$ctrl.$component.filteredRecordCount" ' +
-                    'items-per-page="$ctrl.$component.pageSize" max-size="5" ng-model="$ctrl.$component.currentPage" ng-change="$ctrl.pagerPageChanged()">' +
-                    '</ul>' +
-                    '<div>',
+            templateUrl: 'tbGridPager.tpl.html',
             scope: true,
             terminal: false,
             controller: ['$scope', function ($scope) {
@@ -2740,11 +2727,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             require: {
                 $component: '^tbGrid'
             },
-            template: '<div class="pager-info small" ng-hide="$ctrl.$component.isEmpty">' +
-                '{{\'UI_SHOWINGRECORDS\' | translate: $ctrl.currentInitial:$ctrl.currentTop:$ctrl.$component.filteredRecordCount}} ' +
-                '<span ng-show="$ctrl.filtered">' +
-                '{{\'UI_FILTEREDRECORDS\' | translate: $ctrl.$component.totalRecordCount}}</span>' +
-                '</div>',
+            templateUrl: 'tbGridPagerInfo.tpl.html',
             bindings: {
                 cssClass: '@?'
             },
