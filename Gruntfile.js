@@ -132,7 +132,7 @@ module.exports = function(grunt) {
             },
             main: {
                 src: ['src/Unosquare.Tubular/Javascript/tubular/**/*.tpl.html'],
-                dest: 'src/Unosquare.Tubular/Javascript/tubular/templates.js'
+                dest: 'src/Unosquare.Tubular/Javascript/templates.js'
             }
         },
         concat: {
@@ -140,7 +140,7 @@ module.exports = function(grunt) {
                 src: [
                     'src/Unosquare.Tubular/Javascript/tubular/tubular.js',
                     'src/Unosquare.Tubular/Javascript/tubular/tubular-directives.js',
-                    'src/Unosquare.Tubular/Javascript/tubular/templates.js',
+                    'src/Unosquare.Tubular/Javascript/templates.js',
                     'src/Unosquare.Tubular/Javascript/tubular/directives/**/*.js',
                     'src/Unosquare.Tubular/Javascript/tubular/tubular-directives-editors.js',
                     'src/Unosquare.Tubular/Javascript/tubular/tubular-directives-filters.js',
