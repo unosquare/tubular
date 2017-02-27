@@ -137,7 +137,7 @@ module.exports = function(grunt) {
             },
             chartjs: {
                 base: 'src/Unosquare.Tubular/Javascript/tubular-chart/chartjs/',
-                module: 'tubular.directives',
+                module: 'tubular-chart.directives',
                 src: ['src/Unosquare.Tubular/Javascript/tubular-chart/chartjs/tbChartJs.tpl.html'],
                 dest: 'src/Unosquare.Tubular/Javascript/templates-chartjs.js'
             }
