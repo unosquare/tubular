@@ -90,7 +90,7 @@ describe('Module: tubular.directives', function () {
             scope.form1.tbTextSearchInput.$setViewValue('google');
             timeout.flush(300);
             scope.$apply();
-            var panel = angular.element(element[0].querySelector('#tb-text-search-reset-panel'));
+            var panel = angular.element(element.find('#tb-text-search-reset-panel'));
             expect(panel.hasClass('ng-hide')).toBe(false);
             scope.form1.tbTextSearchInput.$setViewValue('');
             timeout.flush(300);
