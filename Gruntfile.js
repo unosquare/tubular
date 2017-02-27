@@ -108,8 +108,7 @@ module.exports = function(grunt) {
         },
         html2js: {
             options: {
-                base: 'src/Unosquare.Tubular/Javascript/tubular/',
-                module: 'tubular.directives',
+                
                 singleModule: true,
                 useStrict: true,
                 existingModule: true,
@@ -131,8 +130,16 @@ module.exports = function(grunt) {
                 }
             },
             main: {
+                base: 'src/Unosquare.Tubular/Javascript/tubular/',
+                module: 'tubular.directives',
                 src: ['src/Unosquare.Tubular/Javascript/tubular/**/*.tpl.html'],
                 dest: 'src/Unosquare.Tubular/Javascript/templates.js'
+            },
+            chartjs: {
+                base: 'src/Unosquare.Tubular/Javascript/tubular-chart/chartjs/',
+                module: 'tubular.directives',
+                src: ['src/Unosquare.Tubular/Javascript/tubular-chart/chartjs/tbChartJs.tpl.html'],
+                dest: 'src/Unosquare.Tubular/Javascript/templates-chartjs.js'
             }
         },
         concat: {
@@ -161,7 +168,9 @@ module.exports = function(grunt) {
             chart_js: {
                 src: [
                     'bower_components/angular-chart.js/dist/angular-chart.js',
-                    'src/Unosquare.Tubular/Javascript/tubular-chart/tubular-directives-chartjs.js'
+                    'src/Unosquare.Tubular/Javascript/tubular-chart/chartjs/*.module.js',
+                    'src/Unosquare.Tubular/Javascript/templates-chartjs.js',
+                    'src/Unosquare.Tubular/Javascript/tubular-chart/chartjs/*.js'
                 ],
                 dest: 'src/Unosquare.Tubular/Javascript/tubular-chartjs-bundle.js'
             },
@@ -240,7 +249,7 @@ module.exports = function(grunt) {
 
     grunt.registerTask('build-js', ['concat:tubular_js', 'concat:chart_js', 'concat:highchart_js']);
 
-    grunt.registerTask('build', ['html2js:main', 'build-js', 'concat:tubular_css']);
+    grunt.registerTask('build', ['html2js:main', 'html2js:chartjs', 'build-js', 'concat:tubular_css']);
 
     grunt.registerTask('compress', ['uglify:tubular_js', 'uglify:chart_js', 'uglify:highchart_js']);
 

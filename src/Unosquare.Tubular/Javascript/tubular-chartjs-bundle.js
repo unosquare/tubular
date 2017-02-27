@@ -402,7 +402,22 @@
 (function (angular) {
     'use strict';
 
-    angular.module('tubular-chart.directives', ['tubular.services', 'chart.js'])
+    angular.module('tubular-chart.directives', ['tubular.services', 'chart.js']);
+       
+})(angular);
+
+(function(angular){
+angular.module('tubular.directives').run(['$templateCache', function ($templateCache) {
+  "use strict";
+  $templateCache.put("tbChartJs.tpl.html",
+    "<div class=tubular-chart><canvas class=\"chart chart-base\" chart-type=$ctrl.chartType chart-data=$ctrl.data chart-labels=$ctrl.labels chart-series=$ctrl.series chart-click=$ctrl.onClick chart-options=$ctrl.options></canvas><ul ng-show=$ctrl.showLegend class=pie-legend><li ng-repeat=\"item in $ctrl.legends\"><span style=\"background-color: {{item.color}}\"></span>{{item.label}}</li></ul><div class=\"alert alert-info\" ng-show=$ctrl.isEmpty>{{$ctrl.emptyMessage}}</div><div class=\"alert alert-warning\" ng-show=$ctrl.hasError>{{$ctrl.errorMessage}}</div></div>");
+}]);
+})(angular);
+
+(function (angular) {
+    'use strict';
+
+    angular.module('tubular-chart.directives')
         /**
          * @ngdoc component
          * @name tbChartjs
@@ -419,16 +434,7 @@
          * @param {bool} showLegend Set if show the chart legend, default true.
          */
         .component('tbChartjs', {
-            template: '<div class="tubular-chart">' +
-                '<canvas class="chart chart-base" chart-type="$ctrl.chartType" chart-data="$ctrl.data" chart-labels="$ctrl.labels" ' +
-                ' chart-series="$ctrl.series" chart-click="$ctrl.onClick" chart-options="$ctrl.options">' +
-                '</canvas>' +
-                '<ul ng-show="$ctrl.showLegend" class="pie-legend">' +
-                '<li ng-repeat="item in $ctrl.legends"><span style="background-color: {{item.color}}"></span>{{item.label}}</li>' +
-                '</ul>' +
-                '<div class="alert alert-info" ng-show="$ctrl.isEmpty">{{$ctrl.emptyMessage}}</div>' +
-                '<div class="alert alert-warning" ng-show="$ctrl.hasError">{{$ctrl.errorMessage}}</div>' +
-                '</div>',
+            templateUrl: 'tbChartJs.tpl.html',
             bindings: {
                 serverUrl: '@',
                 requireAuthentication: '=?',
@@ -444,8 +450,14 @@
                 series: '=?',
                 options: '=?'
             },
-            controller: [
-                '$scope', 'tubularHttp',
+            controller: 'tbChartJsController'
+        });
+})(angular);
+
+(function (angular) {
+    'use strict';
+
+    angular.module('tubular-chart.directives').controller('tbChartJsController', ['$scope', 'tubularHttp',
                 function ($scope, tubularHttp) {
                     var $ctrl = this;
 
@@ -494,7 +506,7 @@
 
                     $scope.$on('chart-create', function (evt, chart) {
                         if ($ctrl.chartType === 'pie' || $ctrl.chartType === 'doughnut') {
-                            $ctrl.legends = chart.chart.config.data.labels.map(function(v, i) {
+                            $ctrl.legends = chart.chart.config.data.labels.map(function (v, i) {
                                 return {
                                     label: v,
                                     color: chart.chart.config.data.datasets[0].backgroundColor[i]
@@ -509,7 +521,5 @@
                             });
                         }
                     });
-                }
-            ]
-        });
+                }])
 })(angular);
