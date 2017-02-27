@@ -11,7 +11,7 @@
 
 function loadData() {
     browser.sleep(5000);
-    return browser.wait(function () {
+    return browser.wait(() => {
         return $('.tubular-overlay.ng-hide').isPresent().then(function (isPresent) {
             return isPresent;
         });
@@ -23,7 +23,7 @@ function setPagination() {
     element(by.tagName('tb-grid-pager')).$('.pagination-first a').click();
 }
 
-describe('Tubular Filters', function () {
+describe('Tubular Filters', () => {
 
     var tbColumnFilter,
         tbColumnDateTimeFilter,
@@ -41,7 +41,7 @@ describe('Tubular Filters', function () {
 
     var referenceDate = new Date('02/04/2016 00:00 AM');
 
-    beforeAll(function () {
+    beforeAll(() => {
         // Get page
         browser.get('index.html');
         element(by.id('testsSelector')).click();
@@ -49,9 +49,9 @@ describe('Tubular Filters', function () {
     });
 
 
-    describe('tbColumnFilter', function () {
+    describe('tbColumnFilter', () => {
 
-        beforeAll(function () {
+        beforeAll(() => {
             // Set test variables
             tbColumnFilter = element(by.tagName('tb-column-filter'));
             filterBtn = tbColumnFilter.$('.btn-popover');
@@ -66,31 +66,31 @@ describe('Tubular Filters', function () {
             loadData().then(setPagination);
         });
 
-        afterAll(function () {
+        afterAll(() => {
             // Clear filters
             element(by.tagName('tb-grid-pager')).$('.pagination-first a').click()
-                .then(function () {
-                    element(by.tagName('tb-grid-pager')).$('.pagination-first a').click().then(function () {
-                        filterBtn.click().then(function () {
+                .then(() => {
+                    element(by.tagName('tb-grid-pager')).$('.pagination-first a').click().then(() => {
+                        filterBtn.click().then(() => {
                             clearBtn.click().then(loadData);
                         });
                     });
                 });
         });
 
-        beforeEach(function () {
+        beforeEach(() => {
             // Clear filters
             element(by.tagName('tb-grid-pager')).$('.pagination-first a').click()
-                .then(function () {
-                    element(by.tagName('tb-grid-pager')).$('.pagination-first a').click().then(function () {
-                        filterBtn.click().then(function () {
+                .then(() => {
+                    element(by.tagName('tb-grid-pager')).$('.pagination-first a').click().then(() => {
+                        filterBtn.click().then(() => {
                             clearBtn.click().then(loadData);
                         });
                     });
                 });
         });
 
-        it('should cancel filtering when clicking outside filter-popover', function () {
+        it('should cancel filtering when clicking outside filter-popover', () => {
             var originalData;
             var equalData;
 
@@ -100,7 +100,7 @@ describe('Tubular Filters', function () {
                     originalData = originalText;
                 })
                 // Filter and click away
-                .then(function () {
+                .then(() => {
                     filterBtn.click()
                         // Set filtering
                         .then(function() {
@@ -114,34 +114,34 @@ describe('Tubular Filters', function () {
                         });
                 })
                 // Compare data again
-                .then(function () {
+                .then(() => {
                     dataRows.getText()
                         .then(function (modifiedText) {
                             equalData = (originalData.length === modifiedText.length) && originalData.every(function(element, index) {
                                 return element === modifiedText[index];
                             });
                         })
-                        .then(function () {
+                        .then(() => {
                             expect(equalData).toBe(true);
                         });
                 });
         });
 
-        it('should disable Value text-input for "None" filter', function () {
-            filterBtn.click().then(function () {
-                filterSelect.$('[value="string:None"]').click().then(function () {
+        it('should disable Value text-input for "None" filter', () => {
+            filterBtn.click().then(() => {
+                filterSelect.$('[value="string:None"]').click().then(() => {
                     expect(valueInput.getAttribute('disabled')).toBe('true');
                 });
             });
         });
 
-        it('should disable apply button for "None" filter', function () {
-            filterBtn.click().then(function () {
+        it('should disable apply button for "None" filter', () => {
+            filterBtn.click().then(() => {
                 expect(applyBtn.getAttribute('disabled')).toBe('true');
             });
         });
 
-        it('should decorate popover button when showing data is being filtered for its column', function () {
+        it('should decorate popover button when showing data is being filtered for its column', () => {
             // Verify button has no decorating-class
             expect(filterBtn.getAttribute('class')).not.toMatch(/btn-success/);
 
@@ -150,15 +150,15 @@ describe('Tubular Filters', function () {
             filterSelect.$('[value="string:Equals"]').click();
             valueInput.sendKeys('Microsoft');
             applyBtn.click()
-                .then(function () {
+                .then(() => {
                     loadData().
-                        then(function () {
+                        then(() => {
                             expect(filterBtn.getAttribute('class')).toMatch(/btn-success/);
                         });
                 });
         });
 
-        it('should correctly filter data for the "Equals" filtering option', function () {
+        it('should correctly filter data for the "Equals" filtering option', () => {
             var filterOk = true;
             var filteredCustomer = 'Microsoft';
 
@@ -167,20 +167,20 @@ describe('Tubular Filters', function () {
             filterSelect.$('[value="string:Equals"]').click();
             valueInput.sendKeys('Microsoft');
             applyBtn.click()
-                .then(function () {
+                .then(() => {
                     // Verify filtering
                     dataRows.each(function (row) {
                         row.$$('td').get(1).getText()
                             .then(function (customer) {
                                 filterOk = filterOk && (customer === filteredCustomer);
                             });
-                    }).then(function () {
+                    }).then(() => {
                         expect(filterOk).toBe(true);
                     });
                 });
         });
 
-        it('should correctly filter data for the "Not Equals" filtering option', function () {
+        it('should correctly filter data for the "Not Equals" filtering option', () => {
             var filterOk = true;
             var notShowingCustomer = 'Microsoft';
 
@@ -189,20 +189,20 @@ describe('Tubular Filters', function () {
             filterSelect.$('[value="string:NotEquals"]').click();
             valueInput.sendKeys('Microsoft');
             applyBtn.click()
-                .then(function () {
+                .then(() => {
                     // Verify filtering
                     dataRows.each(function (row) {
                         row.$$('td').get(1).getText()
                             .then(function (customer) {
                                 filterOk = filterOk && (customer !== notShowingCustomer);
                             });
-                    }).then(function () {
+                    }).then(() => {
                         expect(filterOk).toBe(true);
                     });
                 });
         });
 
-        it('should correctly filter data for the "Contains" filtering option', function () {
+        it('should correctly filter data for the "Contains" filtering option', () => {
             var filterOk = true;
             var containedString = 'La';
 
@@ -211,20 +211,20 @@ describe('Tubular Filters', function () {
             filterSelect.$('[value="string:Contains"]').click();
             valueInput.sendKeys(containedString);
             applyBtn.click()
-                .then(function () {
+                .then(() => {
                     // Verify filtering
                     dataRows.each(function (row) {
                         row.$$('td').get(1).getText()
                             .then(function (customer) {
                                 filterOk = filterOk && (customer.indexOf(containedString) !== -1);
                             });
-                    }).then(function () {
+                    }).then(() => {
                         expect(filterOk).toBe(true);
                     });
                 });
         });
 
-        it('should correctly filter data for the "Not Contains" filtering option', function () {
+        it('should correctly filter data for the "Not Contains" filtering option', () => {
             var filterOk = true;
             var notContainedString = 'La';
 
@@ -233,20 +233,20 @@ describe('Tubular Filters', function () {
             filterSelect.$('[value="string:NotContains"]').click();
             valueInput.sendKeys('La');
             applyBtn.click()
-                .then(function () {
+                .then(() => {
                     // Verify filtering
                     dataRows.each(function (row) {
                         row.$$('td').get(1).getText()
                             .then(function (customer) {
                                 filterOk = filterOk && (customer.indexOf(notContainedString) === -1);
                             });
-                    }).then(function () {
+                    }).then(() => {
                         expect(filterOk).toBe(true);
                     });
                 });
         });
 
-        it('should correctly filter data for the "Starts With" filtering option', function () {
+        it('should correctly filter data for the "Starts With" filtering option', () => {
             var filterOk = true;
             var startsWithString = 'Uno';
 
@@ -255,20 +255,20 @@ describe('Tubular Filters', function () {
             filterSelect.$('[value="string:StartsWith"]').click();
             valueInput.sendKeys('La');
             applyBtn.click()
-                .then(function () {
+                .then(() => {
                     // Verify filtering
                     dataRows.each(function (row) {
                         row.$$('td').get(1).getText()
                             .then(function (customer) {
                                 filterOk = filterOk && (customer.indexOf(startsWithString) === 0);
                             });
-                    }).then(function () {
+                    }).then(() => {
                         expect(filterOk).toBe(true);
                     });
                 });
         });
 
-        it('should correctly filter data for the "Not Starts With" filtering option', function () {
+        it('should correctly filter data for the "Not Starts With" filtering option', () => {
             var filterOk = true;
             var notStartsWithString = 'Uno';
 
@@ -277,20 +277,20 @@ describe('Tubular Filters', function () {
             filterSelect.$('[value="string:StartsWith"]').click();
             valueInput.sendKeys('La');
             applyBtn.click()
-                .then(function () {
+                .then(() => {
                     // Verify filtering
                     dataRows.each(function (row) {
                         row.$$('td').get(1).getText()
                             .then(function (customer) {
                                 filterOk = filterOk && (customer.indexOf(notStartsWithString) !== 0);
                             });
-                    }).then(function () {
+                    }).then(() => {
                         expect(filterOk).toBe(true);
                     });
                 });
         });
 
-        it('should correctly filter data for the "Ends With" filtering option', function () {
+        it('should correctly filter data for the "Ends With" filtering option', () => {
             var filterOk = true;
             var endsWithString = 'xo';
 
@@ -299,7 +299,7 @@ describe('Tubular Filters', function () {
             filterSelect.$('[value="string:StartsWith"]').click();
             valueInput.sendKeys('La');
             applyBtn.click()
-                .then(function () {
+                .then(() => {
                     // Verify filtering
                     dataRows.each(function (row) {
                         row.$$('td').get(1).getText()
@@ -308,13 +308,13 @@ describe('Tubular Filters', function () {
                                 filterOk = filterOk &&
                                     (customer.indexOf(endsWithString) === (customer.length - endsWithString.length) + 1);
                             });
-                    }).then(function () {
+                    }).then(() => {
                         expect(filterOk).toBe(true);
                     });
                 });
         });
 
-        it('should correctly filter data for the "Not Ends With" filtering option', function () {
+        it('should correctly filter data for the "Not Ends With" filtering option', () => {
             var filterOk = true;
             var endsWithString = 'o';
 
@@ -323,7 +323,7 @@ describe('Tubular Filters', function () {
             filterSelect.$('[value="string:StartsWith"]').click();
             valueInput.sendKeys('La');
             applyBtn.click()
-                .then(function () {
+                .then(() => {
                     // Verify filtering
                     dataRows.each(function (row) {
                         row.$$('td').get(1).getText()
@@ -332,7 +332,7 @@ describe('Tubular Filters', function () {
                                 filterOk = filterOk &&
                                     (customer.indexOf(endsWithString) !== (customer.length - endsWithString.length) + 1);
                             });
-                    }).then(function () {
+                    }).then(() => {
                         expect(filterOk).toBe(true);
                     });
                 });
@@ -340,9 +340,9 @@ describe('Tubular Filters', function () {
 
     });
 
-    describe('tbColumnDateTimeFilter', function () {
+    describe('tbColumnDateTimeFilter', () => {
 
-        beforeAll(function () {
+        beforeAll(() => {
             // Set test variables
             tbColumnDateTimeFilter = element(by.tagName('tb-column-date-time-filter'));
             filterBtn = tbColumnDateTimeFilter.$('.btn-popover');
@@ -358,31 +358,31 @@ describe('Tubular Filters', function () {
             loadData().then(setPagination);
         });
 
-         afterAll(function () {
+         afterAll(() => {
              // Clear filters
              element(by.tagName('tb-grid-pager')).$('.pagination-first a').click()
-                 .then(function () {
-                     element(by.tagName('tb-grid-pager')).$('.pagination-first a').click().then(function () {
-                         filterBtn.click().then(function () {
+                 .then(() => {
+                     element(by.tagName('tb-grid-pager')).$('.pagination-first a').click().then(() => {
+                         filterBtn.click().then(() => {
                              clearBtn.click().then(loadData);
                          });
                      });
                  });
          });
 
-         beforeEach(function () {
+         beforeEach(() => {
              // Clear filters
              element(by.tagName('tb-grid-pager')).$('.pagination-first a').click()
-                 .then(function () {
-                     element(by.tagName('tb-grid-pager')).$('.pagination-first a').click().then(function () {
-                         filterBtn.click().then(function () {
+                 .then(() => {
+                     element(by.tagName('tb-grid-pager')).$('.pagination-first a').click().then(() => {
+                         filterBtn.click().then(() => {
                              clearBtn.click().then(loadData);
                          });
                      });
                  });
          });
 
-        it('should cancel filtering when clicking outside filter-popover', function () {
+        it('should cancel filtering when clicking outside filter-popover', () => {
             var originalData;
             var equalData;
 
@@ -392,7 +392,7 @@ describe('Tubular Filters', function () {
                     originalData = originalText;
                 })
                 // Filter and click away
-                .then(function () {
+                .then(() => {
                     filterBtn.click()
                         // Set filtering
                         .then(function() {
@@ -405,7 +405,7 @@ describe('Tubular Filters', function () {
                         });
                 })
                 // Compare data again
-                .then(function () {
+                .then(() => {
                     dataRows.getText()
                         .then(function (modifiedText) {
                             equalData = (originalData.length === modifiedText.length) && originalData.every(function (element, index) {
@@ -417,22 +417,22 @@ describe('Tubular Filters', function () {
                 });
         });
 
-        it('should disable Value text-input for "None" filter', function () {
-            filterBtn.click().then(function () {
-                filterSelect.$('[value="string:None"]').click().then(function () {
+        it('should disable Value text-input for "None" filter', () => {
+            filterBtn.click().then(() => {
+                filterSelect.$('[value="string:None"]').click().then(() => {
                     expect(valueInput.getAttribute('disabled')).toBe('true');
                 });
             });
         });
 
-        it('should disable apply button for "None" filter', function () {
+        it('should disable apply button for "None" filter', () => {
             filterBtn.click();
 
             filterSelect.$('[value="string:None"]').click();
             expect(applyBtn.getAttribute('disabled')).toBe('true');
         });
 
-        it('should clear filtering when clicking on Clean button', function () {
+        it('should clear filtering when clicking on Clean button', () => {
             var originalData;
             var equalData;
 
@@ -442,7 +442,7 @@ describe('Tubular Filters', function () {
                     originalData = oldText;
                 })
                 // Set filter and apply <-- This is tested by other 'it' block
-                .then(function () {
+                .then(() => {
                     filterBtn.click();
                     filterSelect.$('[value="string:Gt"]').click();
                     valueInput.sendKeys('02/05/2016');
@@ -450,13 +450,13 @@ describe('Tubular Filters', function () {
                         .then(loadData);
                 })
                 // Filter with "None" and apply
-                .then(function () {
+                .then(() => {
                     filterBtn.click();
                     clearBtn.click()
                         .then(loadData);
                 })
                 // Compare data
-                .then(function () {
+                .then(() => {
                     dataRows.getText()
                         .then(function (newText) {
                             equalData = (originalData.length === newText.length) && originalData.every(function (element, index) {
@@ -468,7 +468,7 @@ describe('Tubular Filters', function () {
                 });
         });
 
-        it('should decorate popover button when showing data is being filtered for its column', function () {
+        it('should decorate popover button when showing data is being filtered for its column', () => {
             // Verify button has no decorating-class
             expect(filterBtn.getAttribute('class')).not.toMatch(/btn-success/);
 
@@ -477,15 +477,15 @@ describe('Tubular Filters', function () {
             filterSelect.$('[value="string:Gt"]').click();
             valueInput.sendKeys('02/05/2016');
             applyBtn.click()
-                .then(function () {
+                .then(() => {
                     loadData().
-                        then(function () {
+                        then(() => {
                             expect(filterBtn.getAttribute('class')).toMatch(/btn-success/);
                         });
                 });
         });
 
-        it('should correctly filter data for the "Equals" filtering option', function () {
+        it('should correctly filter data for the "Equals" filtering option', () => {
             var filterOk = true;
             var filterMatcher = /0*1\/30\/2016\s.*/;
 
@@ -494,20 +494,20 @@ describe('Tubular Filters', function () {
             filterSelect.$('[value="string:Equals"]').click();
             valueInput.sendKeys('01/30/2016');
             applyBtn.click()
-                .then(function () {
+                .then(() => {
                     // Verify filtering
                     dataRows.each(function (row) {
                         row.$$('td').get(2).getText()
                             .then(function (date) {
                                 filterOk = filterOk && (filterMatcher.test(date));
                             });
-                    }).then(function () {
+                    }).then(() => {
                         expect(filterOk).toBe(true);
                     });
                 });
         });
 
-        it('should correctly filter data for the "Not Equals" filtering option', function () {
+        it('should correctly filter data for the "Not Equals" filtering option', () => {
             var filterOk = true;
             var filterMatcher = /0*1\/30\/2016\s.*/;
 
@@ -516,20 +516,20 @@ describe('Tubular Filters', function () {
             filterSelect.$('[value="string:NotEquals"]').click();
             valueInput.sendKeys('01/30/2016');
             applyBtn.click()
-                .then(function () {
+                .then(() => {
                     // Verify filtering
                     dataRows.each(function (row) {
                         row.$$('td').get(2).getText()
                             .then(function (date) {
                                 filterOk = filterOk && !(filterMatcher.test(date));
                             });
-                    }).then(function () {
+                    }).then(() => {
                         expect(filterOk).toBe(true);
                     });
                 });
         });  
 
-        it('should correctly filter data for the "Between" filtering option', function () {
+        it('should correctly filter data for the "Between" filtering option', () => {
             var filterOk = true;
             var minDate = new Date('02/04/2016 00:00 AM');
             var maxDate = new Date('02/05/2016 00:00 AM');
@@ -540,22 +540,22 @@ describe('Tubular Filters', function () {
             valueInput.sendKeys('02/04/2016');
             secondValueInput.sendKeys('02/05/2016');
             applyBtn.click()
-                .then(function () {
+                .then(() => {
                     // Verify filtering
-                    loadData().then(function () {
+                    loadData().then(() => {
                         dataRows.each(function (row) {
                             row.$$('td').get(2).getText()
                                 .then(function (date) {
                                     filterOk = filterOk && (minDate <= new Date(date) <= maxDate);
                                 });
                         });
-                    }).then(function () {
+                    }).then(() => {
                         expect(filterOk).toBe(true);
                     });
                 });
         });
 
-        it('should correctly filter data for the "Greater-or-equal" filtering option', function () {
+        it('should correctly filter data for the "Greater-or-equal" filtering option', () => {
             var filterOk = true;
             
             // Set filter and apply it
@@ -563,22 +563,22 @@ describe('Tubular Filters', function () {
             filterSelect.$('[value="string:Gte"]').click();
             valueInput.sendKeys('02/04/2016');
             applyBtn.click()
-                .then(function () {
+                .then(() => {
                     // Verify filtering
-                    loadData().then(function () {
-                        dataRows.each(function (row, index) {
+                    loadData().then(() => {
+                        dataRows.each(function (row) {
                             row.$$('td').get(2).getText()
                                 .then(function (date) {
                                     filterOk = filterOk && (new Date(date) >= referenceDate);
                                 });
                         });
-                    }).then(function () {
+                    }).then(() => {
                         expect(filterOk).toBe(true);
                     });
                 });
         });
 
-        it('should corretlly filter data for the "Greater" filtering option', function () {
+        it('should correctly filter data for the "Greater" filtering option', () => {
             var filterOk = true;
             
             // Set filter and apply it
@@ -586,22 +586,22 @@ describe('Tubular Filters', function () {
             filterSelect.$('[value="string:Gt"]').click();
             valueInput.sendKeys('02/04/2016');
             applyBtn.click()
-                .then(function () {
+                .then(() => {
                     // Verify filtering
-                    loadData().then(function () {
-                        dataRows.each(function (row, index) {
+                    loadData().then(() => {
+                        dataRows.each(function (row) {
                             row.$$('td').get(2).getText()
                                 .then(function (date) {
                                     filterOk = filterOk && (new Date(date) > referenceDate);
                                 });
                         });
-                    }).then(function () {
+                    }).then(() => {
                         expect(filterOk).toBe(true);
                     });
                 });
         });
 
-        it('should correctly filter data for the "Less-or-equal" filtering option', function () {
+        it('should correctly filter data for the "Less-or-equal" filtering option', () => {
             var filterOk = true;
             
             // Set filter and apply it
@@ -609,22 +609,22 @@ describe('Tubular Filters', function () {
             filterSelect.$('[value="string:Lte"]').click();
             valueInput.sendKeys('02/04/2016');
             applyBtn.click()
-                .then(function () {
+                .then(() => {
                     // Verify filtering
-                    loadData().then(function () {
-                        dataRows.each(function (row, index) {
+                    loadData().then(() => {
+                        dataRows.each(function (row) {
                             row.$$('td').get(2).getText()
                                 .then(function (date) {
                                     filterOk = filterOk && (new Date(date) <= referenceDate);
                                 });
                         });
-                    }).then(function () {
+                    }).then(() => {
                         expect(filterOk).toBe(true);
                     });
                 });
         });
 
-        it('should correctly filter data for the "Less" filtering option', function () {
+        it('should correctly filter data for the "Less" filtering option', () => {
             var filterOk = true;
             
             // Set filter and apply it
@@ -632,24 +632,24 @@ describe('Tubular Filters', function () {
             filterSelect.$('[value="string:Lt"]').click();
             valueInput.sendKeys('02/04/2016');
             applyBtn.click()
-                .then(function () {
+                .then(() => {
                     // Verify filtering
-                    loadData().then(function () {
-                        dataRows.each(function (row, index) {
+                    loadData().then(() => {
+                        dataRows.each(function (row) {
                             row.$$('td').get(2).getText()
                                 .then(function (date) {
                                     filterOk = filterOk && (new Date(date) < referenceDate);
                                 });
                         });
-                    }).then(function () {
+                    }).then(() => {
                         expect(filterOk).toBe(true);
                     });
                 });
         });
     });
 
-    describe('tbColumnOptionsFilter', function () {
-        beforeAll(function () {
+    describe('tbColumnOptionsFilter', () => {
+        beforeAll(() => {
             // Set test variables
             var tbColumnOptionsFilter = element(by.tagName('tb-column-options-filter'));
             filterBtn = tbColumnOptionsFilter.$('.btn-popover');
@@ -664,31 +664,31 @@ describe('Tubular Filters', function () {
             loadData().then(setPagination);
         });
 
-        afterAll(function () {
+        afterAll(() => {
             // Clear filters
             element(by.tagName('tb-grid-pager')).$('.pagination-first a').click()
-                .then(function () {
-                    element(by.tagName('tb-grid-pager')).$('.pagination-first a').click().then(function () {
-                        filterBtn.click().then(function () {
+                .then(() => {
+                    element(by.tagName('tb-grid-pager')).$('.pagination-first a').click().then(() => {
+                        filterBtn.click().then(() => {
                             clearBtn.click().then(loadData);
                         });
                     });
                 });
         });
 
-        beforeEach(function () {
+        beforeEach(() => {
             // Clear filters
             element(by.tagName('tb-grid-pager')).$('.pagination-first a').click()
-                .then(function () {
-                    element(by.tagName('tb-grid-pager')).$('.pagination-first a').click().then(function () {
-                        filterBtn.click().then(function () {
+                .then(() => {
+                    element(by.tagName('tb-grid-pager')).$('.pagination-first a').click().then(() => {
+                        filterBtn.click().then(() => {
                             clearBtn.click().then(loadData);
                         });
                     });
                 });
         });
 
-        it('should cancel filtering when clicking outside filter-popover', function () {
+        it('should cancel filtering when clicking outside filter-popover', () => {
             var originalData;
             var equalData;
 
@@ -698,7 +698,7 @@ describe('Tubular Filters', function () {
                     originalData = originalText;
                 })
                 // Filter and click away
-                .then(function () {
+                .then(() => {
                     filterBtn.click()
                         // Set filtering
                         .then(function() {
@@ -710,7 +710,7 @@ describe('Tubular Filters', function () {
                         });
                 })
                 // Compare data again
-                .then(function () {
+                .then(() => {
                     dataRows.getText()
                         .then(function (modifiedText) {
                             equalData = (originalData.length === modifiedText.length) && originalData.every(function (element, index) {
@@ -722,7 +722,7 @@ describe('Tubular Filters', function () {
                 });
         });
 
-        it('should decorate popover button when showing data is being filtered for its column', function () {
+        it('should decorate popover button when showing data is being filtered for its column', () => {
             // Verify button has no decorating-class
             expect(filterBtn.getAttribute('class')).not.toMatch(/btn-success/);
 
@@ -730,15 +730,15 @@ describe('Tubular Filters', function () {
             filterBtn.click();
             filterSelect.$$('option').first().click();
             applyBtn.click()
-                .then(function () {
+                .then(() => {
                     loadData().
-                        then(function () {
+                        then(() => {
                             expect(filterBtn.getAttribute('class')).toMatch(/btn-success/);
                         });
                 });
         });
 
-        it('should filter column-elements in accordance to the selected filter when selecting a single option', function () {
+        it('should filter column-elements in accordance to the selected filter when selecting a single option', () => {
             var filterOk = true;
             var options;
 
@@ -746,8 +746,7 @@ describe('Tubular Filters', function () {
 
             filterSelect.$$('option').getText().then(function (text) {
                 options = text;
-            })
-                .then(function () {
+            }).then(() => {
                     options.forEach(function(option, index) {
                         filterSelect.$$('option').get(index).click().then(function() {
                                 applyBtn.click();
@@ -770,16 +769,16 @@ describe('Tubular Filters', function () {
                             });
                     });
                 })
-                .then(function () {
+                .then(() => {
                     expect(filterOk).toBe(true);
                 });
         });
 
     });
 
-    describe('tbTextSearch', function () {
+    describe('tbTextSearch', () => {
 
-        beforeAll(function () {
+        beforeAll(() => {
             // Set this tests variables
             tbTextSearch = $('tb-text-search');
             tbTextSearchInput = tbTextSearch.$('input');
@@ -790,7 +789,7 @@ describe('Tubular Filters', function () {
             loadData().then(setPagination);
         });
 
-        afterAll(function () {
+        afterAll(() => {
             // Clear filters
             tbTextSearchClearBtn.isDisplayed().then(function (displayed) {
                 if (displayed) {
@@ -799,7 +798,7 @@ describe('Tubular Filters', function () {
             });
         });
 
-        beforeEach(function () {
+        beforeEach(() => {
             // Clear filters
             tbTextSearchClearBtn.isDisplayed().then(function (displayed) {
                 if (displayed) {
@@ -808,11 +807,11 @@ describe('Tubular Filters', function () {
             });
         });
 
-        it('min-chars is not set', function () {
+        it('min-chars is not set', () => {
             expect(tbTextSearch.getAttribute('min-chars')).toBe(null);
         });
 
-        it('should filter data in searchable-column customer name to matching inputted text, starting from 3 characters', function () {
+        it('should filter data in searchable-column customer name to matching inputted text, starting from 3 characters', () => {
             var filterOk = true;
             var filteredCustomer = 'Microsoft';
 
@@ -825,29 +824,29 @@ describe('Tubular Filters', function () {
                     .then(function (customer) {
                         filterOk = filterOk && (customer === filteredCustomer);
                     });
-            }).then(function () {
+            }).then(() => {
                 expect(filterOk).toBe(false);
-            }).then(function () {
+            }).then(() => {
                 filterOk = true;
 
                 // Send 3rd char input
                 tbTextSearchInput.sendKeys('o');
 
                 // Verify filtering
-                loadData().then(function () {
-                    dataRows.each(function (row, index) {
+                loadData().then(() => {
+                    dataRows.each(function (row) {
                         row.$$('td').get(1).getText()
                             .then(function (customer) {
                                 filterOk = filterOk && (customer === filteredCustomer);
                             });
-                    }).then(function () {
+                    }).then(() => {
                         expect(filterOk).toBe(true);
                     });
                 });
             });
         });
 
-        it('should filter data in searchable-column shipper city to matching inputted text, starting from 3 characters', function () {
+        it('should filter data in searchable-column shipper city to matching inputted text, starting from 3 characters', () => {
             var filterOk = true;
             var filteredCity = 'Los Angeles, CA, USA';
 
@@ -860,49 +859,49 @@ describe('Tubular Filters', function () {
                     .then(function (customer) {
                         filterOk = filterOk && (customer === filteredCity);
                     });
-            }).then(function () {
+            }).then(() => {
                 expect(filterOk).toBe(false);
-            }).then(function () {
+            }).then(() => {
                 filterOk = true;
 
                 // Send 3rd char input
                 tbTextSearchInput.sendKeys('s');
 
                 // Verify filtering
-                loadData().then(function () {
-                    dataRows.each(function (row, index) {
+                loadData().then(() => {
+                    dataRows.each(function (row) {
                         row.$$('td').get(3).getText()
                             .then(function (customer) {
                                 filterOk = filterOk && (customer === filteredCity);
                             });
-                    }).then(function () {
+                    }).then(() => {
                         expect(filterOk).toBe(true);
                     });
                 });
             });
         });
 
-        it('should show clear button when there is inputted text only', function () {
+        it('should show clear button when there is inputted text only', () => {
             expect(tbTextSearchClearBtn.isDisplayed()).toBe(false);
-            tbTextSearchInput.sendKeys('1').then(function () {
+            tbTextSearchInput.sendKeys('1').then(() => {
                 expect(tbTextSearchClearBtn.isDisplayed()).toBe(true);
             });
         });
 
-        it('should clear filtering when clicking clear button', function () {
+        it('should clear filtering when clicking clear button', () => {
             var filteredDataCount;
 
             // Send filtering
             tbTextSearchInput.sendKeys('algo');
 
             // Verify filtering
-            loadData().then(function () {
+            loadData().then(() => {
                 dataRows.count().then(function (dataCount) {
                     filteredDataCount = dataCount;
                 })
-                    .then(function () {
+                    .then(() => {
                         tbTextSearchClearBtn.click();
-                        loadData().then(function () {
+                        loadData().then(() => {
                             expect(dataRows.count()).not.toBe(filteredDataCount);
                         });
                     });

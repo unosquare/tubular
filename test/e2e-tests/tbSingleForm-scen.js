@@ -1,10 +1,10 @@
 /* jshint: true */
-/* globals: expect:false,beforeAll:false,expect:false,browser:false,element:false,by:false,describe:false,protractor:false,it:false,beforeEach:false */
+/* globals: expect:false,beforeAll:false,expect:false,browser:false,element:false,by:false,describe:false,protractor:false,it:false,beforeEach:false,xit:false */
 
 // This protractor scen file tests tbColumn and tnForm components.
 
-describe('tbSingleForm', function() {
-    beforeEach(function() {
+describe('tbSingleForm', () => {
+    beforeEach(() => {
         // Go to test
         browser.get('index.html');
         element(by.id('testsSelector')).click();
@@ -12,13 +12,13 @@ describe('tbSingleForm', function() {
 
     });
 
-    xit('should load correct info', function () {
+    xit('should load correct info', () => {
         // TODO: ORLY? Microsoft?
         expect($('input').getAttribute('value')).toBe('Microsoft');
     });
 
-    it('should change customer name', function () {
-        $('#btnDefault').click().then(function() {
+    it('should change customer name', () => {
+        $('#btnDefault').click().then(() => {
             expect($('input').getAttribute('value')).toBe('Unosquare');
         });            
     });
@@ -32,16 +32,16 @@ describe('tbSingleForm', function() {
         $('input').clear();
         $('input').sendKeys('Microsoft');
         element(by.tagName('select')).$$('[value="string:Guadalajara, JAL, Mexico"]').click();
-        $('#btnSave').click().then(function () {
+        $('#btnSave').click().then(() => {
             expect($('#textSave').getText()).toBe('Saved');
             done();
         });
-        
     });
 
-    it('should clear the inputs', function(){
+    it('should clear the inputs', function (done) {
         $('#btnCancel').click().then(function(){
             expect($('input').getAttribute('value')).toBe('');
+            done();
         });
     });
 
@@ -60,23 +60,25 @@ describe('tbSingleForm', function() {
         $('#btnSave').click();
     });
 
-    it('should reset editor', function(){
+    it('should reset editor', function (done) {
         $('#btnClear').click().then(function(){
             expect($('input').getAttribute('value')).toBe('');
             expect($('select').$('option:checked').getText()).toEqual('');
+            done();
         });
     });
 
-    it('should not save if not Changes', function(){
+    it('should not save if not Changes', function (done) {
         var text = $('input').getAttribute('value');
 
         $('#btnSave').click().then(function(){
             expect($('input').getAttribute('value')).toEqual(text);
+            done();
         });
     });
 
-    it('should not be able to click on save', function() {
-        $('#btnCancel').click().then(function() {
+    it('should not be able to click on save', () => {
+        $('#btnCancel').click().then(() => {
             expect($('#btnSave').getAttribute('disabled')).not.toBeNull(null);
             expect($('#btnSave').getAttribute('disabled')).not.toBe('');
         });

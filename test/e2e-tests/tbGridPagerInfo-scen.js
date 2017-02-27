@@ -38,7 +38,7 @@ describe('tbGridPagerInfo', function () {
         tbPageSizeSelector.$('[value="number:10"]').click();
     });
 
-    it('should show text in accordance to numbered of filter rows and current results-page', function () {
+    it('should show text in accordance to numbered of filter rows and current results-page', done => {
         // Started on page 1
         expect(tbGridPagerInfo.getText()).toBe('Showing 1 to 10 of 500 records');
 
@@ -49,12 +49,14 @@ describe('tbGridPagerInfo', function () {
         expect(tbGridPagerInfo.getText()).toBe('Showing 21 to 40 of 500 records');
 
         // Go page 3
-        nextPageBtn.click();
-
-        expect(tbGridPagerInfo.getText()).toBe('Showing 41 to 60 of 500 records');
+        nextPageBtn.click()
+            .then(() => {
+                expect(tbGridPagerInfo.getText()).toBe('Showing 41 to 60 of 500 records');
+                done();
+            });
     });
 
-    it('should show count in footer', function() {
+    it('should show count in footer', function () {
         expect(element(by.id('count')).getText()).toBe('500');
     });
 });
