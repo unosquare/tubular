@@ -26,11 +26,13 @@ module.exports = function (config) {
           '../../bower_components/angular-chart.js/dist/angular-chart.js',
           'Javascript/tubular/tubular-models.js',
           'Javascript/tubular/tubular-services.js',
+          'Javascript/tubular*/**/*.module.js',
           'Javascript/tubular/services/**/*.js',
           'Javascript/tubular/tubular-directives.js',
           'Javascript/tubular*/**/*tpl.html',
           'Javascript/tubular/directives/**/*.js',
           'Javascript/tubular/tubular.js',
+          'Javascript/tubular-chart/**/*.js',
           'Javascript/tubular*/**/*.spec.js',
           'Javascript/tubular*/**/*.e2e.js'
         ],
