@@ -41,7 +41,8 @@ module.exports = function (config) {
         exclude: [
            '**/*.min.js',
            '**/*bundle.js',
-           '**/*.run.js'
+           '**/*.run.js',
+           '**/*.e2e.js'
         ],
 
         // preprocess matching files before serving them to the browser
