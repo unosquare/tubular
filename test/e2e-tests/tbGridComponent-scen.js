@@ -48,7 +48,7 @@ describe('tbGridComponents', function () {
     it('should update item with tbSaveButton', function () {
         var lastItem = dataRows.last();
 
-        lastItem.$$('button').first().click().then(function () {
+        lastItem.$('tb-edit-button').click().then(function () {
             lastItem.$('input').clear().sendKeys('TEST').then(function () {
 
                 lastItem.$$('button').first().click().then(function () {

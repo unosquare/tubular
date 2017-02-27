@@ -11,7 +11,7 @@
      * 
      * It depends upon {@link tubular.services} and {@link tubular.models}.
      */
-    angular.module('tubular.directives', ['tubular.services', 'tubular.models'])
+    angular.module('tubular.directives', ['tubular.models','tubular.services'])
         /**
          * @ngdoc directive
          * @name tbGridTable
@@ -25,16 +25,16 @@
          * This directive is replace by a `table` HTML element.
          */
         .directive('tbGridTable', [
-            function() {
+            function () {
                 return {
                     require: '^tbGrid',
-                    template: '<table ng-transclude class="table tubular-grid-table"></table>',
+                    templateUrl: 'tbGridTable.tpl.html',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
                     scope: true,
                     controller: [
-                        '$scope', function($scope) {
+                        '$scope', function ($scope) {
                             $scope.$component = $scope.$parent.$parent.$ctrl;
                             $scope.tubularDirective = 'tubular-grid-table';
                         }
@@ -54,24 +54,24 @@
          * This directive is replace by a `thead` HTML element.
          */
         .directive('tbColumnDefinitions', [
-            function() {
+            function () {
 
                 return {
                     require: '^tbGridTable',
-                    template: '<thead><tr ng-transclude></tr></thead>',
+                    templateUrl: 'tbColumnDefinitions.tpl.html',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
                     scope: true,
                     controller: [
-                        '$scope', function($scope) {
+                        '$scope', function ($scope) {
                             $scope.$component = $scope.$parent.$parent.$component;
                             $scope.tubularDirective = 'tubular-column-definitions';
                         }
                     ],
-                    compile: function() {
+                    compile: function () {
                         return {
-                            post: function(scope) {
+                            post: function (scope) {
                                 scope.$component.hasColumnsDefinitions = true;
                             }
                         };
@@ -100,12 +100,12 @@
          * @param {boolean} searchable Set if column is searchable.
          * @param {boolean} visible Set if column is visible.
          * @param {string} columnType Set the column data type. Values: string, numeric, date, datetime, or boolean.
-         * @param {boolean} isGrouping Define a group key.
          */
         .directive('tbColumn', [
             function () {
                 return {
                     require: '^tbColumnDefinitions',
+                    // TODO: I was not able to move to templateUrl, I need to research
                     template: '<th ng-transclude ng-class="{sortable: column.Sortable}" ng-show="column.Visible"></th>',
                     restrict: 'E',
                     replace: true,
@@ -119,9 +119,7 @@
                         isKey: '=?',
                         searchable: '=?',
                         columnType: '@?',
-                        isGrouping: '=?',
                         aggregate: '@?',
-                        metaAggregate: '@?',
                         sortDirection: '@?'
                     },
                     controller: [
@@ -141,7 +139,7 @@
                                 }
                             });
 
-                            $scope.$watch('label', function() {
+                            $scope.$watch('label', function () {
                                 $scope.column.Label = $scope.label;
                                 // this broadcast here is used for backwards compatibility with tbColumnHeader requiring a scope.label value on its own
                                 $scope.$broadcast('tbColumn_LabelChanged', $scope.label);
@@ -173,11 +171,9 @@
                                 this.Visible = $scope.visible === 'false' ? false : true;
                                 this.Filter = null;
                                 this.DataType = $scope.columnType || 'string';
-                                this.IsGrouping = $scope.isGrouping === 'true';
                                 this.Aggregate = $scope.aggregate || 'none';
-                                this.MetaAggregate = $scope.metaAggregate || 'none';
                             };
-                            
+
                             $scope.$component.addColumn(column);
                             $scope.column = column;
                             $scope.label = column.Label;
@@ -198,30 +194,26 @@
          * This directive is replace by an `a` HTML element.
          */
         .directive('tbColumnHeader', [
-            function() {
+            function () {
                 return {
                     require: '^tbColumn',
-                    template: '<span><a title="Click to sort. Press Ctrl to sort by multiple columns" class="column-header" href ng-click="sortColumn($event)">' +
-                        '<span class="column-header-default">{{ $parent.column.Label }}</span>' +
-                        '<ng-transclude></ng-transclude></a> ' +
-                        '<i class="fa sort-icon" ng-class="{\'fa-long-arrow-up\': $parent.column.SortDirection == \'Ascending\', \'fa-long-arrow-down\': $parent.column.SortDirection == \'Descending\'}">&nbsp;</i>' +
-                        '</span>',
+                    templateUrl: 'tbColumnHeader.tpl.html',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
                     scope: false,
                     controller: [
-                        '$scope', function($scope) {
-                            $scope.sortColumn = function($event) {
+                        '$scope', function ($scope) {
+                            $scope.sortColumn = function ($event) {
                                 $scope.$parent.sortColumn($event.ctrlKey);
                             };
                             // this listener here is used for backwards compatibility with tbColumnHeader requiring a scope.label value on its own
-                            $scope.$on('tbColumn_LabelChanged', function($event, value) {
+                            $scope.$on('tbColumn_LabelChanged', function ($event, value) {
                                 $scope.label = value;
                             });
                         }
                     ],
-                    link: function($scope, $element) {
+                    link: function ($scope, $element) {
                         if ($element.find('ng-transclude').length > 0) {
                             $element.find('span')[0].remove();
                         }
@@ -245,17 +237,17 @@
          * This directive is replace by an `tbody` HTML element.
          */
         .directive('tbRowSet', [
-            function() {
+            function () {
 
                 return {
                     require: '^tbGrid',
-                    template: '<tbody ng-transclude></tbody>',
+                    templateUrl: 'tbRowSet.tpl.html',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
                     scope: false,
                     controller: [
-                        '$scope', function($scope) {
+                        '$scope', function ($scope) {
                             $scope.$component = $scope.$parent.$component || $scope.$parent.$parent.$component;
                             $scope.tubularDirective = 'tubular-row-set';
                         }
@@ -275,17 +267,17 @@
          * This directive is replace by an `tfoot` HTML element.
          */
         .directive('tbFootSet', [
-            function() {
+            function () {
 
                 return {
                     require: '^tbGrid',
-                    template: '<tfoot ng-transclude></tfoot>',
+                    templateUrl: 'tbFootSet.tpl.html',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
                     scope: false,
                     controller: [
-                        '$scope', function($scope) {
+                        '$scope', function ($scope) {
                             $scope.$component = $scope.$parent.$component || $scope.$parent.$parent.$component;
                             $scope.tubularDirective = 'tubular-foot-set';
                         }
@@ -308,11 +300,10 @@
          * @param {bool} selectable Flag the rowset to allow user to select rows.
          */
         .directive('tbRowTemplate', [
-            function() {
+            function () {
 
                 return {
-                    template: '<tr ng-transclude ng-class="{\'info\': selectableBool && model.$selected}"' +
-                        ' ng-click="changeSelection(model)"></tr>',
+                    templateUrl: 'tbRowTemplate.tpl.html',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
@@ -321,14 +312,14 @@
                         selectable: '@'
                     },
                     controller: [
-                        '$scope', function($scope) {
+                        '$scope', function ($scope) {
                             $scope.tubularDirective = 'tubular-rowset';
                             $scope.fields = [];
                             $scope.hasFieldsDefinitions = false;
                             $scope.selectableBool = $scope.selectable === 'true';
                             $scope.$component = $scope.$parent.$parent.$parent.$component;
 
-                            $scope.$watch('hasFieldsDefinitions', function(newVal) {
+                            $scope.$watch('hasFieldsDefinitions', function (newVal) {
                                 if (newVal !== true || angular.isUndefined($scope.model)) {
                                     return;
                                 }
@@ -336,8 +327,8 @@
                                 $scope.bindFields();
                             });
 
-                            $scope.bindFields = function() {
-                                angular.forEach($scope.fields, function(field) {
+                            $scope.bindFields = function () {
+                                angular.forEach($scope.fields, function (field) {
                                     field.bindScope();
                                 });
                             };
@@ -346,7 +337,7 @@
                                 $scope.$component.selectFromSession($scope.model);
                             }
 
-                            $scope.changeSelection = function(rowModel) {
+                            $scope.changeSelection = function (rowModel) {
                                 if (!$scope.selectableBool) {
                                     return;
                                 }
@@ -355,9 +346,9 @@
                             };
                         }
                     ],
-                    compile: function() {
+                    compile: function () {
                         return {
-                            post: function(scope) {
+                            post: function (scope) {
                                 scope.hasFieldsDefinitions = true;
                             }
                         };
@@ -385,7 +376,7 @@
 
                 return {
                     require: '^tbRowTemplate',
-                    template: '<td ng-transclude ng-show="column.Visible" data-label="{{::column.Label}}"></td>',
+                    templateUrl: 'tbCellTemplate.tpl.html',
                     restrict: 'E',
                     replace: true,
                     transclude: true,

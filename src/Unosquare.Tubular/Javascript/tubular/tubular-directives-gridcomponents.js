@@ -1,8 +1,8 @@
-﻿(function(angular) {
+﻿(function (angular) {
     'use strict';
 
     angular.module('tubular.directives')
-       
+
         /**
          * @ngdoc component
          * @name tbRemoveButton
@@ -27,18 +27,16 @@
                 legend: '@',
                 icon: '@'
             },
-            controller: [
-                'tubularTemplateService', function(tubularTemplateService) {
-                    var $ctrl = this;
+            controller: function () {
+                var $ctrl = this;
 
-                    $ctrl.$onInit = function () {
-                        $ctrl.showIcon = angular.isDefined($ctrl.icon);
-                        $ctrl.showCaption = !($ctrl.showIcon && angular.isUndefined($ctrl.caption));
+                $ctrl.$onInit = function () {
+                    $ctrl.showIcon = angular.isDefined($ctrl.icon);
+                    $ctrl.showCaption = !($ctrl.showIcon && angular.isUndefined($ctrl.caption));
 
-                        $ctrl.templateName = tubularTemplateService.tbRemoveButtonrPopoverTemplateName;
-                    }
-                }
-            ]
+                    $ctrl.templateName = 'tbRemoveButtonPopover.tpl.html';
+                };
+            }
         })
         /**
          * @ngdoc directive
@@ -57,7 +55,7 @@
          * @param {string} cancelCss Add a CSS class to Cancel button.
          */
         .directive('tbSaveButton', [
-            function() {
+            function () {
 
                 return {
                     require: '^tbGrid',
@@ -73,10 +71,10 @@
                         cancelCss: '@'
                     },
                     controller: [
-                        '$scope', function($scope) {
+                        '$scope', function ($scope) {
                             $scope.isNew = $scope.isNew || false;
 
-                            $scope.save = function() {
+                            $scope.save = function () {
                                 if ($scope.isNew) {
                                     $scope.model.$isNew = true;
                                 }
@@ -93,7 +91,7 @@
                                 }
 
                                 $scope.currentRequest.then(
-                                    function(data) {
+                                    function (data) {
                                         $scope.model.$isEditing = false;
 
                                         if (angular.isDefined($scope.model.$component) &&
@@ -103,12 +101,12 @@
                                         }
 
                                         $scope.$emit('tbGrid_OnSuccessfulSave', data, $scope.model.$component);
-                                    }, function(error) {
+                                    }, function (error) {
                                         $scope.$emit('tbGrid_OnConnectionError', error);
                                     });
                             };
 
-                            $scope.cancel = function() {
+                            $scope.cancel = function () {
                                 $scope.model.revertChanges();
                             };
                         }
@@ -131,16 +129,15 @@
             require: {
                 $component: '^tbGrid'
             },
-            template: '<button ng-click="$ctrl.edit()" class="btn btn-xs btn-default" ' +
-                'ng-hide="$ctrl.model.$isEditing">{{:: $ctrl.caption || (\'CAPTION_EDIT\' | translate) }}</button>',
+            templateUrl: 'tbEditButton.tpl.html',
             bindings: {
                 model: '=',
                 caption: '@'
             },
-            controller: function() {
+            controller: function () {
                 var $ctrl = this;
 
-                $ctrl.edit = function() {
+                $ctrl.edit = function () {
                     if ($ctrl.$component.editorMode === 'popup') {
                         $ctrl.model.editPopup();
                     } else {
@@ -166,14 +163,7 @@
             require: {
                 $component: '^tbGrid'
             },
-            template: '<div class="{{::$ctrl.css}}"><form class="form-inline">' +
-                '<div class="form-group">' +
-                '<label class="small">{{:: $ctrl.caption || (\'UI_PAGESIZE\' | translate) }} </label>&nbsp;' +
-                '<select ng-model="$ctrl.$component.pageSize" class="form-control input-sm {{::$ctrl.selectorCss}}" ' +
-                'ng-options="item for item in options">' +
-                '</select>' +
-                '</div>' +
-                '</form></div>',
+            templateUrl: 'tbPageSizeSelector.tpl.html',
             bindings: {
                 caption: '@',
                 css: '@',
@@ -181,7 +171,7 @@
                 options: '=?'
             },
             controller: [
-                '$scope', function($scope) {
+                '$scope', function ($scope) {
                     $scope.options = angular.isDefined($scope.$ctrl.options) ? $scope.$ctrl.options : [10, 20, 50, 100];
                 }
             ]
@@ -204,15 +194,7 @@
             require: {
                 $component: '^tbGrid'
             },
-            template: '<div class="btn-group" uib-dropdown>' +
-                '<button class="btn btn-info btn-sm {{::$ctrl.css}}" uib-dropdown-toggle>' +
-                '<span class="fa fa-download"></span>&nbsp;{{:: $ctrl.caption || (\'UI_EXPORTCSV\' | translate)}}&nbsp;<span class="caret"></span>' +
-                '</button>' +
-                '<ul class="dropdown-menu" uib-dropdown-menu>' +
-                '<li><a href="javascript:void(0)" ng-click="$ctrl.downloadCsv($parent)">{{:: $ctrl.captionMenuCurrent || (\'UI_CURRENTROWS\' | translate)}}</a></li>' +
-                '<li><a href="javascript:void(0)" ng-click="$ctrl.downloadAllCsv($parent)">{{:: $ctrl.captionMenuAll || (\'UI_ALLROWS\' | translate)}}</a></li>' +
-                '</ul>' +
-                '</div>',
+            templateUrl: 'tbExportButton.tpl.html',
             bindings: {
                 filename: '@',
                 css: '@',
@@ -220,17 +202,17 @@
                 captionMenuCurrent: '@',
                 captionMenuAll: '@'
             },
-            controller: ['tubularGridExportService', function(tubular) {
-                    var $ctrl = this;
+            controller: ['tubularGridExportService', function (tubular) {
+                var $ctrl = this;
 
-                    $ctrl.downloadCsv = function() {
-                        tubular.exportGridToCsv($ctrl.filename, $ctrl.$component);
-                    };
+                $ctrl.downloadCsv = function () {
+                    tubular.exportGridToCsv($ctrl.filename, $ctrl.$component);
+                };
 
-                    $ctrl.downloadAllCsv = function() {
-                        tubular.exportAllGridToCsv($ctrl.filename, $ctrl.$component);
-                    };
-                }
+                $ctrl.downloadAllCsv = function () {
+                    tubular.exportAllGridToCsv($ctrl.filename, $ctrl.$component);
+                };
+            }
             ]
         })
         /**
@@ -249,33 +231,31 @@
             require: {
                 $component: '^tbGrid'
             },
-            template: '<button class="btn btn-default btn-sm" ng-click="$ctrl.printGrid()">' +
-                '<span class="fa fa-print"></span>&nbsp;{{:: $ctrl.caption || (\'CAPTION_PRINT\' | translate)}}' +
-                '</button>',
+            templateUrl: 'tbPrintButton.tpl.html',
             bindings: {
                 title: '@',
                 printCss: '@',
                 caption: '@'
             },
-            controller: ['$window', function($window) {
+            controller: ['$window', function ($window) {
                 var $ctrl = this;
 
-                $ctrl.printGrid = function() {
-                    $ctrl.$component.getFullDataSource(function(data) {
+                $ctrl.printGrid = function () {
+                    $ctrl.$component.getFullDataSource(function (data) {
                         var tableHtml = '<table class="table table-bordered table-striped"><thead><tr>'
                             + $ctrl.$component.columns
-                            .filter(function(c) { return c.Visible; })
-                            .map(function(el) {
+                            .filter(function (c) { return c.Visible; })
+                            .map(function (el) {
                                 return '<th>' + (el.Label || el.Name) + '</th>';
                             }).join(' ')
                             + '</tr></thead>'
                             + '<tbody>'
-                            + data.map(function(row) {
+                            + data.map(function (row) {
                                 if (angular.isObject(row)) {
-                                    row = Object.keys(row).map(function(key) { return row[key] });
+                                    row = Object.keys(row).map(function (key) { return row[key] });
                                 }
 
-                                return '<tr>' + row.map(function(cell, index) {
+                                return '<tr>' + row.map(function (cell, index) {
                                     if (angular.isDefined($ctrl.$component.columns[index]) &&
                                         !$ctrl.$component.columns[index].Visible) {
                                         return '';

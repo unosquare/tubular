@@ -1,2 +1,4 @@
 // JavaScript source code
 *.spec.js
+*.e2e.js
+*bundle.js

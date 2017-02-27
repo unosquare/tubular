@@ -90,80 +90,11 @@ describe('Module: tubular.services', function () {
 
             tubularHttp.authenticate('user', 'password', data => {
                 expect(data).toBeDefined();
+                expect(tubularHttp.isAuthenticated()).toBe(true);
                 done();
             }, error => expect(error).toBeUndefined());
 
             $httpBackend.flush();
-
-            /*$scope.isAuthenticated = function () {
-                    console.log("Auth", tubularHttp.isAuthenticated());
-                    if (tubularHttp.isAuthenticated()) {
-                        $scope.isAuth = "Is Authenticated";
-                        return true;
-                    } else {
-                        $scope.isAuth = "Not Authenticated";
-                        return false;
-                    }
-                };
-
-                $scope.expireAccessToken = function () {
-                    $scope.accessToken = tubularHttp.userData.bearerToken;
-                    tubularHttp.setRequireAuthentication(true);
-                    tubularHttp.setAccessTokenAsExpired();
-                }
-
-                $scope.removeAuthentication = function () {
-                    tubularHttp.removeAuthentication();
-
-                    tubularHttp.setRequireAuthentication(true);
-
-                    if (tubularHttp.isAuthenticated()) {
-                        $scope.redirected = "Authenticated";
-                    } else {
-                        $scope.redirected = "Not Authenticated";
-                    }
-                };
-                $scope.retrieveData = function () {
-                    var retData = tubularHttp.userData;
-                    var savedDat = localStorageService.get('auth_data');
-                    $scope.retSavData = retData.username === savedDat.username;
-                    $scope.refreshToken = retData.refreshToken;
-                };
-
-                $scope.getTest = function () {
-                    var getObject = tubularHttp.get('http://tubular.azurewebsites.net/api/orders/53');
-                    if (getObject.cancel != null) {
-                        $scope.getLog = "cancel";
-                    }
-
-                };
-
-                $scope.postTest = function () {
-                    tubularHttp.post('http://tubular.azurewebsites.net/api/orders/53', { 'ShipperCity': 'California' }).promise.then(function (data) {
-                        $scope.postLog = data || 'null';
-                    });
-                };
-
-                $scope.useRefreshToken = function () {
-                    tubularHttp.setRefreshTokenUrl('http://tubular.azurewebsites.net/token');
-                    tubularHttp.setTokenUrl('http://tubular.azurewebsites.net/token');
-                    tubularHttp.setApiBaseUrl('http://tubular.azurewebsites.net/api');
-                    tubularHttp.useRefreshTokens = true;
-
-                    $scope.accessToken = tubularHttp.userData.bearerToken;
-                    tubularHttp.setRequireAuthentication(true);
-                    tubularHttp.setAccessTokenAsExpired();
-
-                    console.log("Before going: ", tubularHttp.apiBaseUrl);
-
-                    tubularHttp.useRefreshTokens = true;
-                    var response = tubularHttp.get('http://tubular.azurewebsites.net/api/orders/10');
-
-                    response.promise.then(function (data) {
-                        console.log("Order", data);
-                        $scope.accessToken = tubularHttp.userData.bearerToken;
-                    });
-                };*/
         });
     });
 });

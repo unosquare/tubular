@@ -90,12 +90,12 @@ describe('Module: tubular.directives', function () {
             scope.form1.tbTextSearchInput.$setViewValue('google');
             timeout.flush(300);
             scope.$apply();
-            var panel = angular.element(element[0].querySelector('#tb-text-search-reset-panel'));
-            expect(panel.hasClass('ng-hide')).toBe(false);
+            var panel = element.find('#tb-text-search-reset-panel');
+            expect(panel).not.toHaveClass('ng-hide');
             scope.form1.tbTextSearchInput.$setViewValue('');
             timeout.flush(300);
             scope.$apply();
-            expect(panel.hasClass('ng-hide')).toBe(true);
+            expect(panel).toHaveClass('ng-hide');
             
             
 

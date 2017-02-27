@@ -1,21 +1,20 @@
-
 <!--
     This template is used to test the following components:
         - tbGridPager
         - tbGridPagerInfo
         - tbPageSizeSelector
     -->
-    
+
 <h1>Testing: </h1>
 <ul>
     <li>tbGridPager component and its related page-navigation functionality </li>
     <li>tbPageSizeSelector component </li>
     <li>tbGridPagerInfo component
 </ul>
-<br/>
-<div ng-controller="GridCtrl">
+<br />
+
 <tb-grid server-url="http://tubular.azurewebsites.net/api/orders/paged" request-method="POST" grid-name="sampleshap1"
-         page-size="10" require-authentication="true" >
+         page-size="10" require-authentication="false">
     <div class="row">
         <tb-grid-pager class="col-md-6 col-xs-12"></tb-grid-pager>
         <tb-page-size-selector class="col-md-3 col-xs-6" selectorcss="input-sm"></tb-page-size-selector>
@@ -70,7 +69,7 @@
                             <tb-cell-template></tb-cell-template>
                             <tb-cell-template></tb-cell-template>
                             <tb-cell-template>
-                                    <b>COUNT <span id="count">{{$component.aggregationFunctions.ShipperCity}}</span></b>
+                                <b>COUNT <span id="count">{{$component.aggregationFunctions.ShipperCity}}</span></b>
                             </tb-cell-template>
                         </tb-row-template>
                     </tb-foot-set>
@@ -79,4 +78,3 @@
         </div>
     </div>
 </tb-grid>
-</div>

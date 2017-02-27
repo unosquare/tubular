@@ -14,14 +14,7 @@
             require: {
                 $component : '^tbGrid'
             },
-            template:
-                '<div class="tubular-pager">' +
-                    '<ul uib-pagination ng-disabled="$ctrl.$component.isEmpty" direction-links="true" ' +
-                    'first-text="&#xf049;" previous-text="&#xf04a;" next-text="&#xf04e;" last-text="&#xf050;"' +
-                    'boundary-links="true" total-items="$ctrl.$component.filteredRecordCount" ' +
-                    'items-per-page="$ctrl.$component.pageSize" max-size="5" ng-model="$ctrl.$component.currentPage" ng-change="$ctrl.pagerPageChanged()">' +
-                    '</ul>' +
-                    '<div>',
+            templateUrl: 'tbGridPager.tpl.html',
             scope: true,
             terminal: false,
             controller: ['$scope', function ($scope) {
@@ -51,11 +44,7 @@
             require: {
                 $component: '^tbGrid'
             },
-            template: '<div class="pager-info small" ng-hide="$ctrl.$component.isEmpty">' +
-                '{{\'UI_SHOWINGRECORDS\' | translate: $ctrl.currentInitial:$ctrl.currentTop:$ctrl.$component.filteredRecordCount}} ' +
-                '<span ng-show="$ctrl.filtered">' +
-                '{{\'UI_FILTEREDRECORDS\' | translate: $ctrl.$component.totalRecordCount}}</span>' +
-                '</div>',
+            templateUrl: 'tbGridPagerInfo.tpl.html',
             bindings: {
                 cssClass: '@?'
             },

@@ -98,7 +98,7 @@
      * 
      * It depends upon {@link tubular.services} and {@link tubular.models}.
      */
-    angular.module('tubular.directives', ['tubular.services', 'tubular.models'])
+    angular.module('tubular.directives', ['tubular.models','tubular.services'])
         /**
          * @ngdoc directive
          * @name tbGridTable
@@ -112,16 +112,16 @@
          * This directive is replace by a `table` HTML element.
          */
         .directive('tbGridTable', [
-            function() {
+            function () {
                 return {
                     require: '^tbGrid',
-                    template: '<table ng-transclude class="table tubular-grid-table"></table>',
+                    templateUrl: 'tbGridTable.tpl.html',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
                     scope: true,
                     controller: [
-                        '$scope', function($scope) {
+                        '$scope', function ($scope) {
                             $scope.$component = $scope.$parent.$parent.$ctrl;
                             $scope.tubularDirective = 'tubular-grid-table';
                         }
@@ -141,24 +141,24 @@
          * This directive is replace by a `thead` HTML element.
          */
         .directive('tbColumnDefinitions', [
-            function() {
+            function () {
 
                 return {
                     require: '^tbGridTable',
-                    template: '<thead><tr ng-transclude></tr></thead>',
+                    templateUrl: 'tbColumnDefinitions.tpl.html',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
                     scope: true,
                     controller: [
-                        '$scope', function($scope) {
+                        '$scope', function ($scope) {
                             $scope.$component = $scope.$parent.$parent.$component;
                             $scope.tubularDirective = 'tubular-column-definitions';
                         }
                     ],
-                    compile: function() {
+                    compile: function () {
                         return {
-                            post: function(scope) {
+                            post: function (scope) {
                                 scope.$component.hasColumnsDefinitions = true;
                             }
                         };
@@ -187,12 +187,12 @@
          * @param {boolean} searchable Set if column is searchable.
          * @param {boolean} visible Set if column is visible.
          * @param {string} columnType Set the column data type. Values: string, numeric, date, datetime, or boolean.
-         * @param {boolean} isGrouping Define a group key.
          */
         .directive('tbColumn', [
             function () {
                 return {
                     require: '^tbColumnDefinitions',
+                    // TODO: I was not able to move to templateUrl, I need to research
                     template: '<th ng-transclude ng-class="{sortable: column.Sortable}" ng-show="column.Visible"></th>',
                     restrict: 'E',
                     replace: true,
@@ -206,9 +206,7 @@
                         isKey: '=?',
                         searchable: '=?',
                         columnType: '@?',
-                        isGrouping: '=?',
                         aggregate: '@?',
-                        metaAggregate: '@?',
                         sortDirection: '@?'
                     },
                     controller: [
@@ -228,7 +226,7 @@
                                 }
                             });
 
-                            $scope.$watch('label', function() {
+                            $scope.$watch('label', function () {
                                 $scope.column.Label = $scope.label;
                                 // this broadcast here is used for backwards compatibility with tbColumnHeader requiring a scope.label value on its own
                                 $scope.$broadcast('tbColumn_LabelChanged', $scope.label);
@@ -260,11 +258,9 @@
                                 this.Visible = $scope.visible === 'false' ? false : true;
                                 this.Filter = null;
                                 this.DataType = $scope.columnType || 'string';
-                                this.IsGrouping = $scope.isGrouping === 'true';
                                 this.Aggregate = $scope.aggregate || 'none';
-                                this.MetaAggregate = $scope.metaAggregate || 'none';
                             };
-                            
+
                             $scope.$component.addColumn(column);
                             $scope.column = column;
                             $scope.label = column.Label;
@@ -285,30 +281,26 @@
          * This directive is replace by an `a` HTML element.
          */
         .directive('tbColumnHeader', [
-            function() {
+            function () {
                 return {
                     require: '^tbColumn',
-                    template: '<span><a title="Click to sort. Press Ctrl to sort by multiple columns" class="column-header" href ng-click="sortColumn($event)">' +
-                        '<span class="column-header-default">{{ $parent.column.Label }}</span>' +
-                        '<ng-transclude></ng-transclude></a> ' +
-                        '<i class="fa sort-icon" ng-class="{\'fa-long-arrow-up\': $parent.column.SortDirection == \'Ascending\', \'fa-long-arrow-down\': $parent.column.SortDirection == \'Descending\'}">&nbsp;</i>' +
-                        '</span>',
+                    templateUrl: 'tbColumnHeader.tpl.html',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
                     scope: false,
                     controller: [
-                        '$scope', function($scope) {
-                            $scope.sortColumn = function($event) {
+                        '$scope', function ($scope) {
+                            $scope.sortColumn = function ($event) {
                                 $scope.$parent.sortColumn($event.ctrlKey);
                             };
                             // this listener here is used for backwards compatibility with tbColumnHeader requiring a scope.label value on its own
-                            $scope.$on('tbColumn_LabelChanged', function($event, value) {
+                            $scope.$on('tbColumn_LabelChanged', function ($event, value) {
                                 $scope.label = value;
                             });
                         }
                     ],
-                    link: function($scope, $element) {
+                    link: function ($scope, $element) {
                         if ($element.find('ng-transclude').length > 0) {
                             $element.find('span')[0].remove();
                         }
@@ -332,17 +324,17 @@
          * This directive is replace by an `tbody` HTML element.
          */
         .directive('tbRowSet', [
-            function() {
+            function () {
 
                 return {
                     require: '^tbGrid',
-                    template: '<tbody ng-transclude></tbody>',
+                    templateUrl: 'tbRowSet.tpl.html',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
                     scope: false,
                     controller: [
-                        '$scope', function($scope) {
+                        '$scope', function ($scope) {
                             $scope.$component = $scope.$parent.$component || $scope.$parent.$parent.$component;
                             $scope.tubularDirective = 'tubular-row-set';
                         }
@@ -362,17 +354,17 @@
          * This directive is replace by an `tfoot` HTML element.
          */
         .directive('tbFootSet', [
-            function() {
+            function () {
 
                 return {
                     require: '^tbGrid',
-                    template: '<tfoot ng-transclude></tfoot>',
+                    templateUrl: 'tbFootSet.tpl.html',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
                     scope: false,
                     controller: [
-                        '$scope', function($scope) {
+                        '$scope', function ($scope) {
                             $scope.$component = $scope.$parent.$component || $scope.$parent.$parent.$component;
                             $scope.tubularDirective = 'tubular-foot-set';
                         }
@@ -395,11 +387,10 @@
          * @param {bool} selectable Flag the rowset to allow user to select rows.
          */
         .directive('tbRowTemplate', [
-            function() {
+            function () {
 
                 return {
-                    template: '<tr ng-transclude ng-class="{\'info\': selectableBool && model.$selected}"' +
-                        ' ng-click="changeSelection(model)"></tr>',
+                    templateUrl: 'tbRowTemplate.tpl.html',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
@@ -408,14 +399,14 @@
                         selectable: '@'
                     },
                     controller: [
-                        '$scope', function($scope) {
+                        '$scope', function ($scope) {
                             $scope.tubularDirective = 'tubular-rowset';
                             $scope.fields = [];
                             $scope.hasFieldsDefinitions = false;
                             $scope.selectableBool = $scope.selectable === 'true';
                             $scope.$component = $scope.$parent.$parent.$parent.$component;
 
-                            $scope.$watch('hasFieldsDefinitions', function(newVal) {
+                            $scope.$watch('hasFieldsDefinitions', function (newVal) {
                                 if (newVal !== true || angular.isUndefined($scope.model)) {
                                     return;
                                 }
@@ -423,8 +414,8 @@
                                 $scope.bindFields();
                             });
 
-                            $scope.bindFields = function() {
-                                angular.forEach($scope.fields, function(field) {
+                            $scope.bindFields = function () {
+                                angular.forEach($scope.fields, function (field) {
                                     field.bindScope();
                                 });
                             };
@@ -433,7 +424,7 @@
                                 $scope.$component.selectFromSession($scope.model);
                             }
 
-                            $scope.changeSelection = function(rowModel) {
+                            $scope.changeSelection = function (rowModel) {
                                 if (!$scope.selectableBool) {
                                     return;
                                 }
@@ -442,9 +433,9 @@
                             };
                         }
                     ],
-                    compile: function() {
+                    compile: function () {
                         return {
-                            post: function(scope) {
+                            post: function (scope) {
                                 scope.hasFieldsDefinitions = true;
                             }
                         };
@@ -472,7 +463,7 @@
 
                 return {
                     require: '^tbRowTemplate',
-                    template: '<td ng-transclude ng-show="column.Visible" data-label="{{::column.Label}}"></td>',
+                    templateUrl: 'tbCellTemplate.tpl.html',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
@@ -514,17 +505,63 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
   $templateCache.put("tbHiddenField.tpl.html",
     "<input type=hidden ng-model=$ctrl.value class=form-control name={{$ctrl.name}}>");
   $templateCache.put("tbNumericEditor.tpl.html",
-    "<div ng-class=\"{ 'form-group' : $ctrl.showLabel && $ctrl.isEditing, 'has-error' : !$ctrl.$valid && $ctrl.$dirty() }\"><span ng-hide=$ctrl.isEditing>{{$ctrl.value | numberorcurrency: format }}</span><label ng-show=$ctrl.showLabel ng-bind=$ctrl.label></label><div class=input-group ng-show=$ctrl.isEditing><div class=input-group-addon ng-hide=\"$ctrl.format == 'I'\"><i ng-class=\"{ 'fa': true, 'fa-calculator': $ctrl.format != 'C', 'fa-usd': $ctrl.format == 'C'}\"></i></div><input type=number placeholder={{$ctrl.placeholder}} ng-model=$ctrl.value class=form-control ng-required=$ctrl.required ng-hide=$ctrl.readOnly step=\"{{$ctrl.step || \\'any\\'}}\" name={{$ctrl.name}}><p class=\"form-control form-control-static text-right\" ng-show=$ctrl.readOnly>{{$ctrl.value | numberorcurrency: format}}</p></div><span class=\"help-block error-block\" ng-show=$ctrl.isEditing ng-repeat=\"error in $ctrl.state.$errors\">{{error}}</span> <span class=help-block ng-show=\"$ctrl.isEditing && $ctrl.help\" ng-bind=$ctrl.help></span></div>");
+    "<div ng-class=\"{ 'form-group' : $ctrl.showLabel && $ctrl.isEditing, 'has-error' : !$ctrl.$valid && $ctrl.$dirty() }\"><span ng-hide=$ctrl.isEditing>{{$ctrl.value | numberorcurrency: format }}</span><label ng-show=$ctrl.showLabel ng-bind=$ctrl.label></label><div class=input-group ng-show=$ctrl.isEditing><div class=input-group-addon ng-hide=\"$ctrl.format == 'I'\"><i ng-class=\"{ 'fa': true, 'fa-calculator': $ctrl.format != 'C', 'fa-usd': $ctrl.format == 'C'}\"></i></div><input type=number placeholder={{$ctrl.placeholder}} ng-model=$ctrl.value class=form-control ng-required=$ctrl.required ng-hide=$ctrl.readOnly step=\"{{$ctrl.step || 'any'}}\" name={{$ctrl.name}}><p class=\"form-control form-control-static text-right\" ng-show=$ctrl.readOnly>{{$ctrl.value | numberorcurrency: format}}</p></div><span class=\"help-block error-block\" ng-show=$ctrl.isEditing ng-repeat=\"error in $ctrl.state.$errors\">{{error}}</span> <span class=help-block ng-show=\"$ctrl.isEditing && $ctrl.help\" ng-bind=$ctrl.help></span></div>");
   $templateCache.put("tbSimpleEditor.tpl.html",
     "<div ng-class=\"{ 'form-group' : $ctrl.showLabel && $ctrl.isEditing, 'has-error' : !$ctrl.$valid && $ctrl.$dirty() }\"><span ng-hide=$ctrl.isEditing ng-bind=$ctrl.value></span><label ng-show=$ctrl.showLabel ng-bind=$ctrl.label></label><input type={{$ctrl.editorType}} placeholder={{$ctrl.placeholder}} ng-show=$ctrl.isEditing ng-model=$ctrl.value class=form-control ng-required=$ctrl.required ng-readonly=$ctrl.readOnly name={{$ctrl.name}}> <span class=\"help-block error-block\" ng-show=$ctrl.isEditing ng-repeat=\"error in $ctrl.state.$errors\">{{error}}</span> <span class=help-block ng-show=\"$ctrl.isEditing && $ctrl.help\" ng-bind=$ctrl.help></span></div>");
+  $templateCache.put("tbTextArea.tpl.html",
+    "<div ng-class=\"{ 'form-group' : $ctrl.showLabel && $ctrl.isEditing, 'has-error' : !$ctrl.$valid && $ctrl.$dirty() }\"><span ng-hide=$ctrl.isEditing ng-bind=$ctrl.value></span><label ng-show=$ctrl.showLabel ng-bind=$ctrl.label></label><textarea ng-show=$ctrl.isEditing placeholder={{$ctrl.placeholder}} ng-model=$ctrl.value class=form-control ng-required=$ctrl.required ng-readonly=$ctrl.readOnly name={{$ctrl.name}}></textarea><span class=\"help-block error-block\" ng-show=$ctrl.isEditing ng-repeat=\"error in $ctrl.state.$errors\">{{error}}</span> <span class=help-block ng-show=\"$ctrl.isEditing && $ctrl.help\" ng-bind=$ctrl.help></span></div>");
+  $templateCache.put("tbForm.tpl.html",
+    "<form ng-transclude name={{name}}></form>");
+  $templateCache.put("tbEditButton.tpl.html",
+    "<button ng-click=$ctrl.edit() class=\"btn btn-xs btn-default\" ng-hide=$ctrl.model.$isEditing>{{:: $ctrl.caption || ('CAPTION_EDIT' | translate) }}</button>");
+  $templateCache.put("tbExportButton.tpl.html",
+    "<div class=btn-group uib-dropdown><button class=\"btn btn-info btn-sm {{::$ctrl.css}}\" uib-dropdown-toggle><span class=\"fa fa-download\"></span>&nbsp;{{:: $ctrl.caption || ('UI_EXPORTCSV' | translate)}}&nbsp;<span class=caret></span></button><ul class=dropdown-menu uib-dropdown-menu><li><a href=javascript:void(0) ng-click=$ctrl.downloadCsv($parent)>{{:: $ctrl.captionMenuCurrent || ('UI_CURRENTROWS' | translate)}}</a></li><li><a href=javascript:void(0) ng-click=$ctrl.downloadAllCsv($parent)>{{:: $ctrl.captionMenuAll || ('UI_ALLROWS' | translate)}}</a></li></ul></div>");
+  $templateCache.put("tbGridPager.tpl.html",
+    "<div class=tubular-pager><ul uib-pagination ng-disabled=$ctrl.$component.isEmpty direction-links=true first-text=&#xf049; previous-text=&#xf04a; next-text=&#xf04e; last-text=&#xf050; boundary-links=true total-items=$ctrl.$component.filteredRecordCount items-per-page=$ctrl.$component.pageSize max-size=5 ng-model=$ctrl.$component.currentPage ng-change=$ctrl.pagerPageChanged()></ul></div>");
+  $templateCache.put("tbGridPagerInfo.tpl.html",
+    "<div class=\"pager-info small\" ng-hide=$ctrl.$component.isEmpty>{{'UI_SHOWINGRECORDS' | translate: $ctrl.currentInitial:$ctrl.currentTop:$ctrl.$component.filteredRecordCount}} <span ng-show=$ctrl.filtered>{{'UI_FILTEREDRECORDS' | translate: $ctrl.$component.totalRecordCount}}</span></div>");
+  $templateCache.put("tbPageSizeSelector.tpl.html",
+    "<div class={{::$ctrl.css}}><form class=form-inline><div class=form-group><label class=small>{{:: $ctrl.caption || ('UI_PAGESIZE' | translate) }}</label>&nbsp;<select ng-model=$ctrl.$component.pageSize class=\"form-control input-sm {{::$ctrl.selectorCss}}\" ng-options=\"item for item in options\"></select></div></form></div>");
+  $templateCache.put("tbPrintButton.tpl.html",
+    "<button class=\"btn btn-default btn-sm\" ng-click=$ctrl.printGrid()><span class=\"fa fa-print\"></span>&nbsp;{{:: $ctrl.caption || ('CAPTION_PRINT' | translate)}}</button>");
   $templateCache.put("tbRemoveButton.tpl.html",
     "<button class=\"btn btn-danger btn-xs btn-popover\" uib-popover-template=$ctrl.templateName popover-placement=right popover-title=\"{{ $ctrl.legend || ('UI_REMOVEROW' | translate) }}\" popover-is-open=$ctrl.isOpen popover-trigger=\"'click outsideClick'\" ng-hide=$ctrl.model.$isEditing><span ng-show=$ctrl.showIcon class={{::$ctrl.icon}}></span> <span ng-show=$ctrl.showCaption>{{:: $ctrl.caption || ('CAPTION_REMOVE' | translate) }}</span></button>");
+  $templateCache.put("tbRemoveButtonPopover.tpl.html",
+    "<div class=tubular-remove-popover><button ng-click=$ctrl.model.delete() class=\"btn btn-danger btn-xs\">{{:: $ctrl.caption || ('CAPTION_REMOVE' | translate) }}</button> &nbsp; <button ng-click=\"$ctrl.isOpen = false;\" class=\"btn btn-default btn-xs\">{{:: $ctrl.cancelCaption || ('CAPTION_CANCEL' | translate) }}</button></div>");
   $templateCache.put("tbSaveButton.tpl.html",
     "<div ng-show=model.$isEditing><button ng-click=save() class=\"btn btn-default {{:: saveCss || '' }}\" ng-disabled=!model.$valid()>{{:: saveCaption || ('CAPTION_SAVE' | translate) }}</button> <button ng-click=cancel() class=\"btn {{:: cancelCss || 'btn-default' }}\">{{:: cancelCaption || ('CAPTION_CANCEL' | translate) }}</button></div>");
   $templateCache.put("tbTextSearch.tpl.html",
     "<div class=tubular-grid-search><div class=\"input-group input-group-sm\"><span class=input-group-addon><i class=\"fa fa-search\"></i> </span><input type=search name=tbTextSearchInput class=form-control placeholder=\"{{:: $ctrl.placeholder || ('UI_SEARCH' | translate) }}\" maxlength=20 ng-model=$ctrl.$component.search.Text ng-model-options=\"{ debounce: 300 }\"> <span id=tb-text-search-reset-panel class=input-group-btn ng-show=\"$ctrl.$component.search.Text.length > 0\"><button id=tb-text-search-reset-button class=\"btn btn-default\" uib-tooltip=\"{{'CAPTION_CLEAR' | translate}}\" ng-click=\"$ctrl.$component.search.Text = ''\"><i class=\"fa fa-times-circle\"></i></button></span></div></div>");
+  $templateCache.put("tbColumnDateTimeFilter.tpl.html",
+    "<div class=tubular-column-menu><button class=\"btn btn-xs btn-default btn-popover\" uib-popover-template=$ctrl.templateName popover-placement=bottom popover-title={{$ctrl.filterTitle}} popover-is-open=$ctrl.isOpen popover-trigger=\"'outsideClick'\" ng-class=\"{ 'btn-success': $ctrl.filter.HasFilter }\"><i class=\"fa fa-filter\"></i></button></div>");
+  $templateCache.put("tbColumnFilter.tpl.html",
+    "<div class=tubular-column-menu><button class=\"btn btn-xs btn-default btn-popover\" uib-popover-template=$ctrl.templateName popover-placement=bottom popover-title={{$ctrl.filterTitle}} popover-is-open=$ctrl.isOpen popover-trigger=\"'click outsideClick'\" ng-class=\"{ 'btn-success': $ctrl.filter.HasFilter }\"><i class=\"fa fa-filter\"></i></button></div>");
+  $templateCache.put("tbColumnFilterPopover.tpl.html",
+    "<div><form class=tubular-column-filter-form onsubmit=\"return false;\"><select class=form-control ng-options=\"key as value for (key , value) in $ctrl.filterOperators\" ng-model=$ctrl.filter.Operator ng-hide=\"$ctrl.dataType == ' boolean' || $ctrl.onlyContains\"></select>&nbsp; <input class=form-control type=search ng-model=$ctrl.filter.Text autofocus ng-keypress=$ctrl.checkEvent($event) ng-hide=\"$ctrl.dataType == 'boolean'\" placeholder=\"{{'CAPTION_VALUE' | translate}}\" ng-disabled=\"$ctrl.filter.Operator == 'None'\"><div class=text-center ng-show=\"$ctrl.dataType == 'boolean'\"><button type=button class=\"btn btn-default btn-md\" ng-disabled=\"$ctrl.filter.Text === true\" ng-click=\"$ctrl.filter.Text = true; $ctrl.filter.Operator = 'Equals';\"><i class=\"fa fa-check\"></i></button>&nbsp; <button type=button class=\"btn btn-default btn-md\" ng-disabled=\"$ctrl.filter.Text === false\" ng-click=\"$ctrl.filter.Text = false; $ctrl.filter.Operator = 'Equals';\"><i class=\"fa fa-times\"></i></button></div><input type=search class=form-control ng-model=$ctrl.filter.Argument[0] ng-keypress=$ctrl.checkEvent($event) ng-show=\"$ctrl.filter.Operator == 'Between'\"><hr><tb-column-filter-buttons></tb-column-filter-buttons></form></div>");
+  $templateCache.put("tbColumnOptionsFilter.tpl.html",
+    "<div><form class=tubular-column-filter-form onsubmit=\"return false;\"><select class=\"form-control checkbox-list\" ng-options=\"item.Key as item.Label for item in $ctrl.optionsItems\" ng-model=$ctrl.filter.Argument multiple ng-disabled=\"$ctrl.dataIsLoaded == false\"></select>&nbsp;<hr><tb-column-filter-buttons></tb-column-filter-buttons></form></div>");
+  $templateCache.put("tbColumnSelector.tpl.html",
+    "<button class=\"btn btn-sm btn-default\" ng-click=$ctrl.openColumnsSelector() ng-bind=\"'CAPTION_SELECTCOLUMNS' | translate\"></button>");
+  $templateCache.put("tbColumnSelectorDialog.tpl.html",
+    "<div class=modal-header><h3 class=modal-title ng-bind=\"'CAPTION_SELECTCOLUMNS' | translate\"></h3></div><div class=modal-body><table class=\"table table-bordered table-responsive table-striped table-hover table-condensed\"><thead><tr><th>Visible?</th><th>Name</th></tr></thead><tbody><tr ng-repeat=\"col in Model\"><td><input type=checkbox ng-model=col.Visible ng-disabled=\"col.Visible && isInvalid()\"></td><td ng-bind=col.Label></td></tr></tbody></table></div><div class=modal-footer><button class=\"btn btn-warning\" ng-click=closePopup() ng-bind=\"'CAPTION_CLOSE' | translate\"></button></div>");
+  $templateCache.put("tbCellTemplate.tpl.html",
+    "<td ng-transclude ng-show=column.Visible data-label={{::column.Label}}></td>");
+  $templateCache.put("tbColumnDefinitions.tpl.html",
+    "<thead><tr ng-transclude></tr></thead>");
+  $templateCache.put("tbColumnFilterButtons.tpl.html",
+    "<div class=text-right><button class=\"btn btn-sm btn-success\" ng-click=$ctrl.currentFilter.applyFilter() ng-disabled=\"$ctrl.currentFilter.filter.Operator == 'None'\" ng-bind=\"'CAPTION_APPLY' | translate\"></button>&nbsp; <button class=\"btn btn-sm btn-danger\" ng-click=$ctrl.currentFilter.clearFilter() ng-bind=\"'CAPTION_CLEAR' | translate\"></button></div>");
+  $templateCache.put("tbColumnHeader.tpl.html",
+    "<span><a title=\"Click to sort. Press Ctrl to sort by multiple columns\" class=column-header href ng-click=sortColumn($event)><span class=column-header-default>{{ $parent.column.Label }}</span><ng-transclude></ng-transclude></a><i class=\"fa sort-icon\" ng-class=\"{'fa-long-arrow-up': $parent.column.SortDirection == 'Ascending', 'fa-long-arrow-down': $parent.column.SortDirection == 'Descending'}\">&nbsp;</i></span>");
+  $templateCache.put("tbFootSet.tpl.html",
+    "<tfoot ng-transclude></tfoot>");
   $templateCache.put("tbGrid.tpl.html",
     "<div><div class=tubular-overlay ng-show=\"$ctrl.showLoading && $ctrl.currentRequest != null\"><div><div class=\"fa fa-refresh fa-2x fa-spin\"></div></div></div><ng-transclude></ng-transclude></div>");
+  $templateCache.put("tbGridTable.tpl.html",
+    "<table ng-transclude class=\"table tubular-grid-table\"></table>");
+  $templateCache.put("tbRowSet.tpl.html",
+    "<tbody ng-transclude></tbody>");
+  $templateCache.put("tbRowTemplate.tpl.html",
+    "<tr ng-transclude ng-class=\"{'info': selectableBool && model.$selected}\" ng-click=changeSelection(model)></tr>");
 }]);
 })(angular);
 
@@ -562,7 +599,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
         [
             function() {
                 return {
-                    template: '<form ng-transclude name="{{name}}"></form>',
+                    templateUrl: 'tbForm.tpl.html',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
@@ -584,7 +621,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                             }
                         };
                     }
-                }
+                };
             }
         ]);
 })(angular);
@@ -956,7 +993,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     tubularHttp.setRequireAuthentication($ctrl.requireAuthentication);
                     $ctrl.editorMode = $ctrl.editorMode || 'none';
                     $ctrl.canSaveState = false;
-                    $ctrl.groupBy = '';
                     $ctrl.showLoading = angular.isUndefined($ctrl.showLoading) ? true : $ctrl.showLoading;
                     $ctrl.autoRefresh = angular.isUndefined($ctrl.autoRefresh) ? true : $ctrl.autoRefresh;
                     $ctrl.serverDeleteUrl = $ctrl.serverDeleteUrl || $ctrl.serverSaveUrl;
@@ -980,44 +1016,17 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         }
 
                         $ctrl.retrieveData();
-                    },
-                    true);
+                    });
 
-                $scope.$watch('$ctrl.hasColumnsDefinitions',
-                    function(newVal) {
-                        if (newVal !== true) return;
-
-                        var isGrouping = false;
-                        // Check columns
-                        angular.forEach($ctrl.columns,
-                            function(column) {
-                                if (column.IsGrouping) {
-                                    if (isGrouping) {
-                                        throw 'Only one column is allowed to grouping';
-                                    }
-
-                                    isGrouping = true;
-                                    column.Visible = false;
-                                    column.Sortable = true;
-                                    column.SortOrder = 1;
-                                    $ctrl.groupBy = column.Name;
-                                }
-                            });
-
-                        angular.forEach($ctrl.columns,
-                            function(column) {
-                                if ($ctrl.groupBy === column.Name) return;
-
-                                if (column.Sortable && column.SortOrder > 0) {
-                                    column.SortOrder++;
-                                }
-                            });
+                $scope.$watch('$ctrl.hasColumnsDefinitions', function(newVal) {
+                        if (newVal !== true) {
+                            return;
+                        }
 
                         $ctrl.retrieveData();
                     });
 
-                $scope.$watch('$ctrl.pageSize',
-                    function() {
+                $scope.$watch('$ctrl.pageSize', function() {
                         if ($ctrl.hasColumnsDefinitions && $ctrl.requestCounter > 0) {
                             if ($ctrl.savePageSize) {
                                 localStorageService.set($ctrl.name + '_pageSize', $ctrl.pageSize);
@@ -1026,8 +1035,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         }
                     });
 
-                $scope.$watch('$ctrl.requestedPage',
-                    function() {
+                $scope.$watch('$ctrl.requestedPage', function() {
                         if ($ctrl.hasColumnsDefinitions && $ctrl.requestCounter > 0) {
                             $ctrl.retrieveData();
                         }
@@ -1399,7 +1407,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
     }
 
     function validateDate($ctrl, translateFilter, dateFilter) {
-        if (angular.isDefined($ctrl.min)) {
+        if ($ctrl.min) {
             if (!angular.isDate($ctrl.min)) {
                 $ctrl.min = new Date($ctrl.min);
             }
@@ -1412,7 +1420,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             }
         }
 
-        if (angular.isDefined($ctrl.max)) {
+        if ($ctrl.max) {
             if (!angular.isDate($ctrl.max)) {
                 $ctrl.max = new Date($ctrl.max);
             }
@@ -2141,16 +2149,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
          * @param {number} max Set the maximum characters.
          */
         .component('tbTextArea', {
-            template: '<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">' +
-                '<span ng-hide="$ctrl.isEditing" ng-bind="$ctrl.value"></span>' +
-                '<label ng-show="$ctrl.showLabel" ng-bind="$ctrl.label"></label>' +
-                '<textarea ng-show="$ctrl.isEditing" placeholder="{{$ctrl.placeholder}}" ng-model="$ctrl.value" class="form-control" ' +
-                ' ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}"></textarea>' +
-                '<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">' +
-                '{{error}}' +
-                '</span>' +
-                '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help" ng-bind="$ctrl.help"></span>' +
-                '</div>',
+            templateUrl: 'tbTextArea.tpl.html',
             bindings: {
                 value: '=?',
                 isEditing: '=?',
@@ -2169,7 +2168,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     var $ctrl = this;
 
                     $ctrl.validate = function () {
-                        if (tubular.isDefined($ctrl.min) && tubular.isDefined($ctrl.value)) {
+                        if ($ctrl.min && $ctrl.value) {
                             if ($ctrl.value.length < parseInt($ctrl.min)) {
                                 $ctrl.$valid = false;
                                 $ctrl.state.$errors = [translateFilter('EDITOR_MIN_CHARS', +$ctrl.min)];
@@ -2177,7 +2176,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                             }
                         }
 
-                        if (tubular.isDefined($ctrl.max) && tubular.isDefined($ctrl.value)) {
+                        if ($ctrl.max && $ctrl.value) {
                             if ($ctrl.value.length > parseInt($ctrl.max)) {
                                 $ctrl.$valid = false;
                                 $ctrl.state.$errors = [translateFilter('EDITOR_MAX_CHARS', +$ctrl.max)];
@@ -2211,11 +2210,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 $columnDateTimeFilter: '^?tbColumnDateTimeFilter',
                 $columnOptionsFilter: '^?tbColumnOptionsFilter'
             },
-            template: '<div class="text-right">' +
-                '<button class="btn btn-sm btn-success" ng-click="$ctrl.currentFilter.applyFilter()"' +
-                'ng-disabled="$ctrl.currentFilter.filter.Operator == \'None\'">{{::\'CAPTION_APPLY\' | translate}}</button>&nbsp;' +
-                '<button class="btn btn-sm btn-danger" ng-click="$ctrl.currentFilter.clearFilter()">{{::\'CAPTION_CLEAR\' | translate}}</button>' +
-                '</div>',
+            templateUrl: 'tbColumnFilterButtons.tpl.html',
             controller: ['$scope', function($scope) {
                     var $ctrl = this;
 
@@ -2238,7 +2233,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             require: {
                 $component: '^tbGrid'
             },
-            template: '<button class="btn btn-sm btn-default" ng-click="$ctrl.openColumnsSelector()">{{::\'CAPTION_SELECTCOLUMNS\' | translate}}</button></div>',
+            templateUrl: 'tbColumnSelector.tpl.html',
             controller: ['$uibModal', function($modal) {
                     var $ctrl = this;
 
@@ -2246,18 +2241,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         var model = $ctrl.$component.columns;
 
                         var dialog = $modal.open({
-                            template: '<div class="modal-header">' +
-                                '<h3 class="modal-title">{{::\'CAPTION_SELECTCOLUMNS\' | translate}}</h3>' +
-                                '</div>' +
-                                '<div class="modal-body">' +
-                                '<table class="table table-bordered table-responsive table-striped table-hover table-condensed">' +
-                                '<thead><tr><th>Visible?</th><th>Name</th></tr></thead>' +
-                                '<tbody><tr ng-repeat="col in Model">' +
-                                '<td><input type="checkbox" ng-model="col.Visible" ng-disabled="col.Visible && isInvalid()" /></td>' +
-                                '<td>{{col.Label}}</td>' +
-                                '</tr></tbody></table></div>' +
-                                '</div>' +
-                                '<div class="modal-footer"><button class="btn btn-warning" ng-click="closePopup()">{{::\'CAPTION_CLOSE\' | translate}}</button></div>',
+                            templateUrl: 'tbColumnSelectorDialog.tpl.html',
                             backdropClass: 'fullHeight',
                             animation: false,
                             controller: [
@@ -2296,12 +2280,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             require: {
                 $component: '^tbGrid'
             },
-            template: '<div class="tubular-column-menu">' +
-                '<button class="btn btn-xs btn-default btn-popover" ' +
-                'uib-popover-template="$ctrl.templateName" popover-placement="bottom" popover-title="{{$ctrl.filterTitle}}" popover-is-open="$ctrl.isOpen"' +
-                ' popover-trigger="\'click outsideClick\'" ng-class="{ \'btn-success\': $ctrl.filter.HasFilter }">' +
-                '<i class="fa fa-filter"></i></button>' +
-                '</div>',
+            templateUrl: 'tbColumnFilter.tpl.html',
             bindings: {
                 text: '@',
                 argument: '@',
@@ -2315,7 +2294,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
                     $ctrl.$onInit = function() {
                         $ctrl.onlyContains = angular.isUndefined($ctrl.onlyContains) ? false : $ctrl.onlyContains;
-                        $ctrl.templateName = tubular.tbColumnFilterPopoverTemplateName;
+                        $ctrl.templateName = 'tbColumnFilterPopover.tpl.html';
                         tubular.setupFilter($scope, $ctrl);
                     };
                 }
@@ -2341,12 +2320,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             require: {
                 $component: '^tbGrid'
             },
-            template: '<div class="tubular-column-menu">' +
-                '<button class="btn btn-xs btn-default btn-popover" ' +
-                'uib-popover-template="$ctrl.templateName" popover-placement="bottom" popover-title="{{$ctrl.filterTitle}}" popover-is-open="$ctrl.isOpen" ' +
-                'popover-trigger="\'outsideClick\'" ng-class="{ \'btn-success\': $ctrl.filter.HasFilter }">' +
-                '<i class="fa fa-filter"></i></button>' +
-                '</div>',
+            templateUrl: 'tbColumnDateTimeFilter.tpl.html', // TODO: Check if can use tbColumnFilter tempalte
             bindings: {
                 text: '@',
                 argument: '@',
@@ -2382,12 +2356,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             require: {
                 $component: '^tbGrid'
             },
-            template: '<div class="tubular-column-menu">' +
-                '<button class="btn btn-xs btn-default btn-popover" uib-popover-template="$ctrl.templateName" popover-placement="bottom" ' +
-                'popover-title="{{$ctrl.filterTitle}}" popover-is-open="$ctrl.isOpen" popover-trigger="\'click outsideClick\'" ' +
-                'ng-class="{ \'btn-success\': $ctrl.filter.HasFilter }">' +
-                '<i class="fa fa-filter"></i></button>' +
-                '</div>',
+            templateUrl: 'tbColumnFilter.tpl.html',
             bindings: {
                 argument: '@',
                 operator: '@',
@@ -2420,7 +2389,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
                     $ctrl.$onInit = function() {
                         $ctrl.dataIsLoaded = false;
-                        $ctrl.templateName = tubular.tbColumnOptionsFilterPopoverTemplateName;
+                        $ctrl.templateName = 'tbColumnOptionsFilter.tpl.html';
                         tubular.setupFilter($scope, $ctrl);
                         $ctrl.getOptionsFromUrl();
 
@@ -2430,11 +2399,11 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             ]
         });
 })(angular);
-(function(angular) {
+(function (angular) {
     'use strict';
 
     angular.module('tubular.directives')
-       
+
         /**
          * @ngdoc component
          * @name tbRemoveButton
@@ -2459,18 +2428,16 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 legend: '@',
                 icon: '@'
             },
-            controller: [
-                'tubularTemplateService', function(tubularTemplateService) {
-                    var $ctrl = this;
+            controller: function () {
+                var $ctrl = this;
 
-                    $ctrl.$onInit = function () {
-                        $ctrl.showIcon = angular.isDefined($ctrl.icon);
-                        $ctrl.showCaption = !($ctrl.showIcon && angular.isUndefined($ctrl.caption));
+                $ctrl.$onInit = function () {
+                    $ctrl.showIcon = angular.isDefined($ctrl.icon);
+                    $ctrl.showCaption = !($ctrl.showIcon && angular.isUndefined($ctrl.caption));
 
-                        $ctrl.templateName = tubularTemplateService.tbRemoveButtonrPopoverTemplateName;
-                    }
-                }
-            ]
+                    $ctrl.templateName = 'tbRemoveButtonPopover.tpl.html';
+                };
+            }
         })
         /**
          * @ngdoc directive
@@ -2489,7 +2456,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
          * @param {string} cancelCss Add a CSS class to Cancel button.
          */
         .directive('tbSaveButton', [
-            function() {
+            function () {
 
                 return {
                     require: '^tbGrid',
@@ -2505,10 +2472,10 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         cancelCss: '@'
                     },
                     controller: [
-                        '$scope', function($scope) {
+                        '$scope', function ($scope) {
                             $scope.isNew = $scope.isNew || false;
 
-                            $scope.save = function() {
+                            $scope.save = function () {
                                 if ($scope.isNew) {
                                     $scope.model.$isNew = true;
                                 }
@@ -2525,7 +2492,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                                 }
 
                                 $scope.currentRequest.then(
-                                    function(data) {
+                                    function (data) {
                                         $scope.model.$isEditing = false;
 
                                         if (angular.isDefined($scope.model.$component) &&
@@ -2535,12 +2502,12 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                                         }
 
                                         $scope.$emit('tbGrid_OnSuccessfulSave', data, $scope.model.$component);
-                                    }, function(error) {
+                                    }, function (error) {
                                         $scope.$emit('tbGrid_OnConnectionError', error);
                                     });
                             };
 
-                            $scope.cancel = function() {
+                            $scope.cancel = function () {
                                 $scope.model.revertChanges();
                             };
                         }
@@ -2563,16 +2530,15 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             require: {
                 $component: '^tbGrid'
             },
-            template: '<button ng-click="$ctrl.edit()" class="btn btn-xs btn-default" ' +
-                'ng-hide="$ctrl.model.$isEditing">{{:: $ctrl.caption || (\'CAPTION_EDIT\' | translate) }}</button>',
+            templateUrl: 'tbEditButton.tpl.html',
             bindings: {
                 model: '=',
                 caption: '@'
             },
-            controller: function() {
+            controller: function () {
                 var $ctrl = this;
 
-                $ctrl.edit = function() {
+                $ctrl.edit = function () {
                     if ($ctrl.$component.editorMode === 'popup') {
                         $ctrl.model.editPopup();
                     } else {
@@ -2598,14 +2564,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             require: {
                 $component: '^tbGrid'
             },
-            template: '<div class="{{::$ctrl.css}}"><form class="form-inline">' +
-                '<div class="form-group">' +
-                '<label class="small">{{:: $ctrl.caption || (\'UI_PAGESIZE\' | translate) }} </label>&nbsp;' +
-                '<select ng-model="$ctrl.$component.pageSize" class="form-control input-sm {{::$ctrl.selectorCss}}" ' +
-                'ng-options="item for item in options">' +
-                '</select>' +
-                '</div>' +
-                '</form></div>',
+            templateUrl: 'tbPageSizeSelector.tpl.html',
             bindings: {
                 caption: '@',
                 css: '@',
@@ -2613,7 +2572,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 options: '=?'
             },
             controller: [
-                '$scope', function($scope) {
+                '$scope', function ($scope) {
                     $scope.options = angular.isDefined($scope.$ctrl.options) ? $scope.$ctrl.options : [10, 20, 50, 100];
                 }
             ]
@@ -2636,15 +2595,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             require: {
                 $component: '^tbGrid'
             },
-            template: '<div class="btn-group" uib-dropdown>' +
-                '<button class="btn btn-info btn-sm {{::$ctrl.css}}" uib-dropdown-toggle>' +
-                '<span class="fa fa-download"></span>&nbsp;{{:: $ctrl.caption || (\'UI_EXPORTCSV\' | translate)}}&nbsp;<span class="caret"></span>' +
-                '</button>' +
-                '<ul class="dropdown-menu" uib-dropdown-menu>' +
-                '<li><a href="javascript:void(0)" ng-click="$ctrl.downloadCsv($parent)">{{:: $ctrl.captionMenuCurrent || (\'UI_CURRENTROWS\' | translate)}}</a></li>' +
-                '<li><a href="javascript:void(0)" ng-click="$ctrl.downloadAllCsv($parent)">{{:: $ctrl.captionMenuAll || (\'UI_ALLROWS\' | translate)}}</a></li>' +
-                '</ul>' +
-                '</div>',
+            templateUrl: 'tbExportButton.tpl.html',
             bindings: {
                 filename: '@',
                 css: '@',
@@ -2652,17 +2603,17 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 captionMenuCurrent: '@',
                 captionMenuAll: '@'
             },
-            controller: ['tubularGridExportService', function(tubular) {
-                    var $ctrl = this;
+            controller: ['tubularGridExportService', function (tubular) {
+                var $ctrl = this;
 
-                    $ctrl.downloadCsv = function() {
-                        tubular.exportGridToCsv($ctrl.filename, $ctrl.$component);
-                    };
+                $ctrl.downloadCsv = function () {
+                    tubular.exportGridToCsv($ctrl.filename, $ctrl.$component);
+                };
 
-                    $ctrl.downloadAllCsv = function() {
-                        tubular.exportAllGridToCsv($ctrl.filename, $ctrl.$component);
-                    };
-                }
+                $ctrl.downloadAllCsv = function () {
+                    tubular.exportAllGridToCsv($ctrl.filename, $ctrl.$component);
+                };
+            }
             ]
         })
         /**
@@ -2681,33 +2632,31 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             require: {
                 $component: '^tbGrid'
             },
-            template: '<button class="btn btn-default btn-sm" ng-click="$ctrl.printGrid()">' +
-                '<span class="fa fa-print"></span>&nbsp;{{:: $ctrl.caption || (\'CAPTION_PRINT\' | translate)}}' +
-                '</button>',
+            templateUrl: 'tbPrintButton.tpl.html',
             bindings: {
                 title: '@',
                 printCss: '@',
                 caption: '@'
             },
-            controller: ['$window', function($window) {
+            controller: ['$window', function ($window) {
                 var $ctrl = this;
 
-                $ctrl.printGrid = function() {
-                    $ctrl.$component.getFullDataSource(function(data) {
+                $ctrl.printGrid = function () {
+                    $ctrl.$component.getFullDataSource(function (data) {
                         var tableHtml = '<table class="table table-bordered table-striped"><thead><tr>'
                             + $ctrl.$component.columns
-                            .filter(function(c) { return c.Visible; })
-                            .map(function(el) {
+                            .filter(function (c) { return c.Visible; })
+                            .map(function (el) {
                                 return '<th>' + (el.Label || el.Name) + '</th>';
                             }).join(' ')
                             + '</tr></thead>'
                             + '<tbody>'
-                            + data.map(function(row) {
+                            + data.map(function (row) {
                                 if (angular.isObject(row)) {
-                                    row = Object.keys(row).map(function(key) { return row[key] });
+                                    row = Object.keys(row).map(function (key) { return row[key] });
                                 }
 
-                                return '<tr>' + row.map(function(cell, index) {
+                                return '<tr>' + row.map(function (cell, index) {
                                     if (angular.isDefined($ctrl.$component.columns[index]) &&
                                         !$ctrl.$component.columns[index].Visible) {
                                         return '';
@@ -2752,14 +2701,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             require: {
                 $component : '^tbGrid'
             },
-            template:
-                '<div class="tubular-pager">' +
-                    '<ul uib-pagination ng-disabled="$ctrl.$component.isEmpty" direction-links="true" ' +
-                    'first-text="&#xf049;" previous-text="&#xf04a;" next-text="&#xf04e;" last-text="&#xf050;"' +
-                    'boundary-links="true" total-items="$ctrl.$component.filteredRecordCount" ' +
-                    'items-per-page="$ctrl.$component.pageSize" max-size="5" ng-model="$ctrl.$component.currentPage" ng-change="$ctrl.pagerPageChanged()">' +
-                    '</ul>' +
-                    '<div>',
+            templateUrl: 'tbGridPager.tpl.html',
             scope: true,
             terminal: false,
             controller: ['$scope', function ($scope) {
@@ -2789,11 +2731,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             require: {
                 $component: '^tbGrid'
             },
-            template: '<div class="pager-info small" ng-hide="$ctrl.$component.isEmpty">' +
-                '{{\'UI_SHOWINGRECORDS\' | translate: $ctrl.currentInitial:$ctrl.currentTop:$ctrl.$component.filteredRecordCount}} ' +
-                '<span ng-show="$ctrl.filtered">' +
-                '{{\'UI_FILTEREDRECORDS\' | translate: $ctrl.$component.totalRecordCount}}</span>' +
-                '</div>',
+            templateUrl: 'tbGridPagerInfo.tpl.html',
             bindings: {
                 cssClass: '@?'
             },
@@ -3419,11 +3357,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     return true;
                 };
 
-                me.setAccessTokenAsExpired = function () {
-                    me.userData.expirationDate = new Date(new Date().getTime() - 10 * 1000);
-                    saveData();
-                };
-
                 me.removeAuthentication = function () {
                     removeData();
                     clearUserData();
@@ -3973,31 +3906,8 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 };
 
                 // Loading popovers templates
-                me.tbColumnFilterPopoverTemplateName = 'tbColumnFilterPopoverTemplate.html';
                 me.tbColumnDateTimeFilterPopoverTemplateName = 'tbColumnDateTimeFilterPopoverTemplate.html';
-                me.tbColumnOptionsFilterPopoverTemplateName = 'tbColumnOptionsFilterPopoverTemplate.html';
-                me.tbRemoveButtonrPopoverTemplateName = 'tbRemoveButtonrPopoverTemplate.html';
-
-                if (!$templateCache.get(me.tbColumnFilterPopoverTemplateName)) {
-                    me.tbColumnFilterPopoverTemplate = '<div>' +
-                        '<form class="tubular-column-filter-form" onsubmit="return false;">' +
-                        '<select class="form-control" ng-options="key as value for (key , value) in $ctrl.filterOperators" ng-model="$ctrl.filter.Operator" ' +
-                        'ng-hide="$ctrl.dataType == \'boolean\' || $ctrl.onlyContains"></select>&nbsp;' +
-                        '<input class="form-control" type="search" ng-model="$ctrl.filter.Text" autofocus ng-keypress="$ctrl.checkEvent($event)" ng-hide="$ctrl.dataType == \'boolean\'"' +
-                        'placeholder="{{\'CAPTION_VALUE\' | translate}}" ng-disabled="$ctrl.filter.Operator == \'None\'" />' +
-                        '<div class="text-center" ng-show="$ctrl.dataType == \'boolean\'">' +
-                        '<button type="button" class="btn btn-default btn-md" ng-disabled="$ctrl.filter.Text === true" ng-click="$ctrl.filter.Text = true; $ctrl.filter.Operator = \'Equals\';">' +
-                        '<i class="fa fa-check"></i></button>&nbsp;' +
-                        '<button type="button" class="btn btn-default btn-md" ng-disabled="$ctrl.filter.Text === false" ng-click="$ctrl.filter.Text = false; $ctrl.filter.Operator = \'Equals\';">' +
-                        '<i class="fa fa-times"></i></button></div>' +
-                        '<input type="search" class="form-control" ng-model="$ctrl.filter.Argument[0]" ng-keypress="$ctrl.checkEvent($event)" ng-show="$ctrl.filter.Operator == \'Between\'" />' +
-                        '<hr />' +
-                        '<tb-column-filter-buttons></tb-column-filter-buttons>' +
-                        '</form></div>';
-
-                    $templateCache.put(me.tbColumnFilterPopoverTemplateName, me.tbColumnFilterPopoverTemplate);
-                }
-
+                
                 if (!$templateCache.get(me.tbColumnDateTimeFilterPopoverTemplateName)) {
                     var htmlDateSelector =
                         '<input class="form-control" type="date" ng-model="$ctrl.filter.Text" autofocus ng-keypress="$ctrl.checkEvent($event)" ' +
@@ -4023,34 +3933,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
                     $templateCache.put(me.tbColumnDateTimeFilterPopoverTemplateName,
                         me.tbColumnDateTimeFilterPopoverTemplate);
-                }
-
-                if (!$templateCache.get(me.tbColumnOptionsFilterPopoverTemplateName)) {
-                    // TODO: we need to expose the Key and Label as binding
-                    me.tbColumnOptionsFilterPopoverTemplate = '<div>' +
-                        '<form class="tubular-column-filter-form" onsubmit="return false;">' +
-                        '<select class="form-control checkbox-list" ng-options="item.Key as item.Label for item in $ctrl.optionsItems" ' +
-                        'ng-model="$ctrl.filter.Argument" multiple ng-disabled="$ctrl.dataIsLoaded == false"></select>&nbsp;' +
-                        '<hr />' +
-                        '<tb-column-filter-buttons></tb-column-filter-buttons>' +
-                        '</form></div>';
-
-                    $templateCache.put(me.tbColumnOptionsFilterPopoverTemplateName,
-                        me.tbColumnOptionsFilterPopoverTemplate);
-                }
-
-                if (!$templateCache.get(me.tbRemoveButtonrPopoverTemplateName)) {
-                    me.tbRemoveButtonrPopoverTemplate = '<div class="tubular-remove-popover">' +
-                        '<button ng-click="$ctrl.model.delete()" class="btn btn-danger btn-xs">' +
-                        '{{:: $ctrl.caption || (\'CAPTION_REMOVE\' | translate) }}' +
-                        '</button>' +
-                        '&nbsp;' +
-                        '<button ng-click="$ctrl.isOpen = false;" class="btn btn-default btn-xs">' +
-                        '{{:: $ctrl.cancelCaption || (\'CAPTION_CANCEL\' | translate) }}' +
-                        '</button>' +
-                        '</div>';
-
-                    $templateCache.put(me.tbRemoveButtonrPopoverTemplateName, me.tbRemoveButtonrPopoverTemplate);
                 }
 
                 /**
@@ -4334,11 +4216,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                             '\r\n\t</div>';
                     }
 
-                    return '<tb-form server-save-method="' +
-                        options.SaveMethod +
-                        '" ' +
-                        'model-key="' +
-                        options.ModelKey +
+                    return '<tb-form server-save-method="' + options.SaveMethod + '" model-key="' + options.ModelKey +
                         '" require-authentication="' +
                         options.RequireAuthentication +
                         '" ' +
@@ -4511,7 +4389,9 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
                     $scope.$watch('$ctrl.filter.Operator', function (val) { if (val === 'None') $ctrl.filter.Text = ''; });
 
-                    if (columns.length === 0) return;
+                    if (columns.length === 0) {
+                        return;
+                    }
 
                     $scope.$watch('$ctrl.filter', function (n) {
                         if (columns[0].Filter.Text !== n.Text) {

@@ -139,31 +139,8 @@
                 };
 
                 // Loading popovers templates
-                me.tbColumnFilterPopoverTemplateName = 'tbColumnFilterPopoverTemplate.html';
                 me.tbColumnDateTimeFilterPopoverTemplateName = 'tbColumnDateTimeFilterPopoverTemplate.html';
-                me.tbColumnOptionsFilterPopoverTemplateName = 'tbColumnOptionsFilterPopoverTemplate.html';
-                me.tbRemoveButtonrPopoverTemplateName = 'tbRemoveButtonrPopoverTemplate.html';
-
-                if (!$templateCache.get(me.tbColumnFilterPopoverTemplateName)) {
-                    me.tbColumnFilterPopoverTemplate = '<div>' +
-                        '<form class="tubular-column-filter-form" onsubmit="return false;">' +
-                        '<select class="form-control" ng-options="key as value for (key , value) in $ctrl.filterOperators" ng-model="$ctrl.filter.Operator" ' +
-                        'ng-hide="$ctrl.dataType == \'boolean\' || $ctrl.onlyContains"></select>&nbsp;' +
-                        '<input class="form-control" type="search" ng-model="$ctrl.filter.Text" autofocus ng-keypress="$ctrl.checkEvent($event)" ng-hide="$ctrl.dataType == \'boolean\'"' +
-                        'placeholder="{{\'CAPTION_VALUE\' | translate}}" ng-disabled="$ctrl.filter.Operator == \'None\'" />' +
-                        '<div class="text-center" ng-show="$ctrl.dataType == \'boolean\'">' +
-                        '<button type="button" class="btn btn-default btn-md" ng-disabled="$ctrl.filter.Text === true" ng-click="$ctrl.filter.Text = true; $ctrl.filter.Operator = \'Equals\';">' +
-                        '<i class="fa fa-check"></i></button>&nbsp;' +
-                        '<button type="button" class="btn btn-default btn-md" ng-disabled="$ctrl.filter.Text === false" ng-click="$ctrl.filter.Text = false; $ctrl.filter.Operator = \'Equals\';">' +
-                        '<i class="fa fa-times"></i></button></div>' +
-                        '<input type="search" class="form-control" ng-model="$ctrl.filter.Argument[0]" ng-keypress="$ctrl.checkEvent($event)" ng-show="$ctrl.filter.Operator == \'Between\'" />' +
-                        '<hr />' +
-                        '<tb-column-filter-buttons></tb-column-filter-buttons>' +
-                        '</form></div>';
-
-                    $templateCache.put(me.tbColumnFilterPopoverTemplateName, me.tbColumnFilterPopoverTemplate);
-                }
-
+                
                 if (!$templateCache.get(me.tbColumnDateTimeFilterPopoverTemplateName)) {
                     var htmlDateSelector =
                         '<input class="form-control" type="date" ng-model="$ctrl.filter.Text" autofocus ng-keypress="$ctrl.checkEvent($event)" ' +
@@ -189,34 +166,6 @@
 
                     $templateCache.put(me.tbColumnDateTimeFilterPopoverTemplateName,
                         me.tbColumnDateTimeFilterPopoverTemplate);
-                }
-
-                if (!$templateCache.get(me.tbColumnOptionsFilterPopoverTemplateName)) {
-                    // TODO: we need to expose the Key and Label as binding
-                    me.tbColumnOptionsFilterPopoverTemplate = '<div>' +
-                        '<form class="tubular-column-filter-form" onsubmit="return false;">' +
-                        '<select class="form-control checkbox-list" ng-options="item.Key as item.Label for item in $ctrl.optionsItems" ' +
-                        'ng-model="$ctrl.filter.Argument" multiple ng-disabled="$ctrl.dataIsLoaded == false"></select>&nbsp;' +
-                        '<hr />' +
-                        '<tb-column-filter-buttons></tb-column-filter-buttons>' +
-                        '</form></div>';
-
-                    $templateCache.put(me.tbColumnOptionsFilterPopoverTemplateName,
-                        me.tbColumnOptionsFilterPopoverTemplate);
-                }
-
-                if (!$templateCache.get(me.tbRemoveButtonrPopoverTemplateName)) {
-                    me.tbRemoveButtonrPopoverTemplate = '<div class="tubular-remove-popover">' +
-                        '<button ng-click="$ctrl.model.delete()" class="btn btn-danger btn-xs">' +
-                        '{{:: $ctrl.caption || (\'CAPTION_REMOVE\' | translate) }}' +
-                        '</button>' +
-                        '&nbsp;' +
-                        '<button ng-click="$ctrl.isOpen = false;" class="btn btn-default btn-xs">' +
-                        '{{:: $ctrl.cancelCaption || (\'CAPTION_CANCEL\' | translate) }}' +
-                        '</button>' +
-                        '</div>';
-
-                    $templateCache.put(me.tbRemoveButtonrPopoverTemplateName, me.tbRemoveButtonrPopoverTemplate);
                 }
 
                 /**
@@ -500,11 +449,7 @@
                             '\r\n\t</div>';
                     }
 
-                    return '<tb-form server-save-method="' +
-                        options.SaveMethod +
-                        '" ' +
-                        'model-key="' +
-                        options.ModelKey +
+                    return '<tb-form server-save-method="' + options.SaveMethod + '" model-key="' + options.ModelKey +
                         '" require-authentication="' +
                         options.RequireAuthentication +
                         '" ' +
@@ -677,7 +622,9 @@
 
                     $scope.$watch('$ctrl.filter.Operator', function (val) { if (val === 'None') $ctrl.filter.Text = ''; });
 
-                    if (columns.length === 0) return;
+                    if (columns.length === 0) {
+                        return;
+                    }
 
                     $scope.$watch('$ctrl.filter', function (n) {
                         if (columns[0].Filter.Text !== n.Text) {

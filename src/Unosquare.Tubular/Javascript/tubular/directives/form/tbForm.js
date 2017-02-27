@@ -32,7 +32,7 @@
         [
             function() {
                 return {
-                    template: '<form ng-transclude name="{{name}}"></form>',
+                    templateUrl: 'tbForm.tpl.html',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
@@ -54,7 +54,7 @@
                             }
                         };
                     }
-                }
+                };
             }
         ]);
 })(angular);

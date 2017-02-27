@@ -9,7 +9,7 @@ module.exports = function (config) {
 
         // frameworks to use
         // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-        frameworks: ['jasmine'],
+        frameworks: ['jasmine-jquery', 'jasmine'],
 
         // list of files / patterns to load in the browser
         files: [
@@ -26,21 +26,24 @@ module.exports = function (config) {
           '../../bower_components/angular-chart.js/dist/angular-chart.js',
           'Javascript/tubular/tubular-models.js',
           'Javascript/tubular/tubular-services.js',
+          'Javascript/tubular*/**/*.module.js',
           'Javascript/tubular/services/**/*.js',
           'Javascript/tubular/interceptors/**/*.js',
           'Javascript/tubular/tubular-directives.js',
           'Javascript/tubular*/**/*tpl.html',
           'Javascript/tubular/directives/**/*.js',
           'Javascript/tubular/tubular.js',
-          'Javascript/tubular*/**/*.spec.js',
-          'Javascript/tubular*/**/*.e2e.js'
+          'Javascript/tubular-chart/**/*.js',
+          'Javascript/tubular*/**/*.spec.js'
+         // 'Javascript/tubular*/**/*.e2e.js
         ],
 
         // list of files to exclude
         exclude: [
            '**/*.min.js',
            '**/*bundle.js',
-           '**/*.run.js'
+           '**/*.run.js',
+           '**/*.e2e.js'
         ],
 
         // preprocess matching files before serving them to the browser
@@ -76,10 +79,9 @@ module.exports = function (config) {
 
         // optionally, configure the reporter
         coverageReporter: {
-            type: 'html',
+            type: 'lcov',
             dir: '../../report/coverage',
             subdir: '.'
-
         },
         // web server port
         port: 9876,
