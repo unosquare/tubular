@@ -332,7 +332,6 @@
                     $scope.items.push({ name: 'StartForm', url: 'tutorial/form.html', docType: 'external' });
                     $scope.items.push({ name: 'StartChart', url: 'tutorial/chart.html', docType: 'external' });
                     $scope.items.push({ name: 'WebApi', url: 'tutorial/webapi.html', docType: 'external' });
-                    $scope.items.push({ name: 'StartReporting', url: 'tutorial/reporting.html', docType: 'external' });
                     $scope.items.push({ name: 'ModalGrid', url: 'tutorial/modal.html', docType: 'external' });
                     $scope.items.push({ name: 'InlineEditor', url: 'tutorial/inline.html', docType: 'external' });
 
