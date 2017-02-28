@@ -290,17 +290,18 @@
                     transclude: true,
                     scope: false,
                     controller: [
-                        '$scope', function ($scope) {
-                            $scope.sortColumn = function ($event) {
+                        '$scope', function($scope) {
+                            $scope.sortColumn = function($event) {
                                 $scope.$parent.sortColumn($event.ctrlKey);
                             };
                             // this listener here is used for backwards compatibility with tbColumnHeader requiring a scope.label value on its own
-                            $scope.$on('tbColumn_LabelChanged', function ($event, value) {
-                                $scope.label = value;
-                            });
+                            $scope.$on('tbColumn_LabelChanged',
+                                function($event, value) {
+                                    $scope.label = value;
+                                });
                         }
                     ],
-                    link: function ($scope, $element) {
+                    link: function($scope, $element) {
                         if ($element.find('ng-transclude').length > 0) {
                             $element.find('span')[0].remove();
                         }
@@ -309,7 +310,7 @@
                             $element.find('a').replaceWith($element.find('a').children());
                         }
                     }
-                }
+                };
             }
         ])
         /**
@@ -2683,7 +2684,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                             + '<tbody>'
                             + data.map(function (row) {
                                 if (angular.isObject(row)) {
-                                    row = Object.keys(row).map(function (key) { return row[key] });
+                                    row = Object.keys(row).map(function (key) { return row[key]; });
                                 }
 
                                 return '<tr>' + row.map(function (cell, index) {
@@ -3444,9 +3445,12 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     }
                 };
 
-                me.addTimeZoneToUrl = function (url) {
-                    return url + (url.indexOf('?') === -1 ? '?' : '&') + 'timezoneOffset=' + new Date().getTimezoneOffset();
-                }
+                me.addTimeZoneToUrl = function(url) {
+                    return url +
+                        (url.indexOf('?') === -1 ? '?' : '&') +
+                        'timezoneOffset=' +
+                        new Date().getTimezoneOffset();
+                };
 
                 me.saveDataAsync = function (model, request) {
                     var component = model.$component;
@@ -3714,8 +3718,13 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
          * Use `tubularPopupService` to show or generate popups with a `tbForm` inside.
          */
         .factory('tubularPopupService', [
-            '$uibModal', '$rootScope', 'tubularTemplateService',
-            function ($uibModal, $rootScope, tubularTemplateService) {
+            '$uibModal',
+            '$rootScope',
+            'tubularTemplateService',
+            function (
+                $uibModal,
+                $rootScope,
+                tubularTemplateService) {
 
                 return {
                     onSuccessForm: function (callback) {
@@ -3821,7 +3830,11 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
          */
         .service('tubularTemplateService',
         [
-            '$templateCache', 'translateFilter', function ($templateCache, translateFilter) {
+            '$templateCache',
+            'translateFilter',
+            function (
+                $templateCache,
+                translateFilter) {
                 var me = this;
 
                 me.canUseHtml5Date = function () {
@@ -4610,11 +4623,13 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             };
 
             me.addTranslation = function (language, key, value) {
-                var languageTable = me.translationTable[language] || me.translationTable[me.currentLanguage] || me.translationTable[me.defaultLanguage];
+                var languageTable = me.translationTable[language] ||
+                    me.translationTable[me.currentLanguage] ||
+                    me.translationTable[me.defaultLanguage];
                 languageTable[key] = value;
 
                 return me;
-            }
+            };
 
             me.translate = function (key) {
                 var languageTable = me.translationTable[me.currentLanguage] || me.translationTable[me.defaultLanguage];

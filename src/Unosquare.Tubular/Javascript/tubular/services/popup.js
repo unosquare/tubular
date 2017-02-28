@@ -10,8 +10,13 @@
          * Use `tubularPopupService` to show or generate popups with a `tbForm` inside.
          */
         .factory('tubularPopupService', [
-            '$uibModal', '$rootScope', 'tubularTemplateService',
-            function ($uibModal, $rootScope, tubularTemplateService) {
+            '$uibModal',
+            '$rootScope',
+            'tubularTemplateService',
+            function (
+                $uibModal,
+                $rootScope,
+                tubularTemplateService) {
 
                 return {
                     onSuccessForm: function (callback) {

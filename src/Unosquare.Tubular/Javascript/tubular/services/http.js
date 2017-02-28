@@ -164,9 +164,12 @@
                     }
                 };
 
-                me.addTimeZoneToUrl = function (url) {
-                    return url + (url.indexOf('?') === -1 ? '?' : '&') + 'timezoneOffset=' + new Date().getTimezoneOffset();
-                }
+                me.addTimeZoneToUrl = function(url) {
+                    return url +
+                        (url.indexOf('?') === -1 ? '?' : '&') +
+                        'timezoneOffset=' +
+                        new Date().getTimezoneOffset();
+                };
 
                 me.saveDataAsync = function (model, request) {
                     var component = model.$component;

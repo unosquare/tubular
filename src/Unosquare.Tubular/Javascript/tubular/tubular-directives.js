@@ -203,17 +203,18 @@
                     transclude: true,
                     scope: false,
                     controller: [
-                        '$scope', function ($scope) {
-                            $scope.sortColumn = function ($event) {
+                        '$scope', function($scope) {
+                            $scope.sortColumn = function($event) {
                                 $scope.$parent.sortColumn($event.ctrlKey);
                             };
                             // this listener here is used for backwards compatibility with tbColumnHeader requiring a scope.label value on its own
-                            $scope.$on('tbColumn_LabelChanged', function ($event, value) {
-                                $scope.label = value;
-                            });
+                            $scope.$on('tbColumn_LabelChanged',
+                                function($event, value) {
+                                    $scope.label = value;
+                                });
                         }
                     ],
-                    link: function ($scope, $element) {
+                    link: function($scope, $element) {
                         if ($element.find('ng-transclude').length > 0) {
                             $element.find('span')[0].remove();
                         }
@@ -222,7 +223,7 @@
                             $element.find('a').replaceWith($element.find('a').children());
                         }
                     }
-                }
+                };
             }
         ])
         /**
