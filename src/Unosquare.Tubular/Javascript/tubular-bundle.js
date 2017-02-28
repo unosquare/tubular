@@ -78,9 +78,9 @@
                 return function (input, format) {
                     if (moment.isMoment(input)) {
                         return input.format(format || 'M/DD/YYYY');
-                    } else {
-                        return dateFilter(input);
                     }
+
+                    return dateFilter(input);
                 };
             }
         ]);
@@ -1614,8 +1614,18 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
         }
     ];
 
-    var tbDateEditorCtrl = ['$scope', '$element', 'tubularEditorService', 'translateFilter', 'dateFilter',
-        function ($scope, $element, tubular, translateFilter, dateFilter) {
+    var tbDateEditorCtrl = [
+        '$scope',
+        '$element',
+        'tubularEditorService',
+        'translateFilter',
+        'dateFilter',
+        function (
+            $scope,
+            $element,
+            tubular,
+            translateFilter,
+            dateFilter) {
             var $ctrl = this;
 
             $scope.$watch(function () { return $ctrl.value; }, changeValueFn($ctrl));
@@ -2034,7 +2044,11 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         element.append(content);
                     },
                     controller: [
-                        '$scope', 'tubularEditorService', function ($scope, tubular) {
+                        '$scope',
+                        'tubularEditorService',
+                        function (
+                            $scope,
+                            tubular) {
                             tubular.setupScope($scope);
                             $scope.selectOptions = 'd for d in getValues($viewValue)';
                             $scope.lastSet = [];
@@ -2143,7 +2157,11 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 uncheckedValue: '=?'
             },
             controller: [
-                'tubularEditorService', '$scope', function (tubular, $scope) {
+                'tubularEditorService',
+                '$scope',
+                function (
+                    tubular,
+                    $scope) {
                     var $ctrl = this;
 
                     $ctrl.$onInit = function () {
@@ -2195,7 +2213,13 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 help: '@?'
             },
             controller: [
-                'tubularEditorService', '$scope', 'translateFilter', function (tubular, $scope, translateFilter) {
+                'tubularEditorService',
+                '$scope',
+                'translateFilter',
+                function (
+                    tubular,
+                    $scope,
+                    translateFilter) {
                     var $ctrl = this;
 
                     $ctrl.validate = function () {

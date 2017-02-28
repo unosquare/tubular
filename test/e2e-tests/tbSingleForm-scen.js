@@ -23,7 +23,7 @@ describe('tbSingleForm', () => {
         });            
     });
 
-    it('should save it', function (done) {
+    it('should save it', done => {
         element(by.tagName('select')).$$('[value="string:Guadalajara, JAL, Mexico"]').click();
         $('#btnDefault').click();
         $('#btnSave').click();
@@ -38,7 +38,7 @@ describe('tbSingleForm', () => {
         });
     });
 
-    it('should clear the inputs', function (done) {
+    it('should clear the inputs', done => {
         $('#btnCancel').click().then(function(){
             expect($('input').getAttribute('value')).toBe('');
             done();
@@ -60,7 +60,7 @@ describe('tbSingleForm', () => {
         $('#btnSave').click();
     });
 
-    it('should reset editor', function (done) {
+    it('should reset editor', done => {
         $('#btnClear').click().then(function(){
             expect($('input').getAttribute('value')).toBe('');
             expect($('select').$('option:checked').getText()).toEqual('');
@@ -68,7 +68,7 @@ describe('tbSingleForm', () => {
         });
     });
 
-    it('should not save if not Changes', function (done) {
+    it('should not save if not Changes', done => {
         var text = $('input').getAttribute('value');
 
         $('#btnSave').click().then(function(){

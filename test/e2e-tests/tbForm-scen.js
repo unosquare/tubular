@@ -32,9 +32,9 @@ describe('tbForm related components', () => {
                     return tbSimpleEditorInput.clear().
                         then(() => tbSimpleEditorInput.sendKeys(tbSimpleEditorCustomerOriginal)
                             .then(() => tbFormSaveBtn.click().then(trueFunc)));
-                } else {
-                    return tbFormCancelBtn.click().then(trueFunc);
                 }
+
+                return tbFormCancelBtn.click().then(trueFunc);
             })
         )));
 
@@ -55,10 +55,8 @@ describe('tbForm related components', () => {
                     return tbNumericEditorInput.clear()
                         .then(() => tbNumericEditorInput.sendKeys(tbNumericEditorValueOriginal).then(() => tbFormSaveBtn.click().then(trueFunc)));
                 }
-                else {
-                    return tbFormCancelBtn.click()
-                        .then(trueFunc);
-                }
+
+                return tbFormCancelBtn.click().then(trueFunc);
             });
         })
         ));
@@ -111,9 +109,8 @@ describe('tbForm related components', () => {
                     if (val !== tbDateEditorDateOriginal) {
                         return tbDateEditorInput.clear().sendKeys(tbDateEditorDateOriginal).then(() => tbFormSaveBtn.click().then(trueFunc));
                     }
-                    else {
-                        return tbFormCancelBtn.click().then(trueFunc);
-                    }
+
+                    return tbFormCancelBtn.click().then(trueFunc);
                 });
             });
         }));
@@ -137,20 +134,17 @@ describe('tbForm related components', () => {
         tbTextAreaErrorMessages,
         tbTextAreaCustomerOriginal = 'Microsoft';
 
-    var tbTextAreaRestore = () => browser.wait(restoreCancelClickFn().then(() => {
-        return tbFormEditBtn2.click().then(() => {
-            return tbTextAreaInput.getAttribute('value').then(function (val) {
-                if (val !== tbTextAreaCustomerOriginal) {
-                    return tbTextAreaInput.clear().then(() => {
-                        return tbTextAreaInput.sendKeys(tbTextAreaCustomerOriginal).then(() => tbFormSaveBtn.click().then(trueFunc));
-                    });
-                }
-                else {
-                    return tbFormCancelBtn.click().then(trueFunc);
-                }
-            });
+    var tbTextAreaRestore = () => browser.wait(restoreCancelClickFn().then(() => tbFormEditBtn2.click().then(() => {
+        return tbTextAreaInput.getAttribute('value').then(val => {
+            if (val !== tbTextAreaCustomerOriginal) {
+                return tbTextAreaInput.clear().then(() => {
+                    return tbTextAreaInput.sendKeys(tbTextAreaCustomerOriginal).then(() => tbFormSaveBtn.click().then(trueFunc));
+                });
+            }
+
+            return tbFormCancelBtn.click().then(trueFunc);
         });
-    }));
+    })));
 
     /****************************/
     //  * tbtbDropdownEditor *  //
@@ -172,9 +166,8 @@ describe('tbForm related components', () => {
                     if (val !== tbDropDownEditorCityOriginal) {
                         return selectDropDownOption('Guadalajara').click().then(() => tbFormSaveBtn.click().then(trueFunc));
                     }
-                    else {
-                        return tbFormCancelBtn.click().then(trueFunc);
-                    }
+
+                    return tbFormCancelBtn.click().then(trueFunc);
                 });
             });
         }));
@@ -193,9 +186,8 @@ describe('tbForm related components', () => {
                     if (val.indexOf('ng-empty') === -1) {
                         return tbCheckboxField.click().then(() => tbFormSaveBtn.click().then(trueFunc));
                     }
-                    else {
-                        return tbFormCancelBtn.click().then(trueFunc);
-                    }
+
+                    return tbFormCancelBtn.click().then(trueFunc);
                 });
             });
         }));
@@ -370,7 +362,7 @@ describe('tbForm related components', () => {
             tbTextAreaInput.clear().then(() => {
                 // input 'Mi' < 3chars
                 tbTextAreaInput.sendKeys('Mi').then(() => {
-                    tbTextAreaErrorMessages.getText().then(function (errorsArray) {
+                    tbTextAreaErrorMessages.getText().then(errorsArray => {
                         errorsArray.forEach(val => {
                             if (val === 'The field needs to be minimum 3 chars.') {
                                 errorPresent = true;
@@ -835,7 +827,7 @@ describe('tbForm related components', () => {
             tbNumericEditor = $('div.modal-dialog form').$('tb-numeric-editor');
             tbNumericEditorInput = tbNumericEditor.$('input');
             tbNumericEditorLabel = tbNumericEditor.$('label');
-            tbNumericEditorHelper = tbNumericEditor.$$('span').filter(function (elem) {
+            tbNumericEditorHelper = tbNumericEditor.$$('span').filter(elem => {
                 return elem.getAttribute('ng-show').then(function (val) {
                     return val != null ? val.indexOf('$ctrl.help') !== -1 : false;
                 });
@@ -846,23 +838,21 @@ describe('tbForm related components', () => {
             tbNumericEditorRestore().then(tbFormEditBtn1.click);
         });
 
-        afterEach(() => {
-            //* Restore default value and open form popup *\\
-            tbNumericEditorRestore().then(tbFormEditBtn1.click);
-        });
+        // Restore default value and open form popup
+        afterEach(() => tbNumericEditorRestore().then(tbFormEditBtn1.click));
 
         it('should set initial component value to the value of "value" attribute when defined', () => {
             expect(tbNumericEditorInput.getAttribute('value')).toMatch('300');
         });
 
-        it('should be invalidated when the entered number is not in the range of "min" and "max" attributes', () => {
+        it('should be invalidated when the entered number is not in the range of "min" and "max" attributes', done => {
             var errorPresent = false;
             var messageCount;
 
             tbNumericEditorInput.clear().then(() => {
                 // input '0'
                 tbNumericEditorInput.sendKeys('0').then(() => {
-                    tbNumericEditorErrorMessages.getText().then(function (errorsArray) {
+                    tbNumericEditorErrorMessages.getText().then(errorsArray => {
                         errorsArray.forEach(function (val) {
                             if (val === 'The minimum number is 1.') {
                                 errorPresent = true;
@@ -873,9 +863,7 @@ describe('tbForm related components', () => {
                     });
                 })
                     .then(() => {
-                        tbNumericEditorErrorMessages.count().then(function (count) {
-                            messageCount = count;
-                        })
+                        tbNumericEditorErrorMessages.count().then(count => messageCount = count)
                             .then(() => {
                                 tbNumericEditorInput.clear().then(() => {
                                     tbNumericEditorInput.sendKeys('100').then(() => {
@@ -888,6 +876,7 @@ describe('tbForm related components', () => {
                     .then(() => {
                         // Expect max value error to be displayed
                         tbNumericEditorInput.sendKeys('0').then(() => expect(tbNumericEditorErrorMessages.count()).toBe(messageCount));
+                        done();
                     });
             });
         });
@@ -934,14 +923,12 @@ describe('tbForm related components', () => {
         });
 
         it('should NOT submit modifications to item/server when clicking form "Cancel"', done => {
-            tbNumericEditorInput.getAttribute('value').then(function (val) {
-                expect(val).toMatch(tbNumericEditorValueOriginal);
-            })
+            tbNumericEditorInput.getAttribute('value').then(val =>  expect(val).toMatch(tbNumericEditorValueOriginal))
                 .then(() => {
                     tbNumericEditorInput.sendKeys('220').then(() => {
                         tbFormCancelBtn.click().then(() => {
                             tbFormEditBtn1.click().then(() => {
-                                tbNumericEditorInput.getAttribute('value').then(function (val) {
+                                tbNumericEditorInput.getAttribute('value').then(val => {
                                     expect(val).toMatch(tbNumericEditorValueOriginal);
                                     done();
                                 });

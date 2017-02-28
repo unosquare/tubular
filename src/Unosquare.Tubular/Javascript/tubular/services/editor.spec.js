@@ -20,11 +20,10 @@ describe('Module: tubular.services', function () {
             });
         });
 
-         
 
-        it('should be defined', function () {
-            expect(editor).toBeDefined();
-        })
+        it('should be defined', function() {
+                expect(editor).toBeDefined();
+            });
 
     });
 });

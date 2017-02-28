@@ -116,8 +116,18 @@
         }
     ];
 
-    var tbDateEditorCtrl = ['$scope', '$element', 'tubularEditorService', 'translateFilter', 'dateFilter',
-        function ($scope, $element, tubular, translateFilter, dateFilter) {
+    var tbDateEditorCtrl = [
+        '$scope',
+        '$element',
+        'tubularEditorService',
+        'translateFilter',
+        'dateFilter',
+        function (
+            $scope,
+            $element,
+            tubular,
+            translateFilter,
+            dateFilter) {
             var $ctrl = this;
 
             $scope.$watch(function () { return $ctrl.value; }, changeValueFn($ctrl));
@@ -536,7 +546,11 @@
                         element.append(content);
                     },
                     controller: [
-                        '$scope', 'tubularEditorService', function ($scope, tubular) {
+                        '$scope',
+                        'tubularEditorService',
+                        function (
+                            $scope,
+                            tubular) {
                             tubular.setupScope($scope);
                             $scope.selectOptions = 'd for d in getValues($viewValue)';
                             $scope.lastSet = [];
@@ -645,7 +659,11 @@
                 uncheckedValue: '=?'
             },
             controller: [
-                'tubularEditorService', '$scope', function (tubular, $scope) {
+                'tubularEditorService',
+                '$scope',
+                function (
+                    tubular,
+                    $scope) {
                     var $ctrl = this;
 
                     $ctrl.$onInit = function () {
@@ -697,7 +715,13 @@
                 help: '@?'
             },
             controller: [
-                'tubularEditorService', '$scope', 'translateFilter', function (tubular, $scope, translateFilter) {
+                'tubularEditorService',
+                '$scope',
+                'translateFilter',
+                function (
+                    tubular,
+                    $scope,
+                    translateFilter) {
                     var $ctrl = this;
 
                     $ctrl.validate = function () {
