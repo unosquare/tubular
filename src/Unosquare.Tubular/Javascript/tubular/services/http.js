@@ -94,9 +94,9 @@
                     expirationDate: null
                 };
 
-                me.isBearerTokenExpired = function () {
+                me.isBearerTokenExpired = function() {
                     return isAuthenticationExpired(me.userData.expirationDate);
-                }
+                };
 
                 me.useRefreshTokens = false;
                 me.requireAuthentication = true;

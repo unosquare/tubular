@@ -11,11 +11,7 @@
 
 function loadData() {
     browser.sleep(5000);
-    return browser.wait(() => {
-        return $('.tubular-overlay.ng-hide').isPresent().then(function (isPresent) {
-            return isPresent;
-        });
-    });
+    return browser.wait(() => $('.tubular-overlay.ng-hide').isPresent().then(isPresent => isPresent));
 }
 
 function setPagination() {

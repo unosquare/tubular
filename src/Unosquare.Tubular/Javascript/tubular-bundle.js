@@ -731,8 +731,21 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
     angular.module('tubular.directives')
         .controller('tbFormController',
         [
-            '$scope', '$routeParams', 'tubularModel', 'tubularHttp', '$timeout', '$element', 'tubularEditorService',
-            function($scope, $routeParams, TubularModel, tubularHttp, $timeout, $element, tubular) {
+            '$scope',
+            '$routeParams',
+            'tubularModel',
+            'tubularHttp',
+            '$timeout',
+            '$element',
+            'tubularEditorService',
+            function (
+                $scope,
+                $routeParams,
+                TubularModel,
+                tubularHttp,
+                $timeout,
+                $element,
+                tubular) {
                 // we need this to find the parent of a field
                 $scope.tubularDirective = 'tubular-form';
                 $scope.hasFieldsDefinitions = false;
@@ -3188,7 +3201,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                                     if (angular.isDefined(parent.model[scope.Name])) {
                                         if (ctrl.DataType === 'date' && parent.model[scope.Name] != null && angular.isString(parent.model[scope.Name])) {
                                             // TODO: Include MomentJS
-                                            var timezone = new Date(Date.parse(parent.model[scope.Name])).toString().match(/([-\+][0-9]+)\s/)[1];
+                                            var timezone = new Date(Date.parse(parent.model[scope.Name])).toString().match(/([-+][0-9]+)\s/)[1];
                                             timezone = timezone.substr(0, timezone.length - 2) + ':' + timezone.substr(timezone.length - 2, 2);
                                             ctrl.value = new Date(Date.parse(parent.model[scope.Name].replace('Z', '') + timezone));
                                         } else {
@@ -3361,9 +3374,9 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     expirationDate: null
                 };
 
-                me.isBearerTokenExpired = function () {
+                me.isBearerTokenExpired = function() {
                     return isAuthenticationExpired(me.userData.expirationDate);
-                }
+                };
 
                 me.useRefreshTokens = false;
                 me.requireAuthentication = true;

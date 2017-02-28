@@ -71,7 +71,7 @@ describe('tbPageSizeSelctor', () => {
                 expect(firstDataRow.$$('td').first().getText()).toMatch('21');
                 expect(lastDataRow.$$('td').first().getText()).toMatch('40');
                 expect(dataRowsCollection.count()).toBe(20);
-                done()
+                done();
             });
         });
     });
