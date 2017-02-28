@@ -51,19 +51,19 @@
                                 </tb-edit-button>
                             </tb-cell-template>
                             <tb-cell-template>
-                                <tb-simple-editor is-editing="row.$isEditing" name="CustomerName">
+                                <tb-simple-editor is-editing="row.$isEditing" name="CustomerName" value={{row.CustomerName}}>
                                 </tb-simple-editor>
                             </tb-cell-template>
                             <tb-cell-template>
-                                <tb-date-editor is-editing="row.$isEditing" name="ShippedDate">
+                                <tb-date-editor is-editing="row.$isEditing" name="ShippedDate" value={{row.ShippedDate}}>
                                 </tb-date-editor>
                             </tb-cell-template>
                             <tb-cell-template>
-                                <tb-simple-editor is-editing="row.$isEditing" name="ShipperCity">
+                                <tb-simple-editor is-editing="row.$isEditing" name="ShipperCity" value={{row.ShipperCity}}>
                                 </tb-simple-editor>
                             </tb-cell-template>
                             <tb-cell-template>
-                                <tb-numeric-editor is-editing="row.$isEditing" name="Amount">
+                                <tb-numeric-editor is-editing="row.$isEditing" name="Amount" value={{row.Amount}}>
                                 </tb-numeric-editor>
                             </tb-cell-template>
                         </tb-row-template>
