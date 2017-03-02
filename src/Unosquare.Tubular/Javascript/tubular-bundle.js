@@ -387,8 +387,8 @@
          * @param {object} rowModel Set the current row, if you are using a ngRepeat you must to use the current element variable here.
          * @param {bool} selectable Flag the rowset to allow user to select rows.
          */
-        .directive('tbRowTemplate', [
-            function () {
+        .directive('tbRowTemplate', ['$timeout',
+            function ($timeout) {
 
                 return {
                     templateUrl: 'tbRowTemplate.tpl.html',
@@ -437,7 +437,10 @@
                     compile: function () {
                         return {
                             post: function (scope) {
-                                scope.hasFieldsDefinitions = true;
+                                // Wait a little bit before to connect to the fields
+                                $timeout(function () {
+                                    scope.hasFieldsDefinitions = true;
+                                }, 300);
                             }
                         };
                     }
