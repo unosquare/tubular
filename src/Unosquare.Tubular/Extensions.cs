@@ -66,15 +66,15 @@
             {
                 var payloadItem = new List<object>(columnMap.Keys.Count);
 
-                foreach (var column in columnMap.Select(m => new { Value = m.Value.GetValue(item), m.Key }))
+                foreach (var column in columnMap.Select(m => new {Value = m.Value.GetValue(item), m.Key}))
                 {
                     if (column.Value is DateTime)
                     {
                         if (column.Key.DataType == DataType.DateTimeUtc ||
                             TubularDefaultSettings.AdjustTimezoneOffset == false)
-                            payloadItem.Add(((DateTime)column.Value));
+                            payloadItem.Add(((DateTime) column.Value));
                         else
-                            payloadItem.Add(((DateTime)column.Value).AddMinutes(-timezoneOffset));
+                            payloadItem.Add(((DateTime) column.Value).AddMinutes(-timezoneOffset));
                     }
                     else
                     {
@@ -114,12 +114,12 @@
             DateTime value;
             if (prop.PropertyType == typeof(DateTime?))
             {
-                var nullableValue = (DateTime?)prop.GetValue(data);
+                var nullableValue = (DateTime?) prop.GetValue(data);
                 if (!nullableValue.HasValue) return;
                 value = nullableValue.Value;
             }
             else
-                value = (DateTime)prop.GetValue(data);
+                value = (DateTime) prop.GetValue(data);
             value = value.AddMinutes(-timezoneOffset);
             prop.SetValue(data, value);
         }
@@ -165,7 +165,8 @@
         public static GridDataResponse CreateGridDataResponse(this GridDataRequest request, IQueryable dataSource,
             ProcessResponseSubset preProcessSubset = null)
         {
-            if (request == null) throw new InvalidOperationException("The GridDataRequest is null");
+            if (request?.Columns == null || request.Columns.Any() == false)
+                throw new ArgumentNullException(nameof(request));
 
             var response = new GridDataResponse
             {
@@ -178,8 +179,7 @@
             var columnMap = MapColumnsToProperties(request.Columns, properties);
 
             var subset = FilterResponse(request, dataSource, response);
-
-
+            
             // Perform Sorting
             var orderingExpression = request.Columns.Where(x => x.SortOrder > 0).OrderBy(x => x.SortOrder)
                 .Aggregate(string.Empty,
@@ -209,11 +209,11 @@
             else
             {
                 var filteredCount = subset.Count();
-                var totalPages = response.TotalPages = filteredCount / pageSize;
+                var totalPages = response.TotalPages = filteredCount/pageSize;
 
                 if (totalPages > 0)
                 {
-                    response.CurrentPage = request.Skip / pageSize + 1;
+                    response.CurrentPage = request.Skip/pageSize + 1;
 
                     if (request.Skip > 0) subset = subset.Skip(request.Skip);
                 }
