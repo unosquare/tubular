@@ -14,22 +14,13 @@
         <link rel="stylesheet" href="//cdn.jsdelivr.net/fontawesome/latest/css/font-awesome.min.css" />
         <link href="//maxcdn.bootstrapcdn.com/bootswatch/latest/lumen/bootstrap.min.css" rel="stylesheet">
     
-        <link rel="stylesheet" href="//cdn.jsdelivr.net/tubular/1.0.1/tubular-bundle.min.css" />
-
-        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-        <!--[if lt IE 9]>
-            <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
-            <script src="//cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js"></script>
-        <![endif]-->
+        <link rel="stylesheet" href="//cdn.jsdelivr.net/tubular/1.2.8/tubular-bundle.min.css" />
 
         <!-- JS (from CDN) -->
-        <script src="//cdn.jsdelivr.net/g/angularjs@1.5.0(angular.min.js+angular-animate.min.js+angular-route.min.js),filesaver.js,blob.js(Blob.js)"></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.0.1/ui-bootstrap.min.js"></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.0.1/ui-bootstrap-tpls.min.js"></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/angular-local-storage/0.1.5/angular-local-storage.min.js"></script>
+        <script src="//cdn.jsdelivr.net/g/angularjs@1.6.0(angular.min.js+angular-animate.min.js+angular-route.min.js),angular.bootstrap@2.5.0(ui-bootstrap.min.js+ui-bootstrap-tpls.min.js),filesaver.js,momentjs@2.17.1,angular-local-storage(angular-local-storage.min.js)"></script>
     
         <!-- Angular Application files -->
-        <script src="//cdn.jsdelivr.net/tubular/1.0.1/tubular-bundle.min.js"></script>
+        <script src="//cdn.jsdelivr.net/tubular/1.2.8/tubular-bundle.min.js"></script>
         <script src="//cdn.jsdelivr.net/tubular/1.0.1/tubular-odata-bundle.min.js"></script>
         <script src="//cdn.jsdelivr.net/tubular/1.0.1/tubular-localdata-bundle.min.js"></script>
         <script src="app.js"></script>
@@ -37,10 +28,6 @@
 
     <body ng-cloak>
         <div class="container">
-            <div class="alert alert-danger">
-                <b>Remember</b> to change <i>server-url</i> attribute to your REST service if your are using a local JSON.
-            </div>
-
             <ng-view></ng-view>
         </div>
     </body>
