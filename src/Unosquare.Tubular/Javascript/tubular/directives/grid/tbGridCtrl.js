@@ -4,8 +4,19 @@
     angular.module('tubular.directives')
         .controller('tbGridController',
         [
-            '$scope', 'localStorageService', 'tubularPopupService', 'tubularModel', 'tubularHttp', '$routeParams',
-            function($scope, localStorageService, tubularPopupService, TubularModel, tubularHttp, $routeParams) {
+            '$scope',
+            'localStorageService',
+            'tubularPopupService',
+            'tubularModel',
+            'tubularHttp',
+            '$routeParams',
+            function (
+                $scope,
+                localStorageService,
+                tubularPopupService,
+                TubularModel,
+                tubularHttp,
+                $routeParams) {
                 var $ctrl = this;
 
                 $ctrl.$onInit = function() {
@@ -210,7 +221,7 @@
                             TimezoneOffset: new Date().getTimezoneOffset()
                         }
                     };
-                }
+                };
 
                 $ctrl.retrieveData = function() {
                     // If the ServerUrl is empty skip data load
@@ -348,7 +359,7 @@
                         return a.SortOrder === b.SortOrder ? 0 : a.SortOrder > b.SortOrder;
                     });
 
-                    currentlySortedColumns.forEach(function(col, index) {
+                    angular.forEach(currentlySortedColumns, function(col, index) {
                         col.SortOrder = index + 1;
                     });
 

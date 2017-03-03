@@ -407,7 +407,7 @@
 })(angular);
 
 (function(angular){
-angular.module('tubular.directives').run(['$templateCache', function ($templateCache) {
+angular.module('tubular-chart.directives').run(['$templateCache', function ($templateCache) {
   "use strict";
   $templateCache.put("tbChartJs.tpl.html",
     "<div class=tubular-chart><canvas class=\"chart chart-base\" chart-type=$ctrl.chartType chart-data=$ctrl.data chart-labels=$ctrl.labels chart-series=$ctrl.series chart-click=$ctrl.onClick chart-options=$ctrl.options></canvas><ul ng-show=$ctrl.showLegend class=pie-legend><li ng-repeat=\"item in $ctrl.legends\"><span style=\"background-color: {{item.color}}\"></span>{{item.label}}</li></ul><div class=\"alert alert-info\" ng-show=$ctrl.isEmpty>{{$ctrl.emptyMessage}}</div><div class=\"alert alert-warning\" ng-show=$ctrl.hasError>{{$ctrl.errorMessage}}</div></div>");
@@ -457,69 +457,82 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 (function (angular) {
     'use strict';
 
-    angular.module('tubular-chart.directives').controller('tbChartJsController', ['$scope', 'tubularHttp',
-                function ($scope, tubularHttp) {
-                    var $ctrl = this;
+    angular.module('tubular-chart.directives')
+        .controller('tbChartJsController',
+        [
+            '$scope',
+            'tubularHttp',
+            function (
+                $scope,
+                tubularHttp) {
+                var $ctrl = this;
 
-                    $ctrl.dataService = tubularHttp.getDataService($ctrl.dataServiceName);
-                    $ctrl.showLegend = angular.isUndefined($ctrl.showLegend) ? true : $ctrl.showLegend;
-                    $ctrl.chartType = $ctrl.chartType || 'line';
+                $ctrl.dataService = tubularHttp.getDataService($ctrl.dataServiceName);
+                $ctrl.showLegend = angular.isUndefined($ctrl.showLegend) ? true : $ctrl.showLegend;
+                $ctrl.chartType = $ctrl.chartType || 'line';
 
-                    // Setup require authentication
-                    $ctrl.requireAuthentication = angular.isUndefined($ctrl.requireAuthentication) ? true : $ctrl.requireAuthentication;
+                // Setup require authentication
+                $ctrl.requireAuthentication = angular.isUndefined($ctrl.requireAuthentication)
+                    ? true
+                    : $ctrl.requireAuthentication;
 
-                    $ctrl.loadData = function () {
-                        tubularHttp.setRequireAuthentication($ctrl.requireAuthentication);
+                $ctrl.loadData = function() {
+                    tubularHttp.setRequireAuthentication($ctrl.requireAuthentication);
 
-                        tubularHttp.get($ctrl.serverUrl).promise.then(function (data) {
-                            if (!data || !data.Data || data.Data.length === 0) {
-                                $ctrl.isEmpty = true;
-                                if (!$ctrl.options) $ctrl.options = {};
-                                $ctrl.options.series = [{ data: [] }];
+                    tubularHttp.get($ctrl.serverUrl)
+                        .promise.then(function(data) {
+                                if (!data || !data.Data || data.Data.length === 0) {
+                                    $ctrl.isEmpty = true;
+                                    if (!$ctrl.options) $ctrl.options = {};
+                                    $ctrl.options.series = [{ data: [] }];
 
-                                if ($ctrl.onLoad) {
-                                    $ctrl.onLoad($ctrl.options, {});
+                                    if ($ctrl.onLoad) {
+                                        $ctrl.onLoad($ctrl.options, {});
+                                    }
+
+                                    return;
                                 }
 
-                                return;
-                            }
+                                $ctrl.isEmpty = false;
 
-                            $ctrl.isEmpty = false;
+                                $ctrl.data = data.Data;
+                                $ctrl.series = data.Series;
+                                $ctrl.labels = data.Labels;
 
-                            $ctrl.data = data.Data;
-                            $ctrl.series = data.Series;
-                            $ctrl.labels = data.Labels;
+                                if ($ctrl.onLoad) {
+                                    $ctrl.onLoad($ctrl.options, data);
+                                }
+                            },
+                            function(error) {
+                                $scope.$emit('tbChart_OnConnectionError', error);
+                            });
+                };
 
-                            if ($ctrl.onLoad) {
-                                $ctrl.onLoad($ctrl.options, data);
-                            }
-                        }, function (error) {
-                            $scope.$emit('tbChart_OnConnectionError', error);
-                        });
-                    };
-
-                    $scope.$watch('$ctrl.serverUrl', function (val) {
+                $scope.$watch('$ctrl.serverUrl',
+                    function(val) {
                         if (angular.isDefined(val) && val != null) {
                             $ctrl.loadData();
                         }
                     });
 
-                    $scope.$on('chart-create', function (evt, chart) {
+                $scope.$on('chart-create',
+                    function(evt, chart) {
                         if ($ctrl.chartType === 'pie' || $ctrl.chartType === 'doughnut') {
-                            $ctrl.legends = chart.chart.config.data.labels.map(function (v, i) {
+                            $ctrl.legends = chart.chart.config.data.labels.map(function(v, i) {
                                 return {
                                     label: v,
                                     color: chart.chart.config.data.datasets[0].backgroundColor[i]
                                 };
                             });
                         } else {
-                            $ctrl.legends = chart.chart.config.data.datasets.map(function (v) {
+                            $ctrl.legends = chart.chart.config.data.datasets.map(function(v) {
                                 return {
                                     label: v.label,
                                     color: v.borderColor
-                                }
+                                };
                             });
                         }
                     });
-                }])
+            }
+        ]);
 })(angular);

@@ -78,9 +78,9 @@
                 return function (input, format) {
                     if (moment.isMoment(input)) {
                         return input.format(format || 'M/DD/YYYY');
-                    } else {
-                        return dateFilter(input);
                     }
+
+                    return dateFilter(input);
                 };
             }
         ]);
@@ -290,17 +290,18 @@
                     transclude: true,
                     scope: false,
                     controller: [
-                        '$scope', function ($scope) {
-                            $scope.sortColumn = function ($event) {
+                        '$scope', function($scope) {
+                            $scope.sortColumn = function($event) {
                                 $scope.$parent.sortColumn($event.ctrlKey);
                             };
                             // this listener here is used for backwards compatibility with tbColumnHeader requiring a scope.label value on its own
-                            $scope.$on('tbColumn_LabelChanged', function ($event, value) {
-                                $scope.label = value;
-                            });
+                            $scope.$on('tbColumn_LabelChanged',
+                                function($event, value) {
+                                    $scope.label = value;
+                                });
                         }
                     ],
-                    link: function ($scope, $element) {
+                    link: function($scope, $element) {
                         if ($element.find('ng-transclude').length > 0) {
                             $element.find('span')[0].remove();
                         }
@@ -309,7 +310,7 @@
                             $element.find('a').replaceWith($element.find('a').children());
                         }
                     }
-                }
+                };
             }
         ])
         /**
@@ -386,8 +387,8 @@
          * @param {object} rowModel Set the current row, if you are using a ngRepeat you must to use the current element variable here.
          * @param {bool} selectable Flag the rowset to allow user to select rows.
          */
-        .directive('tbRowTemplate', [
-            function () {
+        .directive('tbRowTemplate', ['$timeout',
+            function ($timeout) {
 
                 return {
                     templateUrl: 'tbRowTemplate.tpl.html',
@@ -436,7 +437,10 @@
                     compile: function () {
                         return {
                             post: function (scope) {
-                                scope.hasFieldsDefinitions = true;
+                                // Wait a little bit before to connect to the fields
+                                $timeout(function () {
+                                    scope.hasFieldsDefinitions = true;
+                                }, 300);
                             }
                         };
                     }
@@ -568,6 +572,106 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 (function (angular) {
     'use strict';
 
+    var tbSimpleEditorCtrl = ['tubularEditorService', '$scope', 'translateFilter', 'filterFilter',
+        function (tubular, $scope, translateFilter, filterFilter) {
+            var $ctrl = this;
+
+            $ctrl.validate = function () {
+                if ($ctrl.regex && $ctrl.value) {
+                    var patt = new RegExp($ctrl.regex);
+
+                    if (patt.test($ctrl.value) === false) {
+                        $ctrl.$valid = false;
+                        $ctrl.state.$errors = [$ctrl.regexErrorMessage || translateFilter('EDITOR_REGEX_DOESNT_MATCH')];
+                        return;
+                    }
+                }
+
+                if ($ctrl.match) {
+                    if ($ctrl.value !== $ctrl.$component.model[$ctrl.match]) {
+                        var label = filterFilter($ctrl.$component.fields, { name: $ctrl.match }, true)[0].label;
+                        $ctrl.$valid = false;
+                        $ctrl.state.$errors = [translateFilter('EDITOR_MATCH', label)];
+                        return;
+                    }
+                }
+
+                if ($ctrl.min && $ctrl.value) {
+                    if ($ctrl.value.length < parseInt($ctrl.min)) {
+                        $ctrl.$valid = false;
+                        $ctrl.state.$errors = [translateFilter('EDITOR_MIN_CHARS', $ctrl.min)];
+                        return;
+                    }
+                }
+
+                if ($ctrl.max && $ctrl.value) {
+                    if ($ctrl.value.length > parseInt($ctrl.max)) {
+                        $ctrl.$valid = false;
+                        $ctrl.state.$errors = [translateFilter('EDITOR_MAX_CHARS', $ctrl.max)];
+                        return;
+                    }
+                }
+            };
+
+            $ctrl.$onInit = function () {
+                tubular.setupScope($scope, null, $ctrl, false);
+            };
+        }];
+
+    angular.module('tubular.directives')
+        /**
+         * @ngdoc component
+         * @name tbSimpleEditor
+         * @module tubular.directives
+         * 
+         * @description
+         * The `tbSimpleEditor` component is the basic input to show in a grid or form.
+         * It uses the `TubularModel` to retrieve column or field information.
+         * 
+         * @param {string} name Set the field name.
+         * @param {object} value Set the value.
+         * @param {boolean} isEditing Indicate if the field is showing editor.
+         * @param {string} editorType Set what HTML input type should display.
+         * @param {boolean} showLabel Set if the label should be display.
+         * @param {string} label Set the field's label otherwise the name is used.
+         * @param {string} placeholder Set the placeholder text.
+         * @param {string} help Set the help text.
+         * @param {boolean} required Set if the field is required.
+         * @param {boolean} readOnly Set if the field is read-only.
+         * @param {number} min Set the minimum characters.
+         * @param {number} max Set the maximum characters.
+         * @param {string} regex Set the regex validation text.
+         * @param {string} regexErrorMessage Set the regex validation error message.
+         * @param {string} match Set the field name to match values.
+         * @param {string} defaultValue Set the default value.
+         */
+        .component('tbSimpleEditor',
+        {
+            templateUrl: 'tbSimpleEditor.tpl.html',
+            bindings: {
+                regex: '@?',
+                regexErrorMessage: '@?',
+                value: '=?',
+                isEditing: '=?',
+                editorType: '@',
+                showLabel: '=?',
+                label: '@?',
+                required: '=?',
+                min: '=?',
+                max: '=?',
+                name: '@',
+                placeholder: '@?',
+                readOnly: '=?',
+                help: '@?',
+                defaultValue: '@?',
+                match: '@?'
+            },
+            controller: tbSimpleEditorCtrl
+        });
+})(angular);
+(function (angular) {
+    'use strict';
+
     angular.module('tubular.directives')
         /**
          * @ngdoc directive
@@ -631,8 +735,21 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
     angular.module('tubular.directives')
         .controller('tbFormController',
         [
-            '$scope', '$routeParams', 'tubularModel', 'tubularHttp', '$timeout', '$element', 'tubularEditorService',
-            function($scope, $routeParams, TubularModel, tubularHttp, $timeout, $element, tubular) {
+            '$scope',
+            '$routeParams',
+            'tubularModel',
+            'tubularHttp',
+            '$timeout',
+            '$element',
+            'tubularEditorService',
+            function (
+                $scope,
+                $routeParams,
+                TubularModel,
+                tubularHttp,
+                $timeout,
+                $element,
+                tubular) {
                 // we need this to find the parent of a field
                 $scope.tubularDirective = 'tubular-form';
                 $scope.hasFieldsDefinitions = false;
@@ -952,8 +1069,19 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
     angular.module('tubular.directives')
         .controller('tbGridController',
         [
-            '$scope', 'localStorageService', 'tubularPopupService', 'tubularModel', 'tubularHttp', '$routeParams',
-            function($scope, localStorageService, tubularPopupService, TubularModel, tubularHttp, $routeParams) {
+            '$scope',
+            'localStorageService',
+            'tubularPopupService',
+            'tubularModel',
+            'tubularHttp',
+            '$routeParams',
+            function (
+                $scope,
+                localStorageService,
+                tubularPopupService,
+                TubularModel,
+                tubularHttp,
+                $routeParams) {
                 var $ctrl = this;
 
                 $ctrl.$onInit = function() {
@@ -1158,7 +1286,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                             TimezoneOffset: new Date().getTimezoneOffset()
                         }
                     };
-                }
+                };
 
                 $ctrl.retrieveData = function() {
                     // If the ServerUrl is empty skip data load
@@ -1296,7 +1424,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         return a.SortOrder === b.SortOrder ? 0 : a.SortOrder > b.SortOrder;
                     });
 
-                    currentlySortedColumns.forEach(function(col, index) {
+                    angular.forEach(currentlySortedColumns, function(col, index) {
                         col.SortOrder = index + 1;
                     });
 
@@ -1375,7 +1503,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
     'use strict';
 
     // Fix moment serialization
-    moment.fn.toJSON = function () { return this.isValid() ? this.format() : null; }
+    moment.fn.toJSON = function() { return this.isValid() ? this.format() : null; };
 
     function canUseHtml5Date() {
         var el = angular.element('<input type="date" value=":)" />');
@@ -1433,52 +1561,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
         }
     }
 
-    var tbSimpleEditorCtrl = ['tubularEditorService', '$scope', 'translateFilter', 'filterFilter', function (tubular, $scope, translateFilter, filterFilter) {
-        var $ctrl = this;
-
-        $ctrl.validate = function () {
-            if ($ctrl.regex && $ctrl.value) {
-                var patt = new RegExp($ctrl.regex);
-
-                if (patt.test($ctrl.value) === false) {
-                    $ctrl.$valid = false;
-                    $ctrl.state.$errors = [$ctrl.regexErrorMessage || translateFilter('EDITOR_REGEX_DOESNT_MATCH')];
-                    return;
-                }
-            }
-
-            if ($ctrl.match) {
-                if ($ctrl.value !== $ctrl.$component.model[$ctrl.match]) {
-                    var label = filterFilter($ctrl.$component.fields, { name: $ctrl.match }, true)[0].label;
-                    $ctrl.$valid = false;
-                    $ctrl.state.$errors = [translateFilter('EDITOR_MATCH', label)];
-                    return;
-                }
-            }
-
-            if ($ctrl.min && $ctrl.value) {
-                if ($ctrl.value.length < parseInt($ctrl.min)) {
-                    $ctrl.$valid = false;
-                    $ctrl.state.$errors = [translateFilter('EDITOR_MIN_CHARS', $ctrl.min)];
-                    return;
-                }
-            }
-
-            if ($ctrl.max && $ctrl.value) {
-                if ($ctrl.value.length > parseInt($ctrl.max)) {
-                    $ctrl.$valid = false;
-                    $ctrl.state.$errors = [translateFilter('EDITOR_MAX_CHARS', $ctrl.max)];
-                    return;
-                }
-            }
-        };
-
-        $ctrl.$onInit = function () {
-            tubular.setupScope($scope, null, $ctrl, false);
-        };
-    }
-    ];
-
     var tbNumericEditorCtrl = ['tubularEditorService', '$scope', 'translateFilter', function (tubular, $scope, translateFilter) {
         var $ctrl = this;
 
@@ -1535,8 +1617,18 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
         }
     ];
 
-    var tbDateEditorCtrl = ['$scope', '$element', 'tubularEditorService', 'translateFilter', 'dateFilter',
-        function ($scope, $element, tubular, translateFilter, dateFilter) {
+    var tbDateEditorCtrl = [
+        '$scope',
+        '$element',
+        'tubularEditorService',
+        'translateFilter',
+        'dateFilter',
+        function (
+            $scope,
+            $element,
+            tubular,
+            translateFilter,
+            dateFilter) {
             var $ctrl = this;
 
             $scope.$watch(function () { return $ctrl.value; }, changeValueFn($ctrl));
@@ -1670,54 +1762,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
     ];
 
     angular.module('tubular.directives')
-        /**
-         * @ngdoc component
-         * @name tbSimpleEditor
-         * @module tubular.directives
-         * 
-         * @description
-         * The `tbSimpleEditor` component is the basic input to show in a grid or form.
-         * It uses the `TubularModel` to retrieve column or field information.
-         * 
-         * @param {string} name Set the field name.
-         * @param {object} value Set the value.
-         * @param {boolean} isEditing Indicate if the field is showing editor.
-         * @param {string} editorType Set what HTML input type should display.
-         * @param {boolean} showLabel Set if the label should be display.
-         * @param {string} label Set the field's label otherwise the name is used.
-         * @param {string} placeholder Set the placeholder text.
-         * @param {string} help Set the help text.
-         * @param {boolean} required Set if the field is required.
-         * @param {boolean} readOnly Set if the field is read-only.
-         * @param {number} min Set the minimum characters.
-         * @param {number} max Set the maximum characters.
-         * @param {string} regex Set the regex validation text.
-         * @param {string} regexErrorMessage Set the regex validation error message.
-         * @param {string} match Set the field name to match values.
-         * @param {string} defaultValue Set the default value.
-         */
-        .component('tbSimpleEditor', {
-            templateUrl: 'tbSimpleEditor.tpl.html',
-            bindings: {
-                regex: '@?',
-                regexErrorMessage: '@?',
-                value: '=?',
-                isEditing: '=?',
-                editorType: '@',
-                showLabel: '=?',
-                label: '@?',
-                required: '=?',
-                min: '=?',
-                max: '=?',
-                name: '@',
-                placeholder: '@?',
-                readOnly: '=?',
-                help: '@?',
-                defaultValue: '@?',
-                match: '@?'
-            },
-            controller: tbSimpleEditorCtrl
-        })
         /**
          * @ngdoc component
          * @name tbNumericEditor
@@ -2003,7 +2047,11 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         element.append(content);
                     },
                     controller: [
-                        '$scope', 'tubularEditorService', function ($scope, tubular) {
+                        '$scope',
+                        'tubularEditorService',
+                        function (
+                            $scope,
+                            tubular) {
                             tubular.setupScope($scope);
                             $scope.selectOptions = 'd for d in getValues($viewValue)';
                             $scope.lastSet = [];
@@ -2112,7 +2160,11 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 uncheckedValue: '=?'
             },
             controller: [
-                'tubularEditorService', '$scope', function (tubular, $scope) {
+                'tubularEditorService',
+                '$scope',
+                function (
+                    tubular,
+                    $scope) {
                     var $ctrl = this;
 
                     $ctrl.$onInit = function () {
@@ -2164,7 +2216,13 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 help: '@?'
             },
             controller: [
-                'tubularEditorService', '$scope', 'translateFilter', function (tubular, $scope, translateFilter) {
+                'tubularEditorService',
+                '$scope',
+                'translateFilter',
+                function (
+                    tubular,
+                    $scope,
+                    translateFilter) {
                     var $ctrl = this;
 
                     $ctrl.validate = function () {
@@ -2653,7 +2711,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                             + '<tbody>'
                             + data.map(function (row) {
                                 if (angular.isObject(row)) {
-                                    row = Object.keys(row).map(function (key) { return row[key] });
+                                    row = Object.keys(row).map(function (key) { return row[key]; });
                                 }
 
                                 return '<tr>' + row.map(function (cell, index) {
@@ -3171,7 +3229,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                                     if (angular.isDefined(parent.model[scope.Name])) {
                                         if (ctrl.DataType === 'date' && parent.model[scope.Name] != null && angular.isString(parent.model[scope.Name])) {
                                             // TODO: Include MomentJS
-                                            var timezone = new Date(Date.parse(parent.model[scope.Name])).toString().match(/([-\+][0-9]+)\s/)[1];
+                                            var timezone = new Date(Date.parse(parent.model[scope.Name])).toString().match(/([-+][0-9]+)\s/)[1];
                                             timezone = timezone.substr(0, timezone.length - 2) + ':' + timezone.substr(timezone.length - 2, 2);
                                             ctrl.value = new Date(Date.parse(parent.model[scope.Name].replace('Z', '') + timezone));
                                         } else {
@@ -3263,8 +3321,21 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
          * This service provides authentication using bearer-tokens. Based on https://bitbucket.org/david.antaramian/so-21662778-spa-authentication-example
          */
         .service('tubularHttp', [
-            '$http', '$timeout', '$q', 'localStorageService', 'translateFilter', '$log', '$document',
-            function ($http, $timeout, $q, localStorageService, translateFilter, $log, $document) {
+            '$http',
+            '$timeout',
+            '$q',
+            'localStorageService',
+            'translateFilter',
+            '$log',
+            '$document',
+            function (
+                $http,
+                $timeout,
+                $q,
+                localStorageService,
+                translateFilter,
+                $log,
+                $document) {
                 var me = this;
 
                 function init() {
@@ -3318,10 +3389,10 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 }
 
                 function getCancel(canceller) {
-                    return function (reason) {
+                    return function(reason) {
                         $log.error(reason);
                         canceller.resolve(reason);
-                    }
+                    };
                 }
 
                 me.userData = {
@@ -3331,9 +3402,9 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     expirationDate: null
                 };
 
-                me.isBearerTokenExpired = function () {
+                me.isBearerTokenExpired = function() {
                     return isAuthenticationExpired(me.userData.expirationDate);
-                }
+                };
 
                 me.useRefreshTokens = false;
                 me.requireAuthentication = true;
@@ -3401,9 +3472,12 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     }
                 };
 
-                me.addTimeZoneToUrl = function (url) {
-                    return url + (url.indexOf('?') === -1 ? '?' : '&') + 'timezoneOffset=' + new Date().getTimezoneOffset();
-                }
+                me.addTimeZoneToUrl = function(url) {
+                    return url +
+                        (url.indexOf('?') === -1 ? '?' : '&') +
+                        'timezoneOffset=' +
+                        new Date().getTimezoneOffset();
+                };
 
                 me.saveDataAsync = function (model, request) {
                     var component = model.$component;
@@ -3671,8 +3745,13 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
          * Use `tubularPopupService` to show or generate popups with a `tbForm` inside.
          */
         .factory('tubularPopupService', [
-            '$uibModal', '$rootScope', 'tubularTemplateService',
-            function ($uibModal, $rootScope, tubularTemplateService) {
+            '$uibModal',
+            '$rootScope',
+            'tubularTemplateService',
+            function (
+                $uibModal,
+                $rootScope,
+                tubularTemplateService) {
 
                 return {
                     onSuccessForm: function (callback) {
@@ -3778,7 +3857,11 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
          */
         .service('tubularTemplateService',
         [
-            '$templateCache', 'translateFilter', function ($templateCache, translateFilter) {
+            '$templateCache',
+            'translateFilter',
+            function (
+                $templateCache,
+                translateFilter) {
                 var me = this;
 
                 me.canUseHtml5Date = function () {
@@ -4567,11 +4650,13 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             };
 
             me.addTranslation = function (language, key, value) {
-                var languageTable = me.translationTable[language] || me.translationTable[me.currentLanguage] || me.translationTable[me.defaultLanguage];
+                var languageTable = me.translationTable[language] ||
+                    me.translationTable[me.currentLanguage] ||
+                    me.translationTable[me.defaultLanguage];
                 languageTable[key] = value;
 
                 return me;
-            }
+            };
 
             me.translate = function (key) {
                 var languageTable = me.translationTable[me.currentLanguage] || me.translationTable[me.defaultLanguage];

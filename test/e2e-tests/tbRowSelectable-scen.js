@@ -2,14 +2,14 @@
 /* globals: expect:false,beforeAll:false,expect:false,browser:false,element:false,by:false,describe:false,protractor:false,it:false,beforeEach:false */
 
 //tbRowSelectable test
-describe('tbRowSelectable', function () {
-    beforeAll(function () {
+describe('tbRowSelectable', () => {
+    beforeAll(() => {
         browser.get('index.html');
         element(by.id('testsSelector')).click();
         element(by.id('tbRowSelectable')).click();
     });
 
-    it('selected rows', function () {
+    it('selected rows', (done) => {
         element.all(by.repeater('row in $component.rows')).click();
         var rows = element.all(by.repeater('row in $component.rows'));
         var countRows = rows.count();
@@ -17,11 +17,12 @@ describe('tbRowSelectable', function () {
         $('#lbRows').getText().then(function (count) {
             countRows.then(function (result) {
                 expect(parseInt(count)).toEqual(result);
+                done();
             });
         });
     });
 
-    it('unselected rows', function () {
+    it('unselected rows', () => {
         element.all(by.repeater('row in $component.rows')).click();
         element(by.id('btnRows')).click();
         expect($('#lbRows').getText()).toBe('0');

@@ -1,7 +1,8 @@
 ﻿'use strict';
+
 describe('Module: tubular.directives', function () {
     describe('Directive: tb-form', function () {
-        var sut, ctrl, scope, compile, isolated, template, element;
+        var ctrl, scope, compile, isolated, template, element;
 
         beforeEach(function () {
             module('tubular.directives');
@@ -10,10 +11,10 @@ describe('Module: tubular.directives', function () {
 
                 $controllerProvider.register('tbFormController', function ($scope) {
                     $scope.finishDefinition = ctrl.finishDefinition;
-
                 });
             });
         });
+
         beforeEach(inject(function (_$compile_, _$rootScope_) {
             scope = _$rootScope_.$new();
             scope.modelProp = 'x';
@@ -29,11 +30,10 @@ describe('Module: tubular.directives', function () {
         }
 
 
-
-        beforeEach(function () {
-            generate("<tb-form form-name='nombre_de_forma' server-url='http://tubular.azurewebsites.net/api/orders/' require-authentication='false' model='modelProp' model-key='1' service-name='local' server-save-url='http://tubular.azurewebsites.net/api/orders/save'><div id='inner'></div></tb-form>");
-            }
+        beforeEach(() =>
+            generate("<tb-form form-name='nombre_de_forma' server-url='http://tubular.azurewebsites.net/api/orders/' require-authentication='false' model='modelProp' model-key='1' service-name='local' server-save-url='http://tubular.azurewebsites.net/api/orders/save'><div id='inner'></div></tb-form>")
         );
+
         it('should call finishDefinition after compile', function () {
             expect(ctrl.finishDefinition).toHaveBeenCalled();
         });

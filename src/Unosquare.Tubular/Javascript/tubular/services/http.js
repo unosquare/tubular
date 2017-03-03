@@ -13,8 +13,21 @@
          * This service provides authentication using bearer-tokens. Based on https://bitbucket.org/david.antaramian/so-21662778-spa-authentication-example
          */
         .service('tubularHttp', [
-            '$http', '$timeout', '$q', 'localStorageService', 'translateFilter', '$log', '$document',
-            function ($http, $timeout, $q, localStorageService, translateFilter, $log, $document) {
+            '$http',
+            '$timeout',
+            '$q',
+            'localStorageService',
+            'translateFilter',
+            '$log',
+            '$document',
+            function (
+                $http,
+                $timeout,
+                $q,
+                localStorageService,
+                translateFilter,
+                $log,
+                $document) {
                 var me = this;
 
                 function init() {
@@ -68,10 +81,10 @@
                 }
 
                 function getCancel(canceller) {
-                    return function (reason) {
+                    return function(reason) {
                         $log.error(reason);
                         canceller.resolve(reason);
-                    }
+                    };
                 }
 
                 me.userData = {
@@ -81,9 +94,9 @@
                     expirationDate: null
                 };
 
-                me.isBearerTokenExpired = function () {
+                me.isBearerTokenExpired = function() {
                     return isAuthenticationExpired(me.userData.expirationDate);
-                }
+                };
 
                 me.useRefreshTokens = false;
                 me.requireAuthentication = true;
@@ -151,9 +164,12 @@
                     }
                 };
 
-                me.addTimeZoneToUrl = function (url) {
-                    return url + (url.indexOf('?') === -1 ? '?' : '&') + 'timezoneOffset=' + new Date().getTimezoneOffset();
-                }
+                me.addTimeZoneToUrl = function(url) {
+                    return url +
+                        (url.indexOf('?') === -1 ? '?' : '&') +
+                        'timezoneOffset=' +
+                        new Date().getTimezoneOffset();
+                };
 
                 me.saveDataAsync = function (model, request) {
                     var component = model.$component;

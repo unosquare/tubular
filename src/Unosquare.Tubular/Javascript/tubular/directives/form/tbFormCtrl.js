@@ -4,8 +4,21 @@
     angular.module('tubular.directives')
         .controller('tbFormController',
         [
-            '$scope', '$routeParams', 'tubularModel', 'tubularHttp', '$timeout', '$element', 'tubularEditorService',
-            function($scope, $routeParams, TubularModel, tubularHttp, $timeout, $element, tubular) {
+            '$scope',
+            '$routeParams',
+            'tubularModel',
+            'tubularHttp',
+            '$timeout',
+            '$element',
+            'tubularEditorService',
+            function (
+                $scope,
+                $routeParams,
+                TubularModel,
+                tubularHttp,
+                $timeout,
+                $element,
+                tubular) {
                 // we need this to find the parent of a field
                 $scope.tubularDirective = 'tubular-form';
                 $scope.hasFieldsDefinitions = false;

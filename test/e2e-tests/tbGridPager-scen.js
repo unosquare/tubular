@@ -8,7 +8,7 @@
 // component at the related HTML file (tbPager_test.html) is static and constrained
 // to 53 records with consecutive ID's.
 
-describe('tbGridPager', function () {
+describe('tbGridPager', () => {
 
     var tbGridPager,
         firstDataRow,
@@ -21,7 +21,7 @@ describe('tbGridPager', function () {
         pageSize,
         activeNavBtn;
 
-    beforeAll(function () {
+    beforeAll(() => {
         // Go to test
         browser.get('index.html');
         element(by.id('testsSelector')).click();
@@ -75,18 +75,18 @@ describe('tbGridPager', function () {
         });
     });
 
-    describe('navigation buttons', function () {
+    describe('navigation buttons', () => {
 
-        it('should perform no action when clicking on the numbered navigation button corresponding to the current-showing results page', function () {
+        it('should perform no action when clicking on the numbered navigation button corresponding to the current-showing results page', () => {
             activeNavBtn.$('a').click();
 
             expect(firstDataRow.getText()).toMatch(/^1\s/);
             expect(lastDataRow.getText()).toMatch(/^10\s/);
         });
 
-        describe('first/non-last results page related functionallity', function () {
+        describe('first/non-last results page related functionallity', () => {
 
-            it('should disable "first" and "previous" navigation buttons when in first results page', function () {
+            it('should disable "first" and "previous" navigation buttons when in first results page', () => {
                 //Go to first page
                 firstNavBtn.$('a').click();
 
@@ -94,7 +94,7 @@ describe('tbGridPager', function () {
                 expect(previousNavBtn.getAttribute('class')).toMatch(/disabled/);
             });
 
-            it('should enable "last" and "next" navigation buttons when in a results page other than last', function () {
+            it('should enable "last" and "next" navigation buttons when in a results page other than last', () => {
                 //Go to 3rd page
                 tbGridPager.$$('li').get(4).$('a').click();
 
@@ -104,9 +104,9 @@ describe('tbGridPager', function () {
 
         });
 
-        describe('last/non-first results page related functionallity', function () {
+        describe('last/non-first results page related functionallity', () => {
 
-            it('should disable "last" and "next" navigation buttons when in last results page', function () {
+            it('should disable "last" and "next" navigation buttons when in last results page', () => {
                 // Go to last page
                 lastNavBtn.$('a').click();
 
@@ -114,27 +114,25 @@ describe('tbGridPager', function () {
                 expect(nextNavBtn.getAttribute('class')).toMatch(/disabled/);
             });
 
-            it('should enable "first" and "previous" navigation buttons when in a results page other than first', function () {
+            it('should enable "first" and "previous" navigation buttons when in a results page other than first', () => {
                 //Go to 4th page
                 tbGridPager.$$('li').get(5).$('a').click();
 
                 expect(firstNavBtn.getAttribute('class')).not.toMatch(/disabled/);
                 expect(previousNavBtn.getAttribute('class')).not.toMatch(/disabled/);
             });
-
         });
-
     });
 
-    describe('page navigation', function () {
+    describe('page navigation', () => {
 
-        it('should go to next results page when clicking on next navigation button', function () {
+        it('should go to next results page when clicking on next navigation button', () => {
             firstNavBtn.$('a').click();
             nextNavBtn.$('a').click();
             expect(firstDataRow.getText()).toMatch(/^11\s/);
         });
 
-        it('should go to previous results page when clicking on previous navigation button', function () {
+        it('should go to previous results page when clicking on previous navigation button', () => {
             // Go to next-to-next page (page 3)
             nextNavBtn.$('a').click();
             // Go back one page (page 2)
@@ -143,7 +141,7 @@ describe('tbGridPager', function () {
             expect(firstDataRow.getText()).toMatch(/^11\s/);
         });
 
-        it('should go to last results page when clicking on last navigation button', function () {
+        it('should go to last results page when clicking on last navigation button', () => {
             lastNavBtn.$('a').click();
 
             expect(lastNavBtn.getAttribute('class')).toMatch(/disabled/);
@@ -155,7 +153,7 @@ describe('tbGridPager', function () {
             expect(activeNavBtn.$('a').getText()).toEqual(Math.ceil(totalRecords / pageSize).toString());
         });
 
-        it('should go to first results page when clicking on first navigation button', function () {
+        it('should go to first results page when clicking on first navigation button', () => {
             // Go to last page
             lastNavBtn.$('a').click();
 
@@ -165,13 +163,11 @@ describe('tbGridPager', function () {
             expect(firstDataRow.getText()).toMatch(/^1\s/);
         });
 
-        it('should go to corresponding results page when clicking on a numbered navigation button', function () {
+        it('should go to corresponding results page when clicking on a numbered navigation button', () => {
             //Go to 4th page
             tbGridPager.$$('li').get(5).$('a').click();
 
             expect(firstDataRow.getText()).toMatch(/^31\s/);
         });
-
     });
-
 });

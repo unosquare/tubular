@@ -79,9 +79,9 @@
                 return function (input, format) {
                     if (moment.isMoment(input)) {
                         return input.format(format || 'M/DD/YYYY');
-                    } else {
-                        return dateFilter(input);
                     }
+
+                    return dateFilter(input);
                 };
             }
         ]);

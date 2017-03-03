@@ -315,6 +315,7 @@ input[type="checkbox"] .styled:checked + label::after,
 input[type="radio"] .styled:checked + label::after {
   color: #fff;
 }
+
 .chart-legend,
 .bar-legend,
 .line-legend,
@@ -365,7 +366,7 @@ input[type="radio"] .styled:checked + label::after {
   border-radius: 5px;
 }
 
-.panel.panel-rounded {
+.panel-rounded {
     margin: 0;
 }
 
@@ -714,21 +715,7 @@ select.checkbox-list:hover option:checked, select.checkbox-list:focus option:che
             }
 }
 
-.maximized {
-    position: absolute;
-    z-index: 5001;
-    width: 100%;
-    top: 0;
-    left: 0;
-    padding: 20px;
-    height: 100%;
-}
-
-.widget-panel .panel.panel-default {
-    height: 100%;
-}
-
-div.input-group-addon.fa {
+.input-group-addon.fa {
     font-size: 10px;
 }
 

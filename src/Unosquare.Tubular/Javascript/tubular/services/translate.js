@@ -134,11 +134,13 @@
             };
 
             me.addTranslation = function (language, key, value) {
-                var languageTable = me.translationTable[language] || me.translationTable[me.currentLanguage] || me.translationTable[me.defaultLanguage];
+                var languageTable = me.translationTable[language] ||
+                    me.translationTable[me.currentLanguage] ||
+                    me.translationTable[me.defaultLanguage];
                 languageTable[key] = value;
 
                 return me;
-            }
+            };
 
             me.translate = function (key) {
                 var languageTable = me.translationTable[me.currentLanguage] || me.translationTable[me.defaultLanguage];

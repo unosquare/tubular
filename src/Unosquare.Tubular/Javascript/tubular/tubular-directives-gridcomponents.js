@@ -252,7 +252,7 @@
                             + '<tbody>'
                             + data.map(function (row) {
                                 if (angular.isObject(row)) {
-                                    row = Object.keys(row).map(function (key) { return row[key] });
+                                    row = Object.keys(row).map(function (key) { return row[key]; });
                                 }
 
                                 return '<tr>' + row.map(function (cell, index) {

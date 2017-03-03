@@ -11,7 +11,11 @@
          */
         .service('tubularTemplateService',
         [
-            '$templateCache', 'translateFilter', function ($templateCache, translateFilter) {
+            '$templateCache',
+            'translateFilter',
+            function (
+                $templateCache,
+                translateFilter) {
                 var me = this;
 
                 me.canUseHtml5Date = function () {

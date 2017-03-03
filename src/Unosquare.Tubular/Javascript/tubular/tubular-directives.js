@@ -203,17 +203,18 @@
                     transclude: true,
                     scope: false,
                     controller: [
-                        '$scope', function ($scope) {
-                            $scope.sortColumn = function ($event) {
+                        '$scope', function($scope) {
+                            $scope.sortColumn = function($event) {
                                 $scope.$parent.sortColumn($event.ctrlKey);
                             };
                             // this listener here is used for backwards compatibility with tbColumnHeader requiring a scope.label value on its own
-                            $scope.$on('tbColumn_LabelChanged', function ($event, value) {
-                                $scope.label = value;
-                            });
+                            $scope.$on('tbColumn_LabelChanged',
+                                function($event, value) {
+                                    $scope.label = value;
+                                });
                         }
                     ],
-                    link: function ($scope, $element) {
+                    link: function($scope, $element) {
                         if ($element.find('ng-transclude').length > 0) {
                             $element.find('span')[0].remove();
                         }
@@ -222,7 +223,7 @@
                             $element.find('a').replaceWith($element.find('a').children());
                         }
                     }
-                }
+                };
             }
         ])
         /**
@@ -299,8 +300,8 @@
          * @param {object} rowModel Set the current row, if you are using a ngRepeat you must to use the current element variable here.
          * @param {bool} selectable Flag the rowset to allow user to select rows.
          */
-        .directive('tbRowTemplate', [
-            function () {
+        .directive('tbRowTemplate', ['$timeout',
+            function ($timeout) {
 
                 return {
                     templateUrl: 'tbRowTemplate.tpl.html',
@@ -349,7 +350,10 @@
                     compile: function () {
                         return {
                             post: function (scope) {
-                                scope.hasFieldsDefinitions = true;
+                                // Wait a little bit before to connect to the fields
+                                $timeout(function () {
+                                    scope.hasFieldsDefinitions = true;
+                                }, 300);
                             }
                         };
                     }

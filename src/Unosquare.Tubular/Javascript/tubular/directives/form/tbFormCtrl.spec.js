@@ -21,18 +21,14 @@ describe('Module: tubular.directives', function () {
                 $provide.value('$element', $element);
             });
         });
+
         beforeEach(inject(function (_$controller_, $rootScope) {
             scope = $rootScope.$new();
             $controller = _$controller_;
         }));
 
-        function create() {
-            sut = $controller('tbFormController', { '$scope': scope });
-        }
-
         describe('constructor', function () {
-
-            beforeEach(create);
+            beforeEach(() => sut = $controller('tbFormController', { '$scope': scope }));
 
             it('should set tubularDirective properly', function () {
                 expect(scope.tubularDirective).toBe('tubular-form');
