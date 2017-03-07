@@ -45,7 +45,7 @@ describe('Module: tubular.services', function () {
 
             expect(AuthInterceptor.request(config).headers).toBeDefined();
             expect(AuthInterceptor.request(config).headers.Authorization).toBeDefined();
-            expect(AuthInterceptor.request(config).headers.Authorization).not.toContain('yeah');
+            expect(AuthInterceptor.request(config).headers.Authorization).toContain('yeah');
         });
     });
 });
