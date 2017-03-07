@@ -35,7 +35,6 @@
 
                     if (angular.isDefined(savedData) && savedData != null) {
                         me.userData = savedData;
-                        setHttpAuthHeader();
                     }
                 }
 
@@ -55,10 +54,6 @@
                     localStorageService.set('auth_data', me.userData);
                 }
 
-                function setHttpAuthHeader() {
-                    $http.defaults.headers.common.Authorization = 'Bearer ' + me.userData.bearerToken;
-                }
-
                 function retrieveSavedData() {
                     var savedData = localStorageService.get('auth_data');
 
@@ -68,7 +63,6 @@
                         throw 'Authentication token has already expired';
                     } else {
                         me.userData = savedData;
-                        setHttpAuthHeader();
                     }
                 }
 
@@ -156,7 +150,6 @@
                     me.userData.role = data.role;
                     me.userData.refreshToken = data.refresh_token;
 
-                    setHttpAuthHeader();
                     saveData();
 
                     if (angular.isFunction(successCallback)) {

@@ -12,103 +12,111 @@
      */
     angular.module('tubular.services')
         .factory('tubularAuthInterceptor', ['$q', '$injector', function ($q, $injector) {
+
             var authRequestRunning = null;
             var tubularHttpName = 'tubularHttp';
 
-            return {
+            var service = {
+                request: request,
+                requestError: requestError,
+                response: response,
+                responseError: responseError
+            };
 
-                request: function (config) {
-                    // Get the service here because otherwise, a circular dependency injection will be detected
-                    var tubularHttp = $injector.get(tubularHttpName);
-                    var apiBaseUrl = tubularHttp.apiBaseUrl;
+            return service;
 
-                    config.headers = config.headers || {};
+            function request(config) {
+                // Get the service here because otherwise, a circular dependency injection will be detected
+                var tubularHttp = $injector.get(tubularHttpName);
+                var apiBaseUrl = tubularHttp.apiBaseUrl;
 
-                    if (
-                        config.url.substring(0, apiBaseUrl.length) === apiBaseUrl &&
-                        tubularHttp.tokenUrl !== config.url &&
-                        tubularHttp.useRefreshTokens &&
-                        tubularHttp.requireAuthentication &&
-                        tubularHttp.userData.refreshToken) {
+                config.headers = config.headers || {};
 
-                        if (tubularHttp.isBearerTokenExpired()) {
-                            // Let's force an error to automatically go directly to the refresh token stuff
-                            return $q.reject({ error: 'expired token', status: 401, config: config });
-                        }
+                // Handle requests going to API
+                if (config.url.substring(0, apiBaseUrl.length) === apiBaseUrl &&
+                    tubularHttp.tokenUrl !== config.url &&
+                    tubularHttp.requireAuthentication &&
+                    tubularHttp.userData.bearerToken) {
+
+                    config.headers.Authorization = 'Bearer ' + tubularHttp.userData.bearerToken;
+
+                    // When using refresh tokens and bearer token has expired,
+                    // avoid the round trip on go directly to try refreshing the token
+                    if (tubularHttp.useRefreshTokens && tubularHttp.userData.refreshToken
+                        && tubularHttp.isBearerTokenExpired()) {
+                        return $q.reject({ error: 'expired token', status: 401, config: config });
                     }
+                }
 
-                    return config;
-                },
+                return config;
+            }
 
-                requestError: function (rejection) {
-                    return $q.reject(rejection);
-                },
+            function requestError(rejection) {
+                return $q.reject(rejection);
+            }
 
-                // optional method
-                response: function (response) {
-                    return response;
-                },
+            function response(response) {
+                return response;
+            }
 
-                // optional method
-                responseError: function (rejection) {
-                    var deferred = $q.defer();
+            function responseError(rejection) {
+                var deferred = $q.defer();
 
-                    switch (rejection.status) {
-                        case 401:
-                            var tubularHttp = $injector.get(tubularHttpName);
-                            var apiBaseUrl = tubularHttp.apiBaseUrl;
+                switch (rejection.status) {
+                    case 401:
+                        var tubularHttp = $injector.get(tubularHttpName);
+                        var apiBaseUrl = tubularHttp.apiBaseUrl;
 
-                            if (
-                                rejection.config.url.substring(0, apiBaseUrl.length) === apiBaseUrl &&
-                                tubularHttp.tokenUrl !== rejection.config.url &&
-                                tubularHttp.useRefreshTokens &&
-                                tubularHttp.requireAuthentication &&
-                                tubularHttp.userData.refreshToken) {
+                        if (
+                            rejection.config.url.substring(0, apiBaseUrl.length) === apiBaseUrl &&
+                            tubularHttp.tokenUrl !== rejection.config.url &&
+                            tubularHttp.useRefreshTokens &&
+                            tubularHttp.requireAuthentication &&
+                            tubularHttp.userData.refreshToken) {
 
-                                if (!authRequestRunning) {
-                                    authRequestRunning = $injector.get('$http')({
-                                        method: 'POST',
-                                        url: tubularHttp.refreshTokenUrl,
-                                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                                        data: 'grant_type=refresh_token&refresh_token=' + tubularHttp.userData.refreshToken
-                                    });
-                                }
-
-                                authRequestRunning.then(function (r) {
-                                    authRequestRunning = null;
-                                    tubularHttp.handleSuccessCallback(null, r.data);
-
-                                    if (tubularHttp.requireAuthentication && tubularHttp.isAuthenticated()) {
-                                        rejection.config.headers.Authorization = 'Bearer ' + tubularHttp.userData.bearerToken;
-                                        $injector.get('$http')(rejection.config).then(function (resp) {
-                                            deferred.resolve(resp);
-                                        }, function () {
-                                            deferred.reject(r);
-                                        });
-                                    }
-                                    else {
-                                        deferred.reject(rejection);
-                                    }
-                                }, function (response) {
-                                    authRequestRunning = null;
-                                    deferred.reject(response);
-                                    tubularHttp.removeAuthentication();
-                                    $injector.get('$state').go('/Login');
-                                    return;
+                            if (!authRequestRunning) {
+                                authRequestRunning = $injector.get('$http')({
+                                    method: 'POST',
+                                    url: tubularHttp.refreshTokenUrl,
+                                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                                    data: 'grant_type=refresh_token&refresh_token=' + tubularHttp.userData.refreshToken
                                 });
                             }
-                            else {
-                                deferred.reject(rejection);
-                            }
 
-                            return deferred.promise;
-                        default:
-                            break;
-                    }
+                            authRequestRunning.then(function (r) {
+                                authRequestRunning = null;
+                                tubularHttp.handleSuccessCallback(null, r.data);
 
-                    deferred.reject(rejection);
-                    return deferred.promise;
+                                if (tubularHttp.requireAuthentication && tubularHttp.isAuthenticated()) {
+                                    rejection.config.headers.Authorization = 'Bearer ' + tubularHttp.userData.bearerToken;
+                                    $injector.get('$http')(rejection.config).then(function (resp) {
+                                        deferred.resolve(resp);
+                                    }, function () {
+                                        deferred.reject(r);
+                                    });
+                                }
+                                else {
+                                    deferred.reject(rejection);
+                                }
+                            }, function (response) {
+                                authRequestRunning = null;
+                                deferred.reject(response);
+                                tubularHttp.removeAuthentication();
+                                $injector.get('$state').go('/Login');
+                                return;
+                            });
+                        }
+                        else {
+                            deferred.reject(rejection);
+                        }
+
+                        return deferred.promise;
+                    default:
+                        break;
                 }
-            };
+
+                deferred.reject(rejection);
+                return deferred.promise;
+            }
         }]);
 })(angular);
