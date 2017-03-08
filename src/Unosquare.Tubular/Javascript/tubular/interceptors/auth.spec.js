@@ -52,13 +52,13 @@ describe('Module: tubular.services', function () {
             var config = {
                 method: 'GET',
                 url: '/api/dummy',
-                headers : {
+                headers: {
                 }
             };
 
             var rejection = {
-                config : config,
-                status : 401
+                config: config,
+                status: 401
             };
 
             tubularHttp.setRequireAuthentication(true);
@@ -66,48 +66,59 @@ describe('Module: tubular.services', function () {
 
             tubularHttp.userData.bearerToken = "newOne";
             expect(rejection.triedRefreshTokens).toBeUndefined();
-            
+
             AuthInterceptor
                 .responseError(rejection)
                 .then(function () { }, rejection => {
                     expect(rejection).toBeDefined();
                     expect(rejection.triedRefreshTokens).toBeUndefined();
-                    
+
                     done();
                 });
+
+            $httpBackend.flush();
         });
 
         it('should try to use refresh tokens', done => {
             var config = {
                 method: 'GET',
                 url: '/api/dummy',
-                headers : {
+                headers: {
                 }
             };
 
             var rejection = {
-                config : config,
-                status : 401
+                config: config,
+                status: 401
             };
 
             tubularHttp.setRequireAuthentication(true);
             expect(tubularHttp.useRefreshTokens).toBe(false);
 
             tubularHttp.useRefreshTokens = true;
-            tubularHttp.userData.refreshToken = 'mockrefreshtoken';
+            tubularHttp.userData.refreshToken = 'original_refresh';
 
-            tubularHttp.userData.bearerToken = "newOne";
+            tubularHttp.userData.bearerToken = "original_bearer";
             expect(rejection.triedRefreshTokens).toBeUndefined();
-            
+
+            $httpBackend.expectPOST(tubularHttp.refreshTokenUrl, data => {
+                return data === 'grant_type=refresh_token&refresh_token=' + tubularHttp.userData.refreshToken;
+            }).respond(200, { access_token: 'modified_bearer', refresh_token: 'modified_refresh' });
+
+            $httpBackend.expectGET('/api/dummy').respond(200);
+
             AuthInterceptor
                 .responseError(rejection)
-                .then(function () { }, rejection => {
-                    expect(rejection).toBeDefined();
-                    expect(rejection.triedRefreshTokens).toBeDefined();
-                    expect(rejection.triedRefreshTokens).toBe(true);
-                    
+                .then(function (resp) {
+                    expect(resp).toBeDefined();
+                    expect(tubularHttp.userData.bearerToken).not.toBe('original_bearer');
+                    expect(tubularHttp.userData.refreshToken).not.toBe('original_refresh');
                     done();
+                }, rejection => {
+
                 });
+
+            $httpBackend.flush();
         });
     });
 });
