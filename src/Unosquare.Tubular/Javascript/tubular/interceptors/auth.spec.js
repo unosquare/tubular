@@ -48,7 +48,7 @@ describe('Module: tubular.services', function () {
             expect(AuthInterceptor.request(config).headers.Authorization).toContain('yeah');
         });
 
-        it('should NOT try to use refresh tokens', function () {
+        it('should NOT try to use refresh tokens', done => {
             var config = {
                 method: 'GET',
                 url: '/api/dummy',
@@ -77,7 +77,7 @@ describe('Module: tubular.services', function () {
                 });
         });
 
-        it('should try to use refresh tokens', function () {
+        it('should try to use refresh tokens', done => {
             var config = {
                 method: 'GET',
                 url: '/api/dummy',
