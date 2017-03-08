@@ -47,5 +47,67 @@ describe('Module: tubular.services', function () {
             expect(AuthInterceptor.request(config).headers.Authorization).toBeDefined();
             expect(AuthInterceptor.request(config).headers.Authorization).toContain('yeah');
         });
+
+        it('should NOT try to use refresh tokens', function () {
+            var config = {
+                method: 'GET',
+                url: '/api/dummy',
+                headers : {
+                }
+            };
+
+            var rejection = {
+                config : config,
+                status : 401
+            };
+
+            tubularHttp.setRequireAuthentication(true);
+            expect(tubularHttp.useRefreshTokens).toBe(false);
+
+            tubularHttp.userData.bearerToken = "newOne";
+            expect(rejection.triedRefreshTokens).toBeUndefined();
+            
+            AuthInterceptor
+                .responseError(rejection)
+                .then(function () { }, rejection => {
+                    expect(rejection).toBeDefined();
+                    expect(rejection.triedRefreshTokens).toBeUndefined();
+                    
+                    done();
+                });
+        });
+
+        it('should try to use refresh tokens', function () {
+            var config = {
+                method: 'GET',
+                url: '/api/dummy',
+                headers : {
+                }
+            };
+
+            var rejection = {
+                config : config,
+                status : 401
+            };
+
+            tubularHttp.setRequireAuthentication(true);
+            expect(tubularHttp.useRefreshTokens).toBe(false);
+
+            tubularHttp.useRefreshTokens = true;
+            tubularHttp.userData.refreshToken = 'mockrefreshtoken';
+
+            tubularHttp.userData.bearerToken = "newOne";
+            expect(rejection.triedRefreshTokens).toBeUndefined();
+            
+            AuthInterceptor
+                .responseError(rejection)
+                .then(function () { }, rejection => {
+                    expect(rejection).toBeDefined();
+                    expect(rejection.triedRefreshTokens).toBeDefined();
+                    expect(rejection.triedRefreshTokens).toBe(true);
+                    
+                    done();
+                });
+        });
     });
 });

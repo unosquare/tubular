@@ -3161,7 +3161,9 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                             tubularHttp.requireAuthentication &&
                             tubularHttp.userData.refreshToken) {
 
-                            if (!authRequestRunning) {
+                            rejection.triedRefreshTokens = true;
+
+                            if (!authRequestRunning) {    
                                 authRequestRunning = $injector.get('$http')({
                                     method: 'POST',
                                     url: tubularHttp.refreshTokenUrl,
