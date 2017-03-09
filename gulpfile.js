@@ -22,10 +22,7 @@ gulp.task('dgeni', function() {
                 data.push({ name: doc.name, url: doc.outputPath, docType: doc.docType });
             }
 
-            fs.writeFile(path.join("data", "documentation.json"), JSON.stringify(data), function(err) {
-                if (err) return console.log(err);
-                return console.log("The file was saved!");
-            });
+            fs.writeFileSync(path.join("data", "documentation.json"), JSON.stringify(data));
         });
     } catch (x) {
         console.log(x.stack);
@@ -47,8 +44,8 @@ gulp.task('reports', function() {
             subOutput += "<li><a href='https://unosquare.github.io/tubular/reports/" + dir + "/" + link + "'>" + subDir + "</a></li>";
         });
 
-        fs.writeFile('reports/' + dir + '/index.html', baseCss + "<h1>Travis Build #" + dir +" Reports</h1><ul>" + subOutput + "</ul>");
+        fs.writeFileSync('reports/' + dir + '/index.html', baseCss + "<h1>Travis Build #" + dir +" Reports</h1><ul>" + subOutput + "</ul>");
     }, this);
 
-    fs.writeFile('reports/index.html', baseCss + "<h1>Travis Builds Reports</h1><ul>" + output + "</ul>");
+    fs.writeFileSync('reports/index.html', baseCss + "<h1>Travis Builds Reports</h1><ul>" + output + "</ul>");
 });
