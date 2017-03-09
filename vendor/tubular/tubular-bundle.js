@@ -15,6 +15,7 @@
             'localStorageServiceProvider', '$httpProvider', function (localStorageServiceProvider, $httpProvider) {
                 localStorageServiceProvider.setPrefix('tubular');
                 $httpProvider.interceptors.push('tubularAuthInterceptor');
+                $httpProvider.interceptors.push('tubularNoCacheInterceptor');
             }
         ])
         /**
@@ -3086,6 +3087,156 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 })(angular, saveAs);
 (function (angular) {
     'use strict';
+    /**
+     * @ngdoc function
+     * @name tubularAuthInterceptor
+     * @description
+     *
+     * Implement a httpInterceptor to handle authorization using bearer tokens
+     *
+     * @constructor
+     * @returns {Object} A httpInterceptor
+     */
+    angular.module('tubular.services')
+        .factory('tubularAuthInterceptor', ['$q', '$injector', function ($q, $injector) {
+
+            var authRequestRunning = null;
+            var tubularHttpName = 'tubularHttp';
+
+            var service = {
+                request: request,
+                requestError: requestError,
+                response: response,
+                responseError: responseError
+            };
+
+            return service;
+
+            function request(config) {
+                // Get the service here because otherwise, a circular dependency injection will be detected
+                var tubularHttp = $injector.get(tubularHttpName);
+                var apiBaseUrl = tubularHttp.apiBaseUrl;
+
+                config.headers = config.headers || {};
+
+                // Handle requests going to API
+                if (config.url.substring(0, apiBaseUrl.length) === apiBaseUrl &&
+                    tubularHttp.tokenUrl !== config.url &&
+                    tubularHttp.requireAuthentication &&
+                    tubularHttp.userData.bearerToken) {
+
+                    config.headers.Authorization = 'Bearer ' + tubularHttp.userData.bearerToken;
+
+                    // When using refresh tokens and bearer token has expired,
+                    // avoid the round trip on go directly to try refreshing the token
+                    if (tubularHttp.useRefreshTokens && tubularHttp.userData.refreshToken
+                        && tubularHttp.isBearerTokenExpired()) {
+                        return $q.reject({ error: 'expired token', status: 401, config: config });
+                    }
+                }
+
+                return config;
+            }
+
+            function requestError(rejection) {
+                return $q.reject(rejection);
+            }
+
+            function response(response) {
+                return response;
+            }
+
+            function responseError(rejection) {
+                var deferred = $q.defer();
+
+                switch (rejection.status) {
+                    case 401:
+                        var tubularHttp = $injector.get(tubularHttpName);
+                        var apiBaseUrl = tubularHttp.apiBaseUrl;
+
+                        if (
+                            rejection.config.url.substring(0, apiBaseUrl.length) === apiBaseUrl &&
+                            tubularHttp.tokenUrl !== rejection.config.url &&
+                            tubularHttp.useRefreshTokens &&
+                            tubularHttp.requireAuthentication &&
+                            tubularHttp.userData.refreshToken) {
+
+                            rejection.triedRefreshTokens = true;
+
+                            if (!authRequestRunning) {    
+                                authRequestRunning = $injector.get('$http')({
+                                    method: 'POST',
+                                    url: tubularHttp.refreshTokenUrl,
+                                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                                    data: 'grant_type=refresh_token&refresh_token=' + tubularHttp.userData.refreshToken
+                                });
+                            }
+
+                            authRequestRunning.then(function (r) {
+                                authRequestRunning = null;
+                                tubularHttp.handleSuccessCallback(null, r.data);
+
+                                if (tubularHttp.requireAuthentication && tubularHttp.isAuthenticated()) {
+                                    rejection.config.headers.Authorization = 'Bearer ' + tubularHttp.userData.bearerToken;
+                                    $injector.get('$http')(rejection.config).then(function (resp) {
+                                        deferred.resolve(resp);
+                                    }, function () {
+                                        deferred.reject(r);
+                                    });
+                                }
+                                else {
+                                    deferred.reject(rejection);
+                                }
+                            }, function (response) {
+                                authRequestRunning = null;
+                                deferred.reject(response);
+                                tubularHttp.removeAuthentication();
+                                $injector.get('$state').go('/Login');
+                                return;
+                            });
+                        }
+                        else {
+                            deferred.reject(rejection);
+                        }
+
+                        return deferred.promise;
+                    default:
+                        break;
+                }
+
+                deferred.reject(rejection);
+                return deferred.promise;
+            }
+        }]);
+})(angular);
+(function (angular) {
+    'use strict';
+    /**
+     * @ngdoc function
+     * @name tubularNoCacheInterceptor
+     * @description
+     *
+     * Implement a httpInterceptor to prevent browser caching
+     *
+     * @constructor
+     * @returns {Object} A httpInterceptor
+     */
+    angular.module('tubular.services')
+        .factory('tubularNoCacheInterceptor', [function () {
+
+            return {
+                request: function (config) {
+                    if (config.method === 'GET' && config.url.indexOf('.htm') === -1 && config.url.indexOf('blob:') === -1) {
+                        var separator = config.url.indexOf('?') === -1 ? '?' : '&';
+                        config.url = config.url + separator + 'noCache=' + new Date().getTime();
+                    }
+                    return config;
+                }
+            };
+        }]);
+})(angular);
+(function (angular) {
+    'use strict';
 
     angular.module('tubular.services')
          /**
@@ -3343,7 +3494,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
                     if (angular.isDefined(savedData) && savedData != null) {
                         me.userData = savedData;
-                        setHttpAuthHeader();
                     }
                 }
 
@@ -3363,10 +3513,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     localStorageService.set('auth_data', me.userData);
                 }
 
-                function setHttpAuthHeader() {
-                    $http.defaults.headers.common.Authorization = 'Bearer ' + me.userData.bearerToken;
-                }
-
                 function retrieveSavedData() {
                     var savedData = localStorageService.get('auth_data');
 
@@ -3376,7 +3522,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         throw 'Authentication token has already expired';
                     } else {
                         me.userData = savedData;
-                        setHttpAuthHeader();
                     }
                 }
 
@@ -3464,7 +3609,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     me.userData.role = data.role;
                     me.userData.refreshToken = data.refresh_token;
 
-                    setHttpAuthHeader();
                     saveData();
 
                     if (angular.isFunction(successCallback)) {
@@ -4691,118 +4835,4 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 };
             }
         ]);
-})(angular);
-(function (angular) {
-    'use strict';
-    /**
-     * @ngdoc function
-     * @name tubularAuthInterceptor
-     * @description
-     *
-     * Implement a httpInterceptor to handle authorization using bearer tokens
-     *
-     * @constructor
-     * @returns {Object} A httpInterceptor
-     */
-    angular.module('tubular.services')
-        .factory('tubularAuthInterceptor', ['$q', '$injector', function ($q, $injector) {
-            var authRequestRunning = null;
-            var tubularHttpName = 'tubularHttp';
-
-            return {
-
-                request: function (config) {
-                    // Get the service here because otherwise, a circular dependency injection will be detected
-                    var tubularHttp = $injector.get(tubularHttpName);
-                    var apiBaseUrl = tubularHttp.apiBaseUrl;
-
-                    config.headers = config.headers || {};
-
-                    if (
-                        config.url.substring(0, apiBaseUrl.length) === apiBaseUrl &&
-                        tubularHttp.tokenUrl !== config.url &&
-                        tubularHttp.useRefreshTokens &&
-                        tubularHttp.requireAuthentication &&
-                        tubularHttp.userData.refreshToken) {
-
-                        if (tubularHttp.isBearerTokenExpired()) {
-                            // Let's force an error to automatically go directly to the refresh token stuff
-                            return $q.reject({ error: 'expired token', status: 401, config: config });
-                        }
-                    }
-
-                    return config;
-                },
-
-                requestError: function (rejection) {
-                    return $q.reject(rejection);
-                },
-
-                // optional method
-                response: function (response) {
-                    return response;
-                },
-
-                // optional method
-                responseError: function (rejection) {
-                    var deferred = $q.defer();
-
-                    switch (rejection.status) {
-                        case 401:
-                            var tubularHttp = $injector.get(tubularHttpName);
-                            var apiBaseUrl = tubularHttp.apiBaseUrl;
-
-                            if (
-                                rejection.config.url.substring(0, apiBaseUrl.length) === apiBaseUrl &&
-                                tubularHttp.tokenUrl !== rejection.config.url &&
-                                tubularHttp.useRefreshTokens &&
-                                tubularHttp.requireAuthentication &&
-                                tubularHttp.userData.refreshToken) {
-
-                                if (!authRequestRunning) {
-                                    authRequestRunning = $injector.get('$http')({
-                                        method: 'POST',
-                                        url: tubularHttp.refreshTokenUrl,
-                                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                                        data: 'grant_type=refresh_token&refresh_token=' + tubularHttp.userData.refreshToken
-                                    });
-                                }
-
-                                authRequestRunning.then(function (r) {
-                                    authRequestRunning = null;
-                                    tubularHttp.handleSuccessCallback(null, r.data);
-
-                                    if (tubularHttp.requireAuthentication && tubularHttp.isAuthenticated()) {
-                                        rejection.config.headers.Authorization = 'Bearer ' + tubularHttp.userData.bearerToken;
-                                        $injector.get('$http')(rejection.config).then(function (resp) {
-                                            deferred.resolve(resp);
-                                        }, function () {
-                                            deferred.reject(r);
-                                        });
-                                    }
-                                    else {
-                                        deferred.reject(rejection);
-                                    }
-                                }, function (response) {
-                                    authRequestRunning = null;
-                                    deferred.reject(response);
-                                    tubularHttp.removeAuthentication();
-                                    $injector.get('$state').go('/Login');
-                                    return;
-                                });
-                            }
-                            else {
-                                deferred.reject(rejection);
-                            }
-
-                            return deferred.promise;
-                        default:
-                            break;
-                    }
-
-                    deferred.reject(rejection);
-                    return deferred.promise;
-                }
-            };
-        }]);
 })(angular);
