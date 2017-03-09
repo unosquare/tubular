@@ -55,8 +55,8 @@
     "protractor": "^5.1.1",
     "selenium-webdriver": "^3.3.0",
     "protractor-jasmine2-html-reporter": "0.0.7",
-    "eslint": "3.15.0",
-    "eslint-plugin-angular": "1.6.1",
+    "eslint": "3.17.1",
+    "eslint-plugin-angular": "1.6.2",
     "eslint-plugin-jasmine": "2.2.0",
     "eslint-config-angular": "0.5.0",
     "gruntify-eslint": "3.1.0",
@@ -68,7 +68,7 @@
     "karma-coverage": "1.1.1",
     "karma-html-reporter": "0.2.7",
     "karma-chrome-launcher": "^2.0.0",
-    "karma-firefox-launcher": "1.0.0",
+    "karma-firefox-launcher": "1.0.1",
     "karma-ng-html2js-preprocessor": "1.0.0"
   }
 }
