@@ -1,4 +1,4 @@
-{% include "lib/macros.html" %}
+{% import "lib/macros.html" as lib %}
 {% block body %}
 <div class="page-header">
     <h1>{$ doc.name $} <small>directive in {$ doc.module $}</small></h1>
@@ -9,7 +9,7 @@
 
     {% if doc.params %}
     <h3>Directive's attributes</h3>
-    {$ paramTable(doc.params) $}
+    {$ lib.paramTable(doc.params) $}
     {% endif %}
 
     {% if doc.example %}
