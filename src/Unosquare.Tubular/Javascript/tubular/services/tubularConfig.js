@@ -49,12 +49,12 @@
                 for (var n in configObj) {
                     if (n != PLATFORM && configObj.hasOwnProperty(n)) {
                         if (angular.isObject(configObj[n])) {
-                            if (!angular.isDefined(platformObj[n])) {
+                            if (angular.isUndefined(platformObj[n])) {
                                 platformObj[n] = {};
                             }
                             addConfig(configObj[n], platformObj[n]);
 
-                        } else if (!angular.isDefined(platformObj[n])) {
+                        } else if (angular.isUndefined(platformObj[n])) {
                             platformObj[n] = null;
                         }
                     }
@@ -95,7 +95,7 @@
             }
 
             function stringObj(obj, str) {
-                str = str.split(".");
+                str = str.split('.');
                 for (var i = 0; i < str.length; i++) {
                     if (obj && angular.isDefined(obj[str[i]])) {
                         obj = obj[str[i]];
