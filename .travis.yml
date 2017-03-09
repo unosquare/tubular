@@ -1,18 +1,11 @@
-language: csharp
-solution: Unosquare.Tubular.Lib.sln
+language: node_js
+node_js:
+  - "node"
 notifications:
   slack: unolabs:cbusXPH6pBwZ35rVDzi4k4ve
 addons:
   firefox: "51.0"
-env:
-  - TRAVIS_NODE_VERSION="6"
-mono: latest
-sudo: required
 install:
-  - if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew cask install google-chrome; fi
-  - rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm && (cd ~/.nvm && git checkout `git describe --abbrev=0 --tags`) && source ~/.nvm/nvm.sh && nvm install $TRAVIS_NODE_VERSION
-  - nuget install NUnit.ConsoleRunner -OutputDirectory testrunner
-  - nuget restore Unosquare.Tubular.Lib.sln
   - npm install
   - bower update
 before_script:
@@ -20,8 +13,6 @@ before_script:
   - if [[ $TRAVIS_OS_NAME == "linux" ]]; then sh -e /etc/init.d/xvfb start; fi
 script:
   - grunt min
-  - xbuild /p:Configuration=Release Unosquare.Tubular.Lib.sln
-  - mono --debug ./testrunner/NUnit.ConsoleRunner.*/tools/nunit3-console.exe --process=Single ./test/Unosquare.Tubular.Tests/bin/Release/Unosquare.Tubular.Tests.dll
   - npm test
   - chmod +x ./publish.sh
   - ./publish.sh
