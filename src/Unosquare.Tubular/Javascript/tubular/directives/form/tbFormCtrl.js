@@ -6,19 +6,19 @@
         [
             '$scope',
             '$routeParams',
-            'tubularModel',
-            'tubularHttp',
             '$timeout',
             '$element',
             'tubularEditorService',
+            'tubularModel',
+            'tubularHttp',
             function (
                 $scope,
                 $routeParams,
-                TubularModel,
-                tubularHttp,
                 $timeout,
                 $element,
-                tubular) {
+                tubular,
+                TubularModel,
+                tubularHttp) {
                 // we need this to find the parent of a field
                 $scope.tubularDirective = 'tubular-form';
                 $scope.hasFieldsDefinitions = false;

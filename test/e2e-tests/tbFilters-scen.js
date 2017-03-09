@@ -79,9 +79,7 @@ describe('Tubular Filters', () => {
             element(by.tagName('tb-grid-pager')).$('.pagination-first a').click()
                 .then(() => {
                     element(by.tagName('tb-grid-pager')).$('.pagination-first a').click().then(() => {
-                        filterBtn.click().then(() => {
-                            clearBtn.click().then(loadData);
-                        });
+                        filterBtn.click().then(() => clearBtn.click().then(loadData));
                     });
                 });
         });
@@ -92,34 +90,28 @@ describe('Tubular Filters', () => {
 
             dataRows.getText()
                 // Get original text
-                .then(function (originalText) {
-                    originalData = originalText;
-                })
+                .then(originalText => originalData = originalText)
                 // Filter and click away
                 .then(() => {
                     filterBtn.click()
                         // Set filtering
-                        .then(function() {
-                            filterSelect.$('[value="string:Equals"]').click().then(function() {
-                                valueInput.sendKeys('Microsoft');
-                            });
+                        .then(() => {
+                            filterSelect.$('[value="string:Equals"]')
+                                .click()
+                                .then(() => valueInput.sendKeys('Microsoft'));
                         })
                         // Click another element
-                        .then(function() {
-                            element(by.tagName('tb-grid-pager')).$('li.pagination-first a').click();
-                        });
+                        .then(() => element(by.tagName('tb-grid-pager')).$('li.pagination-first a').click());
                 })
                 // Compare data again
                 .then(() => {
                     dataRows.getText()
-                        .then(function (modifiedText) {
-                            equalData = (originalData.length === modifiedText.length) && originalData.every(function(element, index) {
+                        .then(modifiedText => {
+                            equalData = (originalData.length === modifiedText.length) && originalData.every((element, index) => {
                                 return element === modifiedText[index];
                             });
                         })
-                        .then(() => {
-                            expect(equalData).toBe(true);
-                        });
+                        .then(() => expect(equalData).toBe(true));
                 });
         });
 
@@ -165,14 +157,12 @@ describe('Tubular Filters', () => {
             applyBtn.click()
                 .then(() => {
                     // Verify filtering
-                    dataRows.each(function (row) {
+                    dataRows.each(row => {
                         row.$$('td').get(1).getText()
-                            .then(function (customer) {
+                            .then(customer => {
                                 filterOk = filterOk && (customer === filteredCustomer);
                             });
-                    }).then(() => {
-                        expect(filterOk).toBe(true);
-                    });
+                    }).then(() => expect(filterOk).toBe(true));
                 });
         });
 
@@ -187,14 +177,12 @@ describe('Tubular Filters', () => {
             applyBtn.click()
                 .then(() => {
                     // Verify filtering
-                    dataRows.each(function (row) {
+                    dataRows.each(row => {
                         row.$$('td').get(1).getText()
-                            .then(function (customer) {
+                            .then(customer => {
                                 filterOk = filterOk && (customer !== notShowingCustomer);
                             });
-                    }).then(() => {
-                        expect(filterOk).toBe(true);
-                    });
+                    }).then(() => expect(filterOk).toBe(true));
                 });
         });
 
@@ -209,14 +197,12 @@ describe('Tubular Filters', () => {
             applyBtn.click()
                 .then(() => {
                     // Verify filtering
-                    dataRows.each(function (row) {
+                    dataRows.each(row => {
                         row.$$('td').get(1).getText()
-                            .then(function (customer) {
+                            .then(customer => {
                                 filterOk = filterOk && (customer.indexOf(containedString) !== -1);
                             });
-                    }).then(() => {
-                        expect(filterOk).toBe(true);
-                    });
+                    }).then(() => expect(filterOk).toBe(true));
                 });
         });
 
@@ -231,14 +217,12 @@ describe('Tubular Filters', () => {
             applyBtn.click()
                 .then(() => {
                     // Verify filtering
-                    dataRows.each(function (row) {
+                    dataRows.each(row => {
                         row.$$('td').get(1).getText()
-                            .then(function (customer) {
+                            .then(customer => {
                                 filterOk = filterOk && (customer.indexOf(notContainedString) === -1);
                             });
-                    }).then(() => {
-                        expect(filterOk).toBe(true);
-                    });
+                    }).then(() => expect(filterOk).toBe(true));
                 });
         });
 
@@ -253,9 +237,9 @@ describe('Tubular Filters', () => {
             applyBtn.click()
                 .then(() => {
                     // Verify filtering
-                    dataRows.each(function (row) {
+                    dataRows.each(row => {
                         row.$$('td').get(1).getText()
-                            .then(function (customer) {
+                            .then(customer => {
                                 filterOk = filterOk && (customer.indexOf(startsWithString) === 0);
                             });
                     }).then(() => {
@@ -275,9 +259,9 @@ describe('Tubular Filters', () => {
             applyBtn.click()
                 .then(() => {
                     // Verify filtering
-                    dataRows.each(function (row) {
+                    dataRows.each(row => {
                         row.$$('td').get(1).getText()
-                            .then(function (customer) {
+                            .then(customer => {
                                 filterOk = filterOk && (customer.indexOf(notStartsWithString) !== 0);
                             });
                     }).then(() => {
@@ -297,9 +281,9 @@ describe('Tubular Filters', () => {
             applyBtn.click()
                 .then(() => {
                     // Verify filtering
-                    dataRows.each(function (row) {
+                    dataRows.each(row => {
                         row.$$('td').get(1).getText()
-                            .then(function (customer) {
+                            .then(customer => {
 
                                 filterOk = filterOk &&
                                     (customer.indexOf(endsWithString) === (customer.length - endsWithString.length) + 1);
@@ -321,9 +305,9 @@ describe('Tubular Filters', () => {
             applyBtn.click()
                 .then(() => {
                     // Verify filtering
-                    dataRows.each(function (row) {
+                    dataRows.each(row => {
                         row.$$('td').get(1).getText()
-                            .then(function (customer) {
+                            .then(customer => {
 
                                 filterOk = filterOk &&
                                     (customer.indexOf(endsWithString) !== (customer.length - endsWithString.length) + 1);
@@ -354,29 +338,29 @@ describe('Tubular Filters', () => {
             loadData().then(setPagination);
         });
 
-         afterAll(() => {
-             // Clear filters
-             element(by.tagName('tb-grid-pager')).$('.pagination-first a').click()
-                 .then(() => {
-                     element(by.tagName('tb-grid-pager')).$('.pagination-first a').click().then(() => {
-                         filterBtn.click().then(() => {
-                             clearBtn.click().then(loadData);
-                         });
-                     });
-                 });
-         });
+        afterAll(() => {
+            // Clear filters
+            element(by.tagName('tb-grid-pager')).$('.pagination-first a').click()
+                .then(() => {
+                    element(by.tagName('tb-grid-pager')).$('.pagination-first a').click().then(() => {
+                        filterBtn.click().then(() => {
+                            clearBtn.click().then(loadData);
+                        });
+                    });
+                });
+        });
 
-         beforeEach(() => {
-             // Clear filters
-             element(by.tagName('tb-grid-pager')).$('.pagination-first a').click()
-                 .then(() => {
-                     element(by.tagName('tb-grid-pager')).$('.pagination-first a').click().then(() => {
-                         filterBtn.click().then(() => {
-                             clearBtn.click().then(loadData);
-                         });
-                     });
-                 });
-         });
+        beforeEach(() => {
+            // Clear filters
+            element(by.tagName('tb-grid-pager')).$('.pagination-first a').click()
+                .then(() => {
+                    element(by.tagName('tb-grid-pager')).$('.pagination-first a').click().then(() => {
+                        filterBtn.click().then(() => {
+                            clearBtn.click().then(loadData);
+                        });
+                    });
+                });
+        });
 
         it('should cancel filtering when clicking outside filter-popover', () => {
             var originalData;
@@ -391,12 +375,12 @@ describe('Tubular Filters', () => {
                 .then(() => {
                     filterBtn.click()
                         // Set filtering
-                        .then(function() {
+                        .then(() => {
                             filterSelect.$('[value="string:Gt"]').click();
                             valueInput.sendKeys('02/05/2016');
                         })
                         // Click another element
-                        .then(function() {
+                        .then(() => {
                             element(by.tagName('tb-grid-pager')).$('li.pagination-first a').click();
                         });
                 })
@@ -492,7 +476,7 @@ describe('Tubular Filters', () => {
             applyBtn.click()
                 .then(() => {
                     // Verify filtering
-                    dataRows.each(function (row) {
+                    dataRows.each(row => {
                         row.$$('td').get(2).getText()
                             .then(function (date) {
                                 filterOk = filterOk && (filterMatcher.test(date));
@@ -514,7 +498,7 @@ describe('Tubular Filters', () => {
             applyBtn.click()
                 .then(() => {
                     // Verify filtering
-                    dataRows.each(function (row) {
+                    dataRows.each(row => {
                         row.$$('td').get(2).getText()
                             .then(function (date) {
                                 filterOk = filterOk && !(filterMatcher.test(date));
@@ -523,7 +507,7 @@ describe('Tubular Filters', () => {
                         expect(filterOk).toBe(true);
                     });
                 });
-        });  
+        });
 
         it('should correctly filter data for the "Between" filtering option', () => {
             var filterOk = true;
@@ -539,7 +523,7 @@ describe('Tubular Filters', () => {
                 .then(() => {
                     // Verify filtering
                     loadData().then(() => {
-                        dataRows.each(function (row) {
+                        dataRows.each(row => {
                             row.$$('td').get(2).getText()
                                 .then(function (date) {
                                     filterOk = filterOk && (minDate <= new Date(date) <= maxDate);
@@ -553,7 +537,7 @@ describe('Tubular Filters', () => {
 
         it('should correctly filter data for the "Greater-or-equal" filtering option', () => {
             var filterOk = true;
-            
+
             // Set filter and apply it
             filterBtn.click();
             filterSelect.$('[value="string:Gte"]').click();
@@ -562,7 +546,7 @@ describe('Tubular Filters', () => {
                 .then(() => {
                     // Verify filtering
                     loadData().then(() => {
-                        dataRows.each(function (row) {
+                        dataRows.each(row => {
                             row.$$('td').get(2).getText()
                                 .then(function (date) {
                                     filterOk = filterOk && (new Date(date) >= referenceDate);
@@ -576,7 +560,7 @@ describe('Tubular Filters', () => {
 
         it('should correctly filter data for the "Greater" filtering option', () => {
             var filterOk = true;
-            
+
             // Set filter and apply it
             filterBtn.click();
             filterSelect.$('[value="string:Gt"]').click();
@@ -585,7 +569,7 @@ describe('Tubular Filters', () => {
                 .then(() => {
                     // Verify filtering
                     loadData().then(() => {
-                        dataRows.each(function (row) {
+                        dataRows.each(row => {
                             row.$$('td').get(2).getText()
                                 .then(function (date) {
                                     filterOk = filterOk && (new Date(date) > referenceDate);
@@ -599,7 +583,7 @@ describe('Tubular Filters', () => {
 
         it('should correctly filter data for the "Less-or-equal" filtering option', () => {
             var filterOk = true;
-            
+
             // Set filter and apply it
             filterBtn.click();
             filterSelect.$('[value="string:Lte"]').click();
@@ -608,7 +592,7 @@ describe('Tubular Filters', () => {
                 .then(() => {
                     // Verify filtering
                     loadData().then(() => {
-                        dataRows.each(function (row) {
+                        dataRows.each(row => {
                             row.$$('td').get(2).getText()
                                 .then(function (date) {
                                     filterOk = filterOk && (new Date(date) <= referenceDate);
@@ -622,7 +606,7 @@ describe('Tubular Filters', () => {
 
         it('should correctly filter data for the "Less" filtering option', () => {
             var filterOk = true;
-            
+
             // Set filter and apply it
             filterBtn.click();
             filterSelect.$('[value="string:Lt"]').click();
@@ -631,9 +615,9 @@ describe('Tubular Filters', () => {
                 .then(() => {
                     // Verify filtering
                     loadData().then(() => {
-                        dataRows.each(function (row) {
+                        dataRows.each(row => {
                             row.$$('td').get(2).getText()
-                                .then(function (date) {
+                                .then(date => {
                                     filterOk = filterOk && (new Date(date) < referenceDate);
                                 });
                         });
@@ -697,11 +681,11 @@ describe('Tubular Filters', () => {
                 .then(() => {
                     filterBtn.click()
                         // Set filtering
-                        .then(function() {
+                        .then(() => {
                             filterSelect.$$('option').first().click();
                         })
                         // Click another element
-                        .then(function() {
+                        .then(() => {
                             element(by.tagName('tb-grid-pager')).$('li.pagination-first a').click();
                         });
                 })
@@ -740,34 +724,29 @@ describe('Tubular Filters', () => {
 
             filterBtn.click();
 
-            filterSelect.$$('option').getText().then(function (text) {
-                options = text;
-            }).then(() => {
-                    options.forEach(function(option, index) {
-                        filterSelect.$$('option').get(index).click().then(function() {
-                                applyBtn.click();
-                                loadData().then(function() {
-
-                                    dataRows.each(function(row) {
-                                        row.$$('td').get(3).getText().then(function(data) {
-                                            filterOk = filterOk && (data === option);
-                                        });
-                                    });
-
-                                });
-                            })
-                            .then(function() {
-                                filterBtn.click().then(function() {
-                                    clearBtn.click().then(function() {
-                                        loadData().then(filterBtn.click);
-                                    });
+            filterSelect.$$('option').getText()
+                .then(text => options = text)
+                .then(() => {
+                options.forEach(function (option, index) {
+                    filterSelect.$$('option').get(index).click().then(() => {
+                        applyBtn.click();
+                        loadData().then(() => {
+                            dataRows.each(function (row) {
+                                row.$$('td').get(3).getText().then(data => {
+                                    filterOk = filterOk && (data === option);
                                 });
                             });
-                    });
-                })
-                .then(() => {
-                    expect(filterOk).toBe(true);
+
+                        });
+                    })
+                        .then(() => {
+                            filterBtn.click().then(() => {
+                                clearBtn.click().then(() => loadData().then(filterBtn.click));
+                            });
+                        });
                 });
+            })
+                .then(() => expect(filterOk).toBe(true));
         });
 
     });
@@ -787,7 +766,7 @@ describe('Tubular Filters', () => {
 
         afterAll(() => {
             // Clear filters
-            tbTextSearchClearBtn.isDisplayed().then(function (displayed) {
+            tbTextSearchClearBtn.isDisplayed().then(displayed => {
                 if (displayed) {
                     tbTextSearchClearBtn.click().then(loadData);
                 }
@@ -796,7 +775,7 @@ describe('Tubular Filters', () => {
 
         beforeEach(() => {
             // Clear filters
-            tbTextSearchClearBtn.isDisplayed().then(function (displayed) {
+            tbTextSearchClearBtn.isDisplayed().then(displayed => {
                 if (displayed) {
                     tbTextSearchClearBtn.click().then(loadData);
                 }
@@ -815,14 +794,12 @@ describe('Tubular Filters', () => {
             tbTextSearchInput.sendKeys('cr');
 
             // Expect rows not to be filtered
-            dataRows.each(function (row) {
+            dataRows.each(row => {
                 row.$$('td').get(1).getText()
-                    .then(function (customer) {
+                    .then(customer => {
                         filterOk = filterOk && (customer === filteredCustomer);
                     });
-            }).then(() => {
-                expect(filterOk).toBe(false);
-            }).then(() => {
+            }).then(() => expect(filterOk).toBe(false)).then(() => {
                 filterOk = true;
 
                 // Send 3rd char input
@@ -830,14 +807,12 @@ describe('Tubular Filters', () => {
 
                 // Verify filtering
                 loadData().then(() => {
-                    dataRows.each(function (row) {
+                    dataRows.each(row => {
                         row.$$('td').get(1).getText()
-                            .then(function (customer) {
+                            .then(customer => {
                                 filterOk = filterOk && (customer === filteredCustomer);
                             });
-                    }).then(() => {
-                        expect(filterOk).toBe(true);
-                    });
+                    }).then(() => expect(filterOk).toBe(true));
                 });
             });
         });
@@ -850,14 +825,14 @@ describe('Tubular Filters', () => {
             tbTextSearchInput.sendKeys('lo');
 
             // Expect rows not to be filtered
-            dataRows.each(function (row) {
+            dataRows.each(row => {
                 row.$$('td').get(3).getText()
-                    .then(function (customer) {
+                    .then(customer => {
                         filterOk = filterOk && (customer === filteredCity);
                     });
-            }).then(() => {
-                expect(filterOk).toBe(false);
-            }).then(() => {
+            })
+                .then(() => expect(filterOk).toBe(false))
+                .then(() => {
                 filterOk = true;
 
                 // Send 3rd char input
@@ -865,23 +840,17 @@ describe('Tubular Filters', () => {
 
                 // Verify filtering
                 loadData().then(() => {
-                    dataRows.each(function (row) {
+                    dataRows.each(row => {
                         row.$$('td').get(3).getText()
-                            .then(function (customer) {
-                                filterOk = filterOk && (customer === filteredCity);
-                            });
-                    }).then(() => {
-                        expect(filterOk).toBe(true);
-                    });
+                            .then(customer => filterOk = filterOk && (customer === filteredCity));
+                    }).then(() => expect(filterOk).toBe(true));
                 });
             });
         });
 
         it('should show clear button when there is inputted text only', () => {
             expect(tbTextSearchClearBtn.isDisplayed()).toBe(false);
-            tbTextSearchInput.sendKeys('1').then(() => {
-                expect(tbTextSearchClearBtn.isDisplayed()).toBe(true);
-            });
+            tbTextSearchInput.sendKeys('1').then(() => expect(tbTextSearchClearBtn.isDisplayed()).toBe(true));
         });
 
         it('should clear filtering when clicking clear button', () => {
@@ -892,14 +861,10 @@ describe('Tubular Filters', () => {
 
             // Verify filtering
             loadData().then(() => {
-                dataRows.count().then(function (dataCount) {
-                    filteredDataCount = dataCount;
-                })
+                dataRows.count().then(dataCount => filteredDataCount = dataCount)
                     .then(() => {
                         tbTextSearchClearBtn.click();
-                        loadData().then(() => {
-                            expect(dataRows.count()).not.toBe(filteredDataCount);
-                        });
+                        loadData().then(() => expect(dataRows.count()).not.toBe(filteredDataCount));
                     });
             });
         });

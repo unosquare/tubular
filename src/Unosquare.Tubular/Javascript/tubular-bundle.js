@@ -49,7 +49,11 @@
          * `numberorcurrency` is a hack to hold `currency` and `number` in a single filter.
          */
         .filter('numberorcurrency', [
-            'numberFilter', 'currencyFilter', function (numberFilter, currencyFilter) {
+            'currencyFilter',
+            'numberFilter',
+            function (
+                numberFilter,
+                currencyFilter) {
                 return function (input, format, symbol, fractionSize) {
                     fractionSize = fractionSize || 2;
 
@@ -738,19 +742,19 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
         [
             '$scope',
             '$routeParams',
-            'tubularModel',
-            'tubularHttp',
             '$timeout',
             '$element',
             'tubularEditorService',
+            'tubularModel',
+            'tubularHttp',
             function (
                 $scope,
                 $routeParams,
-                TubularModel,
-                tubularHttp,
                 $timeout,
                 $element,
-                tubular) {
+                tubular,
+                TubularModel,
+                tubularHttp) {
                 // we need this to find the parent of a field
                 $scope.tubularDirective = 'tubular-form';
                 $scope.hasFieldsDefinitions = false;
@@ -4851,7 +4855,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     tokenUrl: PLATFORM,
                     refreshTokenUrl: PLATFORM,
                     enableRefreshTokens: PLATFORM,
-                    authenticateRequests: PLATFORM,
+                    requireAuthentication: PLATFORM,
                     baseUrl: PLATFORM
                 },
                 platform: {}
@@ -4866,7 +4870,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     tokenUrl: '/api/token',
                     refreshTokenUrl: '/api/token',
                     enableRefreshTokens: false,
-                    authenticateRequests: true,
+                    requireAuthentication: true,
                     baseUrl: '/api'
                 }
             });
@@ -4887,12 +4891,12 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 for (var n in configObj) {
                     if (n != PLATFORM && configObj.hasOwnProperty(n)) {
                         if (angular.isObject(configObj[n])) {
-                            if (!isDefined(platformObj[n])) {
+                            if (angular.isUndefined(platformObj[n])) {
                                 platformObj[n] = {};
                             }
                             addConfig(configObj[n], platformObj[n]);
 
-                        } else if (!isDefined(platformObj[n])) {
+                        } else if (angular.isUndefined(platformObj[n])) {
                             platformObj[n] = null;
                         }
                     }
@@ -4933,7 +4937,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             }
 
             function stringObj(obj, str) {
-                str = str.split(".");
+                str = str.split('.');
                 for (var i = 0; i < str.length; i++) {
                     if (obj && angular.isDefined(obj[str[i]])) {
                         obj = obj[str[i]];
