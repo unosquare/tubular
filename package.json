@@ -24,7 +24,7 @@
   "devDependencies": {
     "canonical-path": "0.0.2",
     "dgeni": "^0.4.2",
-    "dgeni-packages": "0.12.0",
+    "dgeni-packages": "0.16.10",
     "gulp": "^3.9.1"
   }
 }
