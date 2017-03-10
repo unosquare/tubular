@@ -3,21 +3,23 @@
 describe('Module: tubular.services', function () {
 
     describe('Interceptor: Auth', function () {
-        var AuthInterceptor, $httpBackend, tubularHttp;
+        var AuthInterceptor, $httpBackend, tubularHttp, tubularConfig;
 
         beforeEach(function () {
             module('tubular.services');
 
-            inject(function (_tubularAuthInterceptor_, _$httpBackend_, _tubularHttp_) {
+            inject(function (_tubularAuthInterceptor_, _$httpBackend_, _tubularHttp_, _tubularConfig_) {
                 AuthInterceptor = _tubularAuthInterceptor_;
                 $httpBackend = _$httpBackend_;
                 tubularHttp = _tubularHttp_;
+                tubularConfig = _tubularConfig_;
             });
         });
 
         it('should be defined', function () {
             expect(AuthInterceptor).toBeDefined();
             expect($httpBackend).toBeDefined();
+            expect(tubularConfig).toBeDefined();
             expect(AuthInterceptor.request).toBeDefined();
             expect(AuthInterceptor.requestError).toBeDefined();
             expect(AuthInterceptor.response).toBeDefined();
@@ -40,7 +42,7 @@ describe('Module: tubular.services', function () {
                 url: '/api/dummy'
             };
 
-            tubularHttp.setRequireAuthentication(true);
+            tubularConfig.webApi.requireAuthentication(true);
             tubularHttp.userData.bearerToken = "yeah";
 
             expect(AuthInterceptor.request(config).headers).toBeDefined();
@@ -61,8 +63,7 @@ describe('Module: tubular.services', function () {
                 status: 401
             };
 
-            tubularHttp.setRequireAuthentication(true);
-            expect(tubularHttp.useRefreshTokens).toBe(false);
+            expect(tubularConfig.webApi.enableRefreshTokens()).toBe(false);
 
             tubularHttp.userData.bearerToken = "newOne";
             expect(rejection.triedRefreshTokens).toBeUndefined();
@@ -92,16 +93,15 @@ describe('Module: tubular.services', function () {
                 status: 401
             };
 
-            tubularHttp.setRequireAuthentication(true);
-            expect(tubularHttp.useRefreshTokens).toBe(false);
+            expect(tubularConfig.webApi.enableRefreshTokens()).toBe(false);
 
-            tubularHttp.useRefreshTokens = true;
+            tubularConfig.webApi.enableRefreshTokens(true);
             tubularHttp.userData.refreshToken = 'original_refresh';
 
             tubularHttp.userData.bearerToken = "original_bearer";
             expect(rejection.triedRefreshTokens).toBeUndefined();
 
-            $httpBackend.expectPOST(tubularHttp.refreshTokenUrl, data => {
+            $httpBackend.expectPOST(tubularConfig.webApi.refreshTokenUrl(), data => {
                 return data === 'grant_type=refresh_token&refresh_token=' + tubularHttp.userData.refreshToken;
             }).respond(200, { access_token: 'modified_bearer', refresh_token: 'modified_refresh' });
 

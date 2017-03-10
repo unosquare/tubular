@@ -20,6 +20,7 @@
             'translateFilter',
             '$log',
             '$document',
+            'tubularConfig',
             function (
                 $http,
                 $timeout,
@@ -27,7 +28,8 @@
                 localStorageService,
                 translateFilter,
                 $log,
-                $document) {
+                $document,
+                tubularConfig) {
                 var me = this;
 
                 function init() {
@@ -92,16 +94,6 @@
                     return isAuthenticationExpired(me.userData.expirationDate);
                 };
 
-                me.useRefreshTokens = false;
-                me.requireAuthentication = true;
-                me.refreshTokenUrl = me.tokenUrl = '/api/token';
-                me.apiBaseUrl = '/api';
-
-                me.setRequireAuthentication = function (val) { me.requireAuthentication = val; };
-                me.setTokenUrl = function (val) { me.tokenUrl = val; };
-                me.setRefreshTokenUrl = function (val) { me.refreshTokenUrl = val; };
-                me.setApiBaseUrl = function (val) { me.apiBaseUrl = val; };
-
                 me.isAuthenticated = function () {
                     if (!me.userData.isAuthenticated || isAuthenticationExpired(me.userData.expirationDate)) {
                         try {
@@ -125,7 +117,7 @@
 
                     $http({
                         method: 'POST',
-                        url: me.tokenUrl,
+                        url: tubularConfig.webApi.tokenUrl(),
                         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                         data: 'grant_type=password&username=' + encodeURIComponent(username) + '&password=' + encodeURIComponent(password)
                     }).then(function (response) {
@@ -215,15 +207,15 @@
                     var cancel = getCancel(canceller);
 
                     if (angular.isUndefined(request.requireAuthentication)) {
-                        request.requireAuthentication = me.requireAuthentication;
+                        request.requireAuthentication = tubularConfig.webApi.requireAuthentication();
                     }
 
                     if (angular.isString(request.requireAuthentication)) {
                         request.requireAuthentication = request.requireAuthentication === 'true';
                     }
 
-                    if (!me.useRefreshTokens) {
-                        if (request.requireAuthentication && me.isAuthenticated() === false) {
+                    if (!tubularConfig.webApi.enableRefreshTokens()) {
+                        if (tubularConfig.webApi.requireAuthentication() && me.isAuthenticated() === false) {
 
                             return {
                                 promise: $q(function (resolve) {
@@ -266,8 +258,8 @@
                 };
 
                 me.get = function (url, params) {
-                    if (!me.useRefreshTokens) {
-                        if (me.requireAuthentication && !me.isAuthenticated()) {
+                    if (!tubularConfig.webApi.enableRefreshTokens()) {
+                        if (tubularConfig.webApi.requireAuthentication() && !me.isAuthenticated()) {
                             var canceller = $q.defer();
 
                             // Return empty dataset
@@ -288,8 +280,8 @@
                 };
 
                 me.delete = function (url) {
-                    if (!me.useRefreshTokens) {
-                        if (me.requireAuthentication && !me.isAuthenticated()) {
+                    if (!tubularConfig.webApi.enableRefreshTokens()) {
+                        if (tubularConfig.webApi.requireAuthentication() && !me.isAuthenticated()) {
                             var canceller = $q.defer();
 
                             // Return empty dataset
@@ -309,8 +301,8 @@
                 };
 
                 me.post = function (url, data) {
-                    if (!me.useRefreshTokens) {
-                        if (me.requireAuthentication && !me.isAuthenticated()) {
+                    if (!tubularConfig.webApi.enableRefreshTokens()) {
+                        if (tubularConfig.webApi.requireAuthentication() && !me.isAuthenticated()) {
                             var canceller = $q.defer();
 
                             // Return empty dataset
@@ -340,8 +332,8 @@
                     var canceller = $q.defer();
                     var cancel = getCancel(canceller);
 
-                    if (!me.useRefreshTokens) {
-                        if (me.requireAuthentication && !me.isAuthenticated()) {
+                    if (!tubularConfig.webApi.enableRefreshTokens()) {
+                        if (tubularConfig.webApi.requireAuthentication() && !me.isAuthenticated()) {
                             // Return empty dataset
                             return {
                                 promise: $q(function (resolve) {
@@ -367,8 +359,8 @@
                 };
 
                 me.put = function (url, data) {
-                    if (!me.useRefreshTokens) {
-                        if (me.requireAuthentication && !me.isAuthenticated()) {
+                    if (!tubularConfig.webApi.enableRefreshTokens()) {
+                        if (tubularConfig.webApi.requireAuthentication() && !me.isAuthenticated()) {
                             var canceller = $q.defer();
 
                             // Return empty dataset

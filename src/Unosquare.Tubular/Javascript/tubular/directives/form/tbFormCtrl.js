@@ -11,6 +11,7 @@
             '$timeout',
             '$element',
             'tubularEditorService',
+            'tubularConfig',
             function (
                 $scope,
                 $routeParams,
@@ -18,7 +19,8 @@
                 tubularHttp,
                 $timeout,
                 $element,
-                tubular) {
+                tubular,
+                tubularConfig) {
                 // we need this to find the parent of a field
                 $scope.tubularDirective = 'tubular-form';
                 $scope.hasFieldsDefinitions = false;
@@ -37,11 +39,9 @@
                 };
 
                 // Setup require authentication
-                $ctrl.requireAuthentication = angular.isUndefined($scope.requireAuthentication)
-                    ? true
-                    : $scope.requireAuthentication;
-                tubularHttp.setRequireAuthentication($ctrl.requireAuthentication);
-
+                $ctrl.requireAuthentication = $ctrl.requireAuthentication ? ($ctrl.requireAuthentication === 'true') : true;
+                tubularConfig.webApi.requireAuthentication($ctrl.requireAuthentication);
+                
                 $scope.$watch('hasFieldsDefinitions',
                     function(newVal) {
                         if (newVal !== true) {
