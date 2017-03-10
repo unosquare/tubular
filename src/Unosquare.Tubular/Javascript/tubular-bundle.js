@@ -49,7 +49,11 @@
          * `numberorcurrency` is a hack to hold `currency` and `number` in a single filter.
          */
         .filter('numberorcurrency', [
-            'numberFilter', 'currencyFilter', function (numberFilter, currencyFilter) {
+            'currencyFilter',
+            'numberFilter',
+            function (
+                numberFilter,
+                currencyFilter) {
                 return function (input, format, symbol, fractionSize) {
                     fractionSize = fractionSize || 2;
 
@@ -738,21 +742,19 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
         [
             '$scope',
             '$routeParams',
-            'tubularModel',
-            'tubularHttp',
             '$timeout',
             '$element',
             'tubularEditorService',
-            'tubularConfig',
+            'tubularModel',
+            'tubularHttp',
             function (
                 $scope,
                 $routeParams,
-                TubularModel,
-                tubularHttp,
                 $timeout,
                 $element,
                 tubular,
-                tubularConfig) {
+                TubularModel,
+                tubularHttp) {
                 // we need this to find the parent of a field
                 $scope.tubularDirective = 'tubular-form';
                 $scope.hasFieldsDefinitions = false;
@@ -771,9 +773,11 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 };
 
                 // Setup require authentication
-                $ctrl.requireAuthentication = $ctrl.requireAuthentication ? ($ctrl.requireAuthentication === 'true') : true;
-                tubularConfig.webApi.requireAuthentication($ctrl.requireAuthentication);
-                
+                $ctrl.requireAuthentication = angular.isUndefined($scope.requireAuthentication)
+                    ? true
+                    : $scope.requireAuthentication;
+                tubularHttp.setRequireAuthentication($ctrl.requireAuthentication);
+
                 $scope.$watch('hasFieldsDefinitions',
                     function(newVal) {
                         if (newVal !== true) {
@@ -1076,15 +1080,13 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             'tubularModel',
             'tubularHttp',
             '$routeParams',
-            'tubularConfig',
             function (
                 $scope,
                 localStorageService,
                 tubularPopupService,
                 TubularModel,
                 tubularHttp,
-                $routeParams,
-                tubularConfig) {
+                $routeParams) {
                 var $ctrl = this;
 
                 $ctrl.$onInit = function() {
@@ -1120,8 +1122,8 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     $ctrl.isEmpty = false;
                     $ctrl.dataService = tubularHttp.getDataService($ctrl.dataServiceName);
                     $ctrl.tempRow = new TubularModel($scope, $ctrl, {}, $ctrl.dataService);
-                    $ctrl.requireAuthentication = $ctrl.requireAuthentication ? ($ctrl.requireAuthentication === 'true') : true;
-                    tubularConfig.webApi.requireAuthentication($ctrl.requireAuthentication);
+                    $ctrl.requireAuthentication = $ctrl.requireAuthentication || true;
+                    tubularHttp.setRequireAuthentication($ctrl.requireAuthentication);
                     $ctrl.editorMode = $ctrl.editorMode || 'none';
                     $ctrl.canSaveState = false;
                     $ctrl.showLoading = angular.isUndefined($ctrl.showLoading) ? true : $ctrl.showLoading;
@@ -3100,7 +3102,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
      * @returns {Object} A httpInterceptor
      */
     angular.module('tubular.services')
-        .factory('tubularAuthInterceptor', ['$q', '$injector', 'tubularConfig', function ($q, $injector, tubularConfig) {
+        .factory('tubularAuthInterceptor', ['$q', '$injector', function ($q, $injector) {
 
             var authRequestRunning = null;
             var tubularHttpName = 'tubularHttp';
@@ -3117,22 +3119,21 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             function request(config) {
                 // Get the service here because otherwise, a circular dependency injection will be detected
                 var tubularHttp = $injector.get(tubularHttpName);
-                var webApiSettings = tubularConfig.webApi;
-                var apiBaseUrl = webApiSettings.baseUrl();
+                var apiBaseUrl = tubularHttp.apiBaseUrl;
 
                 config.headers = config.headers || {};
 
                 // Handle requests going to API
                 if (config.url.substring(0, apiBaseUrl.length) === apiBaseUrl &&
-                    webApiSettings.tokenUrl() !== config.url &&
-                    webApiSettings.requireAuthentication() &&
+                    tubularHttp.tokenUrl !== config.url &&
+                    tubularHttp.requireAuthentication &&
                     tubularHttp.userData.bearerToken) {
 
                     config.headers.Authorization = 'Bearer ' + tubularHttp.userData.bearerToken;
 
                     // When using refresh tokens and bearer token has expired,
                     // avoid the round trip on go directly to try refreshing the token
-                    if (webApiSettings.enableRefreshTokens() && tubularHttp.userData.refreshToken
+                    if (tubularHttp.useRefreshTokens && tubularHttp.userData.refreshToken
                         && tubularHttp.isBearerTokenExpired()) {
                         return $q.reject({ error: 'expired token', status: 401, config: config });
                     }
@@ -3155,22 +3156,21 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 switch (rejection.status) {
                     case 401:
                         var tubularHttp = $injector.get(tubularHttpName);
-                        var webApiSettings = tubularConfig.webApi;
-                        var apiBaseUrl = webApiSettings.baseUrl();
+                        var apiBaseUrl = tubularHttp.apiBaseUrl;
 
                         if (
                             rejection.config.url.substring(0, apiBaseUrl.length) === apiBaseUrl &&
-                            webApiSettings.tokenUrl() !== rejection.config.url &&
-                            webApiSettings.enableRefreshTokens() &&
-                            webApiSettings.requireAuthentication() &&
+                            tubularHttp.tokenUrl !== rejection.config.url &&
+                            tubularHttp.useRefreshTokens &&
+                            tubularHttp.requireAuthentication &&
                             tubularHttp.userData.refreshToken) {
 
                             rejection.triedRefreshTokens = true;
 
-                            if (!authRequestRunning) {
+                            if (!authRequestRunning) {    
                                 authRequestRunning = $injector.get('$http')({
                                     method: 'POST',
-                                    url: webApiSettings.refreshTokenUrl(),
+                                    url: tubularHttp.refreshTokenUrl,
                                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                                     data: 'grant_type=refresh_token&refresh_token=' + tubularHttp.userData.refreshToken
                                 });
@@ -3180,7 +3180,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                                 authRequestRunning = null;
                                 tubularHttp.handleSuccessCallback(null, r.data);
 
-                                if (webApiSettings.requireAuthentication() && tubularHttp.isAuthenticated()) {
+                                if (tubularHttp.requireAuthentication && tubularHttp.isAuthenticated()) {
                                     rejection.config.headers.Authorization = 'Bearer ' + tubularHttp.userData.bearerToken;
                                     $injector.get('$http')(rejection.config).then(function (resp) {
                                         deferred.resolve(resp);
@@ -3483,7 +3483,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             'translateFilter',
             '$log',
             '$document',
-            'tubularConfig',
             function (
                 $http,
                 $timeout,
@@ -3491,8 +3490,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 localStorageService,
                 translateFilter,
                 $log,
-                $document,
-                tubularConfig) {
+                $document) {
                 var me = this;
 
                 function init() {
@@ -3557,6 +3555,16 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     return isAuthenticationExpired(me.userData.expirationDate);
                 };
 
+                me.useRefreshTokens = false;
+                me.requireAuthentication = true;
+                me.refreshTokenUrl = me.tokenUrl = '/api/token';
+                me.apiBaseUrl = '/api';
+
+                me.setRequireAuthentication = function (val) { me.requireAuthentication = val; };
+                me.setTokenUrl = function (val) { me.tokenUrl = val; };
+                me.setRefreshTokenUrl = function (val) { me.refreshTokenUrl = val; };
+                me.setApiBaseUrl = function (val) { me.apiBaseUrl = val; };
+
                 me.isAuthenticated = function () {
                     if (!me.userData.isAuthenticated || isAuthenticationExpired(me.userData.expirationDate)) {
                         try {
@@ -3580,7 +3588,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
                     $http({
                         method: 'POST',
-                        url: tubularConfig.webApi.tokenUrl(),
+                        url: me.tokenUrl,
                         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                         data: 'grant_type=password&username=' + encodeURIComponent(username) + '&password=' + encodeURIComponent(password)
                     }).then(function (response) {
@@ -3670,15 +3678,15 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     var cancel = getCancel(canceller);
 
                     if (angular.isUndefined(request.requireAuthentication)) {
-                        request.requireAuthentication = tubularConfig.webApi.requireAuthentication();
+                        request.requireAuthentication = me.requireAuthentication;
                     }
 
                     if (angular.isString(request.requireAuthentication)) {
                         request.requireAuthentication = request.requireAuthentication === 'true';
                     }
 
-                    if (!tubularConfig.webApi.enableRefreshTokens()) {
-                        if (tubularConfig.webApi.requireAuthentication() && me.isAuthenticated() === false) {
+                    if (!me.useRefreshTokens) {
+                        if (request.requireAuthentication && me.isAuthenticated() === false) {
 
                             return {
                                 promise: $q(function (resolve) {
@@ -3721,8 +3729,8 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 };
 
                 me.get = function (url, params) {
-                    if (!tubularConfig.webApi.enableRefreshTokens()) {
-                        if (tubularConfig.webApi.requireAuthentication() && !me.isAuthenticated()) {
+                    if (!me.useRefreshTokens) {
+                        if (me.requireAuthentication && !me.isAuthenticated()) {
                             var canceller = $q.defer();
 
                             // Return empty dataset
@@ -3743,8 +3751,8 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 };
 
                 me.delete = function (url) {
-                    if (!tubularConfig.webApi.enableRefreshTokens()) {
-                        if (tubularConfig.webApi.requireAuthentication() && !me.isAuthenticated()) {
+                    if (!me.useRefreshTokens) {
+                        if (me.requireAuthentication && !me.isAuthenticated()) {
                             var canceller = $q.defer();
 
                             // Return empty dataset
@@ -3764,8 +3772,8 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 };
 
                 me.post = function (url, data) {
-                    if (!tubularConfig.webApi.enableRefreshTokens()) {
-                        if (tubularConfig.webApi.requireAuthentication() && !me.isAuthenticated()) {
+                    if (!me.useRefreshTokens) {
+                        if (me.requireAuthentication && !me.isAuthenticated()) {
                             var canceller = $q.defer();
 
                             // Return empty dataset
@@ -3795,8 +3803,8 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     var canceller = $q.defer();
                     var cancel = getCancel(canceller);
 
-                    if (!tubularConfig.webApi.enableRefreshTokens()) {
-                        if (tubularConfig.webApi.requireAuthentication() && !me.isAuthenticated()) {
+                    if (!me.useRefreshTokens) {
+                        if (me.requireAuthentication && !me.isAuthenticated()) {
                             // Return empty dataset
                             return {
                                 promise: $q(function (resolve) {
@@ -3822,8 +3830,8 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 };
 
                 me.put = function (url, data) {
-                    if (!tubularConfig.webApi.enableRefreshTokens()) {
-                        if (tubularConfig.webApi.requireAuthentication() && !me.isAuthenticated()) {
+                    if (!me.useRefreshTokens) {
+                        if (me.requireAuthentication && !me.isAuthenticated()) {
                             var canceller = $q.defer();
 
                             // Return empty dataset
@@ -4878,7 +4886,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             }
 
 
-            // add new platform configs
+            // private: used to recursively add new platform configs
             function addConfig(configObj, platformObj) {
                 for (var n in configObj) {
                     if (n != PLATFORM && configObj.hasOwnProperty(n)) {
@@ -4896,7 +4904,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             }
 
 
-            // create get/set methods for each config
+            // private: create methods for each config to get/set
             function createConfig(configObj, providerObj, platformPath) {
                 angular.forEach(configObj, function (value, namespace) {
 

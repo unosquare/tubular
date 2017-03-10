@@ -49,7 +49,11 @@
          * `numberorcurrency` is a hack to hold `currency` and `number` in a single filter.
          */
         .filter('numberorcurrency', [
-            'numberFilter', 'currencyFilter', function (numberFilter, currencyFilter) {
+            'currencyFilter',
+            'numberFilter',
+            function (
+                numberFilter,
+                currencyFilter) {
                 return function (input, format, symbol, fractionSize) {
                     fractionSize = fractionSize || 2;
 
