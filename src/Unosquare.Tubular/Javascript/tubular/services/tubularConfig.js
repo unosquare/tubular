@@ -110,12 +110,6 @@
 
 
             // private: Service definition for internal Tubular use
-            /**
-             * @ngdoc service
-             * @name tubularConfig
-             * @module TubularModule
-             * @private
-             */
             provider.$get = function () {
                 return provider;
             };
