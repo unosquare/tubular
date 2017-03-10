@@ -14,8 +14,9 @@ describe('tbRowSelectable', () => {
         var rows = element.all(by.repeater('row in $component.rows'));
         var countRows = rows.count();
         element(by.id('btnRows')).click();
-        $('#lbRows').getText().then(function (count) {
-            countRows.then(function (result) {
+
+        $('#lbRows').getText().then(count => {
+            countRows.then(result => {
                 expect(parseInt(count)).toEqual(result);
                 done();
             });

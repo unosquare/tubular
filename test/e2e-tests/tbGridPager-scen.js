@@ -54,7 +54,7 @@ describe('tbGridPager', () => {
         pageSize = 10;
 
         var recordsRegex = /Showing (\d+) to (\d+) of (\d+) records/;
-        element(by.tagName('tb-grid-pager-info')).$('.pager-info').getText().then(function (result) {
+        element(by.tagName('tb-grid-pager-info')).$('.pager-info').getText().then(result => {
             var pagerResults = recordsRegex.exec(result);
             // Since the result will be something like ["Showing 31 to 40 of 49 records", "31", "40", "49"]
             // We need the third item in the results
@@ -65,7 +65,7 @@ describe('tbGridPager', () => {
         firstNavBtn.$('a').click();
 
         // Ensure data is sorted by ascending-ID
-        firstDataRow.getText().then(function (textId) {
+        firstDataRow.getText().then(textId => {
             if (textId !== 1) {
                 element(by.tagName('thead'))
                     .$$('tr th').first()

@@ -1,5 +1,5 @@
 /// <binding ProjectOpened='watch:scripts' />
-module.exports = function (grunt) {
+module.exports = grunt => {
     // Load grunt tasks automatically
     require('load-grunt-tasks')(grunt);
 
@@ -129,7 +129,7 @@ module.exports = function (grunt) {
                 singleModule: true,
                 useStrict: true,
                 existingModule: true,
-                rename: function (name) {
+                rename: name => {
                     var pieces = name.split('/');
                     return pieces[pieces.length - 1];
                 },

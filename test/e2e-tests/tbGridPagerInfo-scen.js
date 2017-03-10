@@ -7,13 +7,13 @@
 // component at the related HTML file (tbPager_test.html) is static and constrained
 // to 500 records with consecutive ID's.
 
-describe('tbGridPagerInfo', function () {
+describe('tbGridPagerInfo', () => {
 
     var tbGridPagerInfo,
         nextPageBtn,
         tbPageSizeSelector;
 
-    beforeAll(function () {
+    beforeAll(() => {
         // Go to test
         browser.get('index.html');
         element(by.id('testsSelector')).click();
@@ -56,7 +56,5 @@ describe('tbGridPagerInfo', function () {
             });
     });
 
-    it('should show count in footer', function () {
-        expect(element(by.id('count')).getText()).toBe('500');
-    });
+    it('should show count in footer', () => expect(element(by.id('count')).getText()).toBe('500'));
 });

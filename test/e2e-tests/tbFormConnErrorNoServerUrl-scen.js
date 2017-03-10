@@ -1,10 +1,10 @@
 /* jshint: true */
 /* globals: expect:false,beforeAll:false,expect:false,browser:false,element:false,by:false,describe:false,protractor:false,it:false */
 
-describe('tbForm Connection Error NoServerUrl', function () {
+describe('tbForm Connection Error NoServerUrl', () => {
     var errorText;
 
-    beforeAll(function () {
+    beforeAll(() => {
         // Go to test
         browser.get('index.html');
         element(by.id('testsSelector')).click();
@@ -17,7 +17,5 @@ describe('tbForm Connection Error NoServerUrl', function () {
         errorText = element(by.id('error')).getText();
     });
 
-    it('tbForm connection error functionality',function(){
-        expect(errorText).toEqual('No data found');
-    });
+    it('tbForm connection error functionality',()  => expect(errorText).toEqual('No data found'));
 });

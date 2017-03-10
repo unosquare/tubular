@@ -61,7 +61,7 @@ describe('tbGridComponents', () => {
     it('should NOT update item on cancel Update action', () => {
         var lastItem = dataRows.last();
 
-        lastItem.$$('td').last().getText().then(function (originalValue) {
+        lastItem.$$('td').last().getText().then(originalValue => {
             lastItem.$$('button').get(2).click().then(() => {
                 lastItem.$('input').sendKeys('TEST');
                 lastItem.$$('button').get(1).click().then(() => {
@@ -78,9 +78,7 @@ describe('tbGridComponents', () => {
             expect($('div.popover').isDisplayed()).toBe(true, 'should display popover');
 
             $('div.popover').$$('button').first().click().then(() => {
-                dataRows.count().then(function (count) {
-                    expect(count).not.toBe(originalCount, 'should remove the row from the table');
-                });
+                dataRows.count().then(count => expect(count).not.toBe(originalCount, 'should remove the row from the table'));
             });
         });
     });
@@ -96,5 +94,4 @@ describe('tbGridComponents', () => {
             });
         });
     });
-
 });
