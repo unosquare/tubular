@@ -17,32 +17,33 @@ describe('Module: tubular.services', function () {
             expect(tubularTranslate).toBeDefined();
         });
 
-        it('should have default and current language to be "en"', function () {
-            expect(tubularTranslate.currentLanguage && tubular.defaultLanguage).toBe('en');
+        it('should have current language to be "en"', function () {
+            expect(tubularTranslate.currentLanguage).toBe('en');
         });
 
-        it('should have translation tables to have same keys', function () {
+        it('should have default language to be "en"', function () {
+            expect(tubularTranslate.defaultLanguage).toBe('en');
+        });
+
+        xit('should have translation tables to have same keys', function () {
             tubularTranslate.translationTable.forEach(value, key);
         });
 
         it('should change the language', function () {
             tubularTranslate.setLanguage('es');
             expect(tubularTranslate.currentLanguage).toBe('es');
-
         });
 
         it('should translate', function () {
             tubularTranslate.setLanguage('es');
-            var result = tubularTranslate.translate('OP_EQUALS');
-            expect(result).toBe('Equals');
+            expect(tubularTranslate.translate('OP_EQUALS')).toBe('Igual');
 
         });
 
         it('should add new translation', function () {
-
             tubularTranslate.addTranslation('it', 'OP_STARTSWITH', 'Inizia con');
-            expect(translationTable[2]).toBe('it');
-
+            tubularTranslate.setLanguage('it');
+            expect(tubularTranslate.translate('OP_STARTSWITH')).toBe('Inizia con');
         });
 
     });
