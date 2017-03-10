@@ -84,7 +84,7 @@ describe('tbGridPager', () => {
             expect(lastDataRow.getText()).toMatch(/^10\s/);
         });
 
-        describe('first/non-last results page related functionallity', () => {
+        describe('first/non-last results page related functionality', () => {
 
             it('should disable "first" and "previous" navigation buttons when in first results page', () => {
                 //Go to first page
@@ -104,7 +104,7 @@ describe('tbGridPager', () => {
 
         });
 
-        describe('last/non-first results page related functionallity', () => {
+        describe('last/non-first results page related functionality', () => {
 
             it('should disable "last" and "next" navigation buttons when in last results page', () => {
                 // Go to last page
