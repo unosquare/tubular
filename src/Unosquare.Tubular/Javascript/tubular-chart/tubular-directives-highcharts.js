@@ -82,7 +82,7 @@
                         tubularConfig.webApi.requireAuthentication($ctrl.requireAuthentication);
                         $ctrl.hasError = false;
 
-                        tubularHttp.get($ctrl.serverUrl).promise.then($ctrl.handleData, function (error) {
+                        tubularHttp.get($ctrl.serverUrl).then($ctrl.handleData, function (error) {
                             $scope.$emit('tbChart_OnConnectionError', error);
                             $ctrl.hasError = true;
                         });

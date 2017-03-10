@@ -811,9 +811,7 @@ describe('tbForm related components', () => {
                 });
 
             it('should show a help field equal to this attribute, is present',
-                () => {
-                    expect(tbSimpleEditorHelper.getText()).toMatch('This does not help at all');
-                });
+                () => expect(tbSimpleEditorHelper.getText()).toMatch('This does not help at all'));
 
             it('should require the field when the attribute "required" is true',
                 done => {
@@ -893,9 +891,7 @@ describe('tbForm related components', () => {
             afterEach(() => tbNumericEditorRestore().then(tbFormEditBtn1.click));
 
             it('should set initial component value to the value of "value" attribute when defined',
-                () => {
-                    expect(tbNumericEditorInput.getAttribute('value')).toMatch('300');
-                });
+                () => expect(tbNumericEditorInput.getAttribute('value')).toMatch('300'));
 
             it('should be invalidated when the entered number is not in the range of "min" and "max" attributes',
                 done => {
@@ -955,8 +951,8 @@ describe('tbForm related components', () => {
                     tbNumericEditorInput.clear().then(() => {
                         tbNumericEditorErrorMessages.getText().then(errorsArray => {
                             errorsArray.forEach(val => {
-                                var x = val === 'The field is required.' ? '1' : '0';
-                                tbNumericEditorInput.sendKeys(x);
+                                tbNumericEditorInput.sendKeys(val === 'The field is required.' ? '1' : '0');
+
                                 if (val === 'The field is required.') {
                                     errorPresent = true;
                                 }

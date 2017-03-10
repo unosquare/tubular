@@ -26,26 +26,13 @@
 
                 $locationProvider.html5Mode(true);
             }
-        ]).config(['$httpProvider', function ($httpProvider) {
-            $httpProvider.interceptors.push('noCacheInterceptor');
-        }
-        ]).factory('noCacheInterceptor', function () {
-            return {
-                request: function (config) {
-                    if (config.method === 'GET' && config.url.indexOf('.htm') === -1 && config.url.indexOf('blob:') === -1) {
-                        var separator = config.url.indexOf('?') === -1 ? '?' : '&';
-                        config.url = config.url + separator + 'noCache=' + new Date().getTime();
-                    }
-                    return config;
-                }
-            };
-        });
+        ]);
 
     angular.module('app.controllers', ['tubular.services'])
         .controller('titleController', [
             '$scope', '$route', function ($scope, $route) {
                 var me = this;
-                me.content = "Home";
+                me.content = 'Home';
 
                 $scope.$on('$routeChangeSuccess', function () {
                     me.content = $route.current.title;
@@ -60,11 +47,12 @@
             }
         ])
         .controller('tubularSampleCtrl', [
-            '$scope', '$location', 'toastr', 'tubularHttp', function ($scope, $location, toastr, tubularHttp) {
+            '$scope', '$location', 'toastr', 'tubularHttp', 'tubularConfig',
+            function ($scope, $location, toastr, tubularHttp, tubularConfig) {
                 var me = this;
 
-                tubularHttp.setRequireAuthentication(false);
-                tubularHttp.get('api/orders/cities').promise.then(function (data) {
+                tubularConfig.webApi.requireAuthentication(false);
+                tubularHttp.get('api/orders/cities').then(function (data) {
                     $scope.cities = [];
                     angular.forEach(data, function (value) {
                         $scope.cities.push(value.Key);
@@ -77,8 +65,8 @@
 
                 me.defaultDate = new Date();
 
-                me.ColumnName = "Date";
-                me.Filter = "Oxxo";
+                me.ColumnName = 'Date';
+                me.Filter = 'Oxxo';
 
                 // Grid Events
                 $scope.$on('tbGrid_OnBeforeRequest', function (event, eventData) {
@@ -86,27 +74,27 @@
                 });
 
                 $scope.$on('tbGrid_OnRemove', function () {
-                    toastr.success("Record removed");
+                    toastr.success('Record removed');
                 });
 
                 $scope.$on('tbGrid_OnConnectionError', function (error) {
-                    toastr.error(error.statusText || "Connection error");
+                    toastr.error(error.statusText || 'Connection error');
                 });
 
                 $scope.$on('tbGrid_OnSuccessfulSave', function () {
-                    toastr.success("Record updated");
+                    toastr.success('Record updated');
                 });
 
                 // Form Events
-                $scope.$on('tbForm_OnConnectionError', function (error) { toastr.error(error.statusText || "Connection error"); });
+                $scope.$on('tbForm_OnConnectionError', function (error) { toastr.error(error.statusText || 'Connection error'); });
 
                 $scope.$on('tbForm_OnSuccessfulSave', function (event, data, formScope) {
-                    toastr.success("Record updated");
+                    toastr.success('Record updated');
                     if (formScope) formScope.clear();
                 });
 
-                $scope.$on('tbForm_OnSavingNoChanges', function (event) {
-                    toastr.warning("Nothing to save");
+                $scope.$on('tbForm_OnSavingNoChanges', function () {
+                    toastr.warning('Nothing to save');
                     $location.path('/');
                 });
 
@@ -144,15 +132,15 @@
                         !$scope.password ||
                         $scope.username.trim() === '' ||
                         $scope.password.trim() === '') {
-                        toastr.error("", "You need to fill in a username and password");
+                        toastr.error('', 'You need to fill in a username and password');
                         return;
                     }
 
                     $scope.loading = true;
 
-                    tubularHttp.authenticate($scope.username, $scope.password,
+                    tubularHttp.authenticate($scope.username, $scope.password).then(
                         function () {
-                            $location.path("/");
+                            $location.path('/');
                         },
                         function (error) {
                             $scope.loading = false;
