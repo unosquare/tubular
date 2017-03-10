@@ -1,0 +1,515 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for tubular/tubular-models.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../prettify.css" />
+    <link rel="stylesheet" href="../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../index.html">all files</a> / <a href="index.html">tubular/</a> tubular-models.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">2.99% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>2/67</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>0/64</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">5.88% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>1/17</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">3.08% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>2/65</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line low'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">﻿(function (angular, moment) {
+    'use strict';
+&nbsp;
+    /**                                           
+    * @ngdoc module
+    * @name tubular.models
+    * 
+    * @description
+    * Tubular Models module. 
+    * 
+    * It contains model's factories to be use in {@link tubular.directives} like `tubularModel` and `tubularGridColumnModel`.
+    */
+    angular.module('tubular.models', [])
+        /**
+        * @ngdoc factory
+        * @name tubularModel
+        * @module tubular.models
+        *
+        * @description
+        * The `tubularModel` factory is the base to generate a row model to use with `tbGrid` and `tbForm`.
+        */
+        .factory('tubularModel', <span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >            return <span class="fstat-no" title="function not covered" >function ($scope, $ctrl, data, dataService) {</span></span>
+<span class="cstat-no" title="statement not covered" >                var obj = {</span>
+                    $key: '',
+                    $addField: <span class="fstat-no" title="function not covered" >function (key, value, ignoreOriginal) {</span>
+<span class="cstat-no" title="statement not covered" >                        this[key] = value;</span>
+<span class="cstat-no" title="statement not covered" >                        this.$original = this.$original || {};</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                        this.$original[key] = ignoreOriginal ? undefined : value;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                        if (ignoreOriginal) {</span>
+<span class="cstat-no" title="statement not covered" >                            this.$hasChanges = true;</span>
+                        }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                        this.$state = this.$state || {};</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                        $scope.$watch(<span class="fstat-no" title="function not covered" >function () {</span></span>
+<span class="cstat-no" title="statement not covered" >                            return obj[key];</span>
+                        }, <span class="fstat-no" title="function not covered" >function (newValue, oldValue) {</span>
+<span class="cstat-no" title="statement not covered" >                            if (newValue === oldValue) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >                            obj.$hasChanges = obj[key] !== obj.$original[key];</span>
+                        });
+                    }
+                };
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                if (angular.isArray(data) === false) {</span>
+<span class="cstat-no" title="statement not covered" >                    angular.forEach(Object.keys(data), <span class="fstat-no" title="function not covered" >function (name) {</span></span>
+<span class="cstat-no" title="statement not covered" >                        obj.$addField(name, data[name]);</span>
+                    });
+                }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                if (angular.isDefined($ctrl.columns)) {</span>
+<span class="cstat-no" title="statement not covered" >                    angular.forEach($ctrl.columns, <span class="fstat-no" title="function not covered" >function (col, key) {</span></span>
+<span class="cstat-no" title="statement not covered" >                        var value = angular.isDefined(data[key]) ? data[key] : data[col.Name];</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                        if (angular.isUndefined(value) &amp;&amp; data[key] === 0) {</span>
+<span class="cstat-no" title="statement not covered" >                            value = 0;</span>
+                        }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                        obj.$addField(col.Name, value);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                        if (col.DataType === 'date' || col.DataType === 'datetime' || col.DataType === 'datetimeutc') {</span>
+<span class="cstat-no" title="statement not covered" >                            if (obj[col.Name] === null || obj[col.Name] === '')</span>
+<span class="cstat-no" title="statement not covered" >                                obj[col.Name] = '';</span>
+                            else
+<span class="cstat-no" title="statement not covered" >                                obj[col.Name] = col.DataType === 'datetimeutc' ? moment.utc(obj[col.Name]) : moment(obj[col.Name]);</span>
+                        }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                        if (col.IsKey) {</span>
+<span class="cstat-no" title="statement not covered" >                            obj.$key += obj[col.Name] + ',';</span>
+                        }
+                    });
+                }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                if (obj.$key.length &gt; 1) {</span>
+<span class="cstat-no" title="statement not covered" >                    obj.$key = obj.$key.substring(0, obj.$key.length - 1);</span>
+                }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                obj.$hasChanges = obj.$isEditing = false;</span>
+<span class="cstat-no" title="statement not covered" >                obj.$selected = false;</span>
+<span class="cstat-no" title="statement not covered" >                obj.$isNew = false;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                obj.$valid = <span class="fstat-no" title="function not covered" >function () {</span></span>
+<span class="cstat-no" title="statement not covered" >                    var valid = true;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    angular.forEach(obj.$state, <span class="fstat-no" title="function not covered" >function (val) {</span></span>
+<span class="cstat-no" title="statement not covered" >                        if (angular.isUndefined(val) || val.$valid()) <span class="cstat-no" title="statement not covered" >return;</span></span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                        valid = false;</span>
+                    });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    return valid;</span>
+                };
+&nbsp;
+                // Returns a save promise
+<span class="cstat-no" title="statement not covered" >                obj.save = <span class="fstat-no" title="function not covered" >function (forceUpdate) {</span></span>
+<span class="cstat-no" title="statement not covered" >                    if (angular.isUndefined(dataService) || dataService == null) {</span>
+<span class="cstat-no" title="statement not covered" >                        throw 'Define DataService to your model.';</span>
+                    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    if (angular.isUndefined($ctrl.serverSaveUrl) || $ctrl.serverSaveUrl == null) {</span>
+<span class="cstat-no" title="statement not covered" >                        throw 'Define a Save URL.';</span>
+                    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    if (!forceUpdate &amp;&amp; !obj.$isNew &amp;&amp; !obj.$hasChanges) {</span>
+<span class="cstat-no" title="statement not covered" >                        return false;</span>
+                    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    obj.$isLoading = true;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    return dataService.saveDataAsync(obj, {</span>
+                        serverUrl: $ctrl.serverSaveUrl,
+                        requestMethod: obj.$isNew ? ($ctrl.serverSaveMethod || 'POST') : 'PUT'
+                    }).promise;
+                };
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                obj.edit = <span class="fstat-no" title="function not covered" >function () {</span></span>
+<span class="cstat-no" title="statement not covered" >                    if (obj.$isEditing &amp;&amp; obj.$hasChanges) {</span>
+<span class="cstat-no" title="statement not covered" >                        obj.save();</span>
+                    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    obj.$isEditing = !obj.$isEditing;</span>
+                };
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                obj.delete = <span class="fstat-no" title="function not covered" >function () {</span></span>
+<span class="cstat-no" title="statement not covered" >                    $ctrl.deleteRow(obj);</span>
+                };
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                obj.resetOriginal = <span class="fstat-no" title="function not covered" >function () {</span></span>
+<span class="cstat-no" title="statement not covered" >                    angular.forEach(obj.$original, <span class="fstat-no" title="function not covered" >function (k) {</span></span>
+<span class="cstat-no" title="statement not covered" >                        obj.$original[k] = obj[k];</span>
+                    });
+                };
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                obj.revertChanges = <span class="fstat-no" title="function not covered" >function () {</span></span>
+<span class="cstat-no" title="statement not covered" >                    angular.forEach(Object.keys(obj), <span class="fstat-no" title="function not covered" >function (k) {</span></span>
+<span class="cstat-no" title="statement not covered" >                        if (k[0] === '$' || angular.isUndefined(obj.$original[k])) {</span>
+<span class="cstat-no" title="statement not covered" >                            return;</span>
+                        }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                        obj[k] = obj.$original[k];</span>
+                    });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    obj.$hasChanges = obj.$isEditing = false;</span>
+                };
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                return obj;</span>
+            };
+        });
+})(angular, moment);</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Fri Mar 10 2017 16:14:54 GMT+0000 (UTC)
+</div>
+</div>
+<script src="../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../sorter.js"></script>
+</body>
+</html>
