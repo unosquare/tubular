@@ -18,6 +18,7 @@ describe('tbSingleForm', () => {
     });
 
     it('should change customer name', () => {
+        
         $('#btnDefault').click().then(() => {
             expect($('input').getAttribute('value')).toBe('Unosquare');
         });            

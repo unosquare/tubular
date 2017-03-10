@@ -44,7 +44,7 @@
             }
 
 
-            // private: used to recursively add new platform configs
+            // add new platform configs
             function addConfig(configObj, platformObj) {
                 for (var n in configObj) {
                     if (n != PLATFORM && configObj.hasOwnProperty(n)) {
@@ -62,7 +62,7 @@
             }
 
 
-            // private: create methods for each config to get/set
+            // create get/set methods for each config
             function createConfig(configObj, providerObj, platformPath) {
                 angular.forEach(configObj, function (value, namespace) {
 
@@ -110,12 +110,6 @@
 
 
             // private: Service definition for internal Tubular use
-            /**
-             * @ngdoc service
-             * @name tubularConfig
-             * @module TubularModule
-             * @private
-             */
             provider.$get = function () {
                 return provider;
             };

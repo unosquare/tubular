@@ -8,7 +8,7 @@ describe('Module: tubular.directives', function () {
         beforeEach(function () {
             module('tubular.directives');
             module(function ($provide) {
-                tubularHttp = jasmine.createSpyObj('tubularHttp', ['getDataService', 'setRequireAuthentication']);
+                tubularHttp = jasmine.createSpyObj('tubularHttp', ['getDataService']);
                 tubularModel = jasmine.createSpyObj('tubularModel', ['get', 'getByKey', 'registerService', 'retrieveDataAsync']);
                 tubularEditorService = jasmine.createSpyObj('tubularEditorService', ['getUniqueTbFormName']);
                 $routeParams = jasmine.createSpyObj('$routeParams', ['name']);
@@ -35,9 +35,6 @@ describe('Module: tubular.directives', function () {
             });
             it('should set default request method', function () {
                 expect(sut.serverSaveMethod).toBe('POST');
-            });
-            it('should set default require authentication', function () {
-                expect(tubularHttp.setRequireAuthentication).toHaveBeenCalledWith(true);
             });
         });
     });

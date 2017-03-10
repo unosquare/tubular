@@ -10,13 +10,15 @@
             'tubularModel',
             'tubularHttp',
             '$routeParams',
+            'tubularConfig',
             function (
                 $scope,
                 localStorageService,
                 tubularPopupService,
                 TubularModel,
                 tubularHttp,
-                $routeParams) {
+                $routeParams,
+                tubularConfig) {
                 var $ctrl = this;
 
                 $ctrl.$onInit = function() {
@@ -52,8 +54,8 @@
                     $ctrl.isEmpty = false;
                     $ctrl.dataService = tubularHttp.getDataService($ctrl.dataServiceName);
                     $ctrl.tempRow = new TubularModel($scope, $ctrl, {}, $ctrl.dataService);
-                    $ctrl.requireAuthentication = $ctrl.requireAuthentication || true;
-                    tubularHttp.setRequireAuthentication($ctrl.requireAuthentication);
+                    $ctrl.requireAuthentication = $ctrl.requireAuthentication ? ($ctrl.requireAuthentication === 'true') : true;
+                    tubularConfig.webApi.requireAuthentication($ctrl.requireAuthentication);
                     $ctrl.editorMode = $ctrl.editorMode || 'none';
                     $ctrl.canSaveState = false;
                     $ctrl.showLoading = angular.isUndefined($ctrl.showLoading) ? true : $ctrl.showLoading;

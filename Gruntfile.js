@@ -1,5 +1,5 @@
 /// <binding ProjectOpened='watch:scripts' />
-module.exports = function(grunt) {
+module.exports = function (grunt) {
     // Load grunt tasks automatically
     require('load-grunt-tasks')(grunt);
 
@@ -14,6 +14,23 @@ module.exports = function(grunt) {
 
     // Project configuration.
     grunt.initConfig({
+        copy: {
+            main: {
+                files: [
+                    // includes files within path
+                    {
+                        expand: true, 
+                        src: [
+                            'src/Unosquare.Tubular/Javascript/tubular*-bundle.js',
+                            'src/Unosquare.Tubular/Javascript/tubular*-bundle.min.js'
+                        ], 
+                        dest: 'dist/', 
+                        filter: 'isFile',
+                        flatten: true
+                    },
+                ],
+            },
+        },
         instrument: {
             files: [
                 'test/Unosquare.Tubular.WebTest/testApp.js',
@@ -101,18 +118,18 @@ module.exports = function(grunt) {
                 singleRun: false,
                 autoWatch: false,
                 preprocessors: {
-                
+
                 },
                 reporters: ['progress']
             }
         },
         html2js: {
             options: {
-                
+
                 singleModule: true,
                 useStrict: true,
                 existingModule: true,
-                rename: function(name) {
+                rename: function (name) {
                     var pieces = name.split('/');
                     return pieces[pieces.length - 1];
                 },
@@ -234,19 +251,19 @@ module.exports = function(grunt) {
     });
 
     grunt.registerTask('test',
-    [
-        'instrument',
-        'string-replace',
-        'connect:server',
-        'protractor_coverage:remote',
-        'coveralls:local'
-    ]);
+        [
+            'instrument',
+            'string-replace',
+            'connect:server',
+            'protractor_coverage:remote',
+            'coveralls:local'
+        ]);
 
     grunt.registerTask('test-local',
-    [
-        'connect:server',
-        'protractor_coverage:local'
-    ]);
+        [
+            'connect:server',
+            'protractor_coverage:local'
+        ]);
 
     grunt.registerTask('build-js', ['concat:tubular_js', 'concat:chart_js', 'concat:highchart_js']);
 
@@ -257,6 +274,7 @@ module.exports = function(grunt) {
     grunt.registerTask('min', ['build', 'uglify', 'cssmin:main']);
 
     grunt.registerTask('lint', ['eslint']);
+    grunt.registerTask('dist', ['copy']);
     grunt.registerTask('unit', ['karma:dev']);
     grunt.registerTask('unit:ci', ['karma:ci']);
 };

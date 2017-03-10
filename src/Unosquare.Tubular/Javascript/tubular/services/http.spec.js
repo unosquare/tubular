@@ -3,7 +3,7 @@
 describe('Module: tubular.services', function () {
 
     describe('Service: http', function () {
-        var $httpBackend, tubularHttp;
+        var $httpBackend, tubularHttp, tubularConfig;
 
         beforeEach(function () {
             module('tubular.services');
@@ -12,9 +12,10 @@ describe('Module: tubular.services', function () {
                 $filterProvider.register('translate', function () { return filter; });
             });
 
-            inject(function (_$httpBackend_, _tubularHttp_) {
+            inject(function (_$httpBackend_, _tubularHttp_, _tubularConfig_) {
                 $httpBackend = _$httpBackend_;
                 tubularHttp = _tubularHttp_;
+                tubularConfig = _tubularConfig_;
             });
         });
 
@@ -30,25 +31,6 @@ describe('Module: tubular.services', function () {
             expect(tubularHttp.isAuthenticated()).toBe(false);
         });
 
-        it('should has default refreshTokenUrl value', () => {
-            expect(tubularHttp.refreshTokenUrl).toBe('/api/token');
-        });
-
-        it('should has default tokenUrl value', () => {
-            expect(tubularHttp.tokenUrl).toBe('/api/token');
-        });
-
-        it('should has default apiBaseUrl value', () => {
-            expect(tubularHttp.apiBaseUrl).toBe('/api');
-        });
-
-        it('should set require authentication', function() {
-            tubularHttp.setRequireAuthentication(true);
-            expect(tubularHttp.requireAuthentication).toBe(true);
-            tubularHttp.setRequireAuthentication(false);
-            expect(tubularHttp.requireAuthentication).toBe(false);
-        });
-
         it('should retrieve a promise when GET', function() {
             var getPromise = tubularHttp.get('/api/get');
 
@@ -59,7 +41,8 @@ describe('Module: tubular.services', function () {
         it('should retrieve data when GET', done => {
             $httpBackend.expectGET('/api/get').respond(200, { result: true });
 
-            tubularHttp.setRequireAuthentication(false);
+            tubularConfig.webApi.requireAuthentication(false);
+
             tubularHttp.get('/api/get')
                 .promise.then(data => {
                     expect(data).toBeDefined();
@@ -73,7 +56,8 @@ describe('Module: tubular.services', function () {
         it('should not retrieve data when GET', done => {
             $httpBackend.expectGET('/api/get').respond(500);
 
-            tubularHttp.setRequireAuthentication(false);
+            tubularConfig.webApi.requireAuthentication(false);
+            
             tubularHttp.get('/api/get')
                 .promise.then(function () { }, error => {
                     expect(error).toBeDefined();

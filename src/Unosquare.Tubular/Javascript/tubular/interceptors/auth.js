@@ -11,7 +11,7 @@
      * @returns {Object} A httpInterceptor
      */
     angular.module('tubular.services')
-        .factory('tubularAuthInterceptor', ['$q', '$injector', function ($q, $injector) {
+        .factory('tubularAuthInterceptor', ['$q', '$injector', 'tubularConfig', function ($q, $injector, tubularConfig) {
 
             var authRequestRunning = null;
             var tubularHttpName = 'tubularHttp';
@@ -28,21 +28,22 @@
             function request(config) {
                 // Get the service here because otherwise, a circular dependency injection will be detected
                 var tubularHttp = $injector.get(tubularHttpName);
-                var apiBaseUrl = tubularHttp.apiBaseUrl;
+                var webApiSettings = tubularConfig.webApi;
+                var apiBaseUrl = webApiSettings.baseUrl();
 
                 config.headers = config.headers || {};
 
                 // Handle requests going to API
                 if (config.url.substring(0, apiBaseUrl.length) === apiBaseUrl &&
-                    tubularHttp.tokenUrl !== config.url &&
-                    tubularHttp.requireAuthentication &&
+                    webApiSettings.tokenUrl() !== config.url &&
+                    webApiSettings.requireAuthentication() &&
                     tubularHttp.userData.bearerToken) {
 
                     config.headers.Authorization = 'Bearer ' + tubularHttp.userData.bearerToken;
 
                     // When using refresh tokens and bearer token has expired,
                     // avoid the round trip on go directly to try refreshing the token
-                    if (tubularHttp.useRefreshTokens && tubularHttp.userData.refreshToken
+                    if (webApiSettings.enableRefreshTokens() && tubularHttp.userData.refreshToken
                         && tubularHttp.isBearerTokenExpired()) {
                         return $q.reject({ error: 'expired token', status: 401, config: config });
                     }
@@ -65,21 +66,22 @@
                 switch (rejection.status) {
                     case 401:
                         var tubularHttp = $injector.get(tubularHttpName);
-                        var apiBaseUrl = tubularHttp.apiBaseUrl;
+                        var webApiSettings = tubularConfig.webApi;
+                        var apiBaseUrl = webApiSettings.baseUrl();
 
                         if (
                             rejection.config.url.substring(0, apiBaseUrl.length) === apiBaseUrl &&
-                            tubularHttp.tokenUrl !== rejection.config.url &&
-                            tubularHttp.useRefreshTokens &&
-                            tubularHttp.requireAuthentication &&
+                            webApiSettings.tokenUrl() !== rejection.config.url &&
+                            webApiSettings.enableRefreshTokens() &&
+                            webApiSettings.requireAuthentication() &&
                             tubularHttp.userData.refreshToken) {
 
                             rejection.triedRefreshTokens = true;
 
-                            if (!authRequestRunning) {    
+                            if (!authRequestRunning) {
                                 authRequestRunning = $injector.get('$http')({
                                     method: 'POST',
-                                    url: tubularHttp.refreshTokenUrl,
+                                    url: webApiSettings.refreshTokenUrl(),
                                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                                     data: 'grant_type=refresh_token&refresh_token=' + tubularHttp.userData.refreshToken
                                 });
@@ -89,7 +91,7 @@
                                 authRequestRunning = null;
                                 tubularHttp.handleSuccessCallback(null, r.data);
 
-                                if (tubularHttp.requireAuthentication && tubularHttp.isAuthenticated()) {
+                                if (webApiSettings.requireAuthentication() && tubularHttp.isAuthenticated()) {
                                     rejection.config.headers.Authorization = 'Bearer ' + tubularHttp.userData.bearerToken;
                                     $injector.get('$http')(rejection.config).then(function (resp) {
                                         deferred.resolve(resp);
