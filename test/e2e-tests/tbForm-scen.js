@@ -71,9 +71,7 @@ describe('tbForm related components', () => {
         tbTypeaheadEditorLabel,
         tbTypeaheadEditorErrorMessages,
         tbTypeaheadEditorOptions,
-        tbTypeaheadEditorCityOriginal,
-        tbTypeaheadEditorCityOriginalMatcher;
-
+        tbTypeaheadEditorCityOriginal;
 
     function tbTypeaheadEditorRestore() {
         return browser.wait(restoreCancelClickFn().then(() => {
@@ -84,7 +82,7 @@ describe('tbForm related components', () => {
                     }
 
                     return tbTypeaheadEditorInput.clear().then(() =>
-                        tbTypeaheadEditorInput.sendKeys(tbTypeaheadEditorCityOriginalMatcher)
+                        tbTypeaheadEditorInput.sendKeys('Guad')
                         .then(() => tbTypeaheadEditorOptions.first().click()
                             .then(() => tbFormSaveBtn.click().then(trueFunc)))
                     );
@@ -608,16 +606,15 @@ describe('tbForm related components', () => {
                 tbTypeaheadEditorRestore().then(tbFormEditBtn1.click);
             });
 
-            afterEach(() => {
-                //* Restore default value and open form popup *\\
-                tbTypeaheadEditorRestore().then(tbFormEditBtn1.click);
-            });
+            // Restore default value and open form popup
+            afterEach(() => tbTypeaheadEditorRestore().then(tbFormEditBtn1.click));
 
             it('should show an options list when there is an API-info/component entered-data',
                 done => {
                     tbTypeaheadEditorInput.clear()
-                        .then(() => expect(tbTypeaheadEditorOptions.count()).toBe(0))
                         .then(() => {
+                            expect(tbTypeaheadEditorOptions.count()).toBe(0);
+
                             tbTypeaheadEditorInput.sendKeys('l').then(() => {
                                 expect(tbTypeaheadEditorOptions.count()).toBeGreaterThan(0);
                                 done();
@@ -664,9 +661,7 @@ describe('tbForm related components', () => {
                 });
 
             it('should show a label value equal to the component name when "showLabel" attribute is true',
-                () => {
-                    expect(tbTypeaheadEditorLabel.getText()).toMatch('Shipper City');
-                });
+                () => expect(tbTypeaheadEditorLabel.getText()).toMatch('Shipper City'));
 
             it('should require a value when "require" attribute is true',
                 () => {
@@ -734,9 +729,7 @@ describe('tbForm related components', () => {
                 tbSimpleEditorErrorMessages = $('div.modal-dialog form').$('tb-simple-editor')
                     .all(by.repeater('error in $ctrl.state.$errors'));
                 tbSimpleEditorHelper = $('div.modal-dialog form').$('tb-simple-editor').$$('span').filter(elem => {
-                    return elem.getAttribute('ng-show').then(val => {
-                        return val != null ? val.indexOf('$ctrl.help') !== -1 : false;
-                    });
+                    return elem.getAttribute('ng-show').then(val => val != null ? val.indexOf('$ctrl.help') !== -1 : false);
                 }).first();
 
                 //* Restore default value and open form popup *\\
@@ -747,9 +740,7 @@ describe('tbForm related components', () => {
             afterEach(() => tbSimpleEditorRestore().then(tbFormEditBtn1.click));
 
             it('should set initial input value to the value of "value" attribute when defined',
-                () => {
-                    expect(tbSimpleEditorInput.getAttribute('value')).toMatch(tbSimpleEditorCustomerOriginal);
-                });
+                () => expect(tbSimpleEditorInput.getAttribute('value')).toMatch(tbSimpleEditorCustomerOriginal));
 
             it('should be invalidated when the number of chars is not in the range of "min" and "max" attributes',
                 () => {
@@ -789,9 +780,7 @@ describe('tbForm related components', () => {
                 });
 
             it('should show the component name value in a label field when "showLabel" attribute is true',
-                () => {
-                    expect(tbSimpleEditorLabel.getText()).toMatch('Customer Name');
-                });
+                () => expect(tbSimpleEditorLabel.getText()).toMatch('Customer Name'));
 
             it('should set input placeholder to the value of "placeholder" attribute',
                 () => {
@@ -927,8 +916,10 @@ describe('tbForm related components', () => {
                             });
                         })
                             .then(() => {
-                                tbNumericEditorErrorMessages.count().then(count => messageCount = count)
-                                    .then(() => {
+                                tbNumericEditorErrorMessages.count()
+                                    .then(count => {
+                                        messageCount = count;
+
                                         tbNumericEditorInput.clear().then(() => {
                                             tbNumericEditorInput.sendKeys('100').then(() => {
                                                 // Expect min value error to have been removed
@@ -994,8 +985,9 @@ describe('tbForm related components', () => {
             it('should NOT submit modifications to item/server when clicking form "Cancel"',
                 done => {
                     tbNumericEditorInput.getAttribute('value')
-                        .then(val => expect(val).toMatch(tbNumericEditorValueOriginal))
-                        .then(() => {
+                        .then(val => {
+                            expect(val).toMatch(tbNumericEditorValueOriginal);
+
                             tbNumericEditorInput.sendKeys('220').then(() => {
                                 tbFormCancelBtn.click().then(() => {
                                     tbFormEditBtn1.click().then(() => {
