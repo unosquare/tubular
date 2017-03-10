@@ -72,7 +72,7 @@
                 var value = $ctrl.value;
                 $ctrl.value = $ctrl.multiple ? [] : '';
 
-                currentRequest.promise.then(
+                currentRequest.then(
                     function (data) {
                         $ctrl.options = data;
 
