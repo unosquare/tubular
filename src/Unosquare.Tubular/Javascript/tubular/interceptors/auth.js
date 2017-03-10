@@ -89,7 +89,7 @@
 
                             authRequestRunning.then(function (r) {
                                 authRequestRunning = null;
-                                tubularHttp.handleSuccessCallback(null, r.data);
+                                tubularHttp.initAuth(r.data);
 
                                 if (webApiSettings.requireAuthentication() && tubularHttp.isAuthenticated()) {
                                     rejection.config.headers.Authorization = 'Bearer ' + tubularHttp.userData.bearerToken;

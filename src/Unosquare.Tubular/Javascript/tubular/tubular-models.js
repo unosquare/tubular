@@ -112,7 +112,7 @@
                     return dataService.saveDataAsync(obj, {
                         serverUrl: $ctrl.serverSaveUrl,
                         requestMethod: obj.$isNew ? ($ctrl.serverSaveMethod || 'POST') : 'PUT'
-                    }).promise;
+                    });
                 };
 
                 obj.edit = function () {

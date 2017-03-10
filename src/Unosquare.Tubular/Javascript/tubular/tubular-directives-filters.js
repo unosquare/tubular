@@ -184,7 +184,7 @@
                             requestMethod: 'GET'
                         });
 
-                        currentRequest.promise.then(
+                        currentRequest.then(
                             function(data) {
                                 $ctrl.optionsItems = data;
                                 $ctrl.dataIsLoaded = true;

@@ -77,7 +77,7 @@
                 }
 
                 function getCancel(canceller) {
-                    return function(reason) {
+                    return function (reason) {
                         $log.error(reason);
                         canceller.resolve(reason);
                     };
@@ -90,7 +90,7 @@
                     expirationDate: null
                 };
 
-                me.isBearerTokenExpired = function() {
+                me.isBearerTokenExpired = function () {
                     return isAuthenticationExpired(me.userData.expirationDate);
                 };
 
@@ -112,28 +112,23 @@
                     $http.defaults.headers.common.Authorization = null;
                 };
 
-                me.authenticate = function (username, password, successCallback, errorCallback) {
+                me.authenticate = function (username, password) {
                     this.removeAuthentication();
 
-                    $http({
+                    return $http({
                         method: 'POST',
                         url: tubularConfig.webApi.tokenUrl(),
                         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                         data: 'grant_type=password&username=' + encodeURIComponent(username) + '&password=' + encodeURIComponent(password)
                     }).then(function (response) {
-                        me.handleSuccessCallback(successCallback, response.data, username);
+                        me.initAuth(response.data, username);
+                        return { authenticated: true };
                     }, function (errorResponse) {
-                        if (angular.isFunction(errorCallback)) {
-                            var errorMessage = translateFilter('UI_HTTPERROR');
-                            if (errorResponse && errorResponse.data && errorResponse.data.error_description)
-                                errorMessage = errorResponse.data.error_description;
-
-                            errorCallback(errorMessage);
-                        }
+                        return $q.reject(errorResponse);
                     });
                 };
 
-                me.handleSuccessCallback = function (successCallback, data, username) {
+                me.initAuth = function (data, username) {
                     me.userData.isAuthenticated = true;
                     me.userData.username = data.userName || username || me.userData.username;
                     me.userData.bearerToken = data.access_token;
@@ -143,13 +138,9 @@
                     me.userData.refreshToken = data.refresh_token;
 
                     saveData();
-
-                    if (angular.isFunction(successCallback)) {
-                        successCallback(data);
-                    }
                 };
 
-                me.addTimeZoneToUrl = function(url) {
+                me.addTimeZoneToUrl = function (url) {
                     return url +
                         (url.indexOf('?') === -1 ? '?' : '&') +
                         'timezoneOffset=' +
@@ -187,7 +178,7 @@
 
                     var dataRequest = me.retrieveDataAsync(request);
 
-                    dataRequest.promise.then(function (data) {
+                    dataRequest.then(function (data) {
                         model.$hasChanges = false;
                         model.resetOriginal();
 
@@ -216,13 +207,8 @@
 
                     if (!tubularConfig.webApi.enableRefreshTokens()) {
                         if (tubularConfig.webApi.requireAuthentication() && me.isAuthenticated() === false) {
-
-                            return {
-                                promise: $q(function (resolve) {
-                                    resolve(null);
-                                }),
-                                cancel: cancel
-                            };
+                            // Return empty dataset
+                            return $q(function (resolve) { resolve(null); });
                         }
                     }
 
@@ -232,7 +218,7 @@
                         cancel('Timed out');
                     }, request.timeout);
 
-                    var promise = $http({
+                    return $http({
                         url: request.serverUrl,
                         method: request.requestMethod,
                         data: request.data,
@@ -250,29 +236,18 @@
                         }
                         return $q.reject(error);
                     });
-
-                    return {
-                        promise: promise,
-                        cancel: cancel
-                    };
                 };
 
                 me.get = function (url, params) {
                     if (!tubularConfig.webApi.enableRefreshTokens()) {
                         if (tubularConfig.webApi.requireAuthentication() && !me.isAuthenticated()) {
-                            var canceller = $q.defer();
 
                             // Return empty dataset
-                            return {
-                                promise: $q(function (resolve) {
-                                    resolve(null);
-                                }),
-                                cancel: getCancel(canceller)
-                            };
+                            return $q(function (resolve) { resolve(null); });
                         }
                     }
 
-                    return { promise: $http.get(url, params).then(function (data) { return data.data; }) };
+                    return $http.get(url, params).then(function (data) { return data.data; });
                 };
 
                 me.getBinary = function (url) {
@@ -282,15 +257,8 @@
                 me.delete = function (url) {
                     if (!tubularConfig.webApi.enableRefreshTokens()) {
                         if (tubularConfig.webApi.requireAuthentication() && !me.isAuthenticated()) {
-                            var canceller = $q.defer();
-
                             // Return empty dataset
-                            return {
-                                promise: $q(function (resolve) {
-                                    resolve(null);
-                                }),
-                                cancel: getCancel(canceller)
-                            };
+                            return $q(function (resolve) { resolve(null); });
                         }
                     }
 
@@ -303,15 +271,8 @@
                 me.post = function (url, data) {
                     if (!tubularConfig.webApi.enableRefreshTokens()) {
                         if (tubularConfig.webApi.requireAuthentication() && !me.isAuthenticated()) {
-                            var canceller = $q.defer();
-
                             // Return empty dataset
-                            return {
-                                promise: $q(function (resolve) {
-                                    resolve(null);
-                                }),
-                                cancel: getCancel(canceller)
-                            };
+                            return $q(function (resolve) { resolve(null); });
                         }
                     }
                     return me.retrieveDataAsync({
@@ -329,47 +290,28 @@
                  * in your own FormData.
                  */
                 me.postBinary = function (url, formData) {
-                    var canceller = $q.defer();
-                    var cancel = getCancel(canceller);
 
                     if (!tubularConfig.webApi.enableRefreshTokens()) {
                         if (tubularConfig.webApi.requireAuthentication() && !me.isAuthenticated()) {
                             // Return empty dataset
-                            return {
-                                promise: $q(function (resolve) {
-                                    resolve(null);
-                                }),
-                                cancel: cancel
-                            };
+                            return $q(function (resolve) { resolve(null); });
                         }
                     }
 
-                    var promise = $http({
+                    return $http({
                         url: url,
                         method: 'POST',
                         headers: { 'Content-Type': undefined },
                         transformRequest: function (data) { return data; }, // TODO: Remove
                         data: formData
                     });
-
-                    return {
-                        promise: promise,
-                        cancel: cancel
-                    };
                 };
 
                 me.put = function (url, data) {
                     if (!tubularConfig.webApi.enableRefreshTokens()) {
                         if (tubularConfig.webApi.requireAuthentication() && !me.isAuthenticated()) {
-                            var canceller = $q.defer();
-
                             // Return empty dataset
-                            return {
-                                promise: $q(function (resolve) {
-                                    resolve(null);
-                                }),
-                                cancel: me.getCancel(canceller)
-                            };
+                            return $q(function (resolve) { resolve(null); });
                         }
                     }
 

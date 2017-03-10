@@ -26,7 +26,7 @@
                     tubularConfig.webApi.requireAuthentication($ctrl.requireAuthentication);
 
                     tubularHttp.get($ctrl.serverUrl)
-                        .promise.then(function(data) {
+                        .then(function(data) {
                                 if (!data || !data.Data || data.Data.length === 0) {
                                     $ctrl.isEmpty = true;
                                     if (!$ctrl.options) $ctrl.options = {};

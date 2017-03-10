@@ -2,7 +2,7 @@
     'use strict';
 
     // Fix moment serialization
-    moment.fn.toJSON = function() { return this.isValid() ? this.format() : null; };
+    moment.fn.toJSON = function () { return this.isValid() ? this.format() : null; };
 
     function canUseHtml5Date() {
         var el = angular.element('<input type="date" value=":)" />');
@@ -240,7 +240,7 @@
             var value = $ctrl.value;
             $ctrl.value = '';
 
-            currentRequest.promise.then(
+            currentRequest.then(
                 function (data) {
                     $ctrl.options = data;
                     $ctrl.dataIsLoaded = true;
@@ -336,22 +336,22 @@
          */
         .component('tbDateTimeEditor', {
             template: '<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">' +
-                '<span ng-hide="$ctrl.isEditing">{{ $ctrl.value | date: format }}</span>' +
-                '<label ng-show="$ctrl.showLabel" ng-bind="$ctrl.label"></label>' +
-                (canUseHtml5Date() ?
-                    '<input type="datetime-local" ng-show="$ctrl.isEditing" ng-model="$ctrl.dateValue" class="form-control" ' +
-                    'ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}"/>' :
-                    '<div class="input-group" ng-show="$ctrl.isEditing">' +
-                    '<input type="text" uib-datepicker-popup="{{$ctrl.format}}" ng-model="$ctrl.dateValue" class="form-control" ' +
-                    'ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}" is-open="$ctrl.open" />' +
-                    '<span class="input-group-btn">' +
-                    '<button type="button" class="btn btn-default" ng-click="$ctrl.open = !$ctrl.open"><i class="fa fa-calendar"></i></button>' +
-                    '</span>' +
-                    '</div>' +
-                    '<div uib-timepicker ng-model="$ctrl.dateValue"  show-seconds="true" show-meridian="false"></div>') +
-                '<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">{{error}}</span>' +
-                '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help" ng-bind="$ctrl.help"></span>' +
-                '</div>',
+            '<span ng-hide="$ctrl.isEditing">{{ $ctrl.value | date: format }}</span>' +
+            '<label ng-show="$ctrl.showLabel" ng-bind="$ctrl.label"></label>' +
+            (canUseHtml5Date() ?
+                '<input type="datetime-local" ng-show="$ctrl.isEditing" ng-model="$ctrl.dateValue" class="form-control" ' +
+                'ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}"/>' :
+                '<div class="input-group" ng-show="$ctrl.isEditing">' +
+                '<input type="text" uib-datepicker-popup="{{$ctrl.format}}" ng-model="$ctrl.dateValue" class="form-control" ' +
+                'ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}" is-open="$ctrl.open" />' +
+                '<span class="input-group-btn">' +
+                '<button type="button" class="btn btn-default" ng-click="$ctrl.open = !$ctrl.open"><i class="fa fa-calendar"></i></button>' +
+                '</span>' +
+                '</div>' +
+                '<div uib-timepicker ng-model="$ctrl.dateValue"  show-seconds="true" show-meridian="false"></div>') +
+            '<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">{{error}}</span>' +
+            '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help" ng-bind="$ctrl.help"></span>' +
+            '</div>',
             bindings: {
                 value: '=?',
                 isEditing: '=?',
@@ -396,21 +396,21 @@
          */
         .component('tbDateEditor', {
             template: '<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">' +
-                '<span ng-hide="$ctrl.isEditing">{{ $ctrl.value | moment: $ctrl.format }}</span>' +
-                '<label ng-show="$ctrl.showLabel" ng-bind="$ctrl.label"></label>' +
-                (canUseHtml5Date() ?
-                    '<input type="date" ng-show="$ctrl.isEditing" ng-model="$ctrl.dateValue" class="form-control" ' +
-                    'ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}"/>' :
-                    '<div class="input-group" ng-show="$ctrl.isEditing">' +
-                    '<input type="text" uib-datepicker-popup="{{$ctrl.format}}" ng-model="$ctrl.dateValue" class="form-control" ' +
-                    'ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}" is-open="$ctrl.open" />' +
-                    '<span class="input-group-btn">' +
-                    '<button type="button" class="btn btn-default" ng-click="$ctrl.open = !$ctrl.open"><i class="fa fa-calendar"></i></button>' +
-                    '</span>' +
-                    '</div>') +
-                '<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">{{error}}</span>' +
-                '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help" ng-bind="$ctrl.help"></span>' +
-                '</div>',
+            '<span ng-hide="$ctrl.isEditing">{{ $ctrl.value | moment: $ctrl.format }}</span>' +
+            '<label ng-show="$ctrl.showLabel" ng-bind="$ctrl.label"></label>' +
+            (canUseHtml5Date() ?
+                '<input type="date" ng-show="$ctrl.isEditing" ng-model="$ctrl.dateValue" class="form-control" ' +
+                'ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}"/>' :
+                '<div class="input-group" ng-show="$ctrl.isEditing">' +
+                '<input type="text" uib-datepicker-popup="{{$ctrl.format}}" ng-model="$ctrl.dateValue" class="form-control" ' +
+                'ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}" is-open="$ctrl.open" />' +
+                '<span class="input-group-btn">' +
+                '<button type="button" class="btn btn-default" ng-click="$ctrl.open = !$ctrl.open"><i class="fa fa-calendar"></i></button>' +
+                '</span>' +
+                '</div>') +
+            '<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">{{error}}</span>' +
+            '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help" ng-bind="$ctrl.help"></span>' +
+            '</div>',
             bindings: {
                 value: '=?',
                 isEditing: '=?',
@@ -583,7 +583,7 @@
                                 var p = $scope.$component.dataService.retrieveDataAsync({
                                     serverUrl: $scope.optionsUrl + '?search=' + val,
                                     requestMethod: $scope.optionsMethod || 'GET'
-                                }).promise;
+                                });
 
                                 p.then(function (data) {
                                     $scope.lastSet = data;

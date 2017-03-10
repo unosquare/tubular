@@ -274,7 +274,7 @@ module.exports = function (grunt) {
     grunt.registerTask('min', ['build', 'uglify', 'cssmin:main']);
 
     grunt.registerTask('lint', ['eslint']);
-    grunt.registerTask('dist', ['copy']);
+    grunt.registerTask('dist', ['build-js', 'min', 'copy']);
     grunt.registerTask('unit', ['karma:dev']);
     grunt.registerTask('unit:ci', ['karma:ci']);
 };

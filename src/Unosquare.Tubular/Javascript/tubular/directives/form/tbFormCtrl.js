@@ -84,8 +84,7 @@
                         if (angular.isDefined($scope.modelKey) &&
                             $scope.modelKey != null &&
                             $scope.modelKey !== '') {
-                            $scope.dataService.getByKey($scope.serverUrl, $scope.modelKey)
-                                .promise.then(
+                            $scope.dataService.getByKey($scope.serverUrl, $scope.modelKey).then(
                                     function(data) {
                                         $scope.model = new TubularModel($scope, $scope, data, $scope.dataService);
                                         $ctrl.bindFields();
@@ -94,8 +93,7 @@
                                         $scope.$emit('tbForm_OnConnectionError', error);
                                     });
                         } else {
-                            $scope.dataService.get(tubularHttp.addTimeZoneToUrl($scope.serverUrl))
-                                .promise.then(
+                            $scope.dataService.get(tubularHttp.addTimeZoneToUrl($scope.serverUrl)).then(
                                     function(data) {
                                         if (angular.isDefined($scope.model) &&
                                             angular.isDefined($scope.model.$component)) {

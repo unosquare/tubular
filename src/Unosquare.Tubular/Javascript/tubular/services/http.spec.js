@@ -31,11 +31,10 @@ describe('Module: tubular.services', function () {
             expect(tubularHttp.isAuthenticated()).toBe(false);
         });
 
-        it('should retrieve a promise when GET', function() {
+        it('should retrieve a promise when GET', function () {
             var getPromise = tubularHttp.get('/api/get');
 
             expect(getPromise).toBeDefined();
-            expect(getPromise.promise).toBeDefined();
         });
 
         it('should retrieve data when GET', done => {
@@ -43,12 +42,11 @@ describe('Module: tubular.services', function () {
 
             tubularConfig.webApi.requireAuthentication(false);
 
-            tubularHttp.get('/api/get')
-                .promise.then(data => {
-                    expect(data).toBeDefined();
-                    expect(data.result).toBe(true);
-                    done();
-                }, error => expect(error).toBeUndefined());
+            tubularHttp.get('/api/get').then(data => {
+                expect(data).toBeDefined();
+                expect(data.result).toBe(true);
+                done();
+            }, error => expect(error).toBeUndefined());
 
             $httpBackend.flush();
         });
@@ -57,12 +55,11 @@ describe('Module: tubular.services', function () {
             $httpBackend.expectGET('/api/get').respond(500);
 
             tubularConfig.webApi.requireAuthentication(false);
-            
-            tubularHttp.get('/api/get')
-                .promise.then(function () { }, error => {
-                    expect(error).toBeDefined();
-                    done();
-                });
+
+            tubularHttp.get('/api/get').then(function () { }, error => {
+                expect(error).toBeDefined();
+                done();
+            });
 
             $httpBackend.flush();
         });
@@ -72,11 +69,33 @@ describe('Module: tubular.services', function () {
                 return data === 'grant_type=password&username=user&password=password';
             }).respond(200, { access_token: 'HOLA' });
 
-            tubularHttp.authenticate('user', 'password', data => {
-                expect(data).toBeDefined();
+            tubularHttp.authenticate('user', 'password').then(result => {
+                expect(result).toBeDefined();
+                expect(result.authenticated).toBe(true);
+                expect(tubularHttp.userData.bearerToken).toBe('HOLA');
                 expect(tubularHttp.isAuthenticated()).toBe(true);
                 done();
-            }, error => expect(error).toBeUndefined());
+            });
+
+            $httpBackend.flush();
+        });
+
+        it('should NOT authenticate', done => {
+            $httpBackend.expectPOST('/api/token', data => {
+                return data === 'grant_type=password&username=user&password=password';
+            }).respond(500, { error: 'WHAT' });
+
+            tubularHttp.authenticate('user', 'password').then(result => {
+                expect(result).toBeDefined();
+                expect(result.authenticated).toBe(true);
+                expect(tubularHttp.userData.bearerToken).toBe('HOLA');
+                expect(tubularHttp.isAuthenticated()).toBe(true);
+                done();
+            }, error => {
+                expect(error).toBeDefined();
+                expect(error.status).toBeDefined();
+                done();
+            });
 
             $httpBackend.flush();
         });
