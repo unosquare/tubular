@@ -105,7 +105,7 @@
 
                         // Try to match the model to the parent, if it exists
                         if (angular.isDefined(scope.$parent.Model)) {
-                            if (angular.isDefined(scope.$parent.Model[ctrl.name])) {
+                            if (scope.$parent.Model.$fields.indexOf(ctrl.name) !== -1) {
                                 scope.$parent.Model[ctrl.name] = newValue;
                                 scope.$parent.Model.$state = scope.$parent.Model.$state || [];
                                 scope.$parent.Model.$state[scope.Name] = ctrl.state;
