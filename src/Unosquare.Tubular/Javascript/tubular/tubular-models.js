@@ -23,8 +23,10 @@
             return function ($scope, $ctrl, data, dataService) {
                 var obj = {
                     $key: '',
+                    $fields: [],
                     $addField: function (key, value, ignoreOriginal) {
                         this[key] = value;
+                        this.$fields.push(key);
                         this.$original = this.$original || {};
 
                         this.$original[key] = ignoreOriginal ? undefined : value;
