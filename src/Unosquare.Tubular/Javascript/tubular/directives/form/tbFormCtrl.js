@@ -184,6 +184,7 @@
                                 field.resetEditor();
                             } else {
                                 field.value = field.defaultValue;
+                                if (field.dateValue) field.dateValue = field.defaultValue;
                             }
                         });
                 };
