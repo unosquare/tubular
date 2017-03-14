@@ -2864,8 +2864,10 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             return function ($scope, $ctrl, data, dataService) {
                 var obj = {
                     $key: '',
+                    $fields: [],
                     $addField: function (key, value, ignoreOriginal) {
                         this[key] = value;
+                        this.$fields.push(key);
                         this.$original = this.$original || {};
 
                         this.$original[key] = ignoreOriginal ? undefined : value;
@@ -3349,7 +3351,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
                         // Try to match the model to the parent, if it exists
                         if (angular.isDefined(scope.$parent.Model)) {
-                            if (angular.isDefined(scope.$parent.Model[ctrl.name])) {
+                            if (scope.$parent.Model.$fields.indexOf(ctrl.name) !== -1) {
                                 scope.$parent.Model[ctrl.name] = newValue;
                                 scope.$parent.Model.$state = scope.$parent.Model.$state || [];
                                 scope.$parent.Model.$state[scope.Name] = ctrl.state;
