@@ -16,7 +16,10 @@
             }
 
             if (angular.isString(val)) {
-                $ctrl.value = moment(val);
+                if (val === '' || moment(val).year() <= 1900)
+                    $ctrl.value = '';
+                else
+                    $ctrl.value = moment(val);
             }
 
             if (angular.isDefined($ctrl.dateValue)) {
@@ -100,7 +103,7 @@
                 return $ctrl.dateValue;
             }, function (val) {
                 if (angular.isDefined(val)) {
-                    $ctrl.value = moment(val);
+                    $ctrl.value = val === '' ? '' : moment(val);
                 }
             });
 
@@ -136,7 +139,7 @@
                 return $ctrl.dateValue;
             }, function (val) {
                 if (angular.isDefined(val)) {
-                    $ctrl.value = moment(val);
+                    $ctrl.value = val === '' ? '' : moment(val);
                 }
             });
 
