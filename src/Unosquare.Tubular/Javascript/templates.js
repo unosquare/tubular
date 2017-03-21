@@ -48,7 +48,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
   $templateCache.put("tbColumnSelectorDialog.tpl.html",
     "<div class=modal-header><h3 class=modal-title ng-bind=\"'CAPTION_SELECTCOLUMNS' | translate\"></h3></div><div class=modal-body><table class=\"table table-bordered table-responsive table-striped table-hover table-condensed\"><thead><tr><th>Visible?</th><th>Name</th></tr></thead><tbody><tr ng-repeat=\"col in Model\"><td><input type=checkbox ng-model=col.Visible ng-disabled=\"col.Visible && isInvalid()\"></td><td ng-bind=col.Label></td></tr></tbody></table></div><div class=modal-footer><button class=\"btn btn-warning\" ng-click=closePopup() ng-bind=\"'CAPTION_CLOSE' | translate\"></button></div>");
   $templateCache.put("tbCellTemplate.tpl.html",
-    "<td ng-transclude ng-show=column.Visible data-label={{::column.Label}}></td>");
+    "<td ng-transclude ng-show=column.Visible data-label={{::column.Label}} style=height:auto></td>");
   $templateCache.put("tbColumnDefinitions.tpl.html",
     "<thead><tr ng-transclude></tr></thead>");
   $templateCache.put("tbColumnFilterButtons.tpl.html",

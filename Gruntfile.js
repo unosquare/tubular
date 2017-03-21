@@ -22,7 +22,9 @@ module.exports = grunt => {
                         expand: true, 
                         src: [
                             'src/Unosquare.Tubular/Javascript/tubular*-bundle.js',
-                            'src/Unosquare.Tubular/Javascript/tubular*-bundle.min.js'
+                            'src/Unosquare.Tubular/Javascript/tubular*-bundle.min.js',
+                            'src/Unosquare.Tubular/Css/tubular-bundle.css',
+                            'src/Unosquare.Tubular/Css/tubular-bundle.min.css'
                         ], 
                         dest: 'dist/', 
                         filter: 'isFile',

@@ -554,7 +554,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
   $templateCache.put("tbColumnSelectorDialog.tpl.html",
     "<div class=modal-header><h3 class=modal-title ng-bind=\"'CAPTION_SELECTCOLUMNS' | translate\"></h3></div><div class=modal-body><table class=\"table table-bordered table-responsive table-striped table-hover table-condensed\"><thead><tr><th>Visible?</th><th>Name</th></tr></thead><tbody><tr ng-repeat=\"col in Model\"><td><input type=checkbox ng-model=col.Visible ng-disabled=\"col.Visible && isInvalid()\"></td><td ng-bind=col.Label></td></tr></tbody></table></div><div class=modal-footer><button class=\"btn btn-warning\" ng-click=closePopup() ng-bind=\"'CAPTION_CLOSE' | translate\"></button></div>");
   $templateCache.put("tbCellTemplate.tpl.html",
-    "<td ng-transclude ng-show=column.Visible data-label={{::column.Label}}></td>");
+    "<td ng-transclude ng-show=column.Visible data-label={{::column.Label}} style=height:auto></td>");
   $templateCache.put("tbColumnDefinitions.tpl.html",
     "<thead><tr ng-transclude></tr></thead>");
   $templateCache.put("tbColumnFilterButtons.tpl.html",
@@ -920,6 +920,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                                 field.resetEditor();
                             } else {
                                 field.value = field.defaultValue;
+                                if (field.dateValue) field.dateValue = field.defaultValue;
                             }
                         });
                 };
@@ -1523,7 +1524,10 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             }
 
             if (angular.isString(val)) {
-                $ctrl.value = moment(val);
+                if (val === '' || moment(val).year() <= 1900)
+                    $ctrl.value = '';
+                else
+                    $ctrl.value = moment(val);
             }
 
             if (angular.isDefined($ctrl.dateValue)) {
@@ -1607,7 +1611,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 return $ctrl.dateValue;
             }, function (val) {
                 if (angular.isDefined(val)) {
-                    $ctrl.value = moment(val);
+                    $ctrl.value = val === '' ? '' : moment(val);
                 }
             });
 
@@ -1643,7 +1647,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 return $ctrl.dateValue;
             }, function (val) {
                 if (angular.isDefined(val)) {
-                    $ctrl.value = moment(val);
+                    $ctrl.value = val === '' ? '' : moment(val);
                 }
             });
 
@@ -2904,7 +2908,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         obj.$addField(col.Name, value);
 
                         if (col.DataType === 'date' || col.DataType === 'datetime' || col.DataType === 'datetimeutc') {
-                            if (obj[col.Name] === null || obj[col.Name] === '')
+                            if (obj[col.Name] === null || obj[col.Name] === '' || moment(obj[col.Name]).year() <= 1900)
                                 obj[col.Name] = '';
                             else
                                 obj[col.Name] = col.DataType === 'datetimeutc' ? moment.utc(obj[col.Name]) : moment(obj[col.Name]);
@@ -3389,9 +3393,14 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                                     if (angular.isDefined(parent.model[scope.Name])) {
                                         if (ctrl.DataType === 'date' && parent.model[scope.Name] != null && angular.isString(parent.model[scope.Name])) {
                                             // TODO: Include MomentJS
-                                            var timezone = new Date(Date.parse(parent.model[scope.Name])).toString().match(/([-+][0-9]+)\s/)[1];
-                                            timezone = timezone.substr(0, timezone.length - 2) + ':' + timezone.substr(timezone.length - 2, 2);
-                                            ctrl.value = new Date(Date.parse(parent.model[scope.Name].replace('Z', '') + timezone));
+                                            if (parent.model[scope.Name] === '' || parent.model[scope.Name] === null) {
+                                                ctrl.value = parent.model[scope.Name];
+                                            }
+                                            else {
+                                                var timezone = new Date(Date.parse(parent.model[scope.Name])).toString().match(/([-+][0-9]+)\s/)[1];
+                                                timezone = timezone.substr(0, timezone.length - 2) + ':' + timezone.substr(timezone.length - 2, 2);
+                                                ctrl.value = new Date(Date.parse(parent.model[scope.Name].replace('Z', '') + timezone));
+                                            }
                                         } else {
                                             ctrl.value = parent.model[scope.Name];
                                         }
