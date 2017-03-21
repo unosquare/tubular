@@ -1,0 +1,1373 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for tubular/directives/grid/tbGridCtrl.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../../prettify.css" />
+    <link rel="stylesheet" href="../../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../../index.html">all files</a> / <a href="index.html">tubular/directives/grid/</a> tbGridCtrl.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">26.15% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>57/218</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">19.71% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>27/137</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">6.52% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>3/46</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">27.4% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>57/208</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line low'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275
+276
+277
+278
+279
+280
+281
+282
+283
+284
+285
+286
+287
+288
+289
+290
+291
+292
+293
+294
+295
+296
+297
+298
+299
+300
+301
+302
+303
+304
+305
+306
+307
+308
+309
+310
+311
+312
+313
+314
+315
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326
+327
+328
+329
+330
+331
+332
+333
+334
+335
+336
+337
+338
+339
+340
+341
+342
+343
+344
+345
+346
+347
+348
+349
+350
+351
+352
+353
+354
+355
+356
+357
+358
+359
+360
+361
+362
+363
+364
+365
+366
+367
+368
+369
+370
+371
+372
+373
+374
+375
+376
+377
+378
+379
+380
+381
+382
+383
+384
+385
+386
+387
+388
+389
+390
+391
+392
+393
+394
+395
+396
+397
+398
+399
+400
+401
+402
+403
+404
+405
+406
+407
+408
+409
+410
+411
+412
+413
+414
+415
+416
+417
+418
+419
+420
+421
+422
+423
+424
+425
+426
+427
+428
+429
+430
+431
+432
+433
+434
+435
+436
+437</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">﻿(function (angular) {
+    'use strict';
+&nbsp;
+    angular.module('tubular.directives')
+        .controller('tbGridController',
+        [
+            '$scope',
+            'localStorageService',
+            'tubularPopupService',
+            'tubularModel',
+            'tubularHttp',
+            '$routeParams',
+            'tubularConfig',
+            function (
+                $scope,
+                localStorageService,
+                tubularPopupService,
+                TubularModel,
+                tubularHttp,
+                $routeParams,
+                tubularConfig) {
+                var $ctrl = this;
+&nbsp;
+                $ctrl.$onInit = function () {
+                    $ctrl.tubularDirective = 'tubular-grid';
+&nbsp;
+                    $ctrl.name = $ctrl.name || 'tbgrid';
+                    $ctrl.columns = [];
+                    $ctrl.rows = [];
+&nbsp;
+                    $ctrl.savePage = angular.isUndefined($ctrl.savePage) ? true : <span class="branch-1 cbranch-no" title="branch not covered" >$ctrl.savePage;</span>
+                    $ctrl.currentPage = $ctrl.savePage ? (localStorageService.get($ctrl.name + '_page') || 1) : <span class="branch-1 cbranch-no" title="branch not covered" >1;</span>
+&nbsp;
+                    $ctrl.savePageSize = angular.isUndefined($ctrl.savePageSize) ? true : <span class="branch-1 cbranch-no" title="branch not covered" >$ctrl.savePageSize;</span>
+                    $ctrl.pageSize = $ctrl.pageSize || 20;
+                    $ctrl.saveSearch = angular.isUndefined($ctrl.saveSearch) ? <span class="branch-0 cbranch-no" title="branch not covered" >true </span>: $ctrl.saveSearch;
+                    $ctrl.totalPages = 0;
+                    $ctrl.totalRecordCount = 0;
+                    $ctrl.filteredRecordCount = 0;
+                    $ctrl.requestedPage = $ctrl.currentPage;
+                    $ctrl.hasColumnsDefinitions = false;
+                    $ctrl.requestCounter = 0;
+                    $ctrl.requestMethod = $ctrl.requestMethod || 'POST';
+                    $ctrl.serverSaveMethod = $ctrl.serverSaveMethod || 'POST';
+                    $ctrl.requestTimeout = 20000;
+                    $ctrl.currentRequest = null;
+                    $ctrl.autoSearch = $routeParams.param ||
+                        ($ctrl.saveSearch ? (localStorageService.get($ctrl.name + '_search') || '') : <span class="branch-1 cbranch-no" title="branch not covered" >'')</span>;
+                    $ctrl.search = {
+                        Text: $ctrl.autoSearch,
+                        Operator: $ctrl.autoSearch === '' ? 'None' : <span class="branch-1 cbranch-no" title="branch not covered" >'Auto'</span>
+                    };
+&nbsp;
+                    $ctrl.isEmpty = false;
+                    $ctrl.dataService = tubularHttp.getDataService($ctrl.dataServiceName);
+                    $ctrl.tempRow = new TubularModel($scope, $ctrl, {}, $ctrl.dataService);
+                    $ctrl.requireAuthentication = $ctrl.requireAuthentication ? (<span class="branch-0 cbranch-no" title="branch not covered" >$ctrl.requireAuthentication === 'true')</span> : true;
+                    tubularConfig.webApi.requireAuthentication($ctrl.requireAuthentication);
+                    $ctrl.editorMode = $ctrl.editorMode || 'none';
+                    $ctrl.canSaveState = false;
+                    $ctrl.showLoading = angular.isUndefined($ctrl.showLoading) ? true : <span class="branch-1 cbranch-no" title="branch not covered" >$ctrl.showLoading;</span>
+                    $ctrl.autoRefresh = angular.isUndefined($ctrl.autoRefresh) ? true : <span class="branch-1 cbranch-no" title="branch not covered" >$ctrl.autoRefresh;</span>
+                    $ctrl.serverDeleteUrl = $ctrl.serverDeleteUrl || $ctrl.serverSaveUrl;
+&nbsp;
+                    // Emit a welcome message
+                    $scope.$emit('tbGrid_OnGreetParentController', $ctrl);
+                };
+&nbsp;
+                $scope.$watch('$ctrl.columns', <span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >                    if ($ctrl.hasColumnsDefinitions === false || $ctrl.canSaveState === false) {</span>
+<span class="cstat-no" title="statement not covered" >                        return;</span>
+                    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    localStorageService.set($ctrl.name + '_columns', $ctrl.columns);</span>
+                },
+                    true);
+&nbsp;
+                $scope.$watch('$ctrl.serverUrl', <span class="fstat-no" title="function not covered" >function (newVal, prevVal) {</span>
+<span class="cstat-no" title="statement not covered" >                    if ($ctrl.hasColumnsDefinitions === false || $ctrl.currentRequest || newVal === prevVal) {</span>
+<span class="cstat-no" title="statement not covered" >                        return;</span>
+                    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    $ctrl.retrieveData();</span>
+                });
+&nbsp;
+                $scope.$watch('$ctrl.hasColumnsDefinitions', <span class="fstat-no" title="function not covered" >function (newVal) {</span>
+<span class="cstat-no" title="statement not covered" >                    if (newVal !== true) {</span>
+<span class="cstat-no" title="statement not covered" >                        return;</span>
+                    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    $ctrl.retrieveData();</span>
+                });
+&nbsp;
+                $scope.$watch('$ctrl.pageSize', <span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >                    if ($ctrl.hasColumnsDefinitions &amp;&amp; $ctrl.requestCounter &gt; 0) {</span>
+<span class="cstat-no" title="statement not covered" >                        if ($ctrl.savePageSize) {</span>
+<span class="cstat-no" title="statement not covered" >                            localStorageService.set($ctrl.name + '_pageSize', $ctrl.pageSize);</span>
+                        }
+<span class="cstat-no" title="statement not covered" >                        $ctrl.retrieveData();</span>
+                    }
+                });
+&nbsp;
+                $scope.$watch('$ctrl.requestedPage', <span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >                    if ($ctrl.hasColumnsDefinitions &amp;&amp; $ctrl.requestCounter &gt; 0) {</span>
+<span class="cstat-no" title="statement not covered" >                        $ctrl.retrieveData();</span>
+                    }
+                });
+&nbsp;
+                $ctrl.saveSearch = <span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >                    if ($ctrl.saveSearch) {</span>
+<span class="cstat-no" title="statement not covered" >                        if ($ctrl.search.Text === '') {</span>
+<span class="cstat-no" title="statement not covered" >                            localStorageService.remove($ctrl.name + '_search');</span>
+                        } else {
+<span class="cstat-no" title="statement not covered" >                            localStorageService.set($ctrl.name + '_search', $ctrl.search.Text);</span>
+                        }
+                    }
+                };
+&nbsp;
+                $ctrl.addColumn = <span class="fstat-no" title="function not covered" >function (item) {</span>
+<span class="cstat-no" title="statement not covered" >                    if (item.Name == null) <span class="cstat-no" title="statement not covered" >return;</span></span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    if ($ctrl.hasColumnsDefinitions !== false) {</span>
+<span class="cstat-no" title="statement not covered" >                        throw 'Cannot define more columns. Column definitions have been sealed';</span>
+                    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    $ctrl.columns.push(item);</span>
+                };
+&nbsp;
+                $ctrl.newRow = <span class="fstat-no" title="function not covered" >function (template, popup, size, data) {</span>
+<span class="cstat-no" title="statement not covered" >                    $ctrl.tempRow = new TubularModel($scope, $ctrl, data || {}, $ctrl.dataService);</span>
+<span class="cstat-no" title="statement not covered" >                    $ctrl.tempRow.$isNew = true;</span>
+<span class="cstat-no" title="statement not covered" >                    $ctrl.tempRow.$isEditing = true;</span>
+<span class="cstat-no" title="statement not covered" >                    $ctrl.tempRow.$component = $ctrl;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    if (angular.isDefined(template) &amp;&amp; angular.isDefined(popup) &amp;&amp; popup) {</span>
+<span class="cstat-no" title="statement not covered" >                        tubularPopupService.openDialog(template, $ctrl.tempRow, $ctrl, size);</span>
+                    }
+                };
+&nbsp;
+                $ctrl.deleteRow = <span class="fstat-no" title="function not covered" >function (row) {</span>
+                    // TODO: Should I move this behavior to model?
+<span class="cstat-no" title="statement not covered" >                    var urlparts = $ctrl.serverDeleteUrl.split('?');</span>
+<span class="cstat-no" title="statement not covered" >                    var url = urlparts[0] + '/' + row.$key;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    if (urlparts.length &gt; 1) {</span>
+<span class="cstat-no" title="statement not covered" >                        url += '?' + urlparts[1];</span>
+                    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    var request = {</span>
+                        serverUrl: url,
+                        requestMethod: 'DELETE',
+                        timeout: $ctrl.requestTimeout,
+                        requireAuthentication: $ctrl.requireAuthentication
+                    };
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    $ctrl.currentRequest = $ctrl.dataService.retrieveDataAsync(request);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    $ctrl.currentRequest.then(</span>
+<span class="fstat-no" title="function not covered" >                        function (data) {</span>
+<span class="cstat-no" title="statement not covered" >                            row.$hasChanges = false;</span>
+<span class="cstat-no" title="statement not covered" >                            $scope.$emit('tbGrid_OnRemove', data);</span>
+                        },
+<span class="fstat-no" title="function not covered" >                        function (error) {</span>
+<span class="cstat-no" title="statement not covered" >                            $scope.$emit('tbGrid_OnConnectionError', error);</span>
+                        })
+                        .then(<span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >                            $ctrl.currentRequest = null;</span>
+<span class="cstat-no" title="statement not covered" >                            $ctrl.retrieveData();</span>
+                        });
+                };
+&nbsp;
+                $ctrl.verifyColumns = <span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >                    var columns = localStorageService.get($ctrl.name + '_columns');</span>
+<span class="cstat-no" title="statement not covered" >                    if (columns == null || columns === '') {</span>
+                        // Nothing in settings, saving initial state
+<span class="cstat-no" title="statement not covered" >                        localStorageService.set($ctrl.name + '_columns', $ctrl.columns);</span>
+<span class="cstat-no" title="statement not covered" >                        return;</span>
+                    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    angular.forEach(columns,</span>
+<span class="fstat-no" title="function not covered" >                        function (column) {</span>
+<span class="cstat-no" title="statement not covered" >                            var filtered = $ctrl.columns.filter(<span class="fstat-no" title="function not covered" >function (el) {</span> <span class="cstat-no" title="statement not covered" >return el.Name === column.Name; </span>});</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                            if (filtered.length === 0) {</span>
+<span class="cstat-no" title="statement not covered" >                                return;</span>
+                            }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                            var current = filtered[0];</span>
+                            // Updates visibility by now
+<span class="cstat-no" title="statement not covered" >                            current.Visible = column.Visible;</span>
+&nbsp;
+                            // Update sorting
+<span class="cstat-no" title="statement not covered" >                            if ($ctrl.requestCounter &lt; 1) {</span>
+<span class="cstat-no" title="statement not covered" >                                current.SortOrder = column.SortOrder;</span>
+<span class="cstat-no" title="statement not covered" >                                current.SortDirection = column.SortDirection;</span>
+                            }
+&nbsp;
+                            // Update Filters
+<span class="cstat-no" title="statement not covered" >                            if (current.Filter != null &amp;&amp; current.Filter.Text != null) {</span>
+<span class="cstat-no" title="statement not covered" >                                return;</span>
+                            }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                            if (column.Filter != null &amp;&amp;</span>
+                                column.Filter.Text != null &amp;&amp;
+                                column.Filter.Operator !== 'None') {
+<span class="cstat-no" title="statement not covered" >                                current.Filter = column.Filter;</span>
+                            }
+                        });
+                };
+&nbsp;
+                $ctrl.getRequestObject = <span class="fstat-no" title="function not covered" >function (skip) {</span>
+<span class="cstat-no" title="statement not covered" >                    return {</span>
+                        serverUrl: $ctrl.serverUrl,
+                        requestMethod: $ctrl.requestMethod || 'POST',
+                        timeout: $ctrl.requestTimeout,
+                        requireAuthentication: $ctrl.requireAuthentication,
+                        data: {
+                            Count: $ctrl.requestCounter,
+                            Columns: $ctrl.columns,
+                            Skip: skip,
+                            Take: parseInt($ctrl.pageSize),
+                            Search: $ctrl.search,
+                            TimezoneOffset: new Date().getTimezoneOffset()
+                        }
+                    };
+                };
+&nbsp;
+                $ctrl.retrieveData = <span class="fstat-no" title="function not covered" >function () {</span>
+                    // If the ServerUrl is empty skip data load
+<span class="cstat-no" title="statement not covered" >                    if (!$ctrl.serverUrl || $ctrl.currentRequest !== null) {</span>
+<span class="cstat-no" title="statement not covered" >                        return;</span>
+                    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    $ctrl.canSaveState = true;</span>
+<span class="cstat-no" title="statement not covered" >                    $ctrl.verifyColumns();</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    if ($ctrl.savePageSize) {</span>
+<span class="cstat-no" title="statement not covered" >                        $ctrl.pageSize = (localStorageService.get($ctrl.name + '_pageSize') || $ctrl.pageSize);</span>
+                    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    if ($ctrl.pageSize &lt; 10) <span class="cstat-no" title="statement not covered" >$ctrl.pageSize = 20; </span></span>// default
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    var newPages = Math.ceil($ctrl.totalRecordCount / $ctrl.pageSize);</span>
+<span class="cstat-no" title="statement not covered" >                    if ($ctrl.requestedPage &gt; newPages) <span class="cstat-no" title="statement not covered" >$ctrl.requestedPage = newPages;</span></span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    var skip = ($ctrl.requestedPage - 1) * $ctrl.pageSize;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    if (skip &lt; 0) <span class="cstat-no" title="statement not covered" >skip = 0;</span></span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    var request = $ctrl.getRequestObject(skip);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    if (angular.isUndefined($ctrl.onBeforeGetData) === false) {</span>
+<span class="cstat-no" title="statement not covered" >                        $ctrl.onBeforeGetData();</span>
+                    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    $scope.$emit('tbGrid_OnBeforeRequest', request, $ctrl);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    $ctrl.currentRequest = $ctrl.dataService.retrieveDataAsync(request);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    $ctrl.currentRequest.then($ctrl.processPayload, <span class="fstat-no" title="function not covered" >function (error) {</span></span>
+<span class="cstat-no" title="statement not covered" >                        $ctrl.requestedPage = $ctrl.currentPage;</span>
+<span class="cstat-no" title="statement not covered" >                        $scope.$emit('tbGrid_OnConnectionError', error);</span>
+                    }).then(<span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >                        $ctrl.currentRequest = null;</span>
+                    });
+                };
+&nbsp;
+                $ctrl.processPayload = <span class="fstat-no" title="function not covered" >function (data) {</span>
+<span class="cstat-no" title="statement not covered" >                    $ctrl.requestCounter += 1;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    if (angular.isUndefined(data) || data == null) {</span>
+<span class="cstat-no" title="statement not covered" >                        $scope.$emit('tbGrid_OnConnectionError',</span>
+                            {
+                                statusText: 'Data is empty',
+                                status: 0
+                            });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                        return;</span>
+                    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    $ctrl.dataSource = data;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    if (!data.Payload) {</span>
+<span class="cstat-no" title="statement not covered" >                        var errorMsg = 'tubularGrid(' + $ctrl.$id + '): response is invalid.';</span>
+<span class="cstat-no" title="statement not covered" >                        $ctrl.currentRequest.cancel(errorMsg);</span>
+<span class="cstat-no" title="statement not covered" >                        $scope.$emit('tbGrid_OnConnectionError', errorMsg);</span>
+<span class="cstat-no" title="statement not covered" >                        return;</span>
+                    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    $ctrl.rows = data.Payload.map(<span class="fstat-no" title="function not covered" >function (el) {</span></span>
+<span class="cstat-no" title="statement not covered" >                        var model = new TubularModel($scope, $ctrl, el, $ctrl.dataService);</span>
+<span class="cstat-no" title="statement not covered" >                        model.$component = $ctrl;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                        model.editPopup = <span class="fstat-no" title="function not covered" >function (template, size) {</span></span>
+<span class="cstat-no" title="statement not covered" >                            tubularPopupService</span>
+                                .openDialog(template,
+                                new TubularModel($scope, $ctrl, el, $ctrl.dataService),
+                                $ctrl,
+                                size);
+                        };
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                        return model;</span>
+                    });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    $scope.$emit('tbGrid_OnDataLoaded', $ctrl);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    $ctrl.aggregationFunctions = data.AggregationPayload;</span>
+<span class="cstat-no" title="statement not covered" >                    $ctrl.currentPage = data.CurrentPage;</span>
+<span class="cstat-no" title="statement not covered" >                    $ctrl.totalPages = data.TotalPages;</span>
+<span class="cstat-no" title="statement not covered" >                    $ctrl.totalRecordCount = data.TotalRecordCount;</span>
+<span class="cstat-no" title="statement not covered" >                    $ctrl.filteredRecordCount = data.FilteredRecordCount;</span>
+<span class="cstat-no" title="statement not covered" >                    $ctrl.isEmpty = $ctrl.filteredRecordCount === 0;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    if ($ctrl.savePage) {</span>
+<span class="cstat-no" title="statement not covered" >                        localStorageService.set($ctrl.name + '_page', $ctrl.currentPage);</span>
+                    }
+                };
+&nbsp;
+                $ctrl.sortColumn = <span class="fstat-no" title="function not covered" >function (columnName, multiple) {</span>
+<span class="cstat-no" title="statement not covered" >                    var filterColumn = $ctrl.columns.filter(<span class="fstat-no" title="function not covered" >function (el) {</span></span>
+<span class="cstat-no" title="statement not covered" >                        return el.Name === columnName;</span>
+                    });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    if (filterColumn.length === 0) <span class="cstat-no" title="statement not covered" >return;</span></span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    var column = filterColumn[0];</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    if (column.Sortable === false) <span class="cstat-no" title="statement not covered" >return;</span></span>
+&nbsp;
+                    // need to know if it's currently sorted before we reset stuff
+<span class="cstat-no" title="statement not covered" >                    var currentSortDirection = column.SortDirection;</span>
+<span class="cstat-no" title="statement not covered" >                    var toBeSortDirection = currentSortDirection === 'None'</span>
+                        ? 'Ascending'
+                        : currentSortDirection === 'Ascending' ? 'Descending' : 'None';
+&nbsp;
+                    // the latest sorting takes less priority than previous sorts
+<span class="cstat-no" title="statement not covered" >                    if (toBeSortDirection === 'None') {</span>
+<span class="cstat-no" title="statement not covered" >                        column.SortOrder = -1;</span>
+<span class="cstat-no" title="statement not covered" >                        column.SortDirection = 'None';</span>
+                    } else {
+<span class="cstat-no" title="statement not covered" >                        column.SortOrder = Number.MAX_VALUE;</span>
+<span class="cstat-no" title="statement not covered" >                        column.SortDirection = toBeSortDirection;</span>
+                    }
+&nbsp;
+                    // if it's not a multiple sorting, remove the sorting from all other columns
+<span class="cstat-no" title="statement not covered" >                    if (multiple === false) {</span>
+<span class="cstat-no" title="statement not covered" >                        angular.forEach($ctrl.columns.filter(<span class="fstat-no" title="function not covered" >function (col) {</span> <span class="cstat-no" title="statement not covered" >return col.Name !== columnName; </span>}),</span>
+<span class="fstat-no" title="function not covered" >                            function (col) {</span>
+<span class="cstat-no" title="statement not covered" >                                col.SortOrder = -1;</span>
+<span class="cstat-no" title="statement not covered" >                                col.SortDirection = 'None';</span>
+                            });
+                    }
+&nbsp;
+                    // take the columns that actually need to be sorted in order to re-index them
+<span class="cstat-no" title="statement not covered" >                    var currentlySortedColumns = $ctrl.columns.filter(<span class="fstat-no" title="function not covered" >function (col) {</span></span>
+<span class="cstat-no" title="statement not covered" >                        return col.SortOrder &gt; 0;</span>
+                    });
+&nbsp;
+                    // re-index the sort order
+<span class="cstat-no" title="statement not covered" >                    currentlySortedColumns.sort(<span class="fstat-no" title="function not covered" >function (a, b) {</span></span>
+<span class="cstat-no" title="statement not covered" >                        return a.SortOrder === b.SortOrder ? 0 : a.SortOrder &gt; b.SortOrder;</span>
+                    });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    angular.forEach(currentlySortedColumns, <span class="fstat-no" title="function not covered" >function (col, index) {</span></span>
+<span class="cstat-no" title="statement not covered" >                        col.SortOrder = index + 1;</span>
+                    });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    $scope.$broadcast('tbGrid_OnColumnSorted');</span>
+<span class="cstat-no" title="statement not covered" >                    $ctrl.retrieveData();</span>
+                };
+&nbsp;
+                $ctrl.selectedRows = <span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >                    return localStorageService.get($ctrl.name + '_rows') || [];</span>
+                };
+&nbsp;
+                $ctrl.clearSelection = <span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >                    angular.forEach($ctrl.rows,</span>
+<span class="fstat-no" title="function not covered" >                        function (value) {</span>
+<span class="cstat-no" title="statement not covered" >                            value.$selected = false;</span>
+                        });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    localStorageService.set($ctrl.name + '_rows', []);</span>
+                };
+&nbsp;
+                $ctrl.isEmptySelection = <span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >                    return $ctrl.selectedRows().length === 0;</span>
+                };
+&nbsp;
+                $ctrl.selectFromSession = <span class="fstat-no" title="function not covered" >function (row) {</span>
+<span class="cstat-no" title="statement not covered" >                    row.$selected = $ctrl.selectedRows().filter(<span class="fstat-no" title="function not covered" >function (el) {</span> <span class="cstat-no" title="statement not covered" >return el.$key === row.$key; </span>}).length &gt; 0;</span>
+                };
+&nbsp;
+                $ctrl.changeSelection = <span class="fstat-no" title="function not covered" >function (row) {</span>
+<span class="cstat-no" title="statement not covered" >                    if (angular.isUndefined(row)) {</span>
+<span class="cstat-no" title="statement not covered" >                        return;</span>
+                    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    row.$selected = !row.$selected;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    var rows = $ctrl.selectedRows();</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    if (row.$selected) {</span>
+<span class="cstat-no" title="statement not covered" >                        rows.push({ $key: row.$key });</span>
+                    } else {
+<span class="cstat-no" title="statement not covered" >                        rows = rows.filter(<span class="fstat-no" title="function not covered" >function (el) {</span></span>
+<span class="cstat-no" title="statement not covered" >                            return el.$key !== row.$key;</span>
+                        });
+                    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    localStorageService.set($ctrl.name + '_rows', rows);</span>
+                };
+&nbsp;
+                $ctrl.getFullDataSource = <span class="fstat-no" title="function not covered" >function (callback) {</span>
+<span class="cstat-no" title="statement not covered" >                    var request = $ctrl.getRequestObject(0);</span>
+<span class="cstat-no" title="statement not covered" >                    request.data.Take = -1;</span>
+<span class="cstat-no" title="statement not covered" >                    request.data.Search = {</span>
+                        Text: '',
+                        Operator: 'None'
+                    };
+<span class="cstat-no" title="statement not covered" >                    $ctrl.dataService.retrieveDataAsync(request).then(</span>
+<span class="fstat-no" title="function not covered" >                        function (data) {</span>
+<span class="cstat-no" title="statement not covered" >                            callback(data.Payload);</span>
+                        },
+<span class="fstat-no" title="function not covered" >                        function (error) {</span>
+<span class="cstat-no" title="statement not covered" >                            $scope.$emit('tbGrid_OnConnectionError', error);</span>
+                        })
+                        .then(<span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >                            $ctrl.currentRequest = null;</span>
+                        });
+                };
+&nbsp;
+                $ctrl.visibleColumns = <span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >                    return $ctrl.columns.filter(<span class="fstat-no" title="function not covered" >function (el) {</span> <span class="cstat-no" title="statement not covered" >return el.Visible; </span>}).length;</span>
+                };
+            }
+        ]);
+})(angular);</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Tue Mar 21 2017 19:02:50 GMT+0000 (UTC)
+</div>
+</div>
+<script src="../../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../../sorter.js"></script>
+</body>
+</html>
