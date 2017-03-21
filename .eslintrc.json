@@ -1,12 +1,16 @@
 {
-  "env": {
-    "browser": true,    
-    "angular/mocks" :  true
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module"
   },
-  "plugins": [ "angular"],
+  "env": {
+    "browser": true,
+    "angular/mocks": true
+  },
+  "plugins": [ "angular" ],
   "globals": {
     "moment": true,
-    "saveAs":  true 
+    "saveAs": true
   },
   "extends": [
     "eslint:recommended",
