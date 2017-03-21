@@ -1,18 +1,6 @@
 ﻿(function(angular) {
     'use strict';
 
-    // define console methods if not defined
-    if (typeof console === "undefined") {
-        window.console = {
-            log: function () { },
-            debug: function () { },
-            error: function () { },
-            assert: function () { },
-            info: function () { },
-            warn: function () { }
-        };
-    }
-
     angular.module('app.routes', ['ngRoute'])
         .config([
             '$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
@@ -38,20 +26,7 @@
 
                 $locationProvider.html5Mode(true);
             }
-        ]).config(['$httpProvider', function ($httpProvider) {
-            $httpProvider.interceptors.push('noCacheInterceptor');
-        }
-        ]).factory('noCacheInterceptor', function () {
-            return {
-                request: function (config) {
-                    if (config.method === 'GET' && config.url.indexOf('.htm') === -1 && config.url.indexOf('blob:') === -1) {
-                        var separator = config.url.indexOf('?') === -1 ? '?' : '&';
-                        config.url = config.url + separator + 'noCache=' + new Date().getTime();
-                    }
-                    return config;
-                }
-            };
-        });
+        ]);
 
     angular.module('app.controllers', ['tubular.services'])
         .controller('titleController', [
