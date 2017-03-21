@@ -19,19 +19,19 @@ module.exports = grunt => {
                 files: [
                     // includes files within path
                     {
-                        expand: true, 
+                        expand: true,
                         src: [
                             'src/Unosquare.Tubular/Javascript/tubular*-bundle.js',
                             'src/Unosquare.Tubular/Javascript/tubular*-bundle.min.js',
                             'src/Unosquare.Tubular/Css/tubular-bundle.css',
                             'src/Unosquare.Tubular/Css/tubular-bundle.min.css'
-                        ], 
-                        dest: 'dist/', 
+                        ],
+                        dest: 'dist/',
                         filter: 'isFile',
                         flatten: true
-                    },
-                ],
-            },
+                    }
+                ]
+            }
         },
         instrument: {
             files: [
@@ -77,7 +77,7 @@ module.exports = grunt => {
                     coverageDir: 'coverage',
                     args: {
                         baseUrl: 'http://localhost:9000/instrumented/test/Unosquare.Tubular.WebTest/',
-                        browser: process.env.TRAVIS_OS_NAME == 'osx' ? 'chrome' : 'firefox'
+                        browser: process.env.TRAVIS_OS_NAME === 'osx' ? 'chrome' : 'firefox'
 
                     }
                 }

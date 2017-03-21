@@ -1,7 +1,6 @@
 // Karma configuration
-// Generated on Mon Jun 16 2014 15:04:49 GMT+1000 (AUS Eastern Standard Time)
 
-module.exports = function (config) {
+module.exports = (config) => {
     config.set({
 
         // base path that will be used to resolve all patterns (eg. files, exclude)
@@ -55,10 +54,10 @@ module.exports = function (config) {
 
         ngHtml2JsPreprocessor: {
             moduleName: 'tubular.directives',
-            cacheIdFromPath: function (filepath) {
-                var pieces = filepath.split('/');
+            cacheIdFromPath: (filepath) => {
+                const pieces = filepath.split('/');
                 return pieces[pieces.length -1];
-            },
+            }
         },
 
         // test results reporter to use
