@@ -139,7 +139,7 @@
                     $scope.loading = true;
 
                     tubularHttp.authenticate($scope.username, $scope.password).then(
-                        function () {
+                        function (data) {
                             $location.path('/');
                         },
                         function (error) {

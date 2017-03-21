@@ -212,8 +212,7 @@
                 $ctrl.downloadAllCsv = function () {
                     tubular.exportAllGridToCsv($ctrl.filename, $ctrl.$component);
                 };
-            }
-            ]
+            }]
         })
         /**
          * @ngdoc component

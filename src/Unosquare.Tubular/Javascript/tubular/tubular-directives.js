@@ -399,7 +399,7 @@
                             };
 
                             if ($scope.columnName != null) {
-                                var columnModel = $scope.$component.columns
+                                const columnModel = $scope.$component.columns
                                     .filter(function (el) { return el.Name === $scope.columnName; });
 
                                 if (columnModel.length > 0) {

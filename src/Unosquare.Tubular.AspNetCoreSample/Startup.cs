@@ -54,6 +54,7 @@ namespace Unosquare.Tubular.AspNetCoreSample
             app.UseJsonExceptionHandler();
 
             app.UseDefaultFiles();
+            app.UseStaticFiles();
 
             var tokenOptions = new TokenValidationParameters
             {
@@ -91,8 +92,6 @@ namespace Unosquare.Tubular.AspNetCoreSample
             });
 
             app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
-
-            app.UseStaticFiles();
 
             app.UseMvc();
 

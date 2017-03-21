@@ -27,7 +27,7 @@
             }
 
             if (moment.isMoment($ctrl.value)) {
-                var tmpDate = $ctrl.value.toObject();
+                const tmpDate = $ctrl.value.toObject();
                 $ctrl.dateValue = new Date(tmpDate.years, tmpDate.months, tmpDate.date, tmpDate.hours, tmpDate.minutes, tmpDate.seconds);
             } else {
                 // NULL value
@@ -63,7 +63,7 @@
         }
     }
 
-    var tbNumericEditorCtrl = ['tubularEditorService', '$scope', 'translateFilter', function (tubular, $scope, translateFilter) {
+    const tbNumericEditorCtrl = ['tubularEditorService', '$scope', 'translateFilter', function (tubular, $scope, translateFilter) {
         var $ctrl = this;
 
         $ctrl.validate = function () {
@@ -92,7 +92,7 @@
     }
     ];
 
-    var tbDateTimeEditorCtrl = ['$scope', '$element', 'tubularEditorService', 'translateFilter', 'dateFilter',
+    const tbDateTimeEditorCtrl = ['$scope', '$element', 'tubularEditorService', 'translateFilter', 'dateFilter',
         function ($scope, $element, tubular, translateFilter, dateFilter) {
             var $ctrl = this;
 
@@ -119,7 +119,7 @@
         }
     ];
 
-    var tbDateEditorCtrl = [
+    const tbDateEditorCtrl = [
         '$scope',
         '$element',
         'tubularEditorService',
@@ -155,8 +155,7 @@
         }
     ];
 
-
-    var tbDropdownEditorCtrl = ['tubularEditorService', '$scope', function (tubular, $scope) {
+    const tbDropdownEditorCtrl = ['tubularEditorService', '$scope', function (tubular, $scope) {
         var $ctrl = this;
 
         $ctrl.$onInit = function () {
@@ -235,33 +234,29 @@
                 throw 'You need to define a parent Form or Grid';
             }
 
-            var currentRequest = $ctrl.$component.dataService.retrieveDataAsync({
-                serverUrl: $ctrl.optionsUrl,
-                requestMethod: $ctrl.optionsMethod || 'GET'
-            });
-
             var value = $ctrl.value;
             $ctrl.value = '';
 
-            currentRequest.then(
-                function (data) {
-                    $ctrl.options = data;
-                    $ctrl.dataIsLoaded = true;
-                    // TODO: Add an attribute to define if autoselect is OK
-                    var possibleValue = $ctrl.options && $ctrl.options.length > 0 ?
-                        angular.isDefined($ctrl.optionKey) ? $ctrl.options[0][$ctrl.optionKey] : $ctrl.options[0]
-                        : '';
-                    $ctrl.value = value || $ctrl.defaultValue || possibleValue;
+            $ctrl.$component.dataService.retrieveDataAsync({
+                serverUrl: $ctrl.optionsUrl,
+                requestMethod: $ctrl.optionsMethod || 'GET'
+            }).then(function (data) {
+                $ctrl.options = data;
+                $ctrl.dataIsLoaded = true;
+                // TODO: Add an attribute to define if autoselect is OK
+                var possibleValue = $ctrl.options && $ctrl.options.length > 0 ?
+                    angular.isDefined($ctrl.optionKey) ? $ctrl.options[0][$ctrl.optionKey] : $ctrl.options[0]
+                    : '';
+                $ctrl.value = value || $ctrl.defaultValue || possibleValue;
 
-                    // Set the field dirty
-                    var formScope = $ctrl.getFormField();
-                    if (formScope) formScope.$setDirty();
-                }, function (error) {
-                    $scope.$emit('tbGrid_OnConnectionError', error);
-                });
+                // Set the field dirty
+                const formScope = $ctrl.getFormField();
+                if (formScope) formScope.$setDirty();
+            }, function (error) {
+                $scope.$emit('tbGrid_OnConnectionError', error);
+            });
         };
-    }
-    ];
+    }];
 
     angular.module('tubular.directives')
         /**
@@ -586,9 +581,7 @@
                                 var p = $scope.$component.dataService.retrieveDataAsync({
                                     serverUrl: $scope.optionsUrl + '?search=' + val,
                                     requestMethod: $scope.optionsMethod || 'GET'
-                                });
-
-                                p.then(function (data) {
+                                }).then(function (data) {
                                     $scope.lastSet = data;
                                     return data;
                                 });
