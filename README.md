@@ -168,7 +168,7 @@ The following HTML represents a basic grid. You don't need to add anything else 
 
 Tubular works directly with either your own OData service or a custom RESTful call. You can simplify your RESTful API significantly by using our .NET Tubular.ServerSide library which handles IQueryables easily.
 
-##Running the OWIN Sample project
+## Running the OWIN Sample project
 
 In order to run the sample project included in the solution, first you must use Code-first migrations Update-Database command. Here is the explanation step by step:
 
