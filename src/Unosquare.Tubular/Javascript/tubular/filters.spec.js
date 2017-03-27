@@ -44,7 +44,20 @@ describe('Module: tubular', function() {
         });
 
         it('should filter numberorcurrency', function() {
+            result = filterNumberOcurrency('30');
+            expect(result).toEqual('30.00', 'Number filter without fractionSize');
 
+            result = filterNumberOcurrency('30', '', '', 1);
+            expect(result).toEqual('30.0', 'Number filter with fractionSize');
+
+            result = filterNumberOcurrency(30, 'I');
+            expect(result).toEqual(30, 'Int filter');
+
+            result = filterNumberOcurrency(30,'C');
+            expect(result).toEqual('$30.00', 'Currency filter without symbol');
+
+            result = filterNumberOcurrency(30,'C', '€' );
+            expect(result).toEqual('€30.00', 'Currency filter without symbol');
         });
 
         it('should filter moment', function() {
