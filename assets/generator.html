@@ -40,7 +40,8 @@
                 </div>
                 <div ng-hide="step != 3">
                     <p>
-                        If you wish send this grid to <b>Plunker</b> and you can start right now to customize it. The Tubular grid is located as <i>grid.html</i>.
+                        If you wish send this grid to <b>Plunker</b> and you can start right now to customize it. The Tubular
+                        grid is located as <i>grid.html</i>.
                         <br />
                         <b>Save and Continue</b> will save this grid locally and allow to add more views to edit later.
                     </p>
@@ -84,22 +85,22 @@
                     <thead>
                         <tr>
                             <th>
-                                Is Key?
-                                &nbsp;<i class="fa fa-question-circle" data-toggle="tooltip" title="This key is used for CRUD operations"></i>
+                                Is Key? &nbsp;
+                                <i class="fa fa-question-circle" uib-tooltip="This key is used for CRUD operations"></i>
                             </th>
                             <th>Name</th>
                             <th>Label</th>
                             <th>Data Type</th>
                             <th>
-                                Template
-                                &nbsp;<i class="fa fa-question-circle" data-toggle="tooltip" title="Any valid AngularJS placeholder, row object is the current cursor"></i>
+                                Template &nbsp;
+                                <i class="fa fa-question-circle" uib-tooltip="Any valid AngularJS placeholder, row object is the current cursor"></i>
                             </th>
                             <th>Filter</th>
                             <th>Searchable</th>
                             <th>Sortable</th>
                             <th>
-                                Sort Order
-                                &nbsp;<i class="fa fa-question-circle" data-toggle="tooltip" title="If you set any order different to -1, it will sort in the first request"></i>
+                                Sort Order &nbsp;
+                                <i class="fa fa-question-circle" uib-tooltip="If you set any order different to -1, it will sort in the first request"></i>
                             </th>
                             <th>Sort Direction</th>
                             <th>Visible</th>
@@ -127,13 +128,10 @@
                                 <tb-checkbox-field value="row.Sortable"></tb-checkbox-field>
                             </td>
                             <td>
-                                <input type="number" class="form-control" min="0" max="50"
-                                       ng-model="row.SortOrder" ng-disabled="row.Sortable == false" />
+                                <input type="number" class="form-control" min="0" max="50" ng-model="row.SortOrder" ng-disabled="row.Sortable == false" />
                             </td>
                             <td>
-                                <select class="form-control"
-                                        ng-model="row.SortDirection"
-                                        ng-disabled="row.Sortable == false || row.SortOrder <= 0">
+                                <select class="form-control" ng-model="row.SortDirection" ng-disabled="row.Sortable == false || row.SortOrder <= 0">
                                     <option value="">- Not set -</option>
                                     <option value="Ascending">Ascending</option>
                                     <option value="Descending">Descending</option>
@@ -175,7 +173,7 @@
                     <div class="col-xs-4">
                         <label>
                             Editors
-                            &nbsp;<i class="fa fa-question-circle" data-toggle="tooltip" title="A basic text editor will be added, but you can change it later"></i>
+                            &nbsp;<i class="fa fa-question-circle" uib-tooltip="A basic text editor will be added, but you can change it later"></i>
                         </label>
                         <select ng-model="uiOptions.Mode" class="form-control" ng-options="option for option in enums.gridModes"></select>
                     </div>
@@ -188,18 +186,14 @@
             <div class="col-md-12">
                 <uib-tabset>
                     <uib-tab heading="Preview">
-                        <div class="panel panel-default">
-                                <div class="panel-heading">HTML Preview</div>
-                                <div class="panel-body" style="overflow: auto;">
-                                    <div ng-include="templatename"></div>
-                                </div>
-                            </div>
+                        <div ng-include="templatename"></div>
                     </uib-tab>
                     <uib-tab heading="Source Code">
                         <div class="clip_button btn btn-info btn-sm">
-                                <i class="fa fa-clipboard"></i>&nbsp; Copy
-                            </div>
-                            <div hljs source="gridmodel"></div>
+                            <i class="fa fa-clipboard"></i>&nbsp; Copy
+                        </div>
+                        <hr />
+                        <div hljs source="gridmodel"></div>
                     </uib-tab>
                 </uib-tabset>
             </div>
@@ -209,11 +203,11 @@
 
 <script>
     $(function () {
-        $('[data-toggle="tooltip"]').tooltip();
         new ZeroClipboard($('.clip_button')).on('ready', function () {
             this.on('copy', function (event) {
                 event.clipboardData.setData('text/plain', $(event.target).next().text());
             });
         });
     });
+
 </script>
