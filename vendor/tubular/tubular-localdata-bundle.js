@@ -13,8 +13,7 @@
                     i = atob(i);
                     f = n.fromJson(i);
                     t(u.pageRequest(r.data, f))
-                })} 
-            : i(function(n) {
+                }) : i(function(n) {
                     n(t.retrieveDataAsync(r).then(function(n) {
                         return u.pageRequest(r.data, n)
                     }))
