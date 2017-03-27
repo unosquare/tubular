@@ -1,10 +1,7 @@
-﻿<div ng-controller="tubularGeneratorCtrl">
-
+<div ng-controller="tubularGeneratorCtrl">
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-
-
                 <div ng-hide="step != 1">
                     <p ng-show="views.length == 0">
                         First you need to paste a sample model, it could be any <b>JSON</b> or even you can use a <b>OData URL</b>.
@@ -189,37 +186,22 @@
 
         <div class="row" ng-hide="step != 3">
             <div class="col-md-12">
-                <div role="tabpanel" id="samplePreview">
-                    <ul class="nav nav-pills" role="tablist">
-                        <li role="presentation" class="active">
-                            <a href="#preview" aria-controls="preview" role="tab" data-toggle="tab">
-                                <i class="fa fa-table"></i>&nbsp;Preview
-                            </a>
-                        </li>
-                        <li role="presentation">
-                            <a href="#code" aria-controls="code" role="tab" data-toggle="tab">
-                                <i class="fa fa-code"></i>&nbsp;Code
-                            </a>
-                        </li>
-                    </ul>
-                    <hr />
-                    <div class="tab-content">
-                        <div role="tabpanel" class="tab-pane active" id="preview">
-                            <div class="panel panel-default">
+                <uib-tabset>
+                    <uib-tab heading="Preview">
+                        <div class="panel panel-default">
                                 <div class="panel-heading">HTML Preview</div>
                                 <div class="panel-body" style="overflow: auto;">
                                     <div ng-include="templatename"></div>
                                 </div>
                             </div>
-                        </div>
-                        <div role="tabpanel" class="tab-pane" id="code">
-                            <div class="clip_button btn btn-info btn-sm">
+                    </uib-tab>
+                    <uib-tab heading="Source Code">
+                        <div class="clip_button btn btn-info btn-sm">
                                 <i class="fa fa-clipboard"></i>&nbsp; Copy
                             </div>
                             <div hljs source="gridmodel"></div>
-                        </div>
-                    </div>
-                </div>
+                    </uib-tab>
+                </uib-tabset>
             </div>
         </div>
     </div>
@@ -228,11 +210,6 @@
 <script>
     $(function () {
         $('[data-toggle="tooltip"]').tooltip();
-        $('#samplePreview ul.nav a').click(function (e) {
-            e.preventDefault();
-            $(this).tab('show');
-        });
-
         new ZeroClipboard($('.clip_button')).on('ready', function () {
             this.on('copy', function (event) {
                 event.clipboardData.setData('text/plain', $(event.target).next().text());
