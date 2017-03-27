@@ -49,8 +49,8 @@
          * `numberorcurrency` is a hack to hold `currency` and `number` in a single filter.
          */
         .filter('numberorcurrency', [
-            'currencyFilter',
             'numberFilter',
+            'currencyFilter',
             function (
                 numberFilter,
                 currencyFilter) {
