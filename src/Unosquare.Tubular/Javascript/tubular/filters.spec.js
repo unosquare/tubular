@@ -1,36 +1,36 @@
 'use strict';
 
-describe('Module: tubular', function() {
+describe('Module: tubular', () => {
 
-    describe('Tubular filters', function() {
+    describe('Tubular filters', () => {
 
         var $filter, result;
 
-        beforeEach(function() {
+        beforeEach(() => {
             module('tubular');
 
-            inject(function(_$filter_) {
+            inject((_$filter_) => {
                 $filter = _$filter_;
             });
         });
 
-        function filterErrorMessage(input) {
+        var filterErrorMessage = (input) => {
             return $filter('errormessage')(input);
         }
 
-        function filterNumberOcurrency(input, format, symbol, fractionSize) {
+        var filterNumberOcurrency = (input, format, symbol, fractionSize) => {
             return $filter('numberorcurrency')(input, format, symbol, fractionSize);
         }
 
-        function filterMoment(input, format) {
+        var filterMoment = (input, format) => {
             return $filter('moment')(input, format);
         }
 
-        function filterTranslate(input, param1, param2, param3, param4) {
+        var filterTranslate = (input, param1, param2, param3, param4) => {
             return $filter('translate')(input, param1, param2, param3, param4);
         }
 
-        it('should filter errormessage', function() {
+        it('should filter errormessage', () => {
             result = filterErrorMessage('');
             expect(result).toEqual('Connection Error', 'Empty errormessage');
 
@@ -47,7 +47,7 @@ describe('Module: tubular', function() {
             expect(result).toEqual('object reference not set to instance of an object', 'input with ExceptionMessage');
         });
 
-        it('should filter numberorcurrency', function() {
+        it('should filter numberorcurrency', () => {
             result = filterNumberOcurrency('30');
             expect(result).toEqual('30.00', 'Number filter without fractionSize');
 
@@ -64,7 +64,7 @@ describe('Module: tubular', function() {
             expect(result).toEqual('€30.00', 'Currency filter without symbol');
         });
 
-        it('should filter moment', function() {
+        it('should filter moment', () => {
             var date = '2017-03-24';
             result = filterMoment(date);
             expect(result).toEqual('Mar 24, 2017', 'Not-moment date');
@@ -76,7 +76,7 @@ describe('Module: tubular', function() {
             expect(result).toEqual('20170324', 'Moment filter without format');
         });
 
-        it('should filter translate', function() {
+        it('should filter translate', () => {
             result = filterTranslate('EDITOR_REQUIRED');
             expect(result).toEqual('The field is required.', 'Translate filter without params');
 
