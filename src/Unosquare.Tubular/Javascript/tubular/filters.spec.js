@@ -26,6 +26,10 @@ describe('Module: tubular', function() {
             return $filter('moment')(input, format);
         }
 
+        function filterTranslate(input, param1, param2, param3, param4) {
+            return $filter('translate')(input, param1, param2, param3, param4);
+        }
+
         it('should filter errormessage', function() {
             result = filterErrorMessage('');
             expect(result).toEqual('Connection Error', 'Empty errormessage');
@@ -53,10 +57,10 @@ describe('Module: tubular', function() {
             result = filterNumberOcurrency(30, 'I');
             expect(result).toEqual(30, 'Int filter');
 
-            result = filterNumberOcurrency(30,'C');
+            result = filterNumberOcurrency(30, 'C');
             expect(result).toEqual('$30.00', 'Currency filter without symbol');
 
-            result = filterNumberOcurrency(30,'C', '€' );
+            result = filterNumberOcurrency(30, 'C', '€');
             expect(result).toEqual('€30.00', 'Currency filter without symbol');
         });
 
@@ -70,6 +74,17 @@ describe('Module: tubular', function() {
 
             result = filterMoment(moment(date), 'YYYYMMDD');
             expect(result).toEqual('20170324', 'Moment filter without format');
+        });
+
+        it('should filter translate', function() {
+            result = filterTranslate('EDITOR_REQUIRED');
+            expect(result).toEqual('The field is required.', 'Translate filter without params');
+
+            result = filterTranslate('EDITOR_MIN_CHARS', 3);
+            expect(result).toEqual('The field needs to be minimum 3 chars.', 'Translate filter with 1 param');
+
+            result = filterTranslate('UI_SHOWINGRECORDS', 10, 15, 35);
+            expect(result).toEqual('Showing 10 to 15 of 35 records', 'Translate filter with 3 params');
         });
 
     });
