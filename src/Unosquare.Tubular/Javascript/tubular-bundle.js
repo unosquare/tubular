@@ -3232,6 +3232,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         var separator = config.url.indexOf('?') === -1 ? '?' : '&';
                         config.url = config.url + separator + 'noCache=' + new Date().getTime();
                     }
+
                     return config;
                 }
             };
@@ -3500,9 +3501,9 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 $log,
                 $document,
                 tubularConfig) {
-                const authData = 'auth_data';
+                var authData = 'auth_data';
                 var me = this;
-                
+
                 function init() {
                     const savedData = localStorageService.get(authData);
 
@@ -3518,15 +3519,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     return expirationDate - now <= 0;
                 }
 
-                function removeData() {
-                    localStorageService.remove(authData);
-                }
-
-                function saveData() {
-                    removeData();
-                    localStorageService.set(authData, me.userData);
-                }
-
                 function retrieveSavedData() {
                     const savedData = localStorageService.get(authData);
 
@@ -3537,14 +3529,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     } else {
                         me.userData = savedData;
                     }
-                }
-
-                function clearUserData() {
-                    me.userData.isAuthenticated = false;
-                    me.userData.username = '';
-                    me.userData.bearerToken = '';
-                    me.userData.expirationDate = null;
-                    me.userData.refreshToken = null;
                 }
 
                 function getCancel(canceller) {
@@ -3578,9 +3562,13 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 };
 
                 me.removeAuthentication = function () {
-                    removeData();
-                    clearUserData();
-                    $http.defaults.headers.common.Authorization = null;
+                    localStorageService.remove(authData);
+
+                    me.userData.isAuthenticated = false;
+                    me.userData.username = '';
+                    me.userData.bearerToken = '';
+                    me.userData.expirationDate = null;
+                    me.userData.refreshToken = null;
                 };
 
                 me.authenticate = function (username, password) {
@@ -3597,7 +3585,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
                         return response.data;
                     }, function (errorResponse) {
-                        return $q.reject(errorResponse);
+                        return $q.reject(errorResponse.data);
                     });
                 };
 
@@ -3610,7 +3598,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     me.userData.role = data.role;
                     me.userData.refreshToken = data.refresh_token;
 
-                    saveData();
+                    localStorageService.set(authData, me.userData);
                 };
 
                 me.addTimeZoneToUrl = function (url) {
@@ -3649,16 +3637,13 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         };
                     }
 
-                    const dataRequest = me.retrieveDataAsync(request);
+                    return me.retrieveDataAsync(request)
+                        .then(function (data) {
+                            model.$hasChanges = false;
+                            model.resetOriginal();
 
-                    dataRequest.then(function (data) {
-                        model.$hasChanges = false;
-                        model.resetOriginal();
-
-                        return data;
-                    });
-
-                    return dataRequest;
+                            return data;
+                        });
                 };
 
                 me.getExpirationDate = function () {
@@ -3752,7 +3737,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                  * in your own FormData.
                  */
                 me.postBinary = function (url, formData) {
-
                     if (!tubularConfig.webApi.enableRefreshTokens()) {
                         if (tubularConfig.webApi.requireAuthentication() && !me.isAuthenticated()) {
                             // Return empty dataset
@@ -3764,7 +3748,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         url: url,
                         method: 'POST',
                         headers: { 'Content-Type': undefined },
-                        transformRequest: function (data) { return data; }, // TODO: Remove
+                        transformRequest: function (data) { return data; },
                         data: formData
                     });
                 };
@@ -4774,7 +4758,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
         .filter('translate', [
             'tubularTranslate', function (tubularTranslate) {
                 return function (input, param1, param2, param3, param4) {
-                    // TODO: Probably send an optional param to define language
                     if (angular.isDefined(input)) {
                         var translation = tubularTranslate.translate(input);
 

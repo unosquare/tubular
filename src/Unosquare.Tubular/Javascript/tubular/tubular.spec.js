@@ -3,32 +3,21 @@
 describe('Module: tubular', () => {
 
     describe('Tubular filters', () => {
-
         var $filter, result;
 
         beforeEach(() => {
             module('tubular');
 
-            inject((_$filter_) => {
-                $filter = _$filter_;
-            });
+            inject(_$filter_ => $filter = _$filter_);
         });
 
-        var filterErrorMessage = (input) => {
-            return $filter('errormessage')(input);
-        }
+        var filterErrorMessage = (input) => $filter('errormessage')(input);
+        
+        var filterNumberOcurrency = (input, format, symbol, fractionSize) => $filter('numberorcurrency')(input, format, symbol, fractionSize);
 
-        var filterNumberOcurrency = (input, format, symbol, fractionSize) => {
-            return $filter('numberorcurrency')(input, format, symbol, fractionSize);
-        }
-
-        var filterMoment = (input, format) => {
-            return $filter('moment')(input, format);
-        }
-
-        var filterTranslate = (input, param1, param2, param3, param4) => {
-            return $filter('translate')(input, param1, param2, param3, param4);
-        }
+        var filterMoment = (input, format) =>  $filter('moment')(input, format);
+        
+        var filterTranslate = (input, param1, param2, param3, param4) => $filter('translate')(input, param1, param2, param3, param4);
 
         it('should filter errormessage', () => {
             result = filterErrorMessage('');
@@ -37,6 +26,7 @@ describe('Module: tubular', () => {
             result = filterErrorMessage({
                 'statusText': 'Fatal error'
             });
+
             expect(result).toEqual('Fatal error', 'input with statusText');
 
             result = filterErrorMessage({

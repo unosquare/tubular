@@ -159,7 +159,6 @@
         .filter('translate', [
             'tubularTranslate', function (tubularTranslate) {
                 return function (input, param1, param2, param3, param4) {
-                    // TODO: Probably send an optional param to define language
                     if (angular.isDefined(input)) {
                         var translation = tubularTranslate.translate(input);
 
