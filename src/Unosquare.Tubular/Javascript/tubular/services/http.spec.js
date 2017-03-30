@@ -86,14 +86,10 @@ describe('Module: tubular.services', () => {
                 .respond(500, { error: 'WHAT' });
 
             tubularHttp.authenticate('user', 'password').then(result => {
-                expect(result).toBeDefined();
-                expect(result.authenticated).toBe(true);
-                expect(tubularHttp.userData.bearerToken).toBe('HOLA');
-                expect(tubularHttp.isAuthenticated()).toBe(true);
+                expect(result).toBeUndefined();
                 done();
             }, error => {
                 expect(error).toBeDefined();
-                expect(error.status).toBeDefined();
                 done();
             });
 
