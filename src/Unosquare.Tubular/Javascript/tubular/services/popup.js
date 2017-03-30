@@ -50,7 +50,7 @@
                             backdropClass: 'fullHeight',
                             animation: false,
                             size: size,
-                            controller: 'popupCtrl',
+                            controller: 'GenericPopupController',
                             resolve: {
                                 model: function () {
                                     return model;

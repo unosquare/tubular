@@ -3845,7 +3845,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                             backdropClass: 'fullHeight',
                             animation: false,
                             size: size,
-                            controller: 'popupCtrl',
+                            controller: 'GenericPopupController',
                             resolve: {
                                 model: function () {
                                     return model;
@@ -3863,10 +3863,11 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
         ]);
 })(angular);
 (function (angular) {
+
     'use strict';
 
     angular.module('tubular.services')
-        .controller('popupCtrl', [
+        .controller('GenericPopupController', [
             '$rootScope',
             '$scope',
             '$uibModalInstance',

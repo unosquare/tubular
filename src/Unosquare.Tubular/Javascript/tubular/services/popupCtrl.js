@@ -1,8 +1,9 @@
 ﻿(function (angular) {
+
     'use strict';
 
     angular.module('tubular.services')
-        .controller('popupCtrl', [
+        .controller('GenericPopupController', [
             '$rootScope',
             '$scope',
             '$uibModalInstance',
