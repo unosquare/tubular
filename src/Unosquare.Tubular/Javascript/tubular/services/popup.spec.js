@@ -1,28 +1,64 @@
 ﻿'use strict';
 
-describe('Module: tubular.services', function () {
+var models = [{
+    'Id': 8,
+    'Name': 'Guzman Webster',
+    'Company': 'IDEGO',
+    'Email': 'guzmanwebster@idego.com',
+    'Phone': '+1 (869) 428-2675',
+    'Birthday': 'Fri Mar 01 1996 00:57:47 GMT-0600 (Central Standard Time (Mexico))',
+    'IsOwner': 'false'
+}];
 
-    describe('Service: popup', function () {
-        var popupService, uibModal, templateService;
+describe('Module: tubular.services', () => {
 
-        beforeEach(function () {
+    describe('Service: popup', () => {
+        var popupService, tubularTemplateService, $controller, uibModal, dialog, scope;
+
+        beforeEach(() => {
             module('tubular.services');
-            module(function ($provide) {
-                uibModal = jasmine.createSpyObj('uibModal', ['m']);
-                templateService = jasmine.createSpyObj('templateService', ['m']);
-             
-                $provide.value('$uibModal', uibModal);
-                $provide.value('tubularTemplateService', templateService);
-            });
 
-            inject(function (_tubularPopupService_) {
+            inject((_tubularPopupService_, _tubularTemplateService_) => {
                 popupService = _tubularPopupService_;
-
+                tubularTemplateService = _tubularTemplateService_;
             });
         });
 
-        it('should be defined', function () {
+        beforeEach(inject((_$controller_, _$rootScope_) => {
+            $controller = _$controller_;
+            scope = _$rootScope_.$new();
+        }));
+
+        beforeEach(() => {
+            popupService.fakeMethod = () => {};
+            spyOn(popupService, "fakeMethod").and.callFake(function() {
+                return this;
+            });
+            dialog = popupService.fakeMethod();
+        });
+
+
+        it('should popupService to be defined', () => {
             expect(popupService).toBeDefined();
+        })
+
+        it('should openDialog to be defined', () => {
+            expect(dialog.openDialog).toBeDefined();
+        })
+
+        it('should onSuccessForm to be defined', () => {
+            expect(dialog.onSuccessForm).toBeDefined();
+        })
+
+        it('should onConnectionError to be defined', () => {
+            expect(dialog.onConnectionError).toBeDefined();
+        })
+
+        it('should create a modal instance', () => {
+            var templateName = 'temp' + (new Date().getTime()) + '.html';
+            tubularTemplateService.generatePopup(models, 'Test');
+            var instance = dialog.openDialog(templateName, models, scope, 'lg');
+            expect(instance).toBeDefined();
         })
 
     });
