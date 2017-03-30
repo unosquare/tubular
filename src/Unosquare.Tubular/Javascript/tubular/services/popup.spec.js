@@ -13,7 +13,7 @@ var models = [{
 describe('Module: tubular.services', () => {
 
     describe('Service: popup', () => {
-        var popupService, tubularTemplateService, $controller, uibModal, dialog, scope;
+        var popupService, tubularTemplateService, uibModal, dialog, scope;
 
         beforeEach(() => {
             module('tubular.services');
@@ -24,8 +24,7 @@ describe('Module: tubular.services', () => {
             });
         });
 
-        beforeEach(inject((_$controller_, _$rootScope_) => {
-            $controller = _$controller_;
+        beforeEach(inject((_$rootScope_) => {
             scope = _$rootScope_.$new();
         }));
 
