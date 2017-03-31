@@ -10,14 +10,14 @@
      * 
      * It depends upon  {@link tubular.directives}, {@link tubular.services} and {@link tubular.models}.
      */
-    angular.module('tubular', ['tubular.directives', 'tubular.services', 'tubular.models', 'LocalStorageModule'])
+    angular.module('tubular', ['tubular.directives', 'tubular.services', 'tubular.models'])
         .config([
-            'localStorageServiceProvider', '$httpProvider', function (localStorageServiceProvider, $httpProvider) {
-                localStorageServiceProvider.setPrefix('tubular');
+            '$httpProvider', function ($httpProvider) {
                 $httpProvider.interceptors.push('tubularAuthInterceptor');
                 $httpProvider.interceptors.push('tubularNoCacheInterceptor');
             }
         ])
+        .constant('prefix','tubular.')
         /**
          * @ngdoc filter
          * @name errormessage
@@ -1076,20 +1076,22 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
         .controller('tbGridController',
         [
             '$scope',
-            'localStorageService',
             'tubularPopupService',
             'tubularModel',
             'tubularHttp',
             '$routeParams',
             'tubularConfig',
+            '$window',
+            'prefix',
             function (
                 $scope,
-                localStorageService,
                 tubularPopupService,
                 TubularModel,
                 tubularHttp,
                 $routeParams,
-                tubularConfig) {
+                tubularConfig,
+                $window,
+                prefix) {
                 var $ctrl = this;
 
                 $ctrl.$onInit = function () {
@@ -1100,7 +1102,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     $ctrl.rows = [];
 
                     $ctrl.savePage = angular.isUndefined($ctrl.savePage) ? true : $ctrl.savePage;
-                    $ctrl.currentPage = $ctrl.savePage ? (localStorageService.get($ctrl.name + '_page') || 1) : 1;
+                    $ctrl.currentPage = $ctrl.savePage ? (parseInt($window.localStorage.getItem(prefix + $ctrl.name + '_page')) || 1) : 1;
 
                     $ctrl.savePageSize = angular.isUndefined($ctrl.savePageSize) ? true : $ctrl.savePageSize;
                     $ctrl.pageSize = $ctrl.pageSize || 20;
@@ -1116,7 +1118,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     $ctrl.requestTimeout = 20000;
                     $ctrl.currentRequest = null;
                     $ctrl.autoSearch = $routeParams.param ||
-                        ($ctrl.saveSearch ? (localStorageService.get($ctrl.name + '_search') || '') : '');
+                        ($ctrl.saveSearch ? ($window.localStorage.getItem(prefix + $ctrl.name + '_search') || '') : '');
                     $ctrl.search = {
                         Text: $ctrl.autoSearch,
                         Operator: $ctrl.autoSearch === '' ? 'None' : 'Auto'
@@ -1142,7 +1144,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         return;
                     }
 
-                    localStorageService.set($ctrl.name + '_columns', $ctrl.columns);
+                    $window.localStorage.setItem(prefix + $ctrl.name + '_columns', JSON.stringify($ctrl.columns));
                 },
                     true);
 
@@ -1165,7 +1167,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 $scope.$watch('$ctrl.pageSize', function () {
                     if ($ctrl.hasColumnsDefinitions && $ctrl.requestCounter > 0) {
                         if ($ctrl.savePageSize) {
-                            localStorageService.set($ctrl.name + '_pageSize', $ctrl.pageSize);
+                            $window.localStorage.setItem(prefix + $ctrl.name + '_pageSize', $ctrl.pageSize);
                         }
                         $ctrl.retrieveData();
                     }
@@ -1180,9 +1182,9 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 $ctrl.saveSearch = function () {
                     if ($ctrl.saveSearch) {
                         if ($ctrl.search.Text === '') {
-                            localStorageService.remove($ctrl.name + '_search');
+                            $window.localStorage.removeItem(prefix + $ctrl.name + '_search');
                         } else {
-                            localStorageService.set($ctrl.name + '_search', $ctrl.search.Text);
+                            $window.localStorage.setItem(prefix + $ctrl.name + '_search', $ctrl.search.Text);
                         }
                     }
                 };
@@ -1241,10 +1243,10 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 };
 
                 $ctrl.verifyColumns = function () {
-                    var columns = localStorageService.get($ctrl.name + '_columns');
+                    var columns = $window.localStorage.getItem(prefix + $ctrl.name + '_columns');
                     if (columns == null || columns === '') {
                         // Nothing in settings, saving initial state
-                        localStorageService.set($ctrl.name + '_columns', $ctrl.columns);
+                        $window.localStorage.setItem(prefix + $ctrl.name + '_columns', JSON.stringify($ctrl.columns));
                         return;
                     }
 
@@ -1306,7 +1308,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     $ctrl.verifyColumns();
 
                     if ($ctrl.savePageSize) {
-                        $ctrl.pageSize = (localStorageService.get($ctrl.name + '_pageSize') || $ctrl.pageSize);
+                        $ctrl.pageSize = (parseInt($window.localStorage.getItem(prefix + $ctrl.name + '_pageSize')) || $ctrl.pageSize);
                     }
 
                     if ($ctrl.pageSize < 10) $ctrl.pageSize = 20; // default
@@ -1383,7 +1385,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     $ctrl.isEmpty = $ctrl.filteredRecordCount === 0;
 
                     if ($ctrl.savePage) {
-                        localStorageService.set($ctrl.name + '_page', $ctrl.currentPage);
+                        $window.localStorage.setItem(prefix + $ctrl.name + '_page', $ctrl.currentPage);
                     }
                 };
 
@@ -1441,7 +1443,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 };
 
                 $ctrl.selectedRows = function () {
-                    return localStorageService.get($ctrl.name + '_rows') || [];
+                    return $window.localStorage.getItem(prefix + $ctrl.name + '_rows') || [];
                 };
 
                 $ctrl.clearSelection = function () {
@@ -1450,7 +1452,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                             value.$selected = false;
                         });
 
-                    localStorageService.set($ctrl.name + '_rows', []);
+                    $window.localStorage.setItem(prefix + $ctrl.name + '_rows', []);
                 };
 
                 $ctrl.isEmptySelection = function () {
@@ -1478,7 +1480,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         });
                     }
 
-                    localStorageService.set($ctrl.name + '_rows', rows);
+                    $window.localStorage.setItem(prefix + $ctrl.name + '_rows', rows);
                 };
 
                 $ctrl.getFullDataSource = function (callback) {
@@ -3053,7 +3055,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
      * Tubular Services module. 
      * It contains common services like HTTP client, filtering and printing services.
      */
-    angular.module('tubular.services', ['ui.bootstrap', 'LocalStorageModule'])
+    angular.module('tubular.services', ['ui.bootstrap'])
 
         /**
          * @ngdoc factory
@@ -3487,25 +3489,27 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             '$http',
             '$timeout',
             '$q',
-            'localStorageService',
             'translateFilter',
             '$log',
             '$document',
             'tubularConfig',
+            '$window',
+            'prefix',
             function (
                 $http,
                 $timeout,
                 $q,
-                localStorageService,
                 translateFilter,
                 $log,
                 $document,
-                tubularConfig) {
+                tubularConfig,
+                $window,
+                prefix) {
                 var authData = 'auth_data';
                 var me = this;
 
                 function init() {
-                    const savedData = localStorageService.get(authData);
+                    const savedData = $window.localStorage.getItem(prefix + authData);
 
                     if (angular.isDefined(savedData) && savedData != null) {
                         me.userData = savedData;
@@ -3520,7 +3524,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 }
 
                 function retrieveSavedData() {
-                    const savedData = localStorageService.get(authData);
+                    const savedData = $window.localStorage.getItem(prefix + authData);
 
                     if (angular.isUndefined(savedData)) {
                         throw 'No authentication data exists';
@@ -3562,8 +3566,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 };
 
                 me.removeAuthentication = function () {
-                    localStorageService.remove(authData);
-
+                    $window.localStorage.removeItem(prefix + authData);
                     me.userData.isAuthenticated = false;
                     me.userData.username = '';
                     me.userData.bearerToken = '';
@@ -3598,7 +3601,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     me.userData.role = data.role;
                     me.userData.refreshToken = data.refresh_token;
 
-                    localStorageService.set(authData, me.userData);
+                    $window.localStorage.setItem(prefix + authData, JSON.stringify(me.userData));
                 };
 
                 me.addTimeZoneToUrl = function (url) {

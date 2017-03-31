@@ -10,14 +10,14 @@
      * 
      * It depends upon  {@link tubular.directives}, {@link tubular.services} and {@link tubular.models}.
      */
-    angular.module('tubular', ['tubular.directives', 'tubular.services', 'tubular.models', 'LocalStorageModule'])
+    angular.module('tubular', ['tubular.directives', 'tubular.services', 'tubular.models'])
         .config([
-            'localStorageServiceProvider', '$httpProvider', function (localStorageServiceProvider, $httpProvider) {
-                localStorageServiceProvider.setPrefix('tubular');
+            '$httpProvider', function ($httpProvider) {
                 $httpProvider.interceptors.push('tubularAuthInterceptor');
                 $httpProvider.interceptors.push('tubularNoCacheInterceptor');
             }
         ])
+        .constant('prefix','tubular.')
         /**
          * @ngdoc filter
          * @name errormessage

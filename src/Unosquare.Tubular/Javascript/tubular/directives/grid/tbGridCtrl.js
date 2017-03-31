@@ -5,20 +5,22 @@
         .controller('tbGridController',
         [
             '$scope',
-            'localStorageService',
             'tubularPopupService',
             'tubularModel',
             'tubularHttp',
             '$routeParams',
             'tubularConfig',
+            '$window',
+            'prefix',
             function (
                 $scope,
-                localStorageService,
                 tubularPopupService,
                 TubularModel,
                 tubularHttp,
                 $routeParams,
-                tubularConfig) {
+                tubularConfig,
+                $window,
+                prefix) {
                 var $ctrl = this;
 
                 $ctrl.$onInit = function () {
@@ -29,7 +31,7 @@
                     $ctrl.rows = [];
 
                     $ctrl.savePage = angular.isUndefined($ctrl.savePage) ? true : $ctrl.savePage;
-                    $ctrl.currentPage = $ctrl.savePage ? (localStorageService.get($ctrl.name + '_page') || 1) : 1;
+                    $ctrl.currentPage = $ctrl.savePage ? (parseInt($window.localStorage.getItem(prefix + $ctrl.name + '_page')) || 1) : 1;
 
                     $ctrl.savePageSize = angular.isUndefined($ctrl.savePageSize) ? true : $ctrl.savePageSize;
                     $ctrl.pageSize = $ctrl.pageSize || 20;
@@ -45,7 +47,7 @@
                     $ctrl.requestTimeout = 20000;
                     $ctrl.currentRequest = null;
                     $ctrl.autoSearch = $routeParams.param ||
-                        ($ctrl.saveSearch ? (localStorageService.get($ctrl.name + '_search') || '') : '');
+                        ($ctrl.saveSearch ? ($window.localStorage.getItem(prefix + $ctrl.name + '_search') || '') : '');
                     $ctrl.search = {
                         Text: $ctrl.autoSearch,
                         Operator: $ctrl.autoSearch === '' ? 'None' : 'Auto'
@@ -71,7 +73,7 @@
                         return;
                     }
 
-                    localStorageService.set($ctrl.name + '_columns', $ctrl.columns);
+                    $window.localStorage.setItem(prefix + $ctrl.name + '_columns', JSON.stringify($ctrl.columns));
                 },
                     true);
 
@@ -94,7 +96,7 @@
                 $scope.$watch('$ctrl.pageSize', function () {
                     if ($ctrl.hasColumnsDefinitions && $ctrl.requestCounter > 0) {
                         if ($ctrl.savePageSize) {
-                            localStorageService.set($ctrl.name + '_pageSize', $ctrl.pageSize);
+                            $window.localStorage.setItem(prefix + $ctrl.name + '_pageSize', $ctrl.pageSize);
                         }
                         $ctrl.retrieveData();
                     }
@@ -109,9 +111,9 @@
                 $ctrl.saveSearch = function () {
                     if ($ctrl.saveSearch) {
                         if ($ctrl.search.Text === '') {
-                            localStorageService.remove($ctrl.name + '_search');
+                            $window.localStorage.removeItem(prefix + $ctrl.name + '_search');
                         } else {
-                            localStorageService.set($ctrl.name + '_search', $ctrl.search.Text);
+                            $window.localStorage.setItem(prefix + $ctrl.name + '_search', $ctrl.search.Text);
                         }
                     }
                 };
@@ -170,10 +172,10 @@
                 };
 
                 $ctrl.verifyColumns = function () {
-                    var columns = localStorageService.get($ctrl.name + '_columns');
+                    var columns = $window.localStorage.getItem(prefix + $ctrl.name + '_columns');
                     if (columns == null || columns === '') {
                         // Nothing in settings, saving initial state
-                        localStorageService.set($ctrl.name + '_columns', $ctrl.columns);
+                        $window.localStorage.setItem(prefix + $ctrl.name + '_columns', JSON.stringify($ctrl.columns));
                         return;
                     }
 
@@ -235,7 +237,7 @@
                     $ctrl.verifyColumns();
 
                     if ($ctrl.savePageSize) {
-                        $ctrl.pageSize = (localStorageService.get($ctrl.name + '_pageSize') || $ctrl.pageSize);
+                        $ctrl.pageSize = (parseInt($window.localStorage.getItem(prefix + $ctrl.name + '_pageSize')) || $ctrl.pageSize);
                     }
 
                     if ($ctrl.pageSize < 10) $ctrl.pageSize = 20; // default
@@ -312,7 +314,7 @@
                     $ctrl.isEmpty = $ctrl.filteredRecordCount === 0;
 
                     if ($ctrl.savePage) {
-                        localStorageService.set($ctrl.name + '_page', $ctrl.currentPage);
+                        $window.localStorage.setItem(prefix + $ctrl.name + '_page', $ctrl.currentPage);
                     }
                 };
 
@@ -370,7 +372,7 @@
                 };
 
                 $ctrl.selectedRows = function () {
-                    return localStorageService.get($ctrl.name + '_rows') || [];
+                    return $window.localStorage.getItem(prefix + $ctrl.name + '_rows') || [];
                 };
 
                 $ctrl.clearSelection = function () {
@@ -379,7 +381,7 @@
                             value.$selected = false;
                         });
 
-                    localStorageService.set($ctrl.name + '_rows', []);
+                    $window.localStorage.setItem(prefix + $ctrl.name + '_rows', []);
                 };
 
                 $ctrl.isEmptySelection = function () {
@@ -407,7 +409,7 @@
                         });
                     }
 
-                    localStorageService.set($ctrl.name + '_rows', rows);
+                    $window.localStorage.setItem(prefix + $ctrl.name + '_rows', rows);
                 };
 
                 $ctrl.getFullDataSource = function (callback) {

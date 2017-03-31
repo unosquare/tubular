@@ -16,25 +16,27 @@
             '$http',
             '$timeout',
             '$q',
-            'localStorageService',
             'translateFilter',
             '$log',
             '$document',
             'tubularConfig',
+            '$window',
+            'prefix',
             function (
                 $http,
                 $timeout,
                 $q,
-                localStorageService,
                 translateFilter,
                 $log,
                 $document,
-                tubularConfig) {
+                tubularConfig,
+                $window,
+                prefix) {
                 var authData = 'auth_data';
                 var me = this;
 
                 function init() {
-                    const savedData = localStorageService.get(authData);
+                    const savedData = $window.localStorage.getItem(prefix + authData);
 
                     if (angular.isDefined(savedData) && savedData != null) {
                         me.userData = savedData;
@@ -49,7 +51,7 @@
                 }
 
                 function retrieveSavedData() {
-                    const savedData = localStorageService.get(authData);
+                    const savedData = $window.localStorage.getItem(prefix + authData);
 
                     if (angular.isUndefined(savedData)) {
                         throw 'No authentication data exists';
@@ -91,8 +93,7 @@
                 };
 
                 me.removeAuthentication = function () {
-                    localStorageService.remove(authData);
-
+                    $window.localStorage.removeItem(prefix + authData);
                     me.userData.isAuthenticated = false;
                     me.userData.username = '';
                     me.userData.bearerToken = '';
@@ -127,7 +128,7 @@
                     me.userData.role = data.role;
                     me.userData.refreshToken = data.refresh_token;
 
-                    localStorageService.set(authData, me.userData);
+                    $window.localStorage.setItem(prefix + authData, JSON.stringify(me.userData));
                 };
 
                 me.addTimeZoneToUrl = function (url) {

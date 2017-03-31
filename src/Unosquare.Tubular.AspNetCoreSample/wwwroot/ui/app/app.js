@@ -123,7 +123,7 @@
                 };
             }
         ]).controller('loginCtrl',
-            function ($scope, $location, tubularHttp, localStorageService, $uibModal, $routeParams, toastr) {
+            function ($scope, $location, tubularHttp, $uibModal, $routeParams, toastr) {
                 $scope.loading = false;
                 $scope.tokenReset = $routeParams.token;
 

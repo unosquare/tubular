@@ -72,10 +72,10 @@
             });
 
         }).controller('rwController', [
-            '$scope', 'localStorageService',
-            function ($scope, localStorageService) {
+            '$scope', '$window',
+            function ($scope, $window) {
                 $scope.selectRows = function () {
-                    var rows = localStorageService.get('sampleshap1_rows');
+                    var rows = $window.localStorage.getItem('sampleshap1_rows');
                     $scope.rows = rows.length;
                 };
             }
