@@ -25,7 +25,7 @@
          * @param {bool} autoRefresh Set if the grid refresh after any insertion or update, default true.
          * @param {bool} savePage Set if the grid autosave current page, default true.
          * @param {bool} savePageSize Set if the grid autosave page size, default true.
-         * @param {bool} saveSearch Set if the grid autosave search, default true.
+         * @param {bool} saveSearchText Set if the grid autosave search text, default true.
          */
         .component('tbGrid',
         {
@@ -47,7 +47,7 @@
                 autoRefresh: '=?',
                 savePage: '=?',
                 savePageSize: '=?',
-                saveSearch: '=?'
+                saveSearchText: '=?'
             },
             controller: 'tbGridController'
         });

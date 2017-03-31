@@ -1027,7 +1027,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
          * @param {bool} autoRefresh Set if the grid refresh after any insertion or update, default true.
          * @param {bool} savePage Set if the grid autosave current page, default true.
          * @param {bool} savePageSize Set if the grid autosave page size, default true.
-         * @param {bool} saveSearch Set if the grid autosave search, default true.
+         * @param {bool} saveSearchText Set if the grid autosave search text, default true.
          */
         .component('tbGrid',
         {
@@ -1049,7 +1049,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 autoRefresh: '=?',
                 savePage: '=?',
                 savePageSize: '=?',
-                saveSearch: '=?'
+                saveSearchText: '=?'
             },
             controller: 'tbGridController'
         });
@@ -1077,6 +1077,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 $window) {
                 var $ctrl = this;
                 var prefix = tubularConfig.localStorage.prefix();
+                var storage = $window.localStorage;
 
                 $ctrl.$onInit = function () {
                     $ctrl.tubularDirective = 'tubular-grid';
@@ -1086,11 +1087,11 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     $ctrl.rows = [];
 
                     $ctrl.savePage = angular.isUndefined($ctrl.savePage) ? true : $ctrl.savePage;
-                    $ctrl.currentPage = $ctrl.savePage ? (parseInt($window.localStorage.getItem(prefix + $ctrl.name + '_page')) || 1) : 1;
+                    $ctrl.currentPage = $ctrl.savePage ? (parseInt(storage.getItem(prefix + $ctrl.name + '_page')) || 1) : 1;
 
                     $ctrl.savePageSize = angular.isUndefined($ctrl.savePageSize) ? true : $ctrl.savePageSize;
                     $ctrl.pageSize = $ctrl.pageSize || 20;
-                    $ctrl.saveSearch = angular.isUndefined($ctrl.saveSearch) ? true : $ctrl.saveSearch;
+                    $ctrl.saveSearchText = angular.isUndefined($ctrl.saveSearchText) ? true : $ctrl.saveSearchText;
                     $ctrl.totalPages = 0;
                     $ctrl.totalRecordCount = 0;
                     $ctrl.filteredRecordCount = 0;
@@ -1102,7 +1103,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     $ctrl.requestTimeout = 20000;
                     $ctrl.currentRequest = null;
                     $ctrl.autoSearch = $routeParams.param ||
-                        ($ctrl.saveSearch ? ($window.localStorage.getItem(prefix + $ctrl.name + '_search') || '') : '');
+                        ($ctrl.saveSearchText ? (storage.getItem(prefix + $ctrl.name + '_search') || '') : '');
                     $ctrl.search = {
                         Text: $ctrl.autoSearch,
                         Operator: $ctrl.autoSearch === '' ? 'None' : 'Auto'
@@ -1128,7 +1129,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         return;
                     }
 
-                    $window.localStorage.setItem(prefix + $ctrl.name + '_columns', angular.toJson($ctrl.columns));
+                    storage.setItem(prefix + $ctrl.name + '_columns', angular.toJson($ctrl.columns));
                 },
                     true);
 
@@ -1151,7 +1152,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 $scope.$watch('$ctrl.pageSize', function () {
                     if ($ctrl.hasColumnsDefinitions && $ctrl.requestCounter > 0) {
                         if ($ctrl.savePageSize) {
-                            $window.localStorage.setItem(prefix + $ctrl.name + '_pageSize', $ctrl.pageSize);
+                            storage.setItem(prefix + $ctrl.name + '_pageSize', $ctrl.pageSize);
                         }
 
                         $ctrl.retrieveData();
@@ -1165,12 +1166,14 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 });
 
                 $ctrl.saveSearch = function () {
-                    if ($ctrl.saveSearch) {
-                        if ($ctrl.search.Text === '') {
-                            $window.localStorage.removeItem(prefix + $ctrl.name + '_search');
-                        } else {
-                            $window.localStorage.setItem(prefix + $ctrl.name + '_search', $ctrl.search.Text);
-                        }
+                    if (!$ctrl.saveSearchText) {
+                        return;
+                    }
+
+                    if ($ctrl.search.Text === '') {
+                        storage.removeItem(prefix + $ctrl.name + '_search');
+                    } else {
+                        storage.setItem(prefix + $ctrl.name + '_search', $ctrl.search.Text);
                     }
                 };
 
@@ -1228,10 +1231,10 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 };
 
                 $ctrl.verifyColumns = function () {
-                    var columns = angular.fromJson($window.localStorage.getItem(prefix + $ctrl.name + '_columns'));
+                    var columns = angular.fromJson(storage.getItem(prefix + $ctrl.name + '_columns'));
                     if (columns == null || columns === '') {
                         // Nothing in settings, saving initial state
-                        $window.localStorage.setItem(prefix + $ctrl.name + '_columns', angular.toJson($ctrl.columns));
+                        storage.setItem(prefix + $ctrl.name + '_columns', angular.toJson($ctrl.columns));
                         return;
                     }
 
@@ -1298,7 +1301,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     $ctrl.verifyColumns();
 
                     if ($ctrl.savePageSize) {
-                        $ctrl.pageSize = (parseInt($window.localStorage.getItem(prefix + $ctrl.name + '_pageSize')) || $ctrl.pageSize);
+                        $ctrl.pageSize = (parseInt(storage.getItem(prefix + $ctrl.name + '_pageSize')) || $ctrl.pageSize);
                     }
 
                     if ($ctrl.pageSize < 10) {
@@ -1310,7 +1313,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
                     var request = $ctrl.getRequestObject(-1);
 
-                    if (angular.isUndefined($ctrl.onBeforeGetData) === false) {
+                    if (angular.isDefined($ctrl.onBeforeGetData)) {
                         $ctrl.onBeforeGetData();
                     }
 
@@ -1373,7 +1376,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     $ctrl.isEmpty = $ctrl.filteredRecordCount === 0;
 
                     if ($ctrl.savePage) {
-                        $window.localStorage.setItem(prefix + $ctrl.name + '_page', $ctrl.currentPage);
+                        storage.setItem(prefix + $ctrl.name + '_page', $ctrl.currentPage);
                     }
                 };
 
@@ -3475,7 +3478,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 function init() {
                     const savedData = angular.fromJson($window.localStorage.getItem(prefix + authData));
 
-                    if (angular.isDefined(savedData) && savedData != null) {
+                    if (savedData != null) {
                         me.userData = savedData;
                     }
                 }

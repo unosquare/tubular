@@ -37,7 +37,7 @@
                 function init() {
                     const savedData = angular.fromJson($window.localStorage.getItem(prefix + authData));
 
-                    if (angular.isDefined(savedData) && savedData != null) {
+                    if (savedData != null) {
                         me.userData = savedData;
                     }
                 }
