@@ -21,7 +21,6 @@
             '$document',
             'tubularConfig',
             '$window',
-            'prefix',
             function (
                 $http,
                 $timeout,
@@ -30,13 +29,13 @@
                 $log,
                 $document,
                 tubularConfig,
-                $window,
-                prefix) {
+                $window) {
                 var authData = 'auth_data';
+                var prefix = tubularConfig.localStorage.prefix();
                 var me = this;
 
                 function init() {
-                    const savedData = $window.localStorage.getItem(prefix + authData);
+                    const savedData = angular.fromJson($window.localStorage.getItem(prefix + authData));
 
                     if (angular.isDefined(savedData) && savedData != null) {
                         me.userData = savedData;
@@ -51,7 +50,7 @@
                 }
 
                 function retrieveSavedData() {
-                    const savedData = $window.localStorage.getItem(prefix + authData);
+                    const savedData = angular.fromJson($window.localStorage.getItem(prefix + authData));
 
                     if (angular.isUndefined(savedData)) {
                         throw 'No authentication data exists';
@@ -128,7 +127,7 @@
                     me.userData.role = data.role;
                     me.userData.refreshToken = data.refresh_token;
 
-                    $window.localStorage.setItem(prefix + authData, JSON.stringify(me.userData));
+                    $window.localStorage.setItem(prefix + authData, angular.toJson(me.userData));
                 };
 
                 me.addTimeZoneToUrl = function (url) {

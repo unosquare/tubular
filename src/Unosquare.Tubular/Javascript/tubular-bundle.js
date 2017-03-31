@@ -17,7 +17,6 @@
                 $httpProvider.interceptors.push('tubularNoCacheInterceptor');
             }
         ])
-        .constant('prefix','tubular.')
         /**
          * @ngdoc filter
          * @name errormessage
@@ -1082,7 +1081,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             '$routeParams',
             'tubularConfig',
             '$window',
-            'prefix',
             function (
                 $scope,
                 tubularPopupService,
@@ -1090,9 +1088,9 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 tubularHttp,
                 $routeParams,
                 tubularConfig,
-                $window,
-                prefix) {
+                $window) {
                 var $ctrl = this;
+                var prefix = tubularConfig.localStorage.prefix();
 
                 $ctrl.$onInit = function () {
                     $ctrl.tubularDirective = 'tubular-grid';
@@ -1144,7 +1142,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         return;
                     }
 
-                    $window.localStorage.setItem(prefix + $ctrl.name + '_columns', JSON.stringify($ctrl.columns));
+                    $window.localStorage.setItem(prefix + $ctrl.name + '_columns', angular.toJson($ctrl.columns));
                 },
                     true);
 
@@ -1169,6 +1167,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         if ($ctrl.savePageSize) {
                             $window.localStorage.setItem(prefix + $ctrl.name + '_pageSize', $ctrl.pageSize);
                         }
+
                         $ctrl.retrieveData();
                     }
                 });
@@ -1243,10 +1242,10 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 };
 
                 $ctrl.verifyColumns = function () {
-                    var columns = $window.localStorage.getItem(prefix + $ctrl.name + '_columns');
+                    var columns = angular.fromJson($window.localStorage.getItem(prefix + $ctrl.name + '_columns'));
                     if (columns == null || columns === '') {
                         // Nothing in settings, saving initial state
-                        $window.localStorage.setItem(prefix + $ctrl.name + '_columns', JSON.stringify($ctrl.columns));
+                        $window.localStorage.setItem(prefix + $ctrl.name + '_columns', angular.toJson($ctrl.columns));
                         return;
                     }
 
@@ -3509,7 +3508,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             '$document',
             'tubularConfig',
             '$window',
-            'prefix',
             function (
                 $http,
                 $timeout,
@@ -3518,13 +3516,13 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 $log,
                 $document,
                 tubularConfig,
-                $window,
-                prefix) {
+                $window) {
                 var authData = 'auth_data';
+                var prefix = tubularConfig.localStorage.prefix();
                 var me = this;
 
                 function init() {
-                    const savedData = $window.localStorage.getItem(prefix + authData);
+                    const savedData = angular.fromJson($window.localStorage.getItem(prefix + authData));
 
                     if (angular.isDefined(savedData) && savedData != null) {
                         me.userData = savedData;
@@ -3539,7 +3537,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 }
 
                 function retrieveSavedData() {
-                    const savedData = $window.localStorage.getItem(prefix + authData);
+                    const savedData = angular.fromJson($window.localStorage.getItem(prefix + authData));
 
                     if (angular.isUndefined(savedData)) {
                         throw 'No authentication data exists';
@@ -3616,7 +3614,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     me.userData.role = data.role;
                     me.userData.refreshToken = data.refresh_token;
 
-                    $window.localStorage.setItem(prefix + authData, JSON.stringify(me.userData));
+                    $window.localStorage.setItem(prefix + authData, angular.toJson(me.userData));
                 };
 
                 me.addTimeZoneToUrl = function (url) {
@@ -4811,7 +4809,10 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     requireAuthentication: PLATFORM,
                     baseUrl: PLATFORM
                 },
-                platform: {}
+                platform: {},
+                localStorage: {
+                    prefix: PLATFORM
+                }
             };
 
             createConfig(configProperties, provider, '');
@@ -4825,6 +4826,9 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     enableRefreshTokens: false,
                     requireAuthentication: true,
                     baseUrl: '/api'
+                },
+                localStorage: {
+                    prefix: 'tubular.'
                 }
             });
 

@@ -16,7 +16,10 @@
                     requireAuthentication: PLATFORM,
                     baseUrl: PLATFORM
                 },
-                platform: {}
+                platform: {},
+                localStorage: {
+                    prefix: PLATFORM
+                }
             };
 
             createConfig(configProperties, provider, '');
@@ -30,6 +33,9 @@
                     enableRefreshTokens: false,
                     requireAuthentication: true,
                     baseUrl: '/api'
+                },
+                localStorage: {
+                    prefix: 'tubular.'
                 }
             });
 

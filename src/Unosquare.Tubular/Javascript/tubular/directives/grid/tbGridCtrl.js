@@ -11,7 +11,6 @@
             '$routeParams',
             'tubularConfig',
             '$window',
-            'prefix',
             function (
                 $scope,
                 tubularPopupService,
@@ -19,9 +18,9 @@
                 tubularHttp,
                 $routeParams,
                 tubularConfig,
-                $window,
-                prefix) {
+                $window) {
                 var $ctrl = this;
+                var prefix = tubularConfig.localStorage.prefix();
 
                 $ctrl.$onInit = function () {
                     $ctrl.tubularDirective = 'tubular-grid';
@@ -73,7 +72,7 @@
                         return;
                     }
 
-                    $window.localStorage.setItem(prefix + $ctrl.name + '_columns', JSON.stringify($ctrl.columns));
+                    $window.localStorage.setItem(prefix + $ctrl.name + '_columns', angular.toJson($ctrl.columns));
                 },
                     true);
 
@@ -98,6 +97,7 @@
                         if ($ctrl.savePageSize) {
                             $window.localStorage.setItem(prefix + $ctrl.name + '_pageSize', $ctrl.pageSize);
                         }
+
                         $ctrl.retrieveData();
                     }
                 });
@@ -172,10 +172,10 @@
                 };
 
                 $ctrl.verifyColumns = function () {
-                    var columns = $window.localStorage.getItem(prefix + $ctrl.name + '_columns');
+                    var columns = angular.fromJson($window.localStorage.getItem(prefix + $ctrl.name + '_columns'));
                     if (columns == null || columns === '') {
                         // Nothing in settings, saving initial state
-                        $window.localStorage.setItem(prefix + $ctrl.name + '_columns', JSON.stringify($ctrl.columns));
+                        $window.localStorage.setItem(prefix + $ctrl.name + '_columns', angular.toJson($ctrl.columns));
                         return;
                     }
 

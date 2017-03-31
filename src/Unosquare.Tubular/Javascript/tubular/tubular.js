@@ -17,7 +17,6 @@
                 $httpProvider.interceptors.push('tubularNoCacheInterceptor');
             }
         ])
-        .constant('prefix','tubular.')
         /**
          * @ngdoc filter
          * @name errormessage
