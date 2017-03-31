@@ -309,15 +309,13 @@
                     replace: true,
                     transclude: true,
                     scope: {
-                        model: '=rowModel',
-                        selectable: '@'
+                        model: '=rowModel'
                     },
                     controller: [
                         '$scope', function ($scope) {
                             $scope.tubularDirective = 'tubular-rowset';
                             $scope.fields = [];
                             $scope.hasFieldsDefinitions = false;
-                            $scope.selectableBool = $scope.selectable === 'true';
                             $scope.$component = $scope.$parent.$parent.$parent.$component;
 
                             $scope.$watch('hasFieldsDefinitions', function (newVal) {
@@ -332,18 +330,6 @@
                                 angular.forEach($scope.fields, function (field) {
                                     field.bindScope();
                                 });
-                            };
-
-                            if ($scope.selectableBool && angular.isDefined($scope.model)) {
-                                $scope.$component.selectFromSession($scope.model);
-                            }
-
-                            $scope.changeSelection = function (rowModel) {
-                                if (!$scope.selectableBool) {
-                                    return;
-                                }
-
-                                $scope.$component.changeSelection(rowModel);
                             };
                         }
                     ],

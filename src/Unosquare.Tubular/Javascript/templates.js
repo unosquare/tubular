@@ -64,6 +64,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
   $templateCache.put("tbRowSet.tpl.html",
     "<tbody ng-transclude></tbody>");
   $templateCache.put("tbRowTemplate.tpl.html",
-    "<tr ng-transclude ng-class=\"{'info': selectableBool && model.$selected}\" ng-click=changeSelection(model)></tr>");
+    "<tr ng-transclude></tr>");
 }]);
 })(angular);

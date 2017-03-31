@@ -400,15 +400,13 @@
                     replace: true,
                     transclude: true,
                     scope: {
-                        model: '=rowModel',
-                        selectable: '@'
+                        model: '=rowModel'
                     },
                     controller: [
                         '$scope', function ($scope) {
                             $scope.tubularDirective = 'tubular-rowset';
                             $scope.fields = [];
                             $scope.hasFieldsDefinitions = false;
-                            $scope.selectableBool = $scope.selectable === 'true';
                             $scope.$component = $scope.$parent.$parent.$parent.$component;
 
                             $scope.$watch('hasFieldsDefinitions', function (newVal) {
@@ -423,18 +421,6 @@
                                 angular.forEach($scope.fields, function (field) {
                                     field.bindScope();
                                 });
-                            };
-
-                            if ($scope.selectableBool && angular.isDefined($scope.model)) {
-                                $scope.$component.selectFromSession($scope.model);
-                            }
-
-                            $scope.changeSelection = function (rowModel) {
-                                if (!$scope.selectableBool) {
-                                    return;
-                                }
-
-                                $scope.$component.changeSelection(rowModel);
                             };
                         }
                     ],
@@ -569,7 +555,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
   $templateCache.put("tbRowSet.tpl.html",
     "<tbody ng-transclude></tbody>");
   $templateCache.put("tbRowTemplate.tpl.html",
-    "<tr ng-transclude ng-class=\"{'info': selectableBool && model.$selected}\" ng-click=changeSelection(model)></tr>");
+    "<tr ng-transclude></tr>");
 }]);
 })(angular);
 
@@ -1281,6 +1267,11 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 };
 
                 $ctrl.getRequestObject = function (skip) {
+                    if (skip === -1) {
+                        skip = ($ctrl.requestedPage - 1) * $ctrl.pageSize;
+                        if (skip < 0) skip = 0;
+                    }
+
                     return {
                         serverUrl: $ctrl.serverUrl,
                         requestMethod: $ctrl.requestMethod || 'POST',
@@ -1310,16 +1301,14 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         $ctrl.pageSize = (parseInt($window.localStorage.getItem(prefix + $ctrl.name + '_pageSize')) || $ctrl.pageSize);
                     }
 
-                    if ($ctrl.pageSize < 10) $ctrl.pageSize = 20; // default
+                    if ($ctrl.pageSize < 10) {
+                        $ctrl.pageSize = 20; // default
+                    } 
 
                     var newPages = Math.ceil($ctrl.totalRecordCount / $ctrl.pageSize);
                     if ($ctrl.requestedPage > newPages) $ctrl.requestedPage = newPages;
 
-                    var skip = ($ctrl.requestedPage - 1) * $ctrl.pageSize;
-
-                    if (skip < 0) skip = 0;
-
-                    var request = $ctrl.getRequestObject(skip);
+                    var request = $ctrl.getRequestObject(-1);
 
                     if (angular.isUndefined($ctrl.onBeforeGetData) === false) {
                         $ctrl.onBeforeGetData();
@@ -1441,62 +1430,21 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     $ctrl.retrieveData();
                 };
 
-                $ctrl.selectedRows = function () {
-                    return $window.localStorage.getItem(prefix + $ctrl.name + '_rows') || [];
-                };
-
-                $ctrl.clearSelection = function () {
-                    angular.forEach($ctrl.rows,
-                        function (value) {
-                            value.$selected = false;
-                        });
-
-                    $window.localStorage.setItem(prefix + $ctrl.name + '_rows', []);
-                };
-
-                $ctrl.isEmptySelection = function () {
-                    return $ctrl.selectedRows().length === 0;
-                };
-
-                $ctrl.selectFromSession = function (row) {
-                    row.$selected = $ctrl.selectedRows().filter(function (el) { return el.$key === row.$key; }).length > 0;
-                };
-
-                $ctrl.changeSelection = function (row) {
-                    if (angular.isUndefined(row)) {
-                        return;
-                    }
-
-                    row.$selected = !row.$selected;
-
-                    var rows = $ctrl.selectedRows();
-
-                    if (row.$selected) {
-                        rows.push({ $key: row.$key });
-                    } else {
-                        rows = rows.filter(function (el) {
-                            return el.$key !== row.$key;
-                        });
-                    }
-
-                    $window.localStorage.setItem(prefix + $ctrl.name + '_rows', rows);
-                };
-
-                $ctrl.getFullDataSource = function (callback) {
+                $ctrl.getFullDataSource = function () {
                     var request = $ctrl.getRequestObject(0);
                     request.data.Take = -1;
                     request.data.Search = {
                         Text: '',
                         Operator: 'None'
                     };
-                    $ctrl.dataService.retrieveDataAsync(request).then(
+
+                    return $ctrl.dataService.retrieveDataAsync(request).then(
                         function (data) {
-                            callback(data.Payload);
+                            $ctrl.currentRequest = null;
+                            return data.Payload;
                         },
                         function (error) {
                             $scope.$emit('tbGrid_OnConnectionError', error);
-                        })
-                        .then(function () {
                             $ctrl.currentRequest = null;
                         });
                 };
@@ -2699,8 +2647,9 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             controller: ['$window', function ($window) {
                 var $ctrl = this;
 
+                // TODO: Move to Export Service
                 $ctrl.printGrid = function () {
-                    $ctrl.$component.getFullDataSource(function (data) {
+                    $ctrl.$component.getFullDataSource.then(function (data) {
                         var tableHtml = '<table class="table table-bordered table-striped"><thead><tr>'
                             + $ctrl.$component.columns
                             .filter(function (c) { return c.Visible; })
@@ -3085,12 +3034,14 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         var columns = getColumns(gridScope);
                         var visibility = getColumnsVisibility(gridScope);
 
-                        gridScope.getFullDataSource(function(data) {
+                        gridScope.getFullDataSource.then(function (data) {
                             service.saveFile(filename, exportToCsv(columns, data, visibility));
                         });
                     },
 
-                    exportGridToCsv: function(filename, gridScope) {
+                    exportGridToCsv: function (filename, gridScope) {
+                        if (!gridScope.dataSource || !gridScope.dataSource.Payload) return;
+
                         var columns = getColumns(gridScope);
                         var visibility = getColumnsVisibility(gridScope);
 

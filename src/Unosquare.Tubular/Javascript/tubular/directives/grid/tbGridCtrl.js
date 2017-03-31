@@ -211,6 +211,11 @@
                 };
 
                 $ctrl.getRequestObject = function (skip) {
+                    if (skip === -1) {
+                        skip = ($ctrl.requestedPage - 1) * $ctrl.pageSize;
+                        if (skip < 0) skip = 0;
+                    }
+
                     return {
                         serverUrl: $ctrl.serverUrl,
                         requestMethod: $ctrl.requestMethod || 'POST',
@@ -240,16 +245,14 @@
                         $ctrl.pageSize = (parseInt($window.localStorage.getItem(prefix + $ctrl.name + '_pageSize')) || $ctrl.pageSize);
                     }
 
-                    if ($ctrl.pageSize < 10) $ctrl.pageSize = 20; // default
+                    if ($ctrl.pageSize < 10) {
+                        $ctrl.pageSize = 20; // default
+                    } 
 
                     var newPages = Math.ceil($ctrl.totalRecordCount / $ctrl.pageSize);
                     if ($ctrl.requestedPage > newPages) $ctrl.requestedPage = newPages;
 
-                    var skip = ($ctrl.requestedPage - 1) * $ctrl.pageSize;
-
-                    if (skip < 0) skip = 0;
-
-                    var request = $ctrl.getRequestObject(skip);
+                    var request = $ctrl.getRequestObject(-1);
 
                     if (angular.isUndefined($ctrl.onBeforeGetData) === false) {
                         $ctrl.onBeforeGetData();
@@ -371,62 +374,21 @@
                     $ctrl.retrieveData();
                 };
 
-                $ctrl.selectedRows = function () {
-                    return $window.localStorage.getItem(prefix + $ctrl.name + '_rows') || [];
-                };
-
-                $ctrl.clearSelection = function () {
-                    angular.forEach($ctrl.rows,
-                        function (value) {
-                            value.$selected = false;
-                        });
-
-                    $window.localStorage.setItem(prefix + $ctrl.name + '_rows', []);
-                };
-
-                $ctrl.isEmptySelection = function () {
-                    return $ctrl.selectedRows().length === 0;
-                };
-
-                $ctrl.selectFromSession = function (row) {
-                    row.$selected = $ctrl.selectedRows().filter(function (el) { return el.$key === row.$key; }).length > 0;
-                };
-
-                $ctrl.changeSelection = function (row) {
-                    if (angular.isUndefined(row)) {
-                        return;
-                    }
-
-                    row.$selected = !row.$selected;
-
-                    var rows = $ctrl.selectedRows();
-
-                    if (row.$selected) {
-                        rows.push({ $key: row.$key });
-                    } else {
-                        rows = rows.filter(function (el) {
-                            return el.$key !== row.$key;
-                        });
-                    }
-
-                    $window.localStorage.setItem(prefix + $ctrl.name + '_rows', rows);
-                };
-
-                $ctrl.getFullDataSource = function (callback) {
+                $ctrl.getFullDataSource = function () {
                     var request = $ctrl.getRequestObject(0);
                     request.data.Take = -1;
                     request.data.Search = {
                         Text: '',
                         Operator: 'None'
                     };
-                    $ctrl.dataService.retrieveDataAsync(request).then(
+
+                    return $ctrl.dataService.retrieveDataAsync(request).then(
                         function (data) {
-                            callback(data.Payload);
+                            $ctrl.currentRequest = null;
+                            return data.Payload;
                         },
                         function (error) {
                             $scope.$emit('tbGrid_OnConnectionError', error);
-                        })
-                        .then(function () {
                             $ctrl.currentRequest = null;
                         });
                 };

@@ -97,12 +97,14 @@
                         var columns = getColumns(gridScope);
                         var visibility = getColumnsVisibility(gridScope);
 
-                        gridScope.getFullDataSource(function(data) {
+                        gridScope.getFullDataSource.then(function (data) {
                             service.saveFile(filename, exportToCsv(columns, data, visibility));
                         });
                     },
 
-                    exportGridToCsv: function(filename, gridScope) {
+                    exportGridToCsv: function (filename, gridScope) {
+                        if (!gridScope.dataSource || !gridScope.dataSource.Payload) return;
+
                         var columns = getColumns(gridScope);
                         var visibility = getColumnsVisibility(gridScope);
 

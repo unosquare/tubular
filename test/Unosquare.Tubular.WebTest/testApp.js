@@ -46,10 +46,6 @@
                         templateUrl: '/test/Unosquare.Tubular.WebTest/common/tbFormConnErrorNoServerUrl_tests.html',
                         title: 'Tubular Form Loading Test'
                     })
-                    .when('/tbRowSelectable', {
-                        templateUrl: '/test/Unosquare.Tubular.WebTest/common/tbRowSelectable.html',
-                        title: 'selectedRows clearSelection isEmptySelection'
-                    })
                     .otherwise({
                         redirectTo: '/'
                     });
