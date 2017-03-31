@@ -1,8 +1,9 @@
-﻿(function(angular, saveAs) {
+﻿(function(angular) {
     'use strict';
 
     function getColumns(gridScope) {
-        return gridScope.columns.map(function (c) { return c.Label; });
+        return gridScope.columns
+            .map(function (c) { return c.Label; });
     }
 
     function getColumnsVisibility(gridScope) {
@@ -10,7 +11,7 @@
             .map(function (c) { return c.Visible; });
     }
 
-    function exportToCsv(filename, header, rows, visibility) {
+    function exportToCsv(header, rows, visibility) {
         var processRow = function (row) {
             if (angular.isObject(row)) {
                 row = Object.keys(row).map(function (key) { return row[key]; });
@@ -49,13 +50,13 @@
             csvFile += processRow(header);
         }
 
-        for (var i = 0; i < rows.length; i++) {
-            csvFile += processRow(rows[i]);
-        }
+        angular.forEach(rows,
+            function(row) {
+                csvFile += processRow(row);
+            });
 
         // Add "\uFEFF" (UTF-8 BOM)
-        var blob = new Blob(['\uFEFF' + csvFile], { type: 'text/csv;charset=utf-8;' });
-        saveAs(blob, filename);
+        return new Blob(['\uFEFF' + csvFile], { type: 'text/csv;charset=utf-8;' });
     }
 
     /**
@@ -75,15 +76,29 @@
          * @description
          * Use `tubularGridExportService` to export your `tbGrid` to a CSV file.
          */
-        .factory('tubularGridExportService',
-            function() {
+        .factory('tubularGridExportService', ['$window',
+            function($window) {
+                var service = this;
+
+                service.saveFile = function(filename, blob) {
+                    var fileURL = $window.URL.createObjectURL(blob);
+                    var downloadLink = angular.element('<a></a>');
+
+                    downloadLink.attr('href', fileURL);
+                    downloadLink.attr('download', filename);
+                    downloadLink.attr('target', '_self');
+                    downloadLink[0].click();
+
+                    $window.URL.revokeObjectURL(fileURL);
+                };
+
                 return {
                     exportAllGridToCsv: function(filename, gridScope) {
                         var columns = getColumns(gridScope);
                         var visibility = getColumnsVisibility(gridScope);
 
                         gridScope.getFullDataSource(function(data) {
-                            exportToCsv(filename, columns, data, visibility);
+                            service.saveFile(filename, exportToCsv(columns, data, visibility));
                         });
                     },
 
@@ -92,9 +107,9 @@
                         var visibility = getColumnsVisibility(gridScope);
 
                         gridScope.currentRequest = {};
-                        exportToCsv(filename, columns, gridScope.dataSource.Payload, visibility);
+                        service.saveFile(filename, exportToCsv(columns, gridScope.dataSource.Payload, visibility));
                         gridScope.currentRequest = null;
                     }
                 };
-            });
-})(angular, saveAs);
+            }]);
+})(angular);
