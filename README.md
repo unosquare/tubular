@@ -5,7 +5,7 @@
 
 ![Tubular](http://unosquare.github.io/tubular/assets/tubular.png)
 
-*:star:Please star this project if you find it useful!*
+:star: *Please star this project if you find it useful!*
 
 Tubular provides a set of directives and services using AngularJS as framework, the main component is a grid with multiple options:
 
