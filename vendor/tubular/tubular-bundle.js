@@ -4455,7 +4455,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         Argument: $ctrl.argument ? [$ctrl.argument] : null,
                         Operator: $ctrl.operator || 'Contains',
                         OptionsUrl: $ctrl.optionsUrl || null,
-                        HasFilter: !($ctrl.text == null),
+                        HasFilter: !($ctrl.text == null || $ctrl.text == '' || $ctrl.text == undefined),
                         Name: $scope.$parent.$parent.column.Name
                     };
 
