@@ -97,7 +97,7 @@
                         var columns = getColumns(gridScope);
                         var visibility = getColumnsVisibility(gridScope);
 
-                        gridScope.getFullDataSource.then(function (data) {
+                        gridScope.getFullDataSource().then(function (data) {
                             service.saveFile(filename, exportToCsv(columns, data, visibility));
                         });
                     },

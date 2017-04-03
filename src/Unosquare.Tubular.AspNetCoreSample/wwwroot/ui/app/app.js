@@ -144,7 +144,7 @@
                         },
                         function (error) {
                             $scope.loading = false;
-                            toastr.error(error);
+                            toastr.error(error.error_description);
                         });
                 };
             });

@@ -241,7 +241,7 @@
 
                 // TODO: Move to Export Service
                 $ctrl.printGrid = function () {
-                    $ctrl.$component.getFullDataSource.then(function (data) {
+                    $ctrl.$component.getFullDataSource().then(function (data) {
                         var tableHtml = '<table class="table table-bordered table-striped"><thead><tr>'
                             + $ctrl.$component.columns
                             .filter(function (c) { return c.Visible; })

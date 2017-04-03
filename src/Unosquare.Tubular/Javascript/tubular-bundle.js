@@ -2652,7 +2652,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
                 // TODO: Move to Export Service
                 $ctrl.printGrid = function () {
-                    $ctrl.$component.getFullDataSource.then(function (data) {
+                    $ctrl.$component.getFullDataSource().then(function (data) {
                         var tableHtml = '<table class="table table-bordered table-striped"><thead><tr>'
                             + $ctrl.$component.columns
                             .filter(function (c) { return c.Visible; })
@@ -3037,7 +3037,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         var columns = getColumns(gridScope);
                         var visibility = getColumnsVisibility(gridScope);
 
-                        gridScope.getFullDataSource.then(function (data) {
+                        gridScope.getFullDataSource().then(function (data) {
                             service.saveFile(filename, exportToCsv(columns, data, visibility));
                         });
                     },
