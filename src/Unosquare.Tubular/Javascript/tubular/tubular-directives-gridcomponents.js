@@ -236,7 +236,7 @@
                 printCss: '@',
                 caption: '@'
             },
-            controller: ['$window', 'tubularGridExportService', function ($window, tubular) {
+            controller: ['tubularGridExportService', function (tubular) {
                 var $ctrl = this;
 
                 $ctrl.printGrid = function () {
