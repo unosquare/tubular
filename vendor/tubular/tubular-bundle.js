@@ -4472,6 +4472,12 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                                 return;
                             }
 
+                            if ((val.DataType === 'date' || val.DataType === 'datetime' || val.DataType === 'datetimeutc')
+                                && !($ctrl.filter.Text === '' || $ctrl.filter.Text == null))
+                            {
+                                $ctrl.filter.Text = new Date($ctrl.filter.Text);
+                            }
+
                             if ($ctrl.filter.HasFilter !== val.Filter.HasFilter) {
                                 $ctrl.filter.HasFilter = val.Filter.HasFilter;
                                 $ctrl.filter.Text = val.Filter.Text;
