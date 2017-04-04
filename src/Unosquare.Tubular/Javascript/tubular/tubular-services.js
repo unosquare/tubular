@@ -111,6 +111,48 @@
                         gridScope.currentRequest = {};
                         service.saveFile(filename, exportToCsv(columns, gridScope.dataSource.Payload, visibility));
                         gridScope.currentRequest = null;
+                    },
+
+                    printGrid: function (component, printCss, title) {
+                        component.getFullDataSource().then(function (data) {
+                            var tableHtml = '<table class="table table-bordered table-striped"><thead><tr>'
+                                + component.columns
+                                .filter(function (c) { return c.Visible; })
+                                .map(function (el) {
+                                    return '<th>' + (el.Label || el.Name) + '</th>';
+                                }).join(' ')
+                                + '</tr></thead>'
+                                + '<tbody>'
+                                + data.map(function (row) {
+                                    if (angular.isObject(row)) {
+                                        row = Object.keys(row).map(function (key) { return row[key]; });
+                                    }
+
+                                    return '<tr>' + row.map(function (cell, index) {
+                                        if (angular.isDefined(component.columns[index]) &&
+                                            !component.columns[index].Visible) {
+                                            return '';
+                                        }
+
+                                        return '<td>' + cell + '</td>';
+                                    }).join(' ') + '</tr>';
+                                }).join('  ')
+                                + '</tbody>'
+                                + '</table>';
+
+                            var popup = $window.open('about:blank', 'Print', 'menubar=0,location=0,height=500,width=800');
+                            popup.document.write('<link rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap/latest/css/bootstrap.min.css" />');
+
+                            if (printCss !== '') {
+                                popup.document.write('<link rel="stylesheet" href="' + printCss + '" />');
+                            }
+
+                            popup.document.write('<body onload="window.print();">');
+                            popup.document.write('<h1>' + title + '</h1>');
+                            popup.document.write(tableHtml);
+                            popup.document.write('</body>');
+                            popup.document.close();
+                        });
                     }
                 };
             }]);
