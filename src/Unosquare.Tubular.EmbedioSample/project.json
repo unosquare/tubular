@@ -6,8 +6,8 @@
     "copyToOutput": [ "html\\" ]
   },
   "dependencies": {
-    "Unosquare.Tubular": { "target": "project" },
-    "EmbedIO": "1.4.6"
+    "EmbedIO": "1.6.3",
+    "Unosquare.Tubular": { "target": "project" }
   },
   "frameworks": {
     "netcoreapp1.1": {
