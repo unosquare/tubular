@@ -2,9 +2,9 @@
     "version": "1.0.0-*",
     "buildOptions": {},
     "dependencies": {
-      "NUnit": "3.6.0",
-        "dotnet-test-nunit": "3.4.0-beta-3",
-        "Unosquare.Tubular": { "target": "project" }
+      "dotnet-test-nunit": "3.4.0-beta-3",
+      "NUnit": "3.6.1",
+      "Unosquare.Tubular": { "target": "project" }
     },
 
     "testRunner": "nunit",

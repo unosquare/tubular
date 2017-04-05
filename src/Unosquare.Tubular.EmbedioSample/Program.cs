@@ -14,7 +14,7 @@ namespace Unosquare.Tubular.EmbedioSample
         /// <value>
         /// The HTML root path.
         /// </value>
-        public static string HtmlRootPath => Path.Combine(CurrentApp.EntryAssemblyDirectory, "html");
+        public static string HtmlRootPath => Path.Combine(Runtime.EntryAssemblyDirectory, "html");
 
         /// <summary>
         /// Defines the entry point of the application.
