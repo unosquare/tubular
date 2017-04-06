@@ -46,7 +46,7 @@
                     },
                     $isRepeatedField: function (value) {
                         var isRepeated = false;
-                        angular.forEach(this.$fields, function (field, key) {
+                        angular.forEach(this.$fields, function (field) {
                             if (field === value) isRepeated = true;
                         });
 
