@@ -1,8 +1,11 @@
 (function () {
     'use strict';
 
-    angular.module('testApp.routes', ['ngRoute'])
-        .config([
+    angular.module('app', [
+        'tubular',
+        'toastr',
+        'ngRoute'
+    ]).config([
             '$routeProvider', '$locationProvider',
             function ($routeProvider, $locationProvider) {
                 $routeProvider.
@@ -66,20 +69,5 @@
             $scope.$on('tbForm_OnSuccessfulSave', function () {
                 $scope.textSave = "Saved";
             });
-
-        }).controller('rwController', [
-            '$scope', '$window',
-            function ($scope, $window) {
-                $scope.selectRows = function () {
-                    var rows = $window.localStorage.getItem('sampleshap1_rows');
-                    $scope.rows = rows.length;
-                };
-            }
-        ]);
-
-    angular.module('app', [
-        'tubular',
-        'toastr',
-        'testApp.routes'
-    ]);
+        });
 })();

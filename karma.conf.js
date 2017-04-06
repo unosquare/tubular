@@ -32,7 +32,6 @@ module.exports = (config) => {
           'Javascript/tubular/tubular.js',
           'Javascript/tubular-chart/**/*.js',
           'Javascript/tubular*/**/*.spec.js'
-         // 'Javascript/tubular*/**/*.e2e.js
         ],
 
         // list of files to exclude

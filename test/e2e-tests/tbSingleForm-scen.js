@@ -1,7 +1,7 @@
 /* jshint: true */
 /* globals: expect:false,beforeAll:false,expect:false,browser:false,element:false,by:false,describe:false,protractor:false,it:false,beforeEach:false,xit:false */
 
-// This protractor scen file tests tbColumn and tnForm components.
+// This protractor scen file tests tbForm components.
 
 describe('tbSingleForm', () => {
     beforeEach(() => {
@@ -9,28 +9,27 @@ describe('tbSingleForm', () => {
         browser.get('index.html');
         element(by.id('testsSelector')).click();
         element(by.id('tbSingleFormTest')).click();
-
     });
 
-    xit('should load correct info', () => {
-        // TODO: ORLY? Microsoft?
-        expect($('input').getAttribute('value')).toBe('Microsoft');
-    });
+    xit('should load correct info', 
+        () => expect($('input').getAttribute('value')).toBe('Microsoft'));
 
-    it('should change customer name', () => $('#btnDefault').click().then(() => expect($('input').getAttribute('value')).toBe('Unosquare')));
+    it('should change customer name', 
+        () => $('#btnDefault').click().then(() => expect($('input').getAttribute('value')).toBe('Unosquare')));
 
     it('should save it', done => {
         element(by.tagName('select')).$$('[value="string:Guadalajara, JAL, Mexico"]').click();
         $('#btnDefault').click();
-        $('#btnSave').click();
-        
-        expect($('#textSave').getText()).toBe('Saved');
-        $('input').clear();
-        $('input').sendKeys('Microsoft');
-        element(by.tagName('select')).$$('[value="string:Guadalajara, JAL, Mexico"]').click();
         $('#btnSave').click().then(() => {
+            // TODO: this is failing
             expect($('#textSave').getText()).toBe('Saved');
-            done();
+            $('input').clear();
+            $('input').sendKeys('Microsoft');
+            element(by.tagName('select')).$$('[value="string:Guadalajara, JAL, Mexico"]').click();
+            $('#btnSave').click().then(() => {
+                expect($('#textSave').getText()).toBe('Saved');
+                done();
+            });
         });
     });
 
@@ -44,7 +43,7 @@ describe('tbSingleForm', () => {
     it('should update', () => {
         $('#btnDefault').click();
 
-        if($('#textSave').getText() === ''){
+        if ($('#textSave').getText() === '') {
             $('#btnUpdate').click();
             browser.get('index.html');
             element(by.id('testsSelector')).click();
