@@ -29,7 +29,7 @@ PM> Install-Package Tubular
 
 ### Package containing only the server-side stuff
 
-The same Nuget contains .NET452 and .NETStandard 1.6 targets.
+The same Nuget contains `.NET Framework 4.5.2` and `.NET Standard 1.6` targets.
 
 <pre>
 PM> Install-Package Tubular.ServerSide
@@ -60,14 +60,14 @@ You will need to reference the following JS libraries in order to use Tubular in
 * [AngularJS (optionally Animate and Route)](https://angularjs.org/) - 1.6
 * [AngularJS UI Bootstrap](https://angular-ui.github.io/bootstrap/) - 2.5 with the Bootstrap CSS
 * [Moment.js](http://momentjs.com/) - 2.17
-* [AngularJS Local Storage](https://github.com/grevory/angular-local-storage)
 * [Font Awesome](http://fortawesome.github.io/Font-Awesome/)
-* [FileSaver.js](https://github.com/eligrey/FileSaver.js)
 
 ### Deprecated
 
-* <s>[jQuery](http://jquery.com/) - 2.1.4</s> jQuery is only needed in Tubular < 1.0.0
-* <s>[Twitter Bootstrap](http://getbootstrap.com/)</s> Bootstrap is only needed in Tubular < 1.0.0
+* <s>[FileSaver.js](https://github.com/eligrey/FileSaver.js)</s> Only with Tubular < 1.4.0 
+* <s>[AngularJS Local Storage](https://github.com/grevory/angular-local-storage)</s> Only with Tubular < 1.4.0 
+* <s>[jQuery](http://jquery.com/) - 2.1.4</s> Only with Tubular < v1.0.0
+* <s>[Twitter Bootstrap](http://getbootstrap.com/)</s> Only with Tubular < 1.0.0
 
 ### Charts
 
@@ -81,7 +81,7 @@ You can get all the dependencies using the following links in your master HTML p
 <link rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap/latest/css/bootstrap.min.css" />
 <link rel="stylesheet" href="//cdn.jsdelivr.net/fontawesome/latest/css/font-awesome.min.css" />
 
-<script src="//cdn.jsdelivr.net/g/angularjs@1.6.0(angular.min.js+angular-animate.min.js+angular-route.min.js),angular.bootstrap@2.5.0(ui-bootstrap.min.js+ui-bootstrap-tpls.min.js),filesaver.js,momentjs@2.17.1,angular-local-storage(angular-local-storage.min.js)"></script>
+<script src="//cdn.jsdelivr.net/g/angularjs@1.6.0(angular.min.js+angular-animate.min.js+angular-route.min.js),angular.bootstrap@2.5.0(ui-bootstrap.min.js+ui-bootstrap-tpls.min.js),momentjs@2.17.1"></script>
 ```
 
 Then you will need to either grab your own copy of Tubular or you use jsDelivr to reference Tubular CSS and JS files.
@@ -101,7 +101,7 @@ If you want to use OData or LocalData connectors to populate tbGrid, you must in
 
 ## Global Settings
 
-You can access to global settings by using the static object <i>TubularDefaultSettings</i> and setup common behavior in Tubular. The settings included are:
+You can access to global settings by using the static object `TubularDefaultSettings` and setup common behavior in Tubular. The settings included are:
 
 <table>
     <tr><th>Setting</th><th>Default value</th><th>Notes</th></tr>
@@ -110,7 +110,7 @@ You can access to global settings by using the static object <i>TubularDefaultSe
 
 ## Building C# Library
 
-Depending in your environment you must use the solution **Unosquare.Tubular.sln** if you want to build with DOTNET or **Unosquare.Tubular.Lib.sln** if you use msbuild or xbuild.
+Depending in your environment you must use the solution **Unosquare.Tubular.sln** if you want to build with `dotnet` or **Unosquare.Tubular.Lib.sln** if you use `msbuild` or `xbuild`.
 In other words, use first solution file for VS2015 with .NET Core support or the second one for any other environment.
 
 ## Boilerplate
@@ -164,22 +164,4 @@ The following HTML represents a basic grid. You don't need to add anything else 
     </div>
 ```
 
-Tubular works directly with either your own OData service or a custom RESTful call. You can simplify your RESTful API significantly by using our .NET Tubular.ServerSide library which handles IQueryables easily.
-
-## Running the OWIN Sample project
-
-In order to run the sample project included in the solution, first you must use Code-first migrations Update-Database command. Here is the explanation step by step:
-
-First of all, set Unosquare.Tubular.Sample as the solution's Default Project by right clicking it an selecting "Set as StartUp Project". Otherwise the database update will not work.
-
-Next, into the Web.config file of the Unosquare.Tubular.Sample project, specify the missing parameter of the "SampleDbContext" connection string as this example:
-
-            connectionString="MyComputer\SQLEXPRESS"
-
-This way you are specifying where to run the seed method with initial data. 
-
-Finally, open the Package Manager Console, select Unosquare.Tubular.Sample as Default project in the top bar and run the following command:
-
-        update-Database
-
-After this, just right-click the project and select Debug>Start New Instance and you should be watching and explorer window with the sample page. 
+Tubular works directly with either your own OData service or a custom RESTful call. You can simplify your RESTful API significantly by using our .NET Tubular.ServerSide library which handles `IQueryable` easily.
