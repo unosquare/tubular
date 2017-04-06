@@ -5,10 +5,6 @@
 
 // tbFilterButtons internal component is implicitlly tested by the other tests in this file.
 
-// It is assumed throughout the test that the data received for the main tbGrid
-// component at the related HTML file (tbColumn_tests.html) is static and constrained
-// to 53 records with consecutive ID's.
-
 function loadData() {
     browser.sleep(5000);
     return browser.wait(() => $('.tubular-overlay.ng-hide').isPresent().then(isPresent => isPresent));

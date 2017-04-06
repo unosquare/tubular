@@ -35,9 +35,9 @@ describe('tbColumn', () => {
                 .$('li.pagination-first a')
                 .click();
 
-            // Select '100' on tbPageSizeSelector
+            // Select '20' on tbPageSizeSelector
             element(by.model('$ctrl.$component.pageSize'))
-                .$('[value="number:100"]').click();
+                .$('[value="number:20"]').click();
             
             updateFirstAndLastRow();
 
@@ -55,9 +55,7 @@ describe('tbColumn', () => {
                 .$('a');
         });
 
-        var dataSetLowerId = '1',
-            dataSetHigherId = '500',
-            dataSetLowerCustomerName = 'Advanced Technology Systems',
+        var dataSetLowerCustomerName = 'Advanced Technology Systems',
             dataSetHigherCustomerName = 'Vesta',
             dataSetLowerDate = /12\/30\/2015/,
             dataSetHigherDate = /1\/01\/2016/;
@@ -65,13 +63,13 @@ describe('tbColumn', () => {
         it('should sort data in ascending order then on descending order when sorting by Order Id column', () => {
             aOrderIdSorting.click().then(() => {
                 updateFirstAndLastRow();
-                expect(firstDataRow.$$('td').first().getText()).toBe(dataSetLowerId);
-                expect(lastDataRow.$$('td').first().getText()).toBe('100');
+                expect(firstDataRow.$$('td').first().getText()).toBe('1');
+                expect(lastDataRow.$$('td').first().getText()).toBe('20');
 
                 aOrderIdSorting.click().then(() => {
                     updateFirstAndLastRow();
-                    expect(firstDataRow.$$('td').first().getText()).toBe(dataSetHigherId);
-                    expect(lastDataRow.$$('td').first().getText()).toBe('401');
+                    expect(firstDataRow.$$('td').first().getText()).toBe('500');
+                    expect(lastDataRow.$$('td').first().getText()).toBe('481');
                 });
             });
         });
@@ -81,7 +79,6 @@ describe('tbColumn', () => {
                 updateFirstAndLastRow();
                 expect(firstDataRow.$$('td').get(1).getText()).toBe(dataSetLowerCustomerName);
             });
-
         });
 
         it('should order data in descending order when click-sorting an ascending-sorted text column', () => {

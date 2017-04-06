@@ -2,7 +2,6 @@
     This template is used to test the following components:
         - tbColumn
     -->
-
 <h1>Testing: </h1>
 <ul>
     <li>tbColum component sorting-order functionality </li>
@@ -10,18 +9,11 @@
 </ul>
 <br />
 
-<tb-grid server-url="http://tubular.azurewebsites.net/api/orders/paged" request-method="POST" grid-name="sampleshap1" page-size="10"
+<tb-grid server-url="/mockapi/columntest" request-method="POST" grid-name="sampleshap1" page-size="10"
          require-authentication="false">
     <div class="col-md-12">
         <div class="row">
             <tb-grid-pager class="col-md-6 col-xs-12"></tb-grid-pager>
-            <div class="col-md-4 col-xs-6">
-                <div class="btn-group btn-group-sm">
-                    <tb-export-button filename="data.csv" class="btn-group"></tb-export-button>
-                    <tb-print-button title="Sample" class="btn-group"></tb-print-button>
-                    <tb-column-selector></tb-column-selector>
-                </div>
-            </div>
             <tb-page-size-selector class="col-md-3 col-xs-6" selectorcss="input-sm">
             </tb-page-size-selector>
         </div>
