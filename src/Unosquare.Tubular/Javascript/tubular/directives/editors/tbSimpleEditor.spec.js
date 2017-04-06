@@ -79,11 +79,12 @@ describe('Module: tubular.directives', () => {
                     'FirstName' : 'Guerrero'
                 },
                 'fields': [{
-                    'name': "FirstName"
+                    name: "FirstName",
+                    label: "First Name"
                 }]
             };
             ctrl.validate();
-            expect(ctrl.state.$errors[0]).toBe("The field needs to match the  field.");
+            expect(ctrl.state.$errors[0]).toBe("The field needs to match the First Name field.");
         });
     });
 });
