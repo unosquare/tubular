@@ -64,11 +64,26 @@ describe('Module: tubular.directives', () => {
             expect(ctrl.state.$errors[0]).toBe("The field needs to be minimum 10 chars.");
         });
 
-        it('should validate mac', () => {
+        it('should validate max', () => {
             ctrl.value = 'Casillas';
             ctrl.max = 4;
             ctrl.validate();
             expect(ctrl.state.$errors[0]).toBe("The field needs to be maximum 4 chars.");
+        });
+
+        it('should validate match', () => {
+            ctrl.value = 'Casillas';
+            ctrl.match = 'FirstName';
+            ctrl.$component = {
+                'model': {
+                    'FirstName' : 'Guerrero'
+                },
+                'fields': [{
+                    'name': "FirstName"
+                }]
+            };
+            ctrl.validate();
+            expect(ctrl.state.$errors[0]).toBe("The field needs to match the  field.");
         });
     });
 });
