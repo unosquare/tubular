@@ -2750,49 +2750,48 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
     'use strict';
 
     /**                                           
-    * @ngdoc module
-    * @name tubular.models
-    * 
-    * @description
-    * Tubular Models module. 
-    * 
-    * It contains model's factories to be use in {@link tubular.directives} like `tubularModel` and `tubularGridColumnModel`.
-    */
+     * @ngdoc module
+     * @name tubular.models
+     * 
+     * @description
+     * Tubular Models module. 
+     * 
+     * It contains model's factories to be use in {@link tubular.directives} like `tubularModel` and `tubularGridColumnModel`.
+     */
     angular.module('tubular.models', [])
         /**
-        * @ngdoc factory
-        * @name tubularModel
-        * @module tubular.models
-        *
-        * @description
-        * The `tubularModel` factory is the base to generate a row model to use with `tbGrid` and `tbForm`.
-        */
+         * @ngdoc factory
+         * @name tubularModel
+         * @module tubular.models
+         *
+         * @description
+         * The `tubularModel` factory is the base to generate a row model to use with `tbGrid` and `tbForm`.
+         */
         .factory('tubularModel', function () {
             return function ($scope, $ctrl, data, dataService) {
                 var obj = {
                     $key: '',
                     $fields: [],
                     $addField: function (key, value, ignoreOriginal) {
-                        if (this.$fields.indexOf(key) < 0) {
-                            this[key] = value;
-                            this.$fields.push(key);
-                            this.$original = this.$original || {};
+                        if (this.$fields.indexOf(key) >= 0) return;
+                        this[key] = value;
+                        this.$fields.push(key);
+                        this.$original = this.$original || {};
 
-                            this.$original[key] = ignoreOriginal ? undefined : value;
+                        this.$original[key] = ignoreOriginal ? undefined : value;
 
-                            if (ignoreOriginal) {
-                                this.$hasChanges = true;
-                            }
-
-                            this.$state = this.$state || {};
-
-                            $scope.$watch(function () {
-                                return obj[key];
-                            }, function (newValue, oldValue) {
-                                if (newValue === oldValue) return;
-                                obj.$hasChanges = obj[key] !== obj.$original[key];
-                            });
+                        if (ignoreOriginal) {
+                            this.$hasChanges = true;
                         }
+
+                        this.$state = this.$state || {};
+
+                        $scope.$watch(function () {
+                            return obj[key];
+                        }, function (newValue, oldValue) {
+                            if (newValue === oldValue) return;
+                            obj.$hasChanges = obj[key] !== obj.$original[key];
+                        });
                     }
                 };
 
@@ -2901,7 +2900,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             };
         });
 })(angular, moment);
-
 (function(angular) {
     'use strict';
 
