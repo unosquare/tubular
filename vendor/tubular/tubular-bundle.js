@@ -2773,32 +2773,26 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     $key: '',
                     $fields: [],
                     $addField: function (key, value, ignoreOriginal) {
-                        this[key] = value;
-                        this.$fields.push(key);
-                        this.$original = this.$original || {};
+                        if (this.$fields.indexOf(key) < 0) {
+                            this[key] = value;
+                            this.$fields.push(key);
+                            this.$original = this.$original || {};
 
-                        this.$original[key] = ignoreOriginal ? undefined : value;
+                            this.$original[key] = ignoreOriginal ? undefined : value;
 
-                        if (ignoreOriginal) {
-                            this.$hasChanges = true;
+                            if (ignoreOriginal) {
+                                this.$hasChanges = true;
+                            }
+
+                            this.$state = this.$state || {};
+
+                            $scope.$watch(function () {
+                                return obj[key];
+                            }, function (newValue, oldValue) {
+                                if (newValue === oldValue) return;
+                                obj.$hasChanges = obj[key] !== obj.$original[key];
+                            });
                         }
-
-                        this.$state = this.$state || {};
-
-                        $scope.$watch(function () {
-                            return obj[key];
-                        }, function (newValue, oldValue) {
-                            if (newValue === oldValue) return;
-                            obj.$hasChanges = obj[key] !== obj.$original[key];
-                        });
-                    },
-                    $isRepeatedField: function (value) {
-                        var isRepeated = false;
-                        angular.forEach(this.$fields, function (field, key) {
-                            if (field === value) isRepeated = true;
-                        });
-
-                        return isRepeated;
                     }
                 };
 
@@ -2816,7 +2810,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                             value = 0;
                         }
 
-                        if (!obj.$isRepeatedField(col.Name)) obj.$addField(col.Name, value);
+                        obj.$addField(col.Name, value);
 
                         if (col.DataType === 'date' || col.DataType === 'datetime' || col.DataType === 'datetimeutc') {
                             if (obj[col.Name] === null || obj[col.Name] === '' || moment(obj[col.Name]).year() <= 1900)
@@ -2907,6 +2901,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             };
         });
 })(angular, moment);
+
 (function(angular) {
     'use strict';
 
