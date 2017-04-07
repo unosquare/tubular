@@ -55,12 +55,20 @@
          */
         .directive('tbColumnDefinitions', [
             function () {
+
                 return {
                     require: '^tbGridTable',
                     templateUrl: 'tbColumnDefinitions.tpl.html',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
+                    scope: true,
+                    controller: [
+                        '$scope', function ($scope) {
+                            $scope.$component = $scope.$parent.$parent.$component;
+                            $scope.tubularDirective = 'tubular-column-definitions';
+                        }
+                    ],
                     compile: function () {
                         return {
                             post: function (scope) {
@@ -118,6 +126,7 @@
                         '$scope', function ($scope) {
                             $scope.column = { Label: '' };
                             $scope.$component = $scope.$parent.$parent.$component;
+                            $scope.tubularDirective = 'tubular-column';
                             $scope.label = $scope.label || ($scope.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
 
                             $scope.sortColumn = function (multiple) {
@@ -230,12 +239,20 @@
          */
         .directive('tbRowSet', [
             function () {
+
                 return {
                     require: '^tbGrid',
                     templateUrl: 'tbRowSet.tpl.html',
                     restrict: 'E',
                     replace: true,
-                    transclude: true
+                    transclude: true,
+                    scope: false,
+                    controller: [
+                        '$scope', function ($scope) {
+                            $scope.$component = $scope.$parent.$component || $scope.$parent.$parent.$component;
+                            $scope.tubularDirective = 'tubular-row-set';
+                        }
+                    ]
                 };
             }
         ])
@@ -252,12 +269,20 @@
          */
         .directive('tbFootSet', [
             function () {
+
                 return {
                     require: '^tbGrid',
                     templateUrl: 'tbFootSet.tpl.html',
                     restrict: 'E',
                     replace: true,
-                    transclude: true
+                    transclude: true,
+                    scope: false,
+                    controller: [
+                        '$scope', function ($scope) {
+                            $scope.$component = $scope.$parent.$component || $scope.$parent.$parent.$component;
+                            $scope.tubularDirective = 'tubular-foot-set';
+                        }
+                    ]
                 };
             }
         ])
