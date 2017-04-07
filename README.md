@@ -148,7 +148,7 @@ The following HTML represents a basic grid. You don't need to add anything else 
                         </tb-column-definitions>
                         <tb-row-set>
                             <tb-row-template ng-repeat="row in $component.rows" 
-                                             row-model="row" selectable="true">
+                                             row-model="row">
                                 <tb-cell-template>
                                     {{row.CustomerName}}
                                 </tb-cell-template>
