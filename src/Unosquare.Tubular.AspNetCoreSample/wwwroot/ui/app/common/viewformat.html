@@ -113,7 +113,7 @@
                                     </tb-cell-template>
                                 </tb-row-template>
                                 <!-- General rows -->
-                                <tb-row-template ng-repeat="row in $component.rows" row-model="row" selectable="false">
+                                <tb-row-template ng-repeat="row in $component.rows" row-model="row">
                                     <tb-cell-template class="text-center" column-name="OrderId">
                                         <a href="/form/{{row.OrderId}}">{{row.OrderId}}</a>
                                     </tb-cell-template>

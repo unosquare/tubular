@@ -61,7 +61,7 @@
                                     </tb-simple-editor>
                                 </tb-cell-template>
                             </tb-row-template>
-                            <tb-row-template ng-repeat="row in $component.rows" row-model="row" selectable="false">
+                            <tb-row-template ng-repeat="row in $component.rows" row-model="row">
                                 <tb-cell-template visible="false" is-key="true">
                                     {{row.WarehouseID}}
                                 </tb-cell-template>

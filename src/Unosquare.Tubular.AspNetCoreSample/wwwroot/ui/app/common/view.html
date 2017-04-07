@@ -119,7 +119,7 @@
                                 </tb-cell-template>
                             </tb-row-template>
                             <!-- General rows -->
-                            <tb-row-template ng-repeat="row in $component.rows" row-model="row" selectable="false">
+                            <tb-row-template ng-repeat="row in $component.rows" row-model="row">
                                 <tb-cell-template ng-class="{'danger': rowModel.$hasChanges}"
                                                   class="cell-menu text-center">
                                     <div class="btn-group">

@@ -94,7 +94,7 @@
                                 </tb-column-definitions>
                                 <tb-row-set>
                                     <tb-row-template ng-repeat="cells in $component.rows"
-                                                     row-model="cells" selectable="false">
+                                                     row-model="cells">
                                         <tb-cell-template column-name="Key">
                                             {{cells.Key}}
                                         </tb-cell-template>
@@ -171,7 +171,7 @@
                                     </tb-column>
                                 </tb-column-definitions>
                                 <tb-row-set>
-                                    <tb-row-template ng-repeat="row in $component.rows" row-model="row" selectable="false">
+                                    <tb-row-template ng-repeat="row in $component.rows" row-model="row">
                                         <tb-cell-template column-name="Id">
                                             {{row.Id}}
                                         </tb-cell-template>

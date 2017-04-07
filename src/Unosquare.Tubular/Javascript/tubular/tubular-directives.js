@@ -273,7 +273,6 @@
          * This directive is replace by an `tr` HTML element.
          * 
          * @param {object} rowModel Set the current row, if you are using a ngRepeat you must to use the current element variable here.
-         * @param {bool} selectable Flag the rowset to allow user to select rows.
          */
         .directive('tbRowTemplate', ['$timeout',
             function ($timeout) {
