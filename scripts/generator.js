@@ -12,7 +12,6 @@
                      * a new default plnkr, not a plnkr with the desired template.  Given this undesired behavior,
                      * some may still want to open the plnk in a new window by opting-in via ctrl+click.  The
                      */
-
                     var target = newWindow ? '_blank' : '_self';
                     var form = angular.element('<form style="display: none;" method="post" action="' + url + '" target="' + target + '"></form>');
                     angular.forEach(fields, function(value, name) {
