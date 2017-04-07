@@ -31,7 +31,7 @@
             }
         ]);
 
-    angular.module('app.controllers', ['tubular.services', 'LocalStorageModule', 'app.generator'])
+    angular.module('app.controllers', ['tubular.services', 'app.generator'])
         .controller('tubularSampleCtrl', [
             '$scope', '$location', '$anchorScroll', '$templateCache', '$http', 'tubularGenerator', 'toastr',
     function ($scope, $location, $anchorScroll, $templateCache, $http, tubularGenerator, toastr) {
@@ -126,12 +126,11 @@
                         { name: 'grid.html', content: $templateCache.get('assets/' + tag + '.html') }
                     ]);
                 });
-        }
-    }
-        ])
+        };
+    }])
         .controller('tubularGeneratorCtrl', [
-            '$scope', '$http', '$templateCache', 'tubularGenerator', 'localStorageService', 'tubularTemplateService',
-            function ($scope, $http, $templateCache, tubularGenerator, localStorageService, tubularTemplateService) {
+            '$scope', '$http', '$templateCache', 'tubularGenerator', '$window', 'tubularTemplateService',
+            function ($scope, $http, $templateCache, tubularGenerator, $window, tubularTemplateService) {
                 // Options
                 $scope.enums = tubularTemplateService.enums;
 
@@ -145,7 +144,7 @@
                 $scope.uiOptions.ServiceName = 'local';
                 $scope.formOptions.ServiceName = 'local';
 
-                $scope.views = localStorageService.get('generator_views') || [];
+                $scope.views = $window.localStorage.getItem('generator_views') || [];
                 $scope.gridId = ($scope.views.length + 1);
 
                 $scope.generateModel = function () {
@@ -180,7 +179,7 @@
                     $scope.templatename = 'tubulartemplate.html';
 
                     $scope.step++;
-                }
+                };
 
                 $scope.runGridTemplate = function () {
                     $scope.gridmodel = tubularGenerator.runGridTemplate($scope);
@@ -246,7 +245,6 @@
                                 }
                             }
 
-                            // TODO: Generate route for all
                             files.push({ name: 'app.js', content: appJs });
 
                             tubularGenerator.exportPluker(files);
@@ -266,13 +264,13 @@
                         content: $scope.gridmodel.replace(/server-url="(.[^"]+)"/g, 'server-url="' + tempUrl + '"')
                     });
 
-                    localStorageService.set('generator_views', $scope.views);
+                    $window.localStorage.setItem('generator_views', $scope.views);
                     $scope.step = 1;
                     $scope.basemodel = '';
                 };
 
                 $scope.clearViews = function () {
-                    localStorageService.remove('generator_views');
+                    $window.localStorage.removeItem('generator_views');
                     $scope.views = [];
                     $scope.gridId = ($scope.views.length + 1);
                 }
@@ -324,8 +322,6 @@
                     $scope.items.push({ name: '$rootScope', url: 'https://docs.angularjs.org/api/ng/service/$rootScope', docType: 'external' });
                     $scope.items.push({ name: '$modal', url: 'https://angular-ui.github.io/bootstrap/#/modal', docType: 'external' });
                     $scope.items.push({ name: '$location', url: 'https://docs.angularjs.org/api/ng/service/$location', docType: 'external' });
-                    $scope.items.push({ name: '$filter', url: 'https://docs.angularjs.org/api/ng/service/$filter', docType: 'external' });
-                    $scope.items.push({ name: 'localStorageService', url: 'https://github.com/grevory/angular-local-storage', docType: 'external' });
 
                     // Load internal doc
                     $scope.items.push({ name: 'StartGrid', url: 'tutorial/grid.html', docType: 'external' });
