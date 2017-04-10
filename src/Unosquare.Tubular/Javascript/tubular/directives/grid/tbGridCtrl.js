@@ -68,32 +68,37 @@
                     $scope.$emit('tbGrid_OnGreetParentController', $ctrl);
                 };
 
-                $scope.$watch('$ctrl.columns', function () {
+                $scope.columnWatcher = function () {
                     if ($ctrl.hasColumnsDefinitions === false || $ctrl.canSaveState === false) {
                         return;
                     }
 
                     storage.setItem(prefix + $ctrl.name + '_columns', angular.toJson($ctrl.columns));
-                },
-                    true);
+                };
 
-                $scope.$watch('$ctrl.serverUrl', function (newVal, prevVal) {
+                $scope.$watch('$ctrl.columns', $scope.columnWatcher, true);
+
+                $scope.serverUrlWatcher = function (newVal, prevVal) {
                     if ($ctrl.hasColumnsDefinitions === false || $ctrl.currentRequest || newVal === prevVal) {
                         return;
                     }
 
                     $ctrl.retrieveData();
-                });
+                };
 
-                $scope.$watch('$ctrl.hasColumnsDefinitions', function (newVal) {
+                $scope.$watch('$ctrl.serverUrl', $scope.serverUrlWatcher);
+
+                $scope.hasColumnsDefinitionsWatcher = function (newVal) {
                     if (newVal !== true) {
                         return;
                     }
 
                     $ctrl.retrieveData();
-                });
+                };
 
-                $scope.$watch('$ctrl.pageSize', function () {
+                $scope.$watch('$ctrl.hasColumnsDefinitions', $scope.hasColumnsDefinitionsWatcher);
+
+                $scope.pageSizeWatcher =  function () {
                     if ($ctrl.hasColumnsDefinitions && $ctrl.requestCounter > 0) {
                         if ($ctrl.savePageSize) {
                             storage.setItem(prefix + $ctrl.name + '_pageSize', $ctrl.pageSize);
@@ -101,13 +106,17 @@
 
                         $ctrl.retrieveData();
                     }
-                });
+                };
 
-                $scope.$watch('$ctrl.requestedPage', function () {
+                $scope.$watch('$ctrl.pageSize', $scope.pageSizeWatcher);
+
+                $scope.requestedPageWatcher = function () {
                     if ($ctrl.hasColumnsDefinitions && $ctrl.requestCounter > 0) {
                         $ctrl.retrieveData();
                     }
-                });
+                };
+
+                $scope.$watch('$ctrl.requestedPage', $scope.requestedPageWatcher);
 
                 $ctrl.saveSearch = function () {
                     if (!$ctrl.saveSearchText) {
