@@ -146,12 +146,20 @@
          */
         .directive('tbColumnDefinitions', [
             function () {
+
                 return {
                     require: '^tbGridTable',
                     templateUrl: 'tbColumnDefinitions.tpl.html',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
+                    scope: true,
+                    controller: [
+                        '$scope', function ($scope) {
+                            $scope.$component = $scope.$parent.$parent.$component;
+                            $scope.tubularDirective = 'tubular-column-definitions';
+                        }
+                    ],
                     compile: function () {
                         return {
                             post: function (scope) {
@@ -209,6 +217,7 @@
                         '$scope', function ($scope) {
                             $scope.column = { Label: '' };
                             $scope.$component = $scope.$parent.$parent.$component;
+                            $scope.tubularDirective = 'tubular-column';
                             $scope.label = $scope.label || ($scope.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
 
                             $scope.sortColumn = function (multiple) {
@@ -321,12 +330,20 @@
          */
         .directive('tbRowSet', [
             function () {
+
                 return {
                     require: '^tbGrid',
                     templateUrl: 'tbRowSet.tpl.html',
                     restrict: 'E',
                     replace: true,
-                    transclude: true
+                    transclude: true,
+                    scope: false,
+                    controller: [
+                        '$scope', function ($scope) {
+                            $scope.$component = $scope.$parent.$component || $scope.$parent.$parent.$component;
+                            $scope.tubularDirective = 'tubular-row-set';
+                        }
+                    ]
                 };
             }
         ])
@@ -343,12 +360,20 @@
          */
         .directive('tbFootSet', [
             function () {
+
                 return {
                     require: '^tbGrid',
                     templateUrl: 'tbFootSet.tpl.html',
                     restrict: 'E',
                     replace: true,
-                    transclude: true
+                    transclude: true,
+                    scope: false,
+                    controller: [
+                        '$scope', function ($scope) {
+                            $scope.$component = $scope.$parent.$component || $scope.$parent.$parent.$component;
+                            $scope.tubularDirective = 'tubular-foot-set';
+                        }
+                    ]
                 };
             }
         ])
@@ -463,7 +488,6 @@
             }
         ]);
 })(angular);
-
 (function(angular){
 angular.module('tubular.directives').run(['$templateCache', function ($templateCache) {
   "use strict";
@@ -1099,32 +1123,37 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     $scope.$emit('tbGrid_OnGreetParentController', $ctrl);
                 };
 
-                $scope.$watch('$ctrl.columns', function () {
+                $scope.columnWatcher = function () {
                     if ($ctrl.hasColumnsDefinitions === false || $ctrl.canSaveState === false) {
                         return;
                     }
 
                     storage.setItem(prefix + $ctrl.name + '_columns', angular.toJson($ctrl.columns));
-                },
-                    true);
+                };
 
-                $scope.$watch('$ctrl.serverUrl', function (newVal, prevVal) {
+                $scope.$watch('$ctrl.columns', $scope.columnWatcher, true);
+
+                $scope.serverUrlWatcher = function (newVal, prevVal) {
                     if ($ctrl.hasColumnsDefinitions === false || $ctrl.currentRequest || newVal === prevVal) {
                         return;
                     }
 
                     $ctrl.retrieveData();
-                });
+                };
 
-                $scope.$watch('$ctrl.hasColumnsDefinitions', function (newVal) {
+                $scope.$watch('$ctrl.serverUrl', $scope.serverUrlWatcher);
+
+                $scope.hasColumnsDefinitionsWatcher = function (newVal) {
                     if (newVal !== true) {
                         return;
                     }
 
                     $ctrl.retrieveData();
-                });
+                };
 
-                $scope.$watch('$ctrl.pageSize', function () {
+                $scope.$watch('$ctrl.hasColumnsDefinitions', $scope.hasColumnsDefinitionsWatcher);
+
+                $scope.pageSizeWatcher =  function () {
                     if ($ctrl.hasColumnsDefinitions && $ctrl.requestCounter > 0) {
                         if ($ctrl.savePageSize) {
                             storage.setItem(prefix + $ctrl.name + '_pageSize', $ctrl.pageSize);
@@ -1132,13 +1161,17 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
                         $ctrl.retrieveData();
                     }
-                });
+                };
 
-                $scope.$watch('$ctrl.requestedPage', function () {
+                $scope.$watch('$ctrl.pageSize', $scope.pageSizeWatcher);
+
+                $scope.requestedPageWatcher = function () {
                     if ($ctrl.hasColumnsDefinitions && $ctrl.requestCounter > 0) {
                         $ctrl.retrieveData();
                     }
-                });
+                };
+
+                $scope.$watch('$ctrl.requestedPage', $scope.requestedPageWatcher);
 
                 $ctrl.saveSearch = function () {
                     if (!$ctrl.saveSearchText) {
