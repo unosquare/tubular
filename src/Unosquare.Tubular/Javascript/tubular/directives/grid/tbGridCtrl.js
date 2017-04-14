@@ -298,9 +298,7 @@
                     $ctrl.dataSource = data;
 
                     if (!data.Payload) {
-                        var errorMsg = 'tubularGrid(' + $ctrl.$id + '): response is invalid.';
-                        $ctrl.currentRequest.cancel(errorMsg);
-                        $scope.$emit('tbGrid_OnConnectionError', errorMsg);
+                        $scope.$emit('tbGrid_OnConnectionError', 'tubularGrid(' + $ctrl.$id + '): response is invalid.');
                         return;
                     }
 
