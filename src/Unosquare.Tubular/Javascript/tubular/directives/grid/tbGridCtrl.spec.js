@@ -15,16 +15,14 @@ var payload = [[8, 'Guzman Webster', 'IDEGO', 'guzmanwebster@idego.com']];
 describe('Module: tubular.directives', () => {
     describe('Controller: tbGridController', () => {
         var sut, scope, tubularPopupService, tubularModel, tubularHttp, $routeParams, storage, window;
-        var $controller, storageMock, storage, data;
+        var $controller, storageMock, storage, data, tubularHttp;
 
         beforeEach(() => {
             module('tubular.directives');
             module(($provide) => {
-                tubularHttp = jasmine.createSpyObj('tubularHttp', ['getDataService', 'setRequireAuthentication']);
                 tubularModel = jasmine.createSpy();
                 $routeParams = jasmine.createSpyObj('$routeParams', ['name']);
 
-                $provide.value('tubularHttp', tubularHttp);
                 $provide.value('tubularModel', tubularModel);
                 $provide.value('$routeParams', $routeParams);
 
@@ -32,10 +30,11 @@ describe('Module: tubular.directives', () => {
 
         })
 
-        beforeEach(inject((_$controller_, $rootScope, _tubularPopupService_) => {
+        beforeEach(inject((_$controller_, $rootScope, _tubularPopupService_, _tubularHttp_) => {
             scope = $rootScope.$new();
             $controller = _$controller_;
             tubularPopupService = _tubularPopupService_;
+            tubularHttp = _tubularHttp_;
         }));
 
         var create = () => {
@@ -57,161 +56,170 @@ describe('Module: tubular.directives', () => {
                 },
                 length: 0
             };
-            sut = $controller('tbGridController', { '$scope': scope, '$window': window });
+            sut = $controller('tbGridController', { '$scope': scope, '$window': window, 'tubularHttp': tubularHttp });
         }
 
         beforeEach(() => {
             create();
-            spyOn(sut, 'retrieveData');
             sut.$onInit();
-            sut.dataService = {};
-            sut.dataService.retrieveDataAsync = (request) => {
-                return new Promise((resolve, reject) => { });
-            };
         });
 
-        it('should have name', () => {
-            expect(sut.name).toBe('tbgrid');
-        })
+        describe('onInit function, watchers', () => {
+            beforeEach(() => {
+                spyOn(sut, 'retrieveData');
+            });
 
-        it('should have empty columns', () => {
-            expect(sut.columns.length).toBe(0);
-        })
+            it('should have name', () => {
+                expect(sut.name).toBe('tbgrid');
+            })
 
-        it('should have empty rows', () => {
-            expect(sut.rows.length).toBe(0);
-        })
+            it('should have empty columns', () => {
+                expect(sut.columns.length).toBe(0);
+            })
 
-        it('should have savePage', () => {
-            expect(sut.savePage).toBe(true);
-        })
+            it('should have empty rows', () => {
+                expect(sut.rows.length).toBe(0);
+            })
 
-        it('should have currentPage', () => {
-            expect(sut.currentPage).toBe(1);
-        })
+            it('should have savePage', () => {
+                expect(sut.savePage).toBe(true);
+            })
 
-        it('should have savePageSize', () => {
-            expect(sut.savePageSize).toBe(true);
-        })
+            it('should have currentPage', () => {
+                expect(sut.currentPage).toBe(1);
+            })
 
-        it('should have pageSize', () => {
-            expect(sut.pageSize).toBe(20);
-        })
+            it('should have savePageSize', () => {
+                expect(sut.savePageSize).toBe(true);
+            })
 
-        it('should have saveSearchText', () => {
-            expect(sut.saveSearchText).toBe(true);
-        })
+            it('should have pageSize', () => {
+                expect(sut.pageSize).toBe(20);
+            })
 
-        it('should have totalPages', () => {
-            expect(sut.totalPages).toBe(0);
-        })
+            it('should have saveSearchText', () => {
+                expect(sut.saveSearchText).toBe(true);
+            })
 
-        it('should have totalRecordCount', () => {
-            expect(sut.totalRecordCount).toBe(0);
-        })
+            it('should have totalPages', () => {
+                expect(sut.totalPages).toBe(0);
+            })
 
-        it('should have filteredRecordCount', () => {
-            expect(sut.filteredRecordCount).toBe(0);
-        })
+            it('should have totalRecordCount', () => {
+                expect(sut.totalRecordCount).toBe(0);
+            })
 
-        it('should have requestedPage', () => {
-            expect(sut.requestedPage).toBe(1);
-        })
+            it('should have filteredRecordCount', () => {
+                expect(sut.filteredRecordCount).toBe(0);
+            })
 
-        it('should have hasColumnsDefinitions', () => {
-            expect(sut.hasColumnsDefinitions).toBe(false);
-        })
+            it('should have requestedPage', () => {
+                expect(sut.requestedPage).toBe(1);
+            })
 
-        it('should have requestCounter', () => {
-            expect(sut.requestCounter).toBe(0);
-        })
+            it('should have hasColumnsDefinitions', () => {
+                expect(sut.hasColumnsDefinitions).toBe(false);
+            })
 
-        it('should have requestMethod', () => {
-            expect(sut.requestMethod).toBe('POST');
-        })
+            it('should have requestCounter', () => {
+                expect(sut.requestCounter).toBe(0);
+            })
 
-        it('should have serverSaveMethod', () => {
-            expect(sut.serverSaveMethod).toBe('POST');
-        })
+            it('should have requestMethod', () => {
+                expect(sut.requestMethod).toBe('POST');
+            })
 
-        it('should have requestTimeout', () => {
-            expect(sut.requestTimeout).toBe(20000);
-        })
+            it('should have serverSaveMethod', () => {
+                expect(sut.serverSaveMethod).toBe('POST');
+            })
 
-        it('should have currentRequest', () => {
-            expect(sut.currentRequest).toBe(null);
-        })
+            it('should have requestTimeout', () => {
+                expect(sut.requestTimeout).toBe(20000);
+            })
 
-        it('should have autoSearch', () => {
-            expect(sut.autoSearch).toBe('');
-        })
+            it('should have currentRequest', () => {
+                expect(sut.currentRequest).toBe(null);
+            })
 
-        it('should have search', () => {
-            expect(sut.search.Text).toBe('');
-            expect(sut.search.Operator).toBe('None');
-        })
+            it('should have autoSearch', () => {
+                expect(sut.autoSearch).toBe('');
+            })
 
-        it('should have isEmpty', () => {
-            expect(sut.isEmpty).toBe(false);
-        })
+            it('should have search', () => {
+                expect(sut.search.Text).toBe('');
+                expect(sut.search.Operator).toBe('None');
+            })
 
-        it('should have dataService', () => {
-            expect(sut.dataService).toBeDefined();
-        })
+            it('should have isEmpty', () => {
+                expect(sut.isEmpty).toBe(false);
+            })
 
-        it('should have tempRow', () => {
-            expect(sut.tempRow).toBeDefined();
-        })
+            it('should have dataService', () => {
+                expect(sut.dataService).toBeDefined();
+            })
 
-        it('should have requireAuthentication', () => {
-            expect(sut.requireAuthentication).toBe(true);
-        })
+            it('should have tempRow', () => {
+                expect(sut.tempRow).toBeDefined();
+            })
 
-        it('should have editorMode', () => {
-            expect(sut.editorMode).toBe('none');
-        })
+            it('should have requireAuthentication', () => {
+                expect(sut.requireAuthentication).toBe(true);
+            })
 
-        it('should have canSaveState', () => {
-            expect(sut.canSaveState).toBe(false);
-        })
+            it('should have editorMode', () => {
+                expect(sut.editorMode).toBe('none');
+            })
 
-        it('should have showLoading', () => {
-            expect(sut.canSaveState).toBe(false);
-        })
+            it('should have canSaveState', () => {
+                expect(sut.canSaveState).toBe(false);
+            })
 
-        it('should have autoRefresh', () => {
-            expect(sut.autoRefresh).toBe(true);
-        })
+            it('should have showLoading', () => {
+                expect(sut.canSaveState).toBe(false);
+            })
 
-        it('should have serverDeleteUrl', () => {
-            expect(sut.serverDeleteUrl).not.toBeDefined();
-        })
+            it('should have autoRefresh', () => {
+                expect(sut.autoRefresh).toBe(true);
+            })
 
-        it('should watch columns', () => {
-            sut.columns = [{ 'DataType': 'string', 'IsKey': true, 'Name': 'Id', 'Visible': true }];
-            sut.hasColumnsDefinitions = true;
-            sut.canSaveState = true;
-            scope.columnWatcher();
-            var keys = Object.keys(storage);
-            expect(keys[0]).toBe('tubular.tbgrid_columns');
-        })
+            it('should have serverDeleteUrl', () => {
+                expect(sut.serverDeleteUrl).not.toBeDefined();
+            })
 
-        it('should watch serverUrl', () => {
-            sut.serverUrl = 'api/order';
-            sut.hasColumnsDefinitions = true;
-            sut.currentRequest = '';
-            scope.serverUrlWatcher(sut.serverUrl, '');
-            expect(sut.retrieveData).toHaveBeenCalled();
-        })
+            it('should watch columns', () => {
+                sut.columns = [{ 'DataType': 'string', 'IsKey': true, 'Name': 'Id', 'Visible': true }];
+                sut.hasColumnsDefinitions = true;
+                sut.canSaveState = true;
+                scope.columnWatcher();
+                var keys = Object.keys(storage);
+                expect(keys[0]).toBe('tubular.tbgrid_columns');
+            })
 
-        it('should watch hasColumnsDefinitions', () => {
-            sut.hasColumnsDefinitions = true;
-            scope.serverUrlWatcher(sut.hasColumnsDefinitions);
-            expect(sut.retrieveData).toHaveBeenCalled();
-        })
+            it('should watch serverUrl', () => {
+                sut.serverUrl = 'api/order';
+                sut.hasColumnsDefinitions = true;
+                sut.currentRequest = '';
+                scope.serverUrlWatcher(sut.serverUrl, '');
+                expect(sut.retrieveData).toHaveBeenCalled();
+            })
+
+            it('should watch hasColumnsDefinitions', () => {
+                sut.hasColumnsDefinitions = true;
+                scope.serverUrlWatcher(sut.hasColumnsDefinitions);
+                expect(sut.retrieveData).toHaveBeenCalled();
+            })
+
+            it('should watch requestedPage', () => {
+                sut.hasColumnsDefinitions = true;
+                sut.requestCounter = 1;
+                scope.requestedPageWatcher();
+                expect(sut.retrieveData).toHaveBeenCalled();
+            })
+        });        
 
         describe('Watching pageSize', () => {
             beforeEach(() => {
+                spyOn(sut, 'retrieveData');
                 sut.hasColumnsDefinitions = true;
                 sut.requestCounter = 1;
             });
@@ -236,13 +244,6 @@ describe('Module: tubular.directives', () => {
                 expect(sut.retrieveData).toHaveBeenCalled();
             })
         });
-
-        it('should watch requestedPage', () => {
-            sut.hasColumnsDefinitions = true;
-            sut.requestCounter = 1;
-            scope.requestedPageWatcher();
-            expect(sut.retrieveData).toHaveBeenCalled();
-        })
 
         describe('saveSearch function', () => {
             beforeEach(() => {
@@ -299,6 +300,7 @@ describe('Module: tubular.directives', () => {
         });
 
         it('should delete row', () => {
+            spyOn(sut, 'retrieveData');
             var row = { $key: "76", Id: 76, Name: 'Gdl' };
             sut.serverDeleteUrl = 'api/order';
             sut.deleteRow(row);
@@ -443,6 +445,7 @@ describe('Module: tubular.directives', () => {
 
         describe('sortColumn function', () => {
             beforeEach(() => {
+                spyOn(sut, 'retrieveData');
                 spyOn(scope, '$broadcast');
                 sut.columns = [
                     { 'DataType': 'string', 'IsKey': true, 'Name': 'Id', 'Visible': true, 'SortDirection': 'None', 'SortOrder': -1 },
@@ -532,6 +535,72 @@ describe('Module: tubular.directives', () => {
             it('should not get visibleColumns', () => {
                 sut.columns[0].Visible = false;
                 expect(sut.visibleColumns()).toBe(0);
+            })
+        });
+
+        describe('retrieveData function', () => {
+            beforeEach(() => {
+                spyOn(sut, 'verifyColumns');
+                sut.serverUrl = 'api/order';
+                sut.currentRequest = null;
+                sut.columns = [{ 'DataType': 'string', 'IsKey': true, 'Name': 'Id', 'Visible': true }];
+            });
+
+            it('should change canSaveState', () => {
+                sut.canSaveState = false;
+                sut.retrieveData();
+                expect(sut.canSaveState).toBe(true);
+            })
+
+            it('should call verifyColumns', () => {
+                sut.retrieveData();
+                expect(sut.verifyColumns).toHaveBeenCalled();
+            })
+
+            it('should update pageSize', () => {
+                sut.pageSize = 0;
+                window.localStorage.setItem('tubular.tbgrid_pageSize', 30);
+                sut.retrieveData();
+                expect(sut.pageSize).toBe(30);
+            })
+
+            it('should update pageSize on pageSize < 10', () => {
+                sut.pageSize = 5;
+                sut.retrieveData();
+                expect(sut.pageSize).toBe(20);
+            })
+
+            it('should update pageSize on pageSize < 10', () => {
+                sut.pageSize = 5;
+                sut.retrieveData();
+                expect(sut.pageSize).toBe(20);
+            })
+
+            it('should update requestedPage', () => {
+                sut.totalRecordCount = 250;
+                sut.pageSize = 50;
+                sut.requestedPage = 10;
+                sut.retrieveData();
+                expect(sut.requestedPage).toBe(5);
+            })
+
+            it('should call onBeforeGetData', () => {
+                sut.onBeforeGetData = () => { return true; };
+                spyOn(sut, 'onBeforeGetData');
+                sut.retrieveData();
+                expect(sut.onBeforeGetData).toHaveBeenCalled();
+            })
+
+            it('should emit tbGrid_OnBeforeRequest', () => {
+                var request = sut.getRequestObject(-1);
+                spyOn(scope, '$emit');
+                sut.retrieveData();
+                expect(scope.$emit).toHaveBeenCalledWith('tbGrid_OnBeforeRequest', request, sut);
+            })
+
+            it('should process currentRequest', () => {
+                sut.retrieveData();
+                expect(sut.currentRequest).toBeDefined();
             })
         });
     });
