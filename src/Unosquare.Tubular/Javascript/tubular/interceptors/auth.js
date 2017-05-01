@@ -34,8 +34,7 @@
                 config.headers = config.headers || {};
 
                 // Handle requests going to API
-                if (config.url.substring(0, apiBaseUrl.length) === apiBaseUrl &&
-                    webApiSettings.tokenUrl() !== config.url &&
+                if (webApiSettings.tokenUrl() !== config.url &&
                     webApiSettings.requireAuthentication() &&
                     tubularHttp.userData.bearerToken) {
 
