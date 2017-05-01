@@ -29,7 +29,6 @@
                 // Get the service here because otherwise, a circular dependency injection will be detected
                 var tubularHttp = $injector.get(tubularHttpName);
                 var webApiSettings = tubularConfig.webApi;
-                var apiBaseUrl = webApiSettings.baseUrl();
 
                 config.headers = config.headers || {};
 
