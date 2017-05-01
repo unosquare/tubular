@@ -26,14 +26,17 @@ describe('Module: tubular.services', function () {
             expect(AuthInterceptor.responseError).toBeDefined();
         })
 
-        it('should not add any authorization header', function () {
+        it('should not add any authorization header for tokenUrl', function () {
             var config = {
                 method: 'GET',
-                url: '/other/file.html'
+                url: '/api/token'
             };
+            tubularConfig.webApi.tokenUrl('/api/token');
 
-            expect(AuthInterceptor.request(config).headers).toBeDefined();
-            expect(AuthInterceptor.request(config).headers.Authorization).toBeUndefined();
+            var actual = AuthInterceptor.request(config);
+
+            expect(actual.headers).toBeDefined();
+            expect(actual.headers.Authorization).toBeUndefined();
         });
 
         it('should add authorization header', function () {
@@ -41,13 +44,15 @@ describe('Module: tubular.services', function () {
                 method: 'GET',
                 url: '/api/dummy'
             };
-
+            tubularConfig.webApi.tokenUrl('/api/token');
             tubularConfig.webApi.requireAuthentication(true);
             tubularHttp.userData.bearerToken = "yeah";
 
-            expect(AuthInterceptor.request(config).headers).toBeDefined();
-            expect(AuthInterceptor.request(config).headers.Authorization).toBeDefined();
-            expect(AuthInterceptor.request(config).headers.Authorization).toContain('yeah');
+            var actual = AuthInterceptor.request(config)
+
+            expect(actual.headers).toBeDefined();
+            expect(actual.headers.Authorization).toBeDefined();
+            expect(actual.headers.Authorization).toContain('yeah');
         });
 
         it('should NOT try to use refresh tokens', done => {
