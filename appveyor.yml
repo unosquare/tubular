@@ -17,3 +17,4 @@ test_script:
 - grunt min
 - grunt eslint
 - grunt unit:ci
+build: off
