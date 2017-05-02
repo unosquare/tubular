@@ -13,43 +13,11 @@ Tubular provides a set of directives and services using AngularJS as framework, 
 * Common functionality like **Sorting, Filtering (specific to the data type), Free-text search, Paging** and more.
 * Easy to implement inline editors, page or popup forms totally bound to your grid.
 * Basic services like **Print and Export to CSV** in client-side.
-* .NET Framework and .NET Core Library (available in [Nuget](https://www.nuget.org/packages/Tubular.ServerSide)) to create **REST service** easily with any WebApi library. 
 
+Developing with .NET as backend? check [Tubular DotNet](https://github.com/unosquare/tubular-dotnet) project.
 If you are looking for Angular2 support, check [Tubular2](https://github.com/unosquare/tubular2) project.
 
 Please visit the <a href="http://unosquare.github.io/tubular" target="_blank">Tubular GitHub Page</a> to learn how quickly you can start coding. Don't forget to check out the Tubular Generator which quickly turns models into an awesome UIs!
-
-## NuGet Installation [![NuGet version](https://badge.fury.io/nu/tubular.svg)](http://badge.fury.io/nu/tubular)
-
-### Package containing only the client-side stuff
-
-<pre>
-PM> Install-Package Tubular
-</pre>
-
-### Package containing only the server-side stuff
-
-The same Nuget contains `.NET Framework 4.5.2` and `.NET Standard 1.6` targets.
-
-<pre>
-PM> Install-Package Tubular.ServerSide
-</pre>
-
-## Bower Installation [![Bower version](https://badge.fury.io/bo/tubular.svg)](http://badge.fury.io/bo/tubular)
-
-<pre>
-# install Tubular package and add it to bower.json
-$ bower install tubular --save
-</pre>
-
-## npm Installation [![npm version](https://badge.fury.io/js/tubular.svg)](http://badge.fury.io/js/tubular)
-
-The npm package only contains the **Tubular Template Generator Module**, if you want to use all of Tubular's features, please install the Bower package instead.
-
-<pre>
-# install Tubular package and add it to package.json
-$ npm install tubular --save
-</pre>
 
 ## Dependencies
 
@@ -68,10 +36,6 @@ You will need to reference the following JS libraries in order to use Tubular in
 * <s>[AngularJS Local Storage](https://github.com/grevory/angular-local-storage)</s> Only with Tubular < 1.4.0 
 * <s>[jQuery](http://jquery.com/) - 2.1.4</s> Only with Tubular < v1.0.0
 * <s>[Twitter Bootstrap](http://getbootstrap.com/)</s> Only with Tubular < 1.0.0
-
-### Charts
-
-An experimental support to chart is running with Tubular and you can choose between [ChartJS](http://www.chartjs.org/) or [Highcharts](http://www.highcharts.com/). If you want to use any of them, be sure to load the library before Tubular and check [Tubular OWIN Sample](https://github.com/unosquare/tubular/tree/master/src/Unosquare.Tubular.OwinSample) with easy to understand code on how to start using charts.
 
 ## Using a CDN
 
@@ -99,6 +63,32 @@ angular.module('app', ['tubular']);
 
 If you want to use OData or LocalData connectors to populate tbGrid, you must include the separated files. Previous to version 1.0.0 those services where in the main bundle.
 
+## NuGet Installation [![NuGet version](https://badge.fury.io/nu/tubular.svg)](http://badge.fury.io/nu/tubular)
+
+<pre>
+PM> Install-Package Tubular
+</pre>
+
+## Bower Installation [![Bower version](https://badge.fury.io/bo/tubular.svg)](http://badge.fury.io/bo/tubular)
+
+<pre>
+# install Tubular package and add it to bower.json
+$ bower install tubular --save
+</pre>
+
+## npm Installation [![npm version](https://badge.fury.io/js/tubular.svg)](http://badge.fury.io/js/tubular)
+
+The npm package only contains the **Tubular Template Generator Module**, if you want to use all of Tubular's features, please install the Bower package instead.
+
+<pre>
+# install Tubular package and add it to package.json
+$ npm install tubular --save
+</pre>
+
+## Charts
+
+An experimental support to chart is running with Tubular and you can choose between [ChartJS](http://www.chartjs.org/) or [Highcharts](http://www.highcharts.com/). If you want to use any of them, be sure to load the library before Tubular and check [Tubular OWIN Sample](https://github.com/unosquare/tubular/tree/master/src/Unosquare.Tubular.OwinSample) with easy to understand code on how to start using charts.
+
 ## Global Settings
 
 You can access to global settings by using the static object `TubularDefaultSettings` and setup common behavior in Tubular. The settings included are:
@@ -107,19 +97,6 @@ You can access to global settings by using the static object `TubularDefaultSett
     <tr><th>Setting</th><th>Default value</th><th>Notes</th></tr>
     <tr><th>AdjustTimezoneOffset</th><td><i>True</i></td><td>Determines if the DateTime from a Response should adjust the timezone offset send by within the Request.</td></tr>
 </table>
-
-## Building C# Library
-
-Depending in your environment you must use the solution **Unosquare.Tubular.sln** if you want to build with `dotnet` or **Unosquare.Tubular.Lib.sln** if you use `msbuild` or `xbuild`.
-In other words, use first solution file for VS2015 with .NET Core support or the second one for any other environment.
-
-## Boilerplate
-
-We have 3 boilerplates ready to seed your project:
-
-* <a href="https://github.com/unosquare/tubular-boilerplate" target="_blank">Simple Boilerplate</a> without server-side. 
-* [ASP.NET 4.6 Boilerplate](https://github.com/unosquare/tubular-boilerplate-csharp).
-* [ASP.NET Core Boilerplate](https://github.com/unosquare/tubular-aspnet-core-boilerplate)
 
 ## Samples
 
@@ -165,3 +142,11 @@ The following HTML represents a basic grid. You don't need to add anything else 
 ```
 
 Tubular works directly with either your own OData service or a custom RESTful call. You can simplify your RESTful API significantly by using our .NET Tubular.ServerSide library which handles `IQueryable` easily.
+
+## Boilerplate
+
+We have 3 boilerplates ready to seed your project:
+
+* <a href="https://github.com/unosquare/tubular-boilerplate" target="_blank">Simple Boilerplate</a> without server-side. 
+* [ASP.NET 4.6 Boilerplate](https://github.com/unosquare/tubular-boilerplate-csharp).
+* [ASP.NET Core Boilerplate](https://github.com/unosquare/tubular-aspnet-core-boilerplate)
