@@ -56,6 +56,7 @@
                 $locationProvider.html5Mode(true);
             }
         ])
+        .run(function (tubularConfig) { tubularConfig.webApi.requireAuthentication(false); })
         .controller("tbFormCtrl", function ($scope, toastr) {
             $scope.$on('tbForm_OnSuccessfulSave', function (event, data) {
                 toastr.success(data || "Updated");
