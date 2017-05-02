@@ -23,8 +23,8 @@ module.exports = grunt => {
                         src: [
                             'src/js/tubular*-bundle.js',
                             'src/js/tubular*-bundle.min.js',
-                            'src/Unosquare.Tubular/Css/tubular-bundle.css',
-                            'src/Unosquare.Tubular/Css/tubular-bundle.min.css'
+                            'src/css/tubular-bundle.css',
+                            'src/css/tubular-bundle.min.css'
                         ],
                         dest: 'dist/',
                         filter: 'isFile',
@@ -204,10 +204,10 @@ module.exports = grunt => {
             tubular_css: {
                 src: [
                     'bower_components/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css',
-                    'src/Unosquare.Tubular/Css/angular-chartjs/angular-chart.css',
-                    'src/Unosquare.Tubular/Css/tubular/tubular.css'
+                    'src/css/angular-chartjs/angular-chart.css',
+                    'src/css/tubular/tubular.css'
                 ],
-                dest: 'src/Unosquare.Tubular/Css/tubular-bundle.css'
+                dest: 'src/css/tubular-bundle.css'
             }
         },
         uglify: {

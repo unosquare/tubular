@@ -203,11 +203,8 @@ FakesAssemblies/
 
 /coverage
 /instrumented
-/src/Unosquare.Tubular/*.targets
-/test/Unosquare.Tubular.Tests/*.targets
-/src/Unosquare.Tubular.AspNetCoreSample/wwwroot/ui/vendor/tubular
 *.lock.json
 /.vscode
-/src/Unosquare.Tubular.EmbedioSample/html/vendor
-/src/Unosquare.Tubular.OwinSample/ui/vendor/tubular
 /src/js/tubular/templates.js
+/src/js/*.bundle.*
+/src/css/*.bundle.*
