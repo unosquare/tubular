@@ -46,8 +46,8 @@ module.exports = (config) => {
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
-            'Javascript/tubular*/**/!(*spec|*bundle).js': ['coverage'],
-            'Javascript/tubular*/**/*tpl.html': ['ng-html2js']
+            'tubular*/**/!(*spec|*bundle).js': ['coverage'],
+            'tubular*/**/*tpl.html': ['ng-html2js']
         },
 
         ngHtml2JsPreprocessor: {
