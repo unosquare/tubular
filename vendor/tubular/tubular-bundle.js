@@ -1353,9 +1353,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     $ctrl.dataSource = data;
 
                     if (!data.Payload) {
-                        var errorMsg = 'tubularGrid(' + $ctrl.$id + '): response is invalid.';
-                        $ctrl.currentRequest.cancel(errorMsg);
-                        $scope.$emit('tbGrid_OnConnectionError', errorMsg);
+                        $scope.$emit('tbGrid_OnConnectionError', 'tubularGrid(' + $ctrl.$id + '): response is invalid.');
                         return;
                     }
 
@@ -1466,6 +1464,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             }
         ]);
 })(angular);
+
 (function (angular, moment) {
     'use strict';
 
@@ -3098,13 +3097,11 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 // Get the service here because otherwise, a circular dependency injection will be detected
                 var tubularHttp = $injector.get(tubularHttpName);
                 var webApiSettings = tubularConfig.webApi;
-                var apiBaseUrl = webApiSettings.baseUrl();
 
                 config.headers = config.headers || {};
 
                 // Handle requests going to API
-                if (config.url.substring(0, apiBaseUrl.length) === apiBaseUrl &&
-                    webApiSettings.tokenUrl() !== config.url &&
+                if (!checkStatic(config.url) && webApiSettings.tokenUrl() !== config.url &&
                     webApiSettings.requireAuthentication() &&
                     tubularHttp.userData.bearerToken) {
 
@@ -3119,6 +3116,10 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 }
 
                 return config;
+            }
+
+            function checkStatic(url){
+              return /\.(htm|html|css|js|jsx)/.test(url);
             }
 
             function requestError(rejection) {
@@ -3193,6 +3194,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             }
         }]);
 })(angular);
+
 (function (angular) {
     'use strict';
     /**
