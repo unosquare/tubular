@@ -22,17 +22,17 @@ module.exports = (config) => {
           '../../bower_components/highchart-ng/dist/highcharts-ng.js',
           '../../bower_components/chart.js/dist/Chart.js',
           '../../bower_components/angular-chart.js/dist/angular-chart.js',
-          'Javascript/tubular/tubular-models.js',
-          'Javascript/tubular/tubular-services.js',
-          'Javascript/tubular*/**/*.module.js',
-          'Javascript/tubular/services/**/*.js',
-          'Javascript/tubular/interceptors/**/*.js',
-          'Javascript/tubular/tubular-directives.js',
-          'Javascript/tubular*/**/*tpl.html',
-          'Javascript/tubular/directives/**/*.js',
-          'Javascript/tubular/tubular.js',
-          'Javascript/tubular-chart/**/*.js',
-          'Javascript/tubular*/**/*.spec.js'
+          'tubular/tubular-models.js',
+          'tubular/tubular-services.js',
+          'tubular*/**/*.module.js',
+          'tubular/services/**/*.js',
+          'tubular/interceptors/**/*.js',
+          'tubular/tubular-directives.js',
+          'tubular*/**/*tpl.html',
+          'tubular/directives/**/*.js',
+          'tubular/tubular.js',
+          'tubular-chart/**/*.js',
+          'tubular*/**/*.spec.js'
         ],
 
         // list of files to exclude
