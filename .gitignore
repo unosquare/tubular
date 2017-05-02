@@ -208,3 +208,4 @@ FakesAssemblies/
 /src/js/tubular/templates.js
 /src/js/*.bundle.*
 /src/css/*.bundle.*
+test-results.testxml
