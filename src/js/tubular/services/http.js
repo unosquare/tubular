@@ -192,6 +192,7 @@
                         request.requireAuthentication = request.requireAuthentication === 'true';
                     }
 
+                    // TODO: This is wrong requireAuthentication should validate request too
                     if (!tubularConfig.webApi.enableRefreshTokens()) {
                         if (tubularConfig.webApi.requireAuthentication() && me.isAuthenticated() === false) {
                             // Return empty dataset

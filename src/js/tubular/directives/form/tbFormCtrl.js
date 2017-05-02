@@ -11,7 +11,6 @@
             'tubularEditorService',
             'tubularModel',
             'tubularHttp',
-            'tubularConfig',
             function (
                 $scope,
                 $routeParams,
@@ -19,8 +18,7 @@
                 $element,
                 tubular,
                 TubularModel,
-                tubularHttp,
-                tubularConfig) {
+                tubularHttp) {
                 // we need this to find the parent of a field
                 $scope.tubularDirective = 'tubular-form';
                 $scope.hasFieldsDefinitions = false;
@@ -42,7 +40,6 @@
                 $ctrl.requireAuthentication = angular.isUndefined($scope.requireAuthentication)
                     ? true
                     : $scope.requireAuthentication;
-                tubularConfig.webApi.requireAuthentication($ctrl.requireAuthentication);
 
                 $scope.$watch('hasFieldsDefinitions',
                     function(newVal) {
@@ -84,6 +81,7 @@
                         if (angular.isDefined($scope.modelKey) &&
                             $scope.modelKey != null &&
                             $scope.modelKey !== '') {
+                            // TODO: Set requireAuthentication
                             $scope.dataService.getByKey($scope.serverUrl, $scope.modelKey).then(
                                     function(data) {
                                         $scope.model = new TubularModel($scope, $scope, data, $scope.dataService);
@@ -93,6 +91,7 @@
                                         $scope.$emit('tbForm_OnConnectionError', error);
                                     });
                         } else {
+                            // TODO: Set requireAuthentication
                             $scope.dataService.get(tubularHttp.addTimeZoneToUrl($scope.serverUrl)).then(
                                     function(data) {
                                         if (angular.isDefined($scope.model) &&

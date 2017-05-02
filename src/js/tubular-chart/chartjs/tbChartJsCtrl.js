@@ -6,11 +6,9 @@
         [
             '$scope',
             'tubularHttp',
-            'tubularConfig',
             function (
                 $scope,
-                tubularHttp,
-                tubularConfig) {
+                tubularHttp) {
                 var $ctrl = this;
 
                 $ctrl.dataService = tubularHttp.getDataService($ctrl.dataServiceName);
@@ -23,8 +21,7 @@
                     : $ctrl.requireAuthentication;
 
                 $ctrl.loadData = function() {
-                    tubularConfig.webApi.requireAuthentication($ctrl.requireAuthentication);
-
+                    // TODO: Set requireAuthentication
                     tubularHttp.get($ctrl.serverUrl)
                         .then(function(data) {
                                 if (!data || !data.Data || data.Data.length === 0) {

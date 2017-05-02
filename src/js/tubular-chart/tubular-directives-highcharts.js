@@ -39,8 +39,7 @@
                 onClick: '=?'
             },
             controller: [
-                '$scope', 'tubularHttp', '$timeout', 'tubularConfig',
-                function ($scope, tubularHttp, $timeout, tubularConfig) {
+                '$scope', 'tubularHttp', '$timeout', function ($scope, tubularHttp, $timeout) {
                     var $ctrl = this;
 
                     $ctrl.dataService = tubularHttp.getDataService($ctrl.dataServiceName);
@@ -79,7 +78,7 @@
                     $ctrl.requireAuthentication = angular.isUndefined($ctrl.requireAuthentication) ? true : $ctrl.requireAuthentication;
 
                     $ctrl.loadData = function () {
-                        tubularConfig.webApi.requireAuthentication($ctrl.requireAuthentication);
+                        // TODO: Set requireAuthentication
                         $ctrl.hasError = false;
 
                         tubularHttp.get($ctrl.serverUrl).then($ctrl.handleData, function (error) {

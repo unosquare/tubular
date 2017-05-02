@@ -731,7 +731,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             'tubularEditorService',
             'tubularModel',
             'tubularHttp',
-            'tubularConfig',
             function (
                 $scope,
                 $routeParams,
@@ -739,8 +738,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 $element,
                 tubular,
                 TubularModel,
-                tubularHttp,
-                tubularConfig) {
+                tubularHttp) {
                 // we need this to find the parent of a field
                 $scope.tubularDirective = 'tubular-form';
                 $scope.hasFieldsDefinitions = false;
@@ -762,7 +760,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 $ctrl.requireAuthentication = angular.isUndefined($scope.requireAuthentication)
                     ? true
                     : $scope.requireAuthentication;
-                tubularConfig.webApi.requireAuthentication($ctrl.requireAuthentication);
 
                 $scope.$watch('hasFieldsDefinitions',
                     function(newVal) {
@@ -804,6 +801,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         if (angular.isDefined($scope.modelKey) &&
                             $scope.modelKey != null &&
                             $scope.modelKey !== '') {
+                            // TODO: Set requireAuthentication
                             $scope.dataService.getByKey($scope.serverUrl, $scope.modelKey).then(
                                     function(data) {
                                         $scope.model = new TubularModel($scope, $scope, data, $scope.dataService);
@@ -813,6 +811,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                                         $scope.$emit('tbForm_OnConnectionError', error);
                                     });
                         } else {
+                            // TODO: Set requireAuthentication
                             $scope.dataService.get(tubularHttp.addTimeZoneToUrl($scope.serverUrl)).then(
                                     function(data) {
                                         if (angular.isDefined($scope.model) &&
@@ -1112,7 +1111,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     $ctrl.dataService = tubularHttp.getDataService($ctrl.dataServiceName);
                     $ctrl.tempRow = new TubularModel($scope, $ctrl, {}, $ctrl.dataService);
                     $ctrl.requireAuthentication = $ctrl.requireAuthentication ? ($ctrl.requireAuthentication === 'true') : true;
-                    tubularConfig.webApi.requireAuthentication($ctrl.requireAuthentication);
                     $ctrl.editorMode = $ctrl.editorMode || 'none';
                     $ctrl.canSaveState = false;
                     $ctrl.showLoading = angular.isUndefined($ctrl.showLoading) ? true : $ctrl.showLoading;
@@ -3647,6 +3645,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         request.requireAuthentication = request.requireAuthentication === 'true';
                     }
 
+                    // TODO: This is wrong requireAuthentication should validate request too
                     if (!tubularConfig.webApi.enableRefreshTokens()) {
                         if (tubularConfig.webApi.requireAuthentication() && me.isAuthenticated() === false) {
                             // Return empty dataset
