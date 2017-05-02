@@ -1,0 +1,1538 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>index</title>
+<style>
+body { background-color: #eeeeee; padding: 0; margin: 5px; overflow-y: scroll; }
+#HTMLReporter h1 { font-size: 12px; font-weight: normal; text-align: right; margin: 10px 0 10px 0 !important; }
+#HTMLReporter { font-size: 11px; font-family: Monaco, "Lucida Console", monospace; line-height: 14px; color: #333333; }
+#HTMLReporter a { text-decoration: none; }
+#HTMLReporter a:hover { text-decoration: underline; }
+#HTMLReporter p, #HTMLReporter h1, #HTMLReporter h2, #HTMLReporter h3, #HTMLReporter h4, #HTMLReporter h5, #HTMLReporter h6 { margin: 0; line-height: 14px; }
+#HTMLReporter .banner, #HTMLReporter .symbolSummary, #HTMLReporter .summary, #HTMLReporter .resultMessage, #HTMLReporter .specDetail .description, #HTMLReporter .alert .bar, #HTMLReporter .stackTrace { padding-left: 9px; padding-right: 9px; }
+
+#HTMLReporter #jasmine_content { position: fixed; right: 100%; }
+#HTMLReporter .version { color: #aaaaaa; }
+#HTMLReporter .banner { margin-top: 14px; }
+#HTMLReporter .duration { color: #aaaaaa; float: right; }
+#HTMLReporter .exceptions { color: #fff; float: right; margin-top: 5px; margin-right: 5px; }
+#HTMLReporter .bar { line-height: 28px; font-size: 14px; display: block; color: #eee; }
+#HTMLReporter .runningAlert { background-color: #666666; }
+#HTMLReporter .skippedAlert { background-color: #aaaaaa; }
+#HTMLReporter .skippedAlert:first-child { background-color: #333333; }
+#HTMLReporter .skippedAlert:hover { text-decoration: none; color: white; text-decoration: underline; }
+#HTMLReporter .passingAlert { background-color: #a6b779; }
+#HTMLReporter .passingAlert:first-child { background-color: #5e7d00; }
+#HTMLReporter .failingAlert { background-color: #cf867e; }
+#HTMLReporter .failingAlert:first-child { background-color: #b03911; }
+#HTMLReporter .results { margin-top: 14px; }
+#HTMLReporter #details { display: none; }
+#HTMLReporter .resultsMenu { color: #999; background-color: #fff; }
+
+#HTMLReporter .summaryMenuItem { font-weight: normal; text-decoration: none; margin-right: 5px; color: #333; }
+#HTMLReporter .detailsMenuItem { font-weight: normal; text-decoration: none; margin-left: 5px; color: #999; }
+
+#HTMLReporter.showDetails .summaryMenuItem { color: #999; }
+#HTMLReporter.showDetails .detailsMenuItem { color: #333; }
+#HTMLReporter.showDetails .summaryMenuItem:hover { text-decoration: underline; }
+#HTMLReporter             .detailsMenuItem:hover { text-decoration: underline; }
+
+
+#HTMLReporter.showDetails .summary { display: none; }
+#HTMLReporter.showDetails #details { display: block; }
+#HTMLReporter .summary { margin-top: 14px; margin-bottom: 40px; }
+#HTMLReporter .summary .suite .suite, #HTMLReporter .summary .specSummary { margin-left: 14px; }
+#HTMLReporter .summary .specSummary.passed { color: #5e7d00; }
+#HTMLReporter .summary .specSummary.failed { color: #b03911; }
+#HTMLReporter .summary .specSummary.skipped { color: #ba9d37; }
+#HTMLReporter .description + .suite { margin-top: 0; }
+#HTMLReporter .suite { margin-top: 14px; }
+#HTMLReporter .suite a { color: #333333; }
+#HTMLReporter #details .specDetail { margin-bottom: 28px; }
+#HTMLReporter #details .specDetail .description { display: block; color: white; background-color: #b03911; }
+#HTMLReporter .resultMessage { padding-top: 14px; color: #333333; }
+#HTMLReporter .resultMessage span.result { display: block; }
+#HTMLReporter .stackTrace { margin: 5px 0 0 0; max-height: 224px; overflow: auto; 
+    line-height: 18px; color: #666666; border: 1px solid #ddd; background: white; white-space: pre; }
+
+
+.fold-buttons { float: right; }
+.fold-buttons a { color: #fff; font-size: 12px; }
+.fold-buttons { display: none } 
+#HTMLReporter .br { margin-top: 8px; }
+#HTMLReporter .section-starter { font-size: 14px; line-height: 18px }
+#HTMLReporter .summary-section { 
+  cursor: -webkit-zoom-out; cursor: -moz-zoom-out; cursor: zoom-out; 
+  background: #fafafa; 
+  padding: 10px; 
+  border-bottom: #eaeaea 1px solid; }
+#HTMLReporter .summary-section.folded { 
+  cursor: -webkit-zoom-in; cursor: -moz-zoom-in; cursor: zoom-in; 
+  padding-bottom: 8px;
+}
+#HTMLReporter .summary-section.folded div { display: none }
+#HTMLReporter .summary-section.folded div.section-starter { display: block }
+/*#HTMLReporter .summary-section:hover { background: #e9e9e9; }*/
+#HTMLReporter .summary-section:hover { background: #f5f5f5; }
+#HTMLReporter .summary-section-totals { 
+  font-size: 11px;
+  display: none; 
+  margin-left: 11px; 
+  overflow: hidden; 
+  position: relative;
+  top: -1px; 
+}
+#HTMLReporter .summary-section.folded .summary-section-totals { display: inline; }
+#HTMLReporter .summary-section-total { color: #fff; vertical-align: baseline; padding: 1px 8px; }
+#HTMLReporter .summary-section-total.passed { background: #5e7d00;  }
+#HTMLReporter .summary-section-total.failed { background: #b03911;  }
+#HTMLReporter .summary-section-total.skipped { background: #ba9d37;  }
+
+#HTMLReporter { font-size: 12px; line-height: 18px; } /*larget font-size*/
+
+</style>
+</head>
+
+<body id="HTMLReporter" class="html-reporter showDetails">
+<h1>Tested in Firefox 51.0.0 (Linux 0.0.0) on Tue May 02 2017</h1>
+
+<div class="alert">
+
+
+<!-- <span class="failingAlert bar">Failed 26 specs</span> -->
+<span class="failingAlert bar"><span class="fold-buttons"><a href="#" onclick="fold();">Fold</a> | 
+  <a href="#" onclick="unfold();">Unfold</a></span>201 specs, 26 failed, 1 pending</span>
+<span class="resultsMenu bar">
+<a class="summaryMenuItem" onclick="showSummary();" href="#">Spec List<a>|<a 
+   class="detailsMenuItem" onclick="showFailures();" href="#">Failures</a>
+</span>
+
+
+
+</div>
+<div class="results">
+  <div class="summary">
+  
+  
+  
+  
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.services Service: editor</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should be defined</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have form name</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should show isvalid info with required = false</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should show isvalid info</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have getFormField defined</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have $dirty value</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.services Service: http</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should be defined</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should get same instance </span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should be not authenticated </span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should retrieve a promise when GET</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should retrieve data when GET</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should not retrieve data when GET</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should authenticate</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should NOT authenticate</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.services Service: popup</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should popupService to be defined</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should openDialog to be defined</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should onSuccessForm to be defined</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should onConnectionError to be defined</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should create a modal instance</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.services Controller: GenericPopupController</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should scope.Model to be equals model</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should scope.savePopup to be defined</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should scope.closePopup to be defined</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should savePopup return null</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should result to be null</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should savePopup to be defined</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.services Service: templateService Method: createColumns</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should return an array with 7 columns</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">first element should match</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.services Service: templateService Method: generateFieldsArray</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should return an array with 7 fields</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">first element should match</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.services Service: templateService Method: generatePopup</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should html match</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.services Service: templateService Method: getEditorTypeByDateType</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should be tbDateTimeEditor</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should be tbNumericEditor</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should be tbCheckboxField</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should be tbSimpleEditor</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.services Service: templateService Method: generateForm</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should single layout html match</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should two columns layout html match</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should three columns layout html match</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.services Service: templateService Method: generateCells</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should cells html match</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.services Service: templateService Method: generateGrid</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should grid html match</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.services Service: tubularTranslate</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should be defined</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have current language to be &quot;en&quot;</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have default language to be &quot;en&quot;</span>
+      </div>
+    
+      <div class="specSummary skipped">
+      <span class="description">should have translation tables to have same keys</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should change the language</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should translate</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should add new translation</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.services Provider: TubularConfig</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should be defined</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should load default config</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should change config settings</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.services Interceptor: Auth</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should be defined</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should not add any authorization header for tokenUrl</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should add authorization header</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should NOT try to use refresh tokens</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should try to use refresh tokens</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.services Interceptor: Auth should not add any authorization header for static files</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should not add any authorization header for static files (Variant #0 &lt;&quot;html&quot;&gt;)</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should not add any authorization header for static files (Variant #1 &lt;&quot;htm&quot;&gt;)</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should not add any authorization header for static files (Variant #2 &lt;&quot;js&quot;&gt;)</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should not add any authorization header for static files (Variant #3 &lt;&quot;css&quot;&gt;)</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite failed">
+      <span class="description">Module: tubular.directives Directive: tb-simple-editor</span>
+    
+      <div class="specSummary failed">
+      <span class="description">should replace</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">should &quot;name&quot; have info</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">should &quot;is-editing&quot; have info</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">should &quot;editor-type&quot; have info</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">should validate defined</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">should call $onInit</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">should validate regex</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">should validate min</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">should validate max</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">should validate match</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite failed">
+      <span class="description">Module: tubular.directives Directive: tb-form</span>
+    
+      <div class="specSummary failed">
+      <span class="description">should call finishDefinition after compile</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">should set serverSaveUrl</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">should set serverUrl</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">should set requireAuthentication</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">should set name</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">should set data service name</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">should set model key</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">should set model</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">should replace</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">should transclude</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.directives Controller: tbFormController constructor</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should set tubularDirective properly</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should set default request method</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.directives component: tbTextSearch</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should depend on tbGrid</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should load template correctly</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should set placeholder correctly</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should set default minChars correctly</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should set minChars correctly</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite failed">
+      <span class="description">Module: tubular.directives template: tbTextSearch</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should exist</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should set placeholder correctly</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">should fallback placeholder to UI_SEARCH</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">should translate the input placeholder</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">input should debounce (before)</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">input should debounce (after)</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">reset button should be visible only when the input has text</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">reset button should reset the search input</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.directives Controller: tbTextSearchController Method: $onInit</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should set default minChars properly</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should not modify minChars if specified</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should set lastSearch properly</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.directives component: tbGrid</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should be defined</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.directives Controller: tbGridController onInit function, watchers</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should have name</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have empty columns</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have empty rows</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have savePage</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have currentPage</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have savePageSize</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have pageSize</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have saveSearchText</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have totalPages</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have totalRecordCount</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have filteredRecordCount</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have requestedPage</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have hasColumnsDefinitions</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have requestCounter</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have requestMethod</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have serverSaveMethod</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have requestTimeout</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have currentRequest</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have autoSearch</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have search</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have isEmpty</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have dataService</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have tempRow</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have requireAuthentication</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have editorMode</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have canSaveState</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have showLoading</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have autoRefresh</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have serverDeleteUrl</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should watch columns</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should watch serverUrl</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should watch hasColumnsDefinitions</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should watch requestedPage</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.directives Controller: tbGridController Watching pageSize</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should not storage pageSize</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should storage pageSize</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.directives Controller: tbGridController saveSearch function</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should set storage</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should remove storage</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.directives Controller: tbGridController</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should add columns</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should delete row</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.directives Controller: tbGridController newRow function</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should not have properties</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have properties</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should not call tubularPopupService.openDialog</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should call tubularPopupService.openDialog</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.directives Controller: tbGridController verifyColumns function</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should storage columns</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should storage columns</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.directives Controller: tbGridController getRequestObject function</span>
+    
+      <div class="specSummary passed">
+      <span class="description">with skip = -1</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">with skip &gt; -1</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.directives Controller: tbGridController processPayload function</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should emit tbGrid_OnConnectionError on null data</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should emit tbGrid_OnConnectionError on false data.Payload </span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should create ctrl.rows</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should emit tbGrid_OnDataLoaded</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should change ctrl.aggregationFunctions</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should change ctrl.currentPage</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should change ctrl.totalPages</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should change ctrl.totalRecordCount</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should change ctrl.filteredRecordCount</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should change ctrl.isEmpty</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should not storage currentPage</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should storage currentPage</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.directives Controller: tbGridController sortColumn function</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should not change wrong column</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should change column SortOrder and SortDirection</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should remove sorting from other columns</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should not remove sorting from other columns</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should broadcast</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should broadcast</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.directives Controller: tbGridController getFullDataSource function</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should getFullDataSource</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should emit error</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should nullify currentRequest</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.directives Controller: tbGridController visibleColumns function</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should get visibleColumns</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should not get visibleColumns</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.directives Controller: tbGridController retrieveData function</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should change canSaveState</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should call verifyColumns</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should update pageSize</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should update pageSize on pageSize &lt; 10</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should update pageSize on pageSize &lt; 10</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should update requestedPage</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should call onBeforeGetData</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should emit tbGrid_OnBeforeRequest</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should process currentRequest</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.models Tubular Model</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should tubularModel to be defined</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should $key have multiple values</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should delete</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have value</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should reset</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should revert changes</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.models Tubular Model With data as array</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should obj result to be defined</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should obj.$key to be 1</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should $addField method to be called</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should obj.$isEditing to be false</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should obj.$hasChanges to be false</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should obj.$selected to be false</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should obj.$isNew to be false</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.models Tubular Model With data as object</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should $addField method to be called</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should obj.$key to be 1</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should $valid to be true</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should $valid to be false</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.models Tubular Model Saving data</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should return false</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should return object with post method</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should return object with put method</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should edit</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular Tubular filters</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should filter errormessage</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should filter numberorcurrency</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should filter moment</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should filter translate</span>
+      </div>
+    
+    </div>
+  
+  
+</div>
+
+<div id="details">
+  
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.directives Directive: tb-simple-editor should replace</span>
+    <div class="stackTrace">
+      <div class="resultMessage">Error: [$compile:tpload] Failed to load template: tbSimpleEditor.tpl.html (HTTP status: undefined undefined)
+http://errors.angularjs.org/1.6.4/$compile/tpload?p0=tbSimpleEditor.tpl.html&amp;p1=undefined&amp;p2=undefined in http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426 (line 66)
+minErr/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:66:12
+handleError@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:19992:20
+processQueue@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16832:37
+scheduleProcessQueue/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16876:27
+$RootScopeProvider/this.$get&lt;/Scope.prototype.$digest@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:17971:15
+generate@http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2:20:13
+@http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2:26:13</div>
+    </div>
+  </div>
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.directives Directive: tb-simple-editor should &quot;name&quot; have info</span>
+    <div class="stackTrace">
+      <div class="resultMessage">Error: [$compile:tpload] Failed to load template: tbSimpleEditor.tpl.html (HTTP status: undefined undefined)
+http://errors.angularjs.org/1.6.4/$compile/tpload?p0=tbSimpleEditor.tpl.html&amp;p1=undefined&amp;p2=undefined in http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426 (line 66)
+minErr/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:66:12
+handleError@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:19992:20
+processQueue@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16832:37
+scheduleProcessQueue/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16876:27
+$RootScopeProvider/this.$get&lt;/Scope.prototype.$digest@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:17971:15
+generate@http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2:20:13
+@http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2:26:13</div>
+    </div>
+  </div>
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.directives Directive: tb-simple-editor should &quot;is-editing&quot; have info</span>
+    <div class="stackTrace">
+      <div class="resultMessage">Error: [$compile:tpload] Failed to load template: tbSimpleEditor.tpl.html (HTTP status: undefined undefined)
+http://errors.angularjs.org/1.6.4/$compile/tpload?p0=tbSimpleEditor.tpl.html&amp;p1=undefined&amp;p2=undefined in http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426 (line 66)
+minErr/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:66:12
+handleError@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:19992:20
+processQueue@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16832:37
+scheduleProcessQueue/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16876:27
+$RootScopeProvider/this.$get&lt;/Scope.prototype.$digest@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:17971:15
+generate@http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2:20:13
+@http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2:26:13</div>
+    </div>
+  </div>
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.directives Directive: tb-simple-editor should &quot;editor-type&quot; have info</span>
+    <div class="stackTrace">
+      <div class="resultMessage">Error: [$compile:tpload] Failed to load template: tbSimpleEditor.tpl.html (HTTP status: undefined undefined)
+http://errors.angularjs.org/1.6.4/$compile/tpload?p0=tbSimpleEditor.tpl.html&amp;p1=undefined&amp;p2=undefined in http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426 (line 66)
+minErr/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:66:12
+handleError@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:19992:20
+processQueue@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16832:37
+scheduleProcessQueue/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16876:27
+$RootScopeProvider/this.$get&lt;/Scope.prototype.$digest@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:17971:15
+generate@http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2:20:13
+@http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2:26:13</div>
+    </div>
+  </div>
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.directives Directive: tb-simple-editor should validate defined</span>
+    <div class="stackTrace">
+      <div class="resultMessage">Error: [$compile:tpload] Failed to load template: tbSimpleEditor.tpl.html (HTTP status: undefined undefined)
+http://errors.angularjs.org/1.6.4/$compile/tpload?p0=tbSimpleEditor.tpl.html&amp;p1=undefined&amp;p2=undefined in http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426 (line 66)
+minErr/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:66:12
+handleError@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:19992:20
+processQueue@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16832:37
+scheduleProcessQueue/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16876:27
+$RootScopeProvider/this.$get&lt;/Scope.prototype.$digest@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:17971:15
+generate@http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2:20:13
+@http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2:26:13,TypeError: ctrl is undefined in http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2 (line 46)
+@http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2:46:13</div>
+    </div>
+  </div>
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.directives Directive: tb-simple-editor should call $onInit</span>
+    <div class="stackTrace">
+      <div class="resultMessage">Error: [$compile:tpload] Failed to load template: tbSimpleEditor.tpl.html (HTTP status: undefined undefined)
+http://errors.angularjs.org/1.6.4/$compile/tpload?p0=tbSimpleEditor.tpl.html&amp;p1=undefined&amp;p2=undefined in http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426 (line 66)
+minErr/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:66:12
+handleError@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:19992:20
+processQueue@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16832:37
+scheduleProcessQueue/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16876:27
+$RootScopeProvider/this.$get&lt;/Scope.prototype.$digest@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:17971:15
+generate@http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2:20:13
+@http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2:26:13,TypeError: ctrl is undefined in http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2 (line 50)
+@http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2:50:13</div>
+    </div>
+  </div>
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.directives Directive: tb-simple-editor should validate regex</span>
+    <div class="stackTrace">
+      <div class="resultMessage">Error: [$compile:tpload] Failed to load template: tbSimpleEditor.tpl.html (HTTP status: undefined undefined)
+http://errors.angularjs.org/1.6.4/$compile/tpload?p0=tbSimpleEditor.tpl.html&amp;p1=undefined&amp;p2=undefined in http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426 (line 66)
+minErr/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:66:12
+handleError@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:19992:20
+processQueue@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16832:37
+scheduleProcessQueue/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16876:27
+$RootScopeProvider/this.$get&lt;/Scope.prototype.$digest@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:17971:15
+generate@http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2:20:13
+@http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2:26:13,TypeError: ctrl is undefined in http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2 (line 54)
+@http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2:54:13</div>
+    </div>
+  </div>
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.directives Directive: tb-simple-editor should validate min</span>
+    <div class="stackTrace">
+      <div class="resultMessage">Error: [$compile:tpload] Failed to load template: tbSimpleEditor.tpl.html (HTTP status: undefined undefined)
+http://errors.angularjs.org/1.6.4/$compile/tpload?p0=tbSimpleEditor.tpl.html&amp;p1=undefined&amp;p2=undefined in http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426 (line 66)
+minErr/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:66:12
+handleError@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:19992:20
+processQueue@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16832:37
+scheduleProcessQueue/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16876:27
+$RootScopeProvider/this.$get&lt;/Scope.prototype.$digest@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:17971:15
+generate@http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2:20:13
+@http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2:26:13,TypeError: ctrl is undefined in http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2 (line 61)
+@http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2:61:13</div>
+    </div>
+  </div>
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.directives Directive: tb-simple-editor should validate max</span>
+    <div class="stackTrace">
+      <div class="resultMessage">Error: [$compile:tpload] Failed to load template: tbSimpleEditor.tpl.html (HTTP status: undefined undefined)
+http://errors.angularjs.org/1.6.4/$compile/tpload?p0=tbSimpleEditor.tpl.html&amp;p1=undefined&amp;p2=undefined in http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426 (line 66)
+minErr/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:66:12
+handleError@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:19992:20
+processQueue@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16832:37
+scheduleProcessQueue/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16876:27
+$RootScopeProvider/this.$get&lt;/Scope.prototype.$digest@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:17971:15
+generate@http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2:20:13
+@http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2:26:13,TypeError: ctrl is undefined in http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2 (line 68)
+@http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2:68:13</div>
+    </div>
+  </div>
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.directives Directive: tb-simple-editor should validate match</span>
+    <div class="stackTrace">
+      <div class="resultMessage">Error: [$compile:tpload] Failed to load template: tbSimpleEditor.tpl.html (HTTP status: undefined undefined)
+http://errors.angularjs.org/1.6.4/$compile/tpload?p0=tbSimpleEditor.tpl.html&amp;p1=undefined&amp;p2=undefined in http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426 (line 66)
+minErr/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:66:12
+handleError@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:19992:20
+processQueue@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16832:37
+scheduleProcessQueue/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16876:27
+$RootScopeProvider/this.$get&lt;/Scope.prototype.$digest@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:17971:15
+generate@http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2:20:13
+@http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2:26:13,TypeError: ctrl is undefined in http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2 (line 75)
+@http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2:75:13</div>
+    </div>
+  </div>
+  
+  
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.directives Directive: tb-form should call finishDefinition after compile</span>
+    <div class="stackTrace">
+      <div class="resultMessage">Error: [$compile:tpload] Failed to load template: tbForm.tpl.html (HTTP status: undefined undefined)
+http://errors.angularjs.org/1.6.4/$compile/tpload?p0=tbForm.tpl.html&amp;p1=undefined&amp;p2=undefined in http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426 (line 66)
+minErr/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:66:12
+handleError@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:19992:20
+processQueue@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16832:37
+scheduleProcessQueue/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16876:27
+$RootScopeProvider/this.$get&lt;/Scope.prototype.$digest@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:17971:15
+generate@http://localhost:9876/base/tubular/directives/form/tbForm.spec.js?43bd4f7f2b805a7f87c0356beac0a69088648e80:28:13
+@http://localhost:9876/base/tubular/directives/form/tbForm.spec.js?43bd4f7f2b805a7f87c0356beac0a69088648e80:34:13,Expected spy ctrl.finishDefinition to have been called.
+@http://localhost:9876/base/tubular/directives/form/tbForm.spec.js?43bd4f7f2b805a7f87c0356beac0a69088648e80:38:13</div>
+    </div>
+  </div>
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.directives Directive: tb-form should set serverSaveUrl</span>
+    <div class="stackTrace">
+      <div class="resultMessage">Error: [$compile:tpload] Failed to load template: tbForm.tpl.html (HTTP status: undefined undefined)
+http://errors.angularjs.org/1.6.4/$compile/tpload?p0=tbForm.tpl.html&amp;p1=undefined&amp;p2=undefined in http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426 (line 66)
+minErr/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:66:12
+handleError@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:19992:20
+processQueue@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16832:37
+scheduleProcessQueue/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16876:27
+$RootScopeProvider/this.$get&lt;/Scope.prototype.$digest@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:17971:15
+generate@http://localhost:9876/base/tubular/directives/form/tbForm.spec.js?43bd4f7f2b805a7f87c0356beac0a69088648e80:28:13
+@http://localhost:9876/base/tubular/directives/form/tbForm.spec.js?43bd4f7f2b805a7f87c0356beac0a69088648e80:34:13,TypeError: isolated is undefined in http://localhost:9876/base/tubular/directives/form/tbForm.spec.js?43bd4f7f2b805a7f87c0356beac0a69088648e80 (line 41)
+@http://localhost:9876/base/tubular/directives/form/tbForm.spec.js?43bd4f7f2b805a7f87c0356beac0a69088648e80:41:13</div>
+    </div>
+  </div>
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.directives Directive: tb-form should set serverUrl</span>
+    <div class="stackTrace">
+      <div class="resultMessage">Error: [$compile:tpload] Failed to load template: tbForm.tpl.html (HTTP status: undefined undefined)
+http://errors.angularjs.org/1.6.4/$compile/tpload?p0=tbForm.tpl.html&amp;p1=undefined&amp;p2=undefined in http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426 (line 66)
+minErr/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:66:12
+handleError@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:19992:20
+processQueue@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16832:37
+scheduleProcessQueue/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16876:27
+$RootScopeProvider/this.$get&lt;/Scope.prototype.$digest@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:17971:15
+generate@http://localhost:9876/base/tubular/directives/form/tbForm.spec.js?43bd4f7f2b805a7f87c0356beac0a69088648e80:28:13
+@http://localhost:9876/base/tubular/directives/form/tbForm.spec.js?43bd4f7f2b805a7f87c0356beac0a69088648e80:34:13,TypeError: isolated is undefined in http://localhost:9876/base/tubular/directives/form/tbForm.spec.js?43bd4f7f2b805a7f87c0356beac0a69088648e80 (line 44)
+@http://localhost:9876/base/tubular/directives/form/tbForm.spec.js?43bd4f7f2b805a7f87c0356beac0a69088648e80:44:13</div>
+    </div>
+  </div>
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.directives Directive: tb-form should set requireAuthentication</span>
+    <div class="stackTrace">
+      <div class="resultMessage">Error: [$compile:tpload] Failed to load template: tbForm.tpl.html (HTTP status: undefined undefined)
+http://errors.angularjs.org/1.6.4/$compile/tpload?p0=tbForm.tpl.html&amp;p1=undefined&amp;p2=undefined in http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426 (line 66)
+minErr/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:66:12
+handleError@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:19992:20
+processQueue@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16832:37
+scheduleProcessQueue/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16876:27
+$RootScopeProvider/this.$get&lt;/Scope.prototype.$digest@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:17971:15
+generate@http://localhost:9876/base/tubular/directives/form/tbForm.spec.js?43bd4f7f2b805a7f87c0356beac0a69088648e80:28:13
+@http://localhost:9876/base/tubular/directives/form/tbForm.spec.js?43bd4f7f2b805a7f87c0356beac0a69088648e80:34:13,TypeError: isolated is undefined in http://localhost:9876/base/tubular/directives/form/tbForm.spec.js?43bd4f7f2b805a7f87c0356beac0a69088648e80 (line 47)
+@http://localhost:9876/base/tubular/directives/form/tbForm.spec.js?43bd4f7f2b805a7f87c0356beac0a69088648e80:47:13</div>
+    </div>
+  </div>
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.directives Directive: tb-form should set name</span>
+    <div class="stackTrace">
+      <div class="resultMessage">Error: [$compile:tpload] Failed to load template: tbForm.tpl.html (HTTP status: undefined undefined)
+http://errors.angularjs.org/1.6.4/$compile/tpload?p0=tbForm.tpl.html&amp;p1=undefined&amp;p2=undefined in http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426 (line 66)
+minErr/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:66:12
+handleError@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:19992:20
+processQueue@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16832:37
+scheduleProcessQueue/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16876:27
+$RootScopeProvider/this.$get&lt;/Scope.prototype.$digest@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:17971:15
+generate@http://localhost:9876/base/tubular/directives/form/tbForm.spec.js?43bd4f7f2b805a7f87c0356beac0a69088648e80:28:13
+@http://localhost:9876/base/tubular/directives/form/tbForm.spec.js?43bd4f7f2b805a7f87c0356beac0a69088648e80:34:13,TypeError: isolated is undefined in http://localhost:9876/base/tubular/directives/form/tbForm.spec.js?43bd4f7f2b805a7f87c0356beac0a69088648e80 (line 50)
+@http://localhost:9876/base/tubular/directives/form/tbForm.spec.js?43bd4f7f2b805a7f87c0356beac0a69088648e80:50:13</div>
+    </div>
+  </div>
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.directives Directive: tb-form should set data service name</span>
+    <div class="stackTrace">
+      <div class="resultMessage">Error: [$compile:tpload] Failed to load template: tbForm.tpl.html (HTTP status: undefined undefined)
+http://errors.angularjs.org/1.6.4/$compile/tpload?p0=tbForm.tpl.html&amp;p1=undefined&amp;p2=undefined in http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426 (line 66)
+minErr/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:66:12
+handleError@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:19992:20
+processQueue@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16832:37
+scheduleProcessQueue/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16876:27
+$RootScopeProvider/this.$get&lt;/Scope.prototype.$digest@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:17971:15
+generate@http://localhost:9876/base/tubular/directives/form/tbForm.spec.js?43bd4f7f2b805a7f87c0356beac0a69088648e80:28:13
+@http://localhost:9876/base/tubular/directives/form/tbForm.spec.js?43bd4f7f2b805a7f87c0356beac0a69088648e80:34:13,TypeError: isolated is undefined in http://localhost:9876/base/tubular/directives/form/tbForm.spec.js?43bd4f7f2b805a7f87c0356beac0a69088648e80 (line 53)
+@http://localhost:9876/base/tubular/directives/form/tbForm.spec.js?43bd4f7f2b805a7f87c0356beac0a69088648e80:53:13</div>
+    </div>
+  </div>
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.directives Directive: tb-form should set model key</span>
+    <div class="stackTrace">
+      <div class="resultMessage">Error: [$compile:tpload] Failed to load template: tbForm.tpl.html (HTTP status: undefined undefined)
+http://errors.angularjs.org/1.6.4/$compile/tpload?p0=tbForm.tpl.html&amp;p1=undefined&amp;p2=undefined in http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426 (line 66)
+minErr/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:66:12
+handleError@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:19992:20
+processQueue@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16832:37
+scheduleProcessQueue/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16876:27
+$RootScopeProvider/this.$get&lt;/Scope.prototype.$digest@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:17971:15
+generate@http://localhost:9876/base/tubular/directives/form/tbForm.spec.js?43bd4f7f2b805a7f87c0356beac0a69088648e80:28:13
+@http://localhost:9876/base/tubular/directives/form/tbForm.spec.js?43bd4f7f2b805a7f87c0356beac0a69088648e80:34:13,TypeError: isolated is undefined in http://localhost:9876/base/tubular/directives/form/tbForm.spec.js?43bd4f7f2b805a7f87c0356beac0a69088648e80 (line 56)
+@http://localhost:9876/base/tubular/directives/form/tbForm.spec.js?43bd4f7f2b805a7f87c0356beac0a69088648e80:56:13</div>
+    </div>
+  </div>
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.directives Directive: tb-form should set model</span>
+    <div class="stackTrace">
+      <div class="resultMessage">Error: [$compile:tpload] Failed to load template: tbForm.tpl.html (HTTP status: undefined undefined)
+http://errors.angularjs.org/1.6.4/$compile/tpload?p0=tbForm.tpl.html&amp;p1=undefined&amp;p2=undefined in http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426 (line 66)
+minErr/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:66:12
+handleError@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:19992:20
+processQueue@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16832:37
+scheduleProcessQueue/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16876:27
+$RootScopeProvider/this.$get&lt;/Scope.prototype.$digest@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:17971:15
+generate@http://localhost:9876/base/tubular/directives/form/tbForm.spec.js?43bd4f7f2b805a7f87c0356beac0a69088648e80:28:13
+@http://localhost:9876/base/tubular/directives/form/tbForm.spec.js?43bd4f7f2b805a7f87c0356beac0a69088648e80:34:13,TypeError: isolated is undefined in http://localhost:9876/base/tubular/directives/form/tbForm.spec.js?43bd4f7f2b805a7f87c0356beac0a69088648e80 (line 59)
+@http://localhost:9876/base/tubular/directives/form/tbForm.spec.js?43bd4f7f2b805a7f87c0356beac0a69088648e80:59:13</div>
+    </div>
+  </div>
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.directives Directive: tb-form should replace</span>
+    <div class="stackTrace">
+      <div class="resultMessage">Error: [$compile:tpload] Failed to load template: tbForm.tpl.html (HTTP status: undefined undefined)
+http://errors.angularjs.org/1.6.4/$compile/tpload?p0=tbForm.tpl.html&amp;p1=undefined&amp;p2=undefined in http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426 (line 66)
+minErr/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:66:12
+handleError@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:19992:20
+processQueue@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16832:37
+scheduleProcessQueue/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16876:27
+$RootScopeProvider/this.$get&lt;/Scope.prototype.$digest@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:17971:15
+generate@http://localhost:9876/base/tubular/directives/form/tbForm.spec.js?43bd4f7f2b805a7f87c0356beac0a69088648e80:28:13
+@http://localhost:9876/base/tubular/directives/form/tbForm.spec.js?43bd4f7f2b805a7f87c0356beac0a69088648e80:34:13,Expected undefined to be 'nombre_de_forma', 'should place form element'.
+@http://localhost:9876/base/tubular/directives/form/tbForm.spec.js?43bd4f7f2b805a7f87c0356beac0a69088648e80:63:13</div>
+    </div>
+  </div>
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.directives Directive: tb-form should transclude</span>
+    <div class="stackTrace">
+      <div class="resultMessage">Error: [$compile:tpload] Failed to load template: tbForm.tpl.html (HTTP status: undefined undefined)
+http://errors.angularjs.org/1.6.4/$compile/tpload?p0=tbForm.tpl.html&amp;p1=undefined&amp;p2=undefined in http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426 (line 66)
+minErr/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:66:12
+handleError@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:19992:20
+processQueue@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16832:37
+scheduleProcessQueue/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16876:27
+$RootScopeProvider/this.$get&lt;/Scope.prototype.$digest@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:17971:15
+generate@http://localhost:9876/base/tubular/directives/form/tbForm.spec.js?43bd4f7f2b805a7f87c0356beac0a69088648e80:28:13
+@http://localhost:9876/base/tubular/directives/form/tbForm.spec.js?43bd4f7f2b805a7f87c0356beac0a69088648e80:34:13,Expected 0 to be 1.
+@http://localhost:9876/base/tubular/directives/form/tbForm.spec.js?43bd4f7f2b805a7f87c0356beac0a69088648e80:67:13,TypeError: divs[0] is undefined in http://localhost:9876/base/tubular/directives/form/tbForm.spec.js?43bd4f7f2b805a7f87c0356beac0a69088648e80 (line 68)
+@http://localhost:9876/base/tubular/directives/form/tbForm.spec.js?43bd4f7f2b805a7f87c0356beac0a69088648e80:68:13</div>
+    </div>
+  </div>
+  
+  
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.directives template: tbTextSearch should fallback placeholder to UI_SEARCH</span>
+    <div class="stackTrace">
+      <div class="resultMessage">Expected spy unknown to have been called with [ 'UI_SEARCH' ] but it was never called.
+@http://localhost:9876/base/tubular/directives/grid/components/tbTextSearch/tbTextSearch.tpl.html.spec.js?7a2f7b1c1317d4a351d2b458326c02f98a2031ba:58:13</div>
+    </div>
+  </div>
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.directives template: tbTextSearch should translate the input placeholder</span>
+    <div class="stackTrace">
+      <div class="resultMessage">Expected spy unknown to have been called with [ 'CAPTION_CLEAR' ] but it was never called.
+@http://localhost:9876/base/tubular/directives/grid/components/tbTextSearch/tbTextSearch.tpl.html.spec.js?7a2f7b1c1317d4a351d2b458326c02f98a2031ba:68:13</div>
+    </div>
+  </div>
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.directives template: tbTextSearch input should debounce (before)</span>
+    <div class="stackTrace">
+      <div class="resultMessage">TypeError: scope.form1.tbTextSearchInput is undefined in http://localhost:9876/base/tubular/directives/grid/components/tbTextSearch/tbTextSearch.tpl.html.spec.js?7a2f7b1c1317d4a351d2b458326c02f98a2031ba (line 75)
+@http://localhost:9876/base/tubular/directives/grid/components/tbTextSearch/tbTextSearch.tpl.html.spec.js?7a2f7b1c1317d4a351d2b458326c02f98a2031ba:75:13</div>
+    </div>
+  </div>
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.directives template: tbTextSearch input should debounce (after)</span>
+    <div class="stackTrace">
+      <div class="resultMessage">TypeError: scope.form1.tbTextSearchInput is undefined in http://localhost:9876/base/tubular/directives/grid/components/tbTextSearch/tbTextSearch.tpl.html.spec.js?7a2f7b1c1317d4a351d2b458326c02f98a2031ba (line 82)
+@http://localhost:9876/base/tubular/directives/grid/components/tbTextSearch/tbTextSearch.tpl.html.spec.js?7a2f7b1c1317d4a351d2b458326c02f98a2031ba:82:13</div>
+    </div>
+  </div>
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.directives template: tbTextSearch reset button should be visible only when the input has text</span>
+    <div class="stackTrace">
+      <div class="resultMessage">TypeError: scope.form1.tbTextSearchInput is undefined in http://localhost:9876/base/tubular/directives/grid/components/tbTextSearch/tbTextSearch.tpl.html.spec.js?7a2f7b1c1317d4a351d2b458326c02f98a2031ba (line 90)
+@http://localhost:9876/base/tubular/directives/grid/components/tbTextSearch/tbTextSearch.tpl.html.spec.js?7a2f7b1c1317d4a351d2b458326c02f98a2031ba:90:13</div>
+    </div>
+  </div>
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.directives template: tbTextSearch reset button should reset the search input</span>
+    <div class="stackTrace">
+      <div class="resultMessage">TypeError: scope.form1.tbTextSearchInput is undefined in http://localhost:9876/base/tubular/directives/grid/components/tbTextSearch/tbTextSearch.tpl.html.spec.js?7a2f7b1c1317d4a351d2b458326c02f98a2031ba (line 105)
+@http://localhost:9876/base/tubular/directives/grid/components/tbTextSearch/tbTextSearch.tpl.html.spec.js?7a2f7b1c1317d4a351d2b458326c02f98a2031ba:105:13</div>
+    </div>
+  </div>
+  
+  
+</div>
+
+<script>
+
+var folded = false;
+
+document.body.onkeypress = function (e) {
+  if (!e || !e.keyCode) return;
+  switch (e.keyCode) {
+    case 102: toggleFold(); break;
+    case 49: showSummary(); break;
+    case 50: showFailures(); break;case 50: showFailures(); break;case 50: showFailures(); break;
+  }
+};
+
+function showSummary() { document.body.className = "html-reporter showSummary"; }
+function showFailures() { document.body.className = "html-reporter showDetails"; }
+
+function toggleSection(el) {
+  el.className = el.className === 'summary-section' ? 'summary-section folded' : 'summary-section';
+}
+
+function toggleFold() { (folded) ? unfold() : fold(); }
+function fold() {
+  var els = document.querySelectorAll('.summary-section');
+  for (var i = 0; i < els.length; i++) {
+    els[i].className = 'summary-section folded';
+  }
+  folded = true;
+}
+function unfold() {
+  var els = document.querySelectorAll('.summary-section');
+  for (var i = 0; i < els.length; i++) {
+    els[i].className = 'summary-section';
+  }
+  folded = false;
+}
+
+</script>
+
+
+</body>
+</html>
+
