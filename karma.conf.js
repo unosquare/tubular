@@ -12,6 +12,7 @@ module.exports = (config) => {
 
         // list of files / patterns to load in the browser
         files: [
+          '../../node_modules/jasmine-data_driven_tests/src/all.js',
           '../../bower_components/angular/angular.js',
           '../../bower_components/angular-mocks/angular-mocks.js',
           '../../bower_components/angular-route/angular-route.js',
@@ -63,14 +64,14 @@ module.exports = (config) => {
         reporters: ['progress', 'coverage', 'html'],
 
         htmlReporter: {
-            outputDir: 'report/unit', // where to put the reports  
-            focusOnFailures: true, // reports show failures on start 
-            namedFiles: true, // name files instead of creating sub-directories 
+            outputDir: 'report/unit', // where to put the reports
+            focusOnFailures: true, // reports show failures on start
+            namedFiles: true, // name files instead of creating sub-directories
             reportName: 'index',
 
-            // experimental 
-            preserveDescribeNesting: false, // folded suites stay folded  
-            foldAll: false // reports start folded (only with preserveDescribeNesting) 
+            // experimental
+            preserveDescribeNesting: false, // folded suites stay folded
+            foldAll: false // reports start folded (only with preserveDescribeNesting)
         },
 
         // optionally, configure the reporter

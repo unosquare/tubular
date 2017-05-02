@@ -33,7 +33,7 @@
                 config.headers = config.headers || {};
 
                 // Handle requests going to API
-                if (webApiSettings.tokenUrl() !== config.url &&
+                if (!checkStatic(config.url) && webApiSettings.tokenUrl() !== config.url &&
                     webApiSettings.requireAuthentication() &&
                     tubularHttp.userData.bearerToken) {
 
@@ -48,6 +48,10 @@
                 }
 
                 return config;
+            }
+
+            function checkStatic(url){
+              return /\.(htm|html|css|js|jsx)/.test(url);
             }
 
             function requestError(rejection) {

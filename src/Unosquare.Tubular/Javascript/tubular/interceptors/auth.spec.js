@@ -18,8 +18,6 @@ describe('Module: tubular.services', function () {
 
         it('should be defined', function () {
             expect(AuthInterceptor).toBeDefined();
-            expect($httpBackend).toBeDefined();
-            expect(tubularConfig).toBeDefined();
             expect(AuthInterceptor.request).toBeDefined();
             expect(AuthInterceptor.requestError).toBeDefined();
             expect(AuthInterceptor.response).toBeDefined();
@@ -32,6 +30,23 @@ describe('Module: tubular.services', function () {
                 url: '/api/token'
             };
             tubularConfig.webApi.tokenUrl('/api/token');
+            tubularConfig.webApi.requireAuthentication(true);
+            tubularHttp.userData.bearerToken = "yeah";
+
+            var actual = AuthInterceptor.request(config);
+
+            expect(actual.headers).toBeDefined();
+            expect(actual.headers.Authorization).toBeUndefined();
+        });
+
+        all('should not add any authorization header for static files', ['html', 'htm', 'js', 'css'], function (extension) {
+            var config = {
+                method: 'GET',
+                url: '/api/archivo.'+ extension +'/?nocache=12345'
+            };
+            tubularConfig.webApi.tokenUrl('/api/token');
+            tubularConfig.webApi.requireAuthentication(true);
+            tubularHttp.userData.bearerToken = "yeah";
 
             var actual = AuthInterceptor.request(config);
 
