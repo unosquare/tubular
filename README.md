@@ -89,15 +89,6 @@ $ npm install tubular --save
 
 An experimental support to chart is running with Tubular and you can choose between [ChartJS](http://www.chartjs.org/) or [Highcharts](http://www.highcharts.com/). If you want to use any of them, be sure to load the library before Tubular and check [Tubular OWIN Sample](https://github.com/unosquare/tubular/tree/master/src/Unosquare.Tubular.OwinSample) with easy to understand code on how to start using charts.
 
-## Global Settings
-
-You can access to global settings by using the static object `TubularDefaultSettings` and setup common behavior in Tubular. The settings included are:
-
-<table>
-    <tr><th>Setting</th><th>Default value</th><th>Notes</th></tr>
-    <tr><th>AdjustTimezoneOffset</th><td><i>True</i></td><td>Determines if the DateTime from a Response should adjust the timezone offset send by within the Request.</td></tr>
-</table>
-
 ## Samples
 
 You can check out the <a href="http://unosquare.github.io/tubular" target="_blank">Tubular GitHub Page</a> to get a few examples. We still need to work on more samples and better documentation, but we feel what we have now will get you up to speed very quickly :).
