@@ -87,7 +87,7 @@ $ npm install tubular --save
 
 ## Charts
 
-An experimental support to chart is running with Tubular and you can choose between [ChartJS](http://www.chartjs.org/) or [Highcharts](http://www.highcharts.com/). If you want to use any of them, be sure to load the library before Tubular and check [Tubular OWIN Sample](https://github.com/unosquare/tubular/tree/master/src/Unosquare.Tubular.OwinSample) with easy to understand code on how to start using charts.
+An experimental support to chart is running with Tubular and you can choose between [ChartJS](http://www.chartjs.org/) or [Highcharts](http://www.highcharts.com/). If you want to use any of them, be sure to load the library before Tubular and check [Tubular OWIN Sample](https://github.com/unosquare/tubular-dotnet/tree/master/src/Unosquare.Tubular.OwinSample) with easy to understand code on how to start using charts.
 
 ## Samples
 
