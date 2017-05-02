@@ -4,7 +4,7 @@ module.exports = (config) => {
     config.set({
 
         // base path that will be used to resolve all patterns (eg. files, exclude)
-        basePath: 'src/Unosquare.Tubular',
+        basePath: 'src/js',
 
         // frameworks to use
         // available frameworks: https://npmjs.org/browse/keyword/karma-adapter

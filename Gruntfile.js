@@ -21,8 +21,8 @@ module.exports = grunt => {
                     {
                         expand: true,
                         src: [
-                            'src/Unosquare.Tubular/Javascript/tubular*-bundle.js',
-                            'src/Unosquare.Tubular/Javascript/tubular*-bundle.min.js',
+                            'src/js/tubular*-bundle.js',
+                            'src/js/tubular*-bundle.min.js',
                             'src/Unosquare.Tubular/Css/tubular-bundle.css',
                             'src/Unosquare.Tubular/Css/tubular-bundle.min.css'
                         ],
@@ -36,7 +36,7 @@ module.exports = grunt => {
         instrument: {
             files: [
                 'test/Unosquare.Tubular.WebTest/testApp.js',
-                'src/Unosquare.Tubular/Javascript/tubular*-bundle.js'
+                'src/js/tubular*-bundle.js'
             ],
             options: {
                 basePath: 'instrumented/'
@@ -49,7 +49,7 @@ module.exports = grunt => {
                     replacements: [
                         {
                             pattern: /\.\.\/\.\.\/src\/Unosquare\.Tubular\/Javascript\/tubular/g,
-                            replacement: '/instrumented/src/Unosquare.Tubular/Javascript/tubular'
+                            replacement: '/instrumented/src/js/tubular'
                         }
                     ]
                 }
@@ -106,7 +106,7 @@ module.exports = grunt => {
                 outputFile: 'report/eslint/index.html',
                 silent: false
             },
-            src: ['src/Unosquare.Tubular/Javascript/tubular*/**/*.js', '!src/**/*.spec.js', '!src/**/templates.js']
+            src: ['src/js/tubular*/**/*.js', '!src/**/*.spec.js', '!src/**/templates.js']
         },
         karma: {
             options: {
@@ -149,57 +149,57 @@ module.exports = grunt => {
                 }
             },
             main: {
-                base: 'src/Unosquare.Tubular/Javascript/tubular/',
+                base: 'src/js/tubular/',
                 module: 'tubular.directives',
-                src: ['src/Unosquare.Tubular/Javascript/tubular/**/*.tpl.html'],
-                dest: 'src/Unosquare.Tubular/Javascript/templates.js'
+                src: ['src/js/tubular/**/*.tpl.html'],
+                dest: 'src/js/templates.js'
             },
             chartjs: {
-                base: 'src/Unosquare.Tubular/Javascript/tubular-chart/chartjs/',
+                base: 'src/js/tubular-chart/chartjs/',
                 module: 'tubular-chart.directives',
-                src: ['src/Unosquare.Tubular/Javascript/tubular-chart/chartjs/**/*.tpl.html'],
-                dest: 'src/Unosquare.Tubular/Javascript/templates-chartjs.js'
+                src: ['src/js/tubular-chart/chartjs/**/*.tpl.html'],
+                dest: 'src/js/templates-chartjs.js'
             }
         },
         concat: {
             tubular_js: {
                 src: [
-                    'src/Unosquare.Tubular/Javascript/tubular/tubular.js',
-                    'src/Unosquare.Tubular/Javascript/tubular/tubular-directives.js',
-                    'src/Unosquare.Tubular/Javascript/templates.js',
-                    'src/Unosquare.Tubular/Javascript/tubular/directives/**/*.js',
-                    'src/Unosquare.Tubular/Javascript/tubular/tubular-directives-editors.js',
-                    'src/Unosquare.Tubular/Javascript/tubular/tubular-directives-filters.js',
-                    'src/Unosquare.Tubular/Javascript/tubular/tubular-directives-forms.js',
-                    'src/Unosquare.Tubular/Javascript/tubular/tubular-directives-gridcomponents.js',
-                    'src/Unosquare.Tubular/Javascript/tubular/tubular-directives-gridpager.js',
-                    'src/Unosquare.Tubular/Javascript/tubular/tubular-models.js',
-                    'src/Unosquare.Tubular/Javascript/tubular/tubular-services.js',
-                    'src/Unosquare.Tubular/Javascript/tubular/interceptors/**/*.js',
-                    'src/Unosquare.Tubular/Javascript/tubular/services/**/*.js',
-                    'src/Unosquare.Tubular/Javascript/tubular/tubular-services-http.js',
-                    'src/Unosquare.Tubular/Javascript/tubular/interceptors/auth.js',
-                    'src/Unosquare.Tubular/Javascript/tubular/tubular-services-i18n.js',
-                    '!src/Unosquare.Tubular/Javascript/tubular/**/*.spec.js',
-                    '!src/Unosquare.Tubular/Javascript/tubular/**/*.e2e.js'
+                    'src/js/tubular/tubular.js',
+                    'src/js/tubular/tubular-directives.js',
+                    'src/js/templates.js',
+                    'src/js/tubular/directives/**/*.js',
+                    'src/js/tubular/tubular-directives-editors.js',
+                    'src/js/tubular/tubular-directives-filters.js',
+                    'src/js/tubular/tubular-directives-forms.js',
+                    'src/js/tubular/tubular-directives-gridcomponents.js',
+                    'src/js/tubular/tubular-directives-gridpager.js',
+                    'src/js/tubular/tubular-models.js',
+                    'src/js/tubular/tubular-services.js',
+                    'src/js/tubular/interceptors/**/*.js',
+                    'src/js/tubular/services/**/*.js',
+                    'src/js/tubular/tubular-services-http.js',
+                    'src/js/tubular/interceptors/auth.js',
+                    'src/js/tubular/tubular-services-i18n.js',
+                    '!src/js/tubular/**/*.spec.js',
+                    '!src/js/tubular/**/*.e2e.js'
                 ],
-                dest: 'src/Unosquare.Tubular/Javascript/tubular-bundle.js'
+                dest: 'src/js/tubular-bundle.js'
             },
             chart_js: {
                 src: [
                     'bower_components/angular-chart.js/dist/angular-chart.js',
-                    'src/Unosquare.Tubular/Javascript/tubular-chart/chartjs/*.module.js',
-                    'src/Unosquare.Tubular/Javascript/templates-chartjs.js',
-                    'src/Unosquare.Tubular/Javascript/tubular-chart/chartjs/*.js'
+                    'src/js/tubular-chart/chartjs/*.module.js',
+                    'src/js/templates-chartjs.js',
+                    'src/js/tubular-chart/chartjs/*.js'
                 ],
-                dest: 'src/Unosquare.Tubular/Javascript/tubular-chartjs-bundle.js'
+                dest: 'src/js/tubular-chartjs-bundle.js'
             },
             highchart_js: {
                 src: [
                     'bower_components/highchart-ng/dist/highcharts-ng.js',
-                    'src/Unosquare.Tubular/Javascript/tubular-chart/tubular-directives-highcharts.js'
+                    'src/js/tubular-chart/tubular-directives-highcharts.js'
                 ],
-                dest: 'src/Unosquare.Tubular/Javascript/tubular-highcharts-bundle.js'
+                dest: 'src/js/tubular-highcharts-bundle.js'
             },
             tubular_css: {
                 src: [
@@ -213,17 +213,17 @@ module.exports = grunt => {
         uglify: {
             tubular_js: {
                 files: {
-                    'src/Unosquare.Tubular/Javascript/tubular-bundle.min.js': ['src/Unosquare.Tubular/Javascript/tubular-bundle.js']
+                    'src/js/tubular-bundle.min.js': ['src/js/tubular-bundle.js']
                 }
             },
             chart_js: {
                 files: {
-                    'src/Unosquare.Tubular/Javascript/tubular-chartjs-bundle.min.js': ['src/Unosquare.Tubular/Javascript/tubular-chartjs-bundle.js']
+                    'src/js/tubular-chartjs-bundle.min.js': ['src/js/tubular-chartjs-bundle.js']
                 }
             },
             highchart_js: {
                 files: {
-                    'src/Unosquare.Tubular/Javascript/tubular-highcharts-bundle.min.js': ['src/Unosquare.Tubular/Javascript/tubular-highcharts-bundle.js']
+                    'src/js/tubular-highcharts-bundle.min.js': ['src/js/tubular-highcharts-bundle.js']
                 }
             }
         },
@@ -234,15 +234,15 @@ module.exports = grunt => {
             },
             main: {
                 files: {
-                    'src/Unosquare.Tubular/Css/tubular-bundle.min.css': ['src/Unosquare.Tubular/Css/tubular-bundle.css']
+                    'src/css/tubular-bundle.min.css': ['src/css/tubular-bundle.css']
                 }
             }
         },
         watch: {
             scripts: {
                 files: [
-                    'src/Unosquare.Tubular/Javascript/**/*.js',
-                    'src/Unosquare.Tubular/Javascript/**/*.html'
+                    'src/js/**/*.js',
+                    'src/js/**/*.html'
                 ],
                 tasks: ['min'],
                 options: {
