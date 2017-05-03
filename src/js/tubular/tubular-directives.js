@@ -34,7 +34,7 @@
                     transclude: true,
                     scope: true,
                     controller: [
-                        '$scope', function ($scope) {
+                        '$scope', $scope => {
                             $scope.$component = $scope.$parent.$parent.$ctrl;
                             $scope.tubularDirective = 'tubular-grid-table';
                         }
@@ -64,18 +64,12 @@
                     transclude: true,
                     scope: true,
                     controller: [
-                        '$scope', function ($scope) {
+                        '$scope', $scope => {
                             $scope.$component = $scope.$parent.$parent.$component;
                             $scope.tubularDirective = 'tubular-column-definitions';
                         }
                     ],
-                    compile: function () {
-                        return {
-                            post: function (scope) {
-                                scope.$component.hasColumnsDefinitions = true;
-                            }
-                        };
-                    }
+                    compile: () => { post: scope => scope.$component.hasColumnsDefinitions = true }
                 };
             }
         ])
@@ -129,17 +123,15 @@
                             $scope.tubularDirective = 'tubular-column';
                             $scope.label = $scope.label || ($scope.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
 
-                            $scope.sortColumn = function (multiple) {
-                                $scope.$component.sortColumn($scope.column.Name, multiple);
-                            };
+                            $scope.sortColumn = multiple => $scope.$component.sortColumn($scope.column.Name, multiple);
 
-                            $scope.$watch('visible', function (val) {
+                            $scope.$watch('visible', val => {
                                 if (angular.isDefined(val)) {
                                     $scope.column.Visible = val;
                                 }
                             });
 
-                            $scope.$watch('label', function () {
+                            $scope.$watch('label', () => {
                                 $scope.column.Label = $scope.label;
                                 // this broadcast here is used for backwards compatibility with tbColumnHeader requiring a scope.label value on its own
                                 $scope.$broadcast('tbColumn_LabelChanged', $scope.label);
@@ -203,18 +195,14 @@
                     transclude: true,
                     scope: false,
                     controller: [
-                        '$scope', function($scope) {
-                            $scope.sortColumn = function($event) {
-                                $scope.$parent.sortColumn($event.ctrlKey);
-                            };
+                        '$scope', $scope => {
+                            $scope.sortColumn = $event => $scope.$parent.sortColumn($event.ctrlKey);
+
                             // this listener here is used for backwards compatibility with tbColumnHeader requiring a scope.label value on its own
-                            $scope.$on('tbColumn_LabelChanged',
-                                function($event, value) {
-                                    $scope.label = value;
-                                });
+                            $scope.$on('tbColumn_LabelChanged', ($event, value) => $scope.label = value);
                         }
                     ],
-                    link: function($scope, $element) {
+                    link: ($scope, $element) => {
                         if ($element.find('ng-transclude').length > 0) {
                             $element.find('span')[0].remove();
                         }
@@ -248,7 +236,7 @@
                     transclude: true,
                     scope: false,
                     controller: [
-                        '$scope', function ($scope) {
+                        '$scope', $scope => {
                             $scope.$component = $scope.$parent.$component || $scope.$parent.$parent.$component;
                             $scope.tubularDirective = 'tubular-row-set';
                         }
@@ -278,7 +266,7 @@
                     transclude: true,
                     scope: false,
                     controller: [
-                        '$scope', function ($scope) {
+                        '$scope', $scope => {
                             $scope.$component = $scope.$parent.$component || $scope.$parent.$parent.$component;
                             $scope.tubularDirective = 'tubular-foot-set';
                         }
@@ -311,13 +299,13 @@
                         model: '=rowModel'
                     },
                     controller: [
-                        '$scope', function ($scope) {
+                        '$scope', $scope => {
                             $scope.tubularDirective = 'tubular-rowset';
                             $scope.fields = [];
                             $scope.hasFieldsDefinitions = false;
                             $scope.$component = $scope.$parent.$parent.$parent.$component;
 
-                            $scope.$watch('hasFieldsDefinitions', function (newVal) {
+                            $scope.$watch('hasFieldsDefinitions', newVal => {
                                 if (newVal !== true || angular.isUndefined($scope.model)) {
                                     return;
                                 }
@@ -325,23 +313,11 @@
                                 $scope.bindFields();
                             });
 
-                            $scope.bindFields = function () {
-                                angular.forEach($scope.fields, function (field) {
-                                    field.bindScope();
-                                });
-                            };
+                            $scope.bindFields = () => angular.forEach($scope.fields, field => field.bindScope());
                         }
                     ],
-                    compile: function () {
-                        return {
-                            post: function (scope) {
-                                // Wait a little bit before to connect to the fields
-                                $timeout(function () {
-                                    scope.hasFieldsDefinitions = true;
-                                }, 300);
-                            }
-                        };
-                    }
+                    // Wait a little bit before to connect to the fields
+                    compile: ()  => { post: scope => $timeout(()  => scope.hasFieldsDefinitions = true, 300) }
                 };
             }
         ])
@@ -373,19 +349,17 @@
                         columnName: '@?'
                     },
                     controller: [
-                        '$scope', function ($scope) {
+                        '$scope', $scope => {
                             $scope.column = { Visible: true };
                             $scope.columnName = $scope.columnName || null;
                             $scope.$component = $scope.$parent.$parent.$component;
-
-                            $scope.getFormScope = function () {
-                                // TODO: Implement a form in inline editors
-                                return null;
-                            };
+                            
+                            // TODO: Implement a form in inline editors
+                            $scope.getFormScope = () => null;
 
                             if ($scope.columnName != null) {
                                 const columnModel = $scope.$component.columns
-                                    .filter(function (el) { return el.Name === $scope.columnName; });
+                                    .filter(el => el.Name === $scope.columnName);
 
                                 if (columnModel.length > 0) {
                                     $scope.column = columnModel[0];

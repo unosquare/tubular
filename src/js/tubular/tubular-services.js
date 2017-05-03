@@ -2,19 +2,17 @@
     'use strict';
 
     function getColumns(gridScope) {
-        return gridScope.columns
-            .map(function (c) { return c.Label; });
+        return gridScope.columns.map(c => c.Label);
     }
 
     function getColumnsVisibility(gridScope) {
-        return gridScope.columns
-            .map(function (c) { return c.Visible; });
+        return gridScope.columns.map(c => c.Visible);
     }
 
     function exportToCsv(header, rows, visibility) {
-        var processRow = function (row) {
+        var processRow = row => {
             if (angular.isObject(row)) {
-                row = Object.keys(row).map(function (key) { return row[key]; });
+                row = Object.keys(row).map(key => row[key]);
             }
 
             var finalVal = '';
@@ -41,6 +39,7 @@
 
                 finalVal += result;
             }
+
             return finalVal + '\n';
         };
 
@@ -50,10 +49,7 @@
             csvFile += processRow(header);
         }
 
-        angular.forEach(rows,
-            function(row) {
-                csvFile += processRow(row);
-            });
+        angular.forEach(rows, row => csvFile += processRow(row));
 
         // Add "\uFEFF" (UTF-8 BOM)
         return new Blob(['\uFEFF' + csvFile], { type: 'text/csv;charset=utf-8;' });
@@ -97,9 +93,8 @@
                         var columns = getColumns(gridScope);
                         var visibility = getColumnsVisibility(gridScope);
 
-                        gridScope.getFullDataSource().then(function (data) {
-                            service.saveFile(filename, exportToCsv(columns, data, visibility));
-                        });
+                        gridScope.getFullDataSource()
+                            .then(data => service.saveFile(filename, exportToCsv(columns, data, visibility)));
                     },
 
                     exportGridToCsv: function (filename, gridScope) {
@@ -114,21 +109,19 @@
                     },
 
                     printGrid: function (component, printCss, title) {
-                        component.getFullDataSource().then(function (data) {
+                        component.getFullDataSource().then(data => {
                             var tableHtml = '<table class="table table-bordered table-striped"><thead><tr>'
                                 + component.columns
-                                .filter(function (c) { return c.Visible; })
-                                .map(function (el) {
-                                    return '<th>' + (el.Label || el.Name) + '</th>';
-                                }).join(' ')
+                                .filter(c => c.Visible)
+                                .reduce(prev, el => prev + '<th>' + (el.Label || el.Name) + '</th>', '')
                                 + '</tr></thead>'
                                 + '<tbody>'
-                                + data.map(function (row) {
+                                + data.map(row => {
                                     if (angular.isObject(row)) {
-                                        row = Object.keys(row).map(function (key) { return row[key]; });
+                                        row = Object.keys(row).map(key => row[key]);
                                     }
 
-                                    return '<tr>' + row.map(function (cell, index) {
+                                    return '<tr>' + row.map((cell, index) => {
                                         if (angular.isDefined(component.columns[index]) &&
                                             !component.columns[index].Visible) {
                                             return '';

@@ -2,7 +2,7 @@
     'use strict';
 
     // Fix moment serialization
-    moment.fn.toJSON = function () { return this.isValid() ? this.format() : null; };
+    moment.fn.toJSON = () => this.isValid() ? this.format() : null;
 
     function canUseHtml5Date() {
         var el = angular.element('<input type="date" value=":)" />');
@@ -10,16 +10,13 @@
     }
 
     function changeValueFn($ctrl) {
-        return function (val) {
+        return val => {
             if (angular.isUndefined(val)) {
                 return;
             }
 
             if (angular.isString(val)) {
-                if (val === '' || moment(val).year() <= 1900)
-                    $ctrl.value = '';
-                else
-                    $ctrl.value = moment(val);
+                $ctrl.value = val === '' || moment(val).year() <= 1900 ? '' : moment(val);
             }
 
             if (angular.isDefined($ctrl.dateValue)) {
@@ -63,10 +60,10 @@
         }
     }
 
-    const tbNumericEditorCtrl = ['tubularEditorService', '$scope', 'translateFilter', function (tubular, $scope, translateFilter) {
+    const tbNumericEditorCtrl = ['tubularEditorService', '$scope', 'translateFilter', (tubular, $scope, translateFilter) => {
         var $ctrl = this;
 
-        $ctrl.validate = function () {
+        $ctrl.validate = () => {
             if (angular.isDefined($ctrl.min) && $ctrl.min != null && angular.isDefined($ctrl.value) && $ctrl.value != null) {
                 $ctrl.$valid = $ctrl.value >= $ctrl.min;
 
@@ -85,7 +82,7 @@
             }
         };
 
-        $ctrl.$onInit = function () {
+        $ctrl.$onInit = () => {
             $ctrl.DataType = 'numeric';
             tubular.setupScope($scope, 0, $ctrl, false);
         };
@@ -93,25 +90,21 @@
     ];
 
     const tbDateTimeEditorCtrl = ['$scope', '$element', 'tubularEditorService', 'translateFilter', 'dateFilter',
-        function ($scope, $element, tubular, translateFilter, dateFilter) {
+        ($scope, $element, tubular, translateFilter, dateFilter) => {
             var $ctrl = this;
 
             // This could be $onChange??
-            $scope.$watch(function () { return $ctrl.value; }, changeValueFn($ctrl));
+            $scope.$watch(() => $ctrl.value, changeValueFn($ctrl));
 
-            $scope.$watch(function () {
-                return $ctrl.dateValue;
-            }, function (val) {
+            $scope.$watch(() => $ctrl.dateValue, val => {
                 if (angular.isDefined(val)) {
                     $ctrl.value = val === '' ? '' : moment(val);
                 }
             });
 
-            $ctrl.validate = function () {
-                validateDate($ctrl, translateFilter, dateFilter);
-            };
+            $ctrl.validate = () => validateDate($ctrl, translateFilter, dateFilter);
 
-            $ctrl.$onInit = function () {
+            $ctrl.$onInit = () => {
                 $ctrl.DataType = 'datetime';
                 tubular.setupScope($scope, $ctrl.format, $ctrl);
                 $ctrl.format = $ctrl.format || 'MMM D, Y';
@@ -133,21 +126,17 @@
             dateFilter) {
             var $ctrl = this;
 
-            $scope.$watch(function () { return $ctrl.value; }, changeValueFn($ctrl));
+            $scope.$watch(() => $ctrl.value, changeValueFn($ctrl));
 
-            $scope.$watch(function () {
-                return $ctrl.dateValue;
-            }, function (val) {
+            $scope.$watch(() => $ctrl.dateValue, val => {
                 if (angular.isDefined(val)) {
                     $ctrl.value = val === '' ? '' : moment(val);
                 }
             });
 
-            $ctrl.validate = function () {
-                validateDate($ctrl, translateFilter, dateFilter);
-            };
+            $ctrl.validate = () => validateDate($ctrl, translateFilter, dateFilter);
 
-            $ctrl.$onInit = function () {
+            $ctrl.$onInit = () => {
                 $ctrl.DataType = 'date';
                 tubular.setupScope($scope, $ctrl.format, $ctrl);
                 $ctrl.format = $ctrl.format || 'MMM D, Y'; // TODO: Add hours?
@@ -155,7 +144,7 @@
         }
     ];
 
-    const tbDropdownEditorCtrl = ['tubularEditorService', '$scope', 'tubularHttp', function (tubular, $scope, tubularHttp) {
+    const tbDropdownEditorCtrl = ['tubularEditorService', '$scope', 'tubularHttp', (tubular, $scope, tubularHttp) => {
         var $ctrl = this;
 
         $ctrl.$onInit = function () {
@@ -615,10 +604,10 @@
                 name: '@'
             },
             controller: [
-                'tubularEditorService', '$scope', function (tubular, $scope) {
+                'tubularEditorService', '$scope', (tubular, $scope) => {
                     var $ctrl = this;
 
-                    $ctrl.$onInit = function () { tubular.setupScope($scope, null, $ctrl, true); };
+                    $ctrl.$onInit = () => tubular.setupScope($scope, null, $ctrl, true);
                 }
             ]
         })
@@ -664,7 +653,7 @@
                     $scope) {
                     var $ctrl = this;
 
-                    $ctrl.$onInit = function () {
+                    $ctrl.$onInit = () => {
                         $ctrl.required = false; // overwrite required to false always
                         $ctrl.checkedValue = angular.isDefined($ctrl.checkedValue) ? $ctrl.checkedValue : true;
                         $ctrl.uncheckedValue = angular.isDefined($ctrl.uncheckedValue) ? $ctrl.uncheckedValue : false;
@@ -740,9 +729,7 @@
                         }
                     };
 
-                    $ctrl.$onInit = function () {
-                        tubular.setupScope($scope, null, $ctrl, false);
-                    };
+                    $ctrl.$onInit = () =>tubular.setupScope($scope, null, $ctrl, false);
                 }
             ]
         });

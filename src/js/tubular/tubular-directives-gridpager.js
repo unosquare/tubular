@@ -17,18 +17,16 @@
             templateUrl: 'tbGridPager.tpl.html',
             scope: true,
             terminal: false,
-            controller: ['$scope', function ($scope) {
+            controller: ['$scope', $scope => {
                     var $ctrl = this;
 
-                    $scope.$watch('$ctrl.$component.currentPage', function () {
+                    $scope.$watch('$ctrl.$component.currentPage', () => {
                         if ($ctrl.$component.currentPage !== $ctrl.$component.requestedPage) {
                             $ctrl.$component.requestedPage = $ctrl.$component.currentPage;
                         }
                     });
 
-                    $ctrl.pagerPageChanged = function () {
-                        $ctrl.$component.requestedPage = $ctrl.$component.currentPage;
-                    };
+                    $ctrl.pagerPageChanged = () => $ctrl.$component.requestedPage = $ctrl.$component.currentPage;
                 }
             ]
         })
@@ -49,10 +47,10 @@
                 cssClass: '@?'
             },
             controller: [
-                '$scope', function ($scope) {
+                '$scope', $scope => {
                     var $ctrl = this;
 
-                    $ctrl.fixCurrentTop = function () {
+                    $ctrl.fixCurrentTop = () => {
                         $ctrl.currentTop = $ctrl.$component.pageSize * $ctrl.$component.currentPage;
                         $ctrl.currentInitial = (($ctrl.$component.currentPage - 1) * $ctrl.$component.pageSize) + 1;
 
@@ -75,7 +73,7 @@
                         }
                     };
 
-                    $scope.$watch('$ctrl.$component.filteredRecordCount', function () {
+                    $scope.$watch('$ctrl.$component.filteredRecordCount', () => {
                         $ctrl.filtered = $ctrl.$component.totalRecordCount !== $ctrl.$component.filteredRecordCount;
                         $ctrl.fixCurrentTop();
                     });

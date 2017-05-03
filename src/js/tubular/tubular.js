@@ -12,7 +12,7 @@
      */
     angular.module('tubular', ['tubular.directives', 'tubular.services', 'tubular.models'])
         .config([
-            '$httpProvider', function ($httpProvider) {
+            '$httpProvider', $httpProvider => {
                 $httpProvider.interceptors.push('tubularAuthInterceptor');
                 $httpProvider.interceptors.push('tubularNoCacheInterceptor');
             }
@@ -28,8 +28,8 @@
          * @param {object} input Input to filter.
          * @returns {string} Formatted error message.
          */
-        .filter('errormessage', function () {
-            return function (input) {
+        .filter('errormessage', () => {
+            return input => {
                 if (angular.isDefined(input) && angular.isDefined(input.data) &&
                     input.data &&
                     angular.isDefined(input.data.ExceptionMessage)) {
@@ -50,22 +50,15 @@
         .filter('numberorcurrency', [
             'numberFilter',
             'currencyFilter',
-            function (
-                numberFilter,
-                currencyFilter) {
-                return function (input, format, symbol, fractionSize) {
+            (numberFilter, currencyFilter) => {
+                return (input, format, symbol, fractionSize) => {
                     fractionSize = fractionSize || 2;
 
                     if (format === 'C') {
                         return currencyFilter(input, symbol || '$', fractionSize);
                     }
 
-                    if (format === 'I') {
-                        return parseInt(input);
-                    }
-
-                    // default to decimal
-                    return numberFilter(input, fractionSize);
+                    return format === 'I' ? parseInt(input) : numberFilter(input, fractionSize);
                 };
             }
         ])
@@ -78,14 +71,8 @@
          * `moment` is a filter to call format from moment or, if the input is a Date, call Angular's `date` filter.
          */
         .filter('moment', [
-            'dateFilter', function (dateFilter) {
-                return function (input, format) {
-                    if (moment.isMoment(input)) {
-                        return input.format(format || 'M/DD/YYYY');
-                    }
-
-                    return dateFilter(input);
-                };
+            'dateFilter', dateFilter => {
+                return (input, format) => moment.isMoment(input) ? input.format(format || 'M/DD/YYYY') : dateFilter(input);
             }
         ]);
 })(angular, moment);

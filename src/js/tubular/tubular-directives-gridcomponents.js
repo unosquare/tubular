@@ -27,10 +27,10 @@
                 legend: '@',
                 icon: '@'
             },
-            controller: function () {
+            controller: () => {
                 var $ctrl = this;
 
-                $ctrl.$onInit = function () {
+                $ctrl.$onInit = () => {
                     $ctrl.showIcon = angular.isDefined($ctrl.icon);
                     $ctrl.showCaption = !($ctrl.showIcon && angular.isUndefined($ctrl.caption));
 
@@ -71,10 +71,10 @@
                         cancelCss: '@'
                     },
                     controller: [
-                        '$scope', function ($scope) {
+                        '$scope', $scope => {
                             $scope.isNew = $scope.isNew || false;
 
-                            $scope.save = function () {
+                            $scope.save = () => {
                                 if ($scope.isNew) {
                                     $scope.model.$isNew = true;
                                 }
@@ -90,8 +90,8 @@
                                     return;
                                 }
 
-                                $scope.currentRequest.then(
-                                    function (data) {
+                                $scope.currentRequest
+                                    .then(data => {
                                         $scope.model.$isEditing = false;
 
                                         if (angular.isDefined($scope.model.$component) &&
@@ -101,14 +101,10 @@
                                         }
 
                                         $scope.$emit('tbGrid_OnSuccessfulSave', data, $scope.model.$component);
-                                    }, function (error) {
-                                        $scope.$emit('tbGrid_OnConnectionError', error);
-                                    });
+                                    }, error => $scope.$emit('tbGrid_OnConnectionError', error));
                             };
 
-                            $scope.cancel = function () {
-                                $scope.model.revertChanges();
-                            };
+                            $scope.cancel = () => $scope.model.revertChanges();
                         }
                     ]
                 };
@@ -134,10 +130,10 @@
                 model: '=',
                 caption: '@'
             },
-            controller: function () {
+            controller: () => {
                 var $ctrl = this;
 
-                $ctrl.edit = function () {
+                $ctrl.edit = () => {
                     if ($ctrl.$component.editorMode === 'popup') {
                         $ctrl.model.editPopup();
                     } else {
@@ -171,9 +167,7 @@
                 options: '=?'
             },
             controller: [
-                '$scope', function ($scope) {
-                    $scope.options = angular.isDefined($scope.$ctrl.options) ? $scope.$ctrl.options : [10, 20, 50, 100];
-                }
+                '$scope', $scope => $scope.options = angular.isDefined($scope.$ctrl.options) ? $scope.$ctrl.options : [10, 20, 50, 100]
             ]
         })
         /**
@@ -202,16 +196,12 @@
                 captionMenuCurrent: '@',
                 captionMenuAll: '@'
             },
-            controller: ['tubularGridExportService', function (tubular) {
+            controller: ['tubularGridExportService', tubular => {
                 var $ctrl = this;
 
-                $ctrl.downloadCsv = function () {
-                    tubular.exportGridToCsv($ctrl.filename, $ctrl.$component);
-                };
+                $ctrl.downloadCsv = () => tubular.exportGridToCsv($ctrl.filename, $ctrl.$component);
 
-                $ctrl.downloadAllCsv = function () {
-                    tubular.exportAllGridToCsv($ctrl.filename, $ctrl.$component);
-                };
+                $ctrl.downloadAllCsv = () => tubular.exportAllGridToCsv($ctrl.filename, $ctrl.$component);
             }]
         })
         /**
@@ -236,12 +226,10 @@
                 printCss: '@',
                 caption: '@'
             },
-            controller: ['tubularGridExportService', function (tubular) {
+            controller: ['tubularGridExportService', tubular => {
                 var $ctrl = this;
 
-                $ctrl.printGrid = function () {
-                    tubular.printGrid($ctrl.$component, $ctrl.printCss, $ctrl.title);
-                };
+                $ctrl.printGrid = () => tubular.printGrid($ctrl.$component, $ctrl.printCss, $ctrl.title);
             }]
         });
 })(angular);

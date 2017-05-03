@@ -20,11 +20,11 @@
          * The `tubularModel` factory is the base to generate a row model to use with `tbGrid` and `tbForm`.
          */
         .factory('tubularModel', ['tubularHttp', function (tubularHttp) {
-            return function ($scope, $ctrl, data) {
+            return ($scope, $ctrl, data) => {
                 var obj = {
                     $key: '',
                     $fields: [],
-                    $addField: function (key, value, ignoreOriginal) {
+                    $addField: (key, value, ignoreOriginal) => {
                         if (this.$fields.indexOf(key) >= 0) return;
                         this[key] = value;
                         this.$fields.push(key);
@@ -38,9 +38,7 @@
 
                         this.$state = this.$state || {};
 
-                        $scope.$watch(function () {
-                            return obj[key];
-                        }, function (newValue, oldValue) {
+                        $scope.$watch(() => obj[key], (newValue, oldValue) => {
                             if (newValue === oldValue) return;
                             obj.$hasChanges = obj[key] !== obj.$original[key];
                         });
@@ -48,13 +46,11 @@
                 };
 
                 if (angular.isArray(data) === false) {
-                    angular.forEach(Object.keys(data), function (name) {
-                        obj.$addField(name, data[name]);
-                    });
+                    angular.forEach(data, (v,k) => obj.$addField(k, v));
                 }
 
                 if (angular.isDefined($ctrl.columns)) {
-                    angular.forEach($ctrl.columns, function (col, key) {
+                    angular.forEach($ctrl.columns, (col, key) => {
                         var value = angular.isDefined(data[key]) ? data[key] : data[col.Name];
 
                         if (angular.isUndefined(value) && data[key] === 0) {
@@ -84,10 +80,10 @@
                 obj.$selected = false;
                 obj.$isNew = false;
 
-                obj.$valid = function () {
+                obj.$valid = () => {
                     var valid = true;
 
-                    angular.forEach(obj.$state, function (val) {
+                    angular.forEach(obj.$state, val => {
                         if (angular.isUndefined(val) || val.$valid()) return;
 
                         valid = false;
@@ -97,7 +93,7 @@
                 };
 
                 // Returns a save promise
-                obj.save = function (forceUpdate) {
+                obj.save = forceUpdate => {
                     if (angular.isUndefined($ctrl.serverSaveUrl) || $ctrl.serverSaveUrl == null) {
                         throw 'Define a Save URL.';
                     }
@@ -114,7 +110,7 @@
                     });
                 };
 
-                obj.edit = function () {
+                obj.edit = () => {
                     if (obj.$isEditing && obj.$hasChanges) {
                         obj.save();
                     }
@@ -122,18 +118,12 @@
                     obj.$isEditing = !obj.$isEditing;
                 };
 
-                obj.delete = function () {
-                    $ctrl.deleteRow(obj);
-                };
+                obj.delete = () => $ctrl.deleteRow(obj);;
 
-                obj.resetOriginal = function () {
-                    angular.forEach(obj.$original, function (k) {
-                        obj.$original[k] = obj[k];
-                    });
-                };
+                obj.resetOriginal = () => angular.forEach(obj.$original, (v, k) => obj.$original[k] = obj[k]);
 
-                obj.revertChanges = function () {
-                    angular.forEach(Object.keys(obj), function (k) {
+                obj.revertChanges = () => {
+                    angular.forEach(obj, (v, k) => {
                         if (k[0] === '$' || angular.isUndefined(obj.$original[k])) {
                             return;
                         }

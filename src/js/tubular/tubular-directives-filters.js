@@ -17,13 +17,11 @@
                 $columnOptionsFilter: '^?tbColumnOptionsFilter'
             },
             templateUrl: 'tbColumnFilterButtons.tpl.html',
-            controller: ['$scope', function ($scope) {
+            controller: ['$scope', $scope => {
                 var $ctrl = this;
 
-                $ctrl.$onInit = function () {
-                    // Set currentFilter to either one of the parent components or for when this template is being rendered by $compile
-                    $ctrl.currentFilter = $ctrl.$columnFilter || $ctrl.$columnDateTimeFilter || $ctrl.$columnOptionsFilter || $scope.$parent.$ctrl;
-                };
+                // Set currentFilter to either one of the parent components or for when this template is being rendered by $compile
+                $ctrl.$onInit = () =>  $ctrl.currentFilter = $ctrl.$columnFilter || $ctrl.$columnDateTimeFilter || $ctrl.$columnOptionsFilter || $scope.$parent.$ctrl;
             }
             ]
         })
@@ -40,10 +38,10 @@
                 $component: '^tbGrid'
             },
             templateUrl: 'tbColumnSelector.tpl.html',
-            controller: ['$uibModal', function ($modal) {
+            controller: ['$uibModal', $modal => {
                 var $ctrl = this;
 
-                $ctrl.openColumnsSelector = function () {
+                $ctrl.openColumnsSelector = () => {
                     var model = $ctrl.$component.columns;
 
                     var dialog = $modal.open({
@@ -51,12 +49,9 @@
                         backdropClass: 'fullHeight',
                         animation: false,
                         controller: [
-                            '$scope', function ($innerScope) {
+                            '$scope', $innerScope => {
                                 $innerScope.Model = model;
-                                $innerScope.isInvalid = function () {
-                                    return $innerScope.Model.filter(function (el) { return el.Visible; }).length === 1;
-                                };
-
+                                $innerScope.isInvalid = () => $innerScope.Model.filter(el => el.Visible).length === 1;
                                 $innerScope.closePopup = dialog.close;
                             }
                         ]
@@ -95,10 +90,10 @@
                 onlyContains: '=?'
             },
             controller: [
-                '$scope', 'tubularTemplateService', function ($scope, tubular) {
+                '$scope', 'tubularTemplateService', ($scope, tubular) => {
                     var $ctrl = this;
 
-                    $ctrl.$onInit = function () {
+                    $ctrl.$onInit = () => {
                         $ctrl.onlyContains = angular.isUndefined($ctrl.onlyContains) ? false : $ctrl.onlyContains;
                         $ctrl.templateName = 'tbColumnFilterPopover.tpl.html';
                         tubular.setupFilter($scope, $ctrl);
@@ -134,10 +129,10 @@
                 title: '@'
             },
             controller: [
-                '$scope', 'tubularTemplateService', function ($scope, tubular) {
+                '$scope', 'tubularTemplateService', ($scope, tubular) => {
                     var $ctrl = this;
 
-                    $ctrl.$onInit = function () {
+                    $ctrl.$onInit = () => {
                         $ctrl.templateName = tubular.tbColumnDateTimeFilterPopoverTemplateName;
                         tubular.setupFilter($scope, $ctrl);
                     };
@@ -170,10 +165,10 @@
                 title: '@'
             },
             controller: [
-                '$scope', 'tubularTemplateService', 'tubularHttp', function ($scope, tubular, tubularHttp) {
+                '$scope', 'tubularTemplateService', 'tubularHttp', ($scope, tubular, tubularHttp) => {
                     var $ctrl = this;
 
-                    $ctrl.getOptionsFromUrl = function () {
+                    $ctrl.getOptionsFromUrl = () => {
                         if ($ctrl.dataIsLoaded) {
                             $scope.$apply();
                             return;
@@ -182,15 +177,13 @@
                         tubularHttp.retrieveDataAsync({
                             serverUrl: $ctrl.filter.OptionsUrl,
                             requestMethod: 'GET'
-                        }).then(function (data) {
+                        }).then(data => {
                                 $ctrl.optionsItems = data;
                                 $ctrl.dataIsLoaded = true;
-                            }, function (error) {
-                                $scope.$emit('tbGrid_OnConnectionError', error);
-                            });
+                            }, error => $scope.$emit('tbGrid_OnConnectionError', error));
                     };
 
-                    $ctrl.$onInit = function () {
+                    $ctrl.$onInit = () => {
                         $ctrl.dataIsLoaded = false;
                         $ctrl.templateName = 'tbColumnOptionsFilter.tpl.html';
                         tubular.setupFilter($scope, $ctrl);
