@@ -9,7 +9,7 @@
          * @description
          * Use `tubularHttp` to connect a grid or a form to a HTTP Resource. Internally this service is
          * using `$http` to make all the request.
-         * 
+         *
          * This service provides authentication using bearer-tokens. Based on https://bitbucket.org/david.antaramian/so-21662778-spa-authentication-example
          */
         .service('tubularHttp', [
@@ -157,7 +157,7 @@
                     delete clone.$isNew;
 
                     if (model.$isNew) {
-                        request.serverUrl = me.addTimeZoneToUrl(request.serverUrl);
+                        request.serverUrl = addTimeZoneToUrl(request.serverUrl);
                         request.data = clone;
                     } else {
                         request.data = {
