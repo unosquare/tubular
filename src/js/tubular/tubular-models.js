@@ -19,8 +19,8 @@
          * @description
          * The `tubularModel` factory is the base to generate a row model to use with `tbGrid` and `tbForm`.
          */
-        .factory('tubularModel', function () {
-            return function ($scope, $ctrl, data, dataService) {
+        .factory('tubularModel', ['tubularHttp', function (tubularHttp) {
+            return function ($scope, $ctrl, data) {
                 var obj = {
                     $key: '',
                     $fields: [],
@@ -98,10 +98,6 @@
 
                 // Returns a save promise
                 obj.save = function (forceUpdate) {
-                    if (angular.isUndefined(dataService) || dataService == null) {
-                        throw 'Define DataService to your model.';
-                    }
-
                     if (angular.isUndefined($ctrl.serverSaveUrl) || $ctrl.serverSaveUrl == null) {
                         throw 'Define a Save URL.';
                     }
@@ -112,7 +108,7 @@
 
                     obj.$isLoading = true;
 
-                    return dataService.saveDataAsync(obj, {
+                    return tubularHttp.saveDataAsync(obj, {
                         serverUrl: $ctrl.serverSaveUrl,
                         requestMethod: obj.$isNew ? ($ctrl.serverSaveMethod || 'POST') : 'PUT'
                     });
@@ -150,5 +146,5 @@
 
                 return obj;
             };
-        });
+        }]);
 })(angular, moment);

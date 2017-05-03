@@ -39,10 +39,9 @@
                 onClick: '=?'
             },
             controller: [
-                '$scope', 'tubularHttp', '$timeout', function ($scope, tubularHttp, $timeout) {
+                '$scope', '$http', '$timeout', function ($scope, $http, $timeout) {
                     var $ctrl = this;
 
-                    $ctrl.dataService = tubularHttp.getDataService($ctrl.dataServiceName);
                     $ctrl.showLegend = angular.isUndefined($ctrl.showLegend) ? true : $ctrl.showLegend;
                     $ctrl.chartType = $ctrl.chartType || 'line';
 
@@ -81,13 +80,15 @@
                         // TODO: Set requireAuthentication
                         $ctrl.hasError = false;
 
-                        tubularHttp.get($ctrl.serverUrl).then($ctrl.handleData, function (error) {
+                        $http.get($ctrl.serverUrl).then($ctrl.handleData, function (error) {
                             $scope.$emit('tbChart_OnConnectionError', error);
                             $ctrl.hasError = true;
                         });
                     };
 
-                    $ctrl.handleData = function (data) {
+                    $ctrl.handleData = function (response) {
+                        var data = response.data;
+
                         if (!data || !data.Data || data.Data.length === 0) {
                             $ctrl.isEmpty = true;
                             $ctrl.options.series = [{ data: [] }];

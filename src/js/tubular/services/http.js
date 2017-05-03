@@ -118,7 +118,8 @@
                     });
                 };
 
-                me.initAuth = function (data, username) {
+                // TODO: make private this function
+                me.initAuth = function(data, username) {
                     me.userData.isAuthenticated = true;
                     me.userData.username = data.userName || username || me.userData.username;
                     me.userData.bearerToken = data.access_token;
@@ -130,7 +131,7 @@
                     $window.localStorage.setItem(prefix + authData, angular.toJson(me.userData));
                 };
 
-                me.addTimeZoneToUrl = function (url) {
+                function addTimeZoneToUrl(url) {
                     return url +
                         (url.indexOf('?') === -1 ? '?' : '&') +
                         'timezoneOffset=' +
@@ -173,11 +174,6 @@
 
                             return data;
                         });
-                };
-
-                me.getExpirationDate = function () {
-                    const date = new Date();
-                    return new Date(date.getTime() + 5 * 60000); // Add 5 minutes
                 };
 
                 me.retrieveDataAsync = function (request) {
@@ -225,98 +221,6 @@
 
                         return $q.reject(error);
                     });
-                };
-
-                me.get = function (url, params) {
-                    if (!tubularConfig.webApi.enableRefreshTokens()) {
-                        if (tubularConfig.webApi.requireAuthentication() && !me.isAuthenticated()) {
-
-                            // Return empty dataset
-                            return $q(function (resolve) { resolve(null); });
-                        }
-                    }
-
-                    return $http.get(url, params)
-                        .then(function (data) { return data.data; });
-                };
-
-                me.getBinary = function (url) {
-                    return me.get(url, { responseType: 'arraybuffer' });
-                };
-
-                me.delete = function (url) {
-                    return me.retrieveDataAsync({
-                        serverUrl: url,
-                        requestMethod: 'DELETE'
-                    });
-                };
-
-                me.post = function (url, data) {
-                    return me.retrieveDataAsync({
-                        serverUrl: url,
-                        requestMethod: 'POST',
-                        data: data
-                    });
-                };
-
-                /*
-                 * @function postBinary
-                 * 
-                 * @description
-                 * Allow to post a `FormData` object with `$http`. You need to append the files
-                 * in your own FormData.
-                 */
-                me.postBinary = function (url, formData) {
-                    if (!tubularConfig.webApi.enableRefreshTokens()) {
-                        if (tubularConfig.webApi.requireAuthentication() && !me.isAuthenticated()) {
-                            // Return empty dataset
-                            return $q(function (resolve) { resolve(null); });
-                        }
-                    }
-
-                    return $http({
-                        url: url,
-                        method: 'POST',
-                        headers: { 'Content-Type': undefined },
-                        transformRequest: function (data) { return data; },
-                        data: formData
-                    });
-                };
-
-                me.put = function (url, data) {
-                    return me.retrieveDataAsync({
-                        serverUrl: url,
-                        requestMethod: 'PUT',
-                        data: data
-                    });
-                };
-
-                me.getByKey = function (url, key) {
-                    const urlData = me.addTimeZoneToUrl(url).split('?');
-                    var getUrl = urlData[0] + key;
-
-                    if (urlData.length > 1) {
-                        getUrl += '?' + urlData[1];
-                    }
-
-                    return me.get(getUrl);
-                };
-
-                // This is a kind of factory to retrieve a DataService
-                me.instances = [];
-
-                me.registerService = function (name, instance) {
-                    me.instances[name] = instance;
-                };
-
-                me.getDataService = function (name) {
-                    if (angular.isUndefined(name) || name == null || name === 'tubularHttp') {
-                        return me;
-                    }
-
-                    const instance = me.instances[name];
-
-                    return instance == null ? me : instance;
                 };
 
                 init();

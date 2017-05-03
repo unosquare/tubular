@@ -5,13 +5,14 @@
         .controller('tbChartJsController',
         [
             '$scope',
+            '$http',
             'tubularHttp',
             function (
                 $scope,
+                $http,
                 tubularHttp) {
                 var $ctrl = this;
 
-                $ctrl.dataService = tubularHttp.getDataService($ctrl.dataServiceName);
                 $ctrl.showLegend = angular.isUndefined($ctrl.showLegend) ? true : $ctrl.showLegend;
                 $ctrl.chartType = $ctrl.chartType || 'line';
 
@@ -22,8 +23,10 @@
 
                 $ctrl.loadData = function() {
                     // TODO: Set requireAuthentication
-                    tubularHttp.get($ctrl.serverUrl)
-                        .then(function(data) {
+                    $http.get($ctrl.serverUrl)
+                        .then(function(response) {
+                            var data = response.data;
+
                                 if (!data || !data.Data || data.Data.length === 0) {
                                     $ctrl.isEmpty = true;
                                     if (!$ctrl.options) $ctrl.options = {};

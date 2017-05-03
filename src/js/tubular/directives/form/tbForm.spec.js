@@ -49,9 +49,6 @@ describe('Module: tubular.directives', function () {
         it('should set name', function () {
             expect(isolated.name).toBe('nombre_de_forma');
         });
-        it('should set data service name', function () {
-            expect(isolated.dataServiceName).toBe('local');
-        });
         it('should set model key', function () {
             expect(isolated.modelKey).toBe('1');
         });

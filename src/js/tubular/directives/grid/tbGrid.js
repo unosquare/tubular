@@ -17,7 +17,6 @@
          * @param {int} pageSize Define how many records to show in a page, default 20.
          * @param {function} onBeforeGetData Callback to execute before to get data from service.
          * @param {string} requestMethod Set HTTP Method to get data.
-         * @param {string} serviceName Define Data service (name) to retrieve data, defaults `tubularHttp`.
          * @param {bool} requireAuthentication Set if authentication check must be executed, default true.
          * @param {string} gridName Grid's name, used to store metainfo in localstorage.
          * @param {string} editorMode Define if grid is read-only or it has editors (inline or popup).
@@ -39,7 +38,6 @@
                 pageSize: '=?',
                 onBeforeGetData: '=?',
                 requestMethod: '@',
-                dataServiceName: '@?serviceName',
                 requireAuthentication: '@?',
                 name: '@?gridName',
                 editorMode: '@?',

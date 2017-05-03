@@ -170,7 +170,7 @@
                 title: '@'
             },
             controller: [
-                '$scope', 'tubularTemplateService', function ($scope, tubular) {
+                '$scope', 'tubularTemplateService', 'tubularHttp', function ($scope, tubular, tubularHttp) {
                     var $ctrl = this;
 
                     $ctrl.getOptionsFromUrl = function () {
@@ -179,7 +179,7 @@
                             return;
                         }
 
-                        $ctrl.$component.dataService.retrieveDataAsync({
+                        tubularHttp.retrieveDataAsync({
                             serverUrl: $ctrl.filter.OptionsUrl,
                             requestMethod: 'GET'
                         }).then(function (data) {

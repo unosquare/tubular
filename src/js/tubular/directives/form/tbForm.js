@@ -9,7 +9,7 @@
          * @restrict E
          *
          * @description
-         * The `tbForm` directive is the base to create any form powered by Tubular. Define `dataService` and 
+         * The `tbForm` directive is the base to create any form powered by Tubular. Define 
          * `modelKey` to auto-load a record. The `serverSaveUrl` can be used to create a new or update
          * an existing record.
          * 
@@ -25,7 +25,6 @@
          * @param {object} model The object model to show in the form.
          * @param {string} modelKey Defines the fields to use like Keys.
          * @param {string} formName Defines the form name.
-         * @param {string} serviceName Define Data service (name) to retrieve data, defaults `tubularHttp`.
          * @param {bool} requireAuthentication Set if authentication check must be executed, default true.
          */
         .directive('tbForm',
@@ -42,7 +41,6 @@
                         serverSaveUrl: '@',
                         serverSaveMethod: '@',
                         modelKey: '@?',
-                        dataServiceName: '@?serviceName',
                         requireAuthentication: '=?',
                         name: '@?formName'
                     },

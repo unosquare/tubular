@@ -1,4 +1,4 @@
-﻿(function(angular) {
+﻿(function (angular) {
     'use strict';
 
     angular.module('tubular.directives')
@@ -10,7 +10,7 @@
             '$element',
             'tubularEditorService',
             'tubularModel',
-            'tubularHttp',
+            '$http',
             function (
                 $scope,
                 $routeParams,
@@ -18,12 +18,11 @@
                 $element,
                 tubular,
                 TubularModel,
-                tubularHttp) {
+                $http) {
                 // we need this to find the parent of a field
                 $scope.tubularDirective = 'tubular-form';
                 $scope.hasFieldsDefinitions = false;
                 $scope.fields = [];
-                $scope.dataService = tubularHttp.getDataService($scope.dataServiceName);
 
                 var $ctrl = this;
 
@@ -32,7 +31,7 @@
 
                 // This method is meant to provide a reference to the Angular Form
                 // so we can get information about: $pristine, $dirty, $submitted, etc.
-                $scope.getFormScope = function() {
+                $scope.getFormScope = function () {
                     return $scope[$element.attr('name')];
                 };
 
@@ -42,7 +41,7 @@
                     : $scope.requireAuthentication;
 
                 $scope.$watch('hasFieldsDefinitions',
-                    function(newVal) {
+                    function (newVal) {
                         if (newVal !== true) {
                             return;
                         }
@@ -50,11 +49,11 @@
                         $ctrl.retrieveData();
                     });
 
-                $scope.cloneModel = function(model) {
+                $scope.cloneModel = function (model) {
                     var data = {};
 
                     angular.forEach(model,
-                        function(value, key) {
+                        function (value, key) {
                             if (key[0] === '$') {
                                 return;
                             }
@@ -62,18 +61,29 @@
                             data[key] = value;
                         });
 
-                    $scope.model = new TubularModel($scope, $scope, data, $scope.dataService);
+                    $scope.model = new TubularModel($scope, $scope, data);
                     $ctrl.bindFields();
                 };
 
-                $ctrl.bindFields = function() {
+                $ctrl.bindFields = function () {
                     angular.forEach($scope.fields,
-                        function(field) {
+                        function (field) {
                             field.bindScope();
                         });
                 };
 
-                $ctrl.retrieveData = function() {
+                function getUrlWithKey() {
+                    const urlData = $scope.serverUrl.split('?');
+                    var getUrl = urlData[0] + $scope.modelKey;
+
+                    if (urlData.length > 1) {
+                        getUrl += '?' + urlData[1];
+                    }
+
+                    return getUrl;
+                }
+
+                $ctrl.retrieveData = function () {
                     // Try to load a key from markup or route
                     $scope.modelKey = $scope.modelKey || $routeParams.param;
 
@@ -82,49 +92,49 @@
                             $scope.modelKey != null &&
                             $scope.modelKey !== '') {
                             // TODO: Set requireAuthentication
-                            $scope.dataService.getByKey($scope.serverUrl, $scope.modelKey).then(
-                                    function(data) {
-                                        $scope.model = new TubularModel($scope, $scope, data, $scope.dataService);
-                                        $ctrl.bindFields();
-                                    },
-                                    function(error) {
-                                        $scope.$emit('tbForm_OnConnectionError', error);
-                                    });
+                            $http.get(getUrlWithKey()).then(
+                                function (response) {
+                                    var data = response.data;
+                                    $scope.model = new TubularModel($scope, $scope, data);
+                                    $ctrl.bindFields();
+                                },
+                                function (error) {
+                                    $scope.$emit('tbForm_OnConnectionError', error);
+                                });
                         } else {
                             // TODO: Set requireAuthentication
-                            $scope.dataService.get(tubularHttp.addTimeZoneToUrl($scope.serverUrl)).then(
-                                    function(data) {
-                                        if (angular.isDefined($scope.model) &&
-                                            angular.isDefined($scope.model.$component)) {
-                                            $scope
-                                                .model = new
-                                                TubularModel($scope,
-                                                    $scope.model.$component,
-                                                    data,
-                                                    $scope.model.$component.dataService);
-                                        } else {
-                                            $scope.model = new TubularModel($scope, $scope, data, $scope.dataService);
-                                        }
+                            $http.get($scope.serverUrl).then(function (response) {
+                                var data = response.data;
 
-                                        $ctrl.bindFields();
-                                        $scope.model.$isNew = true;
-                                    },
-                                    function(error) {
-                                        $scope.$emit('tbForm_OnConnectionError', error);
-                                    });
+                                if (angular.isDefined($scope.model) &&
+                                    angular.isDefined($scope.model.$component)) {
+                                    $scope
+                                        .model = new
+                                            TubularModel($scope,
+                                            $scope.model.$component,
+                                            data);
+                                } else {
+                                    $scope.model = new TubularModel($scope, $scope, data);
+                                }
+
+                                $ctrl.bindFields();
+                                $scope.model.$isNew = true;
+                            }, function (error) {
+                                $scope.$emit('tbForm_OnConnectionError', error);
+                            });
                         }
 
                         return;
                     }
 
                     if (angular.isUndefined($scope.model)) {
-                        $scope.model = new TubularModel($scope, $scope, {}, $scope.dataService);
+                        $scope.model = new TubularModel($scope, $scope, {});
                     }
 
                     $ctrl.bindFields();
                 };
 
-                $scope.save = function(forceUpdate, keepData) {
+                $scope.save = function (forceUpdate, keepData) {
                     if (!$scope.model.$valid()) {
                         return;
                     }
@@ -137,27 +147,27 @@
                     }
 
                     $scope.currentRequest.then(
-                            function(data) {
-                                if (angular.isDefined($scope.model.$component) &&
-                                    $scope.model.$component.autoRefresh) {
-                                    $scope.model.$component.retrieveData();
-                                }
+                        function (data) {
+                            if (angular.isDefined($scope.model.$component) &&
+                                $scope.model.$component.autoRefresh) {
+                                $scope.model.$component.retrieveData();
+                            }
 
-                                $scope.$emit('tbForm_OnSuccessfulSave', data, $scope);
+                            $scope.$emit('tbForm_OnSuccessfulSave', data, $scope);
 
-                                if (!keepData) {
-                                    $scope.clear();
-                                }
+                            if (!keepData) {
+                                $scope.clear();
+                            }
 
-                                var formScope = $scope.getFormScope();
-                                if (formScope) {
-                                    formScope.$setPristine();
-                                }
-                            },
-                            function(error) {
-                                $scope.$emit('tbForm_OnConnectionError', error, $scope);
-                            })
-                        .then(function() {
+                            var formScope = $scope.getFormScope();
+                            if (formScope) {
+                                formScope.$setPristine();
+                            }
+                        },
+                        function (error) {
+                            $scope.$emit('tbForm_OnConnectionError', error, $scope);
+                        })
+                        .then(function () {
                             $scope.model.$isLoading = false;
                             $scope.currentRequest = null;
                         });
@@ -166,19 +176,19 @@
                 // alias to save
                 $scope.update = $scope.save;
 
-                $scope.create = function() {
+                $scope.create = function () {
                     $scope.model.$isNew = true;
                     $scope.save();
                 };
 
-                $scope.cancel = function() {
+                $scope.cancel = function () {
                     $scope.$emit('tbForm_OnCancel', $scope.model);
                     $scope.clear();
                 };
 
-                $scope.clear = function() {
+                $scope.clear = function () {
                     angular.forEach($scope.fields,
-                        function(field) {
+                        function (field) {
                             if (field.resetEditor) {
                                 field.resetEditor();
                             } else {
@@ -188,19 +198,18 @@
                         });
                 };
 
-                $scope.finishDefinition = function() {
-                    var timer = $timeout(function() {
-                            $scope.hasFieldsDefinitions = true;
+                $scope.finishDefinition = function () {
+                    var timer = $timeout(function () {
+                        $scope.hasFieldsDefinitions = true;
 
-                            if ($element.find('input').length) {
-                                $element.find('input')[0].focus();
-                            }
-                        },
-                        0);
+                        if ($element.find('input').length) {
+                            $element.find('input')[0].focus();
+                        }
+                    }, 0);
 
                     $scope.$emit('tbForm_OnGreetParentController', { controller: $ctrl, scope: $scope });
 
-                    $scope.$on('$destroy', function() { $timeout.cancel(timer); });
+                    $scope.$on('$destroy', function () { $timeout.cancel(timer); });
                 };
             }
         ]);

@@ -8,8 +8,8 @@ describe('Module: tubular.directives', function () {
         beforeEach(function () {
             module('tubular.directives');
             module(function ($provide) {
-                tubularHttp = jasmine.createSpyObj('tubularHttp', ['getDataService']);
-                tubularModel = jasmine.createSpyObj('tubularModel', ['get', 'getByKey', 'registerService', 'retrieveDataAsync']);
+                tubularHttp = jasmine.createSpyObj('tubularHttp', ['isAuthenticated']);
+                tubularModel = jasmine.createSpyObj('tubularModel', ['get', 'getByKey', 'retrieveDataAsync']);
                 tubularEditorService = jasmine.createSpyObj('tubularEditorService', ['getUniqueTbFormName']);
                 $routeParams = jasmine.createSpyObj('$routeParams', ['name']);
                 $element = jasmine.createSpyObj('$element', ['name', 'find']);

@@ -25,9 +25,7 @@ describe('Module: tubular.directives', () => {
 
                 $provide.value('tubularModel', tubularModel);
                 $provide.value('$routeParams', $routeParams);
-
-            })
-
+            });
         })
 
         beforeEach(inject((_$controller_, $rootScope, _tubularPopupService_, _tubularHttp_) => {
@@ -152,10 +150,6 @@ describe('Module: tubular.directives', () => {
 
             it('should have isEmpty', () => {
                 expect(sut.isEmpty).toBe(false);
-            })
-
-            it('should have dataService', () => {
-                expect(sut.dataService).toBeDefined();
             })
 
             it('should have tempRow', () => {
@@ -505,20 +499,20 @@ describe('Module: tubular.directives', () => {
                 };
             });
 
-            it('should getFullDataSource', () => {
+            xit('should getFullDataSource', () => {
                sut.getFullDataSource().then((data) => {
                     expect(data).toBe(payload);
                 });                
             })
 
-            it('should emit error', () => {
+            xit('should emit error', () => {
                 valid = false;
                 sut.getFullDataSource().then().then(() => {
                     expect(scope.$emit).toHaveBeenCalledWith('tbGrid_OnConnectionError', 'Error');
                 });
             })
 
-            it('should nullify currentRequest', () => {
+            xit('should nullify currentRequest', () => {
                 expect(sut.currentRequest).toBe(null);
             })
         });

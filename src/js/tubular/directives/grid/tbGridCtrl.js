@@ -54,8 +54,7 @@
                     };
 
                     $ctrl.isEmpty = false;
-                    $ctrl.dataService = tubularHttp.getDataService($ctrl.dataServiceName);
-                    $ctrl.tempRow = new TubularModel($scope, $ctrl, {}, $ctrl.dataService);
+                    $ctrl.tempRow = new TubularModel($scope, $ctrl, {});
                     $ctrl.requireAuthentication = $ctrl.requireAuthentication ? ($ctrl.requireAuthentication === 'true') : true;
                     $ctrl.editorMode = $ctrl.editorMode || 'none';
                     $ctrl.canSaveState = false;
@@ -140,7 +139,7 @@
                 };
 
                 $ctrl.newRow = function (template, popup, size, data) {
-                    $ctrl.tempRow = new TubularModel($scope, $ctrl, data || {}, $ctrl.dataService);
+                    $ctrl.tempRow = new TubularModel($scope, $ctrl, data || {});
                     $ctrl.tempRow.$isNew = true;
                     $ctrl.tempRow.$isEditing = true;
                     $ctrl.tempRow.$component = $ctrl;
@@ -166,7 +165,7 @@
                         requireAuthentication: $ctrl.requireAuthentication
                     };
 
-                    $ctrl.currentRequest = $ctrl.dataService.retrieveDataAsync(request);
+                    $ctrl.currentRequest = tubularHttp.retrieveDataAsync(request);
 
                     $ctrl.currentRequest.then(
                         function (data) {
@@ -271,7 +270,7 @@
 
                     $scope.$emit('tbGrid_OnBeforeRequest', request, $ctrl);
 
-                    $ctrl.currentRequest = $ctrl.dataService.retrieveDataAsync(request);
+                    $ctrl.currentRequest = tubularHttp.retrieveDataAsync(request);
 
                     $ctrl.currentRequest.then($ctrl.processPayload, function (error) {
                         $ctrl.requestedPage = $ctrl.currentPage;
@@ -302,13 +301,13 @@
                     }
 
                     $ctrl.rows = data.Payload.map(function (el) {
-                        var model = new TubularModel($scope, $ctrl, el, $ctrl.dataService);
+                        var model = new TubularModel($scope, $ctrl, el);
                         model.$component = $ctrl;
 
                         model.editPopup = function (template, size) {
                             tubularPopupService
                                 .openDialog(template,
-                                new TubularModel($scope, $ctrl, el, $ctrl.dataService),
+                                new TubularModel($scope, $ctrl, el),
                                 $ctrl,
                                 size);
                         };
@@ -391,7 +390,7 @@
                         Operator: 'None'
                     };
 
-                    return $ctrl.dataService.retrieveDataAsync(request).then(
+                    return tubularHttp.retrieveDataAsync(request).then(
                         function (data) {
                             $ctrl.currentRequest = null;
                             return data.Payload;

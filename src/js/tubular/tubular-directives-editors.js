@@ -155,7 +155,7 @@
         }
     ];
 
-    const tbDropdownEditorCtrl = ['tubularEditorService', '$scope', function (tubular, $scope) {
+    const tbDropdownEditorCtrl = ['tubularEditorService', '$scope', 'tubularHttp', function (tubular, $scope, tubularHttp) {
         var $ctrl = this;
 
         $ctrl.$onInit = function () {
@@ -237,7 +237,7 @@
             var value = $ctrl.value;
             $ctrl.value = '';
 
-            $ctrl.$component.dataService.retrieveDataAsync({
+            tubularHttp.retrieveDataAsync({
                 serverUrl: $ctrl.optionsUrl,
                 requestMethod: $ctrl.optionsMethod || 'GET'
             }).then(function (data) {
@@ -546,9 +546,11 @@
                     controller: [
                         '$scope',
                         'tubularEditorService',
+                        'tubularHttp',
                         function (
                             $scope,
-                            tubular) {
+                            tubular,
+                            tubularHttp) {
                             tubular.setupScope($scope);
                             $scope.selectOptions = 'd for d in getValues($viewValue)';
                             $scope.lastSet = [];
@@ -578,7 +580,7 @@
                                     throw 'You need to define a parent Form or Grid';
                                 }
 
-                                var p = $scope.$component.dataService.retrieveDataAsync({
+                                var p = tubularHttp.retrieveDataAsync({
                                     serverUrl: $scope.optionsUrl + '?search=' + val,
                                     requestMethod: $scope.optionsMethod || 'GET'
                                 }).then(function (data) {

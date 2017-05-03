@@ -8,7 +8,6 @@ describe('Module: tubular.services', () => {
         beforeEach(() => {
             module('tubular.services');
             module(($filterProvider) => {
-
                 filter = jasmine.createSpy().and.returnValue('translated');
                 $filterProvider.register('translate', () => {
                     return filter;

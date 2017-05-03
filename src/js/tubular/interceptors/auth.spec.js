@@ -29,6 +29,7 @@ describe('Module: tubular.services', function () {
                 method: 'GET',
                 url: '/api/token'
             };
+            
             tubularConfig.webApi.tokenUrl('/api/token');
             tubularConfig.webApi.requireAuthentication(true);
             tubularHttp.userData.bearerToken = "yeah";

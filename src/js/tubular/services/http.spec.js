@@ -23,45 +23,8 @@ describe('Module: tubular.services', () => {
             expect(tubularHttp).toBeDefined();
         });
 
-        it('should get same instance ', () => {
-            expect(tubularHttp.getDataService()).toBe(tubularHttp);
-        });
-
         it('should be not authenticated ', () => {
             expect(tubularHttp.isAuthenticated()).toBe(false);
-        });
-
-        it('should retrieve a promise when GET', () => {
-            var getPromise = tubularHttp.get('/api/get');
-
-            expect(getPromise).toBeDefined();
-        });
-
-        it('should retrieve data when GET', done => {
-            $httpBackend.expectGET('/api/get').respond(200, { result: true });
-
-            tubularConfig.webApi.requireAuthentication(false);
-
-            tubularHttp.get('/api/get').then(data => {
-                expect(data).toBeDefined();
-                expect(data.result).toBe(true);
-                done();
-            }, error => expect(error).toBeUndefined());
-
-            $httpBackend.flush();
-        });
-
-        it('should not retrieve data when GET', done => {
-            $httpBackend.expectGET('/api/get').respond(500);
-
-            tubularConfig.webApi.requireAuthentication(false);
-
-            tubularHttp.get('/api/get').then(() => { }, error => {
-                expect(error).toBeDefined();
-                done();
-            });
-
-            $httpBackend.flush();
         });
 
         it('should authenticate', done => {
