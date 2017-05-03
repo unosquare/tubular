@@ -136,7 +136,7 @@
                         (url.indexOf('?') === -1 ? '?' : '&') +
                         'timezoneOffset=' +
                         new Date().getTimezoneOffset();
-                };
+                }
 
                 me.saveDataAsync = function (model, request) {
                     const component = model.$component;
