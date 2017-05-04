@@ -23,7 +23,7 @@
     "src/**/*",
     "LICENSE",
     "package.json",
-    "README.md",
+    "README.md"
   ],
   "license": "MIT",
   "dependencies": {
