@@ -27,9 +27,9 @@ exports.config = {
         })
       );
 
-      browser.addMockModule('httpMocker', () => {
+      browser.addMockModule('httpMocker', function() {
         angular.module('httpMocker', ['ngMockE2E'])
-            .run(($httpBackend) => {
+            .run(function ($httpBackend) {
                 $httpBackend.whenGET(/mockapi\/orders\/1?.*/g)
                     .respond({"CreatedUser":null,"OrderID":1,"CustomerName":"Unosquare","ShipperCity":"Guadalajara, JAL, Mexico","IsShipped":true,"Amount":300.00,"ShippedDate":"2017-02-01T12:00:00","CreationDate":"2015-12-30T00:00:00","CreatedUserId":"geoperez","WarehouseID":1,"OrderType":15,"ModificationDate":null,"Details":[]});
                 $httpBackend.whenPOST(/mockapi\/saveOrder.*/g)

@@ -12,7 +12,7 @@
      */
     angular.module('tubular', ['tubular.directives', 'tubular.services', 'tubular.models'])
         .config([
-            '$httpProvider', $httpProvider => {
+            '$httpProvider', function($httpProvider) {
                 $httpProvider.interceptors.push('tubularAuthInterceptor');
                 $httpProvider.interceptors.push('tubularNoCacheInterceptor');
             }
@@ -28,7 +28,7 @@
          * @param {object} input Input to filter.
          * @returns {string} Formatted error message.
          */
-        .filter('errormessage', () => {
+        .filter('errormessage', function() {
             return input => {
                 if (angular.isDefined(input) && angular.isDefined(input.data) &&
                     input.data &&
@@ -50,7 +50,7 @@
         .filter('numberorcurrency', [
             'numberFilter',
             'currencyFilter',
-            (numberFilter, currencyFilter) => {
+            function(numberFilter, currencyFilter) {
                 return (input, format, symbol, fractionSize) => {
                     fractionSize = fractionSize || 2;
 
@@ -71,7 +71,7 @@
          * `moment` is a filter to call format from moment or, if the input is a Date, call Angular's `date` filter.
          */
         .filter('moment', [
-            'dateFilter', dateFilter => {
+            'dateFilter', function(dateFilter) {
                 return (input, format) => moment.isMoment(input) ? input.format(format || 'M/DD/YYYY') : dateFilter(input);
             }
         ]);
