@@ -62,7 +62,7 @@
         }
     }
 
-    const tbNumericEditorCtrl = ['tubularEditorService', '$scope', 'translateFilter', (tubular, $scope, translateFilter) => {
+    const tbNumericEditorCtrl = ['tubularEditorService', '$scope', 'translateFilter', function (tubular, $scope, translateFilter) {
         var $ctrl = this;
 
         $ctrl.validate = () => {
@@ -92,7 +92,7 @@
     ];
 
     const tbDateTimeEditorCtrl = ['$scope', '$element', 'tubularEditorService', 'translateFilter', 'dateFilter',
-        ($scope, $element, tubular, translateFilter, dateFilter) => {
+        function ($scope, $element, tubular, translateFilter, dateFilter) {
             var $ctrl = this;
 
             // This could be $onChange??
@@ -146,7 +146,7 @@
         }
     ];
 
-    const tbDropdownEditorCtrl = ['tubularEditorService', '$scope', 'tubularHttp', (tubular, $scope, tubularHttp) => {
+    const tbDropdownEditorCtrl = ['tubularEditorService', '$scope', 'tubularHttp', function (tubular, $scope, tubularHttp) {
         var $ctrl = this;
 
         $ctrl.$onInit = function () {
@@ -582,33 +582,6 @@
                 };
             }
         ])
-        /**
-         * @ngdoc component
-         * @name tbHiddenField
-         * @module tubular.directives
-         *
-         * @description
-         * The `tbHiddenField` component represents a hidden field.
-         * 
-         * It uses the `TubularModel` to retrieve column or field information.
-         * 
-         * @param {string} name Set the field name.
-         * @param {object} value Set the value.
-         */
-        .component('tbHiddenField', {
-            templateUrl: 'tbHiddenField.tpl.html',
-            bindings: {
-                value: '=?',
-                name: '@'
-            },
-            controller: [
-                'tubularEditorService', '$scope', (tubular, $scope) => {
-                    var $ctrl = this;
-
-                    $ctrl.$onInit = () => tubular.setupScope($scope, null, $ctrl, true);
-                }
-            ]
-        })
         /**
          * @ngdoc component
          * @name tbCheckboxField

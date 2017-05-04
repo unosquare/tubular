@@ -9,9 +9,7 @@ describe('Module: tubular.directives', function () {
             module(function ($controllerProvider) {
                 ctrl = jasmine.createSpyObj('ctrl', ['finishDefinition']);
 
-                $controllerProvider.register('tbFormController', function ($scope) {
-                    $scope.finishDefinition = ctrl.finishDefinition;
-                });
+                $controllerProvider.register('tbFormController', $scope => $scope.finishDefinition = ctrl.finishDefinition);
             });
         });
 
@@ -29,9 +27,8 @@ describe('Module: tubular.directives', function () {
             isolated = element.isolateScope();
         }
 
-
         beforeEach(() =>
-            generate("<tb-form form-name='nombre_de_forma' server-url='http://tubular.azurewebsites.net/api/orders/' require-authentication='false' model='modelProp' model-key='1' service-name='local' server-save-url='http://tubular.azurewebsites.net/api/orders/save'><div id='inner'></div></tb-form>")
+            generate("<tb-form form-name='nombre_de_forma' server-url='http://tubular.azurewebsites.net/api/orders/' require-authentication='false' model='modelProp' model-key='1' server-save-url='http://tubular.azurewebsites.net/api/orders/save'><div id='inner'></div></tb-form>")
         );
 
         it('should call finishDefinition after compile', function () {

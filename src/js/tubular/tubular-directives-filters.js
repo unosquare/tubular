@@ -17,11 +17,11 @@
                 $columnOptionsFilter: '^?tbColumnOptionsFilter'
             },
             templateUrl: 'tbColumnFilterButtons.tpl.html',
-            controller: ['$scope', $scope => {
+            controller: ['$scope', function($scope) {
                 var $ctrl = this;
 
                 // Set currentFilter to either one of the parent components or for when this template is being rendered by $compile
-                $ctrl.$onInit = () =>  $ctrl.currentFilter = $ctrl.$columnFilter || $ctrl.$columnDateTimeFilter || $ctrl.$columnOptionsFilter || $scope.$parent.$ctrl;
+                $ctrl.$onInit = () => $ctrl.currentFilter = $ctrl.$columnFilter || $ctrl.$columnDateTimeFilter || $ctrl.$columnOptionsFilter || $scope.$parent.$ctrl;
             }
             ]
         })

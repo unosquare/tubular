@@ -23,7 +23,7 @@
                 var prefix = tubularConfig.localStorage.prefix();
                 var storage = $window.localStorage;
 
-                $ctrl.$onInit = function () {
+                $ctrl.$onInit = () => {
                     $ctrl.tubularDirective = 'tubular-grid';
 
                     $ctrl.name = $ctrl.name || 'tbgrid';
@@ -66,7 +66,7 @@
                     $scope.$emit('tbGrid_OnGreetParentController', $ctrl);
                 };
 
-                $scope.columnWatcher = function () {
+                $scope.columnWatcher = () => {
                     if ($ctrl.hasColumnsDefinitions === false || $ctrl.canSaveState === false) {
                         return;
                     }
@@ -76,7 +76,7 @@
 
                 $scope.$watch('$ctrl.columns', $scope.columnWatcher, true);
 
-                $scope.serverUrlWatcher = function (newVal, prevVal) {
+                $scope.serverUrlWatcher = (newVal, prevVal) => {
                     if ($ctrl.hasColumnsDefinitions === false || $ctrl.currentRequest || newVal === prevVal) {
                         return;
                     }
@@ -86,7 +86,7 @@
 
                 $scope.$watch('$ctrl.serverUrl', $scope.serverUrlWatcher);
 
-                $scope.hasColumnsDefinitionsWatcher = function (newVal) {
+                $scope.hasColumnsDefinitionsWatcher = newVal => {
                     if (newVal !== true) {
                         return;
                     }
@@ -96,7 +96,7 @@
 
                 $scope.$watch('$ctrl.hasColumnsDefinitions', $scope.hasColumnsDefinitionsWatcher);
 
-                $scope.pageSizeWatcher =  function () {
+                $scope.pageSizeWatcher =  () => {
                     if ($ctrl.hasColumnsDefinitions && $ctrl.requestCounter > 0) {
                         if ($ctrl.savePageSize) {
                             storage.setItem(prefix + $ctrl.name + '_pageSize', $ctrl.pageSize);
@@ -108,7 +108,7 @@
 
                 $scope.$watch('$ctrl.pageSize', $scope.pageSizeWatcher);
 
-                $scope.requestedPageWatcher = function () {
+                $scope.requestedPageWatcher = () => {
                     if ($ctrl.hasColumnsDefinitions && $ctrl.requestCounter > 0) {
                         $ctrl.retrieveData();
                     }
@@ -116,7 +116,7 @@
 
                 $scope.$watch('$ctrl.requestedPage', $scope.requestedPageWatcher);
 
-                $ctrl.saveSearch = function () {
+                $ctrl.saveSearch = () => {
                     if (!$ctrl.saveSearchText) {
                         return;
                     }
@@ -128,8 +128,10 @@
                     }
                 };
 
-                $ctrl.addColumn = function (item) {
-                    if (item.Name == null) return;
+                $ctrl.addColumn = item => {
+                    if (item.Name == null){
+                        return;
+                    } 
 
                     if ($ctrl.hasColumnsDefinitions !== false) {
                         throw 'Cannot define more columns. Column definitions have been sealed';
@@ -138,7 +140,7 @@
                     $ctrl.columns.push(item);
                 };
 
-                $ctrl.newRow = function (template, popup, size, data) {
+                $ctrl.newRow = (template, popup, size, data) => {
                     $ctrl.tempRow = new TubularModel($scope, $ctrl, data || {});
                     $ctrl.tempRow.$isNew = true;
                     $ctrl.tempRow.$isEditing = true;
@@ -149,7 +151,7 @@
                     }
                 };
 
-                $ctrl.deleteRow = function (row) {
+                $ctrl.deleteRow = row => {
                     // TODO: Should I move this behavior to model?
                     var urlparts = $ctrl.serverDeleteUrl.split('?');
                     var url = urlparts[0] + '/' + row.$key;
@@ -158,30 +160,25 @@
                         url += '?' + urlparts[1];
                     }
 
-                    var request = {
+                    $ctrl.currentRequest = tubularHttp.retrieveDataAsync({
                         serverUrl: url,
                         requestMethod: 'DELETE',
                         timeout: $ctrl.requestTimeout,
                         requireAuthentication: $ctrl.requireAuthentication
-                    };
+                    });
 
-                    $ctrl.currentRequest = tubularHttp.retrieveDataAsync(request);
-
-                    $ctrl.currentRequest.then(
-                        function (data) {
+                    $ctrl.currentRequest
+                        .then(data => {
                             row.$hasChanges = false;
                             $scope.$emit('tbGrid_OnRemove', data);
-                        },
-                        function (error) {
-                            $scope.$emit('tbGrid_OnConnectionError', error);
-                        })
-                        .then(function () {
-                            $ctrl.currentRequest = null;
-                            $ctrl.retrieveData();
-                        });
+                            }, error => $scope.$emit('tbGrid_OnConnectionError', error))
+                        .then(() => {
+                        $ctrl.currentRequest = null;
+                        $ctrl.retrieveData();
+                    });
                 };
 
-                $ctrl.verifyColumns = function () {
+                $ctrl.verifyColumns = () => {
                     var columns = angular.fromJson(storage.getItem(prefix + $ctrl.name + '_columns'));
                     if (columns == null || columns === '') {
                         // Nothing in settings, saving initial state
@@ -189,9 +186,8 @@
                         return;
                     }
 
-                    angular.forEach(columns,
-                        function (column) {
-                            var filtered = $ctrl.columns.filter(function (el) { return el.Name === column.Name; });
+                    angular.forEach(columns, column => {
+                            var filtered = $ctrl.columns.filter(el => el.Name === column.Name);
 
                             if (filtered.length === 0) {
                                 return;
@@ -220,7 +216,7 @@
                         });
                 };
 
-                $ctrl.getRequestObject = function (skip) {
+                $ctrl.getRequestObject = skip => {
                     if (skip === -1) {
                         skip = ($ctrl.requestedPage - 1) * $ctrl.pageSize;
                         if (skip < 0) skip = 0;
@@ -242,7 +238,7 @@
                     };
                 };
 
-                $ctrl.retrieveData = function () {
+                $ctrl.retrieveData = () => {
                     // If the ServerUrl is empty skip data load
                     if (!$ctrl.serverUrl || $ctrl.currentRequest !== null) {
                         return;
@@ -272,15 +268,13 @@
 
                     $ctrl.currentRequest = tubularHttp.retrieveDataAsync(request);
 
-                    $ctrl.currentRequest.then($ctrl.processPayload, function (error) {
+                    $ctrl.currentRequest.then($ctrl.processPayload, error => {
                         $ctrl.requestedPage = $ctrl.currentPage;
                         $scope.$emit('tbGrid_OnConnectionError', error);
-                    }).then(function () {
-                        $ctrl.currentRequest = null;
-                    });
+                    }).then(() => $ctrl.currentRequest = null);
                 };
 
-                $ctrl.processPayload = function (data) {
+                $ctrl.processPayload = data => {
                     $ctrl.requestCounter += 1;
 
                     if (angular.isUndefined(data) || data == null) {
@@ -300,11 +294,11 @@
                         return;
                     }
 
-                    $ctrl.rows = data.Payload.map(function (el) {
+                    $ctrl.rows = data.Payload.map(el => {
                         var model = new TubularModel($scope, $ctrl, el);
                         model.$component = $ctrl;
 
-                        model.editPopup = function (template, size) {
+                        model.editPopup = (template, size) => {
                             tubularPopupService
                                 .openDialog(template,
                                 new TubularModel($scope, $ctrl, el),
@@ -329,16 +323,18 @@
                     }
                 };
 
-                $ctrl.sortColumn = function (columnName, multiple) {
-                    var filterColumn = $ctrl.columns.filter(function (el) {
-                        return el.Name === columnName;
-                    });
+                $ctrl.sortColumn = (columnName, multiple) => {
+                    var filterColumn = $ctrl.columns.filter(el => el.Name === columnName);
 
-                    if (filterColumn.length === 0) return;
+                    if (filterColumn.length === 0) {
+                        return;
+                    }
 
                     var column = filterColumn[0];
 
-                    if (column.Sortable === false) return;
+                    if (column.Sortable === false) {
+                        return;
+                    }
 
                     // need to know if it's currently sorted before we reset stuff
                     var currentSortDirection = column.SortDirection;
@@ -357,32 +353,26 @@
 
                     // if it's not a multiple sorting, remove the sorting from all other columns
                     if (multiple === false) {
-                        angular.forEach($ctrl.columns.filter(function (col) { return col.Name !== columnName; }),
-                            function (col) {
+                        angular.forEach($ctrl.columns.filter(col => col.Name !== columnName),
+                            col => {
                                 col.SortOrder = -1;
                                 col.SortDirection = 'None';
                             });
                     }
 
                     // take the columns that actually need to be sorted in order to re-index them
-                    var currentlySortedColumns = $ctrl.columns.filter(function (col) {
-                        return col.SortOrder > 0;
-                    });
+                    var currentlySortedColumns = $ctrl.columns.filter(col => col.SortOrder > 0);
 
                     // re-index the sort order
-                    currentlySortedColumns.sort(function (a, b) {
-                        return a.SortOrder === b.SortOrder ? 0 : a.SortOrder > b.SortOrder;
-                    });
+                    currentlySortedColumns.sort((a, b) => a.SortOrder === b.SortOrder ? 0 : a.SortOrder > b.SortOrder);
 
-                    angular.forEach(currentlySortedColumns, function (col, index) {
-                        col.SortOrder = index + 1;
-                    });
+                    angular.forEach(currentlySortedColumns, (col, index) => col.SortOrder = index + 1);
 
                     $scope.$broadcast('tbGrid_OnColumnSorted');
                     $ctrl.retrieveData();
                 };
 
-                $ctrl.getFullDataSource = function () {
+                $ctrl.getFullDataSource = () => {
                     var request = $ctrl.getRequestObject(0);
                     request.data.Take = -1;
                     request.data.Search = {
@@ -390,20 +380,13 @@
                         Operator: 'None'
                     };
 
-                    return tubularHttp.retrieveDataAsync(request).then(
-                        function (data) {
-                            $ctrl.currentRequest = null;
-                            return data.Payload;
-                        },
-                        function (error) {
-                            $scope.$emit('tbGrid_OnConnectionError', error);
-                            $ctrl.currentRequest = null;
-                        });
+                    return tubularHttp.retrieveDataAsync(request)
+                        .then(data => data.Payload, 
+                            error => $scope.$emit('tbGrid_OnConnectionError', error))
+                        .then(() => $ctrl.currentRequest = null);
                 };
 
-                $ctrl.visibleColumns = function () {
-                    return $ctrl.columns.filter(function (el) { return el.Visible; }).length;
-                };
+                $ctrl.visibleColumns = () => $ctrl.columns.filter(el => el.Visible).length;
             }
         ]);
 })(angular);

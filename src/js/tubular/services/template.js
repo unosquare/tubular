@@ -18,7 +18,7 @@
                 translateFilter) {
                 var me = this;
 
-                me.canUseHtml5Date = function () {
+                me.canUseHtml5Date = () => {
                     var el = angular.element('<input type="date" value=":)" />');
                     return el.attr('type') === 'date' && el.val() === '';
                 };
@@ -27,7 +27,7 @@
                     dataTypes: ['numeric', 'date', 'boolean', 'string'],
                     editorTypes: [
                         'tbSimpleEditor', 'tbNumericEditor', 'tbDateTimeEditor', 'tbDateEditor',
-                        'tbDropdownEditor', 'tbTypeaheadEditor', 'tbHiddenField', 'tbCheckboxField', 'tbTextArea'
+                        'tbDropdownEditor', 'tbTypeaheadEditor', 'tbCheckboxField', 'tbTextArea'
                     ],
                     httpMethods: ['POST', 'PUT', 'GET', 'DELETE'],
                     gridModes: ['Read-Only', 'Inline', 'Popup', 'Page'],
@@ -44,7 +44,6 @@
                         ExportCsv: true,
                         Mode: 'Read-Only',
                         RequireAuthentication: false,
-                        ServiceName: '',
                         RequestMethod: 'GET',
                         GridName: 'grid'
                     },
@@ -55,11 +54,10 @@
                         Layout: 'Simple',
                         ModelKey: '',
                         RequireAuthentication: false,
-                        ServiceName: '',
                         dataUrl: ''
                     },
                     fieldsSettings: {
-                        'tbSimpleEditor': {
+                        tbSimpleEditor: {
                             ShowLabel: true,
                             Placeholder: true,
                             Format: false,
@@ -68,7 +66,7 @@
                             ReadOnly: true,
                             EditorType: true
                         },
-                        'tbNumericEditor': {
+                        tbNumericEditor: {
                             ShowLabel: true,
                             Placeholder: true,
                             Format: true,
@@ -77,7 +75,7 @@
                             ReadOnly: true,
                             EditorType: false
                         },
-                        'tbDateTimeEditor': {
+                        tbDateTimeEditor: {
                             ShowLabel: true,
                             Placeholder: false,
                             Format: true,
@@ -86,7 +84,7 @@
                             ReadOnly: true,
                             EditorType: false
                         },
-                        'tbDateEditor': {
+                        tbDateEditor: {
                             ShowLabel: true,
                             Placeholder: false,
                             Format: true,
@@ -95,7 +93,7 @@
                             ReadOnly: true,
                             EditorType: false
                         },
-                        'tbDropdownEditor': {
+                        tbDropdownEditor: {
                             ShowLabel: true,
                             Placeholder: false,
                             Format: false,
@@ -104,7 +102,7 @@
                             ReadOnly: true,
                             EditorType: false
                         },
-                        'tbTypeaheadEditor': {
+                        tbTypeaheadEditor: {
                             ShowLabel: true,
                             Placeholder: true,
                             Format: false,
@@ -113,16 +111,7 @@
                             ReadOnly: true,
                             EditorType: false
                         },
-                        'tbHiddenField': {
-                            ShowLabel: false,
-                            Placeholder: false,
-                            Format: false,
-                            Help: false,
-                            Required: false,
-                            ReadOnly: false,
-                            EditorType: false
-                        },
-                        'tbCheckboxField': {
+                        tbCheckboxField: {
                             ShowLabel: false,
                             Placeholder: false,
                             Format: false,
@@ -131,7 +120,7 @@
                             ReadOnly: true,
                             EditorType: false
                         },
-                        'tbTextArea': {
+                        tbTextArea: {
                             ShowLabel: true,
                             Placeholder: true,
                             Help: true,
@@ -178,12 +167,12 @@
                  * @param {string} mode 
                  * @returns {string} 
                  */
-                me.generateCells = function (columns, mode) {
-                    return columns.map(function (el) {
+                me.generateCells = (columns, mode) => {
+                    return columns.reduce((prev, el) => {
                         var editorTag = el.EditorType
-                            .replace(/([A-Z])/g, function ($1) { return '-' + $1.toLowerCase(); });
+                            .replace(/([A-Z])/g, $1 => '-' + $1.toLowerCase());
 
-                        return '\r\n\t\t<tb-cell-template column-name="' + el.Name + '">' +
+                        return prev + '\r\n\t\t<tb-cell-template column-name="' + el.Name + '">' +
                             '\r\n\t\t\t' +
                             (mode === 'Inline'
                                 ? '<' +
@@ -196,8 +185,7 @@
                                 '>'
                                 : el.Template) +
                             '\r\n\t\t</tb-cell-template>';
-                    })
-                        .join('');
+                    }, '');
                 };
 
                 /**
@@ -243,10 +231,7 @@
                         '" request-method="' +
                         options.RequestMethod +
                         '" class="row" ' +
-                        'page-size="10" require-authentication="' +
-                        options.RequireAuthentication +
-                        '" ' +
-                        (options.ServiceName !== '' ? ' service-name="' + options.ServiceName + '"' : '') +
+                        'page-size="10" require-authentication="' + options.RequireAuthentication + '" ' +
                         (options.Mode !== 'Read-Only' ? ' editor-mode="' + options.Mode.toLowerCase() + '"' : '') +
                         '>' +
                         (topToolbar === '' ? '' : '\r\n\t<div class="row">' + topToolbar + '\r\n\t</div>') +
@@ -258,8 +243,8 @@
                         (options.Mode !== 'Read-Only'
                             ? '\r\n\t\t<tb-column label="Actions"><tb-column-header>{{label}}</tb-column-header></tb-column>'
                             : '') +
-                        columns.map(function (el) {
-                            return '\r\n\t\t<tb-column name="' + el.Name + '" label="' + el.Label +
+                        columns.reduce((prev, el) => {
+                            return prev + '\r\n\t\t<tb-column name="' + el.Name + '" label="' + el.Label +
                                 '" column-type="' + el.DataType + '" sortable="' + el.Sortable +
                                 '" ' +
                                 '\r\n\t\t\tis-key="' + el.IsKey + '" searchable="' + el.Searchable +
@@ -277,8 +262,7 @@
                                 (el.Filter ? '\r\n\t\t\t<tb-column-filter></tb-column-filter>' : '') +
                                 '\r\n\t\t\t<tb-column-header>{{label}}</tb-column-header>' +
                                 '\r\n\t\t</tb-column>';
-                        })
-                        .join('') +
+                        }) +
                         '\r\n\t</tb-column-definitions>' +
                         '\r\n\t<tb-row-set>' +
                         '\r\n\t<tb-row-template ng-repeat="row in $component.rows" row-model="row">' +
@@ -304,7 +288,7 @@
                         '\r\n</div>';
                 };
 
-                me.getEditorTypeByDateType = function (dataType) {
+                me.getEditorTypeByDateType = dataType => {
                     switch (dataType) {
                         case 'date':
                             return 'tbDateTimeEditor';
@@ -327,7 +311,7 @@
                     var jsonModel = (angular.isArray(model) && model.length > 0) ? model[0] : model;
                     var columns = [];
 
-                    angular.forEach(Object.keys(jsonModel), function (prop) {
+                    angular.forEach(Object.keys(jsonModel), prop => {
                         var value = jsonModel[prop];
 
                         // Ignore functions and  null value, but maybe evaluate another item if there is anymore
@@ -362,7 +346,7 @@
 
                     var firstSort = false;
 
-                    angular.forEach(columns, function (columnObj) {
+                    angular.forEach(columns, columnObj => {
                         columnObj.Label = columnObj.Name.replace(/([a-z])([A-Z])/g, '$1 $2');
                         columnObj.EditorType = me.getEditorTypeByDateType(columnObj.DataType);
 
@@ -395,7 +379,7 @@
                     return columns;
                 };
 
-                me.generatePopupTemplate = function (model, title) {
+                me.generatePopupTemplate = (model, title) => {
                     var columns = me.createColumns(model);
 
                     return '<tb-form model="Model">' +
@@ -412,7 +396,7 @@
                         '</tb-form>';
                 };
 
-                me.generatePopup = function (model, title) {
+                me.generatePopup = (model, title) => {
                     var templateName = 'temp' + (new Date().getTime()) + '.html';
                     var template = me.generatePopupTemplate(model, title);
 
@@ -428,7 +412,7 @@
                  * @param {object} options 
                  * @returns {string} 
                  */
-                me.generateForm = function (fields, options) {
+                me.generateForm = (fields, options) => {
                     var layout = options.Layout === 'Simple' ? '' : options.Layout.toLowerCase();
                     var fieldsArray = me.generateFieldsArray(fields);
                     var fieldsMarkup;
@@ -439,16 +423,16 @@
                         fieldsMarkup = '\r\n\t<div class="row">' +
                             (layout === 'two-columns'
                                 ? '\r\n\t<div class="col-md-6">' +
-                                fieldsArray.filter(function (i, e) { return (e % 2) === 0; }).join('') +
+                                fieldsArray.filter((i, e) => (e % 2) === 0).join('') +
                                 '\r\n\t</div>\r\n\t<div class="col-md-6">' +
-                                fieldsArray.filter(function (i, e) { return (e % 2) === 1; }).join('') +
+                                fieldsArray.filter((i, e) => (e % 2) === 1).join('') +
                                 '</div>'
                                 : '\r\n\t<div class="col-md-4">' +
-                                fieldsArray.filter(function (i, e) { return (e % 3) === 0; }).join('') +
+                                fieldsArray.filter((i, e) => (e % 3) === 0).join('') +
                                 '\r\n\t</div>\r\n\t<div class="col-md-4">' +
-                                fieldsArray.filter(function (i, e) { return (e % 3) === 1; }).join('') +
+                                fieldsArray.filter((i, e) => (e % 3) === 1).join('') +
                                 '\r\n\t</div>\r\n\t<div class="col-md-4">' +
-                                fieldsArray.filter(function (i, e) { return (e % 3) === 2; }).join('') +
+                                fieldsArray.filter((i, e) => (e % 3) === 2).join('') +
                                 '\r\n\t</div>') +
                             '\r\n\t</div>';
                     }
@@ -459,11 +443,7 @@
                         '" ' +
                         'server-url="' +
                         options.dataUrl +
-                        '" server-save-url="' +
-                        options.SaveUrl +
-                        '"' +
-                        (options.ServiceName !== '' ? ' service-name="' + options.ServiceName + '"' : '') +
-                        '>' +
+                        '" server-save-url="' + options.SaveUrl + '">' +
                         '\r\n\t' +
                         fieldsMarkup +
                         '\r\n\t<div>' +
@@ -481,10 +461,10 @@
                  * @param {array} columns
                  * @returns {array}
                  */
-                me.generateFieldsArray = function (columns) {
-                    return columns.map(function (el) {
+                me.generateFieldsArray = columns => {
+                    return columns.map(el => {
                         var editorTag = el.EditorType
-                            .replace(/([A-Z])/g, function ($1) { return '-' + $1.toLowerCase(); });
+                            .replace(/([A-Z])/g, $1 => '-' + $1.toLowerCase());
                         var defaults = me.defaults.fieldsSettings[el.EditorType];
 
                         return '\r\n\t<' +
@@ -507,7 +487,7 @@
                     });
                 };
 
-                me.setupFilter = function ($scope, $ctrl) {
+                me.setupFilter = ($scope, $ctrl) => {
                     var dateOps = {
                         'None': translateFilter('OP_NONE'),
                         'Equals': translateFilter('OP_EQUALS'),
@@ -561,13 +541,11 @@
 
                     $ctrl.filterTitle = $ctrl.title || translateFilter('CAPTION_FILTER');
 
-                    $scope.$watch(function () {
-                        var c = $ctrl.$component.columns
-                            .filter(function (e) { return e.Name === $ctrl.filter.Name; });
+                    $scope.$watch(() => {
+                        var c = $ctrl.$component.columns.filter(e => e.Name === $ctrl.filter.Name);
 
                         return c.length !== 0 ? c[0] : null;
-                    },
-                        function (val) {
+                    }, val => {
                             if (!val) {
                                 return;
                             }
@@ -587,7 +565,7 @@
                         true);
 
                     $ctrl.retrieveData = function () {
-                        var c = $ctrl.$component.columns.filter(function (e) { return e.Name === $ctrl.filter.Name; });
+                        var c = $ctrl.$component.columns.filter(e => e.Name === $ctrl.filter.Name);
 
                         if (c.length !== 0) {
                             c[0].Filter = $ctrl.filter;
@@ -628,15 +606,15 @@
                         }
                     };
 
-                    var columns = $ctrl.$component.columns.filter(function (e) { return e.Name === $ctrl.filter.Name; });
+                    var columns = $ctrl.$component.columns.filter(e => e.Name === $ctrl.filter.Name);
 
-                    $scope.$watch('$ctrl.filter.Operator', function (val) { if (val === 'None') $ctrl.filter.Text = ''; });
+                    $scope.$watch('$ctrl.filter.Operator', val => { if (val === 'None') $ctrl.filter.Text = ''; });
 
                     if (columns.length === 0) {
                         return;
                     }
 
-                    $scope.$watch('$ctrl.filter', function (n) {
+                    $scope.$watch('$ctrl.filter', n => {
                         if (columns[0].Filter.Text !== n.Text) {
                             n.Text = columns[0].Filter.Text;
 

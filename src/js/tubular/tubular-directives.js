@@ -34,7 +34,7 @@
                     transclude: true,
                     scope: true,
                     controller: [
-                        '$scope', $scope => {
+                        '$scope', function($scope) {
                             $scope.$component = $scope.$parent.$parent.$ctrl;
                             $scope.tubularDirective = 'tubular-grid-table';
                         }
@@ -62,7 +62,7 @@
                     transclude: true,
                     scope: true,
                     controller: [
-                        '$scope', $scope => {
+                        '$scope', function($scope) {
                             $scope.$component = $scope.$parent.$parent.$component;
                             $scope.tubularDirective = 'tubular-column-definitions';
                         }
@@ -193,7 +193,7 @@
                     transclude: true,
                     scope: false,
                     controller: [
-                        '$scope', $scope => {
+                        '$scope', function($scope) {
                             $scope.sortColumn = $event => $scope.$parent.sortColumn($event.ctrlKey);
 
                             // this listener here is used for backwards compatibility with tbColumnHeader requiring a scope.label value on its own
@@ -234,7 +234,7 @@
                     transclude: true,
                     scope: false,
                     controller: [
-                        '$scope', $scope => {
+                        '$scope', function($scope) {
                             $scope.$component = $scope.$parent.$component || $scope.$parent.$parent.$component;
                             $scope.tubularDirective = 'tubular-row-set';
                         }
@@ -264,7 +264,7 @@
                     transclude: true,
                     scope: false,
                     controller: [
-                        '$scope', $scope => {
+                        '$scope', function($scope) {
                             $scope.$component = $scope.$parent.$component || $scope.$parent.$parent.$component;
                             $scope.tubularDirective = 'tubular-foot-set';
                         }
@@ -295,7 +295,7 @@
                         model: '=rowModel'
                     },
                     controller: [
-                        '$scope', $scope => {
+                        '$scope', function($scope) {
                             $scope.tubularDirective = 'tubular-rowset';
                             $scope.fields = [];
                             $scope.hasFieldsDefinitions = false;
@@ -345,7 +345,7 @@
                     scope: {
                         columnName: '@?'
                     },
-                    controller: ['$scope', $scope => {
+                    controller: ['$scope', function($scope) {
                             $scope.column = { Visible: true };
                             $scope.columnName = $scope.columnName || null;
                             $scope.$component = $scope.$parent.$parent.$component;

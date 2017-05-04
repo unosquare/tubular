@@ -17,7 +17,7 @@
             templateUrl: 'tbGridPager.tpl.html',
             scope: true,
             terminal: false,
-            controller: ['$scope', $scope => {
+            controller: ['$scope', function($scope) {
                     var $ctrl = this;
 
                     $scope.$watch('$ctrl.$component.currentPage', () => {
@@ -47,7 +47,7 @@
                 cssClass: '@?'
             },
             controller: [
-                '$scope', $scope => {
+                '$scope', function($scope) {
                     var $ctrl = this;
 
                     $ctrl.fixCurrentTop = () => {
