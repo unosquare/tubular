@@ -480,7 +480,7 @@ if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.ex
   }
 }());
 
-(function (angular) {
+(angular => {
     'use strict';
 
     angular.module('tubular-hchart.directives', ['tubular.services', 'highcharts-ng'])
@@ -521,10 +521,9 @@ if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.ex
                 onClick: '=?'
             },
             controller: [
-                '$scope', 'tubularHttp', '$timeout', function ($scope, tubularHttp, $timeout) {
+                '$scope', '$http', '$timeout', function ($scope, $http, $timeout) {
                     var $ctrl = this;
 
-                    $ctrl.dataService = tubularHttp.getDataService($ctrl.dataServiceName);
                     $ctrl.showLegend = angular.isUndefined($ctrl.showLegend) ? true : $ctrl.showLegend;
                     $ctrl.chartType = $ctrl.chartType || 'line';
 
@@ -559,17 +558,19 @@ if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.ex
                     // Setup require authentication
                     $ctrl.requireAuthentication = angular.isUndefined($ctrl.requireAuthentication) ? true : $ctrl.requireAuthentication;
 
-                    $ctrl.loadData = function () {
+                    $ctrl.loadData = () => {
                         // TODO: Set requireAuthentication
                         $ctrl.hasError = false;
 
-                        tubularHttp.get($ctrl.serverUrl).then($ctrl.handleData, function (error) {
+                        $http.get($ctrl.serverUrl).then($ctrl.handleData, error => {
                             $scope.$emit('tbChart_OnConnectionError', error);
                             $ctrl.hasError = true;
                         });
                     };
 
-                    $ctrl.handleData = function (data) {
+                    $ctrl.handleData = response => {
+                        var data = response.data;
+
                         if (!data || !data.Data || data.Data.length === 0) {
                             $ctrl.isEmpty = true;
                             $ctrl.options.series = [{ data: [] }];
@@ -585,39 +586,26 @@ if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.ex
 
                         if (data.Series) {
                             $ctrl.options.xAxis.categories = data.Labels;
-                            $ctrl.options.series = data.Series.map(function (el, ix) {
-                                return {
-                                    name: el,
-                                    data: data.Data[ix]
-                                };
-                            });
+                            $ctrl.options.series = data.Series.map((el, ix) => { return { name: el, data: data.Data[ix] }; });
                         } else {
-                            var uniqueSerie = data.Labels.map(function (el, ix) {
-                                return {
-                                    name: el,
-                                    y: data.Data[ix]
-                                };
-                            });
+                            var uniqueSerie = data.Labels.map((el, ix) => { return { name: el, y: data.Data[ix] }; });
 
                             $ctrl.options.series = [{ name: data.SerieName || '', data: uniqueSerie, showInLegend: (data.SerieName || '') !== '' }];
                         }
 
                         if ($ctrl.onLoad) {
-                            $timeout(function () {
-                                $ctrl.onLoad($ctrl.options, {}, $ctrl.options.getHighcharts().series);
-                            }, 100);
-
+                            $timeout(() => $ctrl.onLoad($ctrl.options, {}, $ctrl.options.getHighcharts().series), 100);
                             $ctrl.onLoad($ctrl.options, {}, null);
                         }
                     };
 
-                    $scope.$watch('$ctrl.serverUrl', function (val) {
+                    $scope.$watch('$ctrl.serverUrl', val => {
                         if (angular.isDefined(val) && val != null && val !== '') {
                             $ctrl.loadData();
                         }
                     });
 
-                    $scope.$watch('$ctrl.chartType', function (val) {
+                    $scope.$watch('$ctrl.chartType', val => {
                         if (angular.isDefined(val) && val != null) {
                             $ctrl.options.options.chart.type = val;
                         }
