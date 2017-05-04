@@ -1,0 +1,1838 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>index</title>
+<style>
+body { background-color: #eeeeee; padding: 0; margin: 5px; overflow-y: scroll; }
+#HTMLReporter h1 { font-size: 12px; font-weight: normal; text-align: right; margin: 10px 0 10px 0 !important; }
+#HTMLReporter { font-size: 11px; font-family: Monaco, "Lucida Console", monospace; line-height: 14px; color: #333333; }
+#HTMLReporter a { text-decoration: none; }
+#HTMLReporter a:hover { text-decoration: underline; }
+#HTMLReporter p, #HTMLReporter h1, #HTMLReporter h2, #HTMLReporter h3, #HTMLReporter h4, #HTMLReporter h5, #HTMLReporter h6 { margin: 0; line-height: 14px; }
+#HTMLReporter .banner, #HTMLReporter .symbolSummary, #HTMLReporter .summary, #HTMLReporter .resultMessage, #HTMLReporter .specDetail .description, #HTMLReporter .alert .bar, #HTMLReporter .stackTrace { padding-left: 9px; padding-right: 9px; }
+
+#HTMLReporter #jasmine_content { position: fixed; right: 100%; }
+#HTMLReporter .version { color: #aaaaaa; }
+#HTMLReporter .banner { margin-top: 14px; }
+#HTMLReporter .duration { color: #aaaaaa; float: right; }
+#HTMLReporter .exceptions { color: #fff; float: right; margin-top: 5px; margin-right: 5px; }
+#HTMLReporter .bar { line-height: 28px; font-size: 14px; display: block; color: #eee; }
+#HTMLReporter .runningAlert { background-color: #666666; }
+#HTMLReporter .skippedAlert { background-color: #aaaaaa; }
+#HTMLReporter .skippedAlert:first-child { background-color: #333333; }
+#HTMLReporter .skippedAlert:hover { text-decoration: none; color: white; text-decoration: underline; }
+#HTMLReporter .passingAlert { background-color: #a6b779; }
+#HTMLReporter .passingAlert:first-child { background-color: #5e7d00; }
+#HTMLReporter .failingAlert { background-color: #cf867e; }
+#HTMLReporter .failingAlert:first-child { background-color: #b03911; }
+#HTMLReporter .results { margin-top: 14px; }
+#HTMLReporter #details { display: none; }
+#HTMLReporter .resultsMenu { color: #999; background-color: #fff; }
+
+#HTMLReporter .summaryMenuItem { font-weight: normal; text-decoration: none; margin-right: 5px; color: #333; }
+#HTMLReporter .detailsMenuItem { font-weight: normal; text-decoration: none; margin-left: 5px; color: #999; }
+
+#HTMLReporter.showDetails .summaryMenuItem { color: #999; }
+#HTMLReporter.showDetails .detailsMenuItem { color: #333; }
+#HTMLReporter.showDetails .summaryMenuItem:hover { text-decoration: underline; }
+#HTMLReporter             .detailsMenuItem:hover { text-decoration: underline; }
+
+
+#HTMLReporter.showDetails .summary { display: none; }
+#HTMLReporter.showDetails #details { display: block; }
+#HTMLReporter .summary { margin-top: 14px; margin-bottom: 40px; }
+#HTMLReporter .summary .suite .suite, #HTMLReporter .summary .specSummary { margin-left: 14px; }
+#HTMLReporter .summary .specSummary.passed { color: #5e7d00; }
+#HTMLReporter .summary .specSummary.failed { color: #b03911; }
+#HTMLReporter .summary .specSummary.skipped { color: #ba9d37; }
+#HTMLReporter .description + .suite { margin-top: 0; }
+#HTMLReporter .suite { margin-top: 14px; }
+#HTMLReporter .suite a { color: #333333; }
+#HTMLReporter #details .specDetail { margin-bottom: 28px; }
+#HTMLReporter #details .specDetail .description { display: block; color: white; background-color: #b03911; }
+#HTMLReporter .resultMessage { padding-top: 14px; color: #333333; }
+#HTMLReporter .resultMessage span.result { display: block; }
+#HTMLReporter .stackTrace { margin: 5px 0 0 0; max-height: 224px; overflow: auto; 
+    line-height: 18px; color: #666666; border: 1px solid #ddd; background: white; white-space: pre; }
+
+
+.fold-buttons { float: right; }
+.fold-buttons a { color: #fff; font-size: 12px; }
+.fold-buttons { display: none } 
+#HTMLReporter .br { margin-top: 8px; }
+#HTMLReporter .section-starter { font-size: 14px; line-height: 18px }
+#HTMLReporter .summary-section { 
+  cursor: -webkit-zoom-out; cursor: -moz-zoom-out; cursor: zoom-out; 
+  background: #fafafa; 
+  padding: 10px; 
+  border-bottom: #eaeaea 1px solid; }
+#HTMLReporter .summary-section.folded { 
+  cursor: -webkit-zoom-in; cursor: -moz-zoom-in; cursor: zoom-in; 
+  padding-bottom: 8px;
+}
+#HTMLReporter .summary-section.folded div { display: none }
+#HTMLReporter .summary-section.folded div.section-starter { display: block }
+/*#HTMLReporter .summary-section:hover { background: #e9e9e9; }*/
+#HTMLReporter .summary-section:hover { background: #f5f5f5; }
+#HTMLReporter .summary-section-totals { 
+  font-size: 11px;
+  display: none; 
+  margin-left: 11px; 
+  overflow: hidden; 
+  position: relative;
+  top: -1px; 
+}
+#HTMLReporter .summary-section.folded .summary-section-totals { display: inline; }
+#HTMLReporter .summary-section-total { color: #fff; vertical-align: baseline; padding: 1px 8px; }
+#HTMLReporter .summary-section-total.passed { background: #5e7d00;  }
+#HTMLReporter .summary-section-total.failed { background: #b03911;  }
+#HTMLReporter .summary-section-total.skipped { background: #ba9d37;  }
+
+#HTMLReporter { font-size: 12px; line-height: 18px; } /*larget font-size*/
+
+</style>
+</head>
+
+<body id="HTMLReporter" class="html-reporter showDetails">
+<h1>Tested in Firefox 51.0.0 (Linux 0.0.0) on Thu May 04 2017</h1>
+
+<div class="alert">
+
+
+<!-- <span class="failingAlert bar">Failed 34 specs</span> -->
+<span class="failingAlert bar"><span class="fold-buttons"><a href="#" onclick="fold();">Fold</a> | 
+  <a href="#" onclick="unfold();">Unfold</a></span>195 specs, 34 failed, 6 pending</span>
+<span class="resultsMenu bar">
+<a class="summaryMenuItem" onclick="showSummary();" href="#">Spec List<a>|<a 
+   class="detailsMenuItem" onclick="showFailures();" href="#">Failures</a>
+</span>
+
+
+
+</div>
+<div class="results">
+  <div class="summary">
+  
+  
+  
+  
+  
+    <div class="suite failed">
+      <span class="description">Module: tubular.services Service: editor</span>
+    
+      <div class="specSummary failed">
+      <span class="description">should be defined</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">should have form name</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">should show isvalid info with required = false</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">should show isvalid info</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">should have getFormField defined</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">should have $dirty value</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.services Service: http</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should be defined</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should be not authenticated </span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should authenticate</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should NOT authenticate</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.services Service: popup</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should popupService to be defined</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should openDialog to be defined</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should onSuccessForm to be defined</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should onConnectionError to be defined</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should create a modal instance</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.services Controller: GenericPopupController</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should scope.Model to be equals model</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should scope.savePopup to be defined</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should scope.closePopup to be defined</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should savePopup return null</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should result to be null</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should savePopup to be defined</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.services Service: templateService Method: createColumns</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should return an array with 7 columns</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">first element should match</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.services Service: templateService Method: generateFieldsArray</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should return an array with 7 fields</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">first element should match</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.services Service: templateService Method: generatePopup</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should html match</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.services Service: templateService Method: getEditorTypeByDateType</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should be tbDateTimeEditor</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should be tbNumericEditor</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should be tbCheckboxField</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should be tbSimpleEditor</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.services Service: templateService Method: generateForm</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should single layout html match</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should two columns layout html match</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should three columns layout html match</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.services Service: templateService Method: generateCells</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should cells html match</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.services Service: templateService Method: generateGrid</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should grid html match</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.services Service: tubularTranslate</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should be defined</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have current language to be &quot;en&quot;</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have default language to be &quot;en&quot;</span>
+      </div>
+    
+      <div class="specSummary skipped">
+      <span class="description">should have translation tables to have same keys</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should change the language</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should translate</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should add new translation</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.services Provider: TubularConfig</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should be defined</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should load default config</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should change config settings</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.services Interceptor: Auth</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should be defined</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should not add any authorization header for tokenUrl</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should add authorization header</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should NOT try to use refresh tokens</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should try to use refresh tokens</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.services Interceptor: Auth should not add any authorization header for static files</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should not add any authorization header for static files (Variant #0 &lt;&quot;html&quot;&gt;)</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should not add any authorization header for static files (Variant #1 &lt;&quot;htm&quot;&gt;)</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should not add any authorization header for static files (Variant #2 &lt;&quot;js&quot;&gt;)</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should not add any authorization header for static files (Variant #3 &lt;&quot;css&quot;&gt;)</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite failed">
+      <span class="description">Module: tubular.directives Directive: tb-simple-editor</span>
+    
+      <div class="specSummary failed">
+      <span class="description">should replace</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">should &quot;name&quot; have info</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">should &quot;is-editing&quot; have info</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">should &quot;editor-type&quot; have info</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">should validate defined</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">should call $onInit</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">should validate regex</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">should validate min</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">should validate max</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">should validate match</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.directives Directive: tb-form</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should call finishDefinition after compile</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should set serverSaveUrl</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should set serverUrl</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should set requireAuthentication</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should set name</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should set model key</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should set model</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should replace</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should transclude</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.directives Controller: tbFormController constructor</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should set tubularDirective properly</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should set default request method</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.directives component: tbTextSearch</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should depend on tbGrid</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should load template correctly</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should set placeholder correctly</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should set default minChars correctly</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should set minChars correctly</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.directives template: tbTextSearch</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should exist</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should set placeholder correctly</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should fallback placeholder to UI_SEARCH</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should translate the input placeholder</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">input should debounce (before)</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">input should debounce (after)</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">reset button should be visible only when the input has text</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">reset button should reset the search input</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.directives Controller: tbTextSearchController Method: $onInit</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should set default minChars properly</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should not modify minChars if specified</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should set lastSearch properly</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.directives component: tbGrid</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should be defined</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.directives Controller: tbGridController onInit function, watchers</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should have name</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have empty columns</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have empty rows</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have savePage</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have currentPage</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have savePageSize</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have pageSize</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have saveSearchText</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have totalPages</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have totalRecordCount</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have filteredRecordCount</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have requestedPage</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have hasColumnsDefinitions</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have requestCounter</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have requestMethod</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have serverSaveMethod</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have requestTimeout</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have currentRequest</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have autoSearch</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have search</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have isEmpty</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have tempRow</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have requireAuthentication</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have editorMode</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have canSaveState</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have showLoading</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have autoRefresh</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have serverDeleteUrl</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should watch columns</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should watch serverUrl</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should watch hasColumnsDefinitions</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should watch requestedPage</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.directives Controller: tbGridController Watching pageSize</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should not storage pageSize</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should storage pageSize</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.directives Controller: tbGridController saveSearch function</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should set storage</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should remove storage</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.directives Controller: tbGridController</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should add columns</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should delete row</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.directives Controller: tbGridController newRow function</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should not have properties</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should have properties</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should not call tubularPopupService.openDialog</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should call tubularPopupService.openDialog</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.directives Controller: tbGridController verifyColumns function</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should storage columns</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should storage columns</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.directives Controller: tbGridController getRequestObject function</span>
+    
+      <div class="specSummary passed">
+      <span class="description">with skip = -1</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">with skip &gt; -1</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.directives Controller: tbGridController processPayload function</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should emit tbGrid_OnConnectionError on null data</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should emit tbGrid_OnConnectionError on false data.Payload </span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should create ctrl.rows</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should emit tbGrid_OnDataLoaded</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should change ctrl.aggregationFunctions</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should change ctrl.currentPage</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should change ctrl.totalPages</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should change ctrl.totalRecordCount</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should change ctrl.filteredRecordCount</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should change ctrl.isEmpty</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should not storage currentPage</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should storage currentPage</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.directives Controller: tbGridController sortColumn function</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should not change wrong column</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should change column SortOrder and SortDirection</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should remove sorting from other columns</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should not remove sorting from other columns</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should broadcast</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should broadcast</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.directives Controller: tbGridController getFullDataSource function</span>
+    
+      <div class="specSummary skipped">
+      <span class="description">should getFullDataSource</span>
+      </div>
+    
+      <div class="specSummary skipped">
+      <span class="description">should emit error</span>
+      </div>
+    
+      <div class="specSummary skipped">
+      <span class="description">should nullify currentRequest</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.directives Controller: tbGridController visibleColumns function</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should get visibleColumns</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should not get visibleColumns</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular.directives Controller: tbGridController retrieveData function</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should change canSaveState</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should call verifyColumns</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should update pageSize</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should update pageSize on pageSize &lt; 10</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should update pageSize on pageSize &lt; 10</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should update requestedPage</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should call onBeforeGetData</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should emit tbGrid_OnBeforeRequest</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should process currentRequest</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite failed">
+      <span class="description">Module: tubular.models Tubular Model</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should tubularModel to be defined</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">should $key have multiple values</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">should delete</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">should have value</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">should reset</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">should revert changes</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite failed">
+      <span class="description">Module: tubular.models Tubular Model With data as array</span>
+    
+      <div class="specSummary failed">
+      <span class="description">should obj result to be defined</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">should obj.$key to be 1</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">should $addField method to be called</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">should obj.$isEditing to be false</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">should obj.$hasChanges to be false</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">should obj.$selected to be false</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">should obj.$isNew to be false</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite failed">
+      <span class="description">Module: tubular.models Tubular Model With data as object</span>
+    
+      <div class="specSummary failed">
+      <span class="description">should $addField method to be called</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">should obj.$key to be 1</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">should $valid to be true</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">should $valid to be false</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite failed">
+      <span class="description">Module: tubular.models Tubular Model Saving data</span>
+    
+      <div class="specSummary failed">
+      <span class="description">should return false</span>
+      </div>
+    
+      <div class="specSummary skipped">
+      <span class="description">should return object with post method</span>
+      </div>
+    
+      <div class="specSummary skipped">
+      <span class="description">should return object with put method</span>
+      </div>
+    
+      <div class="specSummary failed">
+      <span class="description">should edit</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">Module: tubular Tubular filters</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should filter errormessage</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should filter numberorcurrency</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should filter moment</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should filter translate</span>
+      </div>
+    
+    </div>
+  
+  
+</div>
+
+<div id="details">
+  
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.services Service: editor should be defined</span>
+    <div class="stackTrace">
+      <div class="resultMessage">TypeError: function bound () {
+    [native code]
+} is not a constructor
+instantiate@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:5018:14
+service/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4852:14
+invoke@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:5003:16
+enforcedReturnValue@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4836:20
+invoke@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:5003:16
+createInjector/protoInstanceInjector&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4795:20
+getService@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4944:32
+injectionArgs@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4969:58
+invoke@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4995:18
+WorkFn@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular-mocks/angular-mocks.js?861c27a0d62d5f7beed79cd1b40b44f0560b2eb5:3173:11
+angular.mock.inject@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular-mocks/angular-mocks.js?861c27a0d62d5f7beed79cd1b40b44f0560b2eb5:3143:35
+@http://localhost:9876/base/tubular/services/editor.spec.js?7e710a76bb612340c19d2466055772214afa7df9:17:13
+[3]&lt;/ContextKarma/this.loaded@http://localhost:9876/context.js:162:7
+angular.mock.inject@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular-mocks/angular-mocks.js?861c27a0d62d5f7beed79cd1b40b44f0560b2eb5:3136:25
+@http://localhost:9876/base/tubular/services/editor.spec.js?7e710a76bb612340c19d2466055772214afa7df9:17:13
+[3]&lt;/ContextKarma/this.loaded@http://localhost:9876/context.js:162:7,TypeError: editor is undefined in http://localhost:9876/base/tubular/services/editor.spec.js?7e710a76bb612340c19d2466055772214afa7df9 (line 28)
+@http://localhost:9876/base/tubular/services/editor.spec.js?7e710a76bb612340c19d2466055772214afa7df9:28:13
+[3]&lt;/ContextKarma/this.loaded@http://localhost:9876/context.js:162:7,Expected undefined to be defined.
+@http://localhost:9876/base/tubular/services/editor.spec.js?7e710a76bb612340c19d2466055772214afa7df9:33:13
+[3]&lt;/ContextKarma/this.loaded@http://localhost:9876/context.js:162:7</div>
+    </div>
+  </div>
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.services Service: editor should have form name</span>
+    <div class="stackTrace">
+      <div class="resultMessage">TypeError: function bound () {
+    [native code]
+} is not a constructor
+instantiate@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:5018:14
+service/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4852:14
+invoke@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:5003:16
+enforcedReturnValue@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4836:20
+invoke@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:5003:16
+createInjector/protoInstanceInjector&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4795:20
+getService@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4944:32
+injectionArgs@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4969:58
+invoke@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4995:18
+WorkFn@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular-mocks/angular-mocks.js?861c27a0d62d5f7beed79cd1b40b44f0560b2eb5:3173:11
+angular.mock.inject@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular-mocks/angular-mocks.js?861c27a0d62d5f7beed79cd1b40b44f0560b2eb5:3143:35
+@http://localhost:9876/base/tubular/services/editor.spec.js?7e710a76bb612340c19d2466055772214afa7df9:17:13
+[3]&lt;/ContextKarma/this.loaded@http://localhost:9876/context.js:162:7
+angular.mock.inject@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular-mocks/angular-mocks.js?861c27a0d62d5f7beed79cd1b40b44f0560b2eb5:3136:25
+@http://localhost:9876/base/tubular/services/editor.spec.js?7e710a76bb612340c19d2466055772214afa7df9:17:13
+[3]&lt;/ContextKarma/this.loaded@http://localhost:9876/context.js:162:7,TypeError: editor is undefined in http://localhost:9876/base/tubular/services/editor.spec.js?7e710a76bb612340c19d2466055772214afa7df9 (line 28)
+@http://localhost:9876/base/tubular/services/editor.spec.js?7e710a76bb612340c19d2466055772214afa7df9:28:13
+[3]&lt;/ContextKarma/this.loaded@http://localhost:9876/context.js:162:7,TypeError: editor is undefined in http://localhost:9876/base/tubular/services/editor.spec.js?7e710a76bb612340c19d2466055772214afa7df9 (line 37)
+@http://localhost:9876/base/tubular/services/editor.spec.js?7e710a76bb612340c19d2466055772214afa7df9:37:13
+[3]&lt;/ContextKarma/this.loaded@http://localhost:9876/context.js:162:7</div>
+    </div>
+  </div>
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.services Service: editor should show isvalid info with required = false</span>
+    <div class="stackTrace">
+      <div class="resultMessage">TypeError: function bound () {
+    [native code]
+} is not a constructor
+instantiate@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:5018:14
+service/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4852:14
+invoke@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:5003:16
+enforcedReturnValue@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4836:20
+invoke@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:5003:16
+createInjector/protoInstanceInjector&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4795:20
+getService@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4944:32
+injectionArgs@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4969:58
+invoke@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4995:18
+WorkFn@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular-mocks/angular-mocks.js?861c27a0d62d5f7beed79cd1b40b44f0560b2eb5:3173:11
+angular.mock.inject@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular-mocks/angular-mocks.js?861c27a0d62d5f7beed79cd1b40b44f0560b2eb5:3143:35
+@http://localhost:9876/base/tubular/services/editor.spec.js?7e710a76bb612340c19d2466055772214afa7df9:17:13
+[3]&lt;/ContextKarma/this.loaded@http://localhost:9876/context.js:162:7
+angular.mock.inject@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular-mocks/angular-mocks.js?861c27a0d62d5f7beed79cd1b40b44f0560b2eb5:3136:25
+@http://localhost:9876/base/tubular/services/editor.spec.js?7e710a76bb612340c19d2466055772214afa7df9:17:13
+[3]&lt;/ContextKarma/this.loaded@http://localhost:9876/context.js:162:7,TypeError: editor is undefined in http://localhost:9876/base/tubular/services/editor.spec.js?7e710a76bb612340c19d2466055772214afa7df9 (line 28)
+@http://localhost:9876/base/tubular/services/editor.spec.js?7e710a76bb612340c19d2466055772214afa7df9:28:13
+[3]&lt;/ContextKarma/this.loaded@http://localhost:9876/context.js:162:7,TypeError: scope.state is undefined in http://localhost:9876/base/tubular/services/editor.spec.js?7e710a76bb612340c19d2466055772214afa7df9 (line 41)
+@http://localhost:9876/base/tubular/services/editor.spec.js?7e710a76bb612340c19d2466055772214afa7df9:41:13
+[3]&lt;/ContextKarma/this.loaded@http://localhost:9876/context.js:162:7</div>
+    </div>
+  </div>
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.services Service: editor should show isvalid info</span>
+    <div class="stackTrace">
+      <div class="resultMessage">TypeError: function bound () {
+    [native code]
+} is not a constructor
+instantiate@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:5018:14
+service/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4852:14
+invoke@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:5003:16
+enforcedReturnValue@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4836:20
+invoke@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:5003:16
+createInjector/protoInstanceInjector&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4795:20
+getService@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4944:32
+injectionArgs@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4969:58
+invoke@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4995:18
+WorkFn@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular-mocks/angular-mocks.js?861c27a0d62d5f7beed79cd1b40b44f0560b2eb5:3173:11
+angular.mock.inject@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular-mocks/angular-mocks.js?861c27a0d62d5f7beed79cd1b40b44f0560b2eb5:3143:35
+@http://localhost:9876/base/tubular/services/editor.spec.js?7e710a76bb612340c19d2466055772214afa7df9:17:13
+[3]&lt;/ContextKarma/this.loaded@http://localhost:9876/context.js:162:7
+angular.mock.inject@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular-mocks/angular-mocks.js?861c27a0d62d5f7beed79cd1b40b44f0560b2eb5:3136:25
+@http://localhost:9876/base/tubular/services/editor.spec.js?7e710a76bb612340c19d2466055772214afa7df9:17:13
+[3]&lt;/ContextKarma/this.loaded@http://localhost:9876/context.js:162:7,TypeError: editor is undefined in http://localhost:9876/base/tubular/services/editor.spec.js?7e710a76bb612340c19d2466055772214afa7df9 (line 28)
+@http://localhost:9876/base/tubular/services/editor.spec.js?7e710a76bb612340c19d2466055772214afa7df9:28:13
+[3]&lt;/ContextKarma/this.loaded@http://localhost:9876/context.js:162:7,TypeError: scope.state is undefined in http://localhost:9876/base/tubular/services/editor.spec.js?7e710a76bb612340c19d2466055772214afa7df9 (line 51)
+@http://localhost:9876/base/tubular/services/editor.spec.js?7e710a76bb612340c19d2466055772214afa7df9:51:13
+[3]&lt;/ContextKarma/this.loaded@http://localhost:9876/context.js:162:7</div>
+    </div>
+  </div>
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.services Service: editor should have getFormField defined</span>
+    <div class="stackTrace">
+      <div class="resultMessage">TypeError: function bound () {
+    [native code]
+} is not a constructor
+instantiate@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:5018:14
+service/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4852:14
+invoke@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:5003:16
+enforcedReturnValue@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4836:20
+invoke@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:5003:16
+createInjector/protoInstanceInjector&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4795:20
+getService@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4944:32
+injectionArgs@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4969:58
+invoke@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4995:18
+WorkFn@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular-mocks/angular-mocks.js?861c27a0d62d5f7beed79cd1b40b44f0560b2eb5:3173:11
+angular.mock.inject@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular-mocks/angular-mocks.js?861c27a0d62d5f7beed79cd1b40b44f0560b2eb5:3143:35
+@http://localhost:9876/base/tubular/services/editor.spec.js?7e710a76bb612340c19d2466055772214afa7df9:17:13
+[3]&lt;/ContextKarma/this.loaded@http://localhost:9876/context.js:162:7
+angular.mock.inject@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular-mocks/angular-mocks.js?861c27a0d62d5f7beed79cd1b40b44f0560b2eb5:3136:25
+@http://localhost:9876/base/tubular/services/editor.spec.js?7e710a76bb612340c19d2466055772214afa7df9:17:13
+[3]&lt;/ContextKarma/this.loaded@http://localhost:9876/context.js:162:7,TypeError: editor is undefined in http://localhost:9876/base/tubular/services/editor.spec.js?7e710a76bb612340c19d2466055772214afa7df9 (line 28)
+@http://localhost:9876/base/tubular/services/editor.spec.js?7e710a76bb612340c19d2466055772214afa7df9:28:13
+[3]&lt;/ContextKarma/this.loaded@http://localhost:9876/context.js:162:7,Expected undefined to be defined.
+@http://localhost:9876/base/tubular/services/editor.spec.js?7e710a76bb612340c19d2466055772214afa7df9:60:13
+[3]&lt;/ContextKarma/this.loaded@http://localhost:9876/context.js:162:7</div>
+    </div>
+  </div>
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.services Service: editor should have $dirty value</span>
+    <div class="stackTrace">
+      <div class="resultMessage">TypeError: function bound () {
+    [native code]
+} is not a constructor
+instantiate@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:5018:14
+service/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4852:14
+invoke@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:5003:16
+enforcedReturnValue@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4836:20
+invoke@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:5003:16
+createInjector/protoInstanceInjector&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4795:20
+getService@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4944:32
+injectionArgs@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4969:58
+invoke@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4995:18
+WorkFn@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular-mocks/angular-mocks.js?861c27a0d62d5f7beed79cd1b40b44f0560b2eb5:3173:11
+angular.mock.inject@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular-mocks/angular-mocks.js?861c27a0d62d5f7beed79cd1b40b44f0560b2eb5:3143:35
+@http://localhost:9876/base/tubular/services/editor.spec.js?7e710a76bb612340c19d2466055772214afa7df9:17:13
+[3]&lt;/ContextKarma/this.loaded@http://localhost:9876/context.js:162:7
+angular.mock.inject@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular-mocks/angular-mocks.js?861c27a0d62d5f7beed79cd1b40b44f0560b2eb5:3136:25
+@http://localhost:9876/base/tubular/services/editor.spec.js?7e710a76bb612340c19d2466055772214afa7df9:17:13
+[3]&lt;/ContextKarma/this.loaded@http://localhost:9876/context.js:162:7,TypeError: editor is undefined in http://localhost:9876/base/tubular/services/editor.spec.js?7e710a76bb612340c19d2466055772214afa7df9 (line 28)
+@http://localhost:9876/base/tubular/services/editor.spec.js?7e710a76bb612340c19d2466055772214afa7df9:28:13
+[3]&lt;/ContextKarma/this.loaded@http://localhost:9876/context.js:162:7,Expected undefined to be defined.
+@http://localhost:9876/base/tubular/services/editor.spec.js?7e710a76bb612340c19d2466055772214afa7df9:64:13
+[3]&lt;/ContextKarma/this.loaded@http://localhost:9876/context.js:162:7</div>
+    </div>
+  </div>
+  
+  
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.directives Directive: tb-simple-editor should replace</span>
+    <div class="stackTrace">
+      <div class="resultMessage">TypeError: function bound () {
+    [native code]
+} is not a constructor in http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426 (line 5018)
+instantiate@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:5018:14
+service/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4852:14
+invoke@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:5003:16
+enforcedReturnValue@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4836:20
+invoke@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:5003:16
+createInjector/protoInstanceInjector&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4795:20
+getService@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4944:32
+injectionArgs@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4969:58
+invoke@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4995:18
+$controllerInit@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:10866:24
+nodeLinkFn@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:9746:35
+compileTemplateUrl/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:10154:13
+processQueue@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16832:37
+scheduleProcessQueue/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16876:27
+$RootScopeProvider/this.$get&lt;/Scope.prototype.$digest@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:17971:15
+generate@http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2:20:13
+@http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2:26:13
+@http://localhost:9876/base/tubular/interceptors/auth.spec.js?b30800a38f8eebf1b663455c51a337ed26004fdd:137:21
+processQueue@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16832:37
+scheduleProcessQueue/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16876:27
+$RootScopeProvider/this.$get&lt;/Scope.prototype.$digest@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:17971:15
+$RootScopeProvider/this.$get&lt;/Scope.prototype.$apply@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:18269:13
+done@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:12387:36
+handleResponse@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular-mocks/angular-mocks.js?861c27a0d62d5f7beed79cd1b40b44f0560b2eb5:1393:9
+createHttpBackendMock/$httpBackend.flush@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular-mocks/angular-mocks.js?861c27a0d62d5f7beed79cd1b40b44f0560b2eb5:1849:9
+@http://localhost:9876/base/tubular/interceptors/auth.spec.js?b30800a38f8eebf1b663455c51a337ed26004fdd:142:13
+@http://localhost:9876/base/tubular/interceptors/auth.spec.js?b30800a38f8eebf1b663455c51a337ed26004fdd:98:21
+processQueue@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16832:37
+scheduleProcessQueue/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16876:27
+$RootScopeProvider/this.$get&lt;/Scope.prototype.$digest@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:17971:15
+createHttpBackendMock/$httpBackend.flush@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular-mocks/angular-mocks.js?861c27a0d62d5f7beed79cd1b40b44f0560b2eb5:1836:27
+@http://localhost:9876/base/tubular/interceptors/auth.spec.js?b30800a38f8eebf1b663455c51a337ed26004fdd:101:13</div>
+    </div>
+  </div>
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.directives Directive: tb-simple-editor should &quot;name&quot; have info</span>
+    <div class="stackTrace">
+      <div class="resultMessage">TypeError: function bound () {
+    [native code]
+} is not a constructor in http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426 (line 5018)
+instantiate@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:5018:14
+service/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4852:14
+invoke@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:5003:16
+enforcedReturnValue@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4836:20
+invoke@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:5003:16
+createInjector/protoInstanceInjector&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4795:20
+getService@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4944:32
+injectionArgs@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4969:58
+invoke@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4995:18
+$controllerInit@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:10866:24
+nodeLinkFn@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:9746:35
+compileTemplateUrl/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:10154:13
+processQueue@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16832:37
+scheduleProcessQueue/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16876:27
+$RootScopeProvider/this.$get&lt;/Scope.prototype.$digest@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:17971:15
+generate@http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2:20:13
+@http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2:26:13
+@http://localhost:9876/base/tubular/interceptors/auth.spec.js?b30800a38f8eebf1b663455c51a337ed26004fdd:137:21
+processQueue@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16832:37
+scheduleProcessQueue/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16876:27
+$RootScopeProvider/this.$get&lt;/Scope.prototype.$digest@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:17971:15
+$RootScopeProvider/this.$get&lt;/Scope.prototype.$apply@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:18269:13
+done@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:12387:36
+handleResponse@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular-mocks/angular-mocks.js?861c27a0d62d5f7beed79cd1b40b44f0560b2eb5:1393:9
+createHttpBackendMock/$httpBackend.flush@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular-mocks/angular-mocks.js?861c27a0d62d5f7beed79cd1b40b44f0560b2eb5:1849:9
+@http://localhost:9876/base/tubular/interceptors/auth.spec.js?b30800a38f8eebf1b663455c51a337ed26004fdd:142:13
+@http://localhost:9876/base/tubular/interceptors/auth.spec.js?b30800a38f8eebf1b663455c51a337ed26004fdd:98:21
+processQueue@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16832:37
+scheduleProcessQueue/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16876:27
+$RootScopeProvider/this.$get&lt;/Scope.prototype.$digest@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:17971:15
+createHttpBackendMock/$httpBackend.flush@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular-mocks/angular-mocks.js?861c27a0d62d5f7beed79cd1b40b44f0560b2eb5:1836:27
+@http://localhost:9876/base/tubular/interceptors/auth.spec.js?b30800a38f8eebf1b663455c51a337ed26004fdd:101:13</div>
+    </div>
+  </div>
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.directives Directive: tb-simple-editor should &quot;is-editing&quot; have info</span>
+    <div class="stackTrace">
+      <div class="resultMessage">TypeError: function bound () {
+    [native code]
+} is not a constructor in http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426 (line 5018)
+instantiate@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:5018:14
+service/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4852:14
+invoke@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:5003:16
+enforcedReturnValue@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4836:20
+invoke@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:5003:16
+createInjector/protoInstanceInjector&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4795:20
+getService@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4944:32
+injectionArgs@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4969:58
+invoke@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4995:18
+$controllerInit@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:10866:24
+nodeLinkFn@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:9746:35
+compileTemplateUrl/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:10154:13
+processQueue@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16832:37
+scheduleProcessQueue/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16876:27
+$RootScopeProvider/this.$get&lt;/Scope.prototype.$digest@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:17971:15
+generate@http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2:20:13
+@http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2:26:13</div>
+    </div>
+  </div>
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.directives Directive: tb-simple-editor should &quot;editor-type&quot; have info</span>
+    <div class="stackTrace">
+      <div class="resultMessage">TypeError: function bound () {
+    [native code]
+} is not a constructor in http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426 (line 5018)
+instantiate@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:5018:14
+service/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4852:14
+invoke@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:5003:16
+enforcedReturnValue@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4836:20
+invoke@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:5003:16
+createInjector/protoInstanceInjector&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4795:20
+getService@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4944:32
+injectionArgs@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4969:58
+invoke@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4995:18
+$controllerInit@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:10866:24
+nodeLinkFn@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:9746:35
+compileTemplateUrl/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:10154:13
+processQueue@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16832:37
+scheduleProcessQueue/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16876:27
+$RootScopeProvider/this.$get&lt;/Scope.prototype.$digest@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:17971:15
+generate@http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2:20:13
+@http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2:26:13</div>
+    </div>
+  </div>
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.directives Directive: tb-simple-editor should validate defined</span>
+    <div class="stackTrace">
+      <div class="resultMessage">TypeError: function bound () {
+    [native code]
+} is not a constructor in http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426 (line 5018)
+instantiate@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:5018:14
+service/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4852:14
+invoke@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:5003:16
+enforcedReturnValue@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4836:20
+invoke@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:5003:16
+createInjector/protoInstanceInjector&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4795:20
+getService@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4944:32
+injectionArgs@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4969:58
+invoke@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4995:18
+$controllerInit@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:10866:24
+nodeLinkFn@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:9746:35
+compileTemplateUrl/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:10154:13
+processQueue@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16832:37
+scheduleProcessQueue/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16876:27
+$RootScopeProvider/this.$get&lt;/Scope.prototype.$digest@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:17971:15
+generate@http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2:20:13
+@http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2:26:13,TypeError: ctrl is undefined in http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2 (line 46)
+@http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2:46:13</div>
+    </div>
+  </div>
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.directives Directive: tb-simple-editor should call $onInit</span>
+    <div class="stackTrace">
+      <div class="resultMessage">TypeError: function bound () {
+    [native code]
+} is not a constructor in http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426 (line 5018)
+instantiate@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:5018:14
+service/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4852:14
+invoke@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:5003:16
+enforcedReturnValue@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4836:20
+invoke@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:5003:16
+createInjector/protoInstanceInjector&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4795:20
+getService@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4944:32
+injectionArgs@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4969:58
+invoke@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4995:18
+$controllerInit@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:10866:24
+nodeLinkFn@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:9746:35
+compileTemplateUrl/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:10154:13
+processQueue@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16832:37
+scheduleProcessQueue/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16876:27
+$RootScopeProvider/this.$get&lt;/Scope.prototype.$digest@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:17971:15
+generate@http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2:20:13
+@http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2:26:13,TypeError: ctrl is undefined in http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2 (line 50)
+@http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2:50:13</div>
+    </div>
+  </div>
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.directives Directive: tb-simple-editor should validate regex</span>
+    <div class="stackTrace">
+      <div class="resultMessage">TypeError: function bound () {
+    [native code]
+} is not a constructor in http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426 (line 5018)
+instantiate@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:5018:14
+service/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4852:14
+invoke@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:5003:16
+enforcedReturnValue@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4836:20
+invoke@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:5003:16
+createInjector/protoInstanceInjector&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4795:20
+getService@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4944:32
+injectionArgs@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4969:58
+invoke@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4995:18
+$controllerInit@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:10866:24
+nodeLinkFn@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:9746:35
+compileTemplateUrl/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:10154:13
+processQueue@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16832:37
+scheduleProcessQueue/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16876:27
+$RootScopeProvider/this.$get&lt;/Scope.prototype.$digest@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:17971:15
+generate@http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2:20:13
+@http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2:26:13,TypeError: ctrl is undefined in http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2 (line 54)
+@http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2:54:13</div>
+    </div>
+  </div>
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.directives Directive: tb-simple-editor should validate min</span>
+    <div class="stackTrace">
+      <div class="resultMessage">TypeError: function bound () {
+    [native code]
+} is not a constructor in http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426 (line 5018)
+instantiate@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:5018:14
+service/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4852:14
+invoke@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:5003:16
+enforcedReturnValue@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4836:20
+invoke@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:5003:16
+createInjector/protoInstanceInjector&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4795:20
+getService@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4944:32
+injectionArgs@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4969:58
+invoke@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4995:18
+$controllerInit@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:10866:24
+nodeLinkFn@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:9746:35
+compileTemplateUrl/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:10154:13
+processQueue@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16832:37
+scheduleProcessQueue/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16876:27
+$RootScopeProvider/this.$get&lt;/Scope.prototype.$digest@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:17971:15
+generate@http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2:20:13
+@http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2:26:13,TypeError: ctrl is undefined in http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2 (line 61)
+@http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2:61:13</div>
+    </div>
+  </div>
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.directives Directive: tb-simple-editor should validate max</span>
+    <div class="stackTrace">
+      <div class="resultMessage">TypeError: function bound () {
+    [native code]
+} is not a constructor in http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426 (line 5018)
+instantiate@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:5018:14
+service/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4852:14
+invoke@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:5003:16
+enforcedReturnValue@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4836:20
+invoke@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:5003:16
+createInjector/protoInstanceInjector&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4795:20
+getService@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4944:32
+injectionArgs@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4969:58
+invoke@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4995:18
+$controllerInit@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:10866:24
+nodeLinkFn@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:9746:35
+compileTemplateUrl/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:10154:13
+processQueue@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16832:37
+scheduleProcessQueue/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16876:27
+$RootScopeProvider/this.$get&lt;/Scope.prototype.$digest@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:17971:15
+generate@http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2:20:13
+@http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2:26:13,TypeError: ctrl is undefined in http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2 (line 68)
+@http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2:68:13</div>
+    </div>
+  </div>
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.directives Directive: tb-simple-editor should validate match</span>
+    <div class="stackTrace">
+      <div class="resultMessage">TypeError: function bound () {
+    [native code]
+} is not a constructor in http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426 (line 5018)
+instantiate@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:5018:14
+service/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4852:14
+invoke@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:5003:16
+enforcedReturnValue@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4836:20
+invoke@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:5003:16
+createInjector/protoInstanceInjector&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4795:20
+getService@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4944:32
+injectionArgs@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4969:58
+invoke@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:4995:18
+$controllerInit@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:10866:24
+nodeLinkFn@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:9746:35
+compileTemplateUrl/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:10154:13
+processQueue@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16832:37
+scheduleProcessQueue/&lt;@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:16876:27
+$RootScopeProvider/this.$get&lt;/Scope.prototype.$digest@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:17971:15
+generate@http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2:20:13
+@http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2:26:13,TypeError: ctrl is undefined in http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2 (line 75)
+@http://localhost:9876/base/tubular/directives/editors/tbSimpleEditor.spec.js?e8adebfb84df59f7b67eda2adf7d0c919a7de9b2:75:13</div>
+    </div>
+  </div>
+  
+  
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.models Tubular Model should $key have multiple values</span>
+    <div class="stackTrace">
+      <div class="resultMessage">TypeError: this.$fields is undefined in http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4 (line 9)
+obj.$addField@http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4:9:459
+@http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4:9:2935
+forEach@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:403:11
+@http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4:9:2354
+@http://localhost:9876/base/tubular/tubular-models.spec.js?403f58526ce3a583c4b7882a74ab4759d4253c07:104:19</div>
+    </div>
+  </div>
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.models Tubular Model should delete</span>
+    <div class="stackTrace">
+      <div class="resultMessage">TypeError: obj is undefined in http://localhost:9876/base/tubular/tubular-models.spec.js?403f58526ce3a583c4b7882a74ab4759d4253c07 (line 146)
+@http://localhost:9876/base/tubular/tubular-models.spec.js?403f58526ce3a583c4b7882a74ab4759d4253c07:146:13</div>
+    </div>
+  </div>
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.models Tubular Model should have value</span>
+    <div class="stackTrace">
+      <div class="resultMessage">TypeError: obj is undefined in http://localhost:9876/base/tubular/tubular-models.spec.js?403f58526ce3a583c4b7882a74ab4759d4253c07 (line 157)
+@http://localhost:9876/base/tubular/tubular-models.spec.js?403f58526ce3a583c4b7882a74ab4759d4253c07:157:13</div>
+    </div>
+  </div>
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.models Tubular Model should reset</span>
+    <div class="stackTrace">
+      <div class="resultMessage">TypeError: obj is undefined in http://localhost:9876/base/tubular/tubular-models.spec.js?403f58526ce3a583c4b7882a74ab4759d4253c07 (line 162)
+@http://localhost:9876/base/tubular/tubular-models.spec.js?403f58526ce3a583c4b7882a74ab4759d4253c07:162:13</div>
+    </div>
+  </div>
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.models Tubular Model should revert changes</span>
+    <div class="stackTrace">
+      <div class="resultMessage">TypeError: obj is undefined in http://localhost:9876/base/tubular/tubular-models.spec.js?403f58526ce3a583c4b7882a74ab4759d4253c07 (line 170)
+@http://localhost:9876/base/tubular/tubular-models.spec.js?403f58526ce3a583c4b7882a74ab4759d4253c07:170:13</div>
+    </div>
+  </div>
+  
+  
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.models Tubular Model With data as array should obj result to be defined</span>
+    <div class="stackTrace">
+      <div class="resultMessage">TypeError: this.$fields is undefined in http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4 (line 9)
+obj.$addField@http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4:9:459
+@http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4:9:2935
+forEach@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:403:11
+@http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4:9:2354
+@http://localhost:9876/base/tubular/tubular-models.spec.js?403f58526ce3a583c4b7882a74ab4759d4253c07:37:23,Expected undefined to be defined.
+@http://localhost:9876/base/tubular/tubular-models.spec.js?403f58526ce3a583c4b7882a74ab4759d4253c07:41:17</div>
+    </div>
+  </div>
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.models Tubular Model With data as array should obj.$key to be 1</span>
+    <div class="stackTrace">
+      <div class="resultMessage">TypeError: this.$fields is undefined in http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4 (line 9)
+obj.$addField@http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4:9:459
+@http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4:9:2935
+forEach@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:403:11
+@http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4:9:2354
+@http://localhost:9876/base/tubular/tubular-models.spec.js?403f58526ce3a583c4b7882a74ab4759d4253c07:37:23,TypeError: obj is undefined in http://localhost:9876/base/tubular/tubular-models.spec.js?403f58526ce3a583c4b7882a74ab4759d4253c07 (line 45)
+@http://localhost:9876/base/tubular/tubular-models.spec.js?403f58526ce3a583c4b7882a74ab4759d4253c07:45:17</div>
+    </div>
+  </div>
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.models Tubular Model With data as array should $addField method to be called</span>
+    <div class="stackTrace">
+      <div class="resultMessage">TypeError: this.$fields is undefined in http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4 (line 9)
+obj.$addField@http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4:9:459
+@http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4:9:2935
+forEach@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:403:11
+@http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4:9:2354
+@http://localhost:9876/base/tubular/tubular-models.spec.js?403f58526ce3a583c4b7882a74ab4759d4253c07:37:23,TypeError: obj is undefined in http://localhost:9876/base/tubular/tubular-models.spec.js?403f58526ce3a583c4b7882a74ab4759d4253c07 (line 49)
+@http://localhost:9876/base/tubular/tubular-models.spec.js?403f58526ce3a583c4b7882a74ab4759d4253c07:49:17</div>
+    </div>
+  </div>
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.models Tubular Model With data as array should obj.$isEditing to be false</span>
+    <div class="stackTrace">
+      <div class="resultMessage">TypeError: this.$fields is undefined in http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4 (line 9)
+obj.$addField@http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4:9:459
+@http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4:9:2935
+forEach@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:403:11
+@http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4:9:2354
+@http://localhost:9876/base/tubular/tubular-models.spec.js?403f58526ce3a583c4b7882a74ab4759d4253c07:37:23,TypeError: obj is undefined in http://localhost:9876/base/tubular/tubular-models.spec.js?403f58526ce3a583c4b7882a74ab4759d4253c07 (line 53)
+@http://localhost:9876/base/tubular/tubular-models.spec.js?403f58526ce3a583c4b7882a74ab4759d4253c07:53:17</div>
+    </div>
+  </div>
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.models Tubular Model With data as array should obj.$hasChanges to be false</span>
+    <div class="stackTrace">
+      <div class="resultMessage">TypeError: this.$fields is undefined in http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4 (line 9)
+obj.$addField@http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4:9:459
+@http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4:9:2935
+forEach@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:403:11
+@http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4:9:2354
+@http://localhost:9876/base/tubular/tubular-models.spec.js?403f58526ce3a583c4b7882a74ab4759d4253c07:37:23,TypeError: obj is undefined in http://localhost:9876/base/tubular/tubular-models.spec.js?403f58526ce3a583c4b7882a74ab4759d4253c07 (line 57)
+@http://localhost:9876/base/tubular/tubular-models.spec.js?403f58526ce3a583c4b7882a74ab4759d4253c07:57:17</div>
+    </div>
+  </div>
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.models Tubular Model With data as array should obj.$selected to be false</span>
+    <div class="stackTrace">
+      <div class="resultMessage">TypeError: this.$fields is undefined in http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4 (line 9)
+obj.$addField@http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4:9:459
+@http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4:9:2935
+forEach@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:403:11
+@http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4:9:2354
+@http://localhost:9876/base/tubular/tubular-models.spec.js?403f58526ce3a583c4b7882a74ab4759d4253c07:37:23,TypeError: obj is undefined in http://localhost:9876/base/tubular/tubular-models.spec.js?403f58526ce3a583c4b7882a74ab4759d4253c07 (line 61)
+@http://localhost:9876/base/tubular/tubular-models.spec.js?403f58526ce3a583c4b7882a74ab4759d4253c07:61:17</div>
+    </div>
+  </div>
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.models Tubular Model With data as array should obj.$isNew to be false</span>
+    <div class="stackTrace">
+      <div class="resultMessage">TypeError: this.$fields is undefined in http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4 (line 9)
+obj.$addField@http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4:9:459
+@http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4:9:2935
+forEach@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:403:11
+@http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4:9:2354
+@http://localhost:9876/base/tubular/tubular-models.spec.js?403f58526ce3a583c4b7882a74ab4759d4253c07:37:23,TypeError: obj is undefined in http://localhost:9876/base/tubular/tubular-models.spec.js?403f58526ce3a583c4b7882a74ab4759d4253c07 (line 65)
+@http://localhost:9876/base/tubular/tubular-models.spec.js?403f58526ce3a583c4b7882a74ab4759d4253c07:65:17</div>
+    </div>
+  </div>
+  
+  
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.models Tubular Model With data as object should $addField method to be called</span>
+    <div class="stackTrace">
+      <div class="resultMessage">TypeError: this.$fields is undefined in http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4 (line 9)
+obj.$addField@http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4:9:459
+@http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4:9:2128
+forEach@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:417:11
+@http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4:9:2053
+@http://localhost:9876/base/tubular/tubular-models.spec.js?403f58526ce3a583c4b7882a74ab4759d4253c07:73:23,TypeError: obj is undefined in http://localhost:9876/base/tubular/tubular-models.spec.js?403f58526ce3a583c4b7882a74ab4759d4253c07 (line 77)
+@http://localhost:9876/base/tubular/tubular-models.spec.js?403f58526ce3a583c4b7882a74ab4759d4253c07:77:17</div>
+    </div>
+  </div>
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.models Tubular Model With data as object should obj.$key to be 1</span>
+    <div class="stackTrace">
+      <div class="resultMessage">TypeError: this.$fields is undefined in http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4 (line 9)
+obj.$addField@http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4:9:459
+@http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4:9:2128
+forEach@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:417:11
+@http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4:9:2053
+@http://localhost:9876/base/tubular/tubular-models.spec.js?403f58526ce3a583c4b7882a74ab4759d4253c07:73:23,TypeError: obj is undefined in http://localhost:9876/base/tubular/tubular-models.spec.js?403f58526ce3a583c4b7882a74ab4759d4253c07 (line 81)
+@http://localhost:9876/base/tubular/tubular-models.spec.js?403f58526ce3a583c4b7882a74ab4759d4253c07:81:17</div>
+    </div>
+  </div>
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.models Tubular Model With data as object should $valid to be true</span>
+    <div class="stackTrace">
+      <div class="resultMessage">TypeError: this.$fields is undefined in http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4 (line 9)
+obj.$addField@http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4:9:459
+@http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4:9:2128
+forEach@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:417:11
+@http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4:9:2053
+@http://localhost:9876/base/tubular/tubular-models.spec.js?403f58526ce3a583c4b7882a74ab4759d4253c07:73:23,TypeError: obj is undefined in http://localhost:9876/base/tubular/tubular-models.spec.js?403f58526ce3a583c4b7882a74ab4759d4253c07 (line 85)
+@http://localhost:9876/base/tubular/tubular-models.spec.js?403f58526ce3a583c4b7882a74ab4759d4253c07:85:17</div>
+    </div>
+  </div>
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.models Tubular Model With data as object should $valid to be false</span>
+    <div class="stackTrace">
+      <div class="resultMessage">TypeError: this.$fields is undefined in http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4 (line 9)
+obj.$addField@http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4:9:459
+@http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4:9:2128
+forEach@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:417:11
+@http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4:9:2053
+@http://localhost:9876/base/tubular/tubular-models.spec.js?403f58526ce3a583c4b7882a74ab4759d4253c07:73:23,TypeError: obj is undefined in http://localhost:9876/base/tubular/tubular-models.spec.js?403f58526ce3a583c4b7882a74ab4759d4253c07 (line 90)
+@http://localhost:9876/base/tubular/tubular-models.spec.js?403f58526ce3a583c4b7882a74ab4759d4253c07:90:21</div>
+    </div>
+  </div>
+  
+  
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.models Tubular Model Saving data should return false</span>
+    <div class="stackTrace">
+      <div class="resultMessage">TypeError: this.$fields is undefined in http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4 (line 9)
+obj.$addField@http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4:9:459
+@http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4:9:2128
+forEach@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:417:11
+@http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4:9:2053
+@http://localhost:9876/base/tubular/tubular-models.spec.js?403f58526ce3a583c4b7882a74ab4759d4253c07:113:23,TypeError: obj is undefined in http://localhost:9876/base/tubular/tubular-models.spec.js?403f58526ce3a583c4b7882a74ab4759d4253c07 (line 119)
+@http://localhost:9876/base/tubular/tubular-models.spec.js?403f58526ce3a583c4b7882a74ab4759d4253c07:119:17</div>
+    </div>
+  </div>
+  
+  <div class="specDetail failed">
+    <span class="description">Module: tubular.models Tubular Model Saving data should edit</span>
+    <div class="stackTrace">
+      <div class="resultMessage">TypeError: this.$fields is undefined in http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4 (line 9)
+obj.$addField@http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4:9:459
+@http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4:9:2128
+forEach@http://localhost:9876/absolute/home/travis/build/unosquare/tubular/bower_components/angular/angular.js?9831e6298bc4fafa9a120923efc1f4e0e258a426:417:11
+@http://localhost:9876/base/tubular/tubular-models.js?0645d9aed7b034d625afa56bc8ff26a1e55581c4:9:2053
+@http://localhost:9876/base/tubular/tubular-models.spec.js?403f58526ce3a583c4b7882a74ab4759d4253c07:113:23,TypeError: obj is undefined in http://localhost:9876/base/tubular/tubular-models.spec.js?403f58526ce3a583c4b7882a74ab4759d4253c07 (line 136)
+@http://localhost:9876/base/tubular/tubular-models.spec.js?403f58526ce3a583c4b7882a74ab4759d4253c07:136:17</div>
+    </div>
+  </div>
+  
+  
+</div>
+
+<script>
+
+var folded = false;
+
+document.body.onkeypress = function (e) {
+  if (!e || !e.keyCode) return;
+  switch (e.keyCode) {
+    case 102: toggleFold(); break;
+    case 49: showSummary(); break;
+    case 50: showFailures(); break;case 50: showFailures(); break;case 50: showFailures(); break;case 50: showFailures(); break;case 50: showFailures(); break;case 50: showFailures(); break;
+  }
+};
+
+function showSummary() { document.body.className = "html-reporter showSummary"; }
+function showFailures() { document.body.className = "html-reporter showDetails"; }
+
+function toggleSection(el) {
+  el.className = el.className === 'summary-section' ? 'summary-section folded' : 'summary-section';
+}
+
+function toggleFold() { (folded) ? unfold() : fold(); }
+function fold() {
+  var els = document.querySelectorAll('.summary-section');
+  for (var i = 0; i < els.length; i++) {
+    els[i].className = 'summary-section folded';
+  }
+  folded = true;
+}
+function unfold() {
+  var els = document.querySelectorAll('.summary-section');
+  for (var i = 0; i < els.length; i++) {
+    els[i].className = 'summary-section';
+  }
+  folded = false;
+}
+
+</script>
+
+
+</body>
+</html>
+
