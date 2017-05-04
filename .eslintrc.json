@@ -21,7 +21,7 @@
     "angular/on-watch": "warn",
     "angular/controller-as": "warn",
     "angular/no-service-method": "warn",
-    "angular/no-service": "warn",
+    "angular/no-services": "warn",
     "angular/controller-as-vm": [ 2, "$ctrl" ],
     "angular/di": [
       2,
