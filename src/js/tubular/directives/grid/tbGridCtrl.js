@@ -1,4 +1,4 @@
-﻿(function (angular) {
+﻿(angular => {
     'use strict';
 
     angular.module('tubular.directives')
@@ -251,9 +251,7 @@
                         $ctrl.pageSize = (parseInt(storage.getItem(prefix + $ctrl.name + '_pageSize')) || $ctrl.pageSize);
                     }
 
-                    if ($ctrl.pageSize < 10) {
-                        $ctrl.pageSize = 20; // default
-                    } 
+                    $ctrl.pageSize = $ctrl.pageSize < 10 ? 20 : $ctrl.pageSize; // default
 
                     var newPages = Math.ceil($ctrl.totalRecordCount / $ctrl.pageSize);
                     if ($ctrl.requestedPage > newPages) $ctrl.requestedPage = newPages;
@@ -290,7 +288,7 @@
                     $ctrl.dataSource = data;
 
                     if (!data.Payload) {
-                        $scope.$emit('tbGrid_OnConnectionError', 'tubularGrid(' + $ctrl.$id + '): response is invalid.');
+                        $scope.$emit('tbGrid_OnConnectionError', `tubularGrid(${$ctrl.$id}): response is invalid.`);
                         return;
                     }
 

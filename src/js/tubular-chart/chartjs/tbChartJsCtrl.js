@@ -9,7 +9,7 @@
       function(
         $scope,
         $http) {
-        var $ctrl = this;
+        let $ctrl = this;
 
         $ctrl.showLegend = angular.isUndefined($ctrl.showLegend) ? true : $ctrl.showLegend;
         $ctrl.chartType = $ctrl.chartType || 'line';
@@ -23,7 +23,7 @@
           // TODO: Set requireAuthentication
           $http.get($ctrl.serverUrl)
             .then((response) => {
-                var data = response.data;
+                const data = response.data;
 
                 if (!data || !data.Data || data.Data.length === 0) {
                   $ctrl.isEmpty = true;
@@ -59,13 +59,9 @@
 
         $scope.$on('chart-create', (evt, chart) => {
             if ($ctrl.chartType === 'pie' || $ctrl.chartType === 'doughnut') {
-              $ctrl.legends = chart.chart.config.data.labels.map((v, i) => {
-                return { label: v, color: chart.chart.config.data.datasets[0].backgroundColor[i]}
-              });
+              $ctrl.legends = chart.chart.config.data.labels.map((v, i) => ({ label: v, color: chart.chart.config.data.datasets[0].backgroundColor[i] }));
             } else {
-              $ctrl.legends = chart.chart.config.data.datasets.map(v => {
-                return { label: v.label, color: v.borderColor };
-              });
+              $ctrl.legends = chart.chart.config.data.datasets.map(v => ({ label: v.label, color: v.borderColor }));
             }
           });
       }

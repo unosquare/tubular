@@ -42,7 +42,7 @@
                 }
             };
 
-            $ctrl.$onInit = () =>tubular.setupScope($scope, null, $ctrl, false);
+            $ctrl.$onInit = () => tubular.setupScope($scope, null, $ctrl, false);
         }];
 
     angular.module('tubular.directives')
@@ -50,11 +50,11 @@
          * @ngdoc component
          * @name tbSimpleEditor
          * @module tubular.directives
-         * 
+         *
          * @description
          * The `tbSimpleEditor` component is the basic input to show in a grid or form.
          * It uses the `TubularModel` to retrieve column or field information.
-         * 
+         *
          * @param {string} name Set the field name.
          * @param {object} value Set the value.
          * @param {boolean} isEditing Indicate if the field is showing editor.
