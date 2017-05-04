@@ -15,6 +15,7 @@
   },
   "extends": [
     "eslint:recommended",
+    "es6-recommended",
     "angular"
   ],
   "rules": {

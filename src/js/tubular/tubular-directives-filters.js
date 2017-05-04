@@ -44,7 +44,7 @@
                 $ctrl.openColumnsSelector = () => {
                     var model = $ctrl.$component.columns;
 
-                    $modal.open({
+                    const dialog = $modal.open({
                         templateUrl: 'tbColumnSelectorDialog.tpl.html',
                         backdropClass: 'fullHeight',
                         animation: false,
