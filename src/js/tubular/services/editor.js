@@ -10,13 +10,13 @@
          * The `tubularEditorService` service is a internal helper to setup any `TubularModel` with a UI.
          */
         .service('tubularEditorService', [
-            'translateFilter', function (translateFilter) {
+            'translateFilter', translateFilter => {
                 var me = this;
 
                 /**
                 * Simple helper to generate a unique name for Tubular Forms
                 */
-                me.getUniqueTbFormName = function () {
+                me.getUniqueTbFormName = () => {
                     me.tbFormCounter = me.tbFormCounter || (me.tbFormCounter = -1);
                     me.tbFormCounter++;
                     return 'tbForm' + me.tbFormCounter;
@@ -38,7 +38,7 @@
 
                     // This is the state API for every property in the Model
                     ctrl.state = {
-                        $valid: function () {
+                        $valid: () => {
                             ctrl.checkValid();
                             return this.$errors.length === 0;
                         },
@@ -47,7 +47,7 @@
                     };
 
                     // Get the field reference using the Angular way
-                    ctrl.getFormField = function () {
+                    ctrl.getFormField = () => {
                         var parent = scope.$parent;
 
                         while (parent != null) {
@@ -63,7 +63,7 @@
                         return null;
                     };
 
-                    ctrl.$dirty = function () {
+                    ctrl.$dirty = () => {
                         // Just forward the property
                         var formField = ctrl.getFormField();
 
@@ -94,9 +94,7 @@
                         ctrl.validate();
                     };
 
-                    scope.$watch(function () {
-                        return ctrl.value;
-                    }, function (newValue, oldValue) {
+                    scope.$watch(() => ctrl.value, (newValue, oldValue) => {
                         if (angular.isUndefined(oldValue) && angular.isUndefined(newValue)) {
                             return;
                         }
@@ -140,7 +138,7 @@
 
                             scope.Name = ctrl.name;
 
-                            ctrl.bindScope = function () {
+                            ctrl.bindScope = () => {
                                 scope.$parent.Model = parent.model;
 
                                 if (angular.equals(ctrl.value, parent.model[scope.Name]) === false) {
@@ -160,9 +158,7 @@
                                         }
                                     }
 
-                                    parent.$watch(function () {
-                                        return ctrl.value;
-                                    }, function (value) {
+                                    parent.$watch(() => ctrl.value, value => {
                                         if (value === parent.model[scope.Name]) {
                                             return;
                                         }
@@ -171,9 +167,7 @@
                                     });
                                 }
 
-                                scope.$watch(function () {
-                                    return parent.model[scope.Name];
-                                }, function (value) {
+                                scope.$watch(() => parent.model[scope.Name], value => {
                                     if (value === ctrl.value) {
                                         return;
                                     }
@@ -197,7 +191,7 @@
 
                                 // This is the state API for every property in the Model
                                 parent.model.$state[scope.Name] = {
-                                    $valid: function () {
+                                    $valid: () => {
                                         ctrl.checkValid();
                                         return ctrl.state.$errors.length === 0;
                                     },

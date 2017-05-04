@@ -118,7 +118,7 @@
                     obj.$isEditing = !obj.$isEditing;
                 };
 
-                obj.delete = () => $ctrl.deleteRow(obj);;
+                obj.delete = () => $ctrl.deleteRow(obj);
 
                 obj.resetOriginal = () => angular.forEach(obj.$original, (v, k) => obj.$original[k] = obj[k]);
 

@@ -69,7 +69,7 @@
                             $scope.tubularDirective = 'tubular-column-definitions';
                         }
                     ],
-                    compile: () => { post: scope => scope.$component.hasColumnsDefinitions = true }
+                    compile: () => { return { post: scope => scope.$component.hasColumnsDefinitions = true }; }
                 };
             }
         ])

@@ -113,7 +113,7 @@
                             var tableHtml = '<table class="table table-bordered table-striped"><thead><tr>'
                                 + component.columns
                                 .filter(c => c.Visible)
-                                .reduce(prev, el => prev + '<th>' + (el.Label || el.Name) + '</th>', '')
+                                .reduce((prev, el) => prev + '<th>' + (el.Label || el.Name) + '</th>', '')
                                 + '</tr></thead>'
                                 + '<tbody>'
                                 + data.map(row => {

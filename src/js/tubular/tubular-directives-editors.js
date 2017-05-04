@@ -47,16 +47,18 @@
             }
         }
 
-        if ($ctrl.max) {
-            if (!angular.isDate($ctrl.max)) {
-                $ctrl.max = new Date($ctrl.max);
-            }
+        if (!$ctrl.max) {
+            return;
+        }
 
-            $ctrl.$valid = $ctrl.dateValue <= $ctrl.max;
+        if (!angular.isDate($ctrl.max)) {
+            $ctrl.max = new Date($ctrl.max);
+        }
 
-            if (!$ctrl.$valid) {
-                $ctrl.state.$errors = [translateFilter('EDITOR_MAX_DATE', dateFilter($ctrl.max, $ctrl.format))];
-            }
+        $ctrl.$valid = $ctrl.dateValue <= $ctrl.max;
+
+        if (!$ctrl.$valid) {
+            $ctrl.state.$errors = [translateFilter('EDITOR_MAX_DATE', dateFilter($ctrl.max, $ctrl.format))];
         }
     }
 
@@ -178,7 +180,7 @@
             if ($ctrl.isEditing) {
                 $ctrl.loadData();
             } else {
-                $scope.$watch(function () { return $ctrl.isEditing; }, function () {
+                $scope.$watch(() => $ctrl.isEditing, () => {
                     if ($ctrl.isEditing) {
                         $ctrl.loadData();
                     }
@@ -196,7 +198,7 @@
             if (angular.isDefined($ctrl.optionLabel) && $ctrl.options) {
                 if (angular.isDefined($ctrl.optionKey)) {
                     var filteredOption = $ctrl.options
-                        .filter(function (el) { return el[$ctrl.optionKey] === $ctrl.value; });
+                        .filter(el => el[$ctrl.optionKey] === $ctrl.value);
 
                     if (filteredOption.length > 0) {
                         $ctrl.readOnlyValue = filteredOption[0][$ctrl.optionLabel];
@@ -207,14 +209,12 @@
             }
         };
 
-        $scope.$watch(function () {
-            return $ctrl.value;
-        }, function (val) {
+        $scope.$watch(() => $ctrl.value, val => {
             $scope.$emit('tbForm_OnFieldChange', $ctrl.$component, $ctrl.name, val, $ctrl.options);
             $scope.updateReadonlyValue();
         });
 
-        $ctrl.loadData = function () {
+        $ctrl.loadData = () => {
             if ($ctrl.dataIsLoaded) {
                 return;
             }
@@ -229,7 +229,7 @@
             tubularHttp.retrieveDataAsync({
                 serverUrl: $ctrl.optionsUrl,
                 requestMethod: $ctrl.optionsMethod || 'GET'
-            }).then(function (data) {
+            }).then(data => {
                 $ctrl.options = data;
                 $ctrl.dataIsLoaded = true;
                 // TODO: Add an attribute to define if autoselect is OK
@@ -241,9 +241,7 @@
                 // Set the field dirty
                 const formScope = $ctrl.getFormField();
                 if (formScope) formScope.$setDirty();
-            }, function (error) {
-                $scope.$emit('tbGrid_OnConnectionError', error);
-            });
+            }, error => $scope.$emit('tbGrid_OnConnectionError', error));
         };
     }];
 
@@ -509,7 +507,7 @@
                         optionLabel: '@?',
                         css: '@?'
                     },
-                    link: function (scope, element) {
+                    link: (scope, element) => {
                         var template = '<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid && $dirty() }">' +
                             '<span ng-hide="isEditing" ng-bind="value"></span>' +
                             '<label ng-show="showLabel" ng-bind="label"></label>' +
@@ -548,7 +546,7 @@
                                 $scope.selectOptions = 'd as d.' + $scope.optionLabel + ' for d in getValues($viewValue)';
                             }
 
-                            $scope.$watch('value', function (val) {
+                            $scope.$watch('value', val => {
                                 $scope.$emit('tbForm_OnFieldChange', $scope.$component, $scope.name, val, $scope.options);
                                 $scope.tooltip = val;
                                 if (angular.isDefined(val) && val != null && angular.isDefined($scope.optionLabel)) {
@@ -556,10 +554,10 @@
                                 }
                             });
 
-                            $scope.getValues = function (val) {
+                            $scope.getValues = val => {
                                 if (angular.isUndefined($scope.optionsUrl)) {
 
-                                    return $q(function (resolve) {
+                                    return $q(resolve => {
                                         $scope.lastSet = $scope.options;
                                         resolve($scope.options);
                                     });
@@ -572,7 +570,7 @@
                                 var p = tubularHttp.retrieveDataAsync({
                                     serverUrl: $scope.optionsUrl + '?search=' + val,
                                     requestMethod: $scope.optionsMethod || 'GET'
-                                }).then(function (data) {
+                                }).then(data => {
                                     $scope.lastSet = data;
                                     return data;
                                 });
@@ -729,7 +727,7 @@
                         }
                     };
 
-                    $ctrl.$onInit = () =>tubular.setupScope($scope, null, $ctrl, false);
+                    $ctrl.$onInit = () => tubular.setupScope($scope, null, $ctrl, false);
                 }
             ]
         });

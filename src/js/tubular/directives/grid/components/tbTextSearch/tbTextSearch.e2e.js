@@ -39,11 +39,9 @@ describe('e2e - Module: tubular.directives', function () {
             element.data('$tbGridController', gridCtrl);
             element = $compile(element)(scope);
             scope.$digest();
-            
         }
 
         it('default state', function () {
-
             gridCtrl.search.Text = '';
 
             generate();
