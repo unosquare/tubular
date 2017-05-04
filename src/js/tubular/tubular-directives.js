@@ -53,9 +53,7 @@
          * 
          * This directive is replace by a `thead` HTML element.
          */
-        .directive('tbColumnDefinitions', [
-            function () {
-
+        .directive('tbColumnDefinitions', [() => {
                 return {
                     require: '^tbGridTable',
                     templateUrl: 'tbColumnDefinitions.tpl.html',
@@ -287,9 +285,7 @@
          * 
          * @param {object} rowModel Set the current row, if you are using a ngRepeat you must to use the current element variable here.
          */
-        .directive('tbRowTemplate', ['$timeout',
-            function ($timeout) {
-
+        .directive('tbRowTemplate', ['$timeout', $timeout => {
                 return {
                     templateUrl: 'tbRowTemplate.tpl.html',
                     restrict: 'E',
@@ -316,8 +312,9 @@
                             $scope.bindFields = () => angular.forEach($scope.fields, field => field.bindScope());
                         }
                     ],
+
                     // Wait a little bit before to connect to the fields
-                    compile: ()  => { post: scope => $timeout(()  => scope.hasFieldsDefinitions = true, 300) }
+                    compile: ()  => { return { post: scope => $timeout(() => scope.hasFieldsDefinitions = true, 300) }; }
                 };
             }
         ])
@@ -348,8 +345,7 @@
                     scope: {
                         columnName: '@?'
                     },
-                    controller: [
-                        '$scope', $scope => {
+                    controller: ['$scope', $scope => {
                             $scope.column = { Visible: true };
                             $scope.columnName = $scope.columnName || null;
                             $scope.$component = $scope.$parent.$parent.$component;

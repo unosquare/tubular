@@ -213,17 +213,17 @@ module.exports = grunt => {
         uglify: {
             tubular_js: {
                 files: {
-                    'src/js/tubular-bundle.min.js': ['src/js/tubular-bundle.js']
+                    'src/js/tubular-bundle.min.js': ['src/js/tubular-bundle.es5.js']
                 }
             },
             chart_js: {
                 files: {
-                    'src/js/tubular-chartjs-bundle.min.js': ['src/js/tubular-chartjs-bundle.js']
+                    'src/js/tubular-chartjs-bundle.min.js': ['src/js/tubular-chartjs-bundle.es5.js']
                 }
             },
             highchart_js: {
                 files: {
-                    'src/js/tubular-highcharts-bundle.min.js': ['src/js/tubular-highcharts-bundle.js']
+                    'src/js/tubular-highcharts-bundle.min.js': ['src/js/tubular-highcharts-bundle.es5.js']
                 }
             }
         },
@@ -247,6 +247,27 @@ module.exports = grunt => {
                 tasks: ['min'],
                 options: {
                     spawn: false
+                }
+            }
+        },
+        babel: {
+            options: {
+                sourceMap: true,
+                presets: ['es2015']
+            },
+            tubular_js: {
+                files: {
+                    'src/js/tubular-bundle.es5.js': ['src/js/tubular-bundle.js']
+                }
+            },
+            chart_js: {
+                files: {
+                    'src/js/tubular-chartjs-bundle.es5.js': ['src/js/tubular-chartjs-bundle.js']
+                }
+            },
+            highchart_js: {
+                files: {
+                    'src/js/tubular-highcharts-bundle.es5.js': ['src/js/tubular-highcharts-bundle.js']
                 }
             }
         }
@@ -273,7 +294,7 @@ module.exports = grunt => {
 
     grunt.registerTask('compress', ['uglify:tubular_js', 'uglify:chart_js', 'uglify:highchart_js']);
 
-    grunt.registerTask('min', ['build', 'uglify', 'cssmin:main']);
+    grunt.registerTask('min', ['build', 'babel', 'uglify', 'cssmin:main']);
 
     grunt.registerTask('lint', ['eslint']);
     grunt.registerTask('dist', ['build-js', 'min', 'copy']);

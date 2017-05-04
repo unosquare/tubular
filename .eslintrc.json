@@ -18,6 +18,7 @@
   ],
   "rules": {
     "quotes": [ 2, "single" ],
+    "no-unused-labels": "off",
     "angular/on-watch": "warn",
     "angular/controller-as": "warn",
     "angular/no-service-method": "warn",
