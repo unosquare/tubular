@@ -1,11 +1,11 @@
 ﻿'use strict';
 
-describe('Module: tubular.directives', function () {
-    describe('Controller: tbFormController', function () {
+describe('Module: tubular.directives', () => {
+    describe('Controller: tbFormController', () => {
         var sut, scope, $element, $routeParams, tubularHttp, tubularModel, tubularEditorService;
         var $controller;
 
-        beforeEach(function () {
+        beforeEach(() => {
             module('tubular.directives');
             module(function ($provide) {
                 tubularHttp = jasmine.createSpyObj('tubularHttp', ['isAuthenticated']);
@@ -27,13 +27,13 @@ describe('Module: tubular.directives', function () {
             $controller = _$controller_;
         }));
 
-        describe('constructor', function () {
+        describe('constructor', () => {
             beforeEach(() => sut = $controller('tbFormController', { '$scope': scope }));
 
-            it('should set tubularDirective properly', function () {
+            it('should set tubularDirective properly', () => {
                 expect(scope.tubularDirective).toBe('tubular-form');
             });
-            it('should set default request method', function () {
+            it('should set default request method', () => {
                 expect(sut.serverSaveMethod).toBe('POST');
             });
         });

@@ -5,7 +5,7 @@
         function (tubular, $scope, translateFilter, filterFilter) {
             var $ctrl = this;
 
-            $ctrl.validate = function () {
+            $ctrl.validate = () => {
                 if ($ctrl.regex && $ctrl.value) {
                     var patt = new RegExp($ctrl.regex);
 
@@ -42,9 +42,7 @@
                 }
             };
 
-            $ctrl.$onInit = function () {
-                tubular.setupScope($scope, null, $ctrl, false);
-            };
+            $ctrl.$onInit = () =>tubular.setupScope($scope, null, $ctrl, false);
         }];
 
     angular.module('tubular.directives')

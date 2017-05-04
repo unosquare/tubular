@@ -50,8 +50,8 @@
                 return config;
             }
 
-            function checkStatic(url){
-              return /\.(htm|html|css|js|jsx)/.test(url);
+            function checkStatic(url) {
+                return /\.(htm|html|css|js|jsx)/.test(url);
             }
 
             function requestError(rejection) {
@@ -95,11 +95,8 @@
 
                                 if (webApiSettings.requireAuthentication() && tubularHttp.isAuthenticated()) {
                                     rejection.config.headers.Authorization = 'Bearer ' + tubularHttp.userData.bearerToken;
-                                    $injector.get('$http')(rejection.config).then(function (resp) {
-                                        deferred.resolve(resp);
-                                    }, function () {
-                                        deferred.reject(r);
-                                    });
+                                    $injector.get('$http')(rejection.config)
+                                        .then(resp => deferred.resolve(resp), () => deferred.reject(r));
                                 }
                                 else {
                                     deferred.reject(rejection);

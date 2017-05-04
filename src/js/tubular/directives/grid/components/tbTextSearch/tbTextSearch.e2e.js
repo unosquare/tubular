@@ -1,17 +1,17 @@
 ﻿'use strict';
 
-describe('e2e - Module: tubular.directives', function () {
-    describe('tbTextSearch', function () {
+describe('e2e - Module: tubular.directives', () => {
+    describe('tbTextSearch', () => {
         var sut, ctrl, scope, gridCtrl, $compile, element, timeout, filter;
 
-        beforeEach(function () {
+        beforeEach(() => {
             module('tubular.directives');
 
             // registering only external dependencies (grid and filter)
-            module(function ($filterProvider) {
+            module($filterProvider => {
 
                 filter = jasmine.createSpy().and.returnValue('translated');
-                $filterProvider.register('translate', function () { return filter; });
+                $filterProvider.register('translate', () => filter);
                 gridCtrl = {
                     search: {
                         Text : ''
@@ -41,7 +41,7 @@ describe('e2e - Module: tubular.directives', function () {
             scope.$digest();
         }
 
-        it('default state', function () {
+        it('default state', () => {
             gridCtrl.search.Text = '';
 
             generate();
@@ -54,7 +54,7 @@ describe('e2e - Module: tubular.directives', function () {
 
         });
 
-        it('searching for a phrase (visual)', function () {
+        it('searching for a phrase (visual)', () => {
             gridCtrl.search.Text = '';
                 
             generate();
@@ -69,7 +69,7 @@ describe('e2e - Module: tubular.directives', function () {
 
         });
 
-        it('searching for a phrase (backend)', function () {
+        it('searching for a phrase (backend)', () => {
             generate();
 
             gridCtrl.search.Text = 'google sometimes';

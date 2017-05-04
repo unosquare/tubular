@@ -38,7 +38,7 @@
                 $component: '^tbGrid'
             },
             templateUrl: 'tbColumnSelector.tpl.html',
-            controller: ['$uibModal', $modal => {
+            controller: ['$uibModal', function ($modal) {
                 var $ctrl = this;
 
                 $ctrl.openColumnsSelector = () => {
@@ -90,7 +90,7 @@
                 onlyContains: '=?'
             },
             controller: [
-                '$scope', 'tubularTemplateService', ($scope, tubular) => {
+                '$scope', 'tubularTemplateService', function($scope, tubular) {
                     var $ctrl = this;
 
                     $ctrl.$onInit = () => {
@@ -129,7 +129,7 @@
                 title: '@'
             },
             controller: [
-                '$scope', 'tubularTemplateService', ($scope, tubular) => {
+                '$scope', 'tubularTemplateService', function($scope, tubular) {
                     var $ctrl = this;
 
                     $ctrl.$onInit = () => {
@@ -165,7 +165,7 @@
                 title: '@'
             },
             controller: [
-                '$scope', 'tubularTemplateService', 'tubularHttp', ($scope, tubular, tubularHttp) => {
+                '$scope', 'tubularTemplateService', 'tubularHttp', function($scope, tubular, tubularHttp) {
                     var $ctrl = this;
 
                     $ctrl.getOptionsFromUrl = () => {

@@ -1,11 +1,11 @@
 ﻿'use strict';
 
-describe('Module: tubular.directives', function () {
-    describe('Controller: tbTextSearchController', function () {
+describe('Module: tubular.directives', () => {
+    describe('Controller: tbTextSearchController', () => {
         var sut, scope, $element, $routeParams, tubularHttp, tubularModel, tubularEditorService;
         var $controller;
 
-        beforeEach(function () {
+        beforeEach(() => {
             module('tubular.directives');
         });
 
@@ -22,23 +22,24 @@ describe('Module: tubular.directives', function () {
             };
         }
 
-        describe('Method: $onInit', function () {
-
+        describe('Method: $onInit', () => {
             beforeEach(create);
 
-            it('should set default minChars properly', function () {
+            it('should set default minChars properly', () => {
                 sut.$onInit();
 
                 expect(sut.minChars).toBe(3);
             });
-            it('should not modify minChars if specified', function () {
+            
+            it('should not modify minChars if specified', () => {
                 sut.minChars = 5;
 
                 sut.$onInit();
 
                 expect(sut.minChars).toBe(5);
             });
-            it('should set lastSearch properly', function () {
+
+            it('should set lastSearch properly', () => {
                 sut.$component.search.Text = "sometext";
 
                 sut.$onInit();
@@ -47,14 +48,8 @@ describe('Module: tubular.directives', function () {
             });
         });
 
-
-        describe('Watch: search.Text', function () {
-
+        describe('Watch: search.Text', () => {
             beforeEach(create);
-
-           
-
-
         });
     });
 });

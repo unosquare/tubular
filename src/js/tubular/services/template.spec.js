@@ -1,6 +1,6 @@
 ﻿'use strict';
 
-describe('Module: tubular.services', function () {
+describe('Module: tubular.services', () => {
     var genFields = '\r\n\t<tb-numeric-editor name=\"Id\"\r\n\t\tlabel=\"Id\" show-label=\"true\"\r\n\t\tplaceholder=\"\"\r\n\t\trequired=\"true\"\r\n\t\tread-only=\"false\"\r\n\t\tformat=\"\"\r\n\t\thelp=\"\"\u003e\r\n\t\u003c/tb-numeric-editor\u003e\r\n\t\u003ctb-simple-editor name=\"Name\"\r\n\t\teditor-type=\"string\" \r\n\t\tlabel=\"Name\" show-label=\"true\"\r\n\t\tplaceholder=\"\"\r\n\t\trequired=\"true\"\r\n\t\tread-only=\"false\"\r\n\t\thelp=\"\"\u003e\r\n\t\u003c/tb-simple-editor\u003e\r\n\t\u003ctb-simple-editor name=\"Company\"\r\n\t\teditor-type=\"string\" \r\n\t\tlabel=\"Company\" show-label=\"true\"\r\n\t\tplaceholder=\"\"\r\n\t\trequired=\"true\"\r\n\t\tread-only=\"false\"\r\n\t\thelp=\"\"\u003e\r\n\t\u003c/tb-simple-editor\u003e\r\n\t\u003ctb-simple-editor name=\"Email\"\r\n\t\teditor-type=\"string\" \r\n\t\tlabel=\"Email\" show-label=\"true\"\r\n\t\tplaceholder=\"\"\r\n\t\trequired=\"true\"\r\n\t\tread-only=\"false\"\r\n\t\thelp=\"\"\u003e\r\n\t\u003c/tb-simple-editor\u003e\r\n\t\u003ctb-simple-editor name=\"Phone\"\r\n\t\teditor-type=\"string\" \r\n\t\tlabel=\"Phone\" show-label=\"true\"\r\n\t\tplaceholder=\"\"\r\n\t\trequired=\"true\"\r\n\t\tread-only=\"false\"\r\n\t\thelp=\"\"\u003e\r\n\t\u003c/tb-simple-editor\u003e\r\n\t\u003ctb-date-time-editor name=\"Birthday\"\r\n\t\tlabel=\"Birthday\" show-label=\"true\"\r\n\t\trequired=\"true\"\r\n\t\tread-only=\"false\"\r\n\t\tformat=\"\"\r\n\t\thelp=\"\"\u003e\r\n\t\u003c/tb-date-time-editor\u003e\r\n\t\u003ctb-checkbox-field name=\"IsOwner\"\r\n\t\tread-only=\"false\"\r\n\t\thelp=\"\"\u003e\r\n\t</tb-checkbox-field>';
     var genCells = '\r\n\t\t<tb-cell-template column-name="Id">\r\n\t\t\t<tb-numeric-editor is-editing="row.$isEditing" value="row.Id"></tb-numeric-editor>\r\n\t\t</tb-cell-template>\r\n\t\t<tb-cell-template column-name="Name">\r\n\t\t\t<tb-simple-editor is-editing="row.$isEditing" value="row.Name"></tb-simple-editor>\r\n\t\t</tb-cell-template>\r\n\t\t<tb-cell-template column-name="Company">\r\n\t\t\t<tb-simple-editor is-editing="row.$isEditing" value="row.Company"></tb-simple-editor>\r\n\t\t</tb-cell-template>\r\n\t\t<tb-cell-template column-name="Email">\r\n\t\t\t<tb-simple-editor is-editing="row.$isEditing" value="row.Email"></tb-simple-editor>\r\n\t\t</tb-cell-template>\r\n\t\t<tb-cell-template column-name="Phone">\r\n\t\t\t<tb-simple-editor is-editing="row.$isEditing" value="row.Phone"></tb-simple-editor>\r\n\t\t</tb-cell-template>\r\n\t\t<tb-cell-template column-name="Birthday">\r\n\t\t\t<tb-date-time-editor is-editing="row.$isEditing" value="row.Birthday"></tb-date-time-editor>\r\n\t\t</tb-cell-template>\r\n\t\t<tb-cell-template column-name="IsOwner">\r\n\t\t\t<tb-checkbox-field is-editing="row.$isEditing" value="row.IsOwner"></tb-checkbox-field>\r\n\t\t</tb-cell-template>';
 
@@ -118,54 +118,54 @@ describe('Module: tubular.services', function () {
         }
     ];
 
-    describe('Service: templateService', function () {
+    describe('Service: templateService', () => {
         var columns, tubularTemplateService;
 
-        beforeEach(function () {
+        beforeEach(() => {
             module('tubular.services');
-            module(function ($filterProvider) {
+            module($filterProvider => {
                 var filter = jasmine.createSpy().and.returnValue('translated');
-                $filterProvider.register('translate', function () { return filter; });
+                $filterProvider.register('translate', () => filter);
             });
 
-            inject(function (_tubularTemplateService_) {
+            inject(_tubularTemplateService_ => {
                 tubularTemplateService = _tubularTemplateService_;
                 columns = tubularTemplateService.createColumns(models);
             });
         });
 
-        describe('Method: createColumns', function () {
-            it('should return an array with 7 columns', function () {
+        describe('Method: createColumns', () => {
+            it('should return an array with 7 columns', () => {
                 expect(columns).not.toBe([]);
                 expect(columns.length).toBe(7);
             });
 
-            it('first element should match', function () {
+            it('first element should match', () => {
                 expect(JSON.stringify(columns[0])).toEqual(JSON.stringify(firstColumn));
             });
         });
 
-        describe('Method: generateFieldsArray', function () {
+        describe('Method: generateFieldsArray', () => {
             var fields;
 
             beforeEach(function() {
                 fields = tubularTemplateService.generateFieldsArray(columns);
             });
 
-            it('should return an array with 7 fields', function () {
+            it('should return an array with 7 fields', () => {
                 expect(fields).not.toBe([]);
                 expect(fields.length).toBe(7);
             });
 
-            it('first element should match', function () {
+            it('first element should match', () => {
                 var expectedString =
                     '\r\n\t<tb-numeric-editor name="Id"\r\n\t\tlabel="Id" show-label="true"\r\n\t\tplaceholder=""\r\n\t\trequired="true"\r\n\t\tread-only="false"\r\n\t\tformat=""\r\n\t\thelp="">\r\n\t</tb-numeric-editor>';
                 expect(fields[0]).toMatch(expectedString);
             });
         });
 
-        describe('Method: generatePopup', function () {
-            it('should html match', function () {
+        describe('Method: generatePopup', () => {
+            it('should html match', () => {
                 var htmlOutput = tubularTemplateService.generatePopupTemplate(models, 'TEST');
                 var expectedString = '<tb-form model="Model">' +
                     '<div class="modal-header"><h3 class="modal-title">TEST</h3></div>' +
@@ -185,29 +185,29 @@ describe('Module: tubular.services', function () {
             });
         });
 
-        describe('Method: getEditorTypeByDateType', function () {
-            it('should be tbDateTimeEditor', function () {
+        describe('Method: getEditorTypeByDateType', () => {
+            it('should be tbDateTimeEditor', () => {
                 expect('tbDateTimeEditor')
                     .toMatch(tubularTemplateService.getEditorTypeByDateType('date'));
             });
 
-            it('should be tbNumericEditor', function () {
+            it('should be tbNumericEditor', () => {
                 expect('tbNumericEditor')
                     .toMatch(tubularTemplateService.getEditorTypeByDateType('numeric'));
             });
 
-            it('should be tbCheckboxField', function () {
+            it('should be tbCheckboxField', () => {
                 expect('tbCheckboxField')
                     .toMatch(tubularTemplateService.getEditorTypeByDateType('boolean'));
             });
 
-            it('should be tbSimpleEditor', function () {
+            it('should be tbSimpleEditor', () => {
                 expect('tbSimpleEditor').toMatch(tubularTemplateService.getEditorTypeByDateType(''));
             });
         });
 
-        describe('Method: generateForm', function () {
-            it('should single layout html match', function () {
+        describe('Method: generateForm', () => {
+            it('should single layout html match', () => {
                 var htmlOutput = tubularTemplateService.generateForm(columns, tubularTemplateService.defaults.formOptions);
 
                 var expectedString =
@@ -219,7 +219,7 @@ describe('Module: tubular.services', function () {
                 expect(expectedString).toEqual(result);
             });
 
-            it('should two columns layout html match', function () {
+            it('should two columns layout html match', () => {
                 var options = tubularTemplateService.defaults.formOptions;
                 options.Layout = 'Two-columns';
                 var htmlOutputTwoCol = tubularTemplateService.generateForm(columns, options);
@@ -233,7 +233,7 @@ describe('Module: tubular.services', function () {
                 expect(expectedString).toEqual(result);
             });
 
-            it('should three columns layout html match', function () {
+            it('should three columns layout html match', () => {
                 var options = tubularTemplateService.defaults.formOptions;
                 options.Layout = 'Three-columns';
                 var htmlOutputThreeCol = tubularTemplateService.generateForm(columns, options);
@@ -248,16 +248,16 @@ describe('Module: tubular.services', function () {
             });
         });
 
-        describe('Method: generateCells', function () {
-            it('should cells html match', function () {
+        describe('Method: generateCells', () => {
+            it('should cells html match', () => {
                 var htmlOutput = tubularTemplateService.generateCells(columns, 'Inline');
 
                 expect(htmlOutput).toEqual(genCells);
             });
         });
 
-        describe('Method: generateGrid', function () {
-            it('should grid html match', function () {
+        describe('Method: generateGrid', () => {
+            it('should grid html match', () => {
                 var htmlOutput = tubularTemplateService
                     .generateGrid(columns, tubularTemplateService.defaults.gridOptions);
 

@@ -76,17 +76,17 @@
                     // Setup require authentication
                     $ctrl.requireAuthentication = angular.isUndefined($ctrl.requireAuthentication) ? true : $ctrl.requireAuthentication;
 
-                    $ctrl.loadData = function () {
+                    $ctrl.loadData = () => {
                         // TODO: Set requireAuthentication
                         $ctrl.hasError = false;
 
-                        $http.get($ctrl.serverUrl).then($ctrl.handleData, function (error) {
+                        $http.get($ctrl.serverUrl).then($ctrl.handleData, error => {
                             $scope.$emit('tbChart_OnConnectionError', error);
                             $ctrl.hasError = true;
                         });
                     };
 
-                    $ctrl.handleData = function (response) {
+                    $ctrl.handleData = response => {
                         var data = response.data;
 
                         if (!data || !data.Data || data.Data.length === 0) {
@@ -122,21 +122,18 @@
                         }
 
                         if ($ctrl.onLoad) {
-                            $timeout(function () {
-                                $ctrl.onLoad($ctrl.options, {}, $ctrl.options.getHighcharts().series);
-                            }, 100);
-
+                            $timeout(() => $ctrl.onLoad($ctrl.options, {}, $ctrl.options.getHighcharts().series), 100);
                             $ctrl.onLoad($ctrl.options, {}, null);
                         }
                     };
 
-                    $scope.$watch('$ctrl.serverUrl', function (val) {
+                    $scope.$watch('$ctrl.serverUrl', val => {
                         if (angular.isDefined(val) && val != null && val !== '') {
                             $ctrl.loadData();
                         }
                     });
 
-                    $scope.$watch('$ctrl.chartType', function (val) {
+                    $scope.$watch('$ctrl.chartType', val => {
                         if (angular.isDefined(val) && val != null) {
                             $ctrl.options.options.chart.type = val;
                         }

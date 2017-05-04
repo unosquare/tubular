@@ -1,21 +1,19 @@
 ﻿'use strict';
 
-describe('Module: tubular.directives', function () {
-    describe('component: tbTextSearch', function () {
+describe('Module: tubular.directives', () => {
+    describe('component: tbTextSearch', () => {
         var sut, ctrl, scope, $compile, isolated, element, gridCtrl, filter, timeout;
 
-        beforeEach(function () {
+        beforeEach(() => {
             module('tubular.directives');
-
             
             module(function ($controllerProvider, $filterProvider) {
                 
                 filter = jasmine.createSpy().and.returnValue('translated');
-                $filterProvider.register('translate', function () { return filter;});
+                $filterProvider.register('translate', () => filter);
                 gridCtrl = jasmine.createSpyObj('grid', ['search']);
 
-                $controllerProvider.register('tbTextSearchController', function ($scope) { });
-                
+                $controllerProvider.register('tbTextSearchController', ($scope) => { });
             });
         });
 
@@ -34,36 +32,30 @@ describe('Module: tubular.directives', function () {
             ctrl = element.controller('tbTextSearch');
         }
 
-
-        it('should depend on tbGrid', function () {
+        it('should depend on tbGrid', () => {
             generate('<tb-text-search placeholder="search me" ></tb-text-search>');
             expect(ctrl.$component).toBe(gridCtrl);
         });
 
-        it('should load template correctly', function () {
+        it('should load template correctly', () => {
             generate('<tb-text-search placeholder="search me" ></tb-text-search>');
             expect(element.find('div')[0].id).toBe('textsearch');
         });
 
-        it('should set placeholder correctly', function () {
+        it('should set placeholder correctly', () => {
             generate('<tb-text-search placeholder="search me" ></tb-text-search>');
             expect(ctrl.placeholder).toBe('search me');
-            
-
         });
 
-        
-
-        it('should set default minChars correctly', function () {
+        it('should set default minChars correctly', () => {
             generate('<tb-text-search placeholder="search me"></tb-text-search>');
             expect(ctrl.minChars).toBeUndefined();
 
         });
-        it('should set minChars correctly', function () {
+
+        it('should set minChars correctly', () => {
             generate('<tb-text-search min-chars="6" placeholder="search me"></tb-text-search>');
             expect(ctrl.minChars).toBe('6');
-
         });
-        
     });
 });
