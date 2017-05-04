@@ -1,4 +1,4 @@
-﻿(function (angular) {
+﻿(angular => {
     'use strict';
 
     angular.module('tubular.directives')
@@ -31,17 +31,14 @@
 
                 // This method is meant to provide a reference to the Angular Form
                 // so we can get information about: $pristine, $dirty, $submitted, etc.
-                $scope.getFormScope = function () {
-                    return $scope[$element.attr('name')];
-                };
+                $scope.getFormScope = () => $scope[$element.attr('name')];
 
                 // Setup require authentication
                 $ctrl.requireAuthentication = angular.isUndefined($scope.requireAuthentication)
                     ? true
                     : $scope.requireAuthentication;
 
-                $scope.$watch('hasFieldsDefinitions',
-                    function (newVal) {
+                $scope.$watch('hasFieldsDefinitions', newVal => {
                         if (newVal !== true) {
                             return;
                         }
@@ -49,7 +46,7 @@
                         $ctrl.retrieveData();
                     });
 
-                $scope.cloneModel = function (model) {
+                $scope.cloneModel = model => {
                     var data = {};
 
                     angular.forEach(model,
@@ -65,12 +62,7 @@
                     $ctrl.bindFields();
                 };
 
-                $ctrl.bindFields = function () {
-                    angular.forEach($scope.fields,
-                        function (field) {
-                            field.bindScope();
-                        });
-                };
+                $ctrl.bindFields = () => angular.forEach($scope.fields, field => field.bindScope());
 
                 function getUrlWithKey() {
                     const urlData = $scope.serverUrl.split('?');
@@ -209,7 +201,7 @@
 
                     $scope.$emit('tbForm_OnGreetParentController', { controller: $ctrl, scope: $scope });
 
-                    $scope.$on('$destroy', function () { $timeout.cancel(timer); });
+                    $scope.$on('$destroy', () => $timeout.cancel(timer));
                 };
             }
         ]);

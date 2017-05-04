@@ -1,4 +1,4 @@
-﻿(function (angular) {
+﻿(angular => {
     'use strict';
 
     angular.module('tubular.directives')
@@ -45,13 +45,7 @@
                         name: '@?formName'
                     },
                     controller: 'tbFormController',
-                    compile: function() {
-                        return {
-                            post: function(scope) {
-                                scope.finishDefinition();
-                            }
-                        };
-                    }
+                    compile: () => { return { post: scope => scope.finishDefinition() }; }
                 };
             }
         ]);

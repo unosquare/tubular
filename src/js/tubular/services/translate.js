@@ -126,23 +126,17 @@
                 }
             };
 
-            me.setLanguage = function (language) {
-                // TODO: Check translationTable first
-                me.currentLanguage = language;
+            // TODO: Check translationTable first
+            me.setLanguage = language => me.currentLanguage = language;
 
-                return me;
-            };
-
-            me.addTranslation = function (language, key, value) {
+            me.addTranslation = (language, key, value) => {
                 var languageTable = me.translationTable[language] ||
                     me.translationTable[me.currentLanguage] ||
                     me.translationTable[me.defaultLanguage];
                 languageTable[key] = value;
-
-                return me;
             };
 
-            me.translate = function (key) {
+            me.translate = (key) => {
                 var languageTable = me.translationTable[me.currentLanguage] || me.translationTable[me.defaultLanguage];
 
                 return languageTable[key] || key;

@@ -1,5 +1,5 @@
 ﻿
-(function(angular) {
+((angular) => {
   'use strict';
 
   angular.module('tubular-chart.directives')
@@ -19,10 +19,10 @@
           true :
           $ctrl.requireAuthentication;
 
-        $ctrl.loadData = function() {
+        $ctrl.loadData = () => {
           // TODO: Set requireAuthentication
           $http.get($ctrl.serverUrl)
-            .then(function(response) {
+            .then((response) => {
                 var data = response.data;
 
                 if (!data || !data.Data || data.Data.length === 0) {
@@ -48,34 +48,23 @@
                 if ($ctrl.onLoad) {
                   $ctrl.onLoad($ctrl.options, data);
                 }
-              },
-              function(error) {
-                $scope.$emit('tbChart_OnConnectionError', error);
-              });
+              }, error => $scope.$emit('tbChart_OnConnectionError', error));
         };
 
-        $scope.$watch('$ctrl.serverUrl',
-          function(val) {
+        $scope.$watch('$ctrl.serverUrl', val => {
             if (angular.isDefined(val) && val != null) {
               $ctrl.loadData();
             }
           });
 
-        $scope.$on('chart-create',
-          function(evt, chart) {
+        $scope.$on('chart-create', (evt, chart) => {
             if ($ctrl.chartType === 'pie' || $ctrl.chartType === 'doughnut') {
-              $ctrl.legends = chart.chart.config.data.labels.map(function(v, i) {
-                return {
-                  label: v,
-                  color: chart.chart.config.data.datasets[0].backgroundColor[i]
-                };
+              $ctrl.legends = chart.chart.config.data.labels.map((v, i) => {
+                return { label: v, color: chart.chart.config.data.datasets[0].backgroundColor[i]}
               });
             } else {
-              $ctrl.legends = chart.chart.config.data.datasets.map(function(v) {
-                return {
-                  label: v.label,
-                  color: v.borderColor
-                };
+              $ctrl.legends = chart.chart.config.data.datasets.map(v => {
+                return { label: v.label, color: v.borderColor };
               });
             }
           });

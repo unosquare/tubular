@@ -1,4 +1,4 @@
-﻿(function (angular) {
+﻿(angular => {
     'use strict';
 
     var tbSimpleEditorCtrl = ['tubularEditorService', '$scope', 'translateFilter', 'filterFilter',

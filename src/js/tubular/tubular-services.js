@@ -76,7 +76,7 @@
             function($window) {
                 var service = this;
 
-                service.saveFile = function(filename, blob) {
+                service.saveFile = (filename, blob) => {
                     var fileURL = $window.URL.createObjectURL(blob);
                     var downloadLink = angular.element('<a></a>');
 
@@ -89,7 +89,7 @@
                 };
 
                 return {
-                    exportAllGridToCsv: function(filename, gridScope) {
+                    exportAllGridToCsv: (filename, gridScope) => {
                         var columns = getColumns(gridScope);
                         var visibility = getColumnsVisibility(gridScope);
 
@@ -97,8 +97,10 @@
                             .then(data => service.saveFile(filename, exportToCsv(columns, data, visibility)));
                     },
 
-                    exportGridToCsv: function (filename, gridScope) {
-                        if (!gridScope.dataSource || !gridScope.dataSource.Payload) return;
+                    exportGridToCsv: (filename, gridScope) => {
+                        if (!gridScope.dataSource || !gridScope.dataSource.Payload) {
+                            return;
+                        }
 
                         var columns = getColumns(gridScope);
                         var visibility = getColumnsVisibility(gridScope);
@@ -108,7 +110,7 @@
                         gridScope.currentRequest = null;
                     },
 
-                    printGrid: function (component, printCss, title) {
+                    printGrid: (component, printCss, title) => {
                         component.getFullDataSource().then(data => {
                             var tableHtml = '<table class="table table-bordered table-striped"><thead><tr>'
                                 + component.columns

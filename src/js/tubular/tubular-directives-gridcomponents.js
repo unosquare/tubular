@@ -27,7 +27,7 @@
                 legend: '@',
                 icon: '@'
             },
-            controller: () => {
+            controller: function() {
                 var $ctrl = this;
 
                 $ctrl.$onInit = () => {
@@ -71,7 +71,7 @@
                         cancelCss: '@'
                     },
                     controller: [
-                        '$scope', $scope => {
+                        '$scope', function($scope) {
                             $scope.isNew = $scope.isNew || false;
 
                             $scope.save = () => {
@@ -130,7 +130,7 @@
                 model: '=',
                 caption: '@'
             },
-            controller: () => {
+            controller: function() {
                 var $ctrl = this;
 
                 $ctrl.edit = () => {
@@ -196,7 +196,7 @@
                 captionMenuCurrent: '@',
                 captionMenuAll: '@'
             },
-            controller: ['tubularGridExportService', tubular => {
+            controller: ['tubularGridExportService', function(tubular) {
                 var $ctrl = this;
 
                 $ctrl.downloadCsv = () => tubular.exportGridToCsv($ctrl.filename, $ctrl.$component);
@@ -226,7 +226,7 @@
                 printCss: '@',
                 caption: '@'
             },
-            controller: ['tubularGridExportService', tubular => {
+            controller: ['tubularGridExportService', function(tubular) {
                 var $ctrl = this;
 
                 $ctrl.printGrid = () => tubular.printGrid($ctrl.$component, $ctrl.printCss, $ctrl.title);

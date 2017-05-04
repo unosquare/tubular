@@ -1,4 +1,4 @@
-﻿(function (angular) {
+﻿(angular => {
     'use strict';
 
     angular.module('tubular-hchart.directives', ['tubular.services', 'highcharts-ng'])
@@ -104,19 +104,9 @@
 
                         if (data.Series) {
                             $ctrl.options.xAxis.categories = data.Labels;
-                            $ctrl.options.series = data.Series.map(function (el, ix) {
-                                return {
-                                    name: el,
-                                    data: data.Data[ix]
-                                };
-                            });
+                            $ctrl.options.series = data.Series.map((el, ix) => { return { name: el, data: data.Data[ix] }; });
                         } else {
-                            var uniqueSerie = data.Labels.map(function (el, ix) {
-                                return {
-                                    name: el,
-                                    y: data.Data[ix]
-                                };
-                            });
+                            var uniqueSerie = data.Labels.map((el, ix) => { return { name: el, y: data.Data[ix] }; });
 
                             $ctrl.options.series = [{ name: data.SerieName || '', data: uniqueSerie, showInLegend: (data.SerieName || '') !== '' }];
                         }

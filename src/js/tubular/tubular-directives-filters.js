@@ -49,7 +49,7 @@
                         backdropClass: 'fullHeight',
                         animation: false,
                         controller: [
-                            '$scope', $innerScope => {
+                            '$scope', function($innerScope) {
                                 $innerScope.Model = model;
                                 $innerScope.isInvalid = () => $innerScope.Model.filter(el => el.Visible).length === 1;
                                 $innerScope.closePopup = dialog.close;
