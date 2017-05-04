@@ -1,9 +1,8 @@
-(function (angular) {
+(angular => {
     'use strict';
 
     angular.module('tubular.services')
         .provider('tubularConfig', function () {
-
             var provider = this;
             provider.platform = {};
             var PLATFORM = 'platform';
@@ -67,23 +66,22 @@
                 }
             }
 
-
             // create get/set methods for each config
             function createConfig(configObj, providerObj, platformPath) {
-                angular.forEach(configObj, function (value, namespace) {
+                angular.forEach(configObj, (value, namespace) => {
 
                     if (angular.isObject(configObj[namespace])) {
                         // recursively drill down the config object so we can create a method for each one
                         providerObj[namespace] = {};
                         createConfig(configObj[namespace], providerObj[namespace], platformPath + '.' + namespace);
-
                     } else {
                         // create a method for the provider/config methods that will be exposed
-                        providerObj[namespace] = function (newValue) {
+                        providerObj[namespace] = (newValue) => {
                             if (arguments.length) {
                                 configObj[namespace] = newValue;
                                 return providerObj;
                             }
+
                             if (configObj[namespace] == PLATFORM) {
                                 // if the config is set to 'platform', then get this config's platform value
                                 // var platformConfig = stringObj(configProperties.platform, 'default' + platformPath + '.' + namespace);
@@ -93,10 +91,10 @@
                                 // didnt find a specific platform config, now try the default
                                 return stringObj(configProperties.platform, 'default' + platformPath + '.' + namespace);
                             }
+
                             return configObj[namespace];
                         };
                     }
-
                 });
             }
 
@@ -114,10 +112,7 @@
 
             provider.setPlatformConfig = setPlatformConfig;
 
-
             // private: Service definition for internal Tubular use
-            provider.$get = function () {
-                return provider;
-            };
+            provider.$get = () =>  provider;
         });
 })(angular);

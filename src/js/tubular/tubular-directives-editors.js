@@ -1,4 +1,4 @@
-(function (angular, moment) {
+((angular, moment) => {
     'use strict';
 
     // Fix moment serialization
@@ -149,7 +149,7 @@
     const tbDropdownEditorCtrl = ['tubularEditorService', '$scope', 'tubularHttp', function (tubular, $scope, tubularHttp) {
         var $ctrl = this;
 
-        $ctrl.$onInit = function () {
+        $ctrl.$onInit = () => {
             tubular.setupScope($scope, null, $ctrl);
             $ctrl.dataIsLoaded = false;
             $ctrl.selectOptions = 'd for d in $ctrl.options';
@@ -168,13 +168,11 @@
                 return;
             }
 
-            $scope.$watch(function () { return $ctrl.optionsUrl; }, function (val, prev) {
-                if (val === prev) {
-                    return;
+            $scope.$watch(() => $ctrl.optionsUrl, (val, prev) => {
+                if (val !== prev) {
+                    $ctrl.dataIsLoaded = false;
+                    $ctrl.loadData();
                 }
-
-                $ctrl.dataIsLoaded = false;
-                $ctrl.loadData();
             });
 
             if ($ctrl.isEditing) {
@@ -188,7 +186,7 @@
             }
         };
 
-        $scope.updateReadonlyValue = function () {
+        $scope.updateReadonlyValue = () => {
             $ctrl.readOnlyValue = $ctrl.value;
 
             if (!$ctrl.value) {
@@ -682,7 +680,7 @@
                     translateFilter) {
                     var $ctrl = this;
 
-                    $ctrl.validate = function () {
+                    $ctrl.validate = () => {
                         if ($ctrl.min && $ctrl.value) {
                             if ($ctrl.value.length < parseInt($ctrl.min)) {
                                 $ctrl.$valid = false;

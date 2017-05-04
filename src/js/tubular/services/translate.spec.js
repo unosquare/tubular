@@ -1,50 +1,45 @@
 ﻿'use strict';
 
-describe('Module: tubular.services', function () {
+describe('Module: tubular.services', () => {
 
-    describe('Service: tubularTranslate', function () {
+    describe('Service: tubularTranslate', () => {
         var tubularTranslate;
 
-        beforeEach(function () {
+        beforeEach(() => {
             module('tubular.services');
 
-            inject(function (_tubularTranslate_) {
-                tubularTranslate = _tubularTranslate_;
-            });
+            inject(_tubularTranslate_ => tubularTranslate = _tubularTranslate_);
         });
 
-        it('should be defined', function () {
-            expect(tubularTranslate).toBeDefined();
-        });
+        it('should be defined', () => expect(tubularTranslate).toBeDefined());
 
-        it('should have current language to be "en"', function () {
+        it('should have current language to be "en"', () => {
             expect(tubularTranslate.currentLanguage).toBe('en');
         });
 
-        it('should have default language to be "en"', function () {
+        it('should have default language to be "en"', () => {
             expect(tubularTranslate.defaultLanguage).toBe('en');
         });
 
-        xit('should have translation tables to have same keys', function () {
+        xit('should have translation tables to have same keys', () => {
             tubularTranslate.translationTable.forEach(value, key);
         });
 
-        it('should change the language', function () {
+        it('should change the language', () => {
             tubularTranslate.setLanguage('es');
             expect(tubularTranslate.currentLanguage).toBe('es');
         });
 
-        it('should translate', function () {
+        it('should translate', () => {
             tubularTranslate.setLanguage('es');
             expect(tubularTranslate.translate('OP_EQUALS')).toBe('Igual');
 
         });
 
-        it('should add new translation', function () {
+        it('should add new translation', () => {
             tubularTranslate.addTranslation('it', 'OP_STARTSWITH', 'Inizia con');
             tubularTranslate.setLanguage('it');
             expect(tubularTranslate.translate('OP_STARTSWITH')).toBe('Inizia con');
         });
-
     });
 });

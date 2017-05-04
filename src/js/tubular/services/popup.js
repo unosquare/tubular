@@ -19,13 +19,13 @@
                 tubularTemplateService) {
 
                 return {
-                    onSuccessForm: function (callback) {
+                    onSuccessForm: callback => {
                         var successHandle = $rootScope.$on('tbForm_OnSuccessfulSave', callback);
 
                         $rootScope.$on('$destroy', successHandle);
                     },
 
-                    onConnectionError: function (callback) {
+                    onConnectionError: callback => {
                         var errorHandle = $rootScope.$on('tbForm_OnConnectionError', callback);
 
                         $rootScope.$on('$destroy', errorHandle);
@@ -40,28 +40,22 @@
                      * @param {string} size 
                      * @returns {object} The Popup instance
                      */
-                    openDialog: function (template, model, gridScope, size) {
+                    openDialog: (template, model, gridScope, size) => {
                         if (angular.isUndefined(template)) {
                             template = tubularTemplateService.generatePopup(model);
                         }
 
-                        var dialog = $uibModal.open({
+                        return $uibModal.open({
                             templateUrl: template,
                             backdropClass: 'fullHeight',
                             animation: false,
                             size: size,
                             controller: 'GenericPopupController',
                             resolve: {
-                                model: function () {
-                                    return model;
-                                },
-                                gridScope: function () {
-                                    return gridScope;
-                                }
+                                model: () => model,
+                                gridScope: () => gridScope
                             }
                         });
-
-                        return dialog;
                     }
                 };
             }

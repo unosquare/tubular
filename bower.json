@@ -24,7 +24,6 @@
     "LICENSE",
     "package.json",
     "README.md",
-    "Unosquare.Tubular.sln"
   ],
   "license": "MIT",
   "dependencies": {

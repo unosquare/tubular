@@ -1,4 +1,4 @@
-﻿(function (angular) {
+﻿(angular => {
     'use strict';
 
     angular.module('tubular.directives')
@@ -44,7 +44,7 @@
                 $ctrl.openColumnsSelector = () => {
                     var model = $ctrl.$component.columns;
 
-                    var dialog = $modal.open({
+                    $modal.open({
                         templateUrl: 'tbColumnSelectorDialog.tpl.html',
                         backdropClass: 'fullHeight',
                         animation: false,

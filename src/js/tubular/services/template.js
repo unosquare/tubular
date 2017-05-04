@@ -172,17 +172,10 @@
                         var editorTag = el.EditorType
                             .replace(/([A-Z])/g, $1 => '-' + $1.toLowerCase());
 
-                        return prev + '\r\n\t\t<tb-cell-template column-name="' + el.Name + '">' +
+                        return prev + `\r\n\t\t<tb-cell-template column-name="${el.Name}">` +
                             '\r\n\t\t\t' +
                             (mode === 'Inline'
-                                ? '<' +
-                                editorTag +
-                                ' is-editing="row.$isEditing" value="row.' +
-                                el.Name +
-                                '">' +
-                                '</' +
-                                editorTag +
-                                '>'
+                                ? `<${editorTag} is-editing="row.$isEditing" value="row.${el.Name}"></${editorTag}>`
                                 : el.Template) +
                             '\r\n\t\t</tb-cell-template>';
                     }, '');
@@ -323,21 +316,21 @@
                             columns.push({
                                 Name: prop,
                                 DataType: 'numeric',
-                                Template: '{{row.' + prop + ' | number}}'
+                                Template: `{{row.${prop} | number}}`
                             });
                         } else if (angular.isDate(value) || !isNaN((new Date(value)).getTime())) {
-                            columns.push({ Name: prop, DataType: 'date', Template: '{{row.' + prop + ' | moment }}' });
+                            columns.push({ Name: prop, DataType: 'date', Template: `{{row.${prop} | moment }}` });
                         } else if (value.toLowerCase() === 'true' || value.toLowerCase() === 'false') {
                             columns.push({
                                 Name: prop,
                                 DataType: 'boolean',
-                                Template: '{{row.' + prop + ' ? "TRUE" : "FALSE" }}'
+                                Template: `{{row.${prop} ? "TRUE" : "FALSE" }}`
                             });
                         } else {
-                            var newColumn = { Name: prop, DataType: 'string', Template: '{{row.' + prop + '}}' };
+                            var newColumn = { Name: prop, DataType: 'string', Template: `{{row.${prop}}}` };
 
                             if ((/e(-|)mail/ig).test(newColumn.Name)) {
-                                newColumn.Template = '<a href="mailto:' + newColumn.Template + '">' + newColumn.Template + '</a>';
+                                newColumn.Template = `<a href="mailto:${newColumn.Template}">${newColumn.Template}</a>`;
                             }
 
                             columns.push(newColumn);
@@ -397,7 +390,7 @@
                 };
 
                 me.generatePopup = (model, title) => {
-                    var templateName = 'temp' + (new Date().getTime()) + '.html';
+                    var templateName = `temp${new Date().getTime()}.html`;
                     var template = me.generatePopupTemplate(model, title);
 
                     $templateCache.put(templateName, template);
@@ -437,13 +430,11 @@
                             '\r\n\t</div>';
                     }
 
-                    return '<tb-form server-save-method="' + options.SaveMethod + '" model-key="' + options.ModelKey +
-                        '" require-authentication="' +
-                        options.RequireAuthentication +
-                        '" ' +
-                        'server-url="' +
-                        options.dataUrl +
-                        '" server-save-url="' + options.SaveUrl + '">' +
+                    return `<tb-form server-save-method="${options.SaveMethod}" 
+                                model-key="${options.ModelKey}" 
+                                require-authentication="${options.RequireAuthentication}" 
+                                server-url="${options.dataUrl}" 
+                                server-save-url="${options.SaveUrl}">` +
                         '\r\n\t' +
                         fieldsMarkup +
                         '\r\n\t<div>' +
@@ -467,11 +458,7 @@
                             .replace(/([A-Z])/g, $1 => '-' + $1.toLowerCase());
                         var defaults = me.defaults.fieldsSettings[el.EditorType];
 
-                        return '\r\n\t<' +
-                            editorTag +
-                            ' name="' +
-                            el.Name +
-                            '"' +
+                        return '\r\n\t' +`<${editorTag} name="${el.Name}"` +
                             (defaults.EditorType ? '\r\n\t\teditor-type="' + el.DataType + '" ' : '') +
                             (defaults.ShowLabel
                                 ? '\r\n\t\tlabel="' + el.Label + '" show-label="' + el.ShowLabel + '"'
@@ -481,9 +468,7 @@
                             (defaults.ReadOnly ? '\r\n\t\tread-only="' + el.ReadOnly + '"' : '') +
                             (defaults.Format ? '\r\n\t\tformat="' + el.Format + '"' : '') +
                             (defaults.Help ? '\r\n\t\thelp="' + el.Help + '"' : '') +
-                            '>\r\n\t</' +
-                            editorTag +
-                            '>';
+                            '>\r\n\t' +`</${editorTag}>`;
                     });
                 };
 
@@ -590,16 +575,14 @@
                         $ctrl.retrieveData();
                     };
 
-                    $ctrl.applyFilter = function () {
+                    $ctrl.applyFilter = () => {
                         $ctrl.filter.HasFilter = true;
                         $ctrl.retrieveData();
                     };
 
-                    $ctrl.close = function () {
-                        $ctrl.isOpen = false;
-                    };
+                    $ctrl.close = () => $ctrl.isOpen = false;
 
-                    $ctrl.checkEvent = function (keyEvent) {
+                    $ctrl.checkEvent = (keyEvent) => {
                         if (keyEvent.which === 13) {
                             $ctrl.applyFilter();
                             keyEvent.preventDefault();
@@ -608,7 +591,11 @@
 
                     var columns = $ctrl.$component.columns.filter(e => e.Name === $ctrl.filter.Name);
 
-                    $scope.$watch('$ctrl.filter.Operator', val => { if (val === 'None') $ctrl.filter.Text = ''; });
+                    $scope.$watch('$ctrl.filter.Operator', val => { 
+                        if (val === 'None') {
+                            $ctrl.filter.Text = ''; 
+                        }
+                    });
 
                     if (columns.length === 0) {
                         return;

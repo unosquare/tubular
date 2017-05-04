@@ -1,4 +1,4 @@
-﻿(function (angular) {
+﻿(angular => {
     'use strict';
 
     angular.module('tubular.directives')

@@ -62,7 +62,7 @@
                 }
 
                 function getCancel(canceller) {
-                    return function (reason) {
+                    return reason => {
                         $log.error(reason);
                         canceller.resolve(reason);
                     };
@@ -75,11 +75,9 @@
                     expirationDate: null
                 };
 
-                me.isBearerTokenExpired = function () {
-                    return isAuthenticationExpired(me.userData.expirationDate);
-                };
+                me.isBearerTokenExpired = ()  => isAuthenticationExpired(me.userData.expirationDate);
 
-                me.isAuthenticated = function () {
+                me.isAuthenticated = () => {
                     if (!me.userData.isAuthenticated || isAuthenticationExpired(me.userData.expirationDate)) {
                         try {
                             retrieveSavedData();
@@ -108,18 +106,16 @@
                         url: tubularConfig.webApi.tokenUrl(),
                         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                         data: 'grant_type=password&username=' + encodeURIComponent(username) + '&password=' + encodeURIComponent(password)
-                    }).then(function (response) {
+                    }).then(response => {
                         me.initAuth(response.data, username);
                         response.data.authenticated = true;
 
                         return response.data;
-                    }, function (errorResponse) {
-                        return $q.reject(errorResponse.data);
-                    });
+                    }, errorResponse => $q.reject(errorResponse.data));
                 };
 
                 // TODO: make private this function
-                me.initAuth = function(data, username) {
+                me.initAuth = (data, username) => {
                     me.userData.isAuthenticated = true;
                     me.userData.username = data.userName || username || me.userData.username;
                     me.userData.bearerToken = data.access_token;
@@ -138,7 +134,7 @@
                         new Date().getTimezoneOffset();
                 }
 
-                me.saveDataAsync = function (model, request) {
+                me.saveDataAsync = (model, request) => {
                     const component = model.$component;
                     model.$component = null;
                     const clone = angular.copy(model);
@@ -167,7 +163,7 @@
                     }
 
                     return me.retrieveDataAsync(request)
-                        .then(function (data) {
+                        .then(data => {
                             model.$hasChanges = false;
                             model.resetOriginal();
 
@@ -175,7 +171,7 @@
                         });
                 };
 
-                me.retrieveDataAsync = function (request) {
+                me.retrieveDataAsync = request => {
                     const canceller = $q.defer();
                     var cancel = getCancel(canceller);
 
@@ -191,26 +187,24 @@
                     if (!tubularConfig.webApi.enableRefreshTokens()) {
                         if (tubularConfig.webApi.requireAuthentication() && me.isAuthenticated() === false) {
                             // Return empty dataset
-                            return $q(function (resolve) { resolve(null); });
+                            return $q(resolve => resolve(null));
                         }
                     }
 
                     request.timeout = request.timeout || 17000;
 
-                    var timeoutHandler = $timeout(function () {
-                        cancel('Timed out');
-                    }, request.timeout);
+                    var timeoutHandler = $timeout(() =>cancel('Timed out'), request.timeout);
 
                     return $http({
                         url: request.serverUrl,
                         method: request.requestMethod,
                         data: request.data,
                         timeout: canceller.promise
-                    }).then(function (response) {
+                    }).then(response => {
                         $timeout.cancel(timeoutHandler);
 
                         return response.data;
-                    }, function (error) {
+                    }, error => {
                         if (error.status === 401) {
                             me.removeAuthentication();
 
