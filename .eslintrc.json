@@ -15,12 +15,21 @@
   },
   "extends": [
     "eslint:recommended",
-    "es6-recommended",
     "angular"
   ],
   "rules": {
     "quotes": [ 2, "single" ],
     "no-unused-labels": "off",
+    "prefer-const": "warn",
+    "no-trailing-spaces": "warn",
+    "no-continue": "warn",
+    "no-var": "warn",
+    "sort-vars": "warn",
+    "arrow-body-style": ["warn", "as-needed"],
+    "arrow-spacing": "warn",
+    "no-confusing-arrow": "warn",
+    "prefer-template": "warn",
+    "keyword-spacing": "warn",
     "angular/on-watch": "warn",
     "angular/controller-as": "warn",
     "angular/no-service-method": "warn",
