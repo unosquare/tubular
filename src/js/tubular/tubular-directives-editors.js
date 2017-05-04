@@ -16,7 +16,7 @@
             }
 
             if (angular.isString(val)) {
-                $ctrl.value = val === '' || moment(val).year() <= 1900 ? '' : moment(val);
+                $ctrl.value = (val === '' || moment(val).year() <= 1900) ? '' : moment(val);
             }
 
             if (angular.isDefined($ctrl.dateValue)) {

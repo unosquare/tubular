@@ -148,7 +148,6 @@
 
                     delete clone.$isEditing;
                     delete clone.$hasChanges;
-                    delete clone.$selected;
                     delete clone.$original;
                     delete clone.$state;
                     delete clone.$valid;

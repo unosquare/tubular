@@ -57,13 +57,7 @@ describe('Module: tubular.models', () => {
                 expect(obj.$hasChanges).toBe(false);
             })
 
-            it('should obj.$selected to be false', () => {
-                expect(obj.$selected).toBe(false);
-            })
-
-            it('should obj.$isNew to be false', () => {
-                expect(obj.$isNew).toBe(false);
-            })
+            it('should obj.$isNew to be false', () => expect(obj.$isNew).toBe(false))
         });
 
         describe('With data as object', () => {
@@ -158,20 +152,20 @@ describe('Module: tubular.models', () => {
             expect(obj.$original.Name).toBe('GDL');
         });
 
-        it('should reset', () => {
+        it('should revert changes', () => {
+            obj.Id = '2';
+            obj.Name = 'ZAP';
+            obj.revertChanges();
+            expect(obj.Id).toBe('1');
+            expect(obj.Name).toBe('GDL');
+        });
+
+        it('should reset originals', () => {
             obj.Id = '2';
             obj.Name = 'ZAP';
             obj.resetOriginal();
-            expect(obj.$original.Id).toBe('1');
-            expect(obj.$original.Name).toBe('GDL');
-        });
-
-        it('should revert changes', () => {
-            obj.$original.Id = '2';
-            obj.$original.Name = 'ZAP';
-            obj.revertChanges();
-            expect(obj.Id).toBe('2');
-            expect(obj.Name).toBe('ZAP');
+            expect(obj.$original.Id).toBe('2');
+            expect(obj.$original.Name).toBe('ZAP');
         });
     });
 });

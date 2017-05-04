@@ -9,9 +9,7 @@ describe('Module: tubular.services', () => {
             module('tubular.services');
             module(($filterProvider) => {
                 filter = jasmine.createSpy().and.returnValue('translated');
-                $filterProvider.register('translate', () => {
-                    return filter;
-                });
+                $filterProvider.register('translate', () => filter);
             });
 
             inject((_tubularEditorService_) => {
@@ -60,8 +58,6 @@ describe('Module: tubular.services', () => {
             expect(scope.getFormField).toBeDefined();
         });
 
-        it('should have $dirty value', () => {
-            expect(scope.$dirty).toBeDefined();
-        });
+        it('should have $dirty value', () => expect(scope.$dirty).toBeDefined());
     });
 });

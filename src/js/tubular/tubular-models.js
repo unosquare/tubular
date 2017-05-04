@@ -19,28 +19,80 @@
          * @description
          * The `tubularModel` factory is the base to generate a row model to use with `tbGrid` and `tbForm`.
          */
-        .factory('tubularModel', ['tubularHttp', function (tubularHttp) {
-            return ($scope, $ctrl, data) => {
+        .factory('tubularModel', ['tubularHttp', function(tubularHttp) {
+            return function($scope, $ctrl, data) {
                 var obj = {
+                    $hasChanges: false,
+                    $isEditing: false,
+                    $isNew: false,
                     $key: '',
                     $fields: [],
+                    $state: {},
+                    $original: {},
+                    $valid: () => {
+                        var valid = true;
+
+                        angular.forEach(obj.$state, val => {
+                            if (angular.isUndefined(val) || val.$valid()) return;
+
+                            valid = false;
+                        });
+
+                        return valid;
+                    },
                     $addField: (key, value, ignoreOriginal) => {
-                        if (this.$fields.indexOf(key) >= 0) return;
-                        this[key] = value;
-                        this.$fields.push(key);
-                        this.$original = this.$original || {};
-
-                        this.$original[key] = ignoreOriginal ? undefined : value;
-
-                        if (ignoreOriginal) {
-                            this.$hasChanges = true;
+                        if (obj.$fields.indexOf(key) >= 0) {
+                            return;
                         }
 
-                        this.$state = this.$state || {};
+                        obj[key] = value;
+                        obj.$fields.push(key);
+                        obj.$original[key] = ignoreOriginal ? undefined : value;
+
+                        if (ignoreOriginal) {
+                            obj.$hasChanges = true;
+                        }
 
                         $scope.$watch(() => obj[key], (newValue, oldValue) => {
-                            if (newValue === oldValue) return;
+                            if (newValue === oldValue) {
+                                return;
+                            }
+
                             obj.$hasChanges = obj[key] !== obj.$original[key];
+                        });
+                    },
+                    edit: () => {
+                        if (obj.$isEditing && obj.$hasChanges) {
+                            obj.save();
+                        }
+
+                        obj.$isEditing = !obj.$isEditing;
+                    },
+                    delete: () => $ctrl.deleteRow(obj),
+                    resetOriginal: () => angular.forEach(obj.$original, (v, k) => obj.$original[k] = obj[k]),
+                    revertChanges: () => {
+                        angular.forEach(obj, (v, k) => {
+                            if (angular.isDefined(obj.$original[k])) {
+                                obj[k] = obj.$original[k];
+                            }
+                        });
+
+                        obj.$hasChanges = obj.$isEditing = false;
+                    },
+                    save: forceUpdate => {
+                        if (angular.isUndefined($ctrl.serverSaveUrl) || $ctrl.serverSaveUrl == null) {
+                            throw 'Define a Save URL.';
+                        }
+
+                        if (!forceUpdate && !obj.$isNew && !obj.$hasChanges) {
+                            return false;
+                        }
+
+                        obj.$isLoading = true;
+
+                        return tubularHttp.saveDataAsync(obj, {
+                            serverUrl: $ctrl.serverSaveUrl,
+                            requestMethod: obj.$isNew ? ($ctrl.serverSaveMethod || 'POST') : 'PUT'
                         });
                     }
                 };
@@ -75,64 +127,6 @@
                 if (obj.$key.length > 1) {
                     obj.$key = obj.$key.substring(0, obj.$key.length - 1);
                 }
-
-                obj.$hasChanges = obj.$isEditing = false;
-                obj.$selected = false;
-                obj.$isNew = false;
-
-                obj.$valid = () => {
-                    var valid = true;
-
-                    angular.forEach(obj.$state, val => {
-                        if (angular.isUndefined(val) || val.$valid()) return;
-
-                        valid = false;
-                    });
-
-                    return valid;
-                };
-
-                // Returns a save promise
-                obj.save = forceUpdate => {
-                    if (angular.isUndefined($ctrl.serverSaveUrl) || $ctrl.serverSaveUrl == null) {
-                        throw 'Define a Save URL.';
-                    }
-
-                    if (!forceUpdate && !obj.$isNew && !obj.$hasChanges) {
-                        return false;
-                    }
-
-                    obj.$isLoading = true;
-
-                    return tubularHttp.saveDataAsync(obj, {
-                        serverUrl: $ctrl.serverSaveUrl,
-                        requestMethod: obj.$isNew ? ($ctrl.serverSaveMethod || 'POST') : 'PUT'
-                    });
-                };
-
-                obj.edit = () => {
-                    if (obj.$isEditing && obj.$hasChanges) {
-                        obj.save();
-                    }
-
-                    obj.$isEditing = !obj.$isEditing;
-                };
-
-                obj.delete = () => $ctrl.deleteRow(obj);
-
-                obj.resetOriginal = () => angular.forEach(obj.$original, (v, k) => obj.$original[k] = obj[k]);
-
-                obj.revertChanges = () => {
-                    angular.forEach(obj, (v, k) => {
-                        if (k[0] === '$' || angular.isUndefined(obj.$original[k])) {
-                            return;
-                        }
-
-                        obj[k] = obj.$original[k];
-                    });
-
-                    obj.$hasChanges = obj.$isEditing = false;
-                };
 
                 return obj;
             };
