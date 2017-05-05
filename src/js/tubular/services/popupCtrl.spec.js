@@ -52,7 +52,6 @@ describe('Module: tubular.services', () => {
         describe('Method: savePopup', () => {
             beforeEach(() => {
                 models.$isNew = false;
-                models.$hasChanges = false;
             });
         });
 

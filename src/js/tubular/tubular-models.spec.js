@@ -2,16 +2,13 @@
 
 describe('Module: tubular.models', () => {
     describe('Tubular Model', () => {
-        var scope, tubularModel, ctrl, obj;
+        var tubularModel, ctrl, obj;
 
         beforeEach(() => {
             module('tubular.services');
             module('tubular.models');
 
-            inject((_$rootScope_, _tubularModel_) => {
-                scope = _$rootScope_.$new();
-                tubularModel = _tubularModel_;
-            });
+            inject(_tubularModel_ => tubularModel = _tubularModel_);
 
             ctrl = {
                 columns: [
@@ -27,7 +24,7 @@ describe('Module: tubular.models', () => {
 
             beforeEach(() => {
                 var data = ["1", "GDL"];
-                obj = tubularModel(scope, ctrl, data);
+                obj = tubularModel(ctrl, data);
             });
 
             it('should obj result to be defined', () => {
@@ -47,17 +44,17 @@ describe('Module: tubular.models', () => {
             })
 
             it('should obj.$hasChanges to be false', () => {
-                expect(obj.$hasChanges).toBe(false);
+                expect(obj.$hasChanges()).toBe(false);
             })
 
-            it('should obj.$isNew to be false', () => expect(obj.$isNew).toBe(false))
+            it('should obj.$isNew to be false', () => expect(obj.$isNew).toBe(false));
         });
 
         describe('With data as object', () => {
 
             beforeEach(() => {
                 var data = { "Id": "1", "Name": "GDL" };
-                obj = tubularModel(scope, ctrl, data);
+                obj = tubularModel(ctrl, data);
             });
 
             it('should $addField method to be called', () => {
@@ -84,7 +81,7 @@ describe('Module: tubular.models', () => {
                 { 'DataType': 'string', 'IsKey': true, 'Name': 'Id' },
                 { 'DataType': 'string', 'IsKey': true, 'Name': 'Name' }
             ];
-            obj = new tubularModel(scope, ctrl, data);
+            obj = new tubularModel(ctrl, data);
 
             expect(obj.$key).toBe('3,ZAP');
         });
@@ -92,7 +89,7 @@ describe('Module: tubular.models', () => {
         describe('working with $original', () => {
             beforeEach(() => {
                 var data = { "Id": "1", "Name": "GDL" };
-                obj = new tubularModel(scope, ctrl, data);
+                obj = new tubularModel(ctrl, data);
             });
 
 

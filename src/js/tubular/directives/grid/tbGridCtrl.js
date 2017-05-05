@@ -54,7 +54,7 @@
                     };
 
                     $ctrl.isEmpty = false;
-                    $ctrl.tempRow = new TubularModel($scope, $ctrl, {});
+                    $ctrl.tempRow = new TubularModel($ctrl, {});
                     $ctrl.requireAuthentication = $ctrl.requireAuthentication ? ($ctrl.requireAuthentication === 'true') : true;
                     $ctrl.editorMode = $ctrl.editorMode || 'none';
                     $ctrl.canSaveState = false;
@@ -141,7 +141,7 @@
                 };
 
                 $ctrl.newRow = (template, popup, size, data) => {
-                    $ctrl.tempRow = new TubularModel($scope, $ctrl, data || {});
+                    $ctrl.tempRow = new TubularModel($ctrl, data || {});
                     $ctrl.tempRow.$isNew = true;
                     $ctrl.tempRow.$isEditing = true;
                     $ctrl.tempRow.$component = $ctrl;
@@ -167,10 +167,9 @@
                     });
 
                     $ctrl.currentRequest
-                        .then(data => {
-                            row.$hasChanges = false;
-                            $scope.$emit('tbGrid_OnRemove', data);
-                            }, error => $scope.$emit('tbGrid_OnConnectionError', error))
+                        .then(
+                            data => $scope.$emit('tbGrid_OnRemove', data), 
+                            error => $scope.$emit('tbGrid_OnConnectionError', error))
                         .then(() => {
                         $ctrl.currentRequest = null;
                         $ctrl.retrieveData();
@@ -326,11 +325,11 @@
                     }
 
                     $ctrl.rows = data.Payload.map(el => {
-                        let model = new TubularModel($scope, $ctrl, el);
+                        let model = new TubularModel($ctrl, el);
                         model.$component = $ctrl;
 
                         model.editPopup = (template, size) => {
-                            tubularPopupService.openDialog(template, new TubularModel($scope, $ctrl, el), $ctrl, size);
+                            tubularPopupService.openDialog(template, new TubularModel($ctrl, el), $ctrl, size);
                         };
 
                         return model;

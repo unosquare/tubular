@@ -143,7 +143,6 @@
                     const originalClone = angular.copy(model.$original);
 
                     delete clone.$isEditing;
-                    delete clone.$hasChanges;
                     delete clone.$original;
                     delete clone.$state;
                     delete clone.$valid;
@@ -164,7 +163,6 @@
 
                     return me.retrieveDataAsync(request)
                         .then(data => {
-                            model.$hasChanges = false;
                             model.resetOriginal();
 
                             return data;

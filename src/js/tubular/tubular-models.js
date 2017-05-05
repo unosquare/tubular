@@ -20,9 +20,18 @@
          * The `tubularModel` factory is the base to generate a row model to use with `tbGrid` and `tbForm`.
          */
         .factory('tubularModel', [function() {
-            return function($scope, $ctrl, data) {
+            return function($ctrl, data) {
                 var obj = {
-                    $hasChanges: false,
+                    $hasChanges: () => {
+                        var hasChanges = false;
+                        angular.forEach(obj, (v, k) => {
+                            if (angular.isDefined(obj.$original[k])) {
+                                hasChanges = hasChanges &&  obj[k] !== obj.$original[k]
+                            }
+                        });
+
+                        return hasChanges;
+                    },
                     $isEditing: false,
                     $isNew: false,
                     $key: '',
@@ -50,18 +59,6 @@
                         obj[key] = value;
                         obj.$fields.push(key);
                         obj.$original[key] = ignoreOriginal ? undefined : value;
-
-                        if (ignoreOriginal) {
-                            obj.$hasChanges = true;
-                        }
-
-                        $scope.$watch(() => obj[key], (newValue, oldValue) => {
-                            if (newValue === oldValue) {
-                                return;
-                            }
-
-                            obj.$hasChanges = obj[key] !== obj.$original[key];
-                        });
                     },
                     resetOriginal: () => angular.forEach(obj.$original, (v, k) => obj.$original[k] = obj[k]),
                     revertChanges: () => {
@@ -71,7 +68,7 @@
                             }
                         });
 
-                        obj.$hasChanges = obj.$isEditing = false;
+                        obj.$isEditing = false;
                     }
                 };
 

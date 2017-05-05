@@ -53,7 +53,7 @@
                         }
                     });
 
-                    $scope.model = new TubularModel($scope, $scope, data);
+                    $scope.model = new TubularModel($scope, data);
                     $ctrl.bindFields();
                 };
 
@@ -82,7 +82,7 @@
                             $http.get(getUrlWithKey()).then(
                                 function (response) {
                                     var data = response.data;
-                                    $scope.model = new TubularModel($scope, $scope, data);
+                                    $scope.model = new TubularModel($scope, data);
                                     $ctrl.bindFields();
                                 },
                                 function (error) {
@@ -93,9 +93,9 @@
                             $http.get($scope.serverUrl).then(response => {
                                 if (angular.isDefined($scope.model) &&
                                     angular.isDefined($scope.model.$component)) {
-                                    $scope.model = new TubularModel($scope, $scope.model.$component, response.data);
+                                    $scope.model = new TubularModel($scope.model.$component, response.data);
                                 } else {
-                                    $scope.model = new TubularModel($scope, $scope, response.data);
+                                    $scope.model = new TubularModel($scope, response.data);
                                 }
 
                                 $ctrl.bindFields();
@@ -107,7 +107,7 @@
                     }
 
                     if (angular.isUndefined($scope.model)) {
-                        $scope.model = new TubularModel($scope, $scope, {});
+                        $scope.model = new TubularModel($scope, {});
                     }
 
                     $ctrl.bindFields();
@@ -118,7 +118,7 @@
                         return;
                     }
 
-                    if (!forceUpdate && !$scope.model.$isNew && !$scope.model.$hasChanges) {
+                    if (!forceUpdate && !$scope.model.$isNew && !$scope.model.$hasChanges()) {
                         $scope.$emit('tbForm_OnSavingNoChanges', $scope);
                         return;
                     }
