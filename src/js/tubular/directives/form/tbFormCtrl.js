@@ -39,19 +39,19 @@
                     : $scope.requireAuthentication;
 
                 $scope.$watch('hasFieldsDefinitions', newVal => {
-                        if (newVal === true) {
-                            $ctrl.retrieveData();
-                        }
-                    });
+                    if (newVal === true) {
+                        $ctrl.retrieveData();
+                    }
+                });
 
                 $scope.cloneModel = model => {
                     var data = {};
 
                     angular.forEach(model, (value, key) => {
-                            if (key[0] !== '$') {
-                                data[key] = value;
-                            }
-                        });
+                        if (key[0] !== '$') {
+                            data[key] = value;
+                        }
+                    });
 
                     $scope.model = new TubularModel($scope, $scope, data);
                     $ctrl.bindFields();
@@ -118,30 +118,35 @@
                         return;
                     }
 
-                    $scope.currentRequest = $scope.model.save(forceUpdate);
-
-                    if ($scope.currentRequest === false) {
+                    if (!forceUpdate && !$scope.model.$isNew && !$scope.model.$hasChanges) {
                         $scope.$emit('tbForm_OnSavingNoChanges', $scope);
                         return;
                     }
 
+                    $scope.model.$isLoading = true;
+
+                    $scope.currentRequest = tubularHttp.saveDataAsync($scope.model, {
+                        serverUrl: $ctrl.serverSaveUrl,
+                        requestMethod: $scope.model.$isNew ? ($ctrl.serverSaveMethod || 'POST') : 'PUT'
+                    });
+
                     $scope.currentRequest.then(data => {
-                            if (angular.isDefined($scope.model.$component) &&
-                                $scope.model.$component.autoRefresh) {
-                                $scope.model.$component.retrieveData();
-                            }
+                        if (angular.isDefined($scope.model.$component) &&
+                            $scope.model.$component.autoRefresh) {
+                            $scope.model.$component.retrieveData();
+                        }
 
-                            $scope.$emit('tbForm_OnSuccessfulSave', data, $scope);
+                        $scope.$emit('tbForm_OnSuccessfulSave', data, $scope);
 
-                            if (!keepData) {
-                                $scope.clear();
-                            }
+                        if (!keepData) {
+                            $scope.clear();
+                        }
 
-                            var formScope = $scope.getFormScope();
-                            if (formScope) {
-                                formScope.$setPristine();
-                            }
-                        }, error => $scope.$emit('tbForm_OnConnectionError', error, $scope))
+                        var formScope = $scope.getFormScope();
+                        if (formScope) {
+                            formScope.$setPristine();
+                        }
+                    }, error => $scope.$emit('tbForm_OnConnectionError', error, $scope))
                         .then(() => {
                             $scope.model.$isLoading = false;
                             $scope.currentRequest = null;

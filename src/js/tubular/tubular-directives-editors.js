@@ -2,10 +2,10 @@
     'use strict';
 
     // Fix moment serialization
-    moment.fn.toJSON = () => this.isValid() ? this.format() : null;
+    moment.fn.toJSON = () => (this.isValid() ? this.format() : null);
 
     function canUseHtml5Date() {
-        var el = angular.element('<input type="date" value=":)" />');
+        const el = angular.element('<input type="date" value=":)" />');
         return el.attr('type') === 'date' && el.val() === '';
     }
 
@@ -63,7 +63,7 @@
     }
 
     const tbNumericEditorCtrl = ['tubularEditorService', '$scope', 'translateFilter', function (tubular, $scope, translateFilter) {
-        var $ctrl = this;
+        const $ctrl = this;
 
         $ctrl.validate = () => {
             if (angular.isDefined($ctrl.min) && $ctrl.min != null && angular.isDefined($ctrl.value) && $ctrl.value != null) {
@@ -93,7 +93,7 @@
 
     const tbDateTimeEditorCtrl = ['$scope', '$element', 'tubularEditorService', 'translateFilter', 'dateFilter',
         function ($scope, $element, tubular, translateFilter, dateFilter) {
-            var $ctrl = this;
+            const $ctrl = this;
 
             // This could be $onChange??
             $scope.$watch(() => $ctrl.value, changeValueFn($ctrl));
@@ -252,12 +252,12 @@
          * @description
          * The `tbNumericEditor` component is numeric input, similar to `tbSimpleEditor` 
          * but can render an add-on to the input visual element.
-         * 
+         *
          * When you need a numeric editor but without the visual elements you can use 
          * `tbSimpleEditor` with the `editorType` attribute with value `number`.
-         * 
+         *
          * This component uses the `TubularModel` to retrieve the model information.
-         * 
+         *
          * @param {string} name Set the field name.
          * @param {object} value Set the value.
          * @param {boolean} isEditing Indicate if the field is showing editor.
@@ -318,23 +318,22 @@
          * @param {string} defaultValue Set the default value.
          */
         .component('tbDateTimeEditor', {
-            template: '<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">' +
-            '<span ng-hide="$ctrl.isEditing">{{ $ctrl.value | date: format }}</span>' +
-            '<label ng-show="$ctrl.showLabel" ng-bind="$ctrl.label"></label>' +
+            template: `<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">
+            <span ng-hide="$ctrl.isEditing">{{ $ctrl.value | date: format }}</span>
+            <label ng-show="$ctrl.showLabel" ng-bind="$ctrl.label"></label>` +
             (canUseHtml5Date() ?
-                '<input type="datetime-local" ng-show="$ctrl.isEditing" ng-model="$ctrl.dateValue" class="form-control" ' +
-                'ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}"/>' :
-                '<div class="input-group" ng-show="$ctrl.isEditing">' +
-                '<input type="text" uib-datepicker-popup="{{$ctrl.format}}" ng-model="$ctrl.dateValue" class="form-control" ' +
-                'ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}" is-open="$ctrl.open" />' +
-                '<span class="input-group-btn">' +
-                '<button type="button" class="btn btn-default" ng-click="$ctrl.open = !$ctrl.open"><i class="fa fa-calendar"></i></button>' +
-                '</span>' +
-                '</div>' +
-                '<div uib-timepicker ng-model="$ctrl.dateValue"  show-seconds="true" show-meridian="false"></div>') +
-            '<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">{{error}}</span>' +
-            '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help" ng-bind="$ctrl.help"></span>' +
-            '</div>',
+                `<input type="datetime-local" ng-show="$ctrl.isEditing" ng-model="$ctrl.dateValue" class="form-control" 
+                ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}"/>` :
+                `<div class="input-group" ng-show="$ctrl.isEditing">
+                <input type="text" uib-datepicker-popup="{{$ctrl.format}}" ng-model="$ctrl.dateValue" class="form-control" 
+                ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}" is-open="$ctrl.open" />
+                <span class="input-group-btn">
+                <button type="button" class="btn btn-default" ng-click="$ctrl.open = !$ctrl.open"><i class="fa fa-calendar"></i></button>
+                </span></div>
+                <div uib-timepicker ng-model="$ctrl.dateValue"  show-seconds="true" show-meridian="false"></div>`) +
+            `<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">{{error}}</span>
+            <span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help" ng-bind="$ctrl.help"></span>
+            </div>`,
             bindings: {
                 value: '=?',
                 isEditing: '=?',
@@ -378,9 +377,9 @@
          * @param {string} defaultValue Set the default value.
          */
         .component('tbDateEditor', {
-            template: '<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">' +
-            '<span ng-hide="$ctrl.isEditing">{{ $ctrl.value | moment: $ctrl.format }}</span>' +
-            '<label ng-show="$ctrl.showLabel" ng-bind="$ctrl.label"></label>' +
+            template: `<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">
+            <span ng-hide="$ctrl.isEditing">{{ $ctrl.value | moment: $ctrl.format }}</span>
+            <label ng-show="$ctrl.showLabel" ng-bind="$ctrl.label"></label>` +
             (canUseHtml5Date() ?
                 '<input type="date" ng-show="$ctrl.isEditing" ng-model="$ctrl.dateValue" class="form-control" ' +
                 'ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}"/>' :
@@ -391,9 +390,9 @@
                 '<button type="button" class="btn btn-default" ng-click="$ctrl.open = !$ctrl.open"><i class="fa fa-calendar"></i></button>' +
                 '</span>' +
                 '</div>') +
-            '<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">{{error}}</span>' +
-            '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help" ng-bind="$ctrl.help"></span>' +
-            '</div>',
+            `<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">{{error}}</span>
+            <span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help" ng-bind="$ctrl.help"></span>
+            </div>`,
             bindings: {
                 value: '=?',
                 isEditing: '=?',
@@ -506,23 +505,20 @@
                         css: '@?'
                     },
                     link: (scope, element) => {
-                        var template = '<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid && $dirty() }">' +
-                            '<span ng-hide="isEditing" ng-bind="value"></span>' +
-                            '<label ng-show="showLabel" ng-bind="label"></label>' +
-                            '<div class="input-group" ng-show="isEditing">' +
-                            '<input ng-model="value" placeholder="{{placeholder}}" title="{{tooltip}}" autocomplete="off" ' +
-                            'class="form-control {{css}}" ng-readonly="readOnly || lastSet.indexOf(value) !== -1" uib-typeahead="' + scope.selectOptions + '" ' +
-                            'ng-required="required" name="{{name}}" /> ' +
-                            '<div class="input-group-addon" ng-hide="lastSet.indexOf(value) !== -1"><i class="fa fa-pencil"></i></div>' +
-                            '<span class="input-group-btn" ng-show="lastSet.indexOf(value) !== -1" tabindex="-1">' +
-                            '<button class="btn btn-default" type="button" ng-click="value = null"><i class="fa fa-times"></i>' +
-                            '</span>' +
-                            '</div>' +
-                            '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">' +
-                            '{{error}}' +
-                            '</span>' +
-                            '<span class="help-block" ng-show="isEditing && help" ng-bind="help"></span>' +
-                            '</div>';
+                        var template = `<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid && $dirty() }">
+                            <span ng-hide="isEditing" ng-bind="value"></span>
+                            <label ng-show="showLabel" ng-bind="label"></label>
+                            <div class="input-group" ng-show="isEditing">
+                            <input ng-model="value" placeholder="{{placeholder}}" title="{{tooltip}}" autocomplete="off" 
+                            class="form-control {{css}}" ng-readonly="readOnly || lastSet.indexOf(value) !== -1" uib-typeahead="${scope.selectOptions}" 
+                            ng-required="required" name="{{name}}" /> 
+                            <div class="input-group-addon" ng-hide="lastSet.indexOf(value) !== -1"><i class="fa fa-pencil"></i></div>
+                            <span class="input-group-btn" ng-show="lastSet.indexOf(value) !== -1" tabindex="-1">
+                            <button class="btn btn-default" type="button" ng-click="value = null"><i class="fa fa-times"></i>
+                            </span></div>
+                            <span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>
+                            <span class="help-block" ng-show="isEditing && help" ng-bind="help"></span>
+                            </div>`;
 
                         var linkFn = $compile(template);
                         var content = linkFn(scope);
@@ -541,7 +537,7 @@
                             $scope.lastSet = [];
 
                             if (angular.isDefined($scope.optionLabel)) {
-                                $scope.selectOptions = 'd as d.' + $scope.optionLabel + ' for d in getValues($viewValue)';
+                                $scope.selectOptions = `d as d.${$scope.optionLabel} for d in getValues($viewValue)`;
                             }
 
                             $scope.$watch('value', val => {
@@ -681,20 +677,16 @@
                     var $ctrl = this;
 
                     $ctrl.validate = () => {
-                        if ($ctrl.min && $ctrl.value) {
-                            if ($ctrl.value.length < parseInt($ctrl.min)) {
-                                $ctrl.$valid = false;
-                                $ctrl.state.$errors = [translateFilter('EDITOR_MIN_CHARS', +$ctrl.min)];
-                                return;
-                            }
+                        if ($ctrl.min && $ctrl.value && $ctrl.value.length < parseInt($ctrl.min)) {
+                            $ctrl.$valid = false;
+                            $ctrl.state.$errors = [translateFilter('EDITOR_MIN_CHARS', +$ctrl.min)];
+                            return;
                         }
 
-                        if ($ctrl.max && $ctrl.value) {
-                            if ($ctrl.value.length > parseInt($ctrl.max)) {
-                                $ctrl.$valid = false;
-                                $ctrl.state.$errors = [translateFilter('EDITOR_MAX_CHARS', +$ctrl.max)];
-                                return;
-                            }
+                        if ($ctrl.max && $ctrl.value && $ctrl.value.length > parseInt($ctrl.max)) {
+                            $ctrl.$valid = false;
+                            $ctrl.state.$errors = [translateFilter('EDITOR_MAX_CHARS', +$ctrl.max)];
+                            return;
                         }
                     };
 

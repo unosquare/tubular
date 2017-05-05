@@ -27,31 +27,7 @@
                         return null;
                     }
 
-                    var result = innerModel.save(forceUpdate);
-
-                    if (angular.isUndefined(result) || result === false) {
-                        return null;
-                    }
-
-                    result.then(
-                        function (data) {
-                            $scope.$emit('tbForm_OnSuccessfulSave', data);
-                            $rootScope.$broadcast('tbForm_OnSuccessfulSave', data);
-                            $scope.Model.$isLoading = false;
-                            if (gridScope.autoRefresh) gridScope.retrieveData();
-                            $uibModalInstance.close();
-
-                            return data;
-                        },
-                        function (error) {
-                            $scope.$emit('tbForm_OnConnectionError', error);
-                            $rootScope.$broadcast('tbForm_OnConnectionError', error);
-                            $scope.Model.$isLoading = false;
-
-                            return error;
-                        });
-
-                    return result;
+                    return gridScope.saveRow(innerModel, forceUpdate).then(() => $uibModalInstance.close());
                 };
 
                 $scope.closePopup = function () {

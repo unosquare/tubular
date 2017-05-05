@@ -19,7 +19,7 @@
          * @description
          * The `tubularModel` factory is the base to generate a row model to use with `tbGrid` and `tbForm`.
          */
-        .factory('tubularModel', ['tubularHttp', function(tubularHttp) {
+        .factory('tubularModel', [function() {
             return function($scope, $ctrl, data) {
                 var obj = {
                     $hasChanges: false,
@@ -33,7 +33,9 @@
                         var valid = true;
 
                         angular.forEach(obj.$state, val => {
-                            if (angular.isUndefined(val) || val.$valid()) return;
+                            if (angular.isUndefined(val) || val.$valid()) {
+                                return;
+                            }
 
                             valid = false;
                         });
@@ -61,14 +63,6 @@
                             obj.$hasChanges = obj[key] !== obj.$original[key];
                         });
                     },
-                    edit: () => {
-                        if (obj.$isEditing && obj.$hasChanges) {
-                            obj.save();
-                        }
-
-                        obj.$isEditing = !obj.$isEditing;
-                    },
-                    delete: () => $ctrl.deleteRow(obj),
                     resetOriginal: () => angular.forEach(obj.$original, (v, k) => obj.$original[k] = obj[k]),
                     revertChanges: () => {
                         angular.forEach(obj, (v, k) => {
@@ -78,26 +72,10 @@
                         });
 
                         obj.$hasChanges = obj.$isEditing = false;
-                    },
-                    save: forceUpdate => {
-                        if (angular.isUndefined($ctrl.serverSaveUrl) || $ctrl.serverSaveUrl == null) {
-                            throw 'Define a Save URL.';
-                        }
-
-                        if (!forceUpdate && !obj.$isNew && !obj.$hasChanges) {
-                            return false;
-                        }
-
-                        obj.$isLoading = true;
-
-                        return tubularHttp.saveDataAsync(obj, {
-                            serverUrl: $ctrl.serverSaveUrl,
-                            requestMethod: obj.$isNew ? ($ctrl.serverSaveMethod || 'POST') : 'PUT'
-                        });
                     }
                 };
 
-                if (angular.isArray(data) === false) {
+                if (!angular.isArray(data)) {
                     angular.forEach(data, (v,k) => obj.$addField(k, v));
                 }
 

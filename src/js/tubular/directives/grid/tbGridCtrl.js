@@ -152,7 +152,6 @@
                 };
 
                 $ctrl.deleteRow = row => {
-                    // TODO: Should I move this behavior to model?
                     var urlparts = $ctrl.serverDeleteUrl.split('?');
                     var url = urlparts[0] + '/' + row.$key;
 
@@ -176,6 +175,40 @@
                         $ctrl.currentRequest = null;
                         $ctrl.retrieveData();
                     });
+                };
+
+                $ctrl.saveRow = (row, forceUpdate) => {
+                        if (!$ctrl.serverSaveUrl) {
+                            throw 'Define a Save URL.';
+                        }
+
+                        if (!forceUpdate && !row.$isNew && !row.$hasChanges) {
+                            return null;
+                        }
+
+                        row.$isLoading = true;
+
+                        $ctrl.currentRequest = tubularHttp.saveDataAsync(row, {
+                            serverUrl: $ctrl.serverSaveUrl,
+                            requestMethod: row.$isNew ? ($ctrl.serverSaveMethod || 'POST') : 'PUT'
+                        });
+
+                        $ctrl.currentRequest.then(data => {
+                            $scope.$emit('tbForm_OnSuccessfulSave', data);
+                            row.$isLoading = false;
+                            $ctrl.retrieveData();
+                            $ctrl.currentRequest = null;
+
+                            return data;
+                        }, error => {
+                            $scope.$emit('tbForm_OnConnectionError', error);
+                            row.$isLoading = false;
+                            $ctrl.currentRequest = null;
+
+                            return error;
+                        });
+
+                        return $ctrl.currentRequest;
                 };
 
                 $ctrl.verifyColumns = () => {
@@ -293,15 +326,11 @@
                     }
 
                     $ctrl.rows = data.Payload.map(el => {
-                        var model = new TubularModel($scope, $ctrl, el);
+                        let model = new TubularModel($scope, $ctrl, el);
                         model.$component = $ctrl;
 
                         model.editPopup = (template, size) => {
-                            tubularPopupService
-                                .openDialog(template,
-                                new TubularModel($scope, $ctrl, el),
-                                $ctrl,
-                                size);
+                            tubularPopupService.openDialog(template, new TubularModel($scope, $ctrl, el), $ctrl, size);
                         };
 
                         return model;

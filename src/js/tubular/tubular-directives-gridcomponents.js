@@ -10,7 +10,7 @@
          *
          * @description
          * The `tbRemoveButton` component is visual helper to show a Remove button with a popover to confirm the action.
-         * 
+         *
          * @param {object} model The row to remove.
          * @param {string} caption Set the caption to use in the button, default Remove.
          * @param {string} cancelCaption Set the caption to use in the Cancel button, default `CAPTION_REMOVE` i18n resource.
@@ -30,6 +30,8 @@
             controller: function() {
                 var $ctrl = this;
 
+                $ctrl.delete = () => $ctrl.$component.deleteRow($ctrl.model);
+
                 $ctrl.$onInit = () => {
                     $ctrl.showIcon = angular.isDefined($ctrl.icon);
                     $ctrl.showCaption = !($ctrl.showIcon && angular.isUndefined($ctrl.caption));
@@ -46,7 +48,7 @@
          *
          * @description
          * The `tbSaveButton` directive is visual helper to show a Save button and Cancel button.
-         * 
+         *
          * @param {object} model The row to remove.
          * @param {boolean} isNew Set if the row is a new record.
          * @param {string} saveCaption Set the caption to use in Save the button, default Save.
@@ -137,7 +139,7 @@
                     if ($ctrl.$component.editorMode === 'popup') {
                         $ctrl.model.editPopup();
                     } else {
-                        $ctrl.model.edit();
+                        $ctrl.model.$isEditing = true;
                     }
                 };
             }

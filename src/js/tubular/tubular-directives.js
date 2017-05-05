@@ -53,7 +53,7 @@
          * 
          * This directive is replace by a `thead` HTML element.
          */
-        .directive('tbColumnDefinitions', [() => {
+        .directive('tbColumnDefinitions', [function() {
                 return {
                     require: '^tbGridTable',
                     templateUrl: 'tbColumnDefinitions.tpl.html',
@@ -67,7 +67,7 @@
                             $scope.tubularDirective = 'tubular-column-definitions';
                         }
                     ],
-                    compile: () => { return { post: scope => scope.$component.hasColumnsDefinitions = true }; }
+                    compile: () => ({ post: scope => scope.$component.hasColumnsDefinitions = true })
                 };
             }
         ])
@@ -314,7 +314,7 @@
                     ],
 
                     // Wait a little bit before to connect to the fields
-                    compile: ()  => { return { post: scope => $timeout(() => scope.hasFieldsDefinitions = true, 300) }; }
+                    compile: ()  => ({ post: scope => $timeout(() => scope.hasFieldsDefinitions = true, 300) })
                 };
             }
         ])
