@@ -125,16 +125,15 @@
 
                     $scope.model.$isLoading = true;
 
-                    $scope.currentRequest = tubularHttp.saveDataAsync($scope.model, {
-                        serverUrl: $ctrl.serverSaveUrl,
-                        requestMethod: $scope.model.$isNew ? ($ctrl.serverSaveMethod || 'POST') : 'PUT'
+                    // TODO: Set requireAuthentication
+                    $scope.currentRequest = $http({
+                        data: $scope.model,
+                        url: $ctrl.serverSaveUrl,
+                        method: $scope.model.$isNew ? ($ctrl.serverSaveMethod || 'POST') : 'PUT'
                     });
 
-                    $scope.currentRequest.then(data => {
-                        if (angular.isDefined($scope.model.$component) &&
-                            $scope.model.$component.autoRefresh) {
-                            $scope.model.$component.retrieveData();
-                        }
+                    $scope.currentRequest.then(reponse => {
+                        const data = response;
 
                         $scope.$emit('tbForm_OnSuccessfulSave', data, $scope);
 

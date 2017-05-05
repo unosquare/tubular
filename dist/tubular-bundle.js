@@ -131,7 +131,7 @@
          * 
          * This directive is replace by a `thead` HTML element.
          */
-        .directive('tbColumnDefinitions', [() => {
+        .directive('tbColumnDefinitions', [function() {
                 return {
                     require: '^tbGridTable',
                     templateUrl: 'tbColumnDefinitions.tpl.html',
@@ -145,7 +145,7 @@
                             $scope.tubularDirective = 'tubular-column-definitions';
                         }
                     ],
-                    compile: () => { return { post: scope => scope.$component.hasColumnsDefinitions = true }; }
+                    compile: () => ({ post: scope => scope.$component.hasColumnsDefinitions = true })
                 };
             }
         ])
@@ -392,7 +392,7 @@
                     ],
 
                     // Wait a little bit before to connect to the fields
-                    compile: ()  => { return { post: scope => $timeout(() => scope.hasFieldsDefinitions = true, 300) }; }
+                    compile: ()  => ({ post: scope => $timeout(() => scope.hasFieldsDefinitions = true, 300) })
                 };
             }
         ])
@@ -475,7 +475,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
   $templateCache.put("tbRemoveButton.tpl.html",
     "<button class=\"btn btn-danger btn-xs btn-popover\" uib-popover-template=$ctrl.templateName popover-placement=right popover-title=\"{{ $ctrl.legend || ('UI_REMOVEROW' | translate) }}\" popover-is-open=$ctrl.isOpen popover-trigger=\"'click outsideClick'\" ng-hide=$ctrl.model.$isEditing><span ng-show=$ctrl.showIcon class={{::$ctrl.icon}}></span> <span ng-show=$ctrl.showCaption>{{:: $ctrl.caption || ('CAPTION_REMOVE' | translate) }}</span></button>");
   $templateCache.put("tbRemoveButtonPopover.tpl.html",
-    "<div class=tubular-remove-popover><button ng-click=$ctrl.model.delete() class=\"btn btn-danger btn-xs\">{{:: $ctrl.caption || ('CAPTION_REMOVE' | translate) }}</button> &nbsp; <button ng-click=\"$ctrl.isOpen = false;\" class=\"btn btn-default btn-xs\">{{:: $ctrl.cancelCaption || ('CAPTION_CANCEL' | translate) }}</button></div>");
+    "<div class=tubular-remove-popover><button ng-click=$ctrl.delete() class=\"btn btn-danger btn-xs\">{{:: $ctrl.caption || ('CAPTION_REMOVE' | translate) }}</button> &nbsp; <button ng-click=\"$ctrl.isOpen = false;\" class=\"btn btn-default btn-xs\">{{:: $ctrl.cancelCaption || ('CAPTION_CANCEL' | translate) }}</button></div>");
   $templateCache.put("tbSaveButton.tpl.html",
     "<div ng-show=model.$isEditing><button ng-click=save() class=\"btn btn-default {{:: saveCss || '' }}\" ng-disabled=!model.$valid()>{{:: saveCaption || ('CAPTION_SAVE' | translate) }}</button> <button ng-click=cancel() class=\"btn {{:: cancelCss || 'btn-default' }}\">{{:: cancelCaption || ('CAPTION_CANCEL' | translate) }}</button></div>");
   $templateCache.put("tbTextSearch.tpl.html",
@@ -557,7 +557,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 }
             };
 
-            $ctrl.$onInit = () =>tubular.setupScope($scope, null, $ctrl, false);
+            $ctrl.$onInit = () => tubular.setupScope($scope, null, $ctrl, false);
         }];
 
     angular.module('tubular.directives')
@@ -565,11 +565,11 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
          * @ngdoc component
          * @name tbSimpleEditor
          * @module tubular.directives
-         * 
+         *
          * @description
          * The `tbSimpleEditor` component is the basic input to show in a grid or form.
          * It uses the `TubularModel` to retrieve column or field information.
-         * 
+         *
          * @param {string} name Set the field name.
          * @param {object} value Set the value.
          * @param {boolean} isEditing Indicate if the field is showing editor.
@@ -704,19 +704,19 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     : $scope.requireAuthentication;
 
                 $scope.$watch('hasFieldsDefinitions', newVal => {
-                        if (newVal === true) {
-                            $ctrl.retrieveData();
-                        }
-                    });
+                    if (newVal === true) {
+                        $ctrl.retrieveData();
+                    }
+                });
 
                 $scope.cloneModel = model => {
                     var data = {};
 
                     angular.forEach(model, (value, key) => {
-                            if (key[0] !== '$') {
-                                data[key] = value;
-                            }
-                        });
+                        if (key[0] !== '$') {
+                            data[key] = value;
+                        }
+                    });
 
                     $scope.model = new TubularModel($scope, $scope, data);
                     $ctrl.bindFields();
@@ -783,30 +783,34 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         return;
                     }
 
-                    $scope.currentRequest = $scope.model.save(forceUpdate);
-
-                    if ($scope.currentRequest === false) {
+                    if (!forceUpdate && !$scope.model.$isNew && !$scope.model.$hasChanges) {
                         $scope.$emit('tbForm_OnSavingNoChanges', $scope);
                         return;
                     }
 
-                    $scope.currentRequest.then(data => {
-                            if (angular.isDefined($scope.model.$component) &&
-                                $scope.model.$component.autoRefresh) {
-                                $scope.model.$component.retrieveData();
-                            }
+                    $scope.model.$isLoading = true;
 
-                            $scope.$emit('tbForm_OnSuccessfulSave', data, $scope);
+                    // TODO: Set requireAuthentication
+                    $scope.currentRequest = $http({
+                        data: $scope.model,
+                        url: $ctrl.serverSaveUrl,
+                        method: $scope.model.$isNew ? ($ctrl.serverSaveMethod || 'POST') : 'PUT'
+                    });
 
-                            if (!keepData) {
-                                $scope.clear();
-                            }
+                    $scope.currentRequest.then(reponse => {
+                        const data = response;
 
-                            var formScope = $scope.getFormScope();
-                            if (formScope) {
-                                formScope.$setPristine();
-                            }
-                        }, error => $scope.$emit('tbForm_OnConnectionError', error, $scope))
+                        $scope.$emit('tbForm_OnSuccessfulSave', data, $scope);
+
+                        if (!keepData) {
+                            $scope.clear();
+                        }
+
+                        var formScope = $scope.getFormScope();
+                        if (formScope) {
+                            formScope.$setPristine();
+                        }
+                    }, error => $scope.$emit('tbForm_OnConnectionError', error, $scope))
                         .then(() => {
                             $scope.model.$isLoading = false;
                             $scope.currentRequest = null;
@@ -981,7 +985,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             controller: 'tbGridController'
         });
 })(angular);
-(function (angular) {
+(angular => {
     'use strict';
 
     angular.module('tubular.directives')
@@ -1135,7 +1139,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 };
 
                 $ctrl.deleteRow = row => {
-                    // TODO: Should I move this behavior to model?
                     var urlparts = $ctrl.serverDeleteUrl.split('?');
                     var url = urlparts[0] + '/' + row.$key;
 
@@ -1159,6 +1162,40 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         $ctrl.currentRequest = null;
                         $ctrl.retrieveData();
                     });
+                };
+
+                $ctrl.saveRow = (row, forceUpdate) => {
+                        if (!$ctrl.serverSaveUrl) {
+                            throw 'Define a Save URL.';
+                        }
+
+                        if (!forceUpdate && !row.$isNew && !row.$hasChanges) {
+                            return null;
+                        }
+
+                        row.$isLoading = true;
+
+                        $ctrl.currentRequest = tubularHttp.saveDataAsync(row, {
+                            serverUrl: $ctrl.serverSaveUrl,
+                            requestMethod: row.$isNew ? ($ctrl.serverSaveMethod || 'POST') : 'PUT'
+                        });
+
+                        $ctrl.currentRequest.then(data => {
+                            $scope.$emit('tbForm_OnSuccessfulSave', data);
+                            row.$isLoading = false;
+                            $ctrl.retrieveData();
+                            $ctrl.currentRequest = null;
+
+                            return data;
+                        }, error => {
+                            $scope.$emit('tbForm_OnConnectionError', error);
+                            row.$isLoading = false;
+                            $ctrl.currentRequest = null;
+
+                            return error;
+                        });
+
+                        return $ctrl.currentRequest;
                 };
 
                 $ctrl.verifyColumns = () => {
@@ -1234,9 +1271,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         $ctrl.pageSize = (parseInt(storage.getItem(prefix + $ctrl.name + '_pageSize')) || $ctrl.pageSize);
                     }
 
-                    if ($ctrl.pageSize < 10) {
-                        $ctrl.pageSize = 20; // default
-                    } 
+                    $ctrl.pageSize = $ctrl.pageSize < 10 ? 20 : $ctrl.pageSize; // default
 
                     var newPages = Math.ceil($ctrl.totalRecordCount / $ctrl.pageSize);
                     if ($ctrl.requestedPage > newPages) $ctrl.requestedPage = newPages;
@@ -1273,20 +1308,16 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     $ctrl.dataSource = data;
 
                     if (!data.Payload) {
-                        $scope.$emit('tbGrid_OnConnectionError', 'tubularGrid(' + $ctrl.$id + '): response is invalid.');
+                        $scope.$emit('tbGrid_OnConnectionError', `tubularGrid(${$ctrl.$id}): response is invalid.`);
                         return;
                     }
 
                     $ctrl.rows = data.Payload.map(el => {
-                        var model = new TubularModel($scope, $ctrl, el);
+                        let model = new TubularModel($scope, $ctrl, el);
                         model.$component = $ctrl;
 
                         model.editPopup = (template, size) => {
-                            tubularPopupService
-                                .openDialog(template,
-                                new TubularModel($scope, $ctrl, el),
-                                $ctrl,
-                                size);
+                            tubularPopupService.openDialog(template, new TubularModel($scope, $ctrl, el), $ctrl, size);
                         };
 
                         return model;
@@ -1378,10 +1409,10 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
     'use strict';
 
     // Fix moment serialization
-    moment.fn.toJSON = () => this.isValid() ? this.format() : null;
+    moment.fn.toJSON = () => (this.isValid() ? this.format() : null);
 
     function canUseHtml5Date() {
-        var el = angular.element('<input type="date" value=":)" />');
+        const el = angular.element('<input type="date" value=":)" />');
         return el.attr('type') === 'date' && el.val() === '';
     }
 
@@ -1439,7 +1470,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
     }
 
     const tbNumericEditorCtrl = ['tubularEditorService', '$scope', 'translateFilter', function (tubular, $scope, translateFilter) {
-        var $ctrl = this;
+        const $ctrl = this;
 
         $ctrl.validate = () => {
             if (angular.isDefined($ctrl.min) && $ctrl.min != null && angular.isDefined($ctrl.value) && $ctrl.value != null) {
@@ -1469,7 +1500,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
     const tbDateTimeEditorCtrl = ['$scope', '$element', 'tubularEditorService', 'translateFilter', 'dateFilter',
         function ($scope, $element, tubular, translateFilter, dateFilter) {
-            var $ctrl = this;
+            const $ctrl = this;
 
             // This could be $onChange??
             $scope.$watch(() => $ctrl.value, changeValueFn($ctrl));
@@ -1628,12 +1659,12 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
          * @description
          * The `tbNumericEditor` component is numeric input, similar to `tbSimpleEditor` 
          * but can render an add-on to the input visual element.
-         * 
+         *
          * When you need a numeric editor but without the visual elements you can use 
          * `tbSimpleEditor` with the `editorType` attribute with value `number`.
-         * 
+         *
          * This component uses the `TubularModel` to retrieve the model information.
-         * 
+         *
          * @param {string} name Set the field name.
          * @param {object} value Set the value.
          * @param {boolean} isEditing Indicate if the field is showing editor.
@@ -1694,23 +1725,22 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
          * @param {string} defaultValue Set the default value.
          */
         .component('tbDateTimeEditor', {
-            template: '<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">' +
-            '<span ng-hide="$ctrl.isEditing">{{ $ctrl.value | date: format }}</span>' +
-            '<label ng-show="$ctrl.showLabel" ng-bind="$ctrl.label"></label>' +
+            template: `<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">
+            <span ng-hide="$ctrl.isEditing">{{ $ctrl.value | date: format }}</span>
+            <label ng-show="$ctrl.showLabel" ng-bind="$ctrl.label"></label>` +
             (canUseHtml5Date() ?
-                '<input type="datetime-local" ng-show="$ctrl.isEditing" ng-model="$ctrl.dateValue" class="form-control" ' +
-                'ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}"/>' :
-                '<div class="input-group" ng-show="$ctrl.isEditing">' +
-                '<input type="text" uib-datepicker-popup="{{$ctrl.format}}" ng-model="$ctrl.dateValue" class="form-control" ' +
-                'ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}" is-open="$ctrl.open" />' +
-                '<span class="input-group-btn">' +
-                '<button type="button" class="btn btn-default" ng-click="$ctrl.open = !$ctrl.open"><i class="fa fa-calendar"></i></button>' +
-                '</span>' +
-                '</div>' +
-                '<div uib-timepicker ng-model="$ctrl.dateValue"  show-seconds="true" show-meridian="false"></div>') +
-            '<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">{{error}}</span>' +
-            '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help" ng-bind="$ctrl.help"></span>' +
-            '</div>',
+                `<input type="datetime-local" ng-show="$ctrl.isEditing" ng-model="$ctrl.dateValue" class="form-control" 
+                ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}"/>` :
+                `<div class="input-group" ng-show="$ctrl.isEditing">
+                <input type="text" uib-datepicker-popup="{{$ctrl.format}}" ng-model="$ctrl.dateValue" class="form-control" 
+                ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}" is-open="$ctrl.open" />
+                <span class="input-group-btn">
+                <button type="button" class="btn btn-default" ng-click="$ctrl.open = !$ctrl.open"><i class="fa fa-calendar"></i></button>
+                </span></div>
+                <div uib-timepicker ng-model="$ctrl.dateValue"  show-seconds="true" show-meridian="false"></div>`) +
+            `<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">{{error}}</span>
+            <span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help" ng-bind="$ctrl.help"></span>
+            </div>`,
             bindings: {
                 value: '=?',
                 isEditing: '=?',
@@ -1754,9 +1784,9 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
          * @param {string} defaultValue Set the default value.
          */
         .component('tbDateEditor', {
-            template: '<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">' +
-            '<span ng-hide="$ctrl.isEditing">{{ $ctrl.value | moment: $ctrl.format }}</span>' +
-            '<label ng-show="$ctrl.showLabel" ng-bind="$ctrl.label"></label>' +
+            template: `<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">
+            <span ng-hide="$ctrl.isEditing">{{ $ctrl.value | moment: $ctrl.format }}</span>
+            <label ng-show="$ctrl.showLabel" ng-bind="$ctrl.label"></label>` +
             (canUseHtml5Date() ?
                 '<input type="date" ng-show="$ctrl.isEditing" ng-model="$ctrl.dateValue" class="form-control" ' +
                 'ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}"/>' :
@@ -1767,9 +1797,9 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 '<button type="button" class="btn btn-default" ng-click="$ctrl.open = !$ctrl.open"><i class="fa fa-calendar"></i></button>' +
                 '</span>' +
                 '</div>') +
-            '<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">{{error}}</span>' +
-            '<span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help" ng-bind="$ctrl.help"></span>' +
-            '</div>',
+            `<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">{{error}}</span>
+            <span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help" ng-bind="$ctrl.help"></span>
+            </div>`,
             bindings: {
                 value: '=?',
                 isEditing: '=?',
@@ -1882,23 +1912,20 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         css: '@?'
                     },
                     link: (scope, element) => {
-                        var template = '<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid && $dirty() }">' +
-                            '<span ng-hide="isEditing" ng-bind="value"></span>' +
-                            '<label ng-show="showLabel" ng-bind="label"></label>' +
-                            '<div class="input-group" ng-show="isEditing">' +
-                            '<input ng-model="value" placeholder="{{placeholder}}" title="{{tooltip}}" autocomplete="off" ' +
-                            'class="form-control {{css}}" ng-readonly="readOnly || lastSet.indexOf(value) !== -1" uib-typeahead="' + scope.selectOptions + '" ' +
-                            'ng-required="required" name="{{name}}" /> ' +
-                            '<div class="input-group-addon" ng-hide="lastSet.indexOf(value) !== -1"><i class="fa fa-pencil"></i></div>' +
-                            '<span class="input-group-btn" ng-show="lastSet.indexOf(value) !== -1" tabindex="-1">' +
-                            '<button class="btn btn-default" type="button" ng-click="value = null"><i class="fa fa-times"></i>' +
-                            '</span>' +
-                            '</div>' +
-                            '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">' +
-                            '{{error}}' +
-                            '</span>' +
-                            '<span class="help-block" ng-show="isEditing && help" ng-bind="help"></span>' +
-                            '</div>';
+                        var template = `<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid && $dirty() }">
+                            <span ng-hide="isEditing" ng-bind="value"></span>
+                            <label ng-show="showLabel" ng-bind="label"></label>
+                            <div class="input-group" ng-show="isEditing">
+                            <input ng-model="value" placeholder="{{placeholder}}" title="{{tooltip}}" autocomplete="off" 
+                            class="form-control {{css}}" ng-readonly="readOnly || lastSet.indexOf(value) !== -1" uib-typeahead="${scope.selectOptions}" 
+                            ng-required="required" name="{{name}}" /> 
+                            <div class="input-group-addon" ng-hide="lastSet.indexOf(value) !== -1"><i class="fa fa-pencil"></i></div>
+                            <span class="input-group-btn" ng-show="lastSet.indexOf(value) !== -1" tabindex="-1">
+                            <button class="btn btn-default" type="button" ng-click="value = null"><i class="fa fa-times"></i>
+                            </span></div>
+                            <span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>
+                            <span class="help-block" ng-show="isEditing && help" ng-bind="help"></span>
+                            </div>`;
 
                         var linkFn = $compile(template);
                         var content = linkFn(scope);
@@ -1917,7 +1944,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                             $scope.lastSet = [];
 
                             if (angular.isDefined($scope.optionLabel)) {
-                                $scope.selectOptions = 'd as d.' + $scope.optionLabel + ' for d in getValues($viewValue)';
+                                $scope.selectOptions = `d as d.${$scope.optionLabel} for d in getValues($viewValue)`;
                             }
 
                             $scope.$watch('value', val => {
@@ -2057,20 +2084,16 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     var $ctrl = this;
 
                     $ctrl.validate = () => {
-                        if ($ctrl.min && $ctrl.value) {
-                            if ($ctrl.value.length < parseInt($ctrl.min)) {
-                                $ctrl.$valid = false;
-                                $ctrl.state.$errors = [translateFilter('EDITOR_MIN_CHARS', +$ctrl.min)];
-                                return;
-                            }
+                        if ($ctrl.min && $ctrl.value && $ctrl.value.length < parseInt($ctrl.min)) {
+                            $ctrl.$valid = false;
+                            $ctrl.state.$errors = [translateFilter('EDITOR_MIN_CHARS', +$ctrl.min)];
+                            return;
                         }
 
-                        if ($ctrl.max && $ctrl.value) {
-                            if ($ctrl.value.length > parseInt($ctrl.max)) {
-                                $ctrl.$valid = false;
-                                $ctrl.state.$errors = [translateFilter('EDITOR_MAX_CHARS', +$ctrl.max)];
-                                return;
-                            }
+                        if ($ctrl.max && $ctrl.value && $ctrl.value.length > parseInt($ctrl.max)) {
+                            $ctrl.$valid = false;
+                            $ctrl.state.$errors = [translateFilter('EDITOR_MAX_CHARS', +$ctrl.max)];
+                            return;
                         }
                     };
 
@@ -2125,7 +2148,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 $ctrl.openColumnsSelector = () => {
                     var model = $ctrl.$component.columns;
 
-                    $modal.open({
+                    const dialog = $modal.open({
                         templateUrl: 'tbColumnSelectorDialog.tpl.html',
                         backdropClass: 'fullHeight',
                         animation: false,
@@ -2288,7 +2311,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
          *
          * @description
          * The `tbRemoveButton` component is visual helper to show a Remove button with a popover to confirm the action.
-         * 
+         *
          * @param {object} model The row to remove.
          * @param {string} caption Set the caption to use in the button, default Remove.
          * @param {string} cancelCaption Set the caption to use in the Cancel button, default `CAPTION_REMOVE` i18n resource.
@@ -2308,6 +2331,8 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             controller: function() {
                 var $ctrl = this;
 
+                $ctrl.delete = () => $ctrl.$component.deleteRow($ctrl.model);
+
                 $ctrl.$onInit = () => {
                     $ctrl.showIcon = angular.isDefined($ctrl.icon);
                     $ctrl.showCaption = !($ctrl.showIcon && angular.isUndefined($ctrl.caption));
@@ -2324,7 +2349,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
          *
          * @description
          * The `tbSaveButton` directive is visual helper to show a Save button and Cancel button.
-         * 
+         *
          * @param {object} model The row to remove.
          * @param {boolean} isNew Set if the row is a new record.
          * @param {string} saveCaption Set the caption to use in Save the button, default Save.
@@ -2415,7 +2440,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     if ($ctrl.$component.editorMode === 'popup') {
                         $ctrl.model.editPopup();
                     } else {
-                        $ctrl.model.edit();
+                        $ctrl.model.$isEditing = true;
                     }
                 };
             }
@@ -2620,7 +2645,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
          * @description
          * The `tubularModel` factory is the base to generate a row model to use with `tbGrid` and `tbForm`.
          */
-        .factory('tubularModel', ['tubularHttp', function(tubularHttp) {
+        .factory('tubularModel', [function() {
             return function($scope, $ctrl, data) {
                 var obj = {
                     $hasChanges: false,
@@ -2634,7 +2659,9 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         var valid = true;
 
                         angular.forEach(obj.$state, val => {
-                            if (angular.isUndefined(val) || val.$valid()) return;
+                            if (angular.isUndefined(val) || val.$valid()) {
+                                return;
+                            }
 
                             valid = false;
                         });
@@ -2662,14 +2689,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                             obj.$hasChanges = obj[key] !== obj.$original[key];
                         });
                     },
-                    edit: () => {
-                        if (obj.$isEditing && obj.$hasChanges) {
-                            obj.save();
-                        }
-
-                        obj.$isEditing = !obj.$isEditing;
-                    },
-                    delete: () => $ctrl.deleteRow(obj),
                     resetOriginal: () => angular.forEach(obj.$original, (v, k) => obj.$original[k] = obj[k]),
                     revertChanges: () => {
                         angular.forEach(obj, (v, k) => {
@@ -2679,26 +2698,10 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         });
 
                         obj.$hasChanges = obj.$isEditing = false;
-                    },
-                    save: forceUpdate => {
-                        if (angular.isUndefined($ctrl.serverSaveUrl) || $ctrl.serverSaveUrl == null) {
-                            throw 'Define a Save URL.';
-                        }
-
-                        if (!forceUpdate && !obj.$isNew && !obj.$hasChanges) {
-                            return false;
-                        }
-
-                        obj.$isLoading = true;
-
-                        return tubularHttp.saveDataAsync(obj, {
-                            serverUrl: $ctrl.serverSaveUrl,
-                            requestMethod: obj.$isNew ? ($ctrl.serverSaveMethod || 'POST') : 'PUT'
-                        });
                     }
                 };
 
-                if (angular.isArray(data) === false) {
+                if (!angular.isArray(data)) {
                     angular.forEach(data, (v,k) => obj.$addField(k, v));
                 }
 
@@ -3574,31 +3577,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         return null;
                     }
 
-                    var result = innerModel.save(forceUpdate);
-
-                    if (angular.isUndefined(result) || result === false) {
-                        return null;
-                    }
-
-                    result.then(
-                        function (data) {
-                            $scope.$emit('tbForm_OnSuccessfulSave', data);
-                            $rootScope.$broadcast('tbForm_OnSuccessfulSave', data);
-                            $scope.Model.$isLoading = false;
-                            if (gridScope.autoRefresh) gridScope.retrieveData();
-                            $uibModalInstance.close();
-
-                            return data;
-                        },
-                        function (error) {
-                            $scope.$emit('tbForm_OnConnectionError', error);
-                            $rootScope.$broadcast('tbForm_OnConnectionError', error);
-                            $scope.Model.$isLoading = false;
-
-                            return error;
-                        });
-
-                    return result;
+                    return gridScope.saveRow(innerModel, forceUpdate).then(() => $uibModalInstance.close());
                 };
 
                 $scope.closePopup = function () {
@@ -4428,6 +4407,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
     angular.module('tubular.services')
         .provider('tubularConfig', function () {
+
             var provider = this;
             provider.platform = {};
             var PLATFORM = 'platform';
@@ -4491,22 +4471,23 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 }
             }
 
+
             // create get/set methods for each config
             function createConfig(configObj, providerObj, platformPath) {
-                angular.forEach(configObj, (value, namespace) => {
+                angular.forEach(configObj, function (value, namespace) {
 
                     if (angular.isObject(configObj[namespace])) {
                         // recursively drill down the config object so we can create a method for each one
                         providerObj[namespace] = {};
                         createConfig(configObj[namespace], providerObj[namespace], platformPath + '.' + namespace);
+
                     } else {
                         // create a method for the provider/config methods that will be exposed
-                        providerObj[namespace] = (newValue) => {
+                        providerObj[namespace] = function (newValue) {
                             if (arguments.length) {
                                 configObj[namespace] = newValue;
                                 return providerObj;
                             }
-
                             if (configObj[namespace] == PLATFORM) {
                                 // if the config is set to 'platform', then get this config's platform value
                                 // var platformConfig = stringObj(configProperties.platform, 'default' + platformPath + '.' + namespace);
@@ -4516,10 +4497,10 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                                 // didnt find a specific platform config, now try the default
                                 return stringObj(configProperties.platform, 'default' + platformPath + '.' + namespace);
                             }
-
                             return configObj[namespace];
                         };
                     }
+
                 });
             }
 
@@ -4537,7 +4518,10 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
             provider.setPlatformConfig = setPlatformConfig;
 
+
             // private: Service definition for internal Tubular use
-            provider.$get = () =>  provider;
+            provider.$get = function () {
+                return provider;
+            };
         });
 })(angular);
