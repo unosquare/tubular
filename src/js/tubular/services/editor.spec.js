@@ -12,28 +12,17 @@ describe('Module: tubular.services', () => {
                 $filterProvider.register('translate', () => filter);
             });
 
-            inject((_tubularEditorService_) => {
+            inject((_tubularEditorService_, rootScope_) => {
                 editor = _tubularEditorService_;
+                scope = _$rootScope_.$new();
             });
-        });
 
-        beforeEach(inject((_$rootScope_) => {
-            scope = _$rootScope_.$new();
-        }));
-
-        beforeEach(() => {
             scope.label = 'Testcomponent';
             editor.setupScope(scope);
             editor.value = null;
         });
 
-        it('should be defined', () => {
-            expect(editor).toBeDefined();
-        });
-
-        it('should have form name', () => {
-            expect(editor.getUniqueTbFormName()).toBe('tbForm0');
-        });
+        it('should be defined', () => expect(editor).toBeDefined());
 
         it('should show isvalid info with required = false', () => {
             expect(scope.state.$valid()).toBe(true, 'should be false without value');

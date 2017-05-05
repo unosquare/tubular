@@ -504,8 +504,8 @@
                         optionLabel: '@?',
                         css: '@?'
                     },
-                    link: (scope, element) => {
-                        var template = `<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid && $dirty() }">
+                    link: function(scope, element) {
+                        const template = `<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid && $dirty() }">
                             <span ng-hide="isEditing" ng-bind="value"></span>
                             <label ng-show="showLabel" ng-bind="label"></label>
                             <div class="input-group" ng-show="isEditing">
@@ -536,21 +536,21 @@
                             $scope.selectOptions = 'd for d in getValues($viewValue)';
                             $scope.lastSet = [];
 
-                            if (angular.isDefined($scope.optionLabel)) {
+                            if ($scope.optionLabe) {
                                 $scope.selectOptions = `d as d.${$scope.optionLabel} for d in getValues($viewValue)`;
                             }
 
                             $scope.$watch('value', val => {
                                 $scope.$emit('tbForm_OnFieldChange', $scope.$component, $scope.name, val, $scope.options);
                                 $scope.tooltip = val;
-                                if (angular.isDefined(val) && val != null && angular.isDefined($scope.optionLabel)) {
+
+                                if (val && $scope.optionLabel) {
                                     $scope.tooltip = val[$scope.optionLabel];
                                 }
                             });
 
                             $scope.getValues = val => {
                                 if (angular.isUndefined($scope.optionsUrl)) {
-
                                     return $q(resolve => {
                                         $scope.lastSet = $scope.options;
                                         resolve($scope.options);
@@ -561,15 +561,13 @@
                                     throw 'You need to define a parent Form or Grid';
                                 }
 
-                                var p = tubularHttp.retrieveDataAsync({
+                                return tubularHttp.retrieveDataAsync({
                                     serverUrl: $scope.optionsUrl + '?search=' + val,
                                     requestMethod: $scope.optionsMethod || 'GET'
                                 }).then(data => {
                                     $scope.lastSet = data;
                                     return data;
                                 });
-
-                                return p;
                             };
                         }
                     ]
@@ -583,9 +581,9 @@
          *
          * @description
          * The `tbCheckboxField` component represents a checkbox field.
-         * 
+         *
          * It uses the `TubularModel` to retrieve column or field information.
-         * 
+         *
          * @param {string} name Set the field name.
          * @param {object} value Set the value.
          * @param {object} checkedValue Set the checked value.

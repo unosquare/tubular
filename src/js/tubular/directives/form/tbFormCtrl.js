@@ -1,5 +1,6 @@
 ﻿(angular => {
     'use strict';
+    var tbFormCounter = 0;
 
     angular.module('tubular.directives')
         .controller('tbFormController',
@@ -8,7 +9,6 @@
             '$routeParams',
             '$timeout',
             '$element',
-            'tubularEditorService',
             'tubularModel',
             '$http',
             function (
@@ -16,7 +16,6 @@
                 $routeParams,
                 $timeout,
                 $element,
-                tubular,
                 TubularModel,
                 $http) {
                 // we need this to find the parent of a field
@@ -27,7 +26,7 @@
                 var $ctrl = this;
 
                 $ctrl.serverSaveMethod = $scope.serverSaveMethod || 'POST'; // TODO: we are not using it
-                $ctrl.name = $scope.name || tubular.getUniqueTbFormName();
+                $ctrl.name = $scope.name || ('tbForm' + tbFormCounter++);
 
                 // This method is meant to provide a reference to the Angular Form
                 // so we can get information about: $pristine, $dirty, $submitted, etc.

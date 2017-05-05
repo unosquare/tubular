@@ -1,14 +1,8 @@
 ﻿(function (angular) {
     'use strict';
-    var tbFormCounter = 0;
     
     function editorService(translateFilter) {
         return {
-            /**
-            * Simple helper to generate a unique name for Tubular Forms
-            */
-            getUniqueTbFormName: () => 'tbForm' + tbFormCounter++,
-
             /**
              * Setups a new Editor, this functions is like a common class constructor to be used
              * with all the tubularEditors.
@@ -144,20 +138,16 @@
                                 }
 
                                 parent.$watch(() => ctrl.value, value => {
-                                    if (value === parent.model[scope.Name]) {
-                                        return;
+                                    if (value !== parent.model[scope.Name]) {
+                                        parent.model[scope.Name] = value;
                                     }
-
-                                    parent.model[scope.Name] = value;
                                 });
                             }
 
                             scope.$watch(() => parent.model[scope.Name], value => {
-                                if (value === ctrl.value) {
-                                    return;
+                                if (value !== ctrl.value) {
+                                    ctrl.value = value;
                                 }
-
-                                ctrl.value = value;
                             }, true);
 
                             if (ctrl.value == null && (ctrl.defaultValue && ctrl.defaultValue != null)) {
