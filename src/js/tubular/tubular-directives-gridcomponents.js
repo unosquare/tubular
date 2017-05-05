@@ -18,7 +18,9 @@
          * @param {string} icon Set the CSS icon's class, the button can have only icon.
          */
         .component('tbRemoveButton', {
-            require: '^tbGrid',
+            require: {
+                $component: '^tbGrid'
+            },
             templateUrl: 'tbRemoveButton.tpl.html',
             bindings: {
                 model: '=',
@@ -27,7 +29,7 @@
                 legend: '@',
                 icon: '@'
             },
-            controller: function() {
+            controller: function () {
                 var $ctrl = this;
 
                 $ctrl.delete = () => $ctrl.$component.deleteRow($ctrl.model);
@@ -73,37 +75,17 @@
                         cancelCss: '@'
                     },
                     controller: [
-                        '$scope', function($scope) {
+                        '$scope', function ($scope) {
+                            $scope.$component = $scope.$parent.$parent.$component;
                             $scope.isNew = $scope.isNew || false;
 
                             $scope.save = () => {
-                                if ($scope.isNew) {
-                                    $scope.model.$isNew = true;
-                                }
-
                                 if (!$scope.model.$valid()) {
                                     return;
                                 }
 
-                                $scope.currentRequest = $scope.model.save();
-
-                                if ($scope.currentRequest === false) {
-                                    $scope.$emit('tbGrid_OnSavingNoChanges', $scope.model);
-                                    return;
-                                }
-
-                                $scope.currentRequest
-                                    .then(data => {
-                                        $scope.model.$isEditing = false;
-
-                                        if (angular.isDefined($scope.model.$component) &&
-                                            angular.isDefined($scope.model.$component.autoRefresh) &&
-                                            $scope.model.$component.autoRefresh) {
-                                            $scope.model.$component.retrieveData();
-                                        }
-
-                                        $scope.$emit('tbGrid_OnSuccessfulSave', data, $scope.model.$component);
-                                    }, error => $scope.$emit('tbGrid_OnConnectionError', error));
+                                $scope.model.$isNew = $scope.isNew;
+                                return $scope.$component.saveRow($scope.model);
                             };
 
                             $scope.cancel = () => $scope.model.revertChanges();
@@ -132,7 +114,7 @@
                 model: '=',
                 caption: '@'
             },
-            controller: function() {
+            controller: function () {
                 var $ctrl = this;
 
                 $ctrl.edit = () => {
@@ -198,7 +180,7 @@
                 captionMenuCurrent: '@',
                 captionMenuAll: '@'
             },
-            controller: ['tubularGridExportService', function(tubular) {
+            controller: ['tubularGridExportService', function (tubular) {
                 var $ctrl = this;
 
                 $ctrl.downloadCsv = () => tubular.exportGridToCsv($ctrl.filename, $ctrl.$component);
@@ -228,7 +210,7 @@
                 printCss: '@',
                 caption: '@'
             },
-            controller: ['tubularGridExportService', function(tubular) {
+            controller: ['tubularGridExportService', function (tubular) {
                 var $ctrl = this;
 
                 $ctrl.printGrid = () => tubular.printGrid($ctrl.$component, $ctrl.printCss, $ctrl.title);

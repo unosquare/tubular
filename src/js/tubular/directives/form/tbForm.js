@@ -12,13 +12,13 @@
          * The `tbForm` directive is the base to create any form powered by Tubular. Define 
          * `modelKey` to auto-load a record. The `serverSaveUrl` can be used to create a new or update
          * an existing record.
-         * 
+         *
          * Please don't bind a controller directly to the `tbForm`, Angular will throw an exception. If you want
          * to extend the form behavior put a controller in a upper node like a div.
-         * 
+         *
          * The `save` method can be forced to update a model against the REST service, otherwise if the Model
          * doesn't detect any change will ignore the save call.
-         * 
+         *
          * @param {string} serverUrl Set the HTTP URL where the data comes.
          * @param {string} serverSaveUrl Set the HTTP URL where the data will be saved.
          * @param {string} serverSaveMethod Set HTTP Method to save data.
@@ -45,7 +45,7 @@
                         name: '@?formName'
                     },
                     controller: 'tbFormController',
-                    compile: () => { return { post: scope => scope.finishDefinition() }; }
+                    compile: () => ({ post: scope => scope.finishDefinition() })
                 };
             }
         ]);

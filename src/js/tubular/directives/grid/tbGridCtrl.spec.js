@@ -1,6 +1,6 @@
 ﻿'use strict';
 
-var models = [{
+const models = [{
     'Id': 8,
     'Name': 'Guzman Webster',
     'Company': 'IDEGO',
@@ -10,7 +10,7 @@ var models = [{
     'IsOwner': 'false'
 }];
 
-var payload = [[8, 'Guzman Webster', 'IDEGO', 'guzmanwebster@idego.com']];
+const payload = [[8, 'Guzman Webster', 'IDEGO', 'guzmanwebster@idego.com']];
 
 describe('Module: tubular.directives', () => {
     describe('Controller: tbGridController', () => {
@@ -576,13 +576,6 @@ describe('Module: tubular.directives', () => {
                 sut.requestedPage = 10;
                 sut.retrieveData();
                 expect(sut.requestedPage).toBe(5);
-            })
-
-            it('should call onBeforeGetData', () => {
-                sut.onBeforeGetData = () => { return true; };
-                spyOn(sut, 'onBeforeGetData');
-                sut.retrieveData();
-                expect(sut.onBeforeGetData).toHaveBeenCalled();
             })
 
             it('should emit tbGrid_OnBeforeRequest', () => {

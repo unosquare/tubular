@@ -15,8 +15,6 @@
                 $component : '^tbGrid'
             },
             templateUrl: 'tbGridPager.tpl.html',
-            scope: true,
-            terminal: false,
             controller: ['$scope', function($scope) {
                     var $ctrl = this;
 

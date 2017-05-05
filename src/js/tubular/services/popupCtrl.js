@@ -1,5 +1,4 @@
-﻿(function (angular) {
-
+﻿(angular => {
     'use strict';
 
     angular.module('tubular.services')
@@ -18,11 +17,11 @@
 
                 $scope.Model = model;
 
-                $scope.savePopup = function (innerModel, forceUpdate) {
+                $scope.savePopup = (innerModel, forceUpdate) => {
                     innerModel = innerModel || $scope.Model;
 
                     // If we have nothing to save and it's not a new record, just close
-                    if (!forceUpdate && !innerModel.$isNew && !innerModel.$hasChanges) {
+                    if (!forceUpdate && !innerModel.$isNew && !innerModel.$hasChanges()) {
                         $scope.closePopup();
                         return null;
                     }
@@ -30,7 +29,7 @@
                     return gridScope.saveRow(innerModel, forceUpdate).then(() => $uibModalInstance.close());
                 };
 
-                $scope.closePopup = function () {
+                $scope.closePopup = () => {
                     if (angular.isDefined($scope.Model.revertChanges)) {
                         $scope.Model.revertChanges();
                     }

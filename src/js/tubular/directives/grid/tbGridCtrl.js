@@ -177,37 +177,37 @@
                 };
 
                 $ctrl.saveRow = (row, forceUpdate) => {
-                        if (!$ctrl.serverSaveUrl) {
-                            throw 'Define a Save URL.';
-                        }
+                    if (!$ctrl.serverSaveUrl) {
+                        throw 'Define a Save URL.';
+                    }
 
-                        if (!forceUpdate && !row.$isNew && !row.$hasChanges) {
-                            return null;
-                        }
+                    if (!forceUpdate && !row.$isNew && !row.$hasChanges()) {
+                        return null;
+                    }
 
-                        row.$isLoading = true;
+                    row.$isLoading = true;
 
-                        $ctrl.currentRequest = tubularHttp.saveDataAsync(row, {
-                            serverUrl: $ctrl.serverSaveUrl,
-                            requestMethod: row.$isNew ? ($ctrl.serverSaveMethod || 'POST') : 'PUT'
-                        });
+                    $ctrl.currentRequest = tubularHttp.saveDataAsync(row, {
+                        serverUrl: $ctrl.serverSaveUrl,
+                        requestMethod: row.$isNew ? ($ctrl.serverSaveMethod || 'POST') : 'PUT'
+                    });
 
-                        $ctrl.currentRequest.then(data => {
-                            $scope.$emit('tbForm_OnSuccessfulSave', data);
-                            row.$isLoading = false;
-                            $ctrl.retrieveData();
-                            $ctrl.currentRequest = null;
+                    $ctrl.currentRequest.then(data => {
+                        $scope.$emit('tbForm_OnSuccessfulSave', data);
+                        row.$isLoading = false;
+                        $ctrl.retrieveData();
+                        $ctrl.currentRequest = null;
 
-                            return data;
-                        }, error => {
-                            $scope.$emit('tbForm_OnConnectionError', error);
-                            row.$isLoading = false;
-                            $ctrl.currentRequest = null;
+                        return data;
+                    }, error => {
+                        $scope.$emit('tbForm_OnConnectionError', error);
+                        row.$isLoading = false;
+                        $ctrl.currentRequest = null;
 
-                            return error;
-                        });
+                        return error;
+                    });
 
-                        return $ctrl.currentRequest;
+                    return $ctrl.currentRequest;
                 };
 
                 $ctrl.verifyColumns = () => {
@@ -289,10 +289,6 @@
                     if ($ctrl.requestedPage > newPages) $ctrl.requestedPage = newPages;
 
                     var request = $ctrl.getRequestObject(-1);
-
-                    if (angular.isDefined($ctrl.onBeforeGetData)) {
-                        $ctrl.onBeforeGetData();
-                    }
 
                     $scope.$emit('tbGrid_OnBeforeRequest', request, $ctrl);
 
