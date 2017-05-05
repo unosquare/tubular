@@ -423,7 +423,7 @@ angular.module('tubular-chart.directives').run(['$templateCache', function ($tem
          *
          * @description
          * The `tbChartjs` component is the base to create any ChartJs component.
-         *  
+         * 
          * @param {string} serverUrl Set the HTTP URL where the data comes.
          * @param {string} chartName Defines the chart name.
          * @param {string} chartType Defines the chart type.
@@ -464,7 +464,7 @@ angular.module('tubular-chart.directives').run(['$templateCache', function ($tem
       function(
         $scope,
         $http) {
-        var $ctrl = this;
+        let $ctrl = this;
 
         $ctrl.showLegend = angular.isUndefined($ctrl.showLegend) ? true : $ctrl.showLegend;
         $ctrl.chartType = $ctrl.chartType || 'line';
@@ -478,7 +478,7 @@ angular.module('tubular-chart.directives').run(['$templateCache', function ($tem
           // TODO: Set requireAuthentication
           $http.get($ctrl.serverUrl)
             .then((response) => {
-                var data = response.data;
+                const data = response.data;
 
                 if (!data || !data.Data || data.Data.length === 0) {
                   $ctrl.isEmpty = true;
@@ -514,13 +514,9 @@ angular.module('tubular-chart.directives').run(['$templateCache', function ($tem
 
         $scope.$on('chart-create', (evt, chart) => {
             if ($ctrl.chartType === 'pie' || $ctrl.chartType === 'doughnut') {
-              $ctrl.legends = chart.chart.config.data.labels.map((v, i) => {
-                return { label: v, color: chart.chart.config.data.datasets[0].backgroundColor[i]}
-              });
+              $ctrl.legends = chart.chart.config.data.labels.map((v, i) => ({ label: v, color: chart.chart.config.data.datasets[0].backgroundColor[i] }));
             } else {
-              $ctrl.legends = chart.chart.config.data.datasets.map(v => {
-                return { label: v.label, color: v.borderColor };
-              });
+              $ctrl.legends = chart.chart.config.data.datasets.map(v => ({ label: v.label, color: v.borderColor }));
             }
           });
       }

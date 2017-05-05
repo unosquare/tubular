@@ -490,7 +490,7 @@ if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.ex
          *
          * @description
          * The `tbHighcharts` component is the base to create any Highcharts component.
-         * 
+         *
          * @param {string} serverUrl Set the HTTP URL where the data comes.
          * @param {string} chartName Defines the chart name.
          * @param {string} chartType Defines the chart type.
@@ -522,7 +522,7 @@ if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.ex
             },
             controller: [
                 '$scope', '$http', '$timeout', function ($scope, $http, $timeout) {
-                    var $ctrl = this;
+                    let $ctrl = this;
 
                     $ctrl.showLegend = angular.isUndefined($ctrl.showLegend) ? true : $ctrl.showLegend;
                     $ctrl.chartType = $ctrl.chartType || 'line';
@@ -586,9 +586,9 @@ if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.ex
 
                         if (data.Series) {
                             $ctrl.options.xAxis.categories = data.Labels;
-                            $ctrl.options.series = data.Series.map((el, ix) => { return { name: el, data: data.Data[ix] }; });
+                            $ctrl.options.series = data.Series.map((el, ix) => ({ name: el, data: data.Data[ix] }));
                         } else {
-                            var uniqueSerie = data.Labels.map((el, ix) => { return { name: el, y: data.Data[ix] }; });
+                            const uniqueSerie = data.Labels.map((el, ix) => ({ name: el, y: data.Data[ix] }));
 
                             $ctrl.options.series = [{ name: data.SerieName || '', data: uniqueSerie, showInLegend: (data.SerieName || '') !== '' }];
                         }
