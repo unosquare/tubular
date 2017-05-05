@@ -132,8 +132,8 @@
                         method: $scope.model.$isNew ? ($ctrl.serverSaveMethod || 'POST') : 'PUT'
                     });
 
-                    $scope.currentRequest.then(reponse => {
-                        const data = response;
+                    $scope.currentRequest.then(response => {
+                        const data = response.data;
 
                         $scope.$emit('tbForm_OnSuccessfulSave', data, $scope);
 
