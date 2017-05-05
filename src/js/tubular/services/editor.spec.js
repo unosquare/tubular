@@ -12,7 +12,7 @@ describe('Module: tubular.services', () => {
                 $filterProvider.register('translate', () => filter);
             });
 
-            inject((_tubularEditorService_, rootScope_) => {
+            inject((_tubularEditorService_, _rootScope_) => {
                 editor = _tubularEditorService_;
                 scope = _$rootScope_.$new();
             });
