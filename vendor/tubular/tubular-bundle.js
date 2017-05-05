@@ -718,7 +718,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         }
                     });
 
-                    $scope.model = new TubularModel($scope, $scope, data);
+                    $scope.model = new TubularModel($scope, data);
                     $ctrl.bindFields();
                 };
 
@@ -747,7 +747,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                             $http.get(getUrlWithKey()).then(
                                 function (response) {
                                     var data = response.data;
-                                    $scope.model = new TubularModel($scope, $scope, data);
+                                    $scope.model = new TubularModel($scope, data);
                                     $ctrl.bindFields();
                                 },
                                 function (error) {
@@ -758,9 +758,9 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                             $http.get($scope.serverUrl).then(response => {
                                 if (angular.isDefined($scope.model) &&
                                     angular.isDefined($scope.model.$component)) {
-                                    $scope.model = new TubularModel($scope, $scope.model.$component, response.data);
+                                    $scope.model = new TubularModel($scope.model.$component, response.data);
                                 } else {
-                                    $scope.model = new TubularModel($scope, $scope, response.data);
+                                    $scope.model = new TubularModel($scope, response.data);
                                 }
 
                                 $ctrl.bindFields();
@@ -772,7 +772,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     }
 
                     if (angular.isUndefined($scope.model)) {
-                        $scope.model = new TubularModel($scope, $scope, {});
+                        $scope.model = new TubularModel($scope, {});
                     }
 
                     $ctrl.bindFields();
@@ -783,7 +783,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         return;
                     }
 
-                    if (!forceUpdate && !$scope.model.$isNew && !$scope.model.$hasChanges) {
+                    if (!forceUpdate && !$scope.model.$isNew && !$scope.model.$hasChanges()) {
                         $scope.$emit('tbForm_OnSavingNoChanges', $scope);
                         return;
                     }
@@ -797,8 +797,8 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         method: $scope.model.$isNew ? ($ctrl.serverSaveMethod || 'POST') : 'PUT'
                     });
 
-                    $scope.currentRequest.then(reponse => {
-                        const data = response;
+                    $scope.currentRequest.then(response => {
+                        const data = response.data;
 
                         $scope.$emit('tbForm_OnSuccessfulSave', data, $scope);
 
@@ -1041,7 +1041,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     };
 
                     $ctrl.isEmpty = false;
-                    $ctrl.tempRow = new TubularModel($scope, $ctrl, {});
+                    $ctrl.tempRow = new TubularModel($ctrl, {});
                     $ctrl.requireAuthentication = $ctrl.requireAuthentication ? ($ctrl.requireAuthentication === 'true') : true;
                     $ctrl.editorMode = $ctrl.editorMode || 'none';
                     $ctrl.canSaveState = false;
@@ -1128,7 +1128,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 };
 
                 $ctrl.newRow = (template, popup, size, data) => {
-                    $ctrl.tempRow = new TubularModel($scope, $ctrl, data || {});
+                    $ctrl.tempRow = new TubularModel($ctrl, data || {});
                     $ctrl.tempRow.$isNew = true;
                     $ctrl.tempRow.$isEditing = true;
                     $ctrl.tempRow.$component = $ctrl;
@@ -1154,10 +1154,9 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     });
 
                     $ctrl.currentRequest
-                        .then(data => {
-                            row.$hasChanges = false;
-                            $scope.$emit('tbGrid_OnRemove', data);
-                            }, error => $scope.$emit('tbGrid_OnConnectionError', error))
+                        .then(
+                            data => $scope.$emit('tbGrid_OnRemove', data), 
+                            error => $scope.$emit('tbGrid_OnConnectionError', error))
                         .then(() => {
                         $ctrl.currentRequest = null;
                         $ctrl.retrieveData();
@@ -1313,11 +1312,11 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     }
 
                     $ctrl.rows = data.Payload.map(el => {
-                        let model = new TubularModel($scope, $ctrl, el);
+                        let model = new TubularModel($ctrl, el);
                         model.$component = $ctrl;
 
                         model.editPopup = (template, size) => {
-                            tubularPopupService.openDialog(template, new TubularModel($scope, $ctrl, el), $ctrl, size);
+                            tubularPopupService.openDialog(template, new TubularModel($ctrl, el), $ctrl, size);
                         };
 
                         return model;
@@ -2646,9 +2645,18 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
          * The `tubularModel` factory is the base to generate a row model to use with `tbGrid` and `tbForm`.
          */
         .factory('tubularModel', [function() {
-            return function($scope, $ctrl, data) {
+            return function($ctrl, data) {
                 var obj = {
-                    $hasChanges: false,
+                    $hasChanges: () => {
+                        var hasChanges = false;
+                        angular.forEach(obj, (v, k) => {
+                            if (angular.isDefined(obj.$original[k])) {
+                                hasChanges = hasChanges &&  obj[k] !== obj.$original[k]
+                            }
+                        });
+
+                        return hasChanges;
+                    },
                     $isEditing: false,
                     $isNew: false,
                     $key: '',
@@ -2676,18 +2684,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         obj[key] = value;
                         obj.$fields.push(key);
                         obj.$original[key] = ignoreOriginal ? undefined : value;
-
-                        if (ignoreOriginal) {
-                            obj.$hasChanges = true;
-                        }
-
-                        $scope.$watch(() => obj[key], (newValue, oldValue) => {
-                            if (newValue === oldValue) {
-                                return;
-                            }
-
-                            obj.$hasChanges = obj[key] !== obj.$original[key];
-                        });
                     },
                     resetOriginal: () => angular.forEach(obj.$original, (v, k) => obj.$original[k] = obj[k]),
                     revertChanges: () => {
@@ -2697,7 +2693,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                             }
                         });
 
-                        obj.$hasChanges = obj.$isEditing = false;
+                        obj.$isEditing = false;
                     }
                 };
 
@@ -3407,7 +3403,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     const originalClone = angular.copy(model.$original);
 
                     delete clone.$isEditing;
-                    delete clone.$hasChanges;
                     delete clone.$original;
                     delete clone.$state;
                     delete clone.$valid;
@@ -3428,7 +3423,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
                     return me.retrieveDataAsync(request)
                         .then(data => {
-                            model.$hasChanges = false;
                             model.resetOriginal();
 
                             return data;
