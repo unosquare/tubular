@@ -667,7 +667,7 @@ describe('tbForm related components', () => {
                 () => {
                     var errorPresent = false;
 
-                    tbTypeaheadEditor.$('button').click.then(() => {
+                    tbTypeaheadEditor.$('button').click().then(() => {
                         tbTypeaheadEditorErrorMessages.getText().then(errorsArray => {
                             errorsArray.forEach(val => {
                                 tbTypeaheadEditorInput.sendKeys(val);
@@ -683,7 +683,7 @@ describe('tbForm related components', () => {
 
             it('should submit modifications to item/server when clicking form "Save"',
                 () => {
-                    tbTypeaheadEditor.$('button').click.then(() => {
+                    tbTypeaheadEditor.$('button').click().then(() => {
                         tbTypeaheadEditorInput.sendKeys('por').then(() => {
                             tbTypeaheadEditorOptions.first().click().then(() => {
                                 tbFormSaveBtn.click().then(() => {
