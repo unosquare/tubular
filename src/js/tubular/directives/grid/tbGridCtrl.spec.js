@@ -1,18 +1,21 @@
 ﻿'use strict';
 
-const models = [{
-    'Id': 8,
-    'Name': 'Guzman Webster',
-    'Company': 'IDEGO',
-    'Email': 'guzmanwebster@idego.com',
-    'Phone': '+1 (869) 428-2675',
-    'Birthday': 'Fri Mar 01 1996 00:57:47 GMT-0600 (Central Standard Time (Mexico))',
-    'IsOwner': 'false'
-}];
 
-const payload = [[8, 'Guzman Webster', 'IDEGO', 'guzmanwebster@idego.com']];
 
 describe('Module: tubular.directives', () => {
+    
+    const models = [{
+        'Id': 8,
+        'Name': 'Guzman Webster',
+        'Company': 'IDEGO',
+        'Email': 'guzmanwebster@idego.com',
+        'Phone': '+1 (869) 428-2675',
+        'Birthday': 'Fri Mar 01 1996 00:57:47 GMT-0600 (Central Standard Time (Mexico))',
+        'IsOwner': 'false'
+    }];
+
+    const payload = [[8, 'Guzman Webster', 'IDEGO', 'guzmanwebster@idego.com']];
+
     describe('Controller: tbGridController', () => {
         var sut, scope, tubularPopupService, tubularModel, tubularHttp, $routeParams, storage, window;
         var $controller, storageMock, storage, data, tubularHttp;
@@ -209,7 +212,7 @@ describe('Module: tubular.directives', () => {
                 scope.requestedPageWatcher();
                 expect(sut.retrieveData).toHaveBeenCalled();
             })
-        });        
+        });
 
         describe('Watching pageSize', () => {
             beforeEach(() => {
@@ -500,9 +503,9 @@ describe('Module: tubular.directives', () => {
             });
 
             xit('should getFullDataSource', () => {
-               sut.getFullDataSource().then((data) => {
+                sut.getFullDataSource().then((data) => {
                     expect(data).toBe(payload);
-                });                
+                });
             })
 
             xit('should emit error', () => {
