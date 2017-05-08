@@ -1,5 +1,5 @@
 /* jshint: true */
-/* globals: expect:false,beforeAll:false,expect:false,browser:false,element:false,by:false,describe:false,protractor:false,it:false,afterEach:false */
+/* globals: expect:false,beforeAll:false,expect:false,browser:false,element:false,by:false,describe:false,protractor:false,it:false,afterEach:false,element:false,browser:false */
 
 describe('tbForm related components', () => {
     var trueFunc = () => true;
@@ -611,7 +611,7 @@ describe('tbForm related components', () => {
 
             it('should show an options list when there is an API-info/component entered-data',
                 done => {
-                    tbTypeaheadEditorInput.clear()
+                    tbTypeaheadEditor.$('button').click()
                         .then(() => {
                             expect(tbTypeaheadEditorOptions.count()).toBe(0);
 
@@ -624,7 +624,7 @@ describe('tbForm related components', () => {
 
             it('should select the option clicked',
                 () => {
-                    tbTypeaheadEditorInput.clear().then(() => {
+                    tbTypeaheadEditor.$('button').click().then(() => {
                         tbTypeaheadEditorInput.sendKeys('la').then(() => {
                             // Select second option, should be "Portrland..."
                             tbTypeaheadEditorOptions.get(1).click().then(() => {
@@ -636,7 +636,7 @@ describe('tbForm related components', () => {
 
             it('should show a "delete" button when an option/match is selected, and delete the option if button is clicked',
                 () => {
-                    tbTypeaheadEditorInput.clear().then(() => {
+                    tbTypeaheadEditor.$('button').click().then(() => {
                         tbTypeaheadEditorInput.sendKeys('guad').then(() => {
                             tbTypeaheadEditorOptions.first().click().then(() => {
                                 // Evaluate button appearence
@@ -667,7 +667,7 @@ describe('tbForm related components', () => {
                 () => {
                     var errorPresent = false;
 
-                    tbTypeaheadEditorInput.clear().then(() => {
+                    tbTypeaheadEditor.$('button').click.then(() => {
                         tbTypeaheadEditorErrorMessages.getText().then(errorsArray => {
                             errorsArray.forEach(val => {
                                 tbTypeaheadEditorInput.sendKeys(val);
@@ -683,7 +683,7 @@ describe('tbForm related components', () => {
 
             it('should submit modifications to item/server when clicking form "Save"',
                 () => {
-                    tbTypeaheadEditorInput.clear().then(() => {
+                    tbTypeaheadEditor.$('button').click.then(() => {
                         tbTypeaheadEditorInput.sendKeys('por').then(() => {
                             tbTypeaheadEditorOptions.first().click().then(() => {
                                 tbFormSaveBtn.click().then(() => {
@@ -699,7 +699,7 @@ describe('tbForm related components', () => {
 
             it('should NOT submit modifications to item/server when clicking form "Cancel"',
                 () => {
-                    tbTypeaheadEditorInput.clear().then(() => {
+                    tbTypeaheadEditor.$('button').click().then(() => {
                         tbTypeaheadEditorInput.sendKeys('por').then(() => {
                             tbTypeaheadEditorOptions.first().click().then(() => {
                                 tbFormCancelBtn.click().then(() => {
