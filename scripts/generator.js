@@ -25,7 +25,7 @@
                 };
             }
         ]).service('tubularGenerator', [
-            'tubularTemplateService', 'formPostData', function tubularGenerator(tubularTemplateService, formPostData) {
+            'tubularTemplateService', 'formPostData', function (tubularTemplateService, formPostData) {
                 var me = this;
 
                 me.DefaultJs = "angular.module('app', ['ngRoute','tubular']).config(['$routeProvider', function($routeProvider) {$routeProvider.when('/', {templateUrl: 'grid.html',}).otherwise({redirectTo: '/'}); } ]);";
