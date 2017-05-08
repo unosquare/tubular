@@ -146,7 +146,7 @@
         }
     ];
 
-    const tbDropdownEditorCtrl = ['tubularEditorService', '$scope', 'tubularHttp', function (tubular, $scope, tubularHttp) {
+    const tbDropdownEditorCtrl = ['tubularEditorService', '$scope', '$http', function (tubular, $scope, $http) {
         var $ctrl = this;
 
         $ctrl.$onInit = () => {
@@ -217,18 +217,14 @@
                 return;
             }
 
-            if (angular.isUndefined($ctrl.$component) || $ctrl.$component == null) {
-                throw 'You need to define a parent Form or Grid';
-            }
-
             var value = $ctrl.value;
             $ctrl.value = '';
 
-            tubularHttp.retrieveDataAsync({
-                serverUrl: $ctrl.optionsUrl,
-                requestMethod: $ctrl.optionsMethod || 'GET'
-            }).then(data => {
-                $ctrl.options = data;
+            $http({
+                url: $ctrl.optionsUrl,
+                method: $ctrl.optionsMethod || 'GET'
+            }).then(response => {
+                $ctrl.options = response.data;
                 $ctrl.dataIsLoaded = true;
                 // TODO: Add an attribute to define if autoselect is OK
                 var possibleValue = $ctrl.options && $ctrl.options.length > 0 ?
@@ -238,7 +234,9 @@
 
                 // Set the field dirty
                 const formScope = $ctrl.getFormField();
-                if (formScope) formScope.$setDirty();
+                if (formScope) {
+                    formScope.$setDirty();
+                }
             }, error => $scope.$emit('tbGrid_OnConnectionError', error));
         };
     }];
@@ -527,11 +525,11 @@
                     controller: [
                         '$scope',
                         'tubularEditorService',
-                        'tubularHttp',
+                        '$http',
                         function (
                             $scope,
                             tubular,
-                            tubularHttp) {
+                            $http) {
                             tubular.setupScope($scope);
                             $scope.selectOptions = 'd for d in getValues($viewValue)';
                             $scope.lastSet = [];
@@ -557,16 +555,12 @@
                                     });
                                 }
 
-                                if (angular.isUndefined($scope.$component) || $scope.$component == null) {
-                                    throw 'You need to define a parent Form or Grid';
-                                }
-
-                                return tubularHttp.retrieveDataAsync({
-                                    serverUrl: $scope.optionsUrl + '?search=' + val,
-                                    requestMethod: $scope.optionsMethod || 'GET'
-                                }).then(data => {
-                                    $scope.lastSet = data;
-                                    return data;
+                                return $http({
+                                    url: $scope.optionsUrl + '?search=' + val,
+                                    method: $scope.optionsMethod || 'GET'
+                                }).then(response => {
+                                    $scope.lastSet = response.data;
+                                    return $scope.lastSet;
                                 });
                             };
                         }

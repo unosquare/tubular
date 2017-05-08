@@ -2,18 +2,17 @@
 
 describe('Module: tubular.directives', () => {
     describe('Controller: tbTextSearchController', () => {
-        var sut, scope, $element, $routeParams, tubularHttp, tubularModel, tubularEditorService;
+        var sut, scope, $element, $routeParams, tubularEditorService;
         var $controller;
 
         beforeEach(() => {
             module('tubular.directives');
-        });
-
-        beforeEach(inject(function (_$controller_, $rootScope) {
-            scope = $rootScope.$new();
-            $controller = _$controller_;
             
-        }));
+            inject(function (_$controller_, $rootScope) {
+                scope = $rootScope.$new();
+                $controller = _$controller_;
+            });
+        });
 
         function create() {
             sut = $controller('tbTextSearchController', { '$scope': scope });
