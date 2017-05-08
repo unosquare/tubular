@@ -20,18 +20,12 @@ If you are looking for Angular2 support, check <a href="https://github.com/unosq
             <hr/>
             <h1 id="nuget">NuGet Installation</h1>
 
-            <h3>Package containing only the client-side stuff</h3>
-
             <div hljs>PM Install-Package Tubular</div>
-
-            <h3>Package containing the server-side stuff (which also installs the client-side stuff)</h3>
-
-            <div hljs>PM Install-Package Tubular.ServerSide</div>
 
             <hr/>
             <h1 id="bower">Bower Installation</h1>
 
-            <div hljs># install Tubular package and add it to bower.json $ bower install tubular --save</div>
+            <div hljs>$ bower install tubular --save</div>
 
             <hr />
             <h1 id="npm">npm Installation</h1>
@@ -40,7 +34,7 @@ If you are looking for Angular2 support, check <a href="https://github.com/unosq
                 The npm package only contains the <b>Tubular Template Module</b>, if you want to use all of Tubular's features,
                 please install the Bower package instead.
             </p>
-            <div hljs># install Tubular package and add it to package.json $ npm install tubular --save</div>
+            <div hljs>$ npm install tubular --save</div>
 
             <hr />
             <h1 id="dependencies">Dependencies</h1>
@@ -94,9 +88,6 @@ If you are looking for Angular2 support, check <a href="https://github.com/unosq
 
             <div hljs>angular.module('app', [tubular']);</div>
 
-            <p>If you want to use OData or LocalData connectors to populate tbGrid, you must include the separated files. Previous
-                to version 1.0.0 those services where in the main bundle.</p>
-
             <hr />
             
             <h1 id="code">Samples</h1>
@@ -141,8 +132,6 @@ If you are looking for Angular2 support, check <a href="https://github.com/unosq
                     </tb-grid>
                 </div>
             </div>
-            <p>Tubular works directly with either your own OData service or a custom RESTful call. You can simplify your RESTful
-                API significantly by using our .NET library which handles <code>IQueryable</code> easily.</p>
         </div>
         <hr />
         
