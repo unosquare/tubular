@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for tubular-chart/chartjs/tbChartJsCtrl.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../prettify.css" />
+    <link rel="stylesheet" href="../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../index.html">all files</a> / <a href="index.html">tubular-chart/chartjs/</a> tbChartJsCtrl.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">8.82% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>3/34</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>0/25</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>0/1</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">9.38% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>3/32</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line low'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">﻿((angular) =&gt; {
+  'use strict';
+&nbsp;
+  angular.module('tubular-chart.directives')
+    .controller('tbChartJsController', [
+      '$scope',
+      '$http',
+<span class="fstat-no" title="function not covered" >      function(</span>
+        $scope,
+        $http) {
+<span class="cstat-no" title="statement not covered" >        let $ctrl = this;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        $ctrl.showLegend = angular.isUndefined($ctrl.showLegend) ? true : $ctrl.showLegend;</span>
+<span class="cstat-no" title="statement not covered" >        $ctrl.chartType = $ctrl.chartType || 'line';</span>
+&nbsp;
+        // Setup require authentication
+<span class="cstat-no" title="statement not covered" >        $ctrl.requireAuthentication = angular.isUndefined($ctrl.requireAuthentication) ?</span>
+          true :
+          $ctrl.requireAuthentication;
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        $ctrl.loadData = () =&gt; {</span>
+          // TODO: Set requireAuthentication
+<span class="cstat-no" title="statement not covered" >          $http.get($ctrl.serverUrl)</span>
+            .then((response) =&gt; {
+<span class="cstat-no" title="statement not covered" >                const data = response.data;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                if (!data || !data.Data || data.Data.length === 0) {</span>
+<span class="cstat-no" title="statement not covered" >                  $ctrl.isEmpty = true;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                  if (!$ctrl.options) {</span>
+<span class="cstat-no" title="statement not covered" >                    $ctrl.options = {};</span>
+                  }
+                  
+<span class="cstat-no" title="statement not covered" >                  $ctrl.options.series = [{</span>
+                    data: []
+                  }];
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                  if ($ctrl.onLoad) {</span>
+<span class="cstat-no" title="statement not covered" >                    $ctrl.onLoad($ctrl.options, {});</span>
+                  }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                  return;</span>
+                }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                $ctrl.isEmpty = false;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                $ctrl.data = data.Data;</span>
+<span class="cstat-no" title="statement not covered" >                $ctrl.series = data.Series;</span>
+<span class="cstat-no" title="statement not covered" >                $ctrl.labels = data.Labels;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                if ($ctrl.onLoad) {</span>
+<span class="cstat-no" title="statement not covered" >                  $ctrl.onLoad($ctrl.options, data);</span>
+                }
+              }, error =&gt; <span class="cstat-no" title="statement not covered" >$scope.$emit('tbChart_OnConnectionError', error))</span>;
+        };
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        $scope.$watch('$ctrl.serverUrl', val =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >            if (angular.isDefined(val) &amp;&amp; val != null) {</span>
+<span class="cstat-no" title="statement not covered" >              $ctrl.loadData();</span>
+            }
+          });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        $scope.$on('chart-create', (evt, chart) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >            if ($ctrl.chartType === 'pie' || $ctrl.chartType === 'doughnut') {</span>
+<span class="cstat-no" title="statement not covered" >              $ctrl.legends = chart.chart.config.data.labels.map((v, i) =&gt; (<span class="cstat-no" title="statement not covered" >{ label: v, color: chart.chart.config.data.datasets[0].backgroundColor[i] })</span>);</span>
+            } else {
+<span class="cstat-no" title="statement not covered" >              $ctrl.legends = chart.chart.config.data.datasets.map(v =&gt; (<span class="cstat-no" title="statement not covered" >{ label: v.label, color: v.borderColor })</span>);</span>
+            }
+          });
+      }
+    ]);
+})(angular);
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Mon May 08 2017 14:06:52 GMT+0000 (UTC)
+</div>
+</div>
+<script src="../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../sorter.js"></script>
+</body>
+</html>
