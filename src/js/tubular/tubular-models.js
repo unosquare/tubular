@@ -22,16 +22,7 @@
         .factory('tubularModel', [function() {
             return function($ctrl, data) {
                 var obj = {
-                    $hasChanges: () => {
-                        var hasChanges = false;
-                        angular.forEach(obj, (v, k) => {
-                            if (angular.isDefined(obj.$original[k])) {
-                                hasChanges = hasChanges &&  obj[k] !== obj.$original[k]
-                            }
-                        });
-
-                        return hasChanges;
-                    },
+                    $hasChanges: () => Object.keys(obj).some(k => angular.isDefined(obj.$original[k]) && obj[k] !== obj.$original[k]),
                     $isEditing: false,
                     $isNew: false,
                     $key: '',

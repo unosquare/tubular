@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+        "checkJs": true,
+        "target": "ES6"
+    },
+    "exclude": [
+        "node_modules",
+        "bower_components"
+    ]
+}

@@ -625,13 +625,13 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
          * The `tbForm` directive is the base to create any form powered by Tubular. Define 
          * `modelKey` to auto-load a record. The `serverSaveUrl` can be used to create a new or update
          * an existing record.
-         * 
+         *
          * Please don't bind a controller directly to the `tbForm`, Angular will throw an exception. If you want
          * to extend the form behavior put a controller in a upper node like a div.
-         * 
+         *
          * The `save` method can be forced to update a model against the REST service, otherwise if the Model
          * doesn't detect any change will ignore the save call.
-         * 
+         *
          * @param {string} serverUrl Set the HTTP URL where the data comes.
          * @param {string} serverSaveUrl Set the HTTP URL where the data will be saved.
          * @param {string} serverSaveMethod Set HTTP Method to save data.
@@ -658,30 +658,27 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         name: '@?formName'
                     },
                     controller: 'tbFormController',
-                    compile: () => { return { post: scope => scope.finishDefinition() }; }
+                    compile: () => ({ post: scope => scope.finishDefinition() })
                 };
             }
         ]);
 })(angular);
 (angular => {
     'use strict';
+    var tbFormCounter = 0;
 
     angular.module('tubular.directives')
         .controller('tbFormController',
         [
             '$scope',
-            '$routeParams',
             '$timeout',
             '$element',
-            'tubularEditorService',
             'tubularModel',
             '$http',
             function (
                 $scope,
-                $routeParams,
                 $timeout,
                 $element,
-                tubular,
                 TubularModel,
                 $http) {
                 // we need this to find the parent of a field
@@ -689,10 +686,21 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 $scope.hasFieldsDefinitions = false;
                 $scope.fields = [];
 
+                function getUrlWithKey() {
+                    const urlData = $scope.serverUrl.split('?');
+                    var getUrl = urlData[0] + $scope.modelKey;
+
+                    if (urlData.length > 1) {
+                        getUrl += '?' + urlData[1];
+                    }
+
+                    return getUrl;
+                }
+
                 var $ctrl = this;
 
-                $ctrl.serverSaveMethod = $scope.serverSaveMethod || 'POST'; // TODO: we are not using it
-                $ctrl.name = $scope.name || tubular.getUniqueTbFormName();
+                $ctrl.serverSaveMethod = $scope.serverSaveMethod || 'POST';
+                $ctrl.name = $scope.name || ('tbForm' + tbFormCounter++);
 
                 // This method is meant to provide a reference to the Angular Form
                 // so we can get information about: $pristine, $dirty, $submitted, etc.
@@ -704,7 +712,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     : $scope.requireAuthentication;
 
                 $scope.$watch('hasFieldsDefinitions', newVal => {
-                    if (newVal === true) {
+                    if (newVal) {
                         $ctrl.retrieveData();
                     }
                 });
@@ -724,49 +732,14 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
                 $ctrl.bindFields = () => angular.forEach($scope.fields, field => field.bindScope());
 
-                function getUrlWithKey() {
-                    const urlData = $scope.serverUrl.split('?');
-                    var getUrl = urlData[0] + $scope.modelKey;
-
-                    if (urlData.length > 1) {
-                        getUrl += '?' + urlData[1];
-                    }
-
-                    return getUrl;
-                }
-
                 $ctrl.retrieveData = function () {
-                    // Try to load a key from markup or route
-                    $scope.modelKey = $scope.modelKey || $routeParams.param;
-
                     if (angular.isDefined($scope.serverUrl)) {
-                        if (angular.isDefined($scope.modelKey) &&
-                            $scope.modelKey != null &&
-                            $scope.modelKey !== '') {
-                            // TODO: Set requireAuthentication
-                            $http.get(getUrlWithKey()).then(
-                                function (response) {
-                                    var data = response.data;
-                                    $scope.model = new TubularModel($scope, data);
-                                    $ctrl.bindFields();
-                                },
-                                function (error) {
-                                    $scope.$emit('tbForm_OnConnectionError', error);
-                                });
-                        } else {
-                            // TODO: Set requireAuthentication
-                            $http.get($scope.serverUrl).then(response => {
-                                if (angular.isDefined($scope.model) &&
-                                    angular.isDefined($scope.model.$component)) {
-                                    $scope.model = new TubularModel($scope.model.$component, response.data);
-                                } else {
-                                    $scope.model = new TubularModel($scope, response.data);
-                                }
-
-                                $ctrl.bindFields();
-                                $scope.model.$isNew = true;
-                            }, error => $scope.$emit('tbForm_OnConnectionError', error));
-                        }
+                        // TODO: Set requireAuthentication
+                        $http.get(getUrlWithKey()).then(response => {
+                            $scope.model = new TubularModel($scope.model && $scope.model.$component || $scope, response.data);
+                            $ctrl.bindFields();
+                            $scope.model.$isNew = true;
+                        }, error => $scope.$emit('tbForm_OnConnectionError', error));
 
                         return;
                     }
@@ -806,7 +779,8 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                             $scope.clear();
                         }
 
-                        var formScope = $scope.getFormScope();
+                        const formScope = $scope.getFormScope();
+
                         if (formScope) {
                             formScope.$setPristine();
                         }
@@ -848,7 +822,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     var timer = $timeout(() => {
                         $scope.hasFieldsDefinitions = true;
 
-                        if ($element.find('input').length) {
+                        if ($element.find('input').length > 0) {
                             $element.find('input')[0].focus();
                         }
                     }, 0);
@@ -950,7 +924,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
          * @param {string} serverDeleteUrl Set the HTTP URL where the data will be saved.
          * @param {string} serverSaveMethod Set HTTP Method to save data.
          * @param {int} pageSize Define how many records to show in a page, default 20.
-         * @param {function} onBeforeGetData Callback to execute before to get data from service.
          * @param {string} requestMethod Set HTTP Method to get data.
          * @param {bool} requireAuthentication Set if authentication check must be executed, default true.
          * @param {string} gridName Grid's name, used to store metainfo in localstorage.
@@ -971,7 +944,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 serverDeleteUrl: '@',
                 serverSaveMethod: '@',
                 pageSize: '=?',
-                onBeforeGetData: '=?',
                 requestMethod: '@',
                 requireAuthentication: '@?',
                 name: '@?gridName',
@@ -1164,37 +1136,39 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 };
 
                 $ctrl.saveRow = (row, forceUpdate) => {
-                        if (!$ctrl.serverSaveUrl) {
-                            throw 'Define a Save URL.';
-                        }
+                    if (!$ctrl.serverSaveUrl) {
+                        throw 'Define a Save URL.';
+                    }
 
-                        if (!forceUpdate && !row.$isNew && !row.$hasChanges) {
-                            return null;
-                        }
+                    if (!forceUpdate && !row.$isNew && !row.$hasChanges()) {
+                        row.$isEditing = false;
+                        return null;
+                    }
 
-                        row.$isLoading = true;
+                    row.$isLoading = true;
 
-                        $ctrl.currentRequest = tubularHttp.saveDataAsync(row, {
-                            serverUrl: $ctrl.serverSaveUrl,
-                            requestMethod: row.$isNew ? ($ctrl.serverSaveMethod || 'POST') : 'PUT'
-                        });
+                    $ctrl.currentRequest = tubularHttp.saveDataAsync(row, {
+                        serverUrl: $ctrl.serverSaveUrl,
+                        requestMethod: row.$isNew ? ($ctrl.serverSaveMethod || 'POST') : 'PUT'
+                    });
 
-                        $ctrl.currentRequest.then(data => {
-                            $scope.$emit('tbForm_OnSuccessfulSave', data);
-                            row.$isLoading = false;
-                            $ctrl.retrieveData();
-                            $ctrl.currentRequest = null;
+                    $ctrl.currentRequest.then(data => {
+                        $scope.$emit('tbForm_OnSuccessfulSave', data);
+                        row.$isLoading = false;
+                        row.$isEditing = false;
+                        $ctrl.retrieveData();
+                        $ctrl.currentRequest = null;
 
-                            return data;
-                        }, error => {
-                            $scope.$emit('tbForm_OnConnectionError', error);
-                            row.$isLoading = false;
-                            $ctrl.currentRequest = null;
+                        return data;
+                    }, error => {
+                        $scope.$emit('tbForm_OnConnectionError', error);
+                        row.$isLoading = false;
+                        $ctrl.currentRequest = null;
 
-                            return error;
-                        });
+                        return error;
+                    });
 
-                        return $ctrl.currentRequest;
+                    return $ctrl.currentRequest;
                 };
 
                 $ctrl.verifyColumns = () => {
@@ -1276,10 +1250,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     if ($ctrl.requestedPage > newPages) $ctrl.requestedPage = newPages;
 
                     var request = $ctrl.getRequestObject(-1);
-
-                    if (angular.isDefined($ctrl.onBeforeGetData)) {
-                        $ctrl.onBeforeGetData();
-                    }
 
                     $scope.$emit('tbGrid_OnBeforeRequest', request, $ctrl);
 
@@ -1910,8 +1880,8 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         optionLabel: '@?',
                         css: '@?'
                     },
-                    link: (scope, element) => {
-                        var template = `<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid && $dirty() }">
+                    link: function(scope, element) {
+                        const template = `<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid && $dirty() }">
                             <span ng-hide="isEditing" ng-bind="value"></span>
                             <label ng-show="showLabel" ng-bind="label"></label>
                             <div class="input-group" ng-show="isEditing">
@@ -1942,21 +1912,21 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                             $scope.selectOptions = 'd for d in getValues($viewValue)';
                             $scope.lastSet = [];
 
-                            if (angular.isDefined($scope.optionLabel)) {
+                            if ($scope.optionLabe) {
                                 $scope.selectOptions = `d as d.${$scope.optionLabel} for d in getValues($viewValue)`;
                             }
 
                             $scope.$watch('value', val => {
                                 $scope.$emit('tbForm_OnFieldChange', $scope.$component, $scope.name, val, $scope.options);
                                 $scope.tooltip = val;
-                                if (angular.isDefined(val) && val != null && angular.isDefined($scope.optionLabel)) {
+
+                                if (val && $scope.optionLabel) {
                                     $scope.tooltip = val[$scope.optionLabel];
                                 }
                             });
 
                             $scope.getValues = val => {
                                 if (angular.isUndefined($scope.optionsUrl)) {
-
                                     return $q(resolve => {
                                         $scope.lastSet = $scope.options;
                                         resolve($scope.options);
@@ -1967,15 +1937,13 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                                     throw 'You need to define a parent Form or Grid';
                                 }
 
-                                var p = tubularHttp.retrieveDataAsync({
+                                return tubularHttp.retrieveDataAsync({
                                     serverUrl: $scope.optionsUrl + '?search=' + val,
                                     requestMethod: $scope.optionsMethod || 'GET'
                                 }).then(data => {
                                     $scope.lastSet = data;
                                     return data;
                                 });
-
-                                return p;
                             };
                         }
                     ]
@@ -1989,9 +1957,9 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
          *
          * @description
          * The `tbCheckboxField` component represents a checkbox field.
-         * 
+         *
          * It uses the `TubularModel` to retrieve column or field information.
-         * 
+         *
          * @param {string} name Set the field name.
          * @param {object} value Set the value.
          * @param {object} checkedValue Set the checked value.
@@ -2318,7 +2286,9 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
          * @param {string} icon Set the CSS icon's class, the button can have only icon.
          */
         .component('tbRemoveButton', {
-            require: '^tbGrid',
+            require: {
+                $component: '^tbGrid'
+            },
             templateUrl: 'tbRemoveButton.tpl.html',
             bindings: {
                 model: '=',
@@ -2327,7 +2297,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 legend: '@',
                 icon: '@'
             },
-            controller: function() {
+            controller: function () {
                 var $ctrl = this;
 
                 $ctrl.delete = () => $ctrl.$component.deleteRow($ctrl.model);
@@ -2373,37 +2343,17 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         cancelCss: '@'
                     },
                     controller: [
-                        '$scope', function($scope) {
+                        '$scope', function ($scope) {
+                            $scope.$component = $scope.$parent.$parent.$component;
                             $scope.isNew = $scope.isNew || false;
 
                             $scope.save = () => {
-                                if ($scope.isNew) {
-                                    $scope.model.$isNew = true;
-                                }
-
                                 if (!$scope.model.$valid()) {
                                     return;
                                 }
 
-                                $scope.currentRequest = $scope.model.save();
-
-                                if ($scope.currentRequest === false) {
-                                    $scope.$emit('tbGrid_OnSavingNoChanges', $scope.model);
-                                    return;
-                                }
-
-                                $scope.currentRequest
-                                    .then(data => {
-                                        $scope.model.$isEditing = false;
-
-                                        if (angular.isDefined($scope.model.$component) &&
-                                            angular.isDefined($scope.model.$component.autoRefresh) &&
-                                            $scope.model.$component.autoRefresh) {
-                                            $scope.model.$component.retrieveData();
-                                        }
-
-                                        $scope.$emit('tbGrid_OnSuccessfulSave', data, $scope.model.$component);
-                                    }, error => $scope.$emit('tbGrid_OnConnectionError', error));
+                                $scope.model.$isNew = $scope.isNew;
+                                return $scope.$component.saveRow($scope.model);
                             };
 
                             $scope.cancel = () => $scope.model.revertChanges();
@@ -2432,7 +2382,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 model: '=',
                 caption: '@'
             },
-            controller: function() {
+            controller: function () {
                 var $ctrl = this;
 
                 $ctrl.edit = () => {
@@ -2498,7 +2448,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 captionMenuCurrent: '@',
                 captionMenuAll: '@'
             },
-            controller: ['tubularGridExportService', function(tubular) {
+            controller: ['tubularGridExportService', function (tubular) {
                 var $ctrl = this;
 
                 $ctrl.downloadCsv = () => tubular.exportGridToCsv($ctrl.filename, $ctrl.$component);
@@ -2528,7 +2478,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 printCss: '@',
                 caption: '@'
             },
-            controller: ['tubularGridExportService', function(tubular) {
+            controller: ['tubularGridExportService', function (tubular) {
                 var $ctrl = this;
 
                 $ctrl.printGrid = () => tubular.printGrid($ctrl.$component, $ctrl.printCss, $ctrl.title);
@@ -2552,8 +2502,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 $component : '^tbGrid'
             },
             templateUrl: 'tbGridPager.tpl.html',
-            scope: true,
-            terminal: false,
             controller: ['$scope', function($scope) {
                     var $ctrl = this;
 
@@ -2647,16 +2595,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
         .factory('tubularModel', [function() {
             return function($ctrl, data) {
                 var obj = {
-                    $hasChanges: () => {
-                        var hasChanges = false;
-                        angular.forEach(obj, (v, k) => {
-                            if (angular.isDefined(obj.$original[k])) {
-                                hasChanges = hasChanges &&  obj[k] !== obj.$original[k]
-                            }
-                        });
-
-                        return hasChanges;
-                    },
+                    $hasChanges: () => Object.keys(obj).some(k => angular.isDefined(obj.$original[k]) && obj[k] !== obj.$original[k]),
                     $isEditing: false,
                     $isNew: false,
                     $key: '',
@@ -3038,15 +2977,9 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 })(angular);
 (function (angular) {
     'use strict';
-    var tbFormCounter = 0;
     
     function editorService(translateFilter) {
         return {
-            /**
-            * Simple helper to generate a unique name for Tubular Forms
-            */
-            getUniqueTbFormName: () => 'tbForm' + tbFormCounter++,
-
             /**
              * Setups a new Editor, this functions is like a common class constructor to be used
              * with all the tubularEditors.
@@ -3182,20 +3115,16 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                                 }
 
                                 parent.$watch(() => ctrl.value, value => {
-                                    if (value === parent.model[scope.Name]) {
-                                        return;
+                                    if (value !== parent.model[scope.Name]) {
+                                        parent.model[scope.Name] = value;
                                     }
-
-                                    parent.model[scope.Name] = value;
                                 });
                             }
 
                             scope.$watch(() => parent.model[scope.Name], value => {
-                                if (value === ctrl.value) {
-                                    return;
+                                if (value !== ctrl.value) {
+                                    ctrl.value = value;
                                 }
-
-                                ctrl.value = value;
                             }, true);
 
                             if (ctrl.value == null && (ctrl.defaultValue && ctrl.defaultValue != null)) {
@@ -3451,7 +3380,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
                     request.timeout = request.timeout || 17000;
 
-                    var timeoutHandler = $timeout(() =>cancel('Timed out'), request.timeout);
+                    var timeoutHandler = $timeout(() => cancel('Timed out'), request.timeout);
 
                     return $http({
                         url: request.serverUrl,
@@ -3542,8 +3471,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             }
         ]);
 })(angular);
-(function (angular) {
-
+(angular => {
     'use strict';
 
     angular.module('tubular.services')
@@ -3562,11 +3490,11 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
                 $scope.Model = model;
 
-                $scope.savePopup = function (innerModel, forceUpdate) {
+                $scope.savePopup = (innerModel, forceUpdate) => {
                     innerModel = innerModel || $scope.Model;
 
                     // If we have nothing to save and it's not a new record, just close
-                    if (!forceUpdate && !innerModel.$isNew && !innerModel.$hasChanges) {
+                    if (!forceUpdate && !innerModel.$isNew && !innerModel.$hasChanges()) {
                         $scope.closePopup();
                         return null;
                     }
@@ -3574,7 +3502,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     return gridScope.saveRow(innerModel, forceUpdate).then(() => $uibModalInstance.close());
                 };
 
-                $scope.closePopup = function () {
+                $scope.closePopup = () => {
                     if (angular.isDefined($scope.Model.revertChanges)) {
                         $scope.Model.revertChanges();
                     }
@@ -4511,7 +4439,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             }
 
             provider.setPlatformConfig = setPlatformConfig;
-
 
             // private: Service definition for internal Tubular use
             provider.$get = function () {

@@ -22,20 +22,14 @@
                 $scope.fields = [];
 
                 function getUrlWithKey() {
-                    if (angular.isDefined($scope.modelKey) &&
-                            $scope.modelKey &&
-                            $scope.modelKey !== '') {
-                        const urlData = $scope.serverUrl.split('?');
-                        var getUrl = urlData[0] + $scope.modelKey;
+                    const urlData = $scope.serverUrl.split('?');
+                    var getUrl = urlData[0] + $scope.modelKey;
 
-                        if (urlData.length > 1) {
-                            getUrl += '?' + urlData[1];
-                        }
-
-                        return getUrl;
+                    if (urlData.length > 1) {
+                        getUrl += '?' + urlData[1];
                     }
 
-                    return $scope.serverUrl;
+                    return getUrl;
                 }
 
                 var $ctrl = this;
@@ -77,13 +71,7 @@
                     if (angular.isDefined($scope.serverUrl)) {
                         // TODO: Set requireAuthentication
                         $http.get(getUrlWithKey()).then(response => {
-                            if (angular.isDefined($scope.model) &&
-                                angular.isDefined($scope.model.$component)) {
-                                $scope.model = new TubularModel($scope.model.$component, response.data);
-                            } else {
-                                $scope.model = new TubularModel($scope, response.data);
-                            }
-
+                            $scope.model = new TubularModel($scope.model && $scope.model.$component || $scope, response.data);
                             $ctrl.bindFields();
                             $scope.model.$isNew = true;
                         }, error => $scope.$emit('tbForm_OnConnectionError', error));

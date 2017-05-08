@@ -114,7 +114,6 @@
 
             provider.setPlatformConfig = setPlatformConfig;
 
-
             // private: Service definition for internal Tubular use
             provider.$get = function () {
                 return provider;

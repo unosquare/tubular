@@ -191,7 +191,7 @@
 
                     request.timeout = request.timeout || 17000;
 
-                    var timeoutHandler = $timeout(() =>cancel('Timed out'), request.timeout);
+                    var timeoutHandler = $timeout(() => cancel('Timed out'), request.timeout);
 
                     return $http({
                         url: request.serverUrl,

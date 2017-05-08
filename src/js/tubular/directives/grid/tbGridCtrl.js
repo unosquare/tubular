@@ -182,6 +182,7 @@
                     }
 
                     if (!forceUpdate && !row.$isNew && !row.$hasChanges()) {
+                        row.$isEditing = false;
                         return null;
                     }
 
@@ -195,6 +196,7 @@
                     $ctrl.currentRequest.then(data => {
                         $scope.$emit('tbForm_OnSuccessfulSave', data);
                         row.$isLoading = false;
+                        row.$isEditing = false;
                         $ctrl.retrieveData();
                         $ctrl.currentRequest = null;
 
