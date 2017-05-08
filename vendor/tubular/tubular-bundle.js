@@ -1522,7 +1522,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
         }
     ];
 
-    const tbDropdownEditorCtrl = ['tubularEditorService', '$scope', 'tubularHttp', function (tubular, $scope, tubularHttp) {
+    const tbDropdownEditorCtrl = ['tubularEditorService', '$scope', '$http', function (tubular, $scope, $http) {
         var $ctrl = this;
 
         $ctrl.$onInit = () => {
@@ -1593,18 +1593,14 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 return;
             }
 
-            if (angular.isUndefined($ctrl.$component) || $ctrl.$component == null) {
-                throw 'You need to define a parent Form or Grid';
-            }
-
             var value = $ctrl.value;
             $ctrl.value = '';
 
-            tubularHttp.retrieveDataAsync({
-                serverUrl: $ctrl.optionsUrl,
-                requestMethod: $ctrl.optionsMethod || 'GET'
-            }).then(data => {
-                $ctrl.options = data;
+            $http({
+                url: $ctrl.optionsUrl,
+                method: $ctrl.optionsMethod || 'GET'
+            }).then(response => {
+                $ctrl.options = response.data;
                 $ctrl.dataIsLoaded = true;
                 // TODO: Add an attribute to define if autoselect is OK
                 var possibleValue = $ctrl.options && $ctrl.options.length > 0 ?
@@ -1614,7 +1610,9 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
                 // Set the field dirty
                 const formScope = $ctrl.getFormField();
-                if (formScope) formScope.$setDirty();
+                if (formScope) {
+                    formScope.$setDirty();
+                }
             }, error => $scope.$emit('tbGrid_OnConnectionError', error));
         };
     }];
@@ -1903,11 +1901,11 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     controller: [
                         '$scope',
                         'tubularEditorService',
-                        'tubularHttp',
+                        '$http',
                         function (
                             $scope,
                             tubular,
-                            tubularHttp) {
+                            $http) {
                             tubular.setupScope($scope);
                             $scope.selectOptions = 'd for d in getValues($viewValue)';
                             $scope.lastSet = [];
@@ -1933,16 +1931,12 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                                     });
                                 }
 
-                                if (angular.isUndefined($scope.$component) || $scope.$component == null) {
-                                    throw 'You need to define a parent Form or Grid';
-                                }
-
-                                return tubularHttp.retrieveDataAsync({
-                                    serverUrl: $scope.optionsUrl + '?search=' + val,
-                                    requestMethod: $scope.optionsMethod || 'GET'
-                                }).then(data => {
-                                    $scope.lastSet = data;
-                                    return data;
+                                return $http({
+                                    url: $scope.optionsUrl + '?search=' + val,
+                                    method: $scope.optionsMethod || 'GET'
+                                }).then(response => {
+                                    $scope.lastSet = response.data;
+                                    return $scope.lastSet;
                                 });
                             };
                         }
@@ -2236,7 +2230,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 title: '@'
             },
             controller: [
-                '$scope', 'tubularTemplateService', 'tubularHttp', function($scope, tubular, tubularHttp) {
+                '$scope', 'tubularTemplateService', '$http', function($scope, tubular, $http) {
                     var $ctrl = this;
 
                     $ctrl.getOptionsFromUrl = () => {
@@ -2245,11 +2239,8 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                             return;
                         }
 
-                        tubularHttp.retrieveDataAsync({
-                            serverUrl: $ctrl.filter.OptionsUrl,
-                            requestMethod: 'GET'
-                        }).then(data => {
-                                $ctrl.optionsItems = data;
+                        $http.get($ctrl.filter.OptionsUrl).then(response => {
+                                $ctrl.optionsItems = response.data;
                                 $ctrl.dataIsLoaded = true;
                             }, error => $scope.$emit('tbGrid_OnConnectionError', error));
                     };
@@ -2595,26 +2586,14 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
         .factory('tubularModel', [function() {
             return function($ctrl, data) {
                 var obj = {
-                    $hasChanges: () => Object.keys(obj).some(k => angular.isDefined(obj.$original[k]) && obj[k] !== obj.$original[k]),
+                    $hasChanges: () => obj.$fields.some(k => angular.isDefined(obj.$original[k]) && obj[k] !== obj.$original[k]),
                     $isEditing: false,
                     $isNew: false,
                     $key: '',
                     $fields: [],
                     $state: {},
                     $original: {},
-                    $valid: () => {
-                        var valid = true;
-
-                        angular.forEach(obj.$state, val => {
-                            if (angular.isUndefined(val) || val.$valid()) {
-                                return;
-                            }
-
-                            valid = false;
-                        });
-
-                        return valid;
-                    },
+                    $valid: () => Object.keys(obj.$state).filter(k => angular.isDefined(obj.$state[k]) && !obj.$state[k].$valid()).length == 0,
                     $addField: (key, value, ignoreOriginal) => {
                         if (obj.$fields.indexOf(key) >= 0) {
                             return;
