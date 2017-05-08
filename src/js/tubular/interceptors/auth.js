@@ -104,7 +104,7 @@
                             authRequestRunning = null;
                             deferred.reject(response);
                             tubularHttp.removeAuthentication();
-                            $injector.get('$state').go('/Login');
+                            $injector.get('$location').path('/Login');
                             return;
                         });
                     }
