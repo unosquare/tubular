@@ -1,6 +1,3 @@
-/* jshint: true */
-/* globals: expect:false,beforeAll:false,expect:false,browser:false,element:false,by:false,describe:false,protractor:false,it:false,afterAll:false */
-
 // This protractor scen file tests tubular-directives-filters components.
 
 // tbFilterButtons internal component is implicitlly tested by the other tests in this file.
@@ -553,11 +550,8 @@ describe('Tubular Filters', () => {
 
         function clearFilter() {
             element(by.tagName('tb-grid-pager')).$('.pagination-first a').click()
-                .then(() => {
-                    element(by.tagName('tb-grid-pager')).$('.pagination-first a').click().then(() => {
-                        filterBtn.click().then(() => clearBtn.click().then(loadData));
-                    });
-                });
+                .then(() => element(by.tagName('tb-grid-pager')).$('.pagination-first a').click()
+                        .then(() => filterBtn.click().then(() => clearBtn.click().then(loadData))));
         }
 
         afterAll(clearFilter);

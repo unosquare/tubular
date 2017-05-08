@@ -22,26 +22,14 @@
         .factory('tubularModel', [function() {
             return function($ctrl, data) {
                 var obj = {
-                    $hasChanges: () => Object.keys(obj).some(k => angular.isDefined(obj.$original[k]) && obj[k] !== obj.$original[k]),
+                    $hasChanges: () => obj.$fields.some(k => angular.isDefined(obj.$original[k]) && obj[k] !== obj.$original[k]),
                     $isEditing: false,
                     $isNew: false,
                     $key: '',
                     $fields: [],
                     $state: {},
                     $original: {},
-                    $valid: () => {
-                        var valid = true;
-
-                        angular.forEach(obj.$state, val => {
-                            if (angular.isUndefined(val) || val.$valid()) {
-                                return;
-                            }
-
-                            valid = false;
-                        });
-
-                        return valid;
-                    },
+                    $valid: () => Object.keys(obj.$state).filter(k => angular.isDefined(obj.$state[k]) && !obj.$state[k].$valid()).length == 0,
                     $addField: (key, value, ignoreOriginal) => {
                         if (obj.$fields.indexOf(key) >= 0) {
                             return;

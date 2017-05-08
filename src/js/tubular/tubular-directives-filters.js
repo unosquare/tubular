@@ -165,7 +165,7 @@
                 title: '@'
             },
             controller: [
-                '$scope', 'tubularTemplateService', 'tubularHttp', function($scope, tubular, tubularHttp) {
+                '$scope', 'tubularTemplateService', '$http', function($scope, tubular, $http) {
                     var $ctrl = this;
 
                     $ctrl.getOptionsFromUrl = () => {
@@ -174,11 +174,8 @@
                             return;
                         }
 
-                        tubularHttp.retrieveDataAsync({
-                            serverUrl: $ctrl.filter.OptionsUrl,
-                            requestMethod: 'GET'
-                        }).then(data => {
-                                $ctrl.optionsItems = data;
+                        $http.get($ctrl.filter.OptionsUrl).then(response => {
+                                $ctrl.optionsItems = response.data;
                                 $ctrl.dataIsLoaded = true;
                             }, error => $scope.$emit('tbGrid_OnConnectionError', error));
                     };
