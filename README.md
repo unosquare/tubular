@@ -61,8 +61,6 @@ Finally update your modules to include Tubular, for example if your module is ca
 angular.module('app', ['tubular']);
 ```
 
-If you want to use OData or LocalData connectors to populate tbGrid, you must include the separated files. Previous to version 1.0.0 those services where in the main bundle.
-
 ## NuGet Installation [![NuGet version](https://badge.fury.io/nu/tubular.svg)](http://badge.fury.io/nu/tubular)
 
 <pre>
@@ -131,8 +129,6 @@ The following HTML represents a basic grid. You don't need to add anything else 
         </tb-grid>
     </div>
 ```
-
-Tubular works directly with either your own OData service or a custom RESTful call. You can simplify your RESTful API significantly by using our .NET Tubular.ServerSide library which handles `IQueryable` easily.
 
 ## Boilerplate
 
