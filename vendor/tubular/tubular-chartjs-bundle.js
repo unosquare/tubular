@@ -453,7 +453,6 @@ angular.module('tubular-chart.directives').run(['$templateCache', function ($tem
         });
 })(angular);
 
-
 ((angular) => {
   'use strict';
 
@@ -482,7 +481,11 @@ angular.module('tubular-chart.directives').run(['$templateCache', function ($tem
 
                 if (!data || !data.Data || data.Data.length === 0) {
                   $ctrl.isEmpty = true;
-                  if (!$ctrl.options) $ctrl.options = {};
+
+                  if (!$ctrl.options) {
+                    $ctrl.options = {};
+                  }
+                  
                   $ctrl.options.series = [{
                     data: []
                   }];
