@@ -528,7 +528,7 @@
         'tubular-hchart.directives',
         'app.routes',
         'app.controllers'
-    ]);
+    ]).run(function (tubularConfig) { tubularConfig.webApi.setRequireAuthentication(false); });
 
     ZeroClipboard.config({ swfPath: "//cdn.jsdelivr.net/zeroclipboard/2.2.0/ZeroClipboard.swf" });
 })(window.angular);
