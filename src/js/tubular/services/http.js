@@ -14,19 +14,15 @@
          */
         .service('tubularHttp', [
             '$http',
-            '$timeout',
             '$q',
             'translateFilter',
-            '$log',
             '$document',
             'tubularConfig',
             '$window',
             function (
                 $http,
-                $timeout,
                 $q,
                 translateFilter,
-                $log,
                 $document,
                 tubularConfig,
                 $window) {
@@ -59,13 +55,6 @@
                     } else {
                         me.userData = savedData;
                     }
-                }
-
-                function getCancel(canceller) {
-                    return reason => {
-                        $log.error(reason);
-                        canceller.resolve(reason);
-                    };
                 }
 
                 me.userData = {
@@ -170,9 +159,6 @@
                 };
 
                 me.retrieveDataAsync = request => {
-                    const canceller = $q.defer();
-                    var cancel = getCancel(canceller);
-
                     if (angular.isUndefined(request.requireAuthentication)) {
                         request.requireAuthentication = tubularConfig.webApi.requireAuthentication();
                     }
@@ -189,20 +175,11 @@
                         }
                     }
 
-                    request.timeout = request.timeout || 17000;
-
-                    var timeoutHandler = $timeout(() => cancel('Timed out'), request.timeout);
-
                     return $http({
                         url: request.serverUrl,
                         method: request.requestMethod,
-                        data: request.data,
-                        timeout: canceller.promise
-                    }).then(response => {
-                        $timeout.cancel(timeoutHandler);
-
-                        return response.data;
-                    }, error => {
+                        data: request.data
+                    }).then(response => response.data, error => {
                         if (error.status === 401) {
                             me.removeAuthentication();
 

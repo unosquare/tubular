@@ -44,7 +44,6 @@
                     $ctrl.requestCounter = 0;
                     $ctrl.requestMethod = $ctrl.requestMethod || 'POST';
                     $ctrl.serverSaveMethod = $ctrl.serverSaveMethod || 'POST';
-                    $ctrl.requestTimeout = 20000;
                     $ctrl.currentRequest = null;
                     $ctrl.autoSearch = $routeParams.param ||
                         ($ctrl.saveSearchText ? (storage.getItem(prefix + $ctrl.name + '_search') || '') : '');
@@ -162,7 +161,6 @@
                     $ctrl.currentRequest = tubularHttp.retrieveDataAsync({
                         serverUrl: url,
                         requestMethod: 'DELETE',
-                        timeout: $ctrl.requestTimeout,
                         requireAuthentication: $ctrl.requireAuthentication
                     });
 
@@ -259,7 +257,6 @@
                     return {
                         serverUrl: $ctrl.serverUrl,
                         requestMethod: $ctrl.requestMethod || 'POST',
-                        timeout: $ctrl.requestTimeout,
                         requireAuthentication: $ctrl.requireAuthentication,
                         data: {
                             Count: $ctrl.requestCounter,

@@ -1,7 +1,5 @@
 ﻿'use strict';
 
-
-
 describe('Module: tubular.directives', () => {
     
     const models = [{
@@ -132,10 +130,6 @@ describe('Module: tubular.directives', () => {
 
             it('should have serverSaveMethod', () => {
                 expect(sut.serverSaveMethod).toBe('POST');
-            })
-
-            it('should have requestTimeout', () => {
-                expect(sut.requestTimeout).toBe(20000);
             })
 
             it('should have currentRequest', () => {
