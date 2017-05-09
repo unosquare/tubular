@@ -320,10 +320,9 @@
                 };
 
                 $ctrl.processPayload = response => {
-                    const data = response.data;
                     $ctrl.requestCounter += 1;
 
-                    if (!data) {
+                    if (!response || !response.data) {
                         $scope.$emit('tbGrid_OnConnectionError',
                             {
                                 statusText: 'Data is empty',
@@ -332,6 +331,8 @@
 
                         return;
                     }
+
+                    const data = response.data;
 
                     $ctrl.dataSource = data;
 

@@ -5,27 +5,23 @@ describe('Module: tubular.services', () => {
     describe('Service: http', () => {
         var $httpBackend, tubularHttp, tubularConfig;
 
-        beforeEach(function () {
+        beforeEach(() => {
             module('tubular.services');
-            module(function ($filterProvider) {
+            module(($filterProvider) => {
                 var filter = jasmine.createSpy().and.returnValue('translated');
                 $filterProvider.register('translate', () => filter);
             });
 
-            inject(function (_$httpBackend_, _tubularHttp_, _tubularConfig_) {
+            inject((_$httpBackend_, _tubularHttp_, _tubularConfig_) => {
                 $httpBackend = _$httpBackend_;
                 tubularHttp = _tubularHttp_;
                 tubularConfig = _tubularConfig_;
             });
         });
 
-        it('should be defined', () => {
-            expect(tubularHttp).toBeDefined();
-        });
+        it('should be defined', () => expect(tubularHttp).toBeDefined());
 
-        it('should be not authenticated ', () => {
-            expect(tubularHttp.isAuthenticated()).toBe(false);
-        });
+        it('should be not authenticated ', () => expect(tubularHttp.isAuthenticated()).toBe(false));
 
         it('should authenticate', done => {
             $httpBackend

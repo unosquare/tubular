@@ -15,8 +15,8 @@ describe('Module: tubular.directives', () => {
     const payload = [[8, 'Guzman Webster', 'IDEGO', 'guzmanwebster@idego.com']];
 
     describe('Controller: tbGridController', () => {
-        var sut, scope, tubularPopupService, tubularModel, tubularHttp, $routeParams, storage, window;
-        var $controller, storageMock, storage, data, tubularHttp;
+        var sut, scope, tubularPopupService, tubularModel, $routeParams, storage, window;
+        var $controller, storageMock, storage, data;
 
         beforeEach(() => {
             module('tubular.directives');
@@ -29,11 +29,10 @@ describe('Module: tubular.directives', () => {
             });
         })
 
-        beforeEach(inject((_$controller_, $rootScope, _tubularPopupService_, _tubularHttp_) => {
+        beforeEach(inject((_$controller_, $rootScope, _tubularPopupService_) => {
             scope = $rootScope.$new();
             $controller = _$controller_;
             tubularPopupService = _tubularPopupService_;
-            tubularHttp = _tubularHttp_;
         }));
 
         var create = () => {
@@ -55,7 +54,7 @@ describe('Module: tubular.directives', () => {
                 },
                 length: 0
             };
-            sut = $controller('tbGridController', { '$scope': scope, '$window': window, 'tubularHttp': tubularHttp });
+            sut = $controller('tbGridController', { '$scope': scope, '$window': window });
         }
 
         beforeEach(() => {
@@ -367,69 +366,69 @@ describe('Module: tubular.directives', () => {
             it('should emit tbGrid_OnConnectionError on false data.Payload ', () => {
                 data.Payload = false;
                 sut.$id = 12;
-                sut.processPayload(data);
+                sut.processPayload({ data: data });
                 expect(scope.$emit).toHaveBeenCalledWith('tbGrid_OnConnectionError', 'tubularGrid(12): response is invalid.');
             })
 
             it('should create ctrl.rows', () => {
-                sut.processPayload(data);
+                sut.processPayload({ data: data });
                 expect(sut.rows[0].$component).toBeDefined();
                 expect(sut.rows[0].editPopup).toBeDefined();
             })
 
             it('should emit tbGrid_OnDataLoaded', () => {
-                sut.processPayload(data);
+                sut.processPayload({ data: data });
                 expect(scope.$emit).toHaveBeenCalledWith('tbGrid_OnDataLoaded', sut);
             })
 
             it('should change ctrl.aggregationFunctions', () => {
                 expect(sut.aggregationFunctions).not.toBeDefined();
-                sut.processPayload(data);
+                sut.processPayload({ data: data });
                 expect(sut.aggregationFunctions).toBeDefined();
                 expect(sut.aggregationFunctions.Amount).toBe(0);
             })
 
             it('should change ctrl.currentPage', () => {
                 expect(sut.currentPage).toBe(1);
-                sut.processPayload(data);
+                sut.processPayload({ data: data });
                 expect(sut.currentPage).toBe(5);
             })
 
             it('should change ctrl.totalPages', () => {
                 expect(sut.totalPages).toBe(0);
-                sut.processPayload(data);
+                sut.processPayload({ data: data });
                 expect(sut.totalPages).toBe(7);
             })
 
             it('should change ctrl.totalRecordCount', () => {
                 expect(sut.totalRecordCount).toBe(0);
-                sut.processPayload(data);
+                sut.processPayload({ data: data });
                 expect(sut.totalRecordCount).toBe(50);
             })
 
             it('should change ctrl.filteredRecordCount', () => {
                 expect(sut.filteredRecordCount).toBe(0);
-                sut.processPayload(data);
+                sut.processPayload({ data: data });
                 expect(sut.filteredRecordCount).toBe(35);
             })
 
             it('should change ctrl.isEmpty', () => {
-                sut.processPayload(data);
+                sut.processPayload({ data: data });
                 expect(sut.isEmpty).toBe(false);
 
                 data.FilteredRecordCount = 0;
-                sut.processPayload(data);
+                sut.processPayload({ data: data });
                 expect(sut.isEmpty).toBe(true);
             })
 
             it('should not storage currentPage', () => {
                 sut.savePage = false;
-                sut.processPayload(data);
+                sut.processPayload({ data: data });
                 expect(storage['tubular.tbgrid_page']).not.toBeDefined();
             })
 
             it('should storage currentPage', () => {
-                sut.processPayload(data);
+                sut.processPayload({ data: data });
                 expect(storage['tubular.tbgrid_page']).toBe(5);
             })
         });
