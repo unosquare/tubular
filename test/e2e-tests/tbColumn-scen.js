@@ -13,7 +13,7 @@ describe('tbColumn', () => {
         lastDataRow,
         aOrderIdSorting,
         aCustomerNameSorting,
-        aCreationDateSorting;
+        aShipDateSorting;
 
     function updateFirstAndLastRow() {
         // First showing row
@@ -50,15 +50,15 @@ describe('tbColumn', () => {
                 .$$('tr th').get(1)
                 .$('a');
             // Sort Shipped Date column link
-            aCreationDateSorting = element(by.tagName('thead'))
-                .$$('tr th').get(3)
+            aShipDateSorting = element(by.tagName('thead'))
+                .$$('tr th').get(2)
                 .$('a');
         });
 
         var dataSetLowerCustomerName = 'Advanced Technology Systems',
             dataSetHigherCustomerName = 'Vesta',
-            dataSetLowerDate = /12\/30\/2015/,
-            dataSetHigherDate = /1\/01\/2016/;
+            dataSetLowerDate = /2\/24\/2015/,
+            dataSetHigherDate = /2\/01\/2017/;
 
         it('should sort data in ascending order then on descending order when sorting by Order Id column', () => {
             aOrderIdSorting.click().then(() => {
@@ -91,17 +91,17 @@ describe('tbColumn', () => {
         });
 
         it('should order data in ascending order when click-sorting an unsorted date column', () => {
-            aCreationDateSorting.click().then(() => {
+            aShipDateSorting.click().then(() => {
                 updateFirstAndLastRow();
-                expect(firstDataRow.$$('td').get(3).getText()).toMatch(dataSetLowerDate);
+                expect(firstDataRow.$$('td').get(2).getText()).toMatch(dataSetLowerDate);
             });
         });
 
         it('should order data in descending order when click-sorting twice an unsorted date column', () => {
-            aCreationDateSorting.click().then(() => {
-                aCreationDateSorting.click().then(() => {
+            aShipDateSorting.click().then(() => {
+                aShipDateSorting.click().then(() => {
                     updateFirstAndLastRow();
-                    expect(firstDataRow.$$('td').get(3).getText()).toMatch(dataSetHigherDate);
+                    expect(firstDataRow.$$('td').get(2).getText()).toMatch(dataSetHigherDate);
                 });
             });
         });
