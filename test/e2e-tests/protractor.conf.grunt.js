@@ -39,7 +39,7 @@ exports.config = {
                 $httpBackend.whenGET(/mockapi\/cities?.*/g)
                     .respond(["Guadalajara, JAL, Mexico","Leon, GTO, Mexico","Los Angeles, CA, USA","Portland, OR, USA"]);
                 
-                $httpBackend.whenPOST(/mockapi\/columntest?.*/g)
+                $httpBackend.whenPOST(/mockapi\/columntest?.*/)
                     .respond((method, url, data) => {
                         var payload = {};
                         var requestObj = angular.fromJson(data);
