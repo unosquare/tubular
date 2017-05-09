@@ -126,7 +126,7 @@
             tubular,
             translateFilter,
             dateFilter) {
-            var $ctrl = this;
+            const $ctrl = this;
 
             $scope.$watch(() => $ctrl.value, changeValueFn($ctrl));
 
@@ -147,7 +147,7 @@
     ];
 
     const tbDropdownEditorCtrl = ['tubularEditorService', '$scope', '$http', function (tubular, $scope, $http) {
-        var $ctrl = this;
+        const $ctrl = this;
 
         $ctrl.$onInit = () => {
             tubular.setupScope($scope, null, $ctrl);
@@ -155,12 +155,12 @@
             $ctrl.selectOptions = 'd for d in $ctrl.options';
 
             if (angular.isDefined($ctrl.optionLabel)) {
-                $ctrl.selectOptions = 'd.' + $ctrl.optionLabel + ' for d in $ctrl.options';
+                $ctrl.selectOptions = `d.${  $ctrl.optionLabel  } for d in $ctrl.options`;
 
                 if (angular.isDefined($ctrl.optionTrack)) {
-                    $ctrl.selectOptions = 'd as d.' + $ctrl.optionLabel + ' for d in $ctrl.options track by d.' + $ctrl.optionTrack;
+                    $ctrl.selectOptions = `d as d.${  $ctrl.optionLabel  } for d in $ctrl.options track by d.${  $ctrl.optionTrack}`;
                 } else if (angular.isDefined($ctrl.optionKey)) {
-                    $ctrl.selectOptions = 'd.' + $ctrl.optionKey + ' as ' + $ctrl.selectOptions;
+                    $ctrl.selectOptions = `d.${  $ctrl.optionKey  } as ${  $ctrl.selectOptions}`;
                 }
             }
 
@@ -195,7 +195,7 @@
 
             if (angular.isDefined($ctrl.optionLabel) && $ctrl.options) {
                 if (angular.isDefined($ctrl.optionKey)) {
-                    var filteredOption = $ctrl.options
+                    const filteredOption = $ctrl.options
                         .filter(el => el[$ctrl.optionKey] === $ctrl.value);
 
                     if (filteredOption.length > 0) {
@@ -217,7 +217,7 @@
                 return;
             }
 
-            var value = $ctrl.value;
+            const value = $ctrl.value;
             $ctrl.value = '';
 
             $http({
@@ -227,7 +227,7 @@
                 $ctrl.options = response.data;
                 $ctrl.dataIsLoaded = true;
                 // TODO: Add an attribute to define if autoselect is OK
-                var possibleValue = $ctrl.options && $ctrl.options.length > 0 ?
+                const possibleValue = $ctrl.options && $ctrl.options.length > 0 ?
                     angular.isDefined($ctrl.optionKey) ? $ctrl.options[0][$ctrl.optionKey] : $ctrl.options[0]
                     : '';
                 $ctrl.value = value || $ctrl.defaultValue || possibleValue;
@@ -248,10 +248,10 @@
          * @module tubular.directives
          *
          * @description
-         * The `tbNumericEditor` component is numeric input, similar to `tbSimpleEditor` 
+         * The `tbNumericEditor` component is numeric input, similar to `tbSimpleEditor`
          * but can render an add-on to the input visual element.
          *
-         * When you need a numeric editor but without the visual elements you can use 
+         * When you need a numeric editor but without the visual elements you can use
          * `tbSimpleEditor` with the `editorType` attribute with value `number`.
          *
          * This component uses the `TubularModel` to retrieve the model information.
@@ -299,9 +299,9 @@
          * @description
          * The `tbDateTimeEditor` component is date/time input. It uses the `datetime-local` HTML5 attribute, but if this
          * components fails it falls back to Angular UI Bootstrap Datepicker (time functionality is unavailable).
-         * 
+         *
          * It uses the `TubularModel` to retrieve column or field information.
-         * 
+         *
          * @param {string} name Set the field name.
          * @param {object} value Set the value.
          * @param {boolean} isEditing Indicate if the field is showing editor.
@@ -318,8 +318,8 @@
         .component('tbDateTimeEditor', {
             template: `<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">
             <span ng-hide="$ctrl.isEditing">{{ $ctrl.value | date: format }}</span>
-            <label ng-show="$ctrl.showLabel" ng-bind="$ctrl.label"></label>` +
-            (canUseHtml5Date() ?
+            <label ng-show="$ctrl.showLabel" ng-bind="$ctrl.label"></label>${
+            canUseHtml5Date() ?
                 `<input type="datetime-local" ng-show="$ctrl.isEditing" ng-model="$ctrl.dateValue" class="form-control" 
                 ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}"/>` :
                 `<div class="input-group" ng-show="$ctrl.isEditing">
@@ -328,8 +328,8 @@
                 <span class="input-group-btn">
                 <button type="button" class="btn btn-default" ng-click="$ctrl.open = !$ctrl.open"><i class="fa fa-calendar"></i></button>
                 </span></div>
-                <div uib-timepicker ng-model="$ctrl.dateValue"  show-seconds="true" show-meridian="false"></div>`) +
-            `<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">{{error}}</span>
+                <div uib-timepicker ng-model="$ctrl.dateValue"  show-seconds="true" show-meridian="false"></div>`
+            }<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">{{error}}</span>
             <span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help" ng-bind="$ctrl.help"></span>
             </div>`,
             bindings: {
@@ -356,11 +356,11 @@
          * @description
          * The `tbDateEditor` component is date input. It uses the `datetime-local` HTML5 attribute, but if this
          * components fails it falls back to a Angular UI Bootstrap Datepicker.
-         * 
+         *
          * Similar to `tbDateTimeEditor` but without a timepicker.
-         * 
+         *
          * It uses the `TubularModel` to retrieve column or field information.
-         * 
+         *
          * @param {string} name Set the field name.
          * @param {object} value Set the value.
          * @param {boolean} isEditing Indicate if the field is showing editor.
@@ -377,8 +377,8 @@
         .component('tbDateEditor', {
             template: `<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">
             <span ng-hide="$ctrl.isEditing">{{ $ctrl.value | moment: $ctrl.format }}</span>
-            <label ng-show="$ctrl.showLabel" ng-bind="$ctrl.label"></label>` +
-            (canUseHtml5Date() ?
+            <label ng-show="$ctrl.showLabel" ng-bind="$ctrl.label"></label>${
+            canUseHtml5Date() ?
                 '<input type="date" ng-show="$ctrl.isEditing" ng-model="$ctrl.dateValue" class="form-control" ' +
                 'ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}"/>' :
                 '<div class="input-group" ng-show="$ctrl.isEditing">' +
@@ -387,8 +387,8 @@
                 '<span class="input-group-btn">' +
                 '<button type="button" class="btn btn-default" ng-click="$ctrl.open = !$ctrl.open"><i class="fa fa-calendar"></i></button>' +
                 '</span>' +
-                '</div>') +
-            `<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">{{error}}</span>
+                '</div>'
+            }<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">{{error}}</span>
             <span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help" ng-bind="$ctrl.help"></span>
             </div>`,
             bindings: {
@@ -413,11 +413,11 @@
          * @module tubular.directives
          *
          * @description
-         * The `tbDropdownEditor` component is drowpdown editor, it can get information from a HTTP 
+         * The `tbDropdownEditor` component is drowpdown editor, it can get information from a HTTP
          * source or it can be an object declared in the attributes.
-         * 
+         *
          * It uses the `TubularModel` to retrieve column or field information.
-         * 
+         *
          * @param {string} name Set the field name.
          * @param {object} value Set the value.
          * @param {boolean} isEditing Indicate if the field is showing editor.
@@ -464,9 +464,9 @@
          * @description
          * The `tbTypeaheadEditor` directive is autocomplete editor, it can get information from a HTTP source or it can get them
          * from a object declared in the attributes.
-         * 
+         *
          * It uses the `TubularModel` to retrieve column or field information.
-         * 
+         *
          * @param {string} name Set the field name.
          * @param {object} value Set the value.
          * @param {boolean} isEditing Indicate if the field is showing editor.
@@ -518,8 +518,8 @@
                             <span class="help-block" ng-show="isEditing && help" ng-bind="help"></span>
                             </div>`;
 
-                        var linkFn = $compile(template);
-                        var content = linkFn(scope);
+                        const linkFn = $compile(template);
+                        const content = linkFn(scope);
                         element.append(content);
                     },
                     controller: [
@@ -556,7 +556,7 @@
                                 }
 
                                 return $http({
-                                    url: $scope.optionsUrl + '?search=' + val,
+                                    url: `${$scope.optionsUrl  }?search=${  val}`,
                                     method: $scope.optionsMethod || 'GET'
                                 }).then(response => {
                                     $scope.lastSet = response.data;
@@ -608,7 +608,7 @@
                 function (
                     tubular,
                     $scope) {
-                    var $ctrl = this;
+                    const $ctrl = this;
 
                     $ctrl.$onInit = () => {
                         $ctrl.required = false; // overwrite required to false always
@@ -626,11 +626,11 @@
          * @module tubular.directives
          *
          * @description
-         * The `tbTextArea` component represents a textarea field. 
+         * The `tbTextArea` component represents a textarea field.
          * Similar to `tbSimpleEditor` but with a `textarea` HTML element instead of `input`.
-         * 
+         *
          * It uses the `TubularModel` to retrieve column or field information.
-         *  
+         *
          * @param {string} name Set the field name.
          * @param {object} value Set the value.
          * @param {boolean} isEditing Indicate if the field is showing editor.
@@ -666,7 +666,7 @@
                     tubular,
                     $scope,
                     translateFilter) {
-                    var $ctrl = this;
+                    const $ctrl = this;
 
                     $ctrl.validate = () => {
                         if ($ctrl.min && $ctrl.value && $ctrl.value.length < parseInt($ctrl.min)) {

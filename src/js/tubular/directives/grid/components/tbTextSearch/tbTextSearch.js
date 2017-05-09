@@ -10,7 +10,7 @@
         *
         * @description
         * The `tbTextSearch` is visual component to enable free-text search in a grid.
-        * 
+        *
         * @param {number} minChars How many chars before to search, default 3.
         * @param {string} placeholder The placeholder text, defaults `UI_SEARCH` i18n resource.
         */
@@ -25,6 +25,6 @@
         },
         controller: 'tbTextSearchController'
     });
-    
+
 
 })(angular);

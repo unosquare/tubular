@@ -5,11 +5,11 @@
         /**
          * @ngdoc component
          * @name tbGrid
-         * 
+         *
          * @description
          * The `tbGrid` directive is the base to create any grid. This is the root node where you should start
          * designing your grid. Don't need to add a `controller`.
-         * 
+         *
          * @param {string} serverUrl Set the HTTP URL where the data comes.
          * @param {string} serverSaveUrl Set the HTTP URL where the data will be saved.
          * @param {string} serverDeleteUrl Set the HTTP URL where the data will be saved.

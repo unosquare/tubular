@@ -5,10 +5,10 @@
      * @ngdoc module
      * @name tubular.directives
      * @module tubular.directives
-     * 
-     * @description 
+     *
+     * @description
      * Tubular Directives and Components module.
-     * 
+     *
      * It depends upon {@link tubular.services} and {@link tubular.models}.
      */
     angular.module('tubular.directives', ['tubular.models','tubular.services'])
@@ -19,9 +19,9 @@
          * @restrict E
          *
          * @description
-         * The `tbGridTable` directive generate the HTML table where all the columns and rowsets can be defined. 
+         * The `tbGridTable` directive generate the HTML table where all the columns and rowsets can be defined.
          * `tbGridTable` requires a parent `tbGrid`.
-         * 
+         *
          * This directive is replace by a `table` HTML element.
          */
         .directive('tbGridTable', [
@@ -50,7 +50,7 @@
          *
          * @description
          * The `tbColumnDefinitions` directive is a parent node to fill with `tbColumn`.
-         * 
+         *
          * This directive is replace by a `thead` HTML element.
          */
         .directive('tbColumnDefinitions', [function() {
@@ -78,11 +78,11 @@
          * @restrict E
          *
          * @description
-         * The `tbColumn` directive creates a column in the grid's model. 
+         * The `tbColumn` directive creates a column in the grid's model.
          * All the attributes are used to generate a `ColumnModel`.
-         * 
+         *
          * This directive is replace by a `th` HTML element.
-         * 
+         *
          * @param {string} name Set the column name.
          * @param {string} label Set the column label, if empty column's name is used.
          * @param {boolean} sortable Set if column is sortable.
@@ -135,7 +135,7 @@
                                 $scope.$broadcast('tbColumn_LabelChanged', $scope.label);
                             });
 
-                            var column = new function () {
+                            const column = new function () {
                                 this.Name = $scope.name || null;
                                 this.Label = $scope.label || null;
                                 this.Sortable = $scope.sortable;
@@ -178,9 +178,9 @@
          * @restrict E
          *
          * @description
-         * The `tbColumnHeader` directive creates a column header, and it must be inside a `tbColumn`. 
+         * The `tbColumnHeader` directive creates a column header, and it must be inside a `tbColumn`.
          * This directive has functionality to sort the column, the `sortable` attribute is declared in the parent element.
-         * 
+         *
          * This directive is replace by an `a` HTML element.
          */
         .directive('tbColumnHeader', [
@@ -220,7 +220,7 @@
          *
          * @description
          * The `tbRowSet` directive is used to handle any `tbRowTemplate`. You can define multiples `tbRowSet` for grouping.
-         * 
+         *
          * This directive is replace by an `tbody` HTML element.
          */
         .directive('tbRowSet', [
@@ -250,7 +250,7 @@
          *
          * @description
          * The `tbFootSet` directive is to handle footer.
-         * 
+         *
          * This directive is replace by an `tfoot` HTML element.
          */
         .directive('tbFootSet', [
@@ -280,13 +280,12 @@
          *
          * @description
          * The `tbRowTemplate` directive should be use with a `ngRepeat` to iterate all the rows or grouped rows in a rowset.
-         * 
+         *
          * This directive is replace by an `tr` HTML element.
-         * 
+         *
          * @param {object} rowModel Set the current row, if you are using a ngRepeat you must to use the current element variable here.
          */
-        .directive('tbRowTemplate', ['$timeout', $timeout => {
-                return {
+        .directive('tbRowTemplate', ['$timeout', $timeout => ({
                     templateUrl: 'tbRowTemplate.tpl.html',
                     restrict: 'E',
                     replace: true,
@@ -315,8 +314,7 @@
 
                     // Wait a little bit before to connect to the fields
                     compile: ()  => ({ post: scope => $timeout(() => scope.hasFieldsDefinitions = true, 300) })
-                };
-            }
+                })
         ])
 
         /**
@@ -326,11 +324,11 @@
          * @restrict E
          *
          * @description
-         * The `tbCellTemplate` directive represents the final table element, a cell, where it can 
+         * The `tbCellTemplate` directive represents the final table element, a cell, where it can
          * hold an in-line editor or a plain AngularJS expression related to the current element in the `ngRepeat`.
-         * 
+         *
          * This directive is replace by an `td` HTML element.
-         * 
+         *
          * @param {string} columnName Setting the related column, by passing the name, the cell can share attributes (like visibility) with the column.
          */
         .directive('tbCellTemplate', [
@@ -349,7 +347,7 @@
                             $scope.column = { Visible: true };
                             $scope.columnName = $scope.columnName || null;
                             $scope.$component = $scope.$parent.$parent.$component;
-                            
+
                             // TODO: Implement a form in inline editors
                             $scope.getFormScope = () => null;
 

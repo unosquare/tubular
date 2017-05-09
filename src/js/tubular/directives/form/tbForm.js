@@ -9,7 +9,7 @@
          * @restrict E
          *
          * @description
-         * The `tbForm` directive is the base to create any form powered by Tubular. Define 
+         * The `tbForm` directive is the base to create any form powered by Tubular. Define
          * `modelKey` to auto-load a record. The `serverSaveUrl` can be used to create a new or update
          * an existing record.
          *

@@ -19,9 +19,9 @@
                 $routeParams,
                 tubularConfig,
                 $window) {
-                var $ctrl = this;
-                var prefix = tubularConfig.localStorage.prefix();
-                var storage = $window.localStorage;
+                const $ctrl = this;
+                const prefix = tubularConfig.localStorage.prefix();
+                const storage = $window.localStorage;
 
                 $ctrl.$onInit = () => {
                     $ctrl.tubularDirective = 'tubular-grid';
@@ -31,7 +31,7 @@
                     $ctrl.rows = [];
 
                     $ctrl.savePage = angular.isUndefined($ctrl.savePage) ? true : $ctrl.savePage;
-                    $ctrl.currentPage = $ctrl.savePage ? (parseInt(storage.getItem(prefix + $ctrl.name + '_page')) || 1) : 1;
+                    $ctrl.currentPage = $ctrl.savePage ? (parseInt(storage.getItem(`${prefix + $ctrl.name  }_page`)) || 1) : 1;
                     $ctrl.savePageSize = angular.isUndefined($ctrl.savePageSize) ? true : $ctrl.savePageSize;
                     $ctrl.pageSize = $ctrl.pageSize || 20;
                     $ctrl.saveSearchText = angular.isUndefined($ctrl.saveSearchText) ? true : $ctrl.saveSearchText;
@@ -45,7 +45,7 @@
                     $ctrl.serverSaveMethod = $ctrl.serverSaveMethod || 'POST';
                     $ctrl.currentRequest = null;
                     $ctrl.autoSearch = $routeParams.param ||
-                        ($ctrl.saveSearchText ? (storage.getItem(prefix + $ctrl.name + '_search') || '') : '');
+                        ($ctrl.saveSearchText ? (storage.getItem(`${prefix + $ctrl.name  }_search`) || '') : '');
                     $ctrl.search = {
                         Text: $ctrl.autoSearch,
                         Operator: $ctrl.autoSearch === '' ? 'None' : 'Auto'
@@ -69,7 +69,7 @@
                         return;
                     }
 
-                    storage.setItem(prefix + $ctrl.name + '_columns', angular.toJson($ctrl.columns));
+                    storage.setItem(`${prefix + $ctrl.name  }_columns`, angular.toJson($ctrl.columns));
                 };
 
                 $scope.$watch('$ctrl.columns', $scope.columnWatcher, true);
@@ -97,7 +97,7 @@
                 $scope.pageSizeWatcher =  () => {
                     if ($ctrl.hasColumnsDefinitions && $ctrl.requestCounter > 0) {
                         if ($ctrl.savePageSize) {
-                            storage.setItem(prefix + $ctrl.name + '_pageSize', $ctrl.pageSize);
+                            storage.setItem(`${prefix + $ctrl.name  }_pageSize`, $ctrl.pageSize);
                         }
 
                         $ctrl.retrieveData();
@@ -120,16 +120,16 @@
                     }
 
                     if ($ctrl.search.Text === '') {
-                        storage.removeItem(prefix + $ctrl.name + '_search');
+                        storage.removeItem(`${prefix + $ctrl.name  }_search`);
                     } else {
-                        storage.setItem(prefix + $ctrl.name + '_search', $ctrl.search.Text);
+                        storage.setItem(`${prefix + $ctrl.name  }_search`, $ctrl.search.Text);
                     }
                 };
 
                 $ctrl.addColumn = item => {
                     if (item.Name == null){
                         return;
-                    } 
+                    }
 
                     if ($ctrl.hasColumnsDefinitions !== false) {
                         throw 'Cannot define more columns. Column definitions have been sealed';
@@ -150,17 +150,17 @@
                 };
 
                 $ctrl.deleteRow = row => {
-                    var urlparts = $ctrl.serverDeleteUrl.split('?');
-                    var url = urlparts[0] + '/' + row.$key;
+                    const urlparts = $ctrl.serverDeleteUrl.split('?');
+                    let url = `${urlparts[0]  }/${  row.$key}`;
 
                     if (urlparts.length > 1) {
-                        url += '?' + urlparts[1];
+                        url += `?${  urlparts[1]}`;
                     }
 
                     $ctrl.currentRequest = $http.delete(url, {
                         requireAuthentication: $ctrl.requireAuthentication
                     })
-                    .then(response => $scope.$emit('tbGrid_OnRemove', response.data), 
+                    .then(response => $scope.$emit('tbGrid_OnRemove', response.data),
                         error => $scope.$emit('tbGrid_OnConnectionError', error))
                     .then(() => {
                         $ctrl.currentRequest = null;
@@ -169,10 +169,10 @@
                 };
 
                 function addTimeZoneToUrl(url) {
-                    return url +
-                        (url.indexOf('?') === -1 ? '?' : '&') +
-                        'timezoneOffset=' +
-                        new Date().getTimezoneOffset();
+                    return `${url +
+                        (url.indexOf('?') === -1 ? '?' : '&')
+                        }timezoneOffset=${
+                        new Date().getTimezoneOffset()}`;
                 }
 
                 $ctrl.saveRow = (row, forceUpdate) => {
@@ -200,7 +200,7 @@
                     delete clone.$component;
                     delete clone.$isLoading;
                     delete clone.$isNew;
-                    
+
                     $ctrl.currentRequest = $http(row, {
                         url: row.$isNew ? addTimeZoneToUrl($ctrl.serverSaveUrl) : $ctrl.serverSaveUrl,
                         method: row.$isNew ? ($ctrl.serverSaveMethod || 'POST') : 'PUT',
@@ -231,21 +231,21 @@
                 };
 
                 $ctrl.verifyColumns = () => {
-                    var columns = angular.fromJson(storage.getItem(prefix + $ctrl.name + '_columns'));
+                    const columns = angular.fromJson(storage.getItem(`${prefix + $ctrl.name  }_columns`));
                     if (columns == null || columns === '') {
                         // Nothing in settings, saving initial state
-                        storage.setItem(prefix + $ctrl.name + '_columns', angular.toJson($ctrl.columns));
+                        storage.setItem(`${prefix + $ctrl.name  }_columns`, angular.toJson($ctrl.columns));
                         return;
                     }
 
                     angular.forEach(columns, column => {
-                            var filtered = $ctrl.columns.filter(el => el.Name === column.Name);
+                            const filtered = $ctrl.columns.filter(el => el.Name === column.Name);
 
                             if (filtered.length === 0) {
                                 return;
                             }
 
-                            var current = filtered[0];
+                            const current = filtered[0];
                             // Updates visibility by now
                             current.Visible = column.Visible;
 
@@ -299,15 +299,15 @@
                     $ctrl.verifyColumns();
 
                     if ($ctrl.savePageSize) {
-                        $ctrl.pageSize = (parseInt(storage.getItem(prefix + $ctrl.name + '_pageSize')) || $ctrl.pageSize);
+                        $ctrl.pageSize = (parseInt(storage.getItem(`${prefix + $ctrl.name  }_pageSize`)) || $ctrl.pageSize);
                     }
 
                     $ctrl.pageSize = $ctrl.pageSize < 10 ? 20 : $ctrl.pageSize; // default
 
-                    var newPages = Math.ceil($ctrl.totalRecordCount / $ctrl.pageSize);
+                    const newPages = Math.ceil($ctrl.totalRecordCount / $ctrl.pageSize);
                     if ($ctrl.requestedPage > newPages) $ctrl.requestedPage = newPages;
 
-                    var request = $ctrl.getRequestObject(-1);
+                    const request = $ctrl.getRequestObject(-1);
 
                     $scope.$emit('tbGrid_OnBeforeRequest', request, $ctrl);
 
@@ -342,7 +342,7 @@
                     }
 
                     $ctrl.rows = data.Payload.map(el => {
-                        let model = new TubularModel($ctrl, el);
+                        const model = new TubularModel($ctrl, el);
                         model.$component = $ctrl;
 
                         model.editPopup = (template, size) => {
@@ -362,26 +362,26 @@
                     $ctrl.isEmpty = $ctrl.filteredRecordCount === 0;
 
                     if ($ctrl.savePage) {
-                        storage.setItem(prefix + $ctrl.name + '_page', $ctrl.currentPage);
+                        storage.setItem(`${prefix + $ctrl.name  }_page`, $ctrl.currentPage);
                     }
                 };
 
                 $ctrl.sortColumn = (columnName, multiple) => {
-                    var filterColumn = $ctrl.columns.filter(el => el.Name === columnName);
+                    const filterColumn = $ctrl.columns.filter(el => el.Name === columnName);
 
                     if (filterColumn.length === 0) {
                         return;
                     }
 
-                    var column = filterColumn[0];
+                    const column = filterColumn[0];
 
                     if (column.Sortable === false) {
                         return;
                     }
 
                     // need to know if it's currently sorted before we reset stuff
-                    var currentSortDirection = column.SortDirection;
-                    var toBeSortDirection = currentSortDirection === 'None'
+                    const currentSortDirection = column.SortDirection;
+                    const toBeSortDirection = currentSortDirection === 'None'
                         ? 'Ascending'
                         : currentSortDirection === 'Ascending' ? 'Descending' : 'None';
 
@@ -404,7 +404,7 @@
                     }
 
                     // take the columns that actually need to be sorted in order to re-index them
-                    var currentlySortedColumns = $ctrl.columns.filter(col => col.SortOrder > 0);
+                    const currentlySortedColumns = $ctrl.columns.filter(col => col.SortOrder > 0);
 
                     // re-index the sort order
                     currentlySortedColumns.sort((a, b) => a.SortOrder === b.SortOrder ? 0 : a.SortOrder > b.SortOrder);
@@ -416,7 +416,7 @@
                 };
 
                 $ctrl.getFullDataSource = () => {
-                    var request = $ctrl.getRequestObject(0);
+                    const request = $ctrl.getRequestObject(0);
                     request.data.Take = -1;
                     request.data.Search = {
                         Text: '',
@@ -424,7 +424,7 @@
                     };
 
                     return $http(request)
-                        .then(response => response.data.Payload, 
+                        .then(response => response.data.Payload,
                             error => $scope.$emit('tbGrid_OnConnectionError', error))
                         .then(() => $ctrl.currentRequest = null);
                 };

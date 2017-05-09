@@ -1,6 +1,6 @@
 ﻿(angular => {
     'use strict';
-    var tbFormCounter = 0;
+    let tbFormCounter = 0;
 
     angular.module('tubular.directives')
         .controller('tbFormController',
@@ -23,19 +23,19 @@
 
                 function getUrlWithKey() {
                     const urlData = $scope.serverUrl.split('?');
-                    var getUrl = urlData[0] + $scope.modelKey;
+                    let getUrl = urlData[0] + $scope.modelKey;
 
                     if (urlData.length > 1) {
-                        getUrl += '?' + urlData[1];
+                        getUrl += `?${  urlData[1]}`;
                     }
 
                     return getUrl;
                 }
 
-                var $ctrl = this;
+                const $ctrl = this;
 
                 $ctrl.serverSaveMethod = $scope.serverSaveMethod || 'POST';
-                $ctrl.name = $scope.name || ('tbForm' + tbFormCounter++);
+                $ctrl.name = $scope.name || (`tbForm${  tbFormCounter++}`);
 
                 // This method is meant to provide a reference to the Angular Form
                 // so we can get information about: $pristine, $dirty, $submitted, etc.
@@ -53,7 +53,7 @@
                 });
 
                 $scope.cloneModel = model => {
-                    var data = {};
+                    const data = {};
 
                     angular.forEach(model, (value, key) => {
                         if (key[0] !== '$') {
@@ -155,7 +155,7 @@
                 };
 
                 $scope.finishDefinition = () => {
-                    var timer = $timeout(() => {
+                    const timer = $timeout(() => {
                         $scope.hasFieldsDefinitions = true;
 
                         if ($element.find('input').length > 0) {

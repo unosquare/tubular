@@ -4,7 +4,7 @@
     angular.module('tubular.directives')
         .controller('tbTextSearchController', [
             '$scope', function ($scope) {
-                var $ctrl = this;
+                const $ctrl = this;
 
                 $ctrl.$onInit = () => {
                     $ctrl.minChars = $ctrl.minChars || 3;

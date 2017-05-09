@@ -10,27 +10,27 @@
     }
 
     function exportToCsv(header, rows, visibility) {
-        var processRow = row => {
+        const processRow = row => {
             if (angular.isObject(row)) {
                 row = Object.keys(row).map(key => row[key]);
             }
 
-            var finalVal = '';
-            for (var j = 0; j < row.length; j++) {
+            let finalVal = '';
+            for (let j = 0; j < row.length; j++) {
                 if (!visibility[j]) {
                     continue;
                 }
 
-                var innerValue = row[j] == null ? '' : row[j].toString();
+                let innerValue = row[j] == null ? '' : row[j].toString();
 
                 if (angular.isDate(row[j])) {
                     innerValue = row[j].toLocaleString();
                 }
 
-                var result = innerValue.replace(/"/g, '""');
+                let result = innerValue.replace(/"/g, '""');
 
                 if (result.search(/("|,|\n)/g) >= 0) {
-                    result = '"' + result + '"';
+                    result = `"${  result  }"`;
                 }
 
                 if (j > 0) {
@@ -40,10 +40,10 @@
                 finalVal += result;
             }
 
-            return finalVal + '\n';
+            return `${finalVal  }\n`;
         };
 
-        var csvFile = '';
+        let csvFile = '';
 
         if (header.length > 0) {
             csvFile += processRow(header);
@@ -52,15 +52,15 @@
         angular.forEach(rows, row => csvFile += processRow(row));
 
         // Add "\uFEFF" (UTF-8 BOM)
-        return new Blob(['\uFEFF' + csvFile], { type: 'text/csv;charset=utf-8;' });
+        return new Blob([`\uFEFF${  csvFile}`], { type: 'text/csv;charset=utf-8;' });
     }
 
     /**
      * @ngdoc module
      * @name tubular.services
-     * 
+     *
      * @description
-     * Tubular Services module. 
+     * Tubular Services module.
      * It contains common services like HTTP client, filtering and printing services.
      */
     angular.module('tubular.services', ['ui.bootstrap'])
@@ -74,11 +74,11 @@
          */
         .factory('tubularGridExportService', ['$window',
             function($window) {
-                var service = this;
+                const service = this;
 
                 service.saveFile = (filename, blob) => {
-                    var fileURL = $window.URL.createObjectURL(blob);
-                    var downloadLink = angular.element('<a></a>');
+                    const fileURL = $window.URL.createObjectURL(blob);
+                    const downloadLink = angular.element('<a></a>');
 
                     downloadLink.attr('href', fileURL);
                     downloadLink.attr('download', filename);
@@ -90,8 +90,8 @@
 
                 return {
                     exportAllGridToCsv: (filename, gridScope) => {
-                        var columns = getColumns(gridScope);
-                        var visibility = getColumnsVisibility(gridScope);
+                        const columns = getColumns(gridScope);
+                        const visibility = getColumnsVisibility(gridScope);
 
                         gridScope.getFullDataSource()
                             .then(data => service.saveFile(filename, exportToCsv(columns, data, visibility)));
@@ -102,8 +102,8 @@
                             return;
                         }
 
-                        var columns = getColumns(gridScope);
-                        var visibility = getColumnsVisibility(gridScope);
+                        const columns = getColumns(gridScope);
+                        const visibility = getColumnsVisibility(gridScope);
 
                         gridScope.currentRequest = {};
                         service.saveFile(filename, exportToCsv(columns, gridScope.dataSource.Payload, visibility));
@@ -112,38 +112,38 @@
 
                     printGrid: (component, printCss, title) => {
                         component.getFullDataSource().then(data => {
-                            var tableHtml = '<table class="table table-bordered table-striped"><thead><tr>'
-                                + component.columns
+                            const tableHtml = `<table class="table table-bordered table-striped"><thead><tr>${
+                                 component.columns
                                 .filter(c => c.Visible)
-                                .reduce((prev, el) => prev + '<th>' + (el.Label || el.Name) + '</th>', '')
-                                + '</tr></thead>'
-                                + '<tbody>'
-                                + data.map(row => {
+                                .reduce((prev, el) => `${prev  }<th>${  el.Label || el.Name  }</th>`, '')
+                                 }</tr></thead>`
+                                + `<tbody>${
+                                 data.map(row => {
                                     if (angular.isObject(row)) {
                                         row = Object.keys(row).map(key => row[key]);
                                     }
 
-                                    return '<tr>' + row.map((cell, index) => {
+                                    return `<tr>${  row.map((cell, index) => {
                                         if (angular.isDefined(component.columns[index]) &&
                                             !component.columns[index].Visible) {
                                             return '';
                                         }
 
-                                        return '<td>' + cell + '</td>';
-                                    }).join(' ') + '</tr>';
+                                        return `<td>${  cell  }</td>`;
+                                    }).join(' ')  }</tr>`;
                                 }).join('  ')
-                                + '</tbody>'
+                                 }</tbody>`
                                 + '</table>';
 
-                            var popup = $window.open('about:blank', 'Print', 'menubar=0,location=0,height=500,width=800');
+                            const popup = $window.open('about:blank', 'Print', 'menubar=0,location=0,height=500,width=800');
                             popup.document.write('<link rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap/latest/css/bootstrap.min.css" />');
 
                             if (printCss !== '') {
-                                popup.document.write('<link rel="stylesheet" href="' + printCss + '" />');
+                                popup.document.write(`<link rel="stylesheet" href="${  printCss  }" />`);
                             }
 
                             popup.document.write('<body onload="window.print();">');
-                            popup.document.write('<h1>' + title + '</h1>');
+                            popup.document.write(`<h1>${  title  }</h1>`);
                             popup.document.write(tableHtml);
                             popup.document.write('</body>');
                             popup.document.close();
