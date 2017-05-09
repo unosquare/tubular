@@ -2,18 +2,16 @@
 
 describe('Module: tubular.directives', () => {
     describe('Controller: tbFormController', () => {
-        var sut, scope, $element, $routeParams, tubularHttp, tubularModel, tubularEditorService;
+        var sut, scope, $element, $routeParams, tubularModel, tubularEditorService;
         var $controller;
 
         beforeEach(() => {
             module('tubular.directives');
             module($provide => {
-                tubularHttp = jasmine.createSpyObj('tubularHttp', ['isAuthenticated']);
-                tubularModel = jasmine.createSpyObj('tubularModel', ['get', 'getByKey', 'retrieveDataAsync']);
+                tubularModel = jasmine.createSpyObj('tubularModel', ['get', 'getByKey']);
                 tubularEditorService = jasmine.createSpyObj('tubularEditorService', ['getUniqueTbFormName']);
                 $element = jasmine.createSpyObj('$element', ['name', 'find']);
 
-                $provide.value('tubularHttp', tubularHttp);
                 $provide.value('tubularModel', tubularModel);
                 $provide.value('tubularEditorService', tubularEditorService);
                 $provide.value('$element', $element);

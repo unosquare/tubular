@@ -734,8 +734,9 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
                 $ctrl.retrieveData = function () {
                     if (angular.isDefined($scope.serverUrl)) {
-                        // TODO: Set requireAuthentication
-                        $http.get(getUrlWithKey()).then(response => {
+                        $http.get(getUrlWithKey(), {
+                            requireAuthentication: $ctrl.requireAuthentication
+                        }).then(response => {
                             $scope.model = new TubularModel($scope.model && $scope.model.$component || $scope, response.data);
                             $ctrl.bindFields();
                             $scope.model.$isNew = true;
@@ -763,11 +764,11 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
                     $scope.model.$isLoading = true;
 
-                    // TODO: Set requireAuthentication
                     $scope.currentRequest = $http({
                         data: $scope.model,
                         url: $ctrl.serverSaveUrl,
-                        method: $scope.model.$isNew ? ($ctrl.serverSaveMethod || 'POST') : 'PUT'
+                        method: $scope.model.$isNew ? ($ctrl.serverSaveMethod || 'POST') : 'PUT',
+                        requireAuthentication: $ctrl.requireAuthentication
                     });
 
                     $scope.currentRequest.then(response => {
@@ -966,7 +967,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             '$scope',
             'tubularPopupService',
             'tubularModel',
-            'tubularHttp',
+            '$http',
             '$routeParams',
             'tubularConfig',
             '$window',
@@ -974,7 +975,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 $scope,
                 tubularPopupService,
                 TubularModel,
-                tubularHttp,
+                $http,
                 $routeParams,
                 tubularConfig,
                 $window) {
@@ -991,7 +992,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
                     $ctrl.savePage = angular.isUndefined($ctrl.savePage) ? true : $ctrl.savePage;
                     $ctrl.currentPage = $ctrl.savePage ? (parseInt(storage.getItem(prefix + $ctrl.name + '_page')) || 1) : 1;
-
                     $ctrl.savePageSize = angular.isUndefined($ctrl.savePageSize) ? true : $ctrl.savePageSize;
                     $ctrl.pageSize = $ctrl.pageSize || 20;
                     $ctrl.saveSearchText = angular.isUndefined($ctrl.saveSearchText) ? true : $ctrl.saveSearchText;
@@ -1003,7 +1003,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     $ctrl.requestCounter = 0;
                     $ctrl.requestMethod = $ctrl.requestMethod || 'POST';
                     $ctrl.serverSaveMethod = $ctrl.serverSaveMethod || 'POST';
-                    $ctrl.requestTimeout = 20000;
                     $ctrl.currentRequest = null;
                     $ctrl.autoSearch = $routeParams.param ||
                         ($ctrl.saveSearchText ? (storage.getItem(prefix + $ctrl.name + '_search') || '') : '');
@@ -1118,22 +1117,23 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         url += '?' + urlparts[1];
                     }
 
-                    $ctrl.currentRequest = tubularHttp.retrieveDataAsync({
-                        serverUrl: url,
-                        requestMethod: 'DELETE',
-                        timeout: $ctrl.requestTimeout,
+                    $ctrl.currentRequest = $http.delete(url, {
                         requireAuthentication: $ctrl.requireAuthentication
-                    });
-
-                    $ctrl.currentRequest
-                        .then(
-                            data => $scope.$emit('tbGrid_OnRemove', data), 
-                            error => $scope.$emit('tbGrid_OnConnectionError', error))
-                        .then(() => {
+                    })
+                    .then(response => $scope.$emit('tbGrid_OnRemove', response.data), 
+                        error => $scope.$emit('tbGrid_OnConnectionError', error))
+                    .then(() => {
                         $ctrl.currentRequest = null;
                         $ctrl.retrieveData();
                     });
                 };
+
+                function addTimeZoneToUrl(url) {
+                    return url +
+                        (url.indexOf('?') === -1 ? '?' : '&') +
+                        'timezoneOffset=' +
+                        new Date().getTimezoneOffset();
+                }
 
                 $ctrl.saveRow = (row, forceUpdate) => {
                     if (!$ctrl.serverSaveUrl) {
@@ -1146,10 +1146,29 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     }
 
                     row.$isLoading = true;
+                    const component = row.$component;
+                    row.$component = null;
+                    const clone = angular.copy(row);
+                    row.$component = component;
 
-                    $ctrl.currentRequest = tubularHttp.saveDataAsync(row, {
-                        serverUrl: $ctrl.serverSaveUrl,
-                        requestMethod: row.$isNew ? ($ctrl.serverSaveMethod || 'POST') : 'PUT'
+                    const originalClone = angular.copy(row.$original);
+
+                    delete clone.$isEditing;
+                    delete clone.$original;
+                    delete clone.$state;
+                    delete clone.$valid;
+                    delete clone.$component;
+                    delete clone.$isLoading;
+                    delete clone.$isNew;
+                    
+                    $ctrl.currentRequest = $http(row, {
+                        url: row.$isNew ? addTimeZoneToUrl($ctrl.serverSaveUrl) : $ctrl.serverSaveUrl,
+                        method: row.$isNew ? ($ctrl.serverSaveMethod || 'POST') : 'PUT',
+                        data: row.$isNew ? clone : {
+                            Old: originalClone,
+                            New: clone,
+                            TimezoneOffset: new Date().getTimezoneOffset()
+                        }
                     });
 
                     $ctrl.currentRequest.then(data => {
@@ -1216,9 +1235,8 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     }
 
                     return {
-                        serverUrl: $ctrl.serverUrl,
-                        requestMethod: $ctrl.requestMethod || 'POST',
-                        timeout: $ctrl.requestTimeout,
+                        url: $ctrl.serverUrl,
+                        method: $ctrl.requestMethod || 'POST',
                         requireAuthentication: $ctrl.requireAuthentication,
                         data: {
                             Count: $ctrl.requestCounter,
@@ -1253,7 +1271,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
                     $scope.$emit('tbGrid_OnBeforeRequest', request, $ctrl);
 
-                    $ctrl.currentRequest = tubularHttp.retrieveDataAsync(request);
+                    $ctrl.currentRequest = $http(request);
 
                     $ctrl.currentRequest.then($ctrl.processPayload, error => {
                         $ctrl.requestedPage = $ctrl.currentPage;
@@ -1261,10 +1279,11 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     }).then(() => $ctrl.currentRequest = null);
                 };
 
-                $ctrl.processPayload = data => {
+                $ctrl.processPayload = response => {
+                    const data = response.data;
                     $ctrl.requestCounter += 1;
 
-                    if (angular.isUndefined(data) || data == null) {
+                    if (!data) {
                         $scope.$emit('tbGrid_OnConnectionError',
                             {
                                 statusText: 'Data is empty',
@@ -1363,8 +1382,8 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         Operator: 'None'
                     };
 
-                    return tubularHttp.retrieveDataAsync(request)
-                        .then(data => data.Payload, 
+                    return $http(request)
+                        .then(response => response.data.Payload, 
                             error => $scope.$emit('tbGrid_OnConnectionError', error))
                         .then(() => $ctrl.currentRequest = null);
                 };
@@ -2832,6 +2851,11 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             return service;
 
             function request(config) {
+                // If the request ignore the authentication bypass
+                if (config.requireAuthentication === false) {
+                    return config;
+                }
+                
                 // Get the service here because otherwise, a circular dependency injection will be detected
                 var tubularHttp = $injector.get(tubularHttpName);
                 var webApiSettings = tubularConfig.webApi;
@@ -2910,7 +2934,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                             authRequestRunning = null;
                             deferred.reject(response);
                             tubularHttp.removeAuthentication();
-                            $injector.get('$state').go('/Login');
+                            $injector.get('$location').path('/Login');
                             return;
                         });
                     }
@@ -3182,19 +3206,15 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
          */
         .service('tubularHttp', [
             '$http',
-            '$timeout',
             '$q',
             'translateFilter',
-            '$log',
             '$document',
             'tubularConfig',
             '$window',
             function (
                 $http,
-                $timeout,
                 $q,
                 translateFilter,
-                $log,
                 $document,
                 tubularConfig,
                 $window) {
@@ -3227,13 +3247,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     } else {
                         me.userData = savedData;
                     }
-                }
-
-                function getCancel(canceller) {
-                    return reason => {
-                        $log.error(reason);
-                        canceller.resolve(reason);
-                    };
                 }
 
                 me.userData = {
@@ -3293,93 +3306,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     me.userData.refreshToken = data.refresh_token;
 
                     $window.localStorage.setItem(prefix + authData, angular.toJson(me.userData));
-                };
-
-                function addTimeZoneToUrl(url) {
-                    return url +
-                        (url.indexOf('?') === -1 ? '?' : '&') +
-                        'timezoneOffset=' +
-                        new Date().getTimezoneOffset();
-                }
-
-                me.saveDataAsync = (model, request) => {
-                    const component = model.$component;
-                    model.$component = null;
-                    const clone = angular.copy(model);
-                    model.$component = component;
-
-                    const originalClone = angular.copy(model.$original);
-
-                    delete clone.$isEditing;
-                    delete clone.$original;
-                    delete clone.$state;
-                    delete clone.$valid;
-                    delete clone.$component;
-                    delete clone.$isLoading;
-                    delete clone.$isNew;
-
-                    if (model.$isNew) {
-                        request.serverUrl = addTimeZoneToUrl(request.serverUrl);
-                        request.data = clone;
-                    } else {
-                        request.data = {
-                            Old: originalClone,
-                            New: clone,
-                            TimezoneOffset: new Date().getTimezoneOffset()
-                        };
-                    }
-
-                    return me.retrieveDataAsync(request)
-                        .then(data => {
-                            model.resetOriginal();
-
-                            return data;
-                        });
-                };
-
-                me.retrieveDataAsync = request => {
-                    const canceller = $q.defer();
-                    var cancel = getCancel(canceller);
-
-                    if (angular.isUndefined(request.requireAuthentication)) {
-                        request.requireAuthentication = tubularConfig.webApi.requireAuthentication();
-                    }
-
-                    if (angular.isString(request.requireAuthentication)) {
-                        request.requireAuthentication = request.requireAuthentication === 'true';
-                    }
-
-                    // TODO: This is wrong requireAuthentication should validate request too
-                    if (!tubularConfig.webApi.enableRefreshTokens()) {
-                        if (tubularConfig.webApi.requireAuthentication() && me.isAuthenticated() === false) {
-                            // Return empty dataset
-                            return $q(resolve => resolve(null));
-                        }
-                    }
-
-                    request.timeout = request.timeout || 17000;
-
-                    var timeoutHandler = $timeout(() => cancel('Timed out'), request.timeout);
-
-                    return $http({
-                        url: request.serverUrl,
-                        method: request.requestMethod,
-                        data: request.data,
-                        timeout: canceller.promise
-                    }).then(response => {
-                        $timeout.cancel(timeoutHandler);
-
-                        return response.data;
-                    }, error => {
-                        if (error.status === 401) {
-                            me.removeAuthentication();
-
-                            // Let's trigger a refresh
-                            $document.location = $document.location;
-                        }
-
-                        return $q.reject(error);
-                    });
                 };
 
                 init();

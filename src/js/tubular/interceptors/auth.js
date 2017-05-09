@@ -26,6 +26,11 @@
             return service;
 
             function request(config) {
+                // If the request ignore the authentication bypass
+                if (config.requireAuthentication === false) {
+                    return config;
+                }
+                
                 // Get the service here because otherwise, a circular dependency injection will be detected
                 var tubularHttp = $injector.get(tubularHttpName);
                 var webApiSettings = tubularConfig.webApi;

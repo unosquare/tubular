@@ -19,9 +19,9 @@
           $ctrl.requireAuthentication;
 
         $ctrl.loadData = () => {
-          // TODO: Set requireAuthentication
-          $http.get($ctrl.serverUrl)
-            .then((response) => {
+          $http.get($ctrl.serverUrl, {
+            requireAuthentication: $ctrl.requireAuthentication
+          }).then((response) => {
                 const data = response.data;
 
                 if (!data || !data.Data || data.Data.length === 0) {

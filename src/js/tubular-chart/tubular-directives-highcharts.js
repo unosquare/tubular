@@ -21,11 +21,11 @@
          */
         .component('tbHighcharts', {
             template: '<div class="tubular-chart">' +
-                '<highchart config="$ctrl.options" ng-hide="$ctrl.isEmpty || $ctrl.hasError">' +
-                '</highchart>' +
-                '<div class="alert alert-info" ng-show="$ctrl.isEmpty">{{$ctrl.emptyMessage}}</div>' +
-                '<div class="alert alert-warning" ng-show="$ctrl.hasError">{{$ctrl.errorMessage}}</div>' +
-                '</div>',
+            '<highchart config="$ctrl.options" ng-hide="$ctrl.isEmpty || $ctrl.hasError">' +
+            '</highchart>' +
+            '<div class="alert alert-info" ng-show="$ctrl.isEmpty">{{$ctrl.emptyMessage}}</div>' +
+            '<div class="alert alert-warning" ng-show="$ctrl.hasError">{{$ctrl.errorMessage}}</div>' +
+            '</div>',
             bindings: {
                 serverUrl: '@',
                 title: '@?',
@@ -77,10 +77,11 @@
                     $ctrl.requireAuthentication = angular.isUndefined($ctrl.requireAuthentication) ? true : $ctrl.requireAuthentication;
 
                     $ctrl.loadData = () => {
-                        // TODO: Set requireAuthentication
                         $ctrl.hasError = false;
 
-                        $http.get($ctrl.serverUrl).then($ctrl.handleData, error => {
+                        $http.get($ctrl.serverUrl, {
+                            requireAuthentication: $ctrl.requireAuthentication
+                        }).then($ctrl.handleData, error => {
                             $scope.$emit('tbChart_OnConnectionError', error);
                             $ctrl.hasError = true;
                         });

@@ -7,7 +7,7 @@
             '$scope',
             'tubularPopupService',
             'tubularModel',
-            'tubularHttp',
+            '$http',
             '$routeParams',
             'tubularConfig',
             '$window',
@@ -15,7 +15,7 @@
                 $scope,
                 tubularPopupService,
                 TubularModel,
-                tubularHttp,
+                $http,
                 $routeParams,
                 tubularConfig,
                 $window) {
@@ -32,7 +32,6 @@
 
                     $ctrl.savePage = angular.isUndefined($ctrl.savePage) ? true : $ctrl.savePage;
                     $ctrl.currentPage = $ctrl.savePage ? (parseInt(storage.getItem(prefix + $ctrl.name + '_page')) || 1) : 1;
-
                     $ctrl.savePageSize = angular.isUndefined($ctrl.savePageSize) ? true : $ctrl.savePageSize;
                     $ctrl.pageSize = $ctrl.pageSize || 20;
                     $ctrl.saveSearchText = angular.isUndefined($ctrl.saveSearchText) ? true : $ctrl.saveSearchText;
@@ -158,21 +157,23 @@
                         url += '?' + urlparts[1];
                     }
 
-                    $ctrl.currentRequest = tubularHttp.retrieveDataAsync({
-                        serverUrl: url,
-                        requestMethod: 'DELETE',
+                    $ctrl.currentRequest = $http.delete(url, {
                         requireAuthentication: $ctrl.requireAuthentication
-                    });
-
-                    $ctrl.currentRequest
-                        .then(
-                            data => $scope.$emit('tbGrid_OnRemove', data), 
-                            error => $scope.$emit('tbGrid_OnConnectionError', error))
-                        .then(() => {
+                    })
+                    .then(response => $scope.$emit('tbGrid_OnRemove', response.data), 
+                        error => $scope.$emit('tbGrid_OnConnectionError', error))
+                    .then(() => {
                         $ctrl.currentRequest = null;
                         $ctrl.retrieveData();
                     });
                 };
+
+                function addTimeZoneToUrl(url) {
+                    return url +
+                        (url.indexOf('?') === -1 ? '?' : '&') +
+                        'timezoneOffset=' +
+                        new Date().getTimezoneOffset();
+                }
 
                 $ctrl.saveRow = (row, forceUpdate) => {
                     if (!$ctrl.serverSaveUrl) {
@@ -185,10 +186,29 @@
                     }
 
                     row.$isLoading = true;
+                    const component = row.$component;
+                    row.$component = null;
+                    const clone = angular.copy(row);
+                    row.$component = component;
 
-                    $ctrl.currentRequest = tubularHttp.saveDataAsync(row, {
-                        serverUrl: $ctrl.serverSaveUrl,
-                        requestMethod: row.$isNew ? ($ctrl.serverSaveMethod || 'POST') : 'PUT'
+                    const originalClone = angular.copy(row.$original);
+
+                    delete clone.$isEditing;
+                    delete clone.$original;
+                    delete clone.$state;
+                    delete clone.$valid;
+                    delete clone.$component;
+                    delete clone.$isLoading;
+                    delete clone.$isNew;
+                    
+                    $ctrl.currentRequest = $http(row, {
+                        url: row.$isNew ? addTimeZoneToUrl($ctrl.serverSaveUrl) : $ctrl.serverSaveUrl,
+                        method: row.$isNew ? ($ctrl.serverSaveMethod || 'POST') : 'PUT',
+                        data: row.$isNew ? clone : {
+                            Old: originalClone,
+                            New: clone,
+                            TimezoneOffset: new Date().getTimezoneOffset()
+                        }
                     });
 
                     $ctrl.currentRequest.then(data => {
@@ -255,8 +275,8 @@
                     }
 
                     return {
-                        serverUrl: $ctrl.serverUrl,
-                        requestMethod: $ctrl.requestMethod || 'POST',
+                        url: $ctrl.serverUrl,
+                        method: $ctrl.requestMethod || 'POST',
                         requireAuthentication: $ctrl.requireAuthentication,
                         data: {
                             Count: $ctrl.requestCounter,
@@ -291,7 +311,7 @@
 
                     $scope.$emit('tbGrid_OnBeforeRequest', request, $ctrl);
 
-                    $ctrl.currentRequest = tubularHttp.retrieveDataAsync(request);
+                    $ctrl.currentRequest = $http(request);
 
                     $ctrl.currentRequest.then($ctrl.processPayload, error => {
                         $ctrl.requestedPage = $ctrl.currentPage;
@@ -299,10 +319,11 @@
                     }).then(() => $ctrl.currentRequest = null);
                 };
 
-                $ctrl.processPayload = data => {
+                $ctrl.processPayload = response => {
+                    const data = response.data;
                     $ctrl.requestCounter += 1;
 
-                    if (angular.isUndefined(data) || data == null) {
+                    if (!data) {
                         $scope.$emit('tbGrid_OnConnectionError',
                             {
                                 statusText: 'Data is empty',
@@ -401,8 +422,8 @@
                         Operator: 'None'
                     };
 
-                    return tubularHttp.retrieveDataAsync(request)
-                        .then(data => data.Payload, 
+                    return $http(request)
+                        .then(response => response.data.Payload, 
                             error => $scope.$emit('tbGrid_OnConnectionError', error))
                         .then(() => $ctrl.currentRequest = null);
                 };

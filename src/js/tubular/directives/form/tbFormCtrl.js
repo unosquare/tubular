@@ -69,8 +69,9 @@
 
                 $ctrl.retrieveData = function () {
                     if (angular.isDefined($scope.serverUrl)) {
-                        // TODO: Set requireAuthentication
-                        $http.get(getUrlWithKey()).then(response => {
+                        $http.get(getUrlWithKey(), {
+                            requireAuthentication: $ctrl.requireAuthentication
+                        }).then(response => {
                             $scope.model = new TubularModel($scope.model && $scope.model.$component || $scope, response.data);
                             $ctrl.bindFields();
                             $scope.model.$isNew = true;
@@ -98,11 +99,11 @@
 
                     $scope.model.$isLoading = true;
 
-                    // TODO: Set requireAuthentication
                     $scope.currentRequest = $http({
                         data: $scope.model,
                         url: $ctrl.serverSaveUrl,
-                        method: $scope.model.$isNew ? ($ctrl.serverSaveMethod || 'POST') : 'PUT'
+                        method: $scope.model.$isNew ? ($ctrl.serverSaveMethod || 'POST') : 'PUT',
+                        requireAuthentication: $ctrl.requireAuthentication
                     });
 
                     $scope.currentRequest.then(response => {
