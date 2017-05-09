@@ -26,9 +26,9 @@
                 $document,
                 tubularConfig,
                 $window) {
-                var authData = 'auth_data';
-                var prefix = tubularConfig.localStorage.prefix();
-                var me = this;
+                const authData = 'auth_data';
+                const prefix = tubularConfig.localStorage.prefix();
+                const me = this;
 
                 function init() {
                     const savedData = angular.fromJson($window.localStorage.getItem(prefix + authData));
@@ -94,7 +94,7 @@
                         method: 'POST',
                         url: tubularConfig.webApi.tokenUrl(),
                         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                        data: 'grant_type=password&username=' + encodeURIComponent(username) + '&password=' + encodeURIComponent(password)
+                        data: `grant_type=password&username=${  encodeURIComponent(username)  }&password=${  encodeURIComponent(password)}`
                     }).then(response => {
                         me.initAuth(response.data, username);
                         response.data.authenticated = true;

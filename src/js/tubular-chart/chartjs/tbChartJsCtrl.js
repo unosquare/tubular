@@ -8,7 +8,7 @@
       function(
         $scope,
         $http) {
-        let $ctrl = this;
+        const $ctrl = this;
 
         $ctrl.showLegend = angular.isUndefined($ctrl.showLegend) ? true : $ctrl.showLegend;
         $ctrl.chartType = $ctrl.chartType || 'line';
@@ -30,7 +30,7 @@
                   if (!$ctrl.options) {
                     $ctrl.options = {};
                   }
-                  
+
                   $ctrl.options.series = [{
                     data: []
                   }];

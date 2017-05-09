@@ -40,7 +40,7 @@
             },
             controller: [
                 '$scope', '$http', '$timeout', function ($scope, $http, $timeout) {
-                    let $ctrl = this;
+                    const $ctrl = this;
 
                     $ctrl.showLegend = angular.isUndefined($ctrl.showLegend) ? true : $ctrl.showLegend;
                     $ctrl.chartType = $ctrl.chartType || 'line';
@@ -88,7 +88,7 @@
                     };
 
                     $ctrl.handleData = response => {
-                        var data = response.data;
+                        const data = response.data;
 
                         if (!data || !data.Data || data.Data.length === 0) {
                             $ctrl.isEmpty = true;

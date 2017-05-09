@@ -1,13 +1,13 @@
 ﻿(function (angular, moment) {
     'use strict';
 
-    /**                                           
+    /**
      * @ngdoc module
      * @name tubular.models
-     * 
+     *
      * @description
-     * Tubular Models module. 
-     * 
+     * Tubular Models module.
+     *
      * It contains model's factories to be use in {@link tubular.directives} like `tubularModel` and `tubularGridColumnModel`.
      */
     angular.module('tubular.models', [])
@@ -57,7 +57,7 @@
 
                 if (angular.isDefined($ctrl.columns)) {
                     angular.forEach($ctrl.columns, (col, key) => {
-                        var value = angular.isDefined(data[key]) ? data[key] : data[col.Name];
+                        let value = angular.isDefined(data[key]) ? data[key] : data[col.Name];
 
                         if (angular.isUndefined(value) && data[key] === 0) {
                             value = 0;
@@ -73,7 +73,7 @@
                         }
 
                         if (col.IsKey) {
-                            obj.$key += obj[col.Name] + ',';
+                            obj.$key += `${obj[col.Name]  },`;
                         }
                     });
                 }

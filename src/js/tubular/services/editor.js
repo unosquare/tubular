@@ -1,6 +1,6 @@
-﻿(function (angular) {
+﻿(function (angular, moment) {
     'use strict';
-    
+
     function editorService(translateFilter) {
         return {
             /**
@@ -29,11 +29,11 @@
 
                 // Get the field reference using the Angular way
                 ctrl.getFormField = () => {
-                    var parent = scope.$parent;
+                    let parent = scope.$parent;
 
                     while (parent != null) {
                         if (parent.tubularDirective === 'tubular-form') {
-                            var formScope = parent.getFormScope();
+                            const formScope = parent.getFormScope();
 
                             return formScope == null ? null : formScope[scope.Name];
                         }
@@ -46,7 +46,7 @@
 
                 ctrl.$dirty = () => {
                     // Just forward the property
-                    var formField = ctrl.getFormField();
+                    const formField = ctrl.getFormField();
 
                     return formField == null ? true : formField.$dirty;
                 };
@@ -98,7 +98,7 @@
                     ctrl.checkValid();
                 });
 
-                var parent = scope.$parent;
+                let parent = scope.$parent;
 
                 // We try to find a Tubular Form in the parents
                 while (parent != null) {
@@ -122,15 +122,13 @@
 
                             if (angular.equals(ctrl.value, parent.model[scope.Name]) === false) {
                                 if (angular.isDefined(parent.model[scope.Name])) {
-                                    if (ctrl.DataType === 'date' && parent.model[scope.Name] != null && angular.isString(parent.model[scope.Name])) {
-                                        // TODO: Include MomentJS
+                                    if ((ctrl.DataType === 'date' || ctrl.DataType === 'datetime')
+                                        && parent.model[scope.Name] != null && angular.isString(parent.model[scope.Name])) {
                                         if (parent.model[scope.Name] === '' || parent.model[scope.Name] === null) {
                                             ctrl.value = parent.model[scope.Name];
                                         }
                                         else {
-                                            var timezone = new Date(Date.parse(parent.model[scope.Name])).toString().match(/([-+][0-9]+)\s/)[1];
-                                            timezone = timezone.substr(0, timezone.length - 2) + ':' + timezone.substr(timezone.length - 2, 2);
-                                            ctrl.value = new Date(Date.parse(parent.model[scope.Name].replace('Z', '') + timezone));
+                                            ctrl.value = moment(parent.model[scope.Name]);
                                         }
                                     } else {
                                         ctrl.value = parent.model[scope.Name];
@@ -151,7 +149,7 @@
                             }, true);
 
                             if (ctrl.value == null && (ctrl.defaultValue && ctrl.defaultValue != null)) {
-                                if (ctrl.DataType === 'date' && angular.isString(ctrl.defaultValue)) {
+                                if ((ctrl.DataType === 'date' || ctrl.DataType === 'datetime') && angular.isString(ctrl.defaultValue)) {
                                     ctrl.defaultValue = new Date(ctrl.defaultValue);
                                 }
 
@@ -179,7 +177,7 @@
                             }
 
                             if (setDirty) {
-                                var formScope = ctrl.getFormField();
+                                const formScope = ctrl.getFormField();
 
                                 if (formScope) {
                                     formScope.$setDirty();
@@ -209,4 +207,4 @@
         .service('tubularEditorService', ['translateFilter', function(translateFilter) {
             return editorService(translateFilter);
         }]);
-})(angular);
+})(angular, moment);

@@ -13,10 +13,10 @@
     angular.module('tubular.services')
         .factory('tubularAuthInterceptor', ['$q', '$injector', 'tubularConfig', function ($q, $injector, tubularConfig) {
 
-            var authRequestRunning = null;
-            var tubularHttpName = 'tubularHttp';
+            let authRequestRunning = null;
+            const tubularHttpName = 'tubularHttp';
 
-            var service = {
+            const service = {
                 request: request,
                 requestError: requestError,
                 response: response,
@@ -30,10 +30,10 @@
                 if (config.requireAuthentication === false) {
                     return config;
                 }
-                
+
                 // Get the service here because otherwise, a circular dependency injection will be detected
-                var tubularHttp = $injector.get(tubularHttpName);
-                var webApiSettings = tubularConfig.webApi;
+                const tubularHttp = $injector.get(tubularHttpName);
+                const webApiSettings = tubularConfig.webApi;
 
                 config.headers = config.headers || {};
 
@@ -42,7 +42,7 @@
                     webApiSettings.requireAuthentication() &&
                     tubularHttp.userData.bearerToken) {
 
-                    config.headers.Authorization = 'Bearer ' + tubularHttp.userData.bearerToken;
+                    config.headers.Authorization = `Bearer ${  tubularHttp.userData.bearerToken}`;
 
                     // When using refresh tokens and bearer token has expired,
                     // avoid the round trip on go directly to try refreshing the token
@@ -68,12 +68,12 @@
             }
 
             function responseError(rejection) {
-                var deferred = $q.defer();
+                const deferred = $q.defer();
 
                 if (rejection.status === 401) {
-                    var tubularHttp = $injector.get(tubularHttpName);
-                    var webApiSettings = tubularConfig.webApi;
-                    var apiBaseUrl = webApiSettings.baseUrl();
+                    const tubularHttp = $injector.get(tubularHttpName);
+                    const webApiSettings = tubularConfig.webApi;
+                    const apiBaseUrl = webApiSettings.baseUrl();
 
                     if (
                         rejection.config.url.substring(0, apiBaseUrl.length) === apiBaseUrl &&
@@ -89,7 +89,7 @@
                                 method: 'POST',
                                 url: webApiSettings.refreshTokenUrl(),
                                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                                data: 'grant_type=refresh_token&refresh_token=' + tubularHttp.userData.refreshToken
+                                data: `grant_type=refresh_token&refresh_token=${  tubularHttp.userData.refreshToken}`
                             });
                         }
 
@@ -98,7 +98,7 @@
                             tubularHttp.initAuth(r.data);
 
                             if (webApiSettings.requireAuthentication() && tubularHttp.isAuthenticated()) {
-                                rejection.config.headers.Authorization = 'Bearer ' + tubularHttp.userData.bearerToken;
+                                rejection.config.headers.Authorization = `Bearer ${  tubularHttp.userData.bearerToken}`;
                                 $injector.get('$http')(rejection.config)
                                     .then(resp => deferred.resolve(resp), () => deferred.reject(r));
                             }
@@ -120,7 +120,7 @@
                 else {
                     deferred.reject(rejection);
                 }
-                
+
                 return deferred.promise;
             }
         }]);

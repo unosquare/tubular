@@ -30,7 +30,7 @@
                 icon: '@'
             },
             controller: function () {
-                var $ctrl = this;
+                const $ctrl = this;
 
                 $ctrl.delete = () => $ctrl.$component.deleteRow($ctrl.model);
 
@@ -101,7 +101,7 @@
          *
          * @description
          * The `tbEditButton` component is visual helper to create an Edit button.
-         * 
+         *
          * @param {object} model The row to remove.
          * @param {string} caption Set the caption to use in the button, default Edit.
          */
@@ -115,7 +115,7 @@
                 caption: '@'
             },
             controller: function () {
-                var $ctrl = this;
+                const $ctrl = this;
 
                 $ctrl.edit = () => {
                     if ($ctrl.$component.editorMode === 'popup') {
@@ -133,7 +133,7 @@
          *
          * @description
          * The `tbPageSizeSelector` component is visual helper to render a dropdown to allow user select how many rows by page.
-         * 
+         *
          * @param {string} caption Set the caption to use in the button, default "Page size:".
          * @param {string} css Add a CSS class to the `div` HTML element.
          * @param {string} selectorCss Add a CSS class to the `select` HTML element.
@@ -161,7 +161,7 @@
          *
          * @description
          * The `tbExportButton` component is visual helper to render a button to export grid to CSV format.
-         * 
+         *
          * @param {string} filename Set the export file name.
          * @param {string} css Add a CSS class to the `button` HTML element.
          * @param {string} caption Set the caption.
@@ -181,7 +181,7 @@
                 captionMenuAll: '@'
             },
             controller: ['tubularGridExportService', function (tubular) {
-                var $ctrl = this;
+                const $ctrl = this;
 
                 $ctrl.downloadCsv = () => tubular.exportGridToCsv($ctrl.filename, $ctrl.$component);
 
@@ -195,7 +195,7 @@
          *
          * @description
          * The `tbPrintButton` component is visual helper to render a button to print the `tbGrid`.
-         * 
+         *
          * @param {string} title Set the document's title.
          * @param {string} printCss Set a stylesheet URL to attach to print mode.
          * @param {string} caption Set the caption.
@@ -211,7 +211,7 @@
                 caption: '@'
             },
             controller: ['tubularGridExportService', function (tubular) {
-                var $ctrl = this;
+                const $ctrl = this;
 
                 $ctrl.printGrid = () => tubular.printGrid($ctrl.$component, $ctrl.printCss, $ctrl.title);
             }]

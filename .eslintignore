@@ -2,4 +2,4 @@
 *.spec.js
 *.e2e.js
 *bundle.js
-template.js
+templates.js

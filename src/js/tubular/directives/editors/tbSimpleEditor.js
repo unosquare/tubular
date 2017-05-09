@@ -1,13 +1,13 @@
 ﻿(angular => {
     'use strict';
 
-    var tbSimpleEditorCtrl = ['tubularEditorService', '$scope', 'translateFilter', 'filterFilter',
+    const tbSimpleEditorCtrl = ['tubularEditorService', '$scope', 'translateFilter', 'filterFilter',
         function (tubular, $scope, translateFilter, filterFilter) {
-            var $ctrl = this;
+            const $ctrl = this;
 
             $ctrl.validate = () => {
                 if ($ctrl.regex && $ctrl.value) {
-                    var patt = new RegExp($ctrl.regex);
+                    const patt = new RegExp($ctrl.regex);
 
                     if (patt.test($ctrl.value) === false) {
                         $ctrl.$valid = false;
@@ -18,7 +18,7 @@
 
                 if ($ctrl.match) {
                     if ($ctrl.value !== $ctrl.$component.model[$ctrl.match]) {
-                        var label = filterFilter($ctrl.$component.fields, { name: $ctrl.match }, true)[0].label;
+                        const label = filterFilter($ctrl.$component.fields, { name: $ctrl.match }, true)[0].label;
                         $ctrl.$valid = false;
                         $ctrl.state.$errors = [translateFilter('EDITOR_MATCH', label)];
                         return;

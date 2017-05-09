@@ -18,7 +18,7 @@
             },
             templateUrl: 'tbColumnFilterButtons.tpl.html',
             controller: ['$scope', function($scope) {
-                var $ctrl = this;
+                const $ctrl = this;
 
                 // Set currentFilter to either one of the parent components or for when this template is being rendered by $compile
                 $ctrl.$onInit = () => $ctrl.currentFilter = $ctrl.$columnFilter || $ctrl.$columnDateTimeFilter || $ctrl.$columnOptionsFilter || $scope.$parent.$ctrl;
@@ -39,10 +39,10 @@
             },
             templateUrl: 'tbColumnSelector.tpl.html',
             controller: ['$uibModal', function ($modal) {
-                var $ctrl = this;
+                const $ctrl = this;
 
                 $ctrl.openColumnsSelector = () => {
-                    var model = $ctrl.$component.columns;
+                    const model = $ctrl.$component.columns;
 
                     const dialog = $modal.open({
                         templateUrl: 'tbColumnSelectorDialog.tpl.html',
@@ -68,9 +68,9 @@
          *
          * @description
          * The `tbColumnFilter` directive is a the basic filter popover. You need to define it inside a `tbColumn`.
-         * 
+         *
          * The parent scope will provide information about the data type.
-         * 
+         *
          * @param {string} title Set the popover title.
          * @param {string} text Set the search text.
          * @param {string} operator Set the initial operator, default depends on data type.
@@ -91,7 +91,7 @@
             },
             controller: [
                 '$scope', 'tubularTemplateService', function($scope, tubular) {
-                    var $ctrl = this;
+                    const $ctrl = this;
 
                     $ctrl.$onInit = () => {
                         $ctrl.onlyContains = angular.isUndefined($ctrl.onlyContains) ? false : $ctrl.onlyContains;
@@ -109,9 +109,9 @@
          *
          * @description
          * The `tbColumnDateTimeFilter` directive is a specific filter with Date and Time editors, instead regular inputs.
-         * 
+         *
          * The parent scope will provide information about the data type.
-         * 
+         *
          * @param {string} title Set the popover title.
          * @param {string} text Set the search text.
          * @param {object} argument Set the search object (if the search is text use text attribute).
@@ -130,7 +130,7 @@
             },
             controller: [
                 '$scope', 'tubularTemplateService', function($scope, tubular) {
-                    var $ctrl = this;
+                    const $ctrl = this;
 
                     $ctrl.$onInit = () => {
                         $ctrl.templateName = tubular.tbColumnDateTimeFilterPopoverTemplateName;
@@ -147,7 +147,7 @@
          *
          * @description
          * The `tbColumnOptionsFilter` directive is a filter with an dropdown listing all the possible values to filter.
-         * 
+         *
          * @param {string} title Set the popover title.
          * @param {object} argument Set the search object.
          * @param {string} operator Set the initial operator, default depends on data type.
@@ -166,7 +166,7 @@
             },
             controller: [
                 '$scope', 'tubularTemplateService', '$http', function($scope, tubular, $http) {
-                    var $ctrl = this;
+                    const $ctrl = this;
 
                     $ctrl.getOptionsFromUrl = () => {
                         if ($ctrl.dataIsLoaded) {

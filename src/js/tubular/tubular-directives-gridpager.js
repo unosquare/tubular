@@ -16,7 +16,7 @@
             },
             templateUrl: 'tbGridPager.tpl.html',
             controller: ['$scope', function($scope) {
-                    var $ctrl = this;
+                    const $ctrl = this;
 
                     $scope.$watch('$ctrl.$component.currentPage', () => {
                         if ($ctrl.$component.currentPage !== $ctrl.$component.requestedPage) {
@@ -46,7 +46,7 @@
             },
             controller: [
                 '$scope', function($scope) {
-                    var $ctrl = this;
+                    const $ctrl = this;
 
                     $ctrl.fixCurrentTop = () => {
                         $ctrl.currentTop = $ctrl.$component.pageSize * $ctrl.$component.currentPage;
@@ -63,7 +63,7 @@
                         if ($ctrl.currentInitial < 0 || $ctrl.$component.totalRecordCount === 0) {
                             $ctrl.currentInitial = 0;
                         }
-                        
+
                         if ($ctrl.$component.pageSize > $ctrl.$component.filteredRecordCount)
                         {
                             $ctrl.currentInitial = 1;

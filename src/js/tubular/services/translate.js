@@ -10,7 +10,7 @@
          * Use `tubularTranslate` to translate strings.
          */
         .service('tubularTranslate', [function () {
-            var me = this;
+            const me = this;
 
             me.currentLanguage = 'en';
             me.defaultLanguage = 'en';
@@ -130,14 +130,14 @@
             me.setLanguage = language => me.currentLanguage = language;
 
             me.addTranslation = (language, key, value) => {
-                var languageTable = me.translationTable[language] ||
+                const languageTable = me.translationTable[language] ||
                     me.translationTable[me.currentLanguage] ||
                     me.translationTable[me.defaultLanguage];
                 languageTable[key] = value;
             };
 
             me.translate = (key) => {
-                var languageTable = me.translationTable[me.currentLanguage] || me.translationTable[me.defaultLanguage];
+                const languageTable = me.translationTable[me.currentLanguage] || me.translationTable[me.defaultLanguage];
 
                 return languageTable[key] || key;
             };
@@ -154,7 +154,7 @@
             'tubularTranslate', function (tubularTranslate) {
                 return function (input, param1, param2, param3, param4) {
                     if (angular.isDefined(input)) {
-                        var translation = tubularTranslate.translate(input);
+                        let translation = tubularTranslate.translate(input);
 
                         translation = translation.replace('{0}', param1 || '');
                         translation = translation.replace('{1}', param2 || '');

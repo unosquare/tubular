@@ -4,11 +4,11 @@
     angular.module('tubular.services')
         .provider('tubularConfig', function () {
 
-            var provider = this;
+            const provider = this;
             provider.platform = {};
-            var PLATFORM = 'platform';
+            const PLATFORM = 'platform';
 
-            var configProperties = {
+            const configProperties = {
                 webApi: {
                     tokenUrl: PLATFORM,
                     refreshTokenUrl: PLATFORM,
@@ -52,7 +52,7 @@
 
             // add new platform configs
             function addConfig(configObj, platformObj) {
-                for (var n in configObj) {
+                for (const n in configObj) {
                     if (n != PLATFORM && configObj.hasOwnProperty(n)) {
                         if (angular.isObject(configObj[n])) {
                             if (angular.isUndefined(platformObj[n])) {
@@ -75,7 +75,7 @@
                     if (angular.isObject(configObj[namespace])) {
                         // recursively drill down the config object so we can create a method for each one
                         providerObj[namespace] = {};
-                        createConfig(configObj[namespace], providerObj[namespace], platformPath + '.' + namespace);
+                        createConfig(configObj[namespace], providerObj[namespace], `${platformPath  }.${  namespace}`);
 
                     } else {
                         // create a method for the provider/config methods that will be exposed
@@ -91,7 +91,7 @@
                                 //     return platformConfig;
                                 // }
                                 // didnt find a specific platform config, now try the default
-                                return stringObj(configProperties.platform, 'default' + platformPath + '.' + namespace);
+                                return stringObj(configProperties.platform, `default${  platformPath  }.${  namespace}`);
                             }
                             return configObj[namespace];
                         };
@@ -102,7 +102,7 @@
 
             function stringObj(obj, str) {
                 str = str.split('.');
-                for (var i = 0; i < str.length; i++) {
+                for (let i = 0; i < str.length; i++) {
                     if (obj && angular.isDefined(obj[str[i]])) {
                         obj = obj[str[i]];
                     } else {

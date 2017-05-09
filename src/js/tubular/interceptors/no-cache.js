@@ -16,8 +16,8 @@
             return {
                 request: (config) => {
                     if (config.method === 'GET' && config.url.indexOf('.htm') === -1 && config.url.indexOf('blob:') === -1) {
-                        var separator = config.url.indexOf('?') === -1 ? '?' : '&';
-                        config.url = config.url + separator + 'noCache=' + new Date().getTime();
+                        const separator = config.url.indexOf('?') === -1 ? '?' : '&';
+                        config.url = `${config.url + separator  }noCache=${  new Date().getTime()}`;
                     }
 
                     return config;

@@ -4,10 +4,10 @@
     /**
      * @ngdoc module
      * @name tubular
-     * 
-     * @description 
+     *
+     * @description
      * Tubular module. Entry point to get all the Tubular functionality.
-     * 
+     *
      * It depends upon  {@link tubular.directives}, {@link tubular.services} and {@link tubular.models}.
      */
     angular.module('tubular', ['tubular.directives', 'tubular.services', 'tubular.models'])
@@ -24,7 +24,7 @@
          *
          * @description
          * Use `errormessage` to retrieve the friendly message possible in a HTTP Error object.
-         * 
+         *
          * @param {object} input Input to filter.
          * @returns {string} Formatted error message.
          */

@@ -20,24 +20,24 @@
 
                 return {
                     onSuccessForm: callback => {
-                        var successHandle = $rootScope.$on('tbForm_OnSuccessfulSave', callback);
+                        const successHandle = $rootScope.$on('tbForm_OnSuccessfulSave', callback);
 
                         $rootScope.$on('$destroy', successHandle);
                     },
 
                     onConnectionError: callback => {
-                        var errorHandle = $rootScope.$on('tbForm_OnConnectionError', callback);
+                        const errorHandle = $rootScope.$on('tbForm_OnConnectionError', callback);
 
                         $rootScope.$on('$destroy', errorHandle);
                     },
 
                     /**
                      * Opens a new Popup
-                     * 
-                     * @param {string} template 
-                     * @param {object} model 
-                     * @param {object} gridScope 
-                     * @param {string} size 
+                     *
+                     * @param {string} template
+                     * @param {object} model
+                     * @param {object} gridScope
+                     * @param {string} size
                      * @returns {object} The Popup instance
                      */
                     openDialog: (template, model, gridScope, size) => {
