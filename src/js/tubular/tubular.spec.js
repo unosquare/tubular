@@ -2,80 +2,16 @@
 
 describe('Module: tubular', () => {
 
-    describe('Tubular filters', () => {
-        var $filter, result;
 
-        beforeEach(() => {
-            module('tubular');
+  var $filter, result;
 
-            inject(_$filter_ => $filter = _$filter_);
-        });
+  beforeEach(() => {
+    module('tubular.models');
+    module('ui.bootstrap');
+    module('tubular.services');
+    module('tubular.directives');
+    module('tubular');
+  });
 
-        var filterErrorMessage = (input) => $filter('errormessage')(input);
-        
-        var filterNumberOcurrency = (input, format, symbol, fractionSize) => $filter('numberorcurrency')(input, format, symbol, fractionSize);
-
-        var filterMoment = (input, format) =>  $filter('moment')(input, format);
-        
-        var filterTranslate = (input, param1, param2, param3, param4) => $filter('translate')(input, param1, param2, param3, param4);
-
-        it('should filter errormessage', () => {
-            result = filterErrorMessage('');
-            expect(result).toEqual('Connection Error', 'Empty errormessage');
-
-            result = filterErrorMessage({
-                'statusText': 'Fatal error'
-            });
-
-            expect(result).toEqual('Fatal error', 'input with statusText');
-
-            result = filterErrorMessage({
-                'data': {
-                    'ExceptionMessage': 'object reference not set to instance of an object'
-                }
-            });
-            expect(result).toEqual('object reference not set to instance of an object', 'input with ExceptionMessage');
-        });
-
-        it('should filter numberorcurrency', () => {
-            result = filterNumberOcurrency('30');
-            expect(result).toEqual('30.00', 'Number filter without fractionSize');
-
-            result = filterNumberOcurrency('30', '', '', 1);
-            expect(result).toEqual('30.0', 'Number filter with fractionSize');
-
-            result = filterNumberOcurrency(30, 'I');
-            expect(result).toEqual(30, 'Int filter');
-
-            result = filterNumberOcurrency(30, 'C');
-            expect(result).toEqual('$30.00', 'Currency filter without symbol');
-
-            result = filterNumberOcurrency(30, 'C', '€');
-            expect(result).toEqual('€30.00', 'Currency filter without symbol');
-        });
-
-        it('should filter moment', () => {
-            var date = '2017-03-24';
-            result = filterMoment(date);
-            expect(result).toEqual('Mar 24, 2017', 'Not-moment date');
-
-            result = filterMoment(moment(date));
-            expect(result).toEqual('3/24/2017', 'Moment filter with format');
-
-            result = filterMoment(moment(date), 'YYYYMMDD');
-            expect(result).toEqual('20170324', 'Moment filter without format');
-        });
-
-        it('should filter translate', () => {
-            result = filterTranslate('EDITOR_REQUIRED');
-            expect(result).toEqual('The field is required.', 'Translate filter without params');
-
-            result = filterTranslate('EDITOR_MIN_CHARS', 3);
-            expect(result).toEqual('The field needs to be minimum 3 chars.', 'Translate filter with 1 param');
-
-            result = filterTranslate('UI_SHOWINGRECORDS', 10, 15, 35);
-            expect(result).toEqual('Showing 10 to 15 of 35 records', 'Translate filter with 3 params');
-        });
-
-    });
+  it('should load successfully', () => {});
 });

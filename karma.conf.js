@@ -25,12 +25,14 @@ module.exports = (config) => {
           'tubular/tubular-models.js',
           'tubular/tubular-services.js',
           'tubular*/**/*.module.js',
+
           'tubular/services/**/*.js',
           'tubular/interceptors/**/*.js',
           'tubular/tubular-directives.js',
           'tubular*/**/*tpl.html',
           'tubular/directives/**/*.js',
           'tubular/tubular.js',
+          'tubular/filters/**/*.js',
           'tubular-chart/**/*.js',
           'tubular*/**/*.spec.js'
         ],
