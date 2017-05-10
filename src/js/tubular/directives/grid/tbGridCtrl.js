@@ -201,7 +201,7 @@
                     delete clone.$isLoading;
                     delete clone.$isNew;
 
-                    $ctrl.currentRequest = $http(row, {
+                    $ctrl.currentRequest = $http({
                         url: row.$isNew ? addTimeZoneToUrl($ctrl.serverSaveUrl) : $ctrl.serverSaveUrl,
                         method: row.$isNew ? ($ctrl.serverSaveMethod || 'POST') : 'PUT',
                         data: row.$isNew ? clone : {

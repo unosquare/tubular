@@ -2,7 +2,7 @@
     'use strict';
 
     // Fix moment serialization
-    moment.fn.toJSON = () => (this.isValid() ? this.format() : null);
+    moment.fn.toJSON = function () { return this.isValid() ? this.format() : null };
 
     function canUseHtml5Date() {
         const el = angular.element('<input type="date" value=":)" />');
@@ -155,12 +155,12 @@
             $ctrl.selectOptions = 'd for d in $ctrl.options';
 
             if (angular.isDefined($ctrl.optionLabel)) {
-                $ctrl.selectOptions = `d.${  $ctrl.optionLabel  } for d in $ctrl.options`;
+                $ctrl.selectOptions = `d.${$ctrl.optionLabel} for d in $ctrl.options`;
 
                 if (angular.isDefined($ctrl.optionTrack)) {
-                    $ctrl.selectOptions = `d as d.${  $ctrl.optionLabel  } for d in $ctrl.options track by d.${  $ctrl.optionTrack}`;
+                    $ctrl.selectOptions = `d as d.${$ctrl.optionLabel} for d in $ctrl.options track by d.${$ctrl.optionTrack}`;
                 } else if (angular.isDefined($ctrl.optionKey)) {
-                    $ctrl.selectOptions = `d.${  $ctrl.optionKey  } as ${  $ctrl.selectOptions}`;
+                    $ctrl.selectOptions = `d.${$ctrl.optionKey} as ${$ctrl.selectOptions}`;
                 }
             }
 
@@ -502,7 +502,7 @@
                         optionLabel: '@?',
                         css: '@?'
                     },
-                    link: function(scope, element) {
+                    link: function (scope, element) {
                         const template = `<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid && $dirty() }">
                             <span ng-hide="isEditing" ng-bind="value"></span>
                             <label ng-show="showLabel" ng-bind="label"></label>
@@ -556,7 +556,7 @@
                                 }
 
                                 return $http({
-                                    url: `${$scope.optionsUrl  }?search=${  val}`,
+                                    url: `${$scope.optionsUrl}?search=${val}`,
                                     method: $scope.optionsMethod || 'GET'
                                 }).then(response => {
                                     $scope.lastSet = response.data;
