@@ -1,4 +1,0 @@
-{
-  "comment": "This is only default config! It may not be appriopriate to your project. Check more on atom.io/packages/atom-lupa",
-  "filePattern": "src/**/*.js"
-}

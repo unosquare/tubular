@@ -75,9 +75,7 @@
                     const webApiSettings = tubularConfig.webApi;
                     const apiBaseUrl = webApiSettings.baseUrl();
 
-                    if (
-                        rejection.config.url.substring(0, apiBaseUrl.length) === apiBaseUrl &&
-                        webApiSettings.tokenUrl() !== rejection.config.url &&
+                    if (webApiSettings.tokenUrl() !== rejection.config.url &&
                         webApiSettings.enableRefreshTokens() &&
                         webApiSettings.requireAuthentication() &&
                         tubularHttp.userData.refreshToken) {
