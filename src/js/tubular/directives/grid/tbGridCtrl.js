@@ -215,9 +215,9 @@
                         $scope.$emit('tbForm_OnSuccessfulSave', data);
                         row.$isLoading = false;
                         row.$isEditing = false;
-                        $ctrl.retrieveData();
                         $ctrl.currentRequest = null;
-
+                        $ctrl.retrieveData();
+                        
                         return data;
                     }, error => {
                         $scope.$emit('tbForm_OnConnectionError', error);

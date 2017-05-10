@@ -471,7 +471,7 @@ describe('tbForm related components', () => {
                 });
         });
 
-    describe('tbDateEditor',
+    xdescribe('tbDateEditor',
         () => {
 
             beforeAll(() => {
@@ -583,7 +583,7 @@ describe('tbForm related components', () => {
                 });
         });
 
-    describe('tbTypeaheadEditor',
+    xdescribe('tbTypeaheadEditor',
         () => {
             beforeAll(() => {
                 //* Assign test variables *\\
