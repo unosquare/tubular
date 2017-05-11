@@ -17,7 +17,7 @@
                 $columnOptionsFilter: '^?tbColumnOptionsFilter'
             },
             templateUrl: 'tbColumnFilterButtons.tpl.html',
-            controller: ['$scope', function($scope) {
+            controller: ['$scope', function ($scope) {
                 const $ctrl = this;
 
                 // Set currentFilter to either one of the parent components or for when this template is being rendered by $compile
@@ -49,7 +49,7 @@
                         backdropClass: 'fullHeight',
                         animation: false,
                         controller: [
-                            '$scope', function($innerScope) {
+                            '$scope', function ($innerScope) {
                                 $innerScope.Model = model;
                                 $innerScope.isInvalid = () => $innerScope.Model.filter(el => el.Visible).length === 1;
                                 $innerScope.closePopup = dialog.close;
@@ -90,7 +90,7 @@
                 onlyContains: '=?'
             },
             controller: [
-                '$scope', 'tubularTemplateService', function($scope, tubular) {
+                '$scope', 'tubularTemplateService', function ($scope, tubular) {
                     const $ctrl = this;
 
                     $ctrl.$onInit = () => {
@@ -129,7 +129,7 @@
                 title: '@'
             },
             controller: [
-                '$scope', 'tubularTemplateService', function($scope, tubular) {
+                '$scope', 'tubularTemplateService', function ($scope, tubular) {
                     const $ctrl = this;
 
                     $ctrl.$onInit = () => {
@@ -165,7 +165,7 @@
                 title: '@'
             },
             controller: [
-                '$scope', 'tubularTemplateService', '$http', function($scope, tubular, $http) {
+                '$scope', 'tubularTemplateService', '$http', function ($scope, tubular, $http) {
                     const $ctrl = this;
 
                     $ctrl.getOptionsFromUrl = () => {
@@ -175,9 +175,9 @@
                         }
 
                         $http.get($ctrl.filter.OptionsUrl).then(response => {
-                                $ctrl.optionsItems = response.data;
-                                $ctrl.dataIsLoaded = true;
-                            }, error => $scope.$emit('tbGrid_OnConnectionError', error));
+                            $ctrl.optionsItems = response.data;
+                            $ctrl.dataIsLoaded = true;
+                        }, error => $scope.$emit('tbGrid_OnConnectionError', error));
                     };
 
                     $ctrl.$onInit = () => {

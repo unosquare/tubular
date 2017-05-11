@@ -15,9 +15,7 @@
      */
     .filter('errormessage', function() {
       return input => {
-        if (angular.isDefined(input) && angular.isDefined(input.data) &&
-          input.data &&
-          angular.isDefined(input.data.ExceptionMessage)) {
+        if (input && input.data && input.data.ExceptionMessage) {
           return input.data.ExceptionMessage;
         }
 

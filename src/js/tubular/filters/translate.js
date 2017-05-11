@@ -14,12 +14,11 @@
       function(tubularTranslate) {
         return function(input, param1, param2, param3, param4) {
           if (angular.isDefined(input)) {
-            let translation = tubularTranslate.translate(input);
-
-            translation = translation.replace('{0}', param1 || '');
-            translation = translation.replace('{1}', param2 || '');
-            translation = translation.replace('{2}', param3 || '');
-            translation = translation.replace('{3}', param4 || '');
+            let translation = tubularTranslate.translate(input)
+              .replace('{0}', param1 || '')
+              .replace('{1}', param2 || '')
+              .replace('{2}', param3 || '')
+              .replace('{3}', param4 || '');
 
             return translation;
           }

@@ -115,6 +115,7 @@ describe('Module: tubular.services', function () {
             };
 
             expect(tubularConfig.webApi.enableRefreshTokens()).toBe(false);
+            expect(tubularHttp.isBearerTokenExpired()).toBe(true);
 
             tubularConfig.webApi.enableRefreshTokens(true);
             tubularHttp.userData.refreshToken = 'original_refresh';

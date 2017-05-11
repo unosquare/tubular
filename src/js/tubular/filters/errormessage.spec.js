@@ -35,7 +35,5 @@ describe('Module: tubular', () => {
       });
       expect(result).toEqual('object reference not set to instance of an object');
     });
-
-
   });
 });
