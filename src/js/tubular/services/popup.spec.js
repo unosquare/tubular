@@ -39,26 +39,30 @@ describe('Module: tubular.services', () => {
 
         it('should popupService to be defined', () => {
             expect(popupService).toBeDefined();
-        })
+        });
 
         it('should openDialog to be defined', () => {
             expect(dialog.openDialog).toBeDefined();
-        })
+        });
 
         it('should onSuccessForm to be defined', () => {
             expect(dialog.onSuccessForm).toBeDefined();
-        })
+        });
 
         it('should onConnectionError to be defined', () => {
             expect(dialog.onConnectionError).toBeDefined();
-        })
+        });
 
-        it('should create a modal instance', () => {
+        it('should create a modal instance with template', () => {
             var templateName = 'temp' + (new Date().getTime()) + '.html';
             tubularTemplateService.generatePopup(models, 'Test');
             var instance = dialog.openDialog(templateName, models, scope, 'lg');
             expect(instance).toBeDefined();
-        })
+        });
 
+        it('should create a modal instance without template', () => {
+            var instance = dialog.openDialog(undefined, models, scope, 'lg');
+            expect(instance).toBeDefined();
+        });
     });
 });
