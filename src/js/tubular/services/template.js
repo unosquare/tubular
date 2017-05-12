@@ -16,10 +16,10 @@
             function (
                 $templateCache,
                 translateFilter) {
-                var me = this;
+                const me = this;
 
                 me.canUseHtml5Date = () => {
-                    var el = angular.element('<input type="date" value=":)" />');
+                    const el = angular.element('<input type="date" value=":)" />');
                     return el.attr('type') === 'date' && el.val() === '';
                 };
 
@@ -133,14 +133,14 @@
 
                 // Loading popovers templates
                 me.tbColumnDateTimeFilterPopoverTemplateName = 'tbColumnDateTimeFilterPopoverTemplate.html';
-                
+
                 if (!$templateCache.get(me.tbColumnDateTimeFilterPopoverTemplateName)) {
-                    var htmlDateSelector =
+                    const htmlDateSelector =
                         '<input class="form-control" type="date" ng-model="$ctrl.filter.Text" autofocus ng-keypress="$ctrl.checkEvent($event)" ' +
                             'placeholder="{{\'CAPTION_VALUE\' | translate}}" ng-disabled="$ctrl.filter.Operator == \'None\'" />' +
                             '<input type="date" class="form-control" ng-model="$ctrl.filter.Argument[0]" ng-keypress="$ctrl.checkEvent($event)" ng-show="$ctrl.filter.Operator == \'Between\'" />';
 
-                    var bootstrapDateSelector = '<div class="input-group">' +
+                    const bootstrapDateSelector = '<div class="input-group">' +
                         '<input type="text" class="form-control" uib-datepicker-popup="MM/dd/yyyy" ng-model="$ctrl.filter.Text" autofocus ng-keypress="$ctrl.checkEvent($event)" ' +
                         'placeholder="{{\'CAPTION_VALUE\' | translate}}" ng-disabled="$ctrl.filter.Operator == \'None\'" is-open="$ctrl.dateOpen" />' +
                         '<span class="input-group-btn">' +
@@ -148,11 +148,11 @@
                         '</span>' +
                         '</div>';
 
-                    me.tbColumnDateTimeFilterPopoverTemplate = '<div>' +
+                    me.tbColumnDateTimeFilterPopoverTemplate = `${'<div>' +
                         '<form class="tubular-column-filter-form" onsubmit="return false;">' +
-                        '<select class="form-control" ng-options="key as value for (key , value) in $ctrl.filterOperators" ng-model="$ctrl.filter.Operator" ng-hide="$ctrl.dataType == \'boolean\'"></select>&nbsp;' +
-                        (me.canUseHtml5Date() ? htmlDateSelector : bootstrapDateSelector) +
-                        '<hr />' +
+                        '<select class="form-control" ng-options="key as value for (key , value) in $ctrl.filterOperators" ng-model="$ctrl.filter.Operator" ng-hide="$ctrl.dataType == \'boolean\'"></select>&nbsp;'}${
+                        me.canUseHtml5Date() ? htmlDateSelector : bootstrapDateSelector
+                        }<hr />` +
                         '<tb-column-filter-buttons></tb-column-filter-buttons>' +
                         '</form>' +
                         '</div>';
@@ -163,33 +163,31 @@
 
                 /**
                  * Generates the grid's cells markup
-                 * @param {array} columns 
-                 * @param {string} mode 
-                 * @returns {string} 
+                 * @param {array} columns
+                 * @param {string} mode
+                 * @returns {string}
                  */
-                me.generateCells = (columns, mode) => {
-                    return columns.reduce((prev, el) => {
-                        var editorTag = el.EditorType
-                            .replace(/([A-Z])/g, $1 => '-' + $1.toLowerCase());
+                me.generateCells = (columns, mode) => columns.reduce((prev, el) => {
+                        const editorTag = el.EditorType
+                            .replace(/([A-Z])/g, $1 => `-${  $1.toLowerCase()}`);
 
-                        return prev + `\r\n\t\t<tb-cell-template column-name="${el.Name}">` +
-                            '\r\n\t\t\t' +
-                            (mode === 'Inline'
+                        return `${prev  }\r\n\t\t<tb-cell-template column-name="${el.Name}">` +
+                            `\r\n\t\t\t${
+                            mode === 'Inline'
                                 ? `<${editorTag} is-editing="row.$isEditing" value="row.${el.Name}"></${editorTag}>`
-                                : el.Template) +
-                            '\r\n\t\t</tb-cell-template>';
+                                : el.Template
+                            }\r\n\t\t</tb-cell-template>`;
                     }, '');
-                };
 
                 /**
                  * Generates a grid markup using a columns model and grids options
-                 * @param {array} columns 
-                 * @param {object} options 
-                 * @returns {string} 
+                 * @param {array} columns
+                 * @param {object} options
+                 * @returns {string}
                  */
                 me.generateGrid = function (columns, options) {
-                    var topToolbar = '';
-                    var bottomToolbar = '';
+                    let topToolbar = '';
+                    let bottomToolbar = '';
 
                     if (options.Pager) {
                         topToolbar += '\r\n\t<tb-grid-pager class="col-md-6"></tb-grid-pager>';
@@ -218,66 +216,64 @@
                         bottomToolbar += '\r\n\t<tb-grid-pager-info class="col-md-3"></tb-grid-pager-info>';
                     }
 
-                    return '<div class="container">' +
-                        '\r\n<tb-grid server-url="' +
-                        options.dataUrl +
-                        '" request-method="' +
-                        options.RequestMethod +
-                        '" class="row" ' +
-                        'page-size="10" require-authentication="' + options.RequireAuthentication + '" ' +
-                        (options.Mode !== 'Read-Only' ? ' editor-mode="' + options.Mode.toLowerCase() + '"' : '') +
-                        '>' +
-                        (topToolbar === '' ? '' : '\r\n\t<div class="row">' + topToolbar + '\r\n\t</div>') +
-                        '\r\n\t<div class="row">' +
+                    return `${'<div class="container">' +
+                        '\r\n<tb-grid server-url="'}${
+                        options.dataUrl
+                        }" request-method="${
+                        options.RequestMethod
+                        }" class="row" ` +
+                        `page-size="10" require-authentication="${  options.RequireAuthentication  }" ${
+                        options.Mode !== 'Read-Only' ? ` editor-mode="${  options.Mode.toLowerCase()  }"` : ''
+                        }>${
+                        topToolbar === '' ? '' : `\r\n\t<div class="row">${  topToolbar  }\r\n\t</div>`
+                        }\r\n\t<div class="row">` +
                         '\r\n\t<div class="col-md-12">' +
                         '\r\n\t<div class="panel panel-default panel-rounded">' +
                         '\r\n\t<tb-grid-table class="table-bordered">' +
-                        '\r\n\t<tb-column-definitions>' +
-                        (options.Mode !== 'Read-Only'
+                        `\r\n\t<tb-column-definitions>${
+                        options.Mode !== 'Read-Only'
                             ? '\r\n\t\t<tb-column label="Actions"><tb-column-header>{{label}}</tb-column-header></tb-column>'
-                            : '') +
-                        columns.reduce((prev, el) => {
-                            return prev + '\r\n\t\t<tb-column name="' + el.Name + '" label="' + el.Label +
-                                '" column-type="' + el.DataType + '" sortable="' + el.Sortable +
-                                '" ' +
-                                '\r\n\t\t\tis-key="' + el.IsKey + '" searchable="' + el.Searchable +
-                                '" ' +
-                                (el.Sortable
-                                    ? '\r\n\t\t\tsort-direction="' +
-                                    el.SortDirection +
-                                    '" sort-order="' +
-                                    el.SortOrder +
-                                    '" '
-                                    : ' ') +
-                                'visible="' +
-                                el.Visible +
-                                '">' +
-                                (el.Filter ? '\r\n\t\t\t<tb-column-filter></tb-column-filter>' : '') +
-                                '\r\n\t\t\t<tb-column-header>{{label}}</tb-column-header>' +
-                                '\r\n\t\t</tb-column>';
-                        }) +
-                        '\r\n\t</tb-column-definitions>' +
+                            : ''
+                        }${columns.reduce((prev, el) => `${prev  }\r\n\t\t<tb-column name="${  el.Name  }" label="${  el.Label
+                                }" column-type="${  el.DataType  }" sortable="${  el.Sortable
+                                }" ` +
+                                `\r\n\t\t\tis-key="${  el.IsKey  }" searchable="${  el.Searchable
+                                }" ${
+                                el.Sortable
+                                    ? `\r\n\t\t\tsort-direction="${
+                                    el.SortDirection
+                                    }" sort-order="${
+                                    el.SortOrder
+                                    }" `
+                                    : ' '
+                                }visible="${
+                                el.Visible
+                                }">${
+                                el.Filter ? '\r\n\t\t\t<tb-column-filter></tb-column-filter>' : ''
+                                }\r\n\t\t\t<tb-column-header>{{label}}</tb-column-header>` +
+                                '\r\n\t\t</tb-column>')
+                        }\r\n\t</tb-column-definitions>` +
                         '\r\n\t<tb-row-set>' +
-                        '\r\n\t<tb-row-template ng-repeat="row in $component.rows" row-model="row">' +
-                        (options.Mode !== 'Read-Only'
-                            ? '\r\n\t\t<tb-cell-template>' +
-                            (options
+                        `\r\n\t<tb-row-template ng-repeat="row in $component.rows" row-model="row">${
+                        options.Mode !== 'Read-Only'
+                            ? `\r\n\t\t<tb-cell-template>${
+                            options
                                 .Mode ===
                                 'Inline'
                                 ? '\r\n\t\t\t<tb-save-button model="row"></tb-save-button>'
-                                : '') +
-                            '\r\n\t\t\t<tb-edit-button model="row"></tb-edit-button>' +
+                                : ''
+                            }\r\n\t\t\t<tb-edit-button model="row"></tb-edit-button>` +
                             '\r\n\t\t</tb-cell-template>'
-                            : '') +
-                        me.generateCells(columns, options.Mode) +
-                        '\r\n\t</tb-row-template>' +
+                            : ''
+                        }${me.generateCells(columns, options.Mode)
+                        }\r\n\t</tb-row-template>` +
                         '\r\n\t</tb-row-set>' +
                         '\r\n\t</tb-grid-table>' +
                         '\r\n\t</div>' +
                         '\r\n\t</div>' +
-                        '\r\n\t</div>' +
-                        (bottomToolbar === '' ? '' : '\r\n\t<div class="row">' + bottomToolbar + '\r\n\t</div>') +
-                        '\r\n</tb-grid>' +
+                        `\r\n\t</div>${
+                        bottomToolbar === '' ? '' : `\r\n\t<div class="row">${  bottomToolbar  }\r\n\t</div>`
+                        }\r\n</tb-grid>` +
                         '\r\n</div>';
                 };
 
@@ -296,16 +292,16 @@
 
                 /*
                  * Create a columns array using a model.
-                 * 
+                 *
                  * @param {object} model
                  * @returns {array} The columns
                  */
                 me.createColumns = function (model) {
-                    var jsonModel = (angular.isArray(model) && model.length > 0) ? model[0] : model;
-                    var columns = [];
+                    const jsonModel = (angular.isArray(model) && model.length > 0) ? model[0] : model;
+                    const columns = [];
 
                     angular.forEach(Object.keys(jsonModel), prop => {
-                        var value = jsonModel[prop];
+                        const value = jsonModel[prop];
 
                         // Ignore functions and  null value, but maybe evaluate another item if there is anymore
                         if (prop[0] === '$' || angular.isFunction(value) || value == null) {
@@ -327,7 +323,7 @@
                                 Template: `{{row.${prop} ? "TRUE" : "FALSE" }}`
                             });
                         } else {
-                            var newColumn = { Name: prop, DataType: 'string', Template: `{{row.${prop}}}` };
+                            const newColumn = { Name: prop, DataType: 'string', Template: `{{row.${prop}}}` };
 
                             if ((/e(-|)mail/ig).test(newColumn.Name)) {
                                 newColumn.Template = `<a href="mailto:${newColumn.Template}">${newColumn.Template}</a>`;
@@ -337,7 +333,7 @@
                         }
                     });
 
-                    var firstSort = false;
+                    let firstSort = false;
 
                     angular.forEach(columns, columnObj => {
                         columnObj.Label = columnObj.Name.replace(/([a-z])([A-Z])/g, '$1 $2');
@@ -373,15 +369,15 @@
                 };
 
                 me.generatePopupTemplate = (model, title) => {
-                    var columns = me.createColumns(model);
+                    const columns = me.createColumns(model);
 
-                    return '<tb-form model="Model">' +
-                        '<div class="modal-header"><h3 class="modal-title">' +
-                        (title || 'Edit Row') +
-                        '</h3></div>' +
-                        '<div class="modal-body">' +
-                        me.generateFieldsArray(columns).join('') +
-                        '</div>' +
+                    return `${'<tb-form model="Model">' +
+                        '<div class="modal-header"><h3 class="modal-title">'}${
+                        title || 'Edit Row'
+                        }</h3></div>` +
+                        `<div class="modal-body">${
+                        me.generateFieldsArray(columns).join('')
+                        }</div>` +
                         '<div class="modal-footer">' +
                         '<button class="btn btn-primary" ng-click="savePopup()" ng-disabled="!Model.$valid()">Save</button>' +
                         '<button class="btn btn-danger" ng-click="closePopup()" formnovalidate>Cancel</button>' +
@@ -390,8 +386,8 @@
                 };
 
                 me.generatePopup = (model, title) => {
-                    var templateName = `temp${new Date().getTime()}.html`;
-                    var template = me.generatePopupTemplate(model, title);
+                    const templateName = `temp${new Date().getTime()}.html`;
+                    const template = me.generatePopupTemplate(model, title);
 
                     $templateCache.put(templateName, template);
 
@@ -400,80 +396,78 @@
 
                 /**
                  * Generates a new form using the fields model and options
-                 * 
-                 * @param {array} fields 
-                 * @param {object} options 
-                 * @returns {string} 
+                 *
+                 * @param {array} fields
+                 * @param {object} options
+                 * @returns {string}
                  */
                 me.generateForm = (fields, options) => {
-                    var layout = options.Layout === 'Simple' ? '' : options.Layout.toLowerCase();
-                    var fieldsArray = me.generateFieldsArray(fields);
-                    var fieldsMarkup;
+                    const layout = options.Layout === 'Simple' ? '' : options.Layout.toLowerCase();
+                    const fieldsArray = me.generateFieldsArray(fields);
+                    let fieldsMarkup;
 
                     if (layout === '') {
                         fieldsMarkup = fieldsArray.join('');
                     } else {
-                        fieldsMarkup = '\r\n\t<div class="row">' +
-                            (layout === 'two-columns'
-                                ? '\r\n\t<div class="col-md-6">' +
-                                fieldsArray.filter((i, e) => (e % 2) === 0).join('') +
-                                '\r\n\t</div>\r\n\t<div class="col-md-6">' +
-                                fieldsArray.filter((i, e) => (e % 2) === 1).join('') +
-                                '</div>'
-                                : '\r\n\t<div class="col-md-4">' +
-                                fieldsArray.filter((i, e) => (e % 3) === 0).join('') +
-                                '\r\n\t</div>\r\n\t<div class="col-md-4">' +
-                                fieldsArray.filter((i, e) => (e % 3) === 1).join('') +
-                                '\r\n\t</div>\r\n\t<div class="col-md-4">' +
-                                fieldsArray.filter((i, e) => (e % 3) === 2).join('') +
-                                '\r\n\t</div>') +
-                            '\r\n\t</div>';
+                        fieldsMarkup = `\r\n\t<div class="row">${
+                            layout === 'two-columns'
+                                ? `\r\n\t<div class="col-md-6">${
+                                fieldsArray.filter((i, e) => (e % 2) === 0).join('')
+                                }\r\n\t</div>\r\n\t<div class="col-md-6">${
+                                fieldsArray.filter((i, e) => (e % 2) === 1).join('')
+                                }</div>`
+                                : `\r\n\t<div class="col-md-4">${
+                                fieldsArray.filter((i, e) => (e % 3) === 0).join('')
+                                }\r\n\t</div>\r\n\t<div class="col-md-4">${
+                                fieldsArray.filter((i, e) => (e % 3) === 1).join('')
+                                }\r\n\t</div>\r\n\t<div class="col-md-4">${
+                                fieldsArray.filter((i, e) => (e % 3) === 2).join('')
+                                }\r\n\t</div>`
+                            }\r\n\t</div>`;
                     }
 
-                    return `<tb-form server-save-method="${options.SaveMethod}" 
+                    return `${`<tb-form server-save-method="${options.SaveMethod}" 
                                 model-key="${options.ModelKey}" 
                                 require-authentication="${options.RequireAuthentication}" 
                                 server-url="${options.dataUrl}" 
                                 server-save-url="${options.SaveUrl}">` +
-                        '\r\n\t' +
-                        fieldsMarkup +
-                        '\r\n\t<div>' +
-                        '\r\n\t\t<button class="btn btn-primary" ng-click="$parent.save()" ng-disabled="!$parent.model.$valid()">Save</button>' +
-                        (options.CancelButton
+                        '\r\n\t'}${
+                        fieldsMarkup
+                        }\r\n\t<div>` +
+                        `\r\n\t\t<button class="btn btn-primary" ng-click="$parent.save()" ng-disabled="!$parent.model.$valid()">Save</button>${
+                        options.CancelButton
                             ? '\r\n\t\t<button class="btn btn-danger" ng-click="$parent.cancel()" formnovalidate>Cancel</button>'
-                            : '') +
-                        '\r\n\t</div>' +
+                            : ''
+                        }\r\n\t</div>` +
                         '\r\n</tb-form>';
                 };
 
                 /**
                  * Generates a array with a template for every column
-                 * 
+                 *
                  * @param {array} columns
                  * @returns {array}
                  */
-                me.generateFieldsArray = columns => {
-                    return columns.map(el => {
-                        var editorTag = el.EditorType
-                            .replace(/([A-Z])/g, $1 => '-' + $1.toLowerCase());
-                        var defaults = me.defaults.fieldsSettings[el.EditorType];
+                me.generateFieldsArray = columns => columns.map(el => {
+                        const editorTag = el.EditorType
+                            .replace(/([A-Z])/g, $1 => `-${  $1.toLowerCase()}`);
+                        const defaults = me.defaults.fieldsSettings[el.EditorType];
 
-                        return '\r\n\t' +`<${editorTag} name="${el.Name}"` +
-                            (defaults.EditorType ? '\r\n\t\teditor-type="' + el.DataType + '" ' : '') +
-                            (defaults.ShowLabel
-                                ? '\r\n\t\tlabel="' + el.Label + '" show-label="' + el.ShowLabel + '"'
-                                : '') +
-                            (defaults.Placeholder ? '\r\n\t\tplaceholder="' + el.Placeholder + '"' : '') +
-                            (defaults.Required ? '\r\n\t\trequired="' + el.Required + '"' : '') +
-                            (defaults.ReadOnly ? '\r\n\t\tread-only="' + el.ReadOnly + '"' : '') +
-                            (defaults.Format ? '\r\n\t\tformat="' + el.Format + '"' : '') +
-                            (defaults.Help ? '\r\n\t\thelp="' + el.Help + '"' : '') +
-                            '>\r\n\t' +`</${editorTag}>`;
+                        return `${'\r\n\t' +`<${editorTag} name="${el.Name}"`}${
+                            defaults.EditorType ? `\r\n\t\teditor-type="${  el.DataType  }" ` : ''
+                            }${defaults.ShowLabel
+                                ? `\r\n\t\tlabel="${  el.Label  }" show-label="${  el.ShowLabel  }"`
+                                : ''
+                            }${defaults.Placeholder ? `\r\n\t\tplaceholder="${  el.Placeholder  }"` : ''
+                            }${defaults.Required ? `\r\n\t\trequired="${  el.Required  }"` : ''
+                            }${defaults.ReadOnly ? `\r\n\t\tread-only="${  el.ReadOnly  }"` : ''
+                            }${defaults.Format ? `\r\n\t\tformat="${  el.Format  }"` : ''
+                            }${defaults.Help ? `\r\n\t\thelp="${  el.Help  }"` : ''
+                            }>\r\n\t` +`</${editorTag}>`;
                     });
-                };
 
                 me.setupFilter = ($scope, $ctrl) => {
-                    var dateOps = {
+                    const dateOps = {
                         'None': translateFilter('OP_NONE'),
                         'Equals': translateFilter('OP_EQUALS'),
                         'NotEquals': translateFilter('OP_NOTEQUALS'),
@@ -484,7 +478,7 @@
                         'Lt': '<'
                     };
 
-                    var filterOperators = {
+                    const filterOperators = {
                         'string': {
                             'None': translateFilter('OP_NONE'),
                             'Equals': translateFilter('OP_EQUALS'),
@@ -527,7 +521,7 @@
                     $ctrl.filterTitle = $ctrl.title || translateFilter('CAPTION_FILTER');
 
                     $scope.$watch(() => {
-                        var c = $ctrl.$component.columns.filter(e => e.Name === $ctrl.filter.Name);
+                        const c = $ctrl.$component.columns.filter(e => e.Name === $ctrl.filter.Name);
 
                         return c.length !== 0 ? c[0] : null;
                     }, val => {
@@ -550,7 +544,7 @@
                         true);
 
                     $ctrl.retrieveData = function () {
-                        var c = $ctrl.$component.columns.filter(e => e.Name === $ctrl.filter.Name);
+                        const c = $ctrl.$component.columns.filter(e => e.Name === $ctrl.filter.Name);
 
                         if (c.length !== 0) {
                             c[0].Filter = $ctrl.filter;
@@ -589,11 +583,11 @@
                         }
                     };
 
-                    var columns = $ctrl.$component.columns.filter(e => e.Name === $ctrl.filter.Name);
+                    const columns = $ctrl.$component.columns.filter(e => e.Name === $ctrl.filter.Name);
 
-                    $scope.$watch('$ctrl.filter.Operator', val => { 
+                    $scope.$watch('$ctrl.filter.Operator', val => {
                         if (val === 'None') {
-                            $ctrl.filter.Text = ''; 
+                            $ctrl.filter.Text = '';
                         }
                     });
 

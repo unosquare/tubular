@@ -59,21 +59,17 @@
                     angular.forEach($ctrl.columns, (col, key) => {
                         let value = angular.isDefined(data[key]) ? data[key] : data[col.Name];
 
-                        if (angular.isUndefined(value) && data[key] === 0) {
-                            value = 0;
+                        if (col.DataType === 'date' || col.DataType === 'datetime' || col.DataType === 'datetimeutc') {
+                            if (value === null || value === '' || moment(value).year() <= 1900)
+                                value = '';
+                            else
+                                value = col.DataType === 'datetimeutc' ? moment.utc(value) : moment(value);
                         }
 
                         obj.$addField(col.Name, value);
 
-                        if (col.DataType === 'date' || col.DataType === 'datetime' || col.DataType === 'datetimeutc') {
-                            if (obj[col.Name] === null || obj[col.Name] === '' || moment(obj[col.Name]).year() <= 1900)
-                                obj[col.Name] = '';
-                            else
-                                obj[col.Name] = col.DataType === 'datetimeutc' ? moment.utc(obj[col.Name]) : moment(obj[col.Name]);
-                        }
-
                         if (col.IsKey) {
-                            obj.$key += `${obj[col.Name]  },`;
+                            obj.$key += `${value},`;
                         }
                     });
                 }
