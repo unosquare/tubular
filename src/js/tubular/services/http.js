@@ -15,14 +15,12 @@
         .service('tubularHttp', [
             '$http',
             '$q',
-            'translateFilter',
             '$document',
             'tubularConfig',
             '$window',
             function (
                 $http,
                 $q,
-                translateFilter,
                 $document,
                 tubularConfig,
                 $window) {

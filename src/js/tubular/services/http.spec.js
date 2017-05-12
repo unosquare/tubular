@@ -7,11 +7,7 @@ describe('Module: tubular.services', () => {
 
         beforeEach(() => {
             module('tubular.services');
-            module(($filterProvider) => {
-                var filter = jasmine.createSpy().and.returnValue('translated');
-                $filterProvider.register('translate', () => filter);
-            });
-
+            
             inject((_$httpBackend_, _tubularHttp_, _tubularConfig_) => {
                 $httpBackend = _$httpBackend_;
                 tubularHttp = _tubularHttp_;
