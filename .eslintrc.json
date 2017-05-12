@@ -40,5 +40,8 @@
       "array",
       { "matchNames": false }
     ]
+  },
+  "settings":{
+    "angular": 1
   }
 }
