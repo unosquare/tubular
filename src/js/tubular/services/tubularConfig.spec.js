@@ -31,5 +31,23 @@ describe('Module: tubular.services', () => {
             TubularConfig.webApi.baseUrl('/apimodified');
             expect(TubularConfig.webApi.baseUrl()).toBe('/apimodified');
         });
+        
+        it('should add platform', () => {
+            TubularConfig.setPlatformConfig('clone', {
+                webApi: {
+                    tokenUrl: '/api/token',
+                    refreshTokenUrl: '/api/token',
+                    enableRefreshTokens: false,
+                    requireAuthentication: true,
+                    baseUrl: '/api'
+                },
+                localStorage: {
+                    prefix: 'tubular.'
+                }
+            });
+
+            expect(TubularConfig.platform.clone).toBeDefined();
+            expect(TubularConfig.platform.clone.webApi.baseUrl()).toBe('/api');
+        });
     });
 });
