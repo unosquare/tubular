@@ -75,15 +75,23 @@ describe('Module: tubular.models', () => {
             })
         });
 
-        it('should $key have multiple values', () => {
-            var data = ["3", "ZAP"];
-            ctrl.columns = [
-                { 'DataType': 'string', 'IsKey': true, 'Name': 'Id' },
-                { 'DataType': 'string', 'IsKey': true, 'Name': 'Name' }
-            ];
-            obj = new tubularModel(ctrl, data);
-
-            expect(obj.$key).toBe('3,ZAP');
+        describe('With columns', () => {
+            beforeEach(() => {
+                var data = ["3", "ZAP", "", "2017-01-01 20:00:00", "2017-01-01", undefined];
+                ctrl.columns = [
+                    { 'DataType': 'string', 'IsKey': true, 'Name': 'Id' },
+                    { 'DataType': 'string', 'IsKey': true, 'Name': 'Name' },
+                    { 'DataType': 'date', 'IsKey': false, 'Name': 'Date' },
+                    { 'DataType': 'datetime', 'IsKey': false, 'Name': 'DateTime' },
+                    { 'DataType': 'datetimeutc', 'IsKey': false, 'Name': 'DateTimeUtc' },
+                    { 'DataType': 'string', 'IsKey': false, 'Name': 'Another' },
+                ];
+                obj = new tubularModel(ctrl, data);
+            });
+            
+            it('should $key have multiple values', () => {
+                expect(obj.$key).toBe('3,ZAP');
+            });
         });
 
         describe('working with $original', () => {
