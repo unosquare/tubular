@@ -3,16 +3,17 @@
 describe('Module: tubular.services', function () {
 
     describe('Interceptor: Auth', function () {
-        var AuthInterceptor, $httpBackend, tubularHttp, tubularConfig;
+        var AuthInterceptor, $httpBackend, tubularHttp, tubularConfig, $rootScope;
 
         beforeEach(function () {
             module('tubular.services');
 
-            inject(function (_tubularAuthInterceptor_, _$httpBackend_, _tubularHttp_, _tubularConfig_) {
+            inject(function (_tubularAuthInterceptor_, _$httpBackend_, _tubularHttp_, _tubularConfig_, _$rootScope_) {
                 AuthInterceptor = _tubularAuthInterceptor_;
                 $httpBackend = _$httpBackend_;
                 tubularHttp = _tubularHttp_;
                 tubularConfig = _tubularConfig_;
+                $rootScope = _$rootScope_;
             });
         });
 
@@ -98,7 +99,7 @@ describe('Module: tubular.services', function () {
                     done();
                 });
 
-            $httpBackend.flush();
+            $rootScope.$digest();
         });
 
         it('should try to use refresh tokens', done => {
@@ -141,6 +142,7 @@ describe('Module: tubular.services', function () {
                 });
 
             $httpBackend.flush();
+            $rootScope.$digest();
         });
     });
 });
