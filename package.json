@@ -8,7 +8,7 @@
     "url": "https://github.com/unosquare/tubular"
   },
   "scripts": {
-    "test": "grunt eslint && grunt unit:ci && grunt coveralls:ci"
+    "test": "grunt eslint && grunt unit:ci && grunt e2e:ci && grunt coveralls:ci"
   },
   "keywords": [
     "grid",
