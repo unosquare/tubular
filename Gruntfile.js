@@ -1,4 +1,3 @@
-/// <binding ProjectOpened='watch:scripts' />
 module.exports = grunt => {
     // Load grunt tasks automatically
     require('load-grunt-tasks')(grunt);
@@ -33,70 +32,12 @@ module.exports = grunt => {
                 ]
             }
         },
-        instrument: {
-            files: [
-                'test/Unosquare.Tubular.WebTest/testApp.js',
-                'src/js/tubular*-bundle.js'
-            ],
-            options: {
-                basePath: 'instrumented/'
-            }
-        },
-        'string-replace': {
-            dist: {
-                files: { 'instrumented/': 'test/Unosquare.Tubular.WebTest/index*.html' },
-                options: {
-                    replacements: [
-                        {
-                            pattern: /\.\.\/\.\.\/src\/Unosquare\.Tubular\/Javascript\/tubular/g,
-                            replacement: '/instrumented/src/js/tubular'
-                        }
-                    ]
-                }
-            }
-        },
-        connect: {
-            server: {
-                options: {
-                    port: 9000,
-                    hostname: 'localhost',
-                    base: ''
-                }
-            }
-        },
-        protractor_coverage: {
-            options: {
-                noColor: false,
-                keepAlive: false,
-                collectorPort: 9001,
-                webdriverManagerUpdate: true,
-                configFile: 'test/e2e-tests/protractor.conf.grunt.js'
-            },
-            remote: {
-                options: {
-                    coverageDir: 'coverage',
-                    args: {
-                        baseUrl: 'http://localhost:9000/instrumented/test/Unosquare.Tubular.WebTest/',
-                        browser: process.env.TRAVIS_OS_NAME === 'osx' ? 'chrome' : 'firefox'
-
-                    }
-                }
-            },
-            local: {
-                options: {
-                    args: {
-                        baseUrl: 'http://localhost:9000/test/Unosquare.Tubular.WebTest/',
-                        browser: 'firefox'
-                    }
-                }
-            }
-        },
         coveralls: {
             options: {
                 force: true
             },
-            local: {
-                src: 'report/coverage/*.info'
+            ci: {
+                src: 'report/coverage/lcov.info'
             }
         },
         eslint: {
@@ -128,7 +69,6 @@ module.exports = grunt => {
                 singleRun: false,
                 autoWatch: false,
                 preprocessors: {
-
                 },
                 reporters: ['progress']
             }
@@ -278,21 +218,6 @@ module.exports = grunt => {
             }
         }
     });
-
-    grunt.registerTask('test',
-        [
-            'instrument',
-            'string-replace',
-            'connect:server',
-            'protractor_coverage:remote',
-            'coveralls:local'
-        ]);
-
-    grunt.registerTask('test-local',
-        [
-            'connect:server',
-            'protractor_coverage:local'
-        ]);
 
     grunt.registerTask('build-js', ['concat:tubular_js', 'concat:chart_js', 'concat:highchart_js']);
 
