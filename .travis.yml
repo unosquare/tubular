@@ -5,7 +5,7 @@ node_js:
 notifications:
   slack: unolabs:cbusXPH6pBwZ35rVDzi4k4ve
 addons:
-  firefox: '52.0'
+  firefox: '51.0'
 install:
 - npm install
 - bower update
