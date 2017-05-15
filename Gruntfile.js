@@ -175,11 +175,9 @@ module.exports = grunt => {
                     'src/js/tubular/tubular-directives-gridpager.js',
                     'src/js/tubular/tubular-models.js',
                     'src/js/tubular/tubular-services.js',
+                    'src/js/tubular/filters/**/*.js',
                     'src/js/tubular/interceptors/**/*.js',
                     'src/js/tubular/services/**/*.js',
-                    'src/js/tubular/tubular-services-http.js',
-                    'src/js/tubular/interceptors/auth.js',
-                    'src/js/tubular/tubular-services-i18n.js',
                     '!src/js/tubular/**/*.spec.js',
                     '!src/js/tubular/**/*.e2e.js'
                 ],
