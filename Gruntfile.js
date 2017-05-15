@@ -116,6 +116,14 @@ module.exports = grunt => {
             ci: {
                 singleRun: true
             },
+            e2eci: {
+              configFile: 'test/e2e/karma.conf.js',
+              singleRun: true
+            },
+            e2e: {
+              configFile: 'test/e2e/karma.conf.js',
+              singleRun: false
+            },
             dev: {
                 singleRun: false,
                 autoWatch: false,
@@ -175,11 +183,10 @@ module.exports = grunt => {
                     'src/js/tubular/tubular-directives-gridpager.js',
                     'src/js/tubular/tubular-models.js',
                     'src/js/tubular/tubular-services.js',
+                    'src/js/tubular/filters/**/*.js',
                     'src/js/tubular/interceptors/**/*.js',
                     'src/js/tubular/services/**/*.js',
-                    'src/js/tubular/tubular-services-http.js',
                     'src/js/tubular/interceptors/auth.js',
-                    'src/js/tubular/tubular-services-i18n.js',
                     '!src/js/tubular/**/*.spec.js',
                     '!src/js/tubular/**/*.e2e.js'
                 ],
@@ -300,4 +307,7 @@ module.exports = grunt => {
     grunt.registerTask('dist', ['build-js', 'min', 'copy']);
     grunt.registerTask('unit', ['karma:dev']);
     grunt.registerTask('unit:ci', ['karma:ci']);
+
+    grunt.registerTask('e2e:ci', ['dist','karma:e2eci']);
+    grunt.registerTask('e2e', ['dist','karma:e2e']);
 };

@@ -1,6 +1,18 @@
 ﻿(function (angular, moment) {
     'use strict';
 
+    angular.module('tubular.services')
+        /**
+        * @ngdoc service
+        * @name tubularEditorService
+        *
+        * @description
+        * The `tubularEditorService` service is a internal helper to setup any `TubularModel` with a UI.
+        */
+        .service('tubularEditorService', ['translateFilter', function(translateFilter) {
+            return editorService(translateFilter);
+        }]);
+        
     function editorService(translateFilter) {
         return {
             /**
@@ -196,15 +208,5 @@
         }
     }
 
-    angular.module('tubular.services')
-        /**
-        * @ngdoc service
-        * @name tubularEditorService
-        *
-        * @description
-        * The `tubularEditorService` service is a internal helper to setup any `TubularModel` with a UI.
-        */
-        .service('tubularEditorService', ['translateFilter', function(translateFilter) {
-            return editorService(translateFilter);
-        }]);
+
 })(angular, moment);
