@@ -37,7 +37,7 @@ module.exports = grunt => {
                 force: true
             },
             ci: {
-                src: '/report/coverage/*.info'
+                src: 'report/coverage/lcov.info'
             }
         },
         eslint: {
