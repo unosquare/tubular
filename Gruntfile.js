@@ -35,6 +35,9 @@ module.exports = grunt => {
         coveralls: {
             options: {
                 force: true
+            },
+            ci: {
+                src: '/report/coverage/*.info'
             }
         },
         eslint: {
