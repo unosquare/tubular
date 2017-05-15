@@ -186,7 +186,6 @@ module.exports = grunt => {
                     'src/js/tubular/filters/**/*.js',
                     'src/js/tubular/interceptors/**/*.js',
                     'src/js/tubular/services/**/*.js',
-                    'src/js/tubular/interceptors/auth.js',
                     '!src/js/tubular/**/*.spec.js',
                     '!src/js/tubular/**/*.e2e.js'
                 ],

@@ -25,6 +25,18 @@ describe('Module: tubular.services', () => {
         'ReadOnly': false
     };
 
+    var extendedModel = {
+            'Id': 8,
+            'Name': 'Guzman Webster',
+            'Company': 'IDEGO',
+            'Email': 'guzmanwebster@idego.com',
+            'Phone': '+1 (869) 428-2675',
+            'Birthday': 'Fri Mar 01 1996 00:57:47 GMT-0600 (Central Standard Time (Mexico))',
+            'IsOwner': 'false',
+            '$Ignore': 'true',
+            'InvalidFunc': function() {}
+        };
+
     var models = [
         {
             'Id': 8,
@@ -135,6 +147,11 @@ describe('Module: tubular.services', () => {
         });
 
         describe('Method: createColumns', () => {
+            it('should match columns with model with funcitons', () => {
+                expect(tubularTemplateService.createColumns(models))
+                    .toEqual(tubularTemplateService.createColumns(extendedModel));
+            });
+
             it('should return an array with 7 columns', () => {
                 expect(columns).not.toBe([]);
                 expect(columns.length).toBe(7);

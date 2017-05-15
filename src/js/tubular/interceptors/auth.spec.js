@@ -3,16 +3,17 @@
 describe('Module: tubular.services', function () {
 
     describe('Interceptor: Auth', function () {
-        var AuthInterceptor, $httpBackend, tubularHttp, tubularConfig;
+        var AuthInterceptor, $httpBackend, tubularHttp, tubularConfig, $rootScope;
 
         beforeEach(function () {
             module('tubular.services');
 
-            inject(function (_tubularAuthInterceptor_, _$httpBackend_, _tubularHttp_, _tubularConfig_) {
+            inject(function (_tubularAuthInterceptor_, _$httpBackend_, _tubularHttp_, _tubularConfig_, _$rootScope_) {
                 AuthInterceptor = _tubularAuthInterceptor_;
                 $httpBackend = _$httpBackend_;
                 tubularHttp = _tubularHttp_;
                 tubularConfig = _tubularConfig_;
+                $rootScope = _$rootScope_;
             });
         });
 
@@ -98,7 +99,7 @@ describe('Module: tubular.services', function () {
                     done();
                 });
 
-            $httpBackend.flush();
+            $rootScope.$digest();
         });
 
         it('should try to use refresh tokens', done => {
@@ -115,7 +116,6 @@ describe('Module: tubular.services', function () {
             };
 
             expect(tubularConfig.webApi.enableRefreshTokens()).toBe(false, 'Should not use refresh tokens by default');
-            // expect(tubularHttp.isBearerTokenExpired()).toBe(true);
 
             tubularConfig.webApi.enableRefreshTokens(true);
             tubularHttp.userData.refreshToken = 'original_refresh';
@@ -141,6 +141,47 @@ describe('Module: tubular.services', function () {
                 });
 
             $httpBackend.flush();
+            $rootScope.$digest();
+        });
+
+        it('should reject with 401 when refresh token not working', done => {
+            var config = {
+                method: 'GET',
+                url: '/api/dummy',
+                headers: {
+                }
+            };
+
+            var rejection = {
+                config: config,
+                status: 401
+            };
+
+            expect(tubularConfig.webApi.enableRefreshTokens()).toBe(false, 'Should not use refresh tokens by default');
+
+            tubularConfig.webApi.enableRefreshTokens(true);
+            tubularHttp.userData.refreshToken = 'original_refresh';
+            tubularHttp.userData.bearerToken = "original_bearer";
+
+            expect(rejection.triedRefreshTokens).toBeUndefined();
+
+            $httpBackend.expectPOST(tubularConfig.webApi.refreshTokenUrl(), data => {
+                return data === 'grant_type=refresh_token&refresh_token=' + tubularHttp.userData.refreshToken;
+            }).respond(401, { access_token: 'modified_bearer', refresh_token: 'modified_refresh' });
+
+            AuthInterceptor
+                .responseError(rejection)
+                .then(function (resp) {
+                    expect(resp).toBeUndefined();
+                    done();
+                }, rejection => {
+                    expect(rejection).toBeDefined();
+                    expect(tubularHttp.userData.bearerToken).toBe('');
+                    done();
+                });
+
+            $httpBackend.flush();
+            $rootScope.$digest();
         });
     });
 });
