@@ -55,10 +55,13 @@ module.exports = grunt => {
                 browsers: ['Firefox']
             },
             ci: {
+                browsers: ['Firefox', 'Chrome'],
                 singleRun: true
+
             },
             e2eci: {
               configFile: 'test/e2e/karma.conf.js',
+              browsers: ['Firefox', 'Chrome'],
               singleRun: true
             },
             e2e: {

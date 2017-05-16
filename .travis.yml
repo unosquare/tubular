@@ -7,6 +7,7 @@ notifications:
   slack: unolabs:cbusXPH6pBwZ35rVDzi4k4ve
 addons:
   firefox: 'latest'
+  chrome: 'latest'
 install:
 - npm install
 - bower update
