@@ -1,5 +1,5 @@
 // Karma configuration
-var ff = process.env.FF;
+var ff = process.env.FF == "true";
 
 module.exports = (config) => {
     config.set({

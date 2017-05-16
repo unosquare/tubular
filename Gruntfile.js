@@ -1,4 +1,4 @@
-var ff = process.env.FF;
+var ff = process.env.FF == "true";
 
 module.exports = grunt => {
     // Load grunt tasks automatically
