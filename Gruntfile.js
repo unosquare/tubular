@@ -12,6 +12,7 @@ module.exports = grunt => {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-contrib-csslint');
 
     // Project configuration.
     grunt.initConfig({
@@ -41,6 +42,13 @@ module.exports = grunt => {
             ci: {
                 src: 'report/coverage/lcov.info'
             }
+        },
+        csslint: {
+          options: {
+            quiet: true,
+            formatters: [{id:'compact', dest: 'report/csslint/report.txt'}]
+          },
+          src: ['src/css/**/*.css', '!src/css/**/*min.css']
         },
         eslint: {
             options: {
