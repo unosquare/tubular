@@ -7,13 +7,14 @@ notifications:
   slack: unolabs:cbusXPH6pBwZ35rVDzi4k4ve
 addons:
   firefox: 'latest'
-env: TZ=Mexico/General
-matrix:
-  include:
-    - env: 
-      - CHROME_BIN=/usr/bin/google-chrome
-      - FF=false
-    - env: FF=true
+env: 
+  global:
+    - TZ=Mexico/General
+    - CHROME_BIN=/usr/bin/google-chrome
+    - DISPLAY=:99.0
+  matrix:
+    - FF=false
+    - FF=true
 install:
 - npm install
 - bower update
@@ -23,7 +24,6 @@ before_install:
 - if [[ "$FF" = "false" ]]; then wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb; fi
 - if [[ "$FF" = "false" ]]; then sudo dpkg -i google-chrome*.deb; fi
 before_script:
-- export DISPLAY=:99.0
 - sh -e /etc/init.d/xvfb start
 script:
 - npm test
