@@ -11,6 +11,15 @@ addons:
 install:
 - npm install
 - bower update
+before_install:
+- export TZ=Mexico/General
+- date
+- sudo apt-get update
+- sudo apt-get install -y libappindicator1 fonts-liberation
+- export DISPLAY=:99.0
+- wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+- sudo dpkg -i google-chrome*.deb
+- export CHROME_BIN=/usr/bin/google-chrome
 before_script:
 - if [[ $TRAVIS_OS_NAME == "linux" ]]; then export DISPLAY=:99.0; fi
 - if [[ $TRAVIS_OS_NAME == "linux" ]]; then sh -e /etc/init.d/xvfb start; fi
