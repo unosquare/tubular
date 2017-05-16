@@ -8,8 +8,11 @@ notifications:
 addons:
   firefox: 'latest'
 env:
-  - FF=false CHROME_BIN=/usr/bin/google-chrome DISPLAY=:99.0
-  - FF=true DISPLAY=:99.0
+  global:
+    secure: beog7sTAvmzWIYC9fEFCVr/ok60aU796/t2cO6oaHpsZxqwM9u2PYBae3o4gJsrZywv9yfKzUku5j/ugHYtrVTt6edCZOGydOwm1vjZINrxvf8zf+dMUicOIu1SfiPAMYbCwq8xlB/MeyzTggkcxymHcr1ARTeqjXpC8XJDFCnQ=
+  matrix:
+    - FF=false CHROME_BIN=/usr/bin/google-chrome DISPLAY=:99.0
+    - FF=true DISPLAY=:99.0
 install:
 - npm install
 - bower update
@@ -24,6 +27,3 @@ script:
 - npm test
 - chmod +x ./publish.sh
 - ./publish.sh
-env:
-  global:
-    secure: beog7sTAvmzWIYC9fEFCVr/ok60aU796/t2cO6oaHpsZxqwM9u2PYBae3o4gJsrZywv9yfKzUku5j/ugHYtrVTt6edCZOGydOwm1vjZINrxvf8zf+dMUicOIu1SfiPAMYbCwq8xlB/MeyzTggkcxymHcr1ARTeqjXpC8XJDFCnQ=
