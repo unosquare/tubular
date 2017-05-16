@@ -27,9 +27,9 @@ cd ..
 
 # Now let's go have some fun with the cloned repo
 cd out
-npm install
-gulp dgeni
-gulp reports
+if [[ "$BROWSER" = "firefox" ]]; then npm install; fi
+if [[ "$BROWSER" = "firefox" ]]; then gulp dgeni; fi
+if [[ "$BROWSER" = "firefox" ]]; then gulp reports; fi
 
 git config user.name "Travis CI"
 git config user.email "geovanni.perez@gmail.com"
