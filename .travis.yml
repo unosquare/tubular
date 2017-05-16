@@ -7,14 +7,9 @@ notifications:
   slack: unolabs:cbusXPH6pBwZ35rVDzi4k4ve
 addons:
   firefox: 'latest'
-env: 
-  global:
-    - TZ=Mexico/General
-    - CHROME_BIN=/usr/bin/google-chrome
-    - DISPLAY=:99.0
-  matrix:
-    - FF=false
-    - FF=true
+env:
+  - FF=false CHROME_BIN=/usr/bin/google-chrome DISPLAY=:99.0
+  - FF=true DISPLAY=:99.0
 install:
 - npm install
 - bower update
