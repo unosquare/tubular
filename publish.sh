@@ -16,9 +16,9 @@ git checkout $TARGET_BRANCH || git checkout --orphan $TARGET_BRANCH
 cd ..
 
 # Move content
-mkdir out/reports/$TRAVIS_BUILD_NUMBER
+mkdir out/reports/$TRAVIS_BUILD_NUMBER/$BROWSER
 cd report
-cp -r * ../out/reports/$TRAVIS_BUILD_NUMBER
+cp -r * ../out/reports/$TRAVIS_BUILD_NUMBER/$BROWSER
 cd ..
 cd dist
 cp -r * ../out/vendor/tubular
@@ -49,5 +49,5 @@ ssh-add tubular
 
 cd out
 # Now that we're all set up, we can push.
-git pull
+git pull --no-edit
 git push $SSH_REPO $TARGET_BRANCH

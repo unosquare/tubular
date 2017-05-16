@@ -11,16 +11,16 @@ env:
   global:
     secure: beog7sTAvmzWIYC9fEFCVr/ok60aU796/t2cO6oaHpsZxqwM9u2PYBae3o4gJsrZywv9yfKzUku5j/ugHYtrVTt6edCZOGydOwm1vjZINrxvf8zf+dMUicOIu1SfiPAMYbCwq8xlB/MeyzTggkcxymHcr1ARTeqjXpC8XJDFCnQ=
   matrix:
-    - FF=false CHROME_BIN=/usr/bin/google-chrome DISPLAY=:99.0
-    - FF=true DISPLAY=:99.0
+    - BROWSER=chrome CHROME_BIN=/usr/bin/google-chrome DISPLAY=:99.0
+    - BROWSER=firefox DISPLAY=:99.0
 install:
 - npm install
 - bower update
 before_install:
-- if [[ "$FF" = "false" ]]; then sudo apt-get update; fi
-- if [[ "$FF" = "false" ]]; then sudo apt-get install -y libappindicator1 fonts-liberation; fi
-- if [[ "$FF" = "false" ]]; then wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb; fi
-- if [[ "$FF" = "false" ]]; then sudo dpkg -i google-chrome*.deb; fi
+- if [[ "$BROWSER" = "chrome" ]]; then sudo apt-get update; fi
+- if [[ "$BROWSER" = "chrome" ]]; then sudo apt-get install -y libappindicator1 fonts-liberation; fi
+- if [[ "$BROWSER" = "chrome" ]]; then wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb; fi
+- if [[ "$BROWSER" = "chrome" ]]; then sudo dpkg -i google-chrome*.deb; fi
 before_script:
 - sh -e /etc/init.d/xvfb start
 script:

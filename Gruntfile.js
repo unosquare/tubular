@@ -1,4 +1,4 @@
-var ff = process.env.FF == "true";
+var ff = process.env.BROWSER == "firefox";
 
 module.exports = grunt => {
     // Load grunt tasks automatically

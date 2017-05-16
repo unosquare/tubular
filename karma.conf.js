@@ -1,5 +1,4 @@
 // Karma configuration
-var ff = process.env.FF == "true";
 
 module.exports = (config) => {
     config.set({
@@ -67,7 +66,7 @@ module.exports = (config) => {
         reporters: ['progress', 'coverage', 'html'],
 
         htmlReporter: {
-            outputDir: 'report/unit/' + (ff ? 'firefox' : 'chrome'), // where to put the reports
+            outputDir: 'report/unit', // where to put the reports
             focusOnFailures: true, // reports show failures on start
             namedFiles: true, // name files instead of creating sub-directories
             reportName: 'index',
