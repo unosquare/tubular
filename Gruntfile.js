@@ -1,3 +1,5 @@
+var ff = process.env.FF;
+
 module.exports = grunt => {
     // Load grunt tasks automatically
     require('load-grunt-tasks')(grunt);
@@ -55,13 +57,13 @@ module.exports = grunt => {
                 browsers: ['Firefox']
             },
             ci: {
-                browsers: ['Firefox', 'Chrome'],
+                browsers: ff ? ['Firefox'] : ['Chrome'],
                 singleRun: true
 
             },
             e2eci: {
               configFile: 'test/e2e/karma.conf.js',
-              browsers: ['Firefox', 'Chrome'],
+              browsers: ff ? ['Firefox'] : ['Chrome'],
               singleRun: true
             },
             e2e: {
