@@ -49,4 +49,5 @@ ssh-add tubular
 
 cd out
 # Now that we're all set up, we can push.
+git pull
 git push $SSH_REPO $TARGET_BRANCH
