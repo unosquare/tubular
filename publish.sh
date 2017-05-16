@@ -16,6 +16,7 @@ git checkout $TARGET_BRANCH || git checkout --orphan $TARGET_BRANCH
 cd ..
 
 # Move content
+mkdir out/reports/$TRAVIS_BUILD_NUMBER
 mkdir out/reports/$TRAVIS_BUILD_NUMBER/$BROWSER
 cd report
 cp -r * ../out/reports/$TRAVIS_BUILD_NUMBER/$BROWSER
