@@ -56,20 +56,17 @@ describe('Module: tubular.services', function () {
             expect(actual.headers.Authorization).toBeUndefined();
         });
 
-        it('should add authorization header', function () {
+        it('should NOT add authorization header (Unauthenticated user)', function () {
             var config = {
                 method: 'GET',
                 url: '/api/dummy'
             };
             tubularConfig.webApi.tokenUrl('/api/token');
             tubularConfig.webApi.requireAuthentication(true);
-            tubularHttp.userData.bearerToken = "yeah";
 
             var actual = AuthInterceptor.request(config)
 
-            expect(actual.headers).toBeDefined();
-            expect(actual.headers.Authorization).toBeDefined();
-            expect(actual.headers.Authorization).toContain('yeah');
+            expect(actual.headers).toBeUndefined();
         });
 
         it('should NOT try to use refresh tokens', done => {
@@ -118,6 +115,8 @@ describe('Module: tubular.services', function () {
             expect(tubularConfig.webApi.enableRefreshTokens()).toBe(false, 'Should not use refresh tokens by default');
 
             tubularConfig.webApi.enableRefreshTokens(true);
+            tubularHttp.userData.isAuthenticated = true;
+            tubularHttp.userData.expirationDate = new Date((new Date()).getTime() - 10000)
             tubularHttp.userData.refreshToken = 'original_refresh';
             tubularHttp.userData.bearerToken = "original_bearer";
 
@@ -125,7 +124,7 @@ describe('Module: tubular.services', function () {
 
             $httpBackend.expectPOST(tubularConfig.webApi.refreshTokenUrl(), data => {
                 return data === 'grant_type=refresh_token&refresh_token=' + tubularHttp.userData.refreshToken;
-            }).respond(200, { access_token: 'modified_bearer', refresh_token: 'modified_refresh' });
+            }).respond(200, { access_token: 'modified_bearer', refresh_token: 'modified_refresh', expires_in : 14399 });
 
             $httpBackend.expectGET(/.*?api\/dummy?.*/).respond(200);
 
@@ -160,6 +159,8 @@ describe('Module: tubular.services', function () {
             expect(tubularConfig.webApi.enableRefreshTokens()).toBe(false, 'Should not use refresh tokens by default');
 
             tubularConfig.webApi.enableRefreshTokens(true);
+            tubularHttp.userData.isAuthenticated = true;
+            tubularHttp.userData.expirationDate = new Date((new Date()).getTime() - 10000);
             tubularHttp.userData.refreshToken = 'original_refresh';
             tubularHttp.userData.bearerToken = "original_bearer";
 

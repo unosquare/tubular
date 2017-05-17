@@ -43,18 +43,6 @@
                     return expirationDate - now <= 0;
                 }
 
-                function retrieveSavedData() {
-                    const savedData = angular.fromJson($window.localStorage.getItem(prefix + authData));
-
-                    if (angular.isUndefined(savedData)) {
-                        throw 'No authentication data exists';
-                    } else if (isAuthenticationExpired(savedData.expirationDate)) {
-                        throw 'Authentication token has already expired';
-                    } else {
-                        me.userData = savedData;
-                    }
-                }
-
                 me.userData = {
                     isAuthenticated: false,
                     username: '',
@@ -62,19 +50,9 @@
                     expirationDate: null
                 };
 
-                me.isBearerTokenExpired = ()  => isAuthenticationExpired(me.userData.expirationDate);
+                me.isBearerTokenExpired = () => isAuthenticationExpired(me.userData.expirationDate);
 
-                me.isAuthenticated = () => {
-                    if (!me.userData.isAuthenticated || isAuthenticationExpired(me.userData.expirationDate)) {
-                        try {
-                            retrieveSavedData();
-                        } catch (e) {
-                            return false;
-                        }
-                    }
-
-                    return true;
-                };
+                me.isAuthenticated = () => me.userData.isAuthenticated && !isAuthenticationExpired(me.userData.expirationDate);
 
                 me.removeAuthentication = function () {
                     $window.localStorage.removeItem(prefix + authData);
@@ -92,7 +70,7 @@
                         method: 'POST',
                         url: tubularConfig.webApi.tokenUrl(),
                         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                        data: `grant_type=password&username=${  encodeURIComponent(username)  }&password=${  encodeURIComponent(password)}`
+                        data: `grant_type=password&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`
                     }).then(response => {
                         me.initAuth(response.data, username);
                         response.data.authenticated = true;
