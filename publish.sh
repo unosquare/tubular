@@ -17,7 +17,6 @@ cd ..
 
 # Move content
 mkdir out/reports/$TRAVIS_BUILD_NUMBER
-mkdir out/reports/$TRAVIS_BUILD_NUMBER
 cd report
 cp -r * ../out/reports/$TRAVIS_BUILD_NUMBER
 cd ..
