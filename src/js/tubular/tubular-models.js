@@ -21,7 +21,7 @@
          */
         .factory('tubularModel', [function() {
             return function($ctrl, data) {
-                let obj = {
+                var obj = {
                     $hasChanges: () => obj.$fields.some(k => angular.isDefined(obj.$original[k]) && obj[k] !== obj.$original[k]),
                     $isEditing: false,
                     $isNew: false,

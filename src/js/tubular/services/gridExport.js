@@ -1,3 +1,4 @@
+
 (function(angular) {
 'use strict';
 
@@ -49,31 +50,29 @@ angular.module('tubular.services')
           },
 
           printGrid: (component, printCss, title) => {
-              component.getFullDataSource().then(data => {
-                const tableHtml = `<table class="table table-bordered table-striped"><thead><tr>${
+            component.getFullDataSource().then(data => {
+              const tableHtml = `<table class="table table-bordered table-striped"><thead><tr>${
                                  component.columns
                                 .filter(c => c.Visible)
                                 .reduce((prev, el) => `${prev  }<th>${  el.Label || el.Name  }</th>`, '')
-                                 }</tr></thead>` +
-                  `<tbody>${
+                                 }</tr></thead>`
+                                + `<tbody>${
                                  data.map(row => {
                                     if (angular.isObject(row)) {
                                         row = Object.keys(row).map(key => row[key]);
                                     }
 
-                                    return ` < tr > $ {
-                    row.map((cell, index) => {
-                      if (angular.isDefined(component.columns[index]) &&
-                        !component.columns[index].Visible) {
-                        return '';
-                      }
+                                    return `<tr>${  row.map((cell, index) => {
+                                        if (angular.isDefined(component.columns[index]) &&
+                                            !component.columns[index].Visible) {
+                                            return '';
+                                        }
 
-                      return `<td>${  cell  }</td>`;
-                    }).join(' ')
-                  } < /tr>`;
-              }).join('  ')
-            } < /tbody>` +
-            '</table>';
+                                        return `<td>${  cell  }</td>`;
+                                    }).join(' ')  }</tr>`;
+                                }).join('  ')
+                                 }</tbody>`
+                                + '</table>';
 
           const popup = $window.open('about:blank', 'Print', 'menubar=0,location=0,height=500,width=800');
           popup.document.write('<link rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap/latest/css/bootstrap.min.css" />');
@@ -108,26 +107,27 @@ function exportToCsv(header, rows, visibility) {
 
     let finalVal = '';
     for (let j = 0; j < row.length; j++) {
-      if (visibility[j]) {
-
-        let innerValue = row[j] == null ? '' : row[j].toString();
-
-        if (angular.isDate(row[j])) {
-          innerValue = row[j].toLocaleString();
-        }
-
-        let result = innerValue.replace(/"/g, '""');
-
-        if (result.search(/("|,|\n)/g) >= 0) {
-          result = `"${  result  }"`;
-        }
-
-        if (j > 0) {
-          finalVal += ',';
-        }
-
-        finalVal += result;
+      if (!visibility[j]) {
+        continue;
       }
+
+      let innerValue = row[j] == null ? '' : row[j].toString();
+
+      if (angular.isDate(row[j])) {
+        innerValue = row[j].toLocaleString();
+      }
+
+      let result = innerValue.replace(/"/g, '""');
+
+      if (result.search(/("|,|\n)/g) >= 0) {
+        result = `"${  result  }"`;
+      }
+
+      if (j > 0) {
+        finalVal += ',';
+      }
+
+      finalVal += result;
     }
 
     return `${finalVal  }\n`;
