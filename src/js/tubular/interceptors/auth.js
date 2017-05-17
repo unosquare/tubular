@@ -38,17 +38,24 @@
                 config.headers = config.headers || {};
 
                 // Handle requests going to API
-                if (!checkStatic(config.url) && webApiSettings.tokenUrl() !== config.url &&
-                    webApiSettings.requireAuthentication() &&
-                    tubularHttp.userData.bearerToken) {
+                if (!checkStatic(config.url) &&
+                    webApiSettings.tokenUrl() !== config.url &&
+                    webApiSettings.refreshTokenUrl() !== config.url &&
+                    webApiSettings.requireAuthentication()) {
 
-                    config.headers.Authorization = `Bearer ${tubularHttp.userData.bearerToken}`;
+                    if (!tubularHttp.isAuthenticated()) {
+                        return $q.reject({ error: 'User not authenticated, new login required.', status: 401, config: config });
+                    }
 
                     // When using refresh tokens and bearer token has expired,
                     // avoid the round trip on go directly to try refreshing the token
-                    if (webApiSettings.enableRefreshTokens() && tubularHttp.userData.refreshToken
-                        && tubularHttp.isBearerTokenExpired()) {
+                    if (webApiSettings.enableRefreshTokens() &&
+                        tubularHttp.userData.refreshToken &&
+                        tubularHttp.isBearerTokenExpired()) {
                         return $q.reject({ error: 'expired token', status: 401, config: config });
+                    }
+                    else {
+                        config.headers.Authorization = `Bearer ${tubularHttp.userData.bearerToken}`;
                     }
                 }
 
@@ -75,8 +82,10 @@
                     const webApiSettings = tubularConfig.webApi;
 
                     if (webApiSettings.tokenUrl() !== rejection.config.url &&
+                        webApiSettings.refreshTokenUrl() !== rejection.config.url &&
                         webApiSettings.enableRefreshTokens() &&
                         webApiSettings.requireAuthentication() &&
+                        tubularHttp.isBearerTokenExpired() &&
                         tubularHttp.userData.refreshToken) {
 
                         rejection.triedRefreshTokens = true;
@@ -104,8 +113,8 @@
                             }
                         }, response => {
                             authRequestRunning = null;
-                            deferred.reject(response);
                             tubularHttp.removeAuthentication();
+                            deferred.reject(response);
                             $injector.get('$location').path('/Login');
                             return;
                         });
