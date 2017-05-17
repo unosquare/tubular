@@ -25,5 +25,5 @@ before_script:
 - sh -e /etc/init.d/xvfb start
 script:
 - npm test
-- chmod +x ./publish.sh
-- ./publish.sh
+- if [[ "$BROWSER" = "firefox" ]]; then chmod +x ./publish.sh; fi
+- if [[ "$BROWSER" = "firefox" ]]; then ./publish.sh; fi

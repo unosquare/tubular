@@ -17,9 +17,9 @@ cd ..
 
 # Move content
 mkdir out/reports/$TRAVIS_BUILD_NUMBER
-mkdir out/reports/$TRAVIS_BUILD_NUMBER/$BROWSER
+mkdir out/reports/$TRAVIS_BUILD_NUMBER
 cd report
-cp -r * ../out/reports/$TRAVIS_BUILD_NUMBER/$BROWSER
+cp -r * ../out/reports/$TRAVIS_BUILD_NUMBER
 cd ..
 cd dist
 cp -r * ../out/vendor/tubular
@@ -27,9 +27,9 @@ cd ..
 
 # Now let's go have some fun with the cloned repo
 cd out
-if [[ "$BROWSER" = "firefox" ]]; then npm install; fi
-if [[ "$BROWSER" = "firefox" ]]; then gulp dgeni; fi
-if [[ "$BROWSER" = "firefox" ]]; then gulp reports; fi
+npm install
+gulp dgeni
+gulp reports
 
 git config user.name "Travis CI"
 git config user.email "geovanni.perez@gmail.com"
@@ -50,5 +50,4 @@ ssh-add tubular
 
 cd out
 # Now that we're all set up, we can push.
-git pull --no-edit
 git push $SSH_REPO $TARGET_BRANCH
