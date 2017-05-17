@@ -14,7 +14,7 @@ install:
 - npm install -g grunt
 - bower update
 test_script:
-- grunt min
 - grunt eslint
 - grunt unit:ci
+- grunt e2e:ci
 build: off
