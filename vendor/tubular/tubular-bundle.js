@@ -2542,7 +2542,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
          */
         .factory('tubularModel', [function() {
             return function($ctrl, data) {
-                var obj = {
+                let obj = {
                     $hasChanges: () => obj.$fields.some(k => angular.isDefined(obj.$original[k]) && obj[k] !== obj.$original[k]),
                     $isEditing: false,
                     $isNew: false,
@@ -2603,6 +2603,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             };
         }]);
 })(angular, moment);
+
 
 (function(angular) {
 'use strict';
@@ -3208,27 +3209,25 @@ function exportToCsv(header, rows, visibility) {
 
     let finalVal = '';
     for (let j = 0; j < row.length; j++) {
-      if (!visibility[j]) {
-        continue;
+      if (visibility[j]) {
+        let innerValue = row[j] == null ? '' : row[j].toString();
+
+        if (angular.isDate(row[j])) {
+          innerValue = row[j].toLocaleString();
+        }
+
+        let result = innerValue.replace(/"/g, '""');
+
+        if (result.search(/("|,|\n)/g) >= 0) {
+          result = `"${  result  }"`;
+        }
+
+        if (j > 0) {
+          finalVal += ',';
+        }
+
+        finalVal += result;
       }
-
-      let innerValue = row[j] == null ? '' : row[j].toString();
-
-      if (angular.isDate(row[j])) {
-        innerValue = row[j].toLocaleString();
-      }
-
-      let result = innerValue.replace(/"/g, '""');
-
-      if (result.search(/("|,|\n)/g) >= 0) {
-        result = `"${  result  }"`;
-      }
-
-      if (j > 0) {
-        finalVal += ',';
-      }
-
-      finalVal += result;
     }
 
     return `${finalVal  }\n`;
