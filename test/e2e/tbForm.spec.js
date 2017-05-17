@@ -4,6 +4,9 @@ describe('Tubular Form', () => {
 
         var scope, compile, templateCache, template, element;
 
+        const btnDefault = '#btnDefault';
+        const inpCustomerName = "input[name='CustomerName']";
+
         beforeEach(module('tubular.tests'));
         beforeEach(module('tubular'));
         beforeEach(module(function ($controllerProvider) {
@@ -20,19 +23,24 @@ describe('Tubular Form', () => {
             compile = _$compile_;
             templateCache = _$templateCache_;
             generate('tbSingleForm');
+            angular.element(document.body).append(template);
         }));
 
         function generate(caseName) {
             var tpl = templateCache.get(caseName + '.case.html');
             template = angular.element(tpl);
             element = compile(template)(scope);
+
             scope.$digest();
 
         }
 
+        afterEach(()=> { template.remove(); })
+
         it('should pass', () => {
-            $j(element).find('#btnDefault').click();
-            expect($j(element).find("input[name='CustomerName']").val()).toBe('Unosquare');
+            element.find(btnDefault).click();
+
+            expect(element.find(inpCustomerName).val()).toBe('Unosquare');
         });
 
 });
