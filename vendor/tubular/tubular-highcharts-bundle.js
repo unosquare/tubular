@@ -522,7 +522,7 @@ if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.ex
             },
             controller: [
                 '$scope', '$http', '$timeout', function ($scope, $http, $timeout) {
-                    const $ctrl = this;
+                    let $ctrl = this;
 
                     $ctrl.showLegend = angular.isUndefined($ctrl.showLegend) ? true : $ctrl.showLegend;
                     $ctrl.chartType = $ctrl.chartType || 'line';
@@ -570,7 +570,7 @@ if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.ex
                     };
 
                     $ctrl.handleData = response => {
-                        const data = response.data;
+                        var data = response.data;
 
                         if (!data || !data.Data || data.Data.length === 0) {
                             $ctrl.isEmpty = true;

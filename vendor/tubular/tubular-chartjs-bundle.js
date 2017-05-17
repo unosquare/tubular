@@ -423,7 +423,7 @@ angular.module('tubular-chart.directives').run(['$templateCache', function ($tem
          *
          * @description
          * The `tbChartjs` component is the base to create any ChartJs component.
-         *
+         * 
          * @param {string} serverUrl Set the HTTP URL where the data comes.
          * @param {string} chartName Defines the chart name.
          * @param {string} chartType Defines the chart type.
@@ -463,7 +463,7 @@ angular.module('tubular-chart.directives').run(['$templateCache', function ($tem
       function(
         $scope,
         $http) {
-        const $ctrl = this;
+        let $ctrl = this;
 
         $ctrl.showLegend = angular.isUndefined($ctrl.showLegend) ? true : $ctrl.showLegend;
         $ctrl.chartType = $ctrl.chartType || 'line';
@@ -485,7 +485,7 @@ angular.module('tubular-chart.directives').run(['$templateCache', function ($tem
                   if (!$ctrl.options) {
                     $ctrl.options = {};
                   }
-
+                  
                   $ctrl.options.series = [{
                     data: []
                   }];
