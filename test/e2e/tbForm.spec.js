@@ -23,19 +23,16 @@ describe('Tubular Form', () => {
             compile = _$compile_;
             templateCache = _$templateCache_;
             generate('tbSingleForm');
-            angular.element(document.body).append(template);
         }));
 
         function generate(caseName) {
             var tpl = templateCache.get(caseName + '.case.html');
             template = angular.element(tpl);
             element = compile(template)(scope);
-
             scope.$digest();
-
         }
 
-        afterEach(()=> { template.remove(); })
+
 
         it('should pass', () => {
             element.find(btnDefault).click();
