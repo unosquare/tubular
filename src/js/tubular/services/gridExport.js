@@ -107,27 +107,25 @@ function exportToCsv(header, rows, visibility) {
 
     let finalVal = '';
     for (let j = 0; j < row.length; j++) {
-      if (!visibility[j]) {
-        continue;
+      if (visibility[j]) {
+        let innerValue = row[j] == null ? '' : row[j].toString();
+
+        if (angular.isDate(row[j])) {
+          innerValue = row[j].toLocaleString();
+        }
+
+        let result = innerValue.replace(/"/g, '""');
+
+        if (result.search(/("|,|\n)/g) >= 0) {
+          result = `"${  result  }"`;
+        }
+
+        if (j > 0) {
+          finalVal += ',';
+        }
+
+        finalVal += result;
       }
-
-      let innerValue = row[j] == null ? '' : row[j].toString();
-
-      if (angular.isDate(row[j])) {
-        innerValue = row[j].toLocaleString();
-      }
-
-      let result = innerValue.replace(/"/g, '""');
-
-      if (result.search(/("|,|\n)/g) >= 0) {
-        result = `"${  result  }"`;
-      }
-
-      if (j > 0) {
-        finalVal += ',';
-      }
-
-      finalVal += result;
     }
 
     return `${finalVal  }\n`;
