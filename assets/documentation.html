@@ -17,7 +17,6 @@
                 <a class="list-group-item" href="#!/Documentation/WebApi">Tubular Grids with .NET assembly</a>
                 <a class="list-group-item" href="#!/Documentation/StartForm">Getting Started - Forms</a>
                 <a class="list-group-item" href="#!/Documentation/StartChart">Getting Started - Charts</a>
-                <a class="list-group-item" href="#!/Documentation/StartReporting">Getting Started - Reporting</a>
             </div>
             <div ng-repeat="(key, group) in items | filter: { docType: '!external', name: search } | groupBy: 'docType'">
                 <h3>{{key}}</h3>
