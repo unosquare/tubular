@@ -1304,7 +1304,9 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     const currentlySortedColumns = $ctrl.columns.filter(col => col.SortOrder > 0);
 
                     // re-index the sort order
-                    currentlySortedColumns.sort((a, b) => a.SortOrder === b.SortOrder ? 0 : a.SortOrder > b.SortOrder);
+                    currentlySortedColumns.sort((a, b) => {
+                        return a.SortOrder === b.SortOrder ? 0 : a.SortOrder > b.SortOrder
+                    });
 
                     angular.forEach(currentlySortedColumns, (col, index) => col.SortOrder = index + 1);
 
@@ -2671,7 +2673,9 @@ angular.module('tubular.services', ['ui.bootstrap'])
     .filter('moment', [
       'dateFilter',
       function(dateFilter) {
-        return (input, format) => moment.isMoment(input) ? input.format(format || 'M/DD/YYYY') : dateFilter(input);
+        return (input, format) => {
+          return moment.isMoment(input) ? input.format(format || 'M/DD/YYYY') : dateFilter(input);
+        }
       }
     ]);
 })(angular, moment);
@@ -2723,7 +2727,7 @@ angular.module('tubular.services', ['ui.bootstrap'])
             return input;
           }
 
-          let translation = tubularTranslate.translate(input)
+          const translation = tubularTranslate.translate(input)
               .replace('{0}', param1 || '')
               .replace('{1}', param2 || '')
               .replace('{2}', param3 || '')
@@ -2886,8 +2890,8 @@ angular.module('tubular.services', ['ui.bootstrap'])
 
             return {
                 request: (config) => {
-                    if (config.method === 'GET' && 
-                    config.url.indexOf('.htm') === -1 && 
+                    if (config.method === 'GET' &&
+                    config.url.indexOf('.htm') === -1 &&
                     config.url.indexOf('blob:') === -1 &&
                     config.url.indexOf('noCache=') === -1) {
                         const separator = config.url.indexOf('?') === -1 ? '?' : '&';
