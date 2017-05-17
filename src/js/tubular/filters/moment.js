@@ -14,7 +14,9 @@
     .filter('moment', [
       'dateFilter',
       function(dateFilter) {
-        return (input, format) => moment.isMoment(input) ? input.format(format || 'M/DD/YYYY') : dateFilter(input);
+        return (input, format) => {
+          return moment.isMoment(input) ? input.format(format || 'M/DD/YYYY') : dateFilter(input);
+        }
       }
     ]);
 })(angular, moment);

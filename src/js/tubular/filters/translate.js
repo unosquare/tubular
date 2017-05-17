@@ -15,7 +15,7 @@
             return input;
           }
 
-          let translation = tubularTranslate.translate(input)
+          const translation = tubularTranslate.translate(input)
               .replace('{0}', param1 || '')
               .replace('{1}', param2 || '')
               .replace('{2}', param3 || '')

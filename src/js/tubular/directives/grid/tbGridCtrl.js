@@ -407,7 +407,9 @@
                     const currentlySortedColumns = $ctrl.columns.filter(col => col.SortOrder > 0);
 
                     // re-index the sort order
-                    currentlySortedColumns.sort((a, b) => a.SortOrder === b.SortOrder ? 0 : a.SortOrder > b.SortOrder);
+                    currentlySortedColumns.sort((a, b) => {
+                        return a.SortOrder === b.SortOrder ? 0 : a.SortOrder > b.SortOrder
+                    });
 
                     angular.forEach(currentlySortedColumns, (col, index) => col.SortOrder = index + 1);
 
