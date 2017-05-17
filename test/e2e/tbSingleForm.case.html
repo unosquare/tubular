@@ -1,0 +1,37 @@
+<div ng-controller="onSaved">
+<tb-form server-url="/mockapi/orders/" require-authentication="false" model-key="1"
+         server-save-url="/mockapi/saveOrder/">
+    <div class="row">
+        <h2>
+            Edit Order <small>{{Model.OrderID}}</small>
+        </h2>
+        <div class="col-md-8">
+            <tb-simple-editor min="3" show-label="true"
+                              name="CustomerName" help="Please a good name" value="Model.CustomerName">
+            </tb-simple-editor>
+        </div>
+        <div class="col-md-4">
+            <button id="btnDefault" class="btn btn-warning" ng-click="Model.CustomerName = 'Unosquare'">Default name</button>
+            <button id="btnUpdate" class="btn btn-warning" ng-click="$parent.update()">Update</button>
+            <button id="btnClear" class="btn btn-primary" ng-click="$parent.clear()">Clear</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <tb-dropdown-editor name="ShipperCity" show-label="true" required="true"
+                                options-url="/mockapi/cities">
+            </tb-dropdown-editor>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <hr />
+            <button id="btnSave" class="btn btn-primary" ng-click="$parent.save()" ng-disabled="!$parent.model.$valid()">Save</button>
+            <button id="btnCancel" class="btn btn-danger" ng-click="$parent.cancel()">Go Back</button>
+            <span id="textSave">{{textSave}}</span>
+            <hr />
+            <code>{{Model | json}}</code>
+        </div>
+    </div>
+</tb-form>
+</div>

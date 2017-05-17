@@ -1,22 +1,29 @@
 language: node_js
 sudo: required
+dist: trusty
 node_js:
 - node
 notifications:
   slack: unolabs:cbusXPH6pBwZ35rVDzi4k4ve
 addons:
-  firefox: '51.0'
-install:
-- npm install
-- bower update
-before_script:
-- if [[ $TRAVIS_OS_NAME == "linux" ]]; then export DISPLAY=:99.0; fi
-- if [[ $TRAVIS_OS_NAME == "linux" ]]; then sh -e /etc/init.d/xvfb start; fi
-script:
-- grunt min
-- npm test
-- chmod +x ./publish.sh
-- ./publish.sh
+  firefox: 'latest'
 env:
   global:
     secure: beog7sTAvmzWIYC9fEFCVr/ok60aU796/t2cO6oaHpsZxqwM9u2PYBae3o4gJsrZywv9yfKzUku5j/ugHYtrVTt6edCZOGydOwm1vjZINrxvf8zf+dMUicOIu1SfiPAMYbCwq8xlB/MeyzTggkcxymHcr1ARTeqjXpC8XJDFCnQ=
+  matrix:
+    - BROWSER=chrome CHROME_BIN=/usr/bin/google-chrome DISPLAY=:99.0
+    - BROWSER=firefox DISPLAY=:99.0
+install:
+- npm install
+- bower update
+before_install:
+- if [[ "$BROWSER" = "chrome" ]]; then sudo apt-get update; fi
+- if [[ "$BROWSER" = "chrome" ]]; then sudo apt-get install -y libappindicator1 fonts-liberation; fi
+- if [[ "$BROWSER" = "chrome" ]]; then wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb; fi
+- if [[ "$BROWSER" = "chrome" ]]; then sudo dpkg -i google-chrome*.deb; fi
+before_script:
+- sh -e /etc/init.d/xvfb start
+script:
+- npm test
+- if [[ "$BROWSER" = "firefox" ]]; then chmod +x ./publish.sh; fi
+- if [[ "$BROWSER" = "firefox" ]]; then ./publish.sh; fi

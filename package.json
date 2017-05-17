@@ -8,7 +8,7 @@
     "url": "https://github.com/unosquare/tubular"
   },
   "scripts": {
-    "test": "grunt eslint && grunt unit:ci && grunt coveralls:ci"
+    "test": "grunt csslint && grunt eslint && grunt unit:ci && grunt e2e:ci && grunt coveralls:ci"
   },
   "keywords": [
     "grid",
@@ -57,10 +57,12 @@
     "karma": "^1.7.0",
     "karma-coverage": "1.1.1",
     "karma-firefox-launcher": "1.0.1",
+    "karma-chrome-launcher": "2.1.1",
     "karma-html-reporter": "0.2.7",
     "karma-jasmine": "1.1.0",
     "karma-jasmine-jquery": "0.1.1",
     "karma-ng-html2js-preprocessor": "1.0.0",
-    "load-grunt-tasks": "^3.5.2"
+    "load-grunt-tasks": "^3.5.2",
+    "grunt-contrib-csslint": "2.0.0"
   }
 }

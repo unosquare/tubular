@@ -1,3 +1,5 @@
+var ff = process.env.BROWSER == "firefox";
+
 module.exports = grunt => {
     // Load grunt tasks automatically
     require('load-grunt-tasks')(grunt);
@@ -10,6 +12,7 @@ module.exports = grunt => {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-contrib-csslint');
 
     // Project configuration.
     grunt.initConfig({
@@ -40,6 +43,13 @@ module.exports = grunt => {
                 src: 'report/coverage/lcov.info'
             }
         },
+        csslint: {
+          options: {
+            quiet: true,
+            formatters: [{id:'compact', dest: 'report/csslint/report.txt'}]
+          },
+          src: ['src/css/**/*.css', '!src/css/**/*min.css']
+        },
         eslint: {
             options: {
                 configFile: '.eslintrc.json',
@@ -55,7 +65,18 @@ module.exports = grunt => {
                 browsers: ['Firefox']
             },
             ci: {
+                browsers: ff ? ['Firefox'] : ['Chrome'],
                 singleRun: true
+
+            },
+            e2eci: {
+              configFile: 'test/e2e/karma.conf.js',
+              browsers: ff ? ['Firefox'] : ['Chrome'],
+              singleRun: true
+            },
+            e2e: {
+              configFile: 'test/e2e/karma.conf.js',
+              singleRun: false
             },
             dev: {
                 singleRun: false,
@@ -223,4 +244,7 @@ module.exports = grunt => {
     grunt.registerTask('dist', ['build-js', 'min', 'copy']);
     grunt.registerTask('unit', ['karma:dev']);
     grunt.registerTask('unit:ci', ['karma:ci']);
+
+    grunt.registerTask('e2e:ci', ['dist','karma:e2eci']);
+    grunt.registerTask('e2e', ['dist','karma:e2e']);
 };

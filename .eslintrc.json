@@ -36,7 +36,7 @@
     "angular/no-services": "warn",
     "angular/controller-as-vm": [ 2, "$ctrl" ],
     "angular/di": [
-      2,
+      1,
       "array",
       { "matchNames": false }
     ]

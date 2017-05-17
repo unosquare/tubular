@@ -4,7 +4,7 @@ module.exports = (config) => {
     config.set({
 
         // base path that will be used to resolve all patterns (eg. files, exclude)
-        basePath: 'src/js',
+        basePath: '.',
 
         // frameworks to use
         // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
@@ -15,45 +15,26 @@ module.exports = (config) => {
           '../../node_modules/jasmine-data_driven_tests/src/all.js',
           '../../bower_components/angular/angular.js',
           '../../bower_components/angular-mocks/angular-mocks.js',
-          '../../bower_components/angular-route/angular-route.js',
-          '../../bower_components/angular-loader/angular-loader.js',
           '../../bower_components/moment/moment.js',
           '../../bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
-          '../../bower_components/highchart-ng/dist/highcharts-ng.js',
-          '../../bower_components/chart.js/dist/Chart.js',
-          '../../bower_components/angular-chart.js/dist/angular-chart.js',
-          'tubular/tubular-models.js',
-          'tubular/tubular-services.js',
-          'tubular*/**/*.module.js',
-
-          'tubular/services/**/*.js',
-          'tubular/interceptors/**/*.js',
-          'tubular/tubular-directives.js',
-          'tubular*/**/*tpl.html',
-          'tubular/directives/**/*.js',
-          'tubular/tubular.js',
-          'tubular/filters/**/*.js',
-          'tubular-chart/**/*.js',
-          'tubular*/**/*.spec.js'
+          '../../dist/tubular-bundle.js',
+          '*.spec.js',
+          '*.case.html'
         ],
 
         // list of files to exclude
         exclude: [
-           '**/*.min.js',
-           '**/*bundle.js',
-           '**/*.run.js',
-           '**/*.e2e.js'
+           '**/*.min.js'
         ],
 
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
-            'tubular*/**/!(*spec|*bundle).js': ['coverage'],
-            'tubular*/**/*tpl.html': ['ng-html2js']
+            '*case.html': ['ng-html2js']
         },
 
         ngHtml2JsPreprocessor: {
-            moduleName: 'tubular.directives',
+            moduleName: 'tubular.tests',
             cacheIdFromPath: (filepath) => {
                 const pieces = filepath.split('/');
                 return pieces[pieces.length -1];
@@ -63,10 +44,10 @@ module.exports = (config) => {
         // test results reporter to use
         // possible values: 'dots', 'progress'
         // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-        reporters: ['progress', 'coverage', 'html'],
+        reporters: ['progress', 'html'],
 
         htmlReporter: {
-            outputDir: 'report/unit', // where to put the reports
+            outputDir: 'report/karma', // where to put the reports
             focusOnFailures: true, // reports show failures on start
             namedFiles: true, // name files instead of creating sub-directories
             reportName: 'index',
@@ -76,12 +57,7 @@ module.exports = (config) => {
             foldAll: false // reports start folded (only with preserveDescribeNesting)
         },
 
-        // optionally, configure the reporter
-        coverageReporter: {
-            type: 'lcov',
-            dir: '../../report/coverage',
-            subdir: '.'
-        },
+
         // web server port
         port: 9876,
 
@@ -97,7 +73,7 @@ module.exports = (config) => {
 
         // start these browsers
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-        browsers: ['PhantomJS', 'Firefox'],
+        browsers: ['PhantomJS'],
 
         // Continuous Integration mode
         // if true, Karma captures browsers, runs the tests and exits
