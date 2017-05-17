@@ -1,5 +1,5 @@
 ﻿
-(function(angular, moment) {
+(function(angular) {
   'use strict';
 
   angular.module('tubular.services')
@@ -10,9 +10,7 @@
      * @description
      * The `tubularEditorService` service is a internal helper to setup any `TubularModel` with a UI.
      */
-    .factory('tubularEditorService', editorService);
-
-  editorService.$inject = ['translateFilter'];
+    .factory('tubularEditorService', ['translateFilter', editorService]);
 
   function editorService(translateFilter) {
     return {
@@ -220,4 +218,4 @@
 
 
 
-})(angular, moment);
+})(angular);
