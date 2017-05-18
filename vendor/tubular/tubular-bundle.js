@@ -2890,12 +2890,13 @@ angular.module('tubular.services', ['ui.bootstrap'])
 
             return {
                 request: (config) => {
-                    if (config.method === 'GET' &&
-                    config.url.indexOf('.htm') === -1 &&
-                    config.url.indexOf('blob:') === -1 &&
-                    config.url.indexOf('noCache=') === -1) {
+
+                    // patterns to escape: .htm | blob: | noCache=
+                    const matchesEspacePatterns = (/\.htm|blob:|noCache\=/.test(config.url));
+
+                    if (config.method === 'GET' && !matchesEspacePatterns) {
                         const separator = config.url.indexOf('?') === -1 ? '?' : '&';
-                        config.url = `${config.url + separator  }noCache=${  new Date().getTime()}`;
+                        config.url = `${config.url + separator}noCache=${new Date().getTime()}`;
                     }
 
                     return config;
