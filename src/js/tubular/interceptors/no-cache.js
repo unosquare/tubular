@@ -15,9 +15,11 @@
 
             return {
                 request: (config) => {
-                    const isMatchingUrl = (/\.htm|blob:|noCache\=/.test(config.url));
-                    
-                    if (config.method === 'GET' && !isMatchingUrl) {
+
+                    // patterns to escape: .htm | blob: | noCache=
+                    const matchesEspacePatterns = (/\.htm|blob:|noCache\=/.test(config.url));
+
+                    if (config.method === 'GET' && !matchesEspacePatterns) {
                         const separator = config.url.indexOf('?') === -1 ? '?' : '&';
                         config.url = `${config.url + separator}noCache=${new Date().getTime()}`;
                     }
