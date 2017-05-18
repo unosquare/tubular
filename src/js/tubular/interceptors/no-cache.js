@@ -16,15 +16,16 @@
             return {
                 request: (config) => {
 
-                    if (config.method === 'GET') {
-                        
-                        // patterns to escape: .htm | blob: | noCache=
-                        const matchesEscapePatterns = (/\.htm|blob:|noCache\=/.test(config.url));
+                    if (config.method !== 'GET') {
+                        return config;
+                    }
 
-                        if (!matchesEscapePatterns) {
-                            const separator = config.url.indexOf('?') === -1 ? '?' : '&';
-                            config.url = `${config.url + separator}noCache=${new Date().getTime()}`;
-                        }
+                    // patterns to escape: .htm | blob: | noCache=
+                    const matchesEscapePatterns = (/\.htm|blob:|noCache\=/.test(config.url));
+
+                    if (!matchesEscapePatterns) {
+                        const separator = config.url.indexOf('?') === -1 ? '?' : '&';
+                        config.url = `${config.url + separator}noCache=${new Date().getTime()}`;
                     }
 
                     return config;
