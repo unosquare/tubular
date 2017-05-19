@@ -15,7 +15,7 @@
                 options = options || {};
                 
                 const obj = {
-                    Label: options.Label || null,
+                    Label: options.Label  || (columnName || '').replace(/([a-z])([A-Z])/g, '$1 $2'),
                     Name: columnName,
                     Sortable: options.Sortable,
                     SortOrder: parseInt(options.SortOrder) || -1,

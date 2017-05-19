@@ -114,12 +114,10 @@
                         aggregate: '@?',
                         sortDirection: '@?'
                     },
-                    controller: [
-                        '$scope', function ($scope) {
-                            $scope.column = { Label: '' };
+                    controller: ['$scope', 'tubularColumn', 
+                        function ($scope, tubularColumn) {
                             $scope.$component = $scope.$parent.$parent.$component;
                             $scope.tubularDirective = 'tubular-column';
-                            $scope.label = $scope.label || ($scope.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
 
                             $scope.sortColumn = multiple => $scope.$component.sortColumn($scope.column.Name, multiple);
 
@@ -135,38 +133,20 @@
                                 $scope.$broadcast('tbColumn_LabelChanged', $scope.label);
                             });
 
-                            const column = new function () {
-                                this.Name = $scope.name || null;
-                                this.Label = $scope.label || null;
-                                this.Sortable = $scope.sortable;
-                                this.SortOrder = parseInt($scope.sortOrder) || -1;
-                                this.SortDirection = function () {
-                                    if (angular.isUndefined($scope.sortDirection)) {
-                                        return 'None';
-                                    }
+                            $scope.column = tubularColumn($scope.name, {
+                                Label: $scope.label,
+                                Sortable: $scope.sortable,
+                                SortOrder: $scope.sortOrder,
+                                SortDirection: $scope.sortDirection,
+                                IsKey: $scope.isKey,
+                                Searchable: $scope.searchable,
+                                Visible: $scope.visible,
+                                DataType: $scope.columnType,
+                                Aggregate: $scope.aggregate
+                            });
 
-                                    if ($scope.sortDirection.toLowerCase().indexOf('asc') === 0) {
-                                        return 'Ascending';
-                                    }
-
-                                    if ($scope.sortDirection.toLowerCase().indexOf('desc') === 0) {
-                                        return 'Descending';
-                                    }
-
-                                    return 'None';
-                                }();
-
-                                this.IsKey = angular.isDefined($scope.isKey) ? $scope.isKey : false;
-                                this.Searchable = angular.isDefined($scope.searchable) ? $scope.searchable : false;
-                                this.Visible = $scope.visible === 'false' ? false : true;
-                                this.Filter = null;
-                                this.DataType = $scope.columnType || 'string';
-                                this.Aggregate = $scope.aggregate || 'none';
-                            };
-
-                            $scope.$component.addColumn(column);
-                            $scope.column = column;
-                            $scope.label = column.Label;
+                            $scope.$component.addColumn($scope.column);
+                            $scope.label = $scope.column.Label;
                         }
                     ]
                 };
