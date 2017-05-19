@@ -27,7 +27,7 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "angular": "^1.6.3",
+    "angular": "^1.6.4",
     "angular-bootstrap": "^2.5.0",
     "highchart-ng": "~0.0.13",
     "angular-chart.js": "^1.1.1",
@@ -36,11 +36,11 @@
     "highcharts-ng": "highchart-ng#^1.0.1"
   },
   "devDependencies":{
-    "angular-route": "^1.6.3",
-    "angular-mocks": "^1.6.3",
-    "angular-loader": "^1.6.3"
+    "angular-route": "^1.6.4",
+    "angular-mocks": "^1.6.4",
+    "angular-loader": "^1.6.4"
   },
   "resolutions": {
-    "angular": "^1.6.3"
+    "angular": "^1.6.4"
   }
 }

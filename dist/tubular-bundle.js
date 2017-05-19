@@ -10,8 +10,9 @@
    *
    * It depends upon  {@link tubular.directives}, {@link tubular.services} and {@link tubular.models}.
    */
-  angular.module('tubular', ['tubular.directives', 'tubular.services', 'tubular.models'])
-
+  angular
+    .module('tubular', ['tubular.directives', 'tubular.services', 'tubular.models'])
+    .info({ version: '1.5.1' });
 
 })(angular);
 
@@ -1304,7 +1305,9 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     const currentlySortedColumns = $ctrl.columns.filter(col => col.SortOrder > 0);
 
                     // re-index the sort order
-                    currentlySortedColumns.sort((a, b) => a.SortOrder === b.SortOrder ? 0 : a.SortOrder > b.SortOrder);
+                    currentlySortedColumns.sort((a, b) => {
+                        return a.SortOrder === b.SortOrder ? 0 : a.SortOrder > b.SortOrder
+                    });
 
                     angular.forEach(currentlySortedColumns, (col, index) => col.SortOrder = index + 1);
 
@@ -2542,7 +2545,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
          */
         .factory('tubularModel', [function() {
             return function($ctrl, data) {
-                var obj = {
+                const obj = {
                     $hasChanges: () => obj.$fields.some(k => angular.isDefined(obj.$original[k]) && obj[k] !== obj.$original[k]),
                     $isEditing: false,
                     $isNew: false,
@@ -2603,6 +2606,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             };
         }]);
 })(angular, moment);
+
 
 (function(angular) {
 'use strict';
@@ -2670,7 +2674,9 @@ angular.module('tubular.services', ['ui.bootstrap'])
     .filter('moment', [
       'dateFilter',
       function(dateFilter) {
-        return (input, format) => moment.isMoment(input) ? input.format(format || 'M/DD/YYYY') : dateFilter(input);
+        return (input, format) => {
+          return moment.isMoment(input) ? input.format(format || 'M/DD/YYYY') : dateFilter(input);
+        }
       }
     ]);
 })(angular, moment);
@@ -2722,7 +2728,7 @@ angular.module('tubular.services', ['ui.bootstrap'])
             return input;
           }
 
-          let translation = tubularTranslate.translate(input)
+          const translation = tubularTranslate.translate(input)
               .replace('{0}', param1 || '')
               .replace('{1}', param2 || '')
               .replace('{2}', param3 || '')
@@ -2774,17 +2780,24 @@ angular.module('tubular.services', ['ui.bootstrap'])
                 config.headers = config.headers || {};
 
                 // Handle requests going to API
-                if (!checkStatic(config.url) && webApiSettings.tokenUrl() !== config.url &&
-                    webApiSettings.requireAuthentication() &&
-                    tubularHttp.userData.bearerToken) {
+                if (!checkStatic(config.url) &&
+                    webApiSettings.tokenUrl() !== config.url &&
+                    webApiSettings.refreshTokenUrl() !== config.url &&
+                    webApiSettings.requireAuthentication()) {
 
-                    config.headers.Authorization = `Bearer ${tubularHttp.userData.bearerToken}`;
+                    if (!tubularHttp.isAuthenticated()) {
+                        return $q.reject({ error: 'User not authenticated, new login required.', status: 401, config: config });
+                    }
 
                     // When using refresh tokens and bearer token has expired,
                     // avoid the round trip on go directly to try refreshing the token
-                    if (webApiSettings.enableRefreshTokens() && tubularHttp.userData.refreshToken
-                        && tubularHttp.isBearerTokenExpired()) {
+                    if (webApiSettings.enableRefreshTokens() &&
+                        tubularHttp.userData.refreshToken &&
+                        tubularHttp.isBearerTokenExpired()) {
                         return $q.reject({ error: 'expired token', status: 401, config: config });
+                    }
+                    else {
+                        config.headers.Authorization = `Bearer ${tubularHttp.userData.bearerToken}`;
                     }
                 }
 
@@ -2811,8 +2824,10 @@ angular.module('tubular.services', ['ui.bootstrap'])
                     const webApiSettings = tubularConfig.webApi;
 
                     if (webApiSettings.tokenUrl() !== rejection.config.url &&
+                        webApiSettings.refreshTokenUrl() !== rejection.config.url &&
                         webApiSettings.enableRefreshTokens() &&
                         webApiSettings.requireAuthentication() &&
+                        tubularHttp.isBearerTokenExpired() &&
                         tubularHttp.userData.refreshToken) {
 
                         rejection.triedRefreshTokens = true;
@@ -2840,8 +2855,8 @@ angular.module('tubular.services', ['ui.bootstrap'])
                             }
                         }, response => {
                             authRequestRunning = null;
-                            deferred.reject(response);
                             tubularHttp.removeAuthentication();
+                            deferred.reject(response);
                             $injector.get('$location').path('/Login');
                             return;
                         });
@@ -2876,9 +2891,17 @@ angular.module('tubular.services', ['ui.bootstrap'])
 
             return {
                 request: (config) => {
-                    if (config.method === 'GET' && config.url.indexOf('.htm') === -1 && config.url.indexOf('blob:') === -1) {
+
+                    if (config.method !== 'GET') {
+                        return config;
+                    }
+
+                    // patterns to escape: .htm | blob: | noCache=
+                    const matchesEscapePatterns = (/\.htm|blob:|noCache\=/.test(config.url));
+
+                    if (!matchesEscapePatterns) {
                         const separator = config.url.indexOf('?') === -1 ? '?' : '&';
-                        config.url = `${config.url + separator  }noCache=${  new Date().getTime()}`;
+                        config.url = `${config.url + separator}noCache=${new Date().getTime()}`;
                     }
 
                     return config;
@@ -2886,218 +2909,216 @@ angular.module('tubular.services', ['ui.bootstrap'])
             };
         }]);
 })(angular);
-(function (angular, moment) {
-    'use strict';
+(function(angular) {
+  'use strict';
 
-    angular.module('tubular.services')
-        /**
-        * @ngdoc service
-        * @name tubularEditorService
-        *
-        * @description
-        * The `tubularEditorService` service is a internal helper to setup any `TubularModel` with a UI.
-        */
-        .service('tubularEditorService', ['translateFilter', function(translateFilter) {
-            return editorService(translateFilter);
-        }]);
-        
-    function editorService(translateFilter) {
-        return {
-            /**
-             * Setups a new Editor, this functions is like a common class constructor to be used
-             * with all the tubularEditors.
-             */
-            setupScope: (scope, defaultFormat, ctrl, setDirty) => {
-                ctrl = ctrl || scope;
-                ctrl.isEditing = angular.isUndefined(ctrl.isEditing) ? true : ctrl.isEditing;
-                ctrl.showLabel = ctrl.showLabel || false;
-                ctrl.label = ctrl.label || (ctrl.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
-                ctrl.required = ctrl.required || false;
-                ctrl.readOnly = ctrl.readOnly || false;
-                ctrl.format = ctrl.format || defaultFormat;
-                ctrl.$valid = true;
+  angular.module('tubular.services')
+    /**
+     * @ngdoc service
+     * @name tubularEditorService
+     *
+     * @description
+     * The `tubularEditorService` service is a internal helper to setup any `TubularModel` with a UI.
+     */
+    .factory('tubularEditorService', ['translateFilter', editorService]);
 
-                // This is the state API for every property in the Model
-                ctrl.state = {
-                    $valid: () => {
-                        ctrl.checkValid();
-                        return ctrl.state.$errors.length === 0;
-                    },
-                    $dirty: ctrl.$dirty,
-                    $errors: []
-                };
+  function editorService(translateFilter) {
+    return {
 
-                // Get the field reference using the Angular way
-                ctrl.getFormField = () => {
-                    let parent = scope.$parent;
-
-                    while (parent != null) {
-                        if (parent.tubularDirective === 'tubular-form') {
-                            const formScope = parent.getFormScope();
-
-                            return formScope == null ? null : formScope[scope.Name];
-                        }
-
-                        parent = parent.$parent;
-                    }
-
-                    return null;
-                };
-
-                ctrl.$dirty = () => {
-                    // Just forward the property
-                    const formField = ctrl.getFormField();
-
-                    return formField == null ? true : formField.$dirty;
-                };
-
-                ctrl.checkValid = () => {
-                    ctrl.$valid = true;
-                    ctrl.state.$errors = [];
-
-                    if ((angular.isUndefined(ctrl.value) && ctrl.required) ||
-                        (angular.isDate(ctrl.value) && isNaN(ctrl.value.getTime()) && ctrl.required)) {
-                        ctrl.$valid = false;
-                        ctrl.state.$errors = [translateFilter('EDITOR_REQUIRED')];
-
-                        if (angular.isDefined(scope.$parent.Model)) {
-                            scope.$parent.Model.$state[scope.Name] = ctrl.state;
-                        }
-
-                        return;
-                    }
-
-                    // Check if we have a validation function, otherwise return
-                    if (angular.isDefined(ctrl.validate)) {
-                        ctrl.validate();
-                    }
-                };
-
-                scope.$watch(() => ctrl.value, (newValue, oldValue) => {
-                    if (angular.isUndefined(oldValue) && angular.isUndefined(newValue)) {
-                        return;
-                    }
-
-                    ctrl.$valid = true;
-
-                    // Try to match the model to the parent, if it exists
-                    if (angular.isDefined(scope.$parent.Model)) {
-                        if (angular.isUndefined(scope.$parent.Model.$fields)) {
-                            scope.$parent.Model.$fields = [];
-                        }
-
-                        if (scope.$parent.Model.$fields.indexOf(ctrl.name) !== -1) {
-                            scope.$parent.Model[ctrl.name] = newValue;
-                            scope.$parent.Model.$state = scope.$parent.Model.$state || [];
-                            scope.$parent.Model.$state[scope.Name] = ctrl.state;
-                        } else if (angular.isDefined(scope.$parent.Model.$addField)) {
-                            scope.$parent.Model.$addField(ctrl.name, newValue, true);
-                        }
-                    }
-
-                    ctrl.checkValid();
-                });
-
-                let parent = scope.$parent;
-
-                // We try to find a Tubular Form in the parents
-                while (parent != null) {
-                    if (parent.tubularDirective === 'tubular-form' ||
-                        parent.tubularDirective === 'tubular-rowset') {
-
-                        if (ctrl.name === null) {
-                            return;
-                        }
-
-                        if (parent.hasFieldsDefinitions !== false) {
-                            throw 'Cannot define more fields. Field definitions have been sealed';
-                        }
-
-                        ctrl.$component = parent.tubularDirective === 'tubular-form' ? parent : parent.$component;
-
-                        scope.Name = ctrl.name;
-
-                        ctrl.bindScope = () => {
-                            scope.$parent.Model = parent.model;
-
-                            if (angular.equals(ctrl.value, parent.model[scope.Name]) === false) {
-                                if (angular.isDefined(parent.model[scope.Name])) {
-                                    if ((ctrl.DataType === 'date' || ctrl.DataType === 'datetime')
-                                        && parent.model[scope.Name] != null && angular.isString(parent.model[scope.Name])) {
-                                        if (parent.model[scope.Name] === '' || parent.model[scope.Name] === null) {
-                                            ctrl.value = parent.model[scope.Name];
-                                        }
-                                        else {
-                                            ctrl.value = moment(parent.model[scope.Name]);
-                                        }
-                                    } else {
-                                        ctrl.value = parent.model[scope.Name];
-                                    }
-                                }
-
-                                parent.$watch(() => ctrl.value, value => {
-                                    if (value !== parent.model[scope.Name]) {
-                                        parent.model[scope.Name] = value;
-                                    }
-                                });
-                            }
-
-                            scope.$watch(() => parent.model[scope.Name], value => {
-                                if (value !== ctrl.value) {
-                                    ctrl.value = value;
-                                }
-                            }, true);
-
-                            if (ctrl.value == null && (ctrl.defaultValue && ctrl.defaultValue != null)) {
-                                if ((ctrl.DataType === 'date' || ctrl.DataType === 'datetime') && angular.isString(ctrl.defaultValue)) {
-                                    ctrl.defaultValue = new Date(ctrl.defaultValue);
-                                }
-
-                                if (ctrl.DataType === 'numeric' && angular.isString(ctrl.defaultValue)) {
-                                    ctrl.defaultValue = parseFloat(ctrl.defaultValue);
-                                }
-
-                                ctrl.value = ctrl.defaultValue;
-                            }
-
-                            parent.model.$state = parent.model.$state || {};
-
-                            // This is the state API for every property in the Model
-                            parent.model.$state[scope.Name] = {
-                                $valid: () => {
-                                    ctrl.checkValid();
-                                    return ctrl.state.$errors.length === 0;
-                                },
-                                $dirty: ctrl.$dirty,
-                                $errors: ctrl.state.$errors
-                            };
-
-                            if (angular.equals(ctrl.state, parent.model.$state[scope.Name]) === false) {
-                                ctrl.state = parent.model.$state[scope.Name];
-                            }
-
-                            if (setDirty) {
-                                const formScope = ctrl.getFormField();
-
-                                if (formScope) {
-                                    formScope.$setDirty();
-                                }
-                            }
-                        };
-
-                        parent.fields.push(ctrl);
-
-                        break;
-                    }
-
-                    parent = parent.$parent;
-                }
-            }
-        }
+      /**
+       * Setups a new Editor, this functions is like a common class constructor to be used
+       * with all the tubularEditors.
+       */
+      setupScope: setupScope
     }
 
+    function setupScope(scope, defaultFormat, ctrl, setDirty) {
+      ctrl = ctrl || scope;
+      ctrl.isEditing = angular.isUndefined(ctrl.isEditing) ? true : ctrl.isEditing;
+      ctrl.showLabel = ctrl.showLabel || false;
+      ctrl.label = ctrl.label || (ctrl.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
+      ctrl.required = ctrl.required || false;
+      ctrl.readOnly = ctrl.readOnly || false;
+      ctrl.format = ctrl.format || defaultFormat;
+      ctrl.$valid = true;
 
-})(angular, moment);
+      // This is the state API for every property in the Model
+      ctrl.state = {
+        $valid: () => {
+          ctrl.checkValid();
+          return ctrl.state.$errors.length === 0;
+        },
+        $dirty: ctrl.$dirty,
+        $errors: []
+      };
+
+      // Get the field reference using the Angular way
+      ctrl.getFormField = () => {
+        let parent = scope.$parent;
+
+        while (parent != null) {
+          if (parent.tubularDirective === 'tubular-form') {
+            const formScope = parent.getFormScope();
+
+            return formScope == null ? null : formScope[scope.Name];
+          }
+
+          parent = parent.$parent;
+        }
+
+        return null;
+      };
+
+      ctrl.$dirty = () => {
+        // Just forward the property
+        const formField = ctrl.getFormField();
+
+        return formField == null ? true : formField.$dirty;
+      };
+
+      ctrl.checkValid = () => {
+        ctrl.$valid = true;
+        ctrl.state.$errors = [];
+
+        if ((angular.isUndefined(ctrl.value) && ctrl.required) ||
+          (angular.isDate(ctrl.value) && isNaN(ctrl.value.getTime()) && ctrl.required)) {
+          ctrl.$valid = false;
+          ctrl.state.$errors = [translateFilter('EDITOR_REQUIRED')];
+
+          if (angular.isDefined(scope.$parent.Model)) {
+            scope.$parent.Model.$state[scope.Name] = ctrl.state;
+          }
+
+          return;
+        }
+
+        // Check if we have a validation function, otherwise return
+        if (angular.isDefined(ctrl.validate)) {
+          ctrl.validate();
+        }
+      };
+
+      scope.$watch(() => ctrl.value, (newValue, oldValue) => {
+        if (angular.isUndefined(oldValue) && angular.isUndefined(newValue)) {
+          return;
+        }
+
+        ctrl.$valid = true;
+
+        // Try to match the model to the parent, if it exists
+        if (angular.isDefined(scope.$parent.Model)) {
+          if (angular.isUndefined(scope.$parent.Model.$fields)) {
+            scope.$parent.Model.$fields = [];
+          }
+
+          if (scope.$parent.Model.$fields.indexOf(ctrl.name) !== -1) {
+            scope.$parent.Model[ctrl.name] = newValue;
+            scope.$parent.Model.$state = scope.$parent.Model.$state || [];
+            scope.$parent.Model.$state[scope.Name] = ctrl.state;
+          } else if (angular.isDefined(scope.$parent.Model.$addField)) {
+            scope.$parent.Model.$addField(ctrl.name, newValue, true);
+          }
+        }
+
+        ctrl.checkValid();
+      });
+
+      let parent = scope.$parent;
+
+      // We try to find a Tubular Form in the parents
+      while (parent != null) {
+        if (parent.tubularDirective === 'tubular-form' ||
+          parent.tubularDirective === 'tubular-rowset') {
+
+          if (ctrl.name === null) {
+            return;
+          }
+
+          if (parent.hasFieldsDefinitions !== false) {
+            throw 'Cannot define more fields. Field definitions have been sealed';
+          }
+
+          ctrl.$component = parent.tubularDirective === 'tubular-form' ? parent : parent.$component;
+
+          scope.Name = ctrl.name;
+
+          ctrl.bindScope = () => {
+            scope.$parent.Model = parent.model;
+
+            if (angular.equals(ctrl.value, parent.model[scope.Name]) === false) {
+              if (angular.isDefined(parent.model[scope.Name])) {
+                if ((ctrl.DataType === 'date' || ctrl.DataType === 'datetime') &&
+                  parent.model[scope.Name] != null && angular.isString(parent.model[scope.Name])) {
+                  if (parent.model[scope.Name] === '' || parent.model[scope.Name] === null) {
+                    ctrl.value = parent.model[scope.Name];
+                  } else {
+                    ctrl.value = moment(parent.model[scope.Name]);
+                  }
+                } else {
+                  ctrl.value = parent.model[scope.Name];
+                }
+              }
+
+              parent.$watch(() => ctrl.value, value => {
+                if (value !== parent.model[scope.Name]) {
+                  parent.model[scope.Name] = value;
+                }
+              });
+            }
+
+            scope.$watch(() => parent.model[scope.Name], value => {
+              if (value !== ctrl.value) {
+                ctrl.value = value;
+              }
+            }, true);
+
+            if (ctrl.value == null && (ctrl.defaultValue && ctrl.defaultValue != null)) {
+              if ((ctrl.DataType === 'date' || ctrl.DataType === 'datetime') && angular.isString(ctrl.defaultValue)) {
+                ctrl.defaultValue = new Date(ctrl.defaultValue);
+              }
+
+              if (ctrl.DataType === 'numeric' && angular.isString(ctrl.defaultValue)) {
+                ctrl.defaultValue = parseFloat(ctrl.defaultValue);
+              }
+
+              ctrl.value = ctrl.defaultValue;
+            }
+
+            parent.model.$state = parent.model.$state || {};
+
+            // This is the state API for every property in the Model
+            parent.model.$state[scope.Name] = {
+              $valid: () => {
+                ctrl.checkValid();
+                return ctrl.state.$errors.length === 0;
+              },
+              $dirty: ctrl.$dirty,
+              $errors: ctrl.state.$errors
+            };
+
+            if (angular.equals(ctrl.state, parent.model.$state[scope.Name]) === false) {
+              ctrl.state = parent.model.$state[scope.Name];
+            }
+
+            if (setDirty) {
+              const formScope = ctrl.getFormField();
+
+              if (formScope) {
+                formScope.$setDirty();
+              }
+            }
+          };
+
+          parent.fields.push(ctrl);
+
+          break;
+        }
+
+        parent = parent.$parent;
+      }
+    }
+  }
+})(angular);
 
 
 (function(angular) {
@@ -3208,27 +3229,25 @@ function exportToCsv(header, rows, visibility) {
 
     let finalVal = '';
     for (let j = 0; j < row.length; j++) {
-      if (!visibility[j]) {
-        continue;
+      if (visibility[j]) {
+        let innerValue = row[j] == null ? '' : row[j].toString();
+
+        if (angular.isDate(row[j])) {
+          innerValue = row[j].toLocaleString();
+        }
+
+        let result = innerValue.replace(/"/g, '""');
+
+        if (result.search(/("|,|\n)/g) >= 0) {
+          result = `"${  result  }"`;
+        }
+
+        if (j > 0) {
+          finalVal += ',';
+        }
+
+        finalVal += result;
       }
-
-      let innerValue = row[j] == null ? '' : row[j].toString();
-
-      if (angular.isDate(row[j])) {
-        innerValue = row[j].toLocaleString();
-      }
-
-      let result = innerValue.replace(/"/g, '""');
-
-      if (result.search(/("|,|\n)/g) >= 0) {
-        result = `"${  result  }"`;
-      }
-
-      if (j > 0) {
-        finalVal += ',';
-      }
-
-      finalVal += result;
     }
 
     return `${finalVal  }\n`;
@@ -3295,18 +3314,6 @@ function exportToCsv(header, rows, visibility) {
                     return expirationDate - now <= 0;
                 }
 
-                function retrieveSavedData() {
-                    const savedData = angular.fromJson($window.localStorage.getItem(prefix + authData));
-
-                    if (angular.isUndefined(savedData)) {
-                        throw 'No authentication data exists';
-                    } else if (isAuthenticationExpired(savedData.expirationDate)) {
-                        throw 'Authentication token has already expired';
-                    } else {
-                        me.userData = savedData;
-                    }
-                }
-
                 me.userData = {
                     isAuthenticated: false,
                     username: '',
@@ -3314,19 +3321,9 @@ function exportToCsv(header, rows, visibility) {
                     expirationDate: null
                 };
 
-                me.isBearerTokenExpired = ()  => isAuthenticationExpired(me.userData.expirationDate);
+                me.isBearerTokenExpired = () => isAuthenticationExpired(me.userData.expirationDate);
 
-                me.isAuthenticated = () => {
-                    if (!me.userData.isAuthenticated || isAuthenticationExpired(me.userData.expirationDate)) {
-                        try {
-                            retrieveSavedData();
-                        } catch (e) {
-                            return false;
-                        }
-                    }
-
-                    return true;
-                };
+                me.isAuthenticated = () => me.userData.isAuthenticated && !isAuthenticationExpired(me.userData.expirationDate);
 
                 me.removeAuthentication = function () {
                     $window.localStorage.removeItem(prefix + authData);
@@ -3344,7 +3341,7 @@ function exportToCsv(header, rows, visibility) {
                         method: 'POST',
                         url: tubularConfig.webApi.tokenUrl(),
                         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                        data: `grant_type=password&username=${  encodeURIComponent(username)  }&password=${  encodeURIComponent(password)}`
+                        data: `grant_type=password&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`
                     }).then(response => {
                         me.initAuth(response.data, username);
                         response.data.authenticated = true;
