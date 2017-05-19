@@ -26,10 +26,10 @@ describe('Component: Grid', () => {
     element = compile(template)(scope);
     scope.columns = [
       new tubularColumn("id", {
-        "Label": "ID"
+        "Label": "ID", "DataType" : "numeric"
       }),
       new tubularColumn("name", {
-        "Label": "Nombre"
+        "Label": "Nombre", "DataType" : "string", "Sortable": true
       })
     ]
     scope.$digest();
