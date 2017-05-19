@@ -18,8 +18,8 @@ module.exports = (config) => {
           '../../bower_components/moment/moment.js',
           '../../bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
           '../../dist/tubular-bundle.js',
-          '*.spec.js',
-          '*.case.html'
+          '**/*.spec.js',
+          '**/*.case.html'
         ],
 
         // list of files to exclude
