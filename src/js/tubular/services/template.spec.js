@@ -278,9 +278,9 @@ describe('Module: tubular.services', () => {
 
         describe('Method: generateCells', () => {
             it('should cells html match', () => {
-                var htmlOutput = tubularTemplateService.generateCells(columns, 'Inline');
+                var htmlOutput = tubularTemplateService.generateCells(columns, 'Inline').replace(/\s/g, '');
 
-                expect(htmlOutput).toEqual(genCells);
+                expect(htmlOutput).toEqual(genCells.replace(/\s/g, ''));
             });
         });
 

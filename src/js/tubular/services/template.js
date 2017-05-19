@@ -1,4 +1,4 @@
-﻿(function (angular) {
+﻿(angular => {
     'use strict';
 
     angular.module('tubular.services')
@@ -135,27 +135,25 @@
                 me.tbColumnDateTimeFilterPopoverTemplateName = 'tbColumnDateTimeFilterPopoverTemplate.html';
 
                 if (!$templateCache.get(me.tbColumnDateTimeFilterPopoverTemplateName)) {
-                    const htmlDateSelector =
-                        '<input class="form-control" type="date" ng-model="$ctrl.filter.Text" autofocus ng-keypress="$ctrl.checkEvent($event)" ' +
-                            'placeholder="{{\'CAPTION_VALUE\' | translate}}" ng-disabled="$ctrl.filter.Operator == \'None\'" />' +
-                            '<input type="date" class="form-control" ng-model="$ctrl.filter.Argument[0]" ng-keypress="$ctrl.checkEvent($event)" ng-show="$ctrl.filter.Operator == \'Between\'" />';
+                    const htmlDateSelector = `<input class="form-control" type="date" ng-model="$ctrl.filter.Text" autofocus ng-keypress="$ctrl.checkEvent($event)" 
+                            placeholder="{{'CAPTION_VALUE' | translate}}" ng-disabled="$ctrl.filter.Operator == 'None'" />
+                            <input type="date" class="form-control" ng-model="$ctrl.filter.Argument[0]" ng-keypress="$ctrl.checkEvent($event)" ng-show="$ctrl.filter.Operator == 'Between'" />`;
 
-                    const bootstrapDateSelector = '<div class="input-group">' +
-                        '<input type="text" class="form-control" uib-datepicker-popup="MM/dd/yyyy" ng-model="$ctrl.filter.Text" autofocus ng-keypress="$ctrl.checkEvent($event)" ' +
-                        'placeholder="{{\'CAPTION_VALUE\' | translate}}" ng-disabled="$ctrl.filter.Operator == \'None\'" is-open="$ctrl.dateOpen" />' +
-                        '<span class="input-group-btn">' +
-                        '<button type="button" class="btn btn-default" ng-click="$ctrl.dateOpen = !$ctrl.dateOpen;"><i class="fa fa-calendar"></i></button>' +
-                        '</span>' +
-                        '</div>';
+                    const bootstrapDateSelector = `<div class="input-group">
+                        <input type="text" class="form-control" uib-datepicker-popup="MM/dd/yyyy" ng-model="$ctrl.filter.Text" autofocus ng-keypress="$ctrl.checkEvent($event)" 
+                        placeholder="{{'CAPTION_VALUE' | translate}}" ng-disabled="$ctrl.filter.Operator == 'None'" is-open="$ctrl.dateOpen" />
+                        <span class="input-group-btn">
+                        <button type="button" class="btn btn-default" ng-click="$ctrl.dateOpen = !$ctrl.dateOpen;"><i class="fa fa-calendar"></i></button>
+                        </span>
+                        </div>`;
 
-                    me.tbColumnDateTimeFilterPopoverTemplate = `${'<div>' +
-                        '<form class="tubular-column-filter-form" onsubmit="return false;">' +
-                        '<select class="form-control" ng-options="key as value for (key , value) in $ctrl.filterOperators" ng-model="$ctrl.filter.Operator" ng-hide="$ctrl.dataType == \'boolean\'"></select>&nbsp;'}${
-                        me.canUseHtml5Date() ? htmlDateSelector : bootstrapDateSelector
-                        }<hr />` +
-                        '<tb-column-filter-buttons></tb-column-filter-buttons>' +
-                        '</form>' +
-                        '</div>';
+                    me.tbColumnDateTimeFilterPopoverTemplate = `<div>
+                        <form class="tubular-column-filter-form" onsubmit="return false;">
+                        <select class="form-control" ng-options="key as value for (key , value) in $ctrl.filterOperators" ng-model="$ctrl.filter.Operator" ng-hide="$ctrl.dataType == 'boolean'"></select>
+                        ${me.canUseHtml5Date() ? htmlDateSelector : bootstrapDateSelector}<hr />
+                        <tb-column-filter-buttons></tb-column-filter-buttons>
+                        </form>
+                        </div>`;
 
                     $templateCache.put(me.tbColumnDateTimeFilterPopoverTemplateName,
                         me.tbColumnDateTimeFilterPopoverTemplate);
@@ -171,12 +169,9 @@
                         const editorTag = el.EditorType
                             .replace(/([A-Z])/g, $1 => `-${  $1.toLowerCase()}`);
 
-                        return `${prev  }\r\n\t\t<tb-cell-template column-name="${el.Name}">` +
-                            `\r\n\t\t\t${
-                            mode === 'Inline'
-                                ? `<${editorTag} is-editing="row.$isEditing" value="row.${el.Name}"></${editorTag}>`
-                                : el.Template
-                            }\r\n\t\t</tb-cell-template>`;
+                        return `${prev}\r\n\t\t<tb-cell-template column-name="${el.Name}">
+                            \t\t\t${mode === 'Inline' ? `<${editorTag} is-editing="row.$isEditing" value="row.${el.Name}"></${editorTag}>` : el.Template}
+                            \t\t</tb-cell-template>`;
                     }, '');
 
                 me.generateColumnsDefinitions = (columns) => {
