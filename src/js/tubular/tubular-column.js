@@ -11,7 +11,7 @@
          * The `tubularColumn` factory is the base to generate a column model to use with `tbGrid`.
          */
         .factory('tubularColumn', [function() {
-            return (columnName, options) => {
+            return function(columnName, options) {
                 options = options || {};
                 
                 const obj = {
