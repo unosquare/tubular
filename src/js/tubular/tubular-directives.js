@@ -52,7 +52,7 @@
          * The `tbColumnDefinitions` directive is a parent node to fill with `tbColumn`.
          *
          * This directive is replace by a `thead` HTML element.
-         * 
+         *
          * @param {array} columns Set an array of TubularColumn to use. Using this attribute will create a template for columns and rows overwritting any template inside.
          */
         .directive('tbColumnDefinitions', [function() {
@@ -68,16 +68,15 @@
                     controller: [
                         '$scope', 
                         'tubularTemplateService',
-                        'tubularColumn', 
                         '$compile',
-                        function($scope, tubularTemplateService, tubularColumn, $compile) {
+                        function($scope, tubularTemplateService, $compile) {
                             $scope.$component = $scope.$parent.$parent.$component;
                             $scope.tubularDirective = 'tubular-column-definitions';
                         }
                     ],
                     link: function (scope, element) {
                         function InitFromColumns() {
-                            var isValid = true;
+                            let isValid = true;
                             
                             angular.forEach(scope.columns, column =>  isValid = isValid && column.Name);
 
