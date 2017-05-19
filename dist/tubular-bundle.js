@@ -70,19 +70,43 @@
          * The `tbColumnDefinitions` directive is a parent node to fill with `tbColumn`.
          *
          * This directive is replace by a `thead` HTML element.
+         * 
+         * @param {array} columns Set an array of TubularColumn to use. Using this attribute will create a template for columns and rows overwritting any template inside.
          */
-        .directive('tbColumnDefinitions', [function() {
+        .directive('tbColumnDefinitions', ['tubularTemplateService', function() {
                 return {
                     require: '^tbGridTable',
                     templateUrl: 'tbColumnDefinitions.tpl.html',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
-                    scope: true,
+                    scope: {
+                        columns: '=?'
+                    },
                     controller: [
-                        '$scope', function($scope) {
+                        '$scope', 
+                        'tubularTemplateService',
+                        'tubularColumn', 
+                        function($scope, tubularTemplateService, tubularColumn) {
+                            
+                            function InitFromColumns() {
+                                var isValid = true;
+                                
+                                angular.forEach($scope.columns, column =>  isValid = isValid && column.Name);
+
+                                if (!isValid) {
+                                    throw 'Column attribute contains invalid';
+                                }
+
+                                $scope.$component.addColumn($scope.column);
+                            }
+
                             $scope.$component = $scope.$parent.$parent.$component;
                             $scope.tubularDirective = 'tubular-column-definitions';
+
+                            if ($scope.columns && $scope.$component) {
+                                InitFromColumns();
+                            }
                         }
                     ],
                     compile: () => ({ post: scope => scope.$component.hasColumnsDefinitions = true })
@@ -852,7 +876,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
          * @param {bool} savePage Set if the grid autosave current page, default true.
          * @param {bool} savePageSize Set if the grid autosave page size, default true.
          * @param {bool} saveSearchText Set if the grid autosave search text, default true.
-         * @param {array} columns Set an array of TubularColumn to use. Using this attribute will create a template for columns and rows overwritting any template inside.
          */
         .component('tbGrid',
         {
@@ -872,8 +895,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 autoRefresh: '=?',
                 savePage: '=?',
                 savePageSize: '=?',
-                saveSearchText: '=?',
-                columns: '=?'
+                saveSearchText: '=?'
             },
             controller: 'tbGridController'
         });
@@ -887,7 +909,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             '$scope',
             'tubularPopupService',
             'tubularModel',
-            'tubularColumn',
             '$http',
             '$routeParams',
             'tubularConfig',
@@ -896,7 +917,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 $scope,
                 tubularPopupService,
                 TubularModel,
-                tubularColumn,
                 $http,
                 $routeParams,
                 tubularConfig,
@@ -905,21 +925,12 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 const prefix = tubularConfig.localStorage.prefix();
                 const storage = $window.localStorage;
 
-                function InitFromColumns() {
-                    var isValid = true;
-                    
-                    angular.forEach($ctrl.columns, column =>  isValid = isValid && column.Name);
-
-                    if (isValid) {
-                        $ctrl.hasColumnsDefinitions = true;
-                    }
-                }
-
                 $ctrl.$onInit = () => {
                     $ctrl.tubularDirective = 'tubular-grid';
 
                     $ctrl.name = $ctrl.name || 'tbgrid';
                     $ctrl.rows = [];
+                    $ctrl.columns = [];
 
                     $ctrl.savePage = angular.isUndefined($ctrl.savePage) ? true : $ctrl.savePage;
                     $ctrl.currentPage = $ctrl.savePage ? (parseInt(storage.getItem(`${prefix + $ctrl.name}_page`)) || 1) : 1;
@@ -950,12 +961,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     $ctrl.showLoading = angular.isUndefined($ctrl.showLoading) ? true : $ctrl.showLoading;
                     $ctrl.autoRefresh = angular.isUndefined($ctrl.autoRefresh) ? true : $ctrl.autoRefresh;
                     $ctrl.serverDeleteUrl = $ctrl.serverDeleteUrl || $ctrl.serverSaveUrl;
-
-                    if (angular.isArray($ctrl.columns)) {
-                        InitFromColumns();
-                    } else {
-                        $ctrl.columns = [];
-                    }
 
                     // Emit a welcome message
                     $scope.$emit('tbGrid_OnGreetParentController', $ctrl);
@@ -3701,6 +3706,16 @@ function exportToCsv(header, rows, visibility) {
                             }\r\n\t\t</tb-cell-template>`;
                     }, '');
 
+                me.generateColumnsDefinitions = (columns) => {
+                    return columns.reduce((prev, el) => 
+                        `${prev}
+                        \t\t<tb-column name="${el.Name}" label="${el.Label}" column-type="${el.DataType}" sortable="${el.Sortable}" 
+                        \t\t\tis-key="${el.IsKey}" searchable="${el.Searchable}" ${el.Sortable ? `\r\n\t\t\tsort-direction="${el.SortDirection}" sort-order="${el.SortOrder}" ` : ' '}
+                                visible="${el.Visible}">${el.Filter ? '\r\n\t\t\t<tb-column-filter></tb-column-filter>' : ''}
+                        \t\t\t<tb-column-header>{{label}}</tb-column-header>
+                        \t\t</tb-column>`, '');
+                }
+
                 /**
                  * Generates a grid markup using a columns model and grids options
                  * @param {array} columns
@@ -3738,65 +3753,30 @@ function exportToCsv(header, rows, visibility) {
                         bottomToolbar += '\r\n\t<tb-grid-pager-info class="col-md-3"></tb-grid-pager-info>';
                     }
 
+                    const columnDefinitions = me.generateColumnsDefinitions(columns);
+
                     return `${'<div class="container">' +
-                        '\r\n<tb-grid server-url="'}${
-                        options.dataUrl
-                        }" request-method="${
-                        options.RequestMethod
-                        }" class="row" ` +
-                        `page-size="10" require-authentication="${  options.RequireAuthentication  }" ${
-                        options.Mode !== 'Read-Only' ? ` editor-mode="${  options.Mode.toLowerCase()  }"` : ''
-                        }>${
-                        topToolbar === '' ? '' : `\r\n\t<div class="row">${  topToolbar  }\r\n\t</div>`
-                        }\r\n\t<div class="row">` +
+                        '\r\n<tb-grid server-url="'}${options.dataUrl}" request-method="${options.RequestMethod}" class="row" ` +
+                        `page-size="10" require-authentication="${options.RequireAuthentication }" ${options.Mode !== 'Read-Only' ? ` editor-mode="${  options.Mode.toLowerCase()  }"` : ''}>${topToolbar === '' ? '' : `\r\n\t<div class="row">${  topToolbar  }\r\n\t</div>`}\r\n\t<div class="row">` +
                         '\r\n\t<div class="col-md-12">' +
                         '\r\n\t<div class="panel panel-default panel-rounded">' +
-                        '\r\n\t<tb-grid-table class="table-bordered">' +
-                        `\r\n\t<tb-column-definitions>${
-                        options.Mode !== 'Read-Only'
-                            ? '\r\n\t\t<tb-column label="Actions"><tb-column-header>{{label}}</tb-column-header></tb-column>'
-                            : ''
-                        }${columns.reduce((prev, el) => `${prev  }\r\n\t\t<tb-column name="${  el.Name  }" label="${  el.Label
-                                }" column-type="${  el.DataType  }" sortable="${  el.Sortable
-                                }" ` +
-                                `\r\n\t\t\tis-key="${  el.IsKey  }" searchable="${  el.Searchable
-                                }" ${
-                                el.Sortable
-                                    ? `\r\n\t\t\tsort-direction="${
-                                    el.SortDirection
-                                    }" sort-order="${
-                                    el.SortOrder
-                                    }" `
-                                    : ' '
-                                }visible="${
-                                el.Visible
-                                }">${
-                                el.Filter ? '\r\n\t\t\t<tb-column-filter></tb-column-filter>' : ''
-                                }\r\n\t\t\t<tb-column-header>{{label}}</tb-column-header>` +
-                                '\r\n\t\t</tb-column>')
-                        }\r\n\t</tb-column-definitions>` +
+                        `\r\n\t<tb-grid-table class="table-bordered">
+                        \t<tb-column-definitions>
+                        ${columnDefinitions}
+                        </tb-column-definitions>` +
                         '\r\n\t<tb-row-set>' +
                         `\r\n\t<tb-row-template ng-repeat="row in $component.rows" row-model="row">${
                         options.Mode !== 'Read-Only'
-                            ? `\r\n\t\t<tb-cell-template>${
-                            options
-                                .Mode ===
-                                'Inline'
-                                ? '\r\n\t\t\t<tb-save-button model="row"></tb-save-button>'
-                                : ''
-                            }\r\n\t\t\t<tb-edit-button model="row"></tb-edit-button>` +
+                            ? `\r\n\t\t<tb-cell-template>${options.Mode === 'Inline' ? '\r\n\t\t\t<tb-save-button model="row"></tb-save-button>' : ''}\r\n\t\t\t<tb-edit-button model="row"></tb-edit-button>` +
                             '\r\n\t\t</tb-cell-template>'
                             : ''
-                        }${me.generateCells(columns, options.Mode)
-                        }\r\n\t</tb-row-template>` +
-                        '\r\n\t</tb-row-set>' +
-                        '\r\n\t</tb-grid-table>' +
-                        '\r\n\t</div>' +
-                        '\r\n\t</div>' +
-                        `\r\n\t</div>${
-                        bottomToolbar === '' ? '' : `\r\n\t<div class="row">${  bottomToolbar  }\r\n\t</div>`
-                        }\r\n</tb-grid>` +
-                        '\r\n</div>';
+                        }${me.generateCells(columns, options.Mode)}\r\n\t</tb-row-template>` +
+                        `\r\n\t</tb-row-set>
+                        \t</tb-grid-table>
+                        \t</div>
+                        \t</div>
+                        \t</div>${bottomToolbar === '' ? '' : `\r\n\t<div class="row">${  bottomToolbar  }\r\n\t</div>`}\r\n</tb-grid>
+                        </div>`;
                 };
 
                 me.getEditorTypeByDateType = dataType => {

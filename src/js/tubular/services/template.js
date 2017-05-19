@@ -179,6 +179,16 @@
                             }\r\n\t\t</tb-cell-template>`;
                     }, '');
 
+                me.generateColumnsDefinitions = (columns) => {
+                    return columns.reduce((prev, el) => 
+                        `${prev}
+                        \t\t<tb-column name="${el.Name}" label="${el.Label}" column-type="${el.DataType}" sortable="${el.Sortable}" 
+                        \t\t\tis-key="${el.IsKey}" searchable="${el.Searchable}" ${el.Sortable ? `\r\n\t\t\tsort-direction="${el.SortDirection}" sort-order="${el.SortOrder}" ` : ' '}
+                                visible="${el.Visible}">${el.Filter ? '\r\n\t\t\t<tb-column-filter></tb-column-filter>' : ''}
+                        \t\t\t<tb-column-header>{{label}}</tb-column-header>
+                        \t\t</tb-column>`, '');
+                }
+
                 /**
                  * Generates a grid markup using a columns model and grids options
                  * @param {array} columns
@@ -216,65 +226,30 @@
                         bottomToolbar += '\r\n\t<tb-grid-pager-info class="col-md-3"></tb-grid-pager-info>';
                     }
 
+                    const columnDefinitions = me.generateColumnsDefinitions(columns);
+
                     return `${'<div class="container">' +
-                        '\r\n<tb-grid server-url="'}${
-                        options.dataUrl
-                        }" request-method="${
-                        options.RequestMethod
-                        }" class="row" ` +
-                        `page-size="10" require-authentication="${  options.RequireAuthentication  }" ${
-                        options.Mode !== 'Read-Only' ? ` editor-mode="${  options.Mode.toLowerCase()  }"` : ''
-                        }>${
-                        topToolbar === '' ? '' : `\r\n\t<div class="row">${  topToolbar  }\r\n\t</div>`
-                        }\r\n\t<div class="row">` +
+                        '\r\n<tb-grid server-url="'}${options.dataUrl}" request-method="${options.RequestMethod}" class="row" ` +
+                        `page-size="10" require-authentication="${options.RequireAuthentication }" ${options.Mode !== 'Read-Only' ? ` editor-mode="${  options.Mode.toLowerCase()  }"` : ''}>${topToolbar === '' ? '' : `\r\n\t<div class="row">${  topToolbar  }\r\n\t</div>`}\r\n\t<div class="row">` +
                         '\r\n\t<div class="col-md-12">' +
                         '\r\n\t<div class="panel panel-default panel-rounded">' +
-                        '\r\n\t<tb-grid-table class="table-bordered">' +
-                        `\r\n\t<tb-column-definitions>${
-                        options.Mode !== 'Read-Only'
-                            ? '\r\n\t\t<tb-column label="Actions"><tb-column-header>{{label}}</tb-column-header></tb-column>'
-                            : ''
-                        }${columns.reduce((prev, el) => `${prev  }\r\n\t\t<tb-column name="${  el.Name  }" label="${  el.Label
-                                }" column-type="${  el.DataType  }" sortable="${  el.Sortable
-                                }" ` +
-                                `\r\n\t\t\tis-key="${  el.IsKey  }" searchable="${  el.Searchable
-                                }" ${
-                                el.Sortable
-                                    ? `\r\n\t\t\tsort-direction="${
-                                    el.SortDirection
-                                    }" sort-order="${
-                                    el.SortOrder
-                                    }" `
-                                    : ' '
-                                }visible="${
-                                el.Visible
-                                }">${
-                                el.Filter ? '\r\n\t\t\t<tb-column-filter></tb-column-filter>' : ''
-                                }\r\n\t\t\t<tb-column-header>{{label}}</tb-column-header>` +
-                                '\r\n\t\t</tb-column>')
-                        }\r\n\t</tb-column-definitions>` +
+                        `\r\n\t<tb-grid-table class="table-bordered">
+                        \t<tb-column-definitions>
+                        ${columnDefinitions}
+                        </tb-column-definitions>` +
                         '\r\n\t<tb-row-set>' +
                         `\r\n\t<tb-row-template ng-repeat="row in $component.rows" row-model="row">${
                         options.Mode !== 'Read-Only'
-                            ? `\r\n\t\t<tb-cell-template>${
-                            options
-                                .Mode ===
-                                'Inline'
-                                ? '\r\n\t\t\t<tb-save-button model="row"></tb-save-button>'
-                                : ''
-                            }\r\n\t\t\t<tb-edit-button model="row"></tb-edit-button>` +
+                            ? `\r\n\t\t<tb-cell-template>${options.Mode === 'Inline' ? '\r\n\t\t\t<tb-save-button model="row"></tb-save-button>' : ''}\r\n\t\t\t<tb-edit-button model="row"></tb-edit-button>` +
                             '\r\n\t\t</tb-cell-template>'
                             : ''
-                        }${me.generateCells(columns, options.Mode)
-                        }\r\n\t</tb-row-template>` +
-                        '\r\n\t</tb-row-set>' +
-                        '\r\n\t</tb-grid-table>' +
-                        '\r\n\t</div>' +
-                        '\r\n\t</div>' +
-                        `\r\n\t</div>${
-                        bottomToolbar === '' ? '' : `\r\n\t<div class="row">${  bottomToolbar  }\r\n\t</div>`
-                        }\r\n</tb-grid>` +
-                        '\r\n</div>';
+                        }${me.generateCells(columns, options.Mode)}\r\n\t</tb-row-template>` +
+                        `\r\n\t</tb-row-set>
+                        \t</tb-grid-table>
+                        \t</div>
+                        \t</div>
+                        \t</div>${bottomToolbar === '' ? '' : `\r\n\t<div class="row">${  bottomToolbar  }\r\n\t</div>`}\r\n</tb-grid>
+                        </div>`;
                 };
 
                 me.getEditorTypeByDateType = dataType => {

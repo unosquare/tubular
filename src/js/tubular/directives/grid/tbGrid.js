@@ -24,7 +24,6 @@
          * @param {bool} savePage Set if the grid autosave current page, default true.
          * @param {bool} savePageSize Set if the grid autosave page size, default true.
          * @param {bool} saveSearchText Set if the grid autosave search text, default true.
-         * @param {array} columns Set an array of TubularColumn to use. Using this attribute will create a template for columns and rows overwritting any template inside.
          */
         .component('tbGrid',
         {
@@ -44,8 +43,7 @@
                 autoRefresh: '=?',
                 savePage: '=?',
                 savePageSize: '=?',
-                saveSearchText: '=?',
-                columns: '=?'
+                saveSearchText: '=?'
             },
             controller: 'tbGridController'
         });

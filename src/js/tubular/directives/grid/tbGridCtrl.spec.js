@@ -57,7 +57,7 @@ describe('Module: tubular.directives', () => {
         sut = $controller('tbGridController', { '$scope': scope, '$window': window });
     }
 
-    describe('Controller: tbGridController (regular)', () => {
+    describe('Controller: tbGridController', () => {
         beforeEach(() => {
             create();
             sut.$onInit();
@@ -589,22 +589,4 @@ describe('Module: tubular.directives', () => {
             })
         });
     });
-
-    describe('Controller: tbGridController (with columns-as-attribute)', () => {
-        beforeEach(() => {
-            create();
-            sut.columns = [
-                new tubularColumn('Id'),
-                new tubularColumn('Name')
-            ];
-            sut.$onInit();
-        });
-
-        it('should have columns', () => expect(sut.columns).toBeDefined());
-
-        it('should have columns definition flagged', () => expect(sut.hasColumnsDefinitions).toBe(true));
-
-        it('should have 2 columns', () => expect(sut.columns.length).toBe(2));
-    });
-    
 });

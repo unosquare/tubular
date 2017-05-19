@@ -52,19 +52,43 @@
          * The `tbColumnDefinitions` directive is a parent node to fill with `tbColumn`.
          *
          * This directive is replace by a `thead` HTML element.
+         * 
+         * @param {array} columns Set an array of TubularColumn to use. Using this attribute will create a template for columns and rows overwritting any template inside.
          */
-        .directive('tbColumnDefinitions', [function() {
+        .directive('tbColumnDefinitions', ['tubularTemplateService', function() {
                 return {
                     require: '^tbGridTable',
                     templateUrl: 'tbColumnDefinitions.tpl.html',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
-                    scope: true,
+                    scope: {
+                        columns: '=?'
+                    },
                     controller: [
-                        '$scope', function($scope) {
+                        '$scope', 
+                        'tubularTemplateService',
+                        'tubularColumn', 
+                        function($scope, tubularTemplateService, tubularColumn) {
+                            
+                            function InitFromColumns() {
+                                var isValid = true;
+                                
+                                angular.forEach($scope.columns, column =>  isValid = isValid && column.Name);
+
+                                if (!isValid) {
+                                    throw 'Column attribute contains invalid';
+                                }
+
+                                $scope.$component.addColumn($scope.column);
+                            }
+
                             $scope.$component = $scope.$parent.$parent.$component;
                             $scope.tubularDirective = 'tubular-column-definitions';
+
+                            if ($scope.columns && $scope.$component) {
+                                InitFromColumns();
+                            }
                         }
                     ],
                     compile: () => ({ post: scope => scope.$component.hasColumnsDefinitions = true })
