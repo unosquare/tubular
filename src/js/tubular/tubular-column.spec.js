@@ -22,6 +22,11 @@ describe('Module: tubular.models', () => {
             expect(sut.Name).toBe('Test');
         });
 
+        it('should constructor with name define label properly', () => {
+            var sut = tubularColumn('MyColumn');
+            expect(sut.Label).toBe('My Column');
+        });
+
         it('should constructor with name define default values', () => {
             var sut = tubularColumn('Test');
             expect(sut.SortOrder).toBe(-1);

@@ -3,7 +3,7 @@
 
 describe('Component: Grid', () => {
 
-  var scope, compile, templateCache, template, element, TbColumn, $httpBackend;
+  var scope, compile, templateCache, template, element, tubularColumn, $httpBackend;
 
 
   beforeEach(module('tubular.tests'));
@@ -16,6 +16,7 @@ describe('Component: Grid', () => {
     compile = _$compile_;
     templateCache = _$templateCache_;
     $httpBackend = _$httpBackend_;
+    tubularColumn = _tubularColumn_;
     generate('columns-as-attribute');
   }));
 
@@ -24,10 +25,10 @@ describe('Component: Grid', () => {
     template = angular.element(tpl);
     element = compile(template)(scope);
     scope.columns = [
-      new TbColumn("id", {
+      new tubularColumn("id", {
         "Label": "ID"
       }),
-      new TbColumn("name", {
+      new tubularColumn("name", {
         "Label": "Nombre"
       })
     ]
