@@ -1,0 +1,1376 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for tubular/directives/grid/tbGridCtrl.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../../prettify.css" />
+    <link rel="stylesheet" href="../../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../../index.html">all files</a> / <a href="index.html">tubular/directives/grid/</a> tbGridCtrl.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">72.73% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>168/231</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">65.54% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>97/148</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">50% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>1/2</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">71.62% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>159/222</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line medium'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275
+276
+277
+278
+279
+280
+281
+282
+283
+284
+285
+286
+287
+288
+289
+290
+291
+292
+293
+294
+295
+296
+297
+298
+299
+300
+301
+302
+303
+304
+305
+306
+307
+308
+309
+310
+311
+312
+313
+314
+315
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326
+327
+328
+329
+330
+331
+332
+333
+334
+335
+336
+337
+338
+339
+340
+341
+342
+343
+344
+345
+346
+347
+348
+349
+350
+351
+352
+353
+354
+355
+356
+357
+358
+359
+360
+361
+362
+363
+364
+365
+366
+367
+368
+369
+370
+371
+372
+373
+374
+375
+376
+377
+378
+379
+380
+381
+382
+383
+384
+385
+386
+387
+388
+389
+390
+391
+392
+393
+394
+395
+396
+397
+398
+399
+400
+401
+402
+403
+404
+405
+406
+407
+408
+409
+410
+411
+412
+413
+414
+415
+416
+417
+418
+419
+420
+421
+422
+423
+424
+425
+426
+427
+428
+429
+430
+431
+432
+433
+434
+435
+436
+437
+438</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8×</span>
+<span class="cline-any cline-yes">8×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8×</span>
+<span class="cline-any cline-yes">8×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8×</span>
+<span class="cline-any cline-yes">8×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-yes">14×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">9×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">﻿(angular =&gt; {
+    'use strict';
+&nbsp;
+    angular.module('tubular.directives')
+        .controller('tbGridController',
+        [
+            '$scope',
+            'tubularPopupService',
+            'tubularModel',
+            '$http',
+            '$routeParams',
+            'tubularConfig',
+            '$window',
+            function (
+                $scope,
+                tubularPopupService,
+                TubularModel,
+                $http,
+                $routeParams,
+                tubularConfig,
+                $window) {
+                const $ctrl = this;
+                const prefix = tubularConfig.localStorage.prefix();
+                const storage = $window.localStorage;
+&nbsp;
+                $ctrl.$onInit = () =&gt; {
+                    $ctrl.tubularDirective = 'tubular-grid';
+&nbsp;
+                    $ctrl.name = $ctrl.name || 'tbgrid';
+                    $ctrl.columns = [];
+                    $ctrl.rows = [];
+&nbsp;
+                    $ctrl.savePage = angular.isUndefined($ctrl.savePage) ? true : <span class="branch-1 cbranch-no" title="branch not covered" >$ctrl.savePage;</span>
+                    $ctrl.currentPage = $ctrl.savePage ? (parseInt(storage.getItem(`${prefix + $ctrl.name  }_page`)) || 1) : <span class="branch-1 cbranch-no" title="branch not covered" >1;</span>
+                    $ctrl.savePageSize = angular.isUndefined($ctrl.savePageSize) ? true : <span class="branch-1 cbranch-no" title="branch not covered" >$ctrl.savePageSize;</span>
+                    $ctrl.pageSize = $ctrl.pageSize || 20;
+                    $ctrl.saveSearchText = angular.isUndefined($ctrl.saveSearchText) ? true : <span class="branch-1 cbranch-no" title="branch not covered" >$ctrl.saveSearchText;</span>
+                    $ctrl.totalPages = 0;
+                    $ctrl.totalRecordCount = 0;
+                    $ctrl.filteredRecordCount = 0;
+                    $ctrl.requestedPage = $ctrl.currentPage;
+                    $ctrl.hasColumnsDefinitions = false;
+                    $ctrl.requestCounter = 0;
+                    $ctrl.requestMethod = $ctrl.requestMethod || 'POST';
+                    $ctrl.serverSaveMethod = $ctrl.serverSaveMethod || 'POST';
+                    $ctrl.currentRequest = null;
+                    $ctrl.autoSearch = $routeParams.param ||
+                        ($ctrl.saveSearchText ? (storage.getItem(`${prefix + $ctrl.name  }_search`) || '') : <span class="branch-1 cbranch-no" title="branch not covered" >'')</span>;
+                    $ctrl.search = {
+                        Text: $ctrl.autoSearch,
+                        Operator: $ctrl.autoSearch === '' ? 'None' : <span class="branch-1 cbranch-no" title="branch not covered" >'Auto'</span>
+                    };
+&nbsp;
+                    $ctrl.isEmpty = false;
+                    $ctrl.tempRow = new TubularModel($ctrl, {});
+                    $ctrl.requireAuthentication = $ctrl.requireAuthentication ? (<span class="branch-0 cbranch-no" title="branch not covered" >$ctrl.requireAuthentication === 'true')</span> : true;
+                    $ctrl.editorMode = $ctrl.editorMode || 'none';
+                    $ctrl.canSaveState = false;
+                    $ctrl.showLoading = angular.isUndefined($ctrl.showLoading) ? true : <span class="branch-1 cbranch-no" title="branch not covered" >$ctrl.showLoading;</span>
+                    $ctrl.autoRefresh = angular.isUndefined($ctrl.autoRefresh) ? true : <span class="branch-1 cbranch-no" title="branch not covered" >$ctrl.autoRefresh;</span>
+                    $ctrl.serverDeleteUrl = $ctrl.serverDeleteUrl || $ctrl.serverSaveUrl;
+&nbsp;
+                    // Emit a welcome message
+                    $scope.$emit('tbGrid_OnGreetParentController', $ctrl);
+                };
+&nbsp;
+                $scope.columnWatcher = () =&gt; {
+                    <span class="missing-if-branch" title="if path not taken" >I</span>if ($ctrl.hasColumnsDefinitions === false || $ctrl.canSaveState === false) {
+<span class="cstat-no" title="statement not covered" >                        return;</span>
+                    }
+&nbsp;
+                    storage.setItem(`${prefix + $ctrl.name  }_columns`, angular.toJson($ctrl.columns));
+                };
+&nbsp;
+                $scope.$watch('$ctrl.columns', $scope.columnWatcher, true);
+&nbsp;
+                $scope.serverUrlWatcher = (newVal, prevVal) =&gt; {
+                    <span class="missing-if-branch" title="if path not taken" >I</span>if ($ctrl.hasColumnsDefinitions === false || $ctrl.currentRequest || newVal === prevVal) {
+<span class="cstat-no" title="statement not covered" >                        return;</span>
+                    }
+&nbsp;
+                    $ctrl.retrieveData();
+                };
+&nbsp;
+                $scope.$watch('$ctrl.serverUrl', $scope.serverUrlWatcher);
+&nbsp;
+                $scope.hasColumnsDefinitionsWatcher = newVal =&gt; {
+<span class="cstat-no" title="statement not covered" >                    if (newVal !== true) {</span>
+<span class="cstat-no" title="statement not covered" >                        return;</span>
+                    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    $ctrl.retrieveData();</span>
+                };
+&nbsp;
+                $scope.$watch('$ctrl.hasColumnsDefinitions', $scope.hasColumnsDefinitionsWatcher);
+&nbsp;
+                $scope.pageSizeWatcher =  () =&gt; {
+                    <span class="missing-if-branch" title="else path not taken" >E</span>if ($ctrl.hasColumnsDefinitions &amp;&amp; $ctrl.requestCounter &gt; 0) {
+                        if ($ctrl.savePageSize) {
+                            storage.setItem(`${prefix + $ctrl.name  }_pageSize`, $ctrl.pageSize);
+                        }
+&nbsp;
+                        $ctrl.retrieveData();
+                    }
+                };
+&nbsp;
+                $scope.$watch('$ctrl.pageSize', $scope.pageSizeWatcher);
+&nbsp;
+                $scope.requestedPageWatcher = () =&gt; {
+                    <span class="missing-if-branch" title="else path not taken" >E</span>if ($ctrl.hasColumnsDefinitions &amp;&amp; $ctrl.requestCounter &gt; 0) {
+                        $ctrl.retrieveData();
+                    }
+                };
+&nbsp;
+                $scope.$watch('$ctrl.requestedPage', $scope.requestedPageWatcher);
+&nbsp;
+                $ctrl.saveSearch = () =&gt; {
+                    <span class="missing-if-branch" title="if path not taken" >I</span>if (!$ctrl.saveSearchText) {
+<span class="cstat-no" title="statement not covered" >                        return;</span>
+                    }
+&nbsp;
+                    if ($ctrl.search.Text === '') {
+                        storage.removeItem(`${prefix + $ctrl.name  }_search`);
+                    } else {
+                        storage.setItem(`${prefix + $ctrl.name  }_search`, $ctrl.search.Text);
+                    }
+                };
+&nbsp;
+                $ctrl.addColumn = item =&gt; {
+                    <span class="missing-if-branch" title="if path not taken" >I</span>if (item.Name == null){
+<span class="cstat-no" title="statement not covered" >                        return;</span>
+                    }
+&nbsp;
+                    <span class="missing-if-branch" title="if path not taken" >I</span>if ($ctrl.hasColumnsDefinitions !== false) {
+<span class="cstat-no" title="statement not covered" >                        throw 'Cannot define more columns. Column definitions have been sealed';</span>
+                    }
+&nbsp;
+                    $ctrl.columns.push(item);
+                };
+&nbsp;
+                $ctrl.newRow = (template, popup, size, data) =&gt; {
+                    $ctrl.tempRow = new TubularModel($ctrl, data || {});
+                    $ctrl.tempRow.$isNew = true;
+                    $ctrl.tempRow.$isEditing = true;
+                    $ctrl.tempRow.$component = $ctrl;
+&nbsp;
+                    if (angular.isDefined(template) &amp;&amp; angular.isDefined(popup) &amp;&amp; popup) {
+                        tubularPopupService.openDialog(template, $ctrl.tempRow, $ctrl, size);
+                    }
+                };
+&nbsp;
+                $ctrl.deleteRow = row =&gt; {
+                    const urlparts = $ctrl.serverDeleteUrl.split('?');
+                    let url = `${urlparts[0]  }/${  row.$key}`;
+&nbsp;
+                    <span class="missing-if-branch" title="if path not taken" >I</span>if (urlparts.length &gt; 1) {
+<span class="cstat-no" title="statement not covered" >                        url += `?${  urlparts[1]}`;</span>
+                    }
+&nbsp;
+                    $ctrl.currentRequest = $http.delete(url, {
+                        requireAuthentication: $ctrl.requireAuthentication
+                    })
+                    .then(response =&gt; <span class="cstat-no" title="statement not covered" >$scope.$emit('tbGrid_OnRemove', response.data),</span>
+                        error =&gt; <span class="cstat-no" title="statement not covered" >$scope.$emit('tbGrid_OnConnectionError', error))</span>
+                    .then(() =&gt; {
+<span class="cstat-no" title="statement not covered" >                        $ctrl.currentRequest = null;</span>
+<span class="cstat-no" title="statement not covered" >                        $ctrl.retrieveData();</span>
+                    });
+                };
+&nbsp;
+<span class="fstat-no" title="function not covered" >                function addTimeZoneToUrl(url) {</span>
+<span class="cstat-no" title="statement not covered" >                    return `${url +</span>
+                        (url.indexOf('?') === -1 ? '?' : '&amp;')
+                        }timezoneOffset=${
+                        new Date().getTimezoneOffset()}`;
+                }
+&nbsp;
+                $ctrl.saveRow = (row, forceUpdate) =&gt; {
+<span class="cstat-no" title="statement not covered" >                    if (!$ctrl.serverSaveUrl) {</span>
+<span class="cstat-no" title="statement not covered" >                        throw 'Define a Save URL.';</span>
+                    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    if (!forceUpdate &amp;&amp; !row.$isNew &amp;&amp; !row.$hasChanges()) {</span>
+<span class="cstat-no" title="statement not covered" >                        row.$isEditing = false;</span>
+<span class="cstat-no" title="statement not covered" >                        return null;</span>
+                    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    row.$isLoading = true;</span>
+<span class="cstat-no" title="statement not covered" >                    const component = row.$component;</span>
+<span class="cstat-no" title="statement not covered" >                    row.$component = null;</span>
+<span class="cstat-no" title="statement not covered" >                    const clone = angular.copy(row);</span>
+<span class="cstat-no" title="statement not covered" >                    row.$component = component;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    const originalClone = angular.copy(row.$original);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    delete clone.$isEditing;</span>
+<span class="cstat-no" title="statement not covered" >                    delete clone.$original;</span>
+<span class="cstat-no" title="statement not covered" >                    delete clone.$state;</span>
+<span class="cstat-no" title="statement not covered" >                    delete clone.$valid;</span>
+<span class="cstat-no" title="statement not covered" >                    delete clone.$component;</span>
+<span class="cstat-no" title="statement not covered" >                    delete clone.$isLoading;</span>
+<span class="cstat-no" title="statement not covered" >                    delete clone.$isNew;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    $ctrl.currentRequest = $http({</span>
+                        url: row.$isNew ? addTimeZoneToUrl($ctrl.serverSaveUrl) : $ctrl.serverSaveUrl,
+                        method: row.$isNew ? ($ctrl.serverSaveMethod || 'POST') : 'PUT',
+                        data: row.$isNew ? clone : {
+                            Old: originalClone,
+                            New: clone,
+                            TimezoneOffset: new Date().getTimezoneOffset()
+                        }
+                    });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    $ctrl.currentRequest.then(data =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >                        $scope.$emit('tbForm_OnSuccessfulSave', data);</span>
+<span class="cstat-no" title="statement not covered" >                        row.$isLoading = false;</span>
+<span class="cstat-no" title="statement not covered" >                        row.$isEditing = false;</span>
+<span class="cstat-no" title="statement not covered" >                        $ctrl.currentRequest = null;</span>
+<span class="cstat-no" title="statement not covered" >                        $ctrl.retrieveData();</span>
+                        
+<span class="cstat-no" title="statement not covered" >                        return data;</span>
+                    }, error =&gt; {
+<span class="cstat-no" title="statement not covered" >                        $scope.$emit('tbForm_OnConnectionError', error);</span>
+<span class="cstat-no" title="statement not covered" >                        row.$isLoading = false;</span>
+<span class="cstat-no" title="statement not covered" >                        $ctrl.currentRequest = null;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                        return error;</span>
+                    });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    return $ctrl.currentRequest;</span>
+                };
+&nbsp;
+                $ctrl.verifyColumns = () =&gt; {
+                    const columns = angular.fromJson(storage.getItem(`${prefix + $ctrl.name  }_columns`));
+                    if (columns == null || columns === '') {
+                        // Nothing in settings, saving initial state
+                        storage.setItem(`${prefix + $ctrl.name  }_columns`, angular.toJson($ctrl.columns));
+                        return;
+                    }
+&nbsp;
+                    angular.forEach(columns, column =&gt; {
+                            const filtered = $ctrl.columns.filter(el =&gt; el.Name === column.Name);
+&nbsp;
+                            <span class="missing-if-branch" title="if path not taken" >I</span>if (filtered.length === 0) {
+<span class="cstat-no" title="statement not covered" >                                return;</span>
+                            }
+&nbsp;
+                            const current = filtered[0];
+                            // Updates visibility by now
+                            current.Visible = column.Visible;
+&nbsp;
+                            // Update sorting
+                            <span class="missing-if-branch" title="else path not taken" >E</span>if ($ctrl.requestCounter &lt; 1) {
+                                current.SortOrder = column.SortOrder;
+                                current.SortDirection = column.SortDirection;
+                            }
+&nbsp;
+                            // Update Filters
+                            <span class="missing-if-branch" title="if path not taken" >I</span>if (current.Filter != null &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >current.Filter.Text != null)</span> {
+<span class="cstat-no" title="statement not covered" >                                return;</span>
+                            }
+&nbsp;
+                            <span class="missing-if-branch" title="if path not taken" >I</span>if (column.Filter != null &amp;&amp;
+<span class="branch-1 cbranch-no" title="branch not covered" >                                column.Filter.Text != null </span>&amp;&amp;
+<span class="branch-2 cbranch-no" title="branch not covered" >                                column.Filter.Operator !== 'None')</span> {
+<span class="cstat-no" title="statement not covered" >                                current.Filter = column.Filter;</span>
+                            }
+                        });
+                };
+&nbsp;
+                $ctrl.getRequestObject = skip =&gt; {
+                    if (skip === -1) {
+                        skip = ($ctrl.requestedPage - 1) * $ctrl.pageSize;
+                        if (skip &lt; 0) skip = 0;
+                    }
+&nbsp;
+                    return {
+                        url: $ctrl.serverUrl,
+                        method: $ctrl.requestMethod || <span class="branch-1 cbranch-no" title="branch not covered" >'POST',</span>
+                        requireAuthentication: $ctrl.requireAuthentication,
+                        data: {
+                            Count: $ctrl.requestCounter,
+                            Columns: $ctrl.columns,
+                            Skip: skip,
+                            Take: parseInt($ctrl.pageSize),
+                            Search: $ctrl.search,
+                            TimezoneOffset: new Date().getTimezoneOffset()
+                        }
+                    };
+                };
+&nbsp;
+                $ctrl.retrieveData = () =&gt; {
+                    // If the ServerUrl is empty skip data load
+                    <span class="missing-if-branch" title="if path not taken" >I</span>if (!$ctrl.serverUrl || $ctrl.currentRequest !== null) {
+<span class="cstat-no" title="statement not covered" >                        return;</span>
+                    }
+&nbsp;
+                    $ctrl.canSaveState = true;
+                    $ctrl.verifyColumns();
+&nbsp;
+                    <span class="missing-if-branch" title="else path not taken" >E</span>if ($ctrl.savePageSize) {
+                        $ctrl.pageSize = (parseInt(storage.getItem(`${prefix + $ctrl.name  }_pageSize`)) || $ctrl.pageSize);
+                    }
+&nbsp;
+                    $ctrl.pageSize = $ctrl.pageSize &lt; 10 ? 20 : $ctrl.pageSize; // default
+&nbsp;
+                    const newPages = Math.ceil($ctrl.totalRecordCount / $ctrl.pageSize);
+                    <span class="missing-if-branch" title="else path not taken" >E</span>if ($ctrl.requestedPage &gt; newPages) $ctrl.requestedPage = newPages;
+&nbsp;
+                    const request = $ctrl.getRequestObject(-1);
+&nbsp;
+                    $scope.$emit('tbGrid_OnBeforeRequest', request, $ctrl);
+&nbsp;
+                    $ctrl.currentRequest = $http(request);
+&nbsp;
+                    $ctrl.currentRequest.then($ctrl.processPayload, error =&gt; {
+<span class="cstat-no" title="statement not covered" >                        $ctrl.requestedPage = $ctrl.currentPage;</span>
+<span class="cstat-no" title="statement not covered" >                        $scope.$emit('tbGrid_OnConnectionError', error);</span>
+                    }).then(() =&gt; <span class="cstat-no" title="statement not covered" >$ctrl.currentRequest = null)</span>;
+                };
+&nbsp;
+                $ctrl.processPayload = response =&gt; {
+                    $ctrl.requestCounter += 1;
+&nbsp;
+                    if (!response || !response.data) {
+                        $scope.$emit('tbGrid_OnConnectionError',
+                            {
+                                statusText: 'Data is empty',
+                                status: 0
+                            });
+&nbsp;
+                        return;
+                    }
+&nbsp;
+                    const data = response.data;
+&nbsp;
+                    $ctrl.dataSource = data;
+&nbsp;
+                    if (!data.Payload) {
+                        $scope.$emit('tbGrid_OnConnectionError', `tubularGrid(${$ctrl.$id}): response is invalid.`);
+                        return;
+                    }
+&nbsp;
+                    $ctrl.rows = data.Payload.map(el =&gt; {
+                        const model = new TubularModel($ctrl, el);
+                        model.$component = $ctrl;
+&nbsp;
+                        model.editPopup = (template, size) =&gt; {
+<span class="cstat-no" title="statement not covered" >                            tubularPopupService.openDialog(template, new TubularModel($ctrl, el), $ctrl, size);</span>
+                        };
+&nbsp;
+                        return model;
+                    });
+&nbsp;
+                    $scope.$emit('tbGrid_OnDataLoaded', $ctrl);
+&nbsp;
+                    $ctrl.aggregationFunctions = data.AggregationPayload;
+                    $ctrl.currentPage = data.CurrentPage;
+                    $ctrl.totalPages = data.TotalPages;
+                    $ctrl.totalRecordCount = data.TotalRecordCount;
+                    $ctrl.filteredRecordCount = data.FilteredRecordCount;
+                    $ctrl.isEmpty = $ctrl.filteredRecordCount === 0;
+&nbsp;
+                    if ($ctrl.savePage) {
+                        storage.setItem(`${prefix + $ctrl.name  }_page`, $ctrl.currentPage);
+                    }
+                };
+&nbsp;
+                $ctrl.sortColumn = (columnName, multiple) =&gt; {
+                    const filterColumn = $ctrl.columns.filter(el =&gt; el.Name === columnName);
+&nbsp;
+                    if (filterColumn.length === 0) {
+                        return;
+                    }
+&nbsp;
+                    const column = filterColumn[0];
+&nbsp;
+                    <span class="missing-if-branch" title="if path not taken" >I</span>if (column.Sortable === false) {
+<span class="cstat-no" title="statement not covered" >                        return;</span>
+                    }
+&nbsp;
+                    // need to know if it's currently sorted before we reset stuff
+                    const currentSortDirection = column.SortDirection;
+                    const toBeSortDirection = currentSortDirection === 'None'
+                        ? 'Ascending'
+                        : currentSortDirection === 'Ascending' ? 'Descending' : <span class="branch-1 cbranch-no" title="branch not covered" >'None';</span>
+&nbsp;
+                    // the latest sorting takes less priority than previous sorts
+                    <span class="missing-if-branch" title="if path not taken" >I</span>if (toBeSortDirection === 'None') {
+<span class="cstat-no" title="statement not covered" >                        column.SortOrder = -1;</span>
+<span class="cstat-no" title="statement not covered" >                        column.SortDirection = 'None';</span>
+                    } else {
+                        column.SortOrder = Number.MAX_VALUE;
+                        column.SortDirection = toBeSortDirection;
+                    }
+&nbsp;
+                    // if it's not a multiple sorting, remove the sorting from all other columns
+                    if (multiple === false) {
+                        angular.forEach($ctrl.columns.filter(col =&gt; col.Name !== columnName),
+                            col =&gt; {
+                                col.SortOrder = -1;
+                                col.SortDirection = 'None';
+                            });
+                    }
+&nbsp;
+                    // take the columns that actually need to be sorted in order to re-index them
+                    const currentlySortedColumns = $ctrl.columns.filter(col =&gt; col.SortOrder &gt; 0);
+&nbsp;
+                    // re-index the sort order
+                    currentlySortedColumns.sort((a, b) =&gt; {
+                        return a.SortOrder === b.SortOrder ? <span class="branch-0 cbranch-no" title="branch not covered" >0 </span>: a.SortOrder &gt; b.SortOrder
+                    });
+&nbsp;
+                    angular.forEach(currentlySortedColumns, (col, index) =&gt; col.SortOrder = index + 1);
+&nbsp;
+                    $scope.$broadcast('tbGrid_OnColumnSorted');
+                    $ctrl.retrieveData();
+                };
+&nbsp;
+                $ctrl.getFullDataSource = () =&gt; {
+<span class="cstat-no" title="statement not covered" >                    const request = $ctrl.getRequestObject(0);</span>
+<span class="cstat-no" title="statement not covered" >                    request.data.Take = -1;</span>
+<span class="cstat-no" title="statement not covered" >                    request.data.Search = {</span>
+                        Text: '',
+                        Operator: 'None'
+                    };
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    return $http(request)</span>
+                        .then(response =&gt; <span class="cstat-no" title="statement not covered" >response.data.Payload,</span>
+                            error =&gt; <span class="cstat-no" title="statement not covered" >$scope.$emit('tbGrid_OnConnectionError', error))</span>
+                        .then(() =&gt; <span class="cstat-no" title="statement not covered" >$ctrl.currentRequest = null)</span>;
+                };
+&nbsp;
+                $ctrl.visibleColumns = () =&gt; $ctrl.columns.filter(el =&gt; el.Visible).length;
+            }
+        ]);
+})(angular);
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Fri May 19 2017 18:40:49 GMT+0000 (UTC)
+</div>
+</div>
+<script src="../../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../../sorter.js"></script>
+</body>
+</html>
