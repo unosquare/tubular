@@ -73,7 +73,7 @@
          * 
          * @param {array} columns Set an array of TubularColumn to use. Using this attribute will create a template for columns and rows overwritting any template inside.
          */
-        .directive('tbColumnDefinitions', ['tubularTemplateService', function() {
+        .directive('tbColumnDefinitions', [function() {
                 return {
                     require: '^tbGridTable',
                     templateUrl: 'tbColumnDefinitions.tpl.html',
@@ -87,28 +87,32 @@
                         '$scope', 
                         'tubularTemplateService',
                         'tubularColumn', 
-                        function($scope, tubularTemplateService, tubularColumn) {
-                            
-                            function InitFromColumns() {
-                                var isValid = true;
-                                
-                                angular.forEach($scope.columns, column =>  isValid = isValid && column.Name);
-
-                                if (!isValid) {
-                                    throw 'Column attribute contains invalid';
-                                }
-
-                                $scope.$component.addColumn($scope.column);
-                            }
-
+                        '$compile',
+                        function($scope, tubularTemplateService, tubularColumn, $compile) {
                             $scope.$component = $scope.$parent.$parent.$component;
                             $scope.tubularDirective = 'tubular-column-definitions';
-
-                            if ($scope.columns && $scope.$component) {
-                                InitFromColumns();
-                            }
                         }
                     ],
+                    link: function (scope, element) {
+                        function InitFromColumns() {
+                            var isValid = true;
+                            
+                            angular.forEach(scope.columns, column =>  isValid = isValid && column.Name);
+
+                            if (!isValid) {
+                                throw 'Column attribute contains invalid';
+                            }
+
+                            scope.$component.addColumn(scope.column);
+                        }
+
+                        if (scope.columns && scope.$component){
+                            InitFromColumns();
+                            const template = tubularTemplateService.generateColumnsDefinitions(scope.columns);
+                            const content = $compile(template)(scope);
+                            element.append(content);
+                        }
+                    },
                     compile: () => ({ post: scope => scope.$component.hasColumnsDefinitions = true })
                 };
             }
@@ -333,7 +337,6 @@
                             $scope.bindFields = () => angular.forEach($scope.fields, field => field.bindScope());
                         }
                     ],
-
                     // Wait a little bit before to connect to the fields
                     compile: ()  => ({ post: scope => $timeout(() => scope.hasFieldsDefinitions = true, 300) })
                 })
@@ -3525,7 +3528,7 @@ function exportToCsv(header, rows, visibility) {
             }
         ]);
 })(angular);
-(function (angular) {
+(angular => {
     'use strict';
 
     angular.module('tubular.services')
@@ -3662,27 +3665,25 @@ function exportToCsv(header, rows, visibility) {
                 me.tbColumnDateTimeFilterPopoverTemplateName = 'tbColumnDateTimeFilterPopoverTemplate.html';
 
                 if (!$templateCache.get(me.tbColumnDateTimeFilterPopoverTemplateName)) {
-                    const htmlDateSelector =
-                        '<input class="form-control" type="date" ng-model="$ctrl.filter.Text" autofocus ng-keypress="$ctrl.checkEvent($event)" ' +
-                            'placeholder="{{\'CAPTION_VALUE\' | translate}}" ng-disabled="$ctrl.filter.Operator == \'None\'" />' +
-                            '<input type="date" class="form-control" ng-model="$ctrl.filter.Argument[0]" ng-keypress="$ctrl.checkEvent($event)" ng-show="$ctrl.filter.Operator == \'Between\'" />';
+                    const htmlDateSelector = `<input class="form-control" type="date" ng-model="$ctrl.filter.Text" autofocus ng-keypress="$ctrl.checkEvent($event)" 
+                            placeholder="{{'CAPTION_VALUE' | translate}}" ng-disabled="$ctrl.filter.Operator == 'None'" />
+                            <input type="date" class="form-control" ng-model="$ctrl.filter.Argument[0]" ng-keypress="$ctrl.checkEvent($event)" ng-show="$ctrl.filter.Operator == 'Between'" />`;
 
-                    const bootstrapDateSelector = '<div class="input-group">' +
-                        '<input type="text" class="form-control" uib-datepicker-popup="MM/dd/yyyy" ng-model="$ctrl.filter.Text" autofocus ng-keypress="$ctrl.checkEvent($event)" ' +
-                        'placeholder="{{\'CAPTION_VALUE\' | translate}}" ng-disabled="$ctrl.filter.Operator == \'None\'" is-open="$ctrl.dateOpen" />' +
-                        '<span class="input-group-btn">' +
-                        '<button type="button" class="btn btn-default" ng-click="$ctrl.dateOpen = !$ctrl.dateOpen;"><i class="fa fa-calendar"></i></button>' +
-                        '</span>' +
-                        '</div>';
+                    const bootstrapDateSelector = `<div class="input-group">
+                        <input type="text" class="form-control" uib-datepicker-popup="MM/dd/yyyy" ng-model="$ctrl.filter.Text" autofocus ng-keypress="$ctrl.checkEvent($event)" 
+                        placeholder="{{'CAPTION_VALUE' | translate}}" ng-disabled="$ctrl.filter.Operator == 'None'" is-open="$ctrl.dateOpen" />
+                        <span class="input-group-btn">
+                        <button type="button" class="btn btn-default" ng-click="$ctrl.dateOpen = !$ctrl.dateOpen;"><i class="fa fa-calendar"></i></button>
+                        </span>
+                        </div>`;
 
-                    me.tbColumnDateTimeFilterPopoverTemplate = `${'<div>' +
-                        '<form class="tubular-column-filter-form" onsubmit="return false;">' +
-                        '<select class="form-control" ng-options="key as value for (key , value) in $ctrl.filterOperators" ng-model="$ctrl.filter.Operator" ng-hide="$ctrl.dataType == \'boolean\'"></select>&nbsp;'}${
-                        me.canUseHtml5Date() ? htmlDateSelector : bootstrapDateSelector
-                        }<hr />` +
-                        '<tb-column-filter-buttons></tb-column-filter-buttons>' +
-                        '</form>' +
-                        '</div>';
+                    me.tbColumnDateTimeFilterPopoverTemplate = `<div>
+                        <form class="tubular-column-filter-form" onsubmit="return false;">
+                        <select class="form-control" ng-options="key as value for (key , value) in $ctrl.filterOperators" ng-model="$ctrl.filter.Operator" ng-hide="$ctrl.dataType == 'boolean'"></select>
+                        ${me.canUseHtml5Date() ? htmlDateSelector : bootstrapDateSelector}<hr />
+                        <tb-column-filter-buttons></tb-column-filter-buttons>
+                        </form>
+                        </div>`;
 
                     $templateCache.put(me.tbColumnDateTimeFilterPopoverTemplateName,
                         me.tbColumnDateTimeFilterPopoverTemplate);
@@ -3698,23 +3699,18 @@ function exportToCsv(header, rows, visibility) {
                         const editorTag = el.EditorType
                             .replace(/([A-Z])/g, $1 => `-${  $1.toLowerCase()}`);
 
-                        return `${prev  }\r\n\t\t<tb-cell-template column-name="${el.Name}">` +
-                            `\r\n\t\t\t${
-                            mode === 'Inline'
-                                ? `<${editorTag} is-editing="row.$isEditing" value="row.${el.Name}"></${editorTag}>`
-                                : el.Template
-                            }\r\n\t\t</tb-cell-template>`;
+                        return `${prev}\r\n\t\t<tb-cell-template column-name="${el.Name}">
+                            \t\t\t${mode === 'Inline' ? `<${editorTag} is-editing="row.$isEditing" value="row.${el.Name}"></${editorTag}>` : el.Template}
+                            \t\t</tb-cell-template>`;
                     }, '');
 
-                me.generateColumnsDefinitions = (columns) => {
-                    return columns.reduce((prev, el) => 
+                me.generateColumnsDefinitions = (columns) => columns.reduce((prev, el) => 
                         `${prev}
                         \t\t<tb-column name="${el.Name}" label="${el.Label}" column-type="${el.DataType}" sortable="${el.Sortable}" 
                         \t\t\tis-key="${el.IsKey}" searchable="${el.Searchable}" ${el.Sortable ? `\r\n\t\t\tsort-direction="${el.SortDirection}" sort-order="${el.SortOrder}" ` : ' '}
                                 visible="${el.Visible}">${el.Filter ? '\r\n\t\t\t<tb-column-filter></tb-column-filter>' : ''}
                         \t\t\t<tb-column-header>{{label}}</tb-column-header>
                         \t\t</tb-column>`, '');
-                }
 
                 /**
                  * Generates a grid markup using a columns model and grids options
