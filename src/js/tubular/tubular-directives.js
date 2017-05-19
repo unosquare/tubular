@@ -55,7 +55,10 @@
          *
          * @param {array} columns Set an array of TubularColumn to use. Using this attribute will create a template for columns and rows overwritting any template inside.
          */
-        .directive('tbColumnDefinitions', [function() {
+        .directive('tbColumnDefinitions', [
+            'tubularTemplateService', 
+            '$compile', 
+            function(tubularTemplateService, $compile) {
                 return {
                     require: '^tbGridTable',
                     templateUrl: 'tbColumnDefinitions.tpl.html',
@@ -67,9 +70,7 @@
                     },
                     controller: [
                         '$scope', 
-                        'tubularTemplateService',
-                        '$compile',
-                        function($scope, tubularTemplateService, $compile) {
+                        function($scope) {
                             $scope.$component = $scope.$parent.$parent.$component;
                             $scope.tubularDirective = 'tubular-column-definitions';
                         }
