@@ -135,6 +135,7 @@ module.exports = grunt => {
                     'src/js/tubular/tubular-directives-gridcomponents.js',
                     'src/js/tubular/tubular-directives-gridpager.js',
                     'src/js/tubular/tubular-models.js',
+                    'src/js/tubular/tubular-column.js',
                     'src/js/tubular/tubular-services.js',
                     'src/js/tubular/filters/**/*.js',
                     'src/js/tubular/interceptors/**/*.js',

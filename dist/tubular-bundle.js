@@ -132,12 +132,10 @@
                         aggregate: '@?',
                         sortDirection: '@?'
                     },
-                    controller: [
-                        '$scope', function ($scope) {
-                            $scope.column = { Label: '' };
+                    controller: ['$scope', 'tubularColumn', 
+                        function ($scope, tubularColumn) {
                             $scope.$component = $scope.$parent.$parent.$component;
                             $scope.tubularDirective = 'tubular-column';
-                            $scope.label = $scope.label || ($scope.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
 
                             $scope.sortColumn = multiple => $scope.$component.sortColumn($scope.column.Name, multiple);
 
@@ -153,38 +151,20 @@
                                 $scope.$broadcast('tbColumn_LabelChanged', $scope.label);
                             });
 
-                            const column = new function () {
-                                this.Name = $scope.name || null;
-                                this.Label = $scope.label || null;
-                                this.Sortable = $scope.sortable;
-                                this.SortOrder = parseInt($scope.sortOrder) || -1;
-                                this.SortDirection = function () {
-                                    if (angular.isUndefined($scope.sortDirection)) {
-                                        return 'None';
-                                    }
+                            $scope.column = tubularColumn($scope.name, {
+                                Label: $scope.label,
+                                Sortable: $scope.sortable,
+                                SortOrder: $scope.sortOrder,
+                                SortDirection: $scope.sortDirection,
+                                IsKey: $scope.isKey,
+                                Searchable: $scope.searchable,
+                                Visible: $scope.visible,
+                                DataType: $scope.columnType,
+                                Aggregate: $scope.aggregate
+                            });
 
-                                    if ($scope.sortDirection.toLowerCase().indexOf('asc') === 0) {
-                                        return 'Ascending';
-                                    }
-
-                                    if ($scope.sortDirection.toLowerCase().indexOf('desc') === 0) {
-                                        return 'Descending';
-                                    }
-
-                                    return 'None';
-                                }();
-
-                                this.IsKey = angular.isDefined($scope.isKey) ? $scope.isKey : false;
-                                this.Searchable = angular.isDefined($scope.searchable) ? $scope.searchable : false;
-                                this.Visible = $scope.visible === 'false' ? false : true;
-                                this.Filter = null;
-                                this.DataType = $scope.columnType || 'string';
-                                this.Aggregate = $scope.aggregate || 'none';
-                            };
-
-                            $scope.$component.addColumn(column);
-                            $scope.column = column;
-                            $scope.label = column.Label;
+                            $scope.$component.addColumn($scope.column);
+                            $scope.label = $scope.column.Label;
                         }
                     ]
                 };
@@ -2606,6 +2586,55 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             };
         }]);
 })(angular, moment);
+
+(angular => {
+    'use strict';
+
+    angular.module('tubular.models')
+        /**
+         * @ngdoc factory
+         * @name tubularColumn
+         * @module tubular.models
+         *
+         * @description
+         * The `tubularColumn` factory is the base to generate a column model to use with `tbGrid`.
+         */
+        .factory('tubularColumn', [function() {
+            return (columnName, options) => {
+                options = options || {};
+                
+                const obj = {
+                    Label: options.Label  || (columnName || '').replace(/([a-z])([A-Z])/g, '$1 $2'),
+                    Name: columnName,
+                    Sortable: options.Sortable,
+                    SortOrder: parseInt(options.SortOrder) || -1,
+                    SortDirection: function(){
+                        if (angular.isUndefined(options.SortDirection)) {
+                            return 'None';
+                        }
+
+                        if (options.SortDirection.toLowerCase().indexOf('asc') === 0) {
+                            return 'Ascending';
+                        }
+
+                        if (options.SortDirection.toLowerCase().indexOf('desc') === 0) {
+                            return 'Descending';
+                        }
+
+                        return 'None';
+                    }(),
+                    IsKey: angular.isDefined(options.IsKey) ? options.IsKey : false,
+                    Searchable: angular.isDefined(options.Searchable) ? options.Searchable : false,
+                    Visible: options.Visible === 'false' ? false : true,
+                    Filter: null,
+                    DataType: options.DataType || 'string',
+                    Aggregate: options.Aggregate || 'none'
+                };
+
+                return obj;
+            };
+        }]);
+})(angular);
 
 
 (function(angular) {
