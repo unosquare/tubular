@@ -887,6 +887,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             '$scope',
             'tubularPopupService',
             'tubularModel',
+            'tubularColumn',
             '$http',
             '$routeParams',
             'tubularConfig',
@@ -895,6 +896,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 $scope,
                 tubularPopupService,
                 TubularModel,
+                tubularColumn,
                 $http,
                 $routeParams,
                 tubularConfig,
@@ -903,15 +905,24 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 const prefix = tubularConfig.localStorage.prefix();
                 const storage = $window.localStorage;
 
+                function InitFromColumns() {
+                    var isValid = true;
+                    
+                    angular.forEach($ctrl.columns, column =>  isValid = isValid && column.Name);
+
+                    if (isValid) {
+                        $ctrl.hasColumnsDefinitions = true;
+                    }
+                }
+
                 $ctrl.$onInit = () => {
                     $ctrl.tubularDirective = 'tubular-grid';
 
                     $ctrl.name = $ctrl.name || 'tbgrid';
-                    $ctrl.columns = [];
                     $ctrl.rows = [];
 
                     $ctrl.savePage = angular.isUndefined($ctrl.savePage) ? true : $ctrl.savePage;
-                    $ctrl.currentPage = $ctrl.savePage ? (parseInt(storage.getItem(`${prefix + $ctrl.name  }_page`)) || 1) : 1;
+                    $ctrl.currentPage = $ctrl.savePage ? (parseInt(storage.getItem(`${prefix + $ctrl.name}_page`)) || 1) : 1;
                     $ctrl.savePageSize = angular.isUndefined($ctrl.savePageSize) ? true : $ctrl.savePageSize;
                     $ctrl.pageSize = $ctrl.pageSize || 20;
                     $ctrl.saveSearchText = angular.isUndefined($ctrl.saveSearchText) ? true : $ctrl.saveSearchText;
@@ -925,7 +936,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     $ctrl.serverSaveMethod = $ctrl.serverSaveMethod || 'POST';
                     $ctrl.currentRequest = null;
                     $ctrl.autoSearch = $routeParams.param ||
-                        ($ctrl.saveSearchText ? (storage.getItem(`${prefix + $ctrl.name  }_search`) || '') : '');
+                        ($ctrl.saveSearchText ? (storage.getItem(`${prefix + $ctrl.name}_search`) || '') : '');
                     $ctrl.search = {
                         Text: $ctrl.autoSearch,
                         Operator: $ctrl.autoSearch === '' ? 'None' : 'Auto'
@@ -939,6 +950,12 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     $ctrl.showLoading = angular.isUndefined($ctrl.showLoading) ? true : $ctrl.showLoading;
                     $ctrl.autoRefresh = angular.isUndefined($ctrl.autoRefresh) ? true : $ctrl.autoRefresh;
                     $ctrl.serverDeleteUrl = $ctrl.serverDeleteUrl || $ctrl.serverSaveUrl;
+
+                    if (angular.isArray($ctrl.columns)) {
+                        InitFromColumns();
+                    } else {
+                        $ctrl.columns = [];
+                    }
 
                     // Emit a welcome message
                     $scope.$emit('tbGrid_OnGreetParentController', $ctrl);
