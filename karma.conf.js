@@ -23,6 +23,7 @@ module.exports = (config) => {
           '../../bower_components/chart.js/dist/Chart.js',
           '../../bower_components/angular-chart.js/dist/angular-chart.js',
           'tubular/tubular-models.js',
+          'tubular/tubular-column.js',
           'tubular/tubular-services.js',
           'tubular*/**/*.module.js',
 
