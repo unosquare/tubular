@@ -10,8 +10,9 @@
    *
    * It depends upon  {@link tubular.directives}, {@link tubular.services} and {@link tubular.models}.
    */
-  angular.module('tubular', ['tubular.directives', 'tubular.services', 'tubular.models'])
-
+  angular
+    .module('tubular', ['tubular.directives', 'tubular.services', 'tubular.models'])
+    .info({ version: '1.5.1' });
 
 })(angular);
 
@@ -2908,7 +2909,6 @@ angular.module('tubular.services', ['ui.bootstrap'])
             };
         }]);
 })(angular);
-
 (function(angular) {
   'use strict';
 
@@ -3116,18 +3116,8 @@ angular.module('tubular.services', ['ui.bootstrap'])
 
         parent = parent.$parent;
       }
-
     }
-
-
-
   }
-
-
-
-
-
-
 })(angular);
 
 
