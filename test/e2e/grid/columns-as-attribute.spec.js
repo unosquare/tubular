@@ -11,7 +11,7 @@ describe('Component: Grid', () => {
 
 
 
-      beforeEach(inject(function(_$compile_, _$rootScope_, _$templateCache_, _$httpBackend_, _TbColumn_) {
+      beforeEach(inject(function(_$compile_, _$rootScope_, _$templateCache_, _$httpBackend_, _tubularColumn_) {
         scope = _$rootScope_;
         compile = _$compile_;
         templateCache = _$templateCache_;
@@ -37,7 +37,7 @@ describe('Component: Grid', () => {
 
 
       it('should pass', () => {
-          
+
 
           const headers = element.find("th");
 
