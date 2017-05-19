@@ -913,7 +913,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             'tubularPopupService',
             'tubularModel',
             '$http',
-            '$routeParams',
             'tubularConfig',
             '$window',
             function (
@@ -921,7 +920,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 tubularPopupService,
                 TubularModel,
                 $http,
-                $routeParams,
                 tubularConfig,
                 $window) {
                 const $ctrl = this;
@@ -949,8 +947,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     $ctrl.requestMethod = $ctrl.requestMethod || 'POST';
                     $ctrl.serverSaveMethod = $ctrl.serverSaveMethod || 'POST';
                     $ctrl.currentRequest = null;
-                    $ctrl.autoSearch = $routeParams.param ||
-                        ($ctrl.saveSearchText ? (storage.getItem(`${prefix + $ctrl.name}_search`) || '') : '');
+                    $ctrl.autoSearch = $ctrl.saveSearchText ? (storage.getItem(`${prefix + $ctrl.name}_search`) || '') : '';
                     $ctrl.search = {
                         Text: $ctrl.autoSearch,
                         Operator: $ctrl.autoSearch === '' ? 'None' : 'Auto'
