@@ -174,15 +174,13 @@
                             \t\t</tb-cell-template>`;
                     }, '');
 
-                me.generateColumnsDefinitions = (columns) => {
-                    return columns.reduce((prev, el) => 
+                me.generateColumnsDefinitions = (columns) => columns.reduce((prev, el) => 
                         `${prev}
                         \t\t<tb-column name="${el.Name}" label="${el.Label}" column-type="${el.DataType}" sortable="${el.Sortable}" 
                         \t\t\tis-key="${el.IsKey}" searchable="${el.Searchable}" ${el.Sortable ? `\r\n\t\t\tsort-direction="${el.SortDirection}" sort-order="${el.SortOrder}" ` : ' '}
                                 visible="${el.Visible}">${el.Filter ? '\r\n\t\t\t<tb-column-filter></tb-column-filter>' : ''}
                         \t\t\t<tb-column-header>{{label}}</tb-column-header>
                         \t\t</tb-column>`, '');
-                }
 
                 /**
                  * Generates a grid markup using a columns model and grids options

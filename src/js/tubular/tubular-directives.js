@@ -55,7 +55,7 @@
          * 
          * @param {array} columns Set an array of TubularColumn to use. Using this attribute will create a template for columns and rows overwritting any template inside.
          */
-        .directive('tbColumnDefinitions', ['tubularTemplateService', function() {
+        .directive('tbColumnDefinitions', [function() {
                 return {
                     require: '^tbGridTable',
                     templateUrl: 'tbColumnDefinitions.tpl.html',
@@ -69,28 +69,32 @@
                         '$scope', 
                         'tubularTemplateService',
                         'tubularColumn', 
-                        function($scope, tubularTemplateService, tubularColumn) {
-                            
-                            function InitFromColumns() {
-                                var isValid = true;
-                                
-                                angular.forEach($scope.columns, column =>  isValid = isValid && column.Name);
-
-                                if (!isValid) {
-                                    throw 'Column attribute contains invalid';
-                                }
-
-                                $scope.$component.addColumn($scope.column);
-                            }
-
+                        '$compile',
+                        function($scope, tubularTemplateService, tubularColumn, $compile) {
                             $scope.$component = $scope.$parent.$parent.$component;
                             $scope.tubularDirective = 'tubular-column-definitions';
-
-                            if ($scope.columns && $scope.$component) {
-                                InitFromColumns();
-                            }
                         }
                     ],
+                    link: function (scope, element) {
+                        function InitFromColumns() {
+                            var isValid = true;
+                            
+                            angular.forEach(scope.columns, column =>  isValid = isValid && column.Name);
+
+                            if (!isValid) {
+                                throw 'Column attribute contains invalid';
+                            }
+
+                            scope.$component.addColumn(scope.column);
+                        }
+
+                        if (scope.columns && scope.$component){
+                            InitFromColumns();
+                            const template = tubularTemplateService.generateColumnsDefinitions(scope.columns);
+                            const content = $compile(template)(scope);
+                            element.append(content);
+                        }
+                    },
                     compile: () => ({ post: scope => scope.$component.hasColumnsDefinitions = true })
                 };
             }
@@ -315,7 +319,6 @@
                             $scope.bindFields = () => angular.forEach($scope.fields, field => field.bindScope());
                         }
                     ],
-
                     // Wait a little bit before to connect to the fields
                     compile: ()  => ({ post: scope => $timeout(() => scope.hasFieldsDefinitions = true, 300) })
                 })
