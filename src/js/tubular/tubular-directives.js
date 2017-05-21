@@ -147,7 +147,7 @@
                     },
                     controller: ['$scope', 'tubularColumn',
                         function ($scope, tubularColumn) {
-                            $scope.$component = $scope.$parent.$component;
+                            $scope.$component = $scope.$parent.$component || $scope.$parent.$parent.$component;
                             $scope.tubularDirective = 'tubular-column';
 
                             $scope.sortColumn = multiple => $scope.$component.sortColumn($scope.column.Name, multiple);

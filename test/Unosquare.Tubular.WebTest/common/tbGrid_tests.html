@@ -1,6 +1,6 @@
 <div ng-controller="ProgrammaticCtrl as ctrl">
-{{ ctrl.columns | json}}
 
+<!--
 <tb-grid server-url="http://tubular.azurewebsites.net/api/orders/paged" request-method="POST" 
     page-size="10">
     <div class="row">
@@ -41,6 +41,7 @@
         </div>
     </div>
 </tb-grid>
+-->
 
 <tb-grid server-url="http://tubular.azurewebsites.net/api/orders/paged" request-method="POST" 
     page-size="10">
@@ -53,7 +54,7 @@
         <div class="col-md-12">
             <div class="panel panel-default panel-rounded">
                 <tb-grid-table class="table-bordered">
-                    <tb-column-definitions rows="ctrl.columns">
+                    <tb-column-definitions columns="ctrl.columns">
                     </tb-column-definitions>
                     <tb-row-set>
                         <tb-row-template ng-repeat="row in $component.rows"
