@@ -9,7 +9,11 @@
             '$routeProvider', '$locationProvider',
             function ($routeProvider, $locationProvider) {
                 $routeProvider.
-                    when('/tbGridPagerTests', {
+                    when('/tbGridTests', {
+                        templateUrl: '/test/Unosquare.Tubular.WebTest/common/tbGrid_tests.html',
+                        title: 'Tubular Grid Tests'
+                    })
+                    .when('/tbGridPagerTests', {
                         templateUrl: '/test/Unosquare.Tubular.WebTest/common/tbGridPager_tests.html',
                         title: 'Tubular Grid Pager (and related) Tests'
                     })
@@ -70,5 +74,13 @@
             $scope.$on('tbForm_OnSuccessfulSave', function () {
                 $scope.textSave = "Saved";
             });
+        }).controller('ProgrammaticCtrl', function ($scope, tubularColumn) {
+            var $ctrl = this;
+            $ctrl.columns = [
+                new tubularColumn('OrderID', { DataType: 'numeric', Sortable: true}),
+                new tubularColumn('CustomerName'),
+                new tubularColumn('ShippedDate'),
+                new tubularColumn('ShipperCity'),
+            ];
         });
 })();
