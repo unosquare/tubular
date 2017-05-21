@@ -1200,6 +1200,10 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         return;
                     }
 
+                    if ($ctrl.columns.length === 0) {
+                        throw 'You need to define at least one column';
+                    }
+
                     $ctrl.canSaveState = true;
                     $ctrl.verifyColumns();
 
