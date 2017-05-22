@@ -104,8 +104,6 @@
                                 if (!isValid) {
                                     throw 'Column attribute contains invalid';
                                 }
-
-                                angular.forEach(scope.columns, column => scope.$component.addColumn(column));
                             }
 
                             if (scope.columns && scope.$component) {
