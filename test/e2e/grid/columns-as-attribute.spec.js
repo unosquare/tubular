@@ -17,13 +17,6 @@ describe('Component: Grid', () => {
     templateCache = _$templateCache_;
     $httpBackend = _$httpBackend_;
     tubularColumn = _tubularColumn_;
-    generate('columns-as-attribute');
-  }));
-
-  function generate(caseName) {
-    var tpl = templateCache.get(caseName + '.case.html');
-    template = angular.element(tpl);
-    element = compile(template)(scope);
     scope.columns = [
       new tubularColumn("id", {
         "Label": "ID", "DataType" : "numeric"
@@ -32,18 +25,43 @@ describe('Component: Grid', () => {
         "Label": "Nombre", "DataType" : "string", "Sortable": true
       })
     ]
+  }));
+
+  function generate(caseName) {
+    var tpl = templateCache.get(caseName + '.case.html');
+    template = angular.element(tpl);
+    element = compile(template)(scope);
     scope.$digest();
   }
 
 
 
   it('should render specified columns', () => {
+    generate('columns-as-attribute');
+
     const headers = element.find("th");
 
 
     expect(headers.length).toBe(2, 'should have 2 columns');
     expect($j(headers[0]).text().trim()).toBe('ID');
     expect($j(headers[1]).text().trim()).toBe('Nombre');
+  });
+
+  it('should rerender columns if changed', () => {
+    generate('columns-as-attribute');
+
+    scope.columns.push(new tubularColumn("value", {
+      "Label": "Valor", "DataType" : "string", "Sortable": false
+    }));
+    scope.$digest()
+
+    const headers = element.find("th");
+
+
+    expect(headers.length).toBe(3, 'should have 3 columns');
+    expect($j(headers[0]).text().trim()).toBe('ID');
+    expect($j(headers[1]).text().trim()).toBe('Nombre');
+    expect($j(headers[2]).text().trim()).toBe('Valor');
   });
 
 
