@@ -45,14 +45,17 @@ You can get all the dependencies using the following links in your master HTML p
 <link rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap/latest/css/bootstrap.min.css" />
 <link rel="stylesheet" href="//cdn.jsdelivr.net/fontawesome/latest/css/font-awesome.min.css" />
 
-<script src="//cdn.jsdelivr.net/g/angularjs@1.6.0(angular.min.js+angular-animate.min.js+angular-route.min.js),angular.bootstrap@2.5.0(ui-bootstrap.min.js+ui-bootstrap-tpls.min.js),momentjs@2.17.1"></script>
+<script src="//cdn.jsdelivr.net/npm/angular@1.6.4/angular.js"></script>
+<script src="//cdn.jsdelivr.net/npm/angular-route@1.6.4/angular-route.js"></script>
+<script src="//cdn.jsdelivr.net/npm/angular-animate@1.6.4/angular-animate.js"></script>
+<script src="//cdn.jsdelivr.net/g/angular.bootstrap@2.5.0(ui-bootstrap.min.js+ui-bootstrap-tpls.min.js),momentjs@2.17.1"></script>
 ```
 
 Then you will need to either grab your own copy of Tubular or you use jsDelivr to reference Tubular CSS and JS files.
 
 ```html
 <link rel="stylesheet" href="//cdn.jsdelivr.net/tubular/latest/tubular-bundle.min.css" />
-<script src="//cdn.jsdelivr.net/tubular/latest/tubular-bundle.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/tubular@1.5.1"></script>
 ```
 
 Finally update your modules to include Tubular, for example if your module is called <i>app</i>, then you will need to add Tubular as a dependency as follows:
