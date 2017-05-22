@@ -29,7 +29,7 @@
      *
      * It depends upon {@link tubular.services} and {@link tubular.models}.
      */
-    angular.module('tubular.directives', ['tubular.models', 'tubular.services'])
+    angular.module('tubular.directives', ['tubular.models','tubular.services'])
         /**
          * @ngdoc directive
          * @name tbGridTable
@@ -52,7 +52,7 @@
                     transclude: true,
                     scope: true,
                     controller: [
-                        '$scope', function ($scope) {
+                        '$scope', function($scope) {
                             $scope.$component = $scope.$parent.$parent.$ctrl;
                             $scope.tubularDirective = 'tubular-grid-table';
                         }
@@ -70,51 +70,22 @@
          * The `tbColumnDefinitions` directive is a parent node to fill with `tbColumn`.
          *
          * This directive is replace by a `thead` HTML element.
-         *
-         * @param {array} columns Set an array of TubularColumn to use. Using this attribute will create a template for columns and rows overwritting any template inside.
          */
-        .directive('tbColumnDefinitions', [
-            'tubularTemplateService',
-            '$compile',
-            function (tubularTemplateService, $compile) {
+        .directive('tbColumnDefinitions', [function() {
                 return {
                     require: '^tbGridTable',
                     templateUrl: 'tbColumnDefinitions.tpl.html',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
-                    scope: {
-                        columns: '=?'
-                    },
+                    scope: true,
                     controller: [
-                        '$scope',
-                        function ($scope) {
+                        '$scope', function($scope) {
                             $scope.$component = $scope.$parent.$parent.$component;
                             $scope.tubularDirective = 'tubular-column-definitions';
                         }
                     ],
-                    compile: () => ({
-                        pre: (scope, element) => {
-
-                            function InitFromColumns() {
-                                let isValid = true;
-
-                                angular.forEach(scope.columns, column => isValid = isValid && column.Name);
-
-                                if (!isValid) {
-                                    throw 'Column attribute contains invalid';
-                                }
-                            }
-
-                            if (scope.columns && scope.$component) {
-                                InitFromColumns();
-                                const template = tubularTemplateService.generateColumnsDefinitions(scope.columns);
-                                const content = $compile(template)(scope);
-                                element.find('tr').append(content);
-                            }
-                        },
-                        post: scope => scope.$component.hasColumnsDefinitions = true
-                    })
+                    compile: () => ({ post: scope => scope.$component.hasColumnsDefinitions = true })
                 };
             }
         ])
@@ -161,10 +132,12 @@
                         aggregate: '@?',
                         sortDirection: '@?'
                     },
-                    controller: ['$scope', 'tubularColumn',
-                        function ($scope, tubularColumn) {
-                            $scope.$component = $scope.$parent.$component || $scope.$parent.$parent.$component;
+                    controller: [
+                        '$scope', function ($scope) {
+                            $scope.column = { Label: '' };
+                            $scope.$component = $scope.$parent.$parent.$component;
                             $scope.tubularDirective = 'tubular-column';
+                            $scope.label = $scope.label || ($scope.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
 
                             $scope.sortColumn = multiple => $scope.$component.sortColumn($scope.column.Name, multiple);
 
@@ -180,20 +153,38 @@
                                 $scope.$broadcast('tbColumn_LabelChanged', $scope.label);
                             });
 
-                            $scope.column = tubularColumn($scope.name, {
-                                Label: $scope.label,
-                                Sortable: $scope.sortable,
-                                SortOrder: $scope.sortOrder,
-                                SortDirection: $scope.sortDirection,
-                                IsKey: $scope.isKey,
-                                Searchable: $scope.searchable,
-                                Visible: $scope.visible,
-                                DataType: $scope.columnType,
-                                Aggregate: $scope.aggregate
-                            });
+                            const column = new function () {
+                                this.Name = $scope.name || null;
+                                this.Label = $scope.label || null;
+                                this.Sortable = $scope.sortable;
+                                this.SortOrder = parseInt($scope.sortOrder) || -1;
+                                this.SortDirection = function () {
+                                    if (angular.isUndefined($scope.sortDirection)) {
+                                        return 'None';
+                                    }
 
-                            $scope.$component.addColumn($scope.column);
-                            $scope.label = $scope.column.Label;
+                                    if ($scope.sortDirection.toLowerCase().indexOf('asc') === 0) {
+                                        return 'Ascending';
+                                    }
+
+                                    if ($scope.sortDirection.toLowerCase().indexOf('desc') === 0) {
+                                        return 'Descending';
+                                    }
+
+                                    return 'None';
+                                }();
+
+                                this.IsKey = angular.isDefined($scope.isKey) ? $scope.isKey : false;
+                                this.Searchable = angular.isDefined($scope.searchable) ? $scope.searchable : false;
+                                this.Visible = $scope.visible === 'false' ? false : true;
+                                this.Filter = null;
+                                this.DataType = $scope.columnType || 'string';
+                                this.Aggregate = $scope.aggregate || 'none';
+                            };
+
+                            $scope.$component.addColumn(column);
+                            $scope.column = column;
+                            $scope.label = column.Label;
                         }
                     ]
                 };
@@ -220,7 +211,7 @@
                     transclude: true,
                     scope: false,
                     controller: [
-                        '$scope', function ($scope) {
+                        '$scope', function($scope) {
                             $scope.sortColumn = $event => $scope.$parent.sortColumn($event.ctrlKey);
 
                             // this listener here is used for backwards compatibility with tbColumnHeader requiring a scope.label value on its own
@@ -261,7 +252,7 @@
                     transclude: true,
                     scope: false,
                     controller: [
-                        '$scope', function ($scope) {
+                        '$scope', function($scope) {
                             $scope.$component = $scope.$parent.$component || $scope.$parent.$parent.$component;
                             $scope.tubularDirective = 'tubular-row-set';
                         }
@@ -291,7 +282,7 @@
                     transclude: true,
                     scope: false,
                     controller: [
-                        '$scope', function ($scope) {
+                        '$scope', function($scope) {
                             $scope.$component = $scope.$parent.$component || $scope.$parent.$parent.$component;
                             $scope.tubularDirective = 'tubular-foot-set';
                         }
@@ -313,34 +304,35 @@
          * @param {object} rowModel Set the current row, if you are using a ngRepeat you must to use the current element variable here.
          */
         .directive('tbRowTemplate', ['$timeout', $timeout => ({
-            templateUrl: 'tbRowTemplate.tpl.html',
-            restrict: 'E',
-            replace: true,
-            transclude: true,
-            scope: {
-                model: '=rowModel'
-            },
-            controller: [
-                '$scope', function ($scope) {
-                    $scope.tubularDirective = 'tubular-rowset';
-                    $scope.fields = [];
-                    $scope.hasFieldsDefinitions = false;
-                    $scope.$component = $scope.$parent.$parent.$parent.$component;
+                    templateUrl: 'tbRowTemplate.tpl.html',
+                    restrict: 'E',
+                    replace: true,
+                    transclude: true,
+                    scope: {
+                        model: '=rowModel'
+                    },
+                    controller: [
+                        '$scope', function($scope) {
+                            $scope.tubularDirective = 'tubular-rowset';
+                            $scope.fields = [];
+                            $scope.hasFieldsDefinitions = false;
+                            $scope.$component = $scope.$parent.$parent.$parent.$component;
 
-                    $scope.$watch('hasFieldsDefinitions', newVal => {
-                        if (newVal !== true || angular.isUndefined($scope.model)) {
-                            return;
+                            $scope.$watch('hasFieldsDefinitions', newVal => {
+                                if (newVal !== true || angular.isUndefined($scope.model)) {
+                                    return;
+                                }
+
+                                $scope.bindFields();
+                            });
+
+                            $scope.bindFields = () => angular.forEach($scope.fields, field => field.bindScope());
                         }
+                    ],
 
-                        $scope.bindFields();
-                    });
-
-                    $scope.bindFields = () => angular.forEach($scope.fields, field => field.bindScope());
-                }
-            ],
-            // Wait a little bit before to connect to the fields
-            compile: () => ({ post: scope => $timeout(() => scope.hasFieldsDefinitions = true, 300) })
-        })
+                    // Wait a little bit before to connect to the fields
+                    compile: ()  => ({ post: scope => $timeout(() => scope.hasFieldsDefinitions = true, 300) })
+                })
         ])
 
         /**
@@ -369,23 +361,23 @@
                     scope: {
                         columnName: '@?'
                     },
-                    controller: ['$scope', function ($scope) {
-                        $scope.column = { Visible: true };
-                        $scope.columnName = $scope.columnName || null;
-                        $scope.$component = $scope.$parent.$parent.$component;
+                    controller: ['$scope', function($scope) {
+                            $scope.column = { Visible: true };
+                            $scope.columnName = $scope.columnName || null;
+                            $scope.$component = $scope.$parent.$parent.$component;
 
-                        // TODO: Implement a form in inline editors
-                        $scope.getFormScope = () => null;
+                            // TODO: Implement a form in inline editors
+                            $scope.getFormScope = () => null;
 
-                        if ($scope.columnName != null) {
-                            const columnModel = $scope.$component.columns
-                                .filter(el => el.Name === $scope.columnName);
+                            if ($scope.columnName != null) {
+                                const columnModel = $scope.$component.columns
+                                    .filter(el => el.Name === $scope.columnName);
 
-                            if (columnModel.length > 0) {
-                                $scope.column = columnModel[0];
+                                if (columnModel.length > 0) {
+                                    $scope.column = columnModel[0];
+                                }
                             }
                         }
-                    }
                     ]
                 };
             }
@@ -914,6 +906,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             'tubularPopupService',
             'tubularModel',
             '$http',
+            '$routeParams',
             'tubularConfig',
             '$window',
             function (
@@ -921,6 +914,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 tubularPopupService,
                 TubularModel,
                 $http,
+                $routeParams,
                 tubularConfig,
                 $window) {
                 const $ctrl = this;
@@ -931,11 +925,11 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     $ctrl.tubularDirective = 'tubular-grid';
 
                     $ctrl.name = $ctrl.name || 'tbgrid';
-                    $ctrl.rows = [];
                     $ctrl.columns = [];
+                    $ctrl.rows = [];
 
                     $ctrl.savePage = angular.isUndefined($ctrl.savePage) ? true : $ctrl.savePage;
-                    $ctrl.currentPage = $ctrl.savePage ? (parseInt(storage.getItem(`${prefix + $ctrl.name}_page`)) || 1) : 1;
+                    $ctrl.currentPage = $ctrl.savePage ? (parseInt(storage.getItem(`${prefix + $ctrl.name  }_page`)) || 1) : 1;
                     $ctrl.savePageSize = angular.isUndefined($ctrl.savePageSize) ? true : $ctrl.savePageSize;
                     $ctrl.pageSize = $ctrl.pageSize || 20;
                     $ctrl.saveSearchText = angular.isUndefined($ctrl.saveSearchText) ? true : $ctrl.saveSearchText;
@@ -948,7 +942,8 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     $ctrl.requestMethod = $ctrl.requestMethod || 'POST';
                     $ctrl.serverSaveMethod = $ctrl.serverSaveMethod || 'POST';
                     $ctrl.currentRequest = null;
-                    $ctrl.autoSearch = $ctrl.saveSearchText ? (storage.getItem(`${prefix + $ctrl.name}_search`) || '') : '';
+                    $ctrl.autoSearch = $routeParams.param ||
+                        ($ctrl.saveSearchText ? (storage.getItem(`${prefix + $ctrl.name  }_search`) || '') : '');
                     $ctrl.search = {
                         Text: $ctrl.autoSearch,
                         Operator: $ctrl.autoSearch === '' ? 'None' : 'Auto'
@@ -1196,10 +1191,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     // If the ServerUrl is empty skip data load
                     if (!$ctrl.serverUrl || $ctrl.currentRequest !== null) {
                         return;
-                    }
-
-                    if ($ctrl.columns.length === 0) {
-                        throw 'You need to define at least one column';
                     }
 
                     $ctrl.canSaveState = true;
@@ -2616,55 +2607,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
         }]);
 })(angular, moment);
 
-(angular => {
-    'use strict';
-
-    angular.module('tubular.models')
-        /**
-         * @ngdoc factory
-         * @name tubularColumn
-         * @module tubular.models
-         *
-         * @description
-         * The `tubularColumn` factory is the base to generate a column model to use with `tbGrid`.
-         */
-        .factory('tubularColumn', [function() {
-            return function(columnName, options) {
-                options = options || {};
-                
-                const obj = {
-                    Label: options.Label  || (columnName || '').replace(/([a-z])([A-Z])/g, '$1 $2'),
-                    Name: columnName,
-                    Sortable: options.Sortable,
-                    SortOrder: parseInt(options.SortOrder) || -1,
-                    SortDirection: function(){
-                        if (angular.isUndefined(options.SortDirection)) {
-                            return 'None';
-                        }
-
-                        if (options.SortDirection.toLowerCase().indexOf('asc') === 0) {
-                            return 'Ascending';
-                        }
-
-                        if (options.SortDirection.toLowerCase().indexOf('desc') === 0) {
-                            return 'Descending';
-                        }
-
-                        return 'None';
-                    }(),
-                    IsKey: angular.isDefined(options.IsKey) ? options.IsKey : false,
-                    Searchable: angular.isDefined(options.Searchable) ? options.Searchable : false,
-                    Visible: options.Visible === 'false' ? false : true,
-                    Filter: null,
-                    DataType: options.DataType || 'string',
-                    Aggregate: options.Aggregate || 'none'
-                };
-
-                return obj;
-            };
-        }]);
-})(angular);
-
 
 (function(angular) {
 'use strict';
@@ -2685,7 +2627,7 @@ angular.module('tubular.services', ['ui.bootstrap'])
       $httpProvider.interceptors.push('tubularAuthInterceptor');
       $httpProvider.interceptors.push('tubularNoCacheInterceptor');
     }
-  ]);
+  ])
 
 
 })(angular);
@@ -3530,7 +3472,7 @@ function exportToCsv(header, rows, visibility) {
             }
         ]);
 })(angular);
-(angular => {
+(function (angular) {
     'use strict';
 
     angular.module('tubular.services')
@@ -3667,25 +3609,27 @@ function exportToCsv(header, rows, visibility) {
                 me.tbColumnDateTimeFilterPopoverTemplateName = 'tbColumnDateTimeFilterPopoverTemplate.html';
 
                 if (!$templateCache.get(me.tbColumnDateTimeFilterPopoverTemplateName)) {
-                    const htmlDateSelector = `<input class="form-control" type="date" ng-model="$ctrl.filter.Text" autofocus ng-keypress="$ctrl.checkEvent($event)" 
-                            placeholder="{{'CAPTION_VALUE' | translate}}" ng-disabled="$ctrl.filter.Operator == 'None'" />
-                            <input type="date" class="form-control" ng-model="$ctrl.filter.Argument[0]" ng-keypress="$ctrl.checkEvent($event)" ng-show="$ctrl.filter.Operator == 'Between'" />`;
+                    const htmlDateSelector =
+                        '<input class="form-control" type="date" ng-model="$ctrl.filter.Text" autofocus ng-keypress="$ctrl.checkEvent($event)" ' +
+                            'placeholder="{{\'CAPTION_VALUE\' | translate}}" ng-disabled="$ctrl.filter.Operator == \'None\'" />' +
+                            '<input type="date" class="form-control" ng-model="$ctrl.filter.Argument[0]" ng-keypress="$ctrl.checkEvent($event)" ng-show="$ctrl.filter.Operator == \'Between\'" />';
 
-                    const bootstrapDateSelector = `<div class="input-group">
-                        <input type="text" class="form-control" uib-datepicker-popup="MM/dd/yyyy" ng-model="$ctrl.filter.Text" autofocus ng-keypress="$ctrl.checkEvent($event)" 
-                        placeholder="{{'CAPTION_VALUE' | translate}}" ng-disabled="$ctrl.filter.Operator == 'None'" is-open="$ctrl.dateOpen" />
-                        <span class="input-group-btn">
-                        <button type="button" class="btn btn-default" ng-click="$ctrl.dateOpen = !$ctrl.dateOpen;"><i class="fa fa-calendar"></i></button>
-                        </span>
-                        </div>`;
+                    const bootstrapDateSelector = '<div class="input-group">' +
+                        '<input type="text" class="form-control" uib-datepicker-popup="MM/dd/yyyy" ng-model="$ctrl.filter.Text" autofocus ng-keypress="$ctrl.checkEvent($event)" ' +
+                        'placeholder="{{\'CAPTION_VALUE\' | translate}}" ng-disabled="$ctrl.filter.Operator == \'None\'" is-open="$ctrl.dateOpen" />' +
+                        '<span class="input-group-btn">' +
+                        '<button type="button" class="btn btn-default" ng-click="$ctrl.dateOpen = !$ctrl.dateOpen;"><i class="fa fa-calendar"></i></button>' +
+                        '</span>' +
+                        '</div>';
 
-                    me.tbColumnDateTimeFilterPopoverTemplate = `<div>
-                        <form class="tubular-column-filter-form" onsubmit="return false;">
-                        <select class="form-control" ng-options="key as value for (key , value) in $ctrl.filterOperators" ng-model="$ctrl.filter.Operator" ng-hide="$ctrl.dataType == 'boolean'"></select>
-                        ${me.canUseHtml5Date() ? htmlDateSelector : bootstrapDateSelector}<hr />
-                        <tb-column-filter-buttons></tb-column-filter-buttons>
-                        </form>
-                        </div>`;
+                    me.tbColumnDateTimeFilterPopoverTemplate = `${'<div>' +
+                        '<form class="tubular-column-filter-form" onsubmit="return false;">' +
+                        '<select class="form-control" ng-options="key as value for (key , value) in $ctrl.filterOperators" ng-model="$ctrl.filter.Operator" ng-hide="$ctrl.dataType == \'boolean\'"></select>&nbsp;'}${
+                        me.canUseHtml5Date() ? htmlDateSelector : bootstrapDateSelector
+                        }<hr />` +
+                        '<tb-column-filter-buttons></tb-column-filter-buttons>' +
+                        '</form>' +
+                        '</div>';
 
                     $templateCache.put(me.tbColumnDateTimeFilterPopoverTemplateName,
                         me.tbColumnDateTimeFilterPopoverTemplate);
@@ -3701,18 +3645,13 @@ function exportToCsv(header, rows, visibility) {
                         const editorTag = el.EditorType
                             .replace(/([A-Z])/g, $1 => `-${  $1.toLowerCase()}`);
 
-                        return `${prev}\r\n\t\t<tb-cell-template column-name="${el.Name}">
-                            \t\t\t${mode === 'Inline' ? `<${editorTag} is-editing="row.$isEditing" value="row.${el.Name}"></${editorTag}>` : el.Template}
-                            \t\t</tb-cell-template>`;
+                        return `${prev  }\r\n\t\t<tb-cell-template column-name="${el.Name}">` +
+                            `\r\n\t\t\t${
+                            mode === 'Inline'
+                                ? `<${editorTag} is-editing="row.$isEditing" value="row.${el.Name}"></${editorTag}>`
+                                : el.Template
+                            }\r\n\t\t</tb-cell-template>`;
                     }, '');
-
-                me.generateColumnsDefinitions = (columns) => columns.reduce((prev, el) => 
-                        `${prev}
-                        \t\t<tb-column name="${el.Name}" label="${el.Label}" column-type="${el.DataType}" sortable="${el.Sortable}" 
-                        \t\t\tis-key="${el.IsKey}" searchable="${el.Searchable}" ${el.Sortable ? `\r\n\t\t\tsort-direction="${el.SortDirection}" sort-order="${el.SortOrder}" ` : ' '}
-                                visible="${el.Visible}">${el.Filter ? '\r\n\t\t\t<tb-column-filter></tb-column-filter>' : ''}
-                        \t\t\t<tb-column-header><span>{{label}}</span></tb-column-header>
-                        \t\t</tb-column>`, '');
 
                 /**
                  * Generates a grid markup using a columns model and grids options
@@ -3751,30 +3690,65 @@ function exportToCsv(header, rows, visibility) {
                         bottomToolbar += '\r\n\t<tb-grid-pager-info class="col-md-3"></tb-grid-pager-info>';
                     }
 
-                    const columnDefinitions = me.generateColumnsDefinitions(columns);
-
                     return `${'<div class="container">' +
-                        '\r\n<tb-grid server-url="'}${options.dataUrl}" request-method="${options.RequestMethod}" class="row" ` +
-                        `page-size="10" require-authentication="${options.RequireAuthentication }" ${options.Mode !== 'Read-Only' ? ` editor-mode="${  options.Mode.toLowerCase()  }"` : ''}>${topToolbar === '' ? '' : `\r\n\t<div class="row">${  topToolbar  }\r\n\t</div>`}\r\n\t<div class="row">` +
+                        '\r\n<tb-grid server-url="'}${
+                        options.dataUrl
+                        }" request-method="${
+                        options.RequestMethod
+                        }" class="row" ` +
+                        `page-size="10" require-authentication="${  options.RequireAuthentication  }" ${
+                        options.Mode !== 'Read-Only' ? ` editor-mode="${  options.Mode.toLowerCase()  }"` : ''
+                        }>${
+                        topToolbar === '' ? '' : `\r\n\t<div class="row">${  topToolbar  }\r\n\t</div>`
+                        }\r\n\t<div class="row">` +
                         '\r\n\t<div class="col-md-12">' +
                         '\r\n\t<div class="panel panel-default panel-rounded">' +
-                        `\r\n\t<tb-grid-table class="table-bordered">
-                        \t<tb-column-definitions>
-                        ${columnDefinitions}
-                        </tb-column-definitions>` +
+                        '\r\n\t<tb-grid-table class="table-bordered">' +
+                        `\r\n\t<tb-column-definitions>${
+                        options.Mode !== 'Read-Only'
+                            ? '\r\n\t\t<tb-column label="Actions"><tb-column-header>{{label}}</tb-column-header></tb-column>'
+                            : ''
+                        }${columns.reduce((prev, el) => `${prev  }\r\n\t\t<tb-column name="${  el.Name  }" label="${  el.Label
+                                }" column-type="${  el.DataType  }" sortable="${  el.Sortable
+                                }" ` +
+                                `\r\n\t\t\tis-key="${  el.IsKey  }" searchable="${  el.Searchable
+                                }" ${
+                                el.Sortable
+                                    ? `\r\n\t\t\tsort-direction="${
+                                    el.SortDirection
+                                    }" sort-order="${
+                                    el.SortOrder
+                                    }" `
+                                    : ' '
+                                }visible="${
+                                el.Visible
+                                }">${
+                                el.Filter ? '\r\n\t\t\t<tb-column-filter></tb-column-filter>' : ''
+                                }\r\n\t\t\t<tb-column-header>{{label}}</tb-column-header>` +
+                                '\r\n\t\t</tb-column>')
+                        }\r\n\t</tb-column-definitions>` +
                         '\r\n\t<tb-row-set>' +
                         `\r\n\t<tb-row-template ng-repeat="row in $component.rows" row-model="row">${
                         options.Mode !== 'Read-Only'
-                            ? `\r\n\t\t<tb-cell-template>${options.Mode === 'Inline' ? '\r\n\t\t\t<tb-save-button model="row"></tb-save-button>' : ''}\r\n\t\t\t<tb-edit-button model="row"></tb-edit-button>` +
+                            ? `\r\n\t\t<tb-cell-template>${
+                            options
+                                .Mode ===
+                                'Inline'
+                                ? '\r\n\t\t\t<tb-save-button model="row"></tb-save-button>'
+                                : ''
+                            }\r\n\t\t\t<tb-edit-button model="row"></tb-edit-button>` +
                             '\r\n\t\t</tb-cell-template>'
                             : ''
-                        }${me.generateCells(columns, options.Mode)}\r\n\t</tb-row-template>` +
-                        `\r\n\t</tb-row-set>
-                        \t</tb-grid-table>
-                        \t</div>
-                        \t</div>
-                        \t</div>${bottomToolbar === '' ? '' : `\r\n\t<div class="row">${  bottomToolbar  }\r\n\t</div>`}\r\n</tb-grid>
-                        </div>`;
+                        }${me.generateCells(columns, options.Mode)
+                        }\r\n\t</tb-row-template>` +
+                        '\r\n\t</tb-row-set>' +
+                        '\r\n\t</tb-grid-table>' +
+                        '\r\n\t</div>' +
+                        '\r\n\t</div>' +
+                        `\r\n\t</div>${
+                        bottomToolbar === '' ? '' : `\r\n\t<div class="row">${  bottomToolbar  }\r\n\t</div>`
+                        }\r\n</tb-grid>` +
+                        '\r\n</div>';
                 };
 
                 me.getEditorTypeByDateType = dataType => {
