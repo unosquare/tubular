@@ -40,8 +40,11 @@ describe('Component: Grid', () => {
   it('should render specified columns', () => {
     const headers = element.find("th");
 
+
     expect(headers.length).toBe(2, 'should have 2 columns');
-    expect(headers[0].text()).toBe(2, 'ID');
-    expect(headers[1].text()).toBe(2, 'Nombre');
+    expect($j(headers[0]).text().trim()).toBe('ID');
+    expect($j(headers[1]).text().trim()).toBe('Nombre');
   });
+
+
 });
