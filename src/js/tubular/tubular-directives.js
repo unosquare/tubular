@@ -92,7 +92,7 @@
                                 InitFromColumns();
                                 const template = tubularTemplateService.generateColumnsDefinitions(scope.columns);
                                 const content = $compile(template)(scope);
-                                element.append(content);
+                                element.find('tr').append(content);
                             }
                         },
                         post: scope => scope.$component.hasColumnsDefinitions = true
