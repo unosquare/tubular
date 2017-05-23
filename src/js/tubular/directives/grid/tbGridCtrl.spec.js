@@ -153,10 +153,6 @@ describe('Module: tubular.directives', () => {
                 expect(sut.tempRow).toBeDefined();
             })
 
-            it('should have requireAuthentication', () => {
-                expect(sut.requireAuthentication).toBe(true);
-            })
-
             it('should have editorMode', () => {
                 expect(sut.editorMode).toBe('none');
             })
@@ -262,9 +258,7 @@ describe('Module: tubular.directives', () => {
         })
 
         describe('newRow function', () => {
-            beforeEach(() => {
-                spyOn(tubularPopupService, 'openDialog');
-            });
+            beforeEach(() => spyOn(tubularPopupService, 'openDialog'));
 
             it('should not have properties', () => {
                 var keys = Object.keys(sut.tempRow);

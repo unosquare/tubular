@@ -18,7 +18,6 @@
                 $http) {
                 // we need this to find the parent of a field
                 $scope.tubularDirective = 'tubular-form';
-                $scope.hasFieldsDefinitions = false;
                 $scope.fields = [];
 
                 function getUrlWithKey() {
@@ -45,12 +44,6 @@
                 $ctrl.requireAuthentication = angular.isUndefined($scope.requireAuthentication)
                     ? true
                     : $scope.requireAuthentication;
-
-                $scope.$watch('hasFieldsDefinitions', newVal => {
-                    if (newVal) {
-                        $ctrl.retrieveData();
-                    }
-                });
 
                 $scope.cloneModel = model => {
                     const data = {};
@@ -156,7 +149,7 @@
 
                 $scope.finishDefinition = () => {
                     const timer = $timeout(() => {
-                        $scope.hasFieldsDefinitions = true;
+                        $ctrl.retrieveData();
 
                         if ($element.find('input').length > 0) {
                             $element.find('input')[0].focus();

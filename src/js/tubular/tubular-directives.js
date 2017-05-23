@@ -306,22 +306,13 @@
                 '$scope', function ($scope) {
                     $scope.tubularDirective = 'tubular-rowset';
                     $scope.fields = [];
-                    $scope.hasFieldsDefinitions = false;
                     $scope.$component = $scope.$parent.$parent.$parent.$component;
-
-                    $scope.$watch('hasFieldsDefinitions', newVal => {
-                        if (newVal !== true || angular.isUndefined($scope.model)) {
-                            return;
-                        }
-
-                        $scope.bindFields();
-                    });
 
                     $scope.bindFields = () => angular.forEach($scope.fields, field => field.bindScope());
                 }
             ],
             // Wait a little bit before to connect to the fields
-            compile: () => ({ post: scope => $timeout(() => scope.hasFieldsDefinitions = true, 300) })
+            compile: () => ({ post: scope => $timeout(() => scope.bindFields(), 300) })
         })
         ])
 
