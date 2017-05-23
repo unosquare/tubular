@@ -3,8 +3,9 @@
 
 describe('Component: Grid', () => {
 
-  var scope, compile, templateCache, template, element, tubularColumn, $httpBackend;
+  let scope, compile, templateCache, template, element, tubularColumn, $httpBackend;
 
+  const serverUrl = 'api/data';
 
   beforeEach(module('tubular.tests'));
   beforeEach(module('tubular'));
@@ -17,18 +18,22 @@ describe('Component: Grid', () => {
     templateCache = _$templateCache_;
     $httpBackend = _$httpBackend_;
     tubularColumn = _tubularColumn_;
+    scope.serverUrl = serverUrl;
     scope.columns = [
       new tubularColumn("id", {
-        "Label": "ID", "DataType" : "numeric"
+        "Label": "ID",
+        "DataType": "numeric"
       }),
       new tubularColumn("name", {
-        "Label": "Nombre", "DataType" : "string", "Sortable": true
+        "Label": "Nombre",
+        "DataType": "string",
+        "Sortable": true
       })
     ]
   }));
 
-  function generate(caseName) {
-    var tpl = templateCache.get(caseName + '.case.html');
+  function generate() {
+    var tpl = templateCache.get('columns-as-attribute.case.html');
     template = angular.element(tpl);
     element = compile(template)(scope);
     scope.$digest();
@@ -37,7 +42,7 @@ describe('Component: Grid', () => {
 
 
   it('should render specified columns', () => {
-    generate('columns-as-attribute');
+    generate();
 
     const headers = element.find("th");
 
@@ -48,10 +53,12 @@ describe('Component: Grid', () => {
   });
 
   xit('should rerender columns if changed', () => {
-    generate('columns-as-attribute');
+    generate();
 
     scope.columns.push(new tubularColumn("value", {
-      "Label": "Valor", "DataType" : "string", "Sortable": false
+      "Label": "Valor",
+      "DataType": "string",
+      "Sortable": false
     }));
     scope.$digest()
 
@@ -64,5 +71,22 @@ describe('Component: Grid', () => {
     expect($j(headers[2]).text().trim()).toBe('Valor');
   }).pend('El simio dijo que no va a jalar');
 
+  it('should bind columns correctly', () => {
+    $httpBackend.expectGET(serverUrl).respond(200, {
+      data: [{
+        id: 1,
+        name: 'geo',
+        value: 'tubular'
+      }]
+    });
 
+    generate();
+    $httpBackend.flush();
+    scope.$digest();
+
+    const data = element.find("td");
+    expect($j(data[0]).text().trim()).toBe('1');
+    expect($j(data[1]).text().trim()).toBe('Geo');
+    expect($j(data[2]).text().trim()).toBe('Tubular');
+  });
 });
