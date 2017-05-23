@@ -50,7 +50,6 @@
 
                     $ctrl.isEmpty = false;
                     $ctrl.tempRow = new TubularModel($ctrl, {});
-                    $ctrl.requireAuthentication = $ctrl.requireAuthentication ? ($ctrl.requireAuthentication === 'true') : true;
                     $ctrl.editorMode = $ctrl.editorMode || 'none';
                     $ctrl.canSaveState = false;
                     $ctrl.showLoading = angular.isUndefined($ctrl.showLoading) ? true : $ctrl.showLoading;
@@ -155,7 +154,7 @@
                     }
 
                     $ctrl.currentRequest = $http.delete(url, {
-                        requireAuthentication: $ctrl.requireAuthentication
+                        requireAuthentication: getRequiredAuthentication()
                     })
                     .then(response => $scope.$emit('tbGrid_OnRemove', response.data),
                         error => $scope.$emit('tbGrid_OnConnectionError', error))
@@ -164,6 +163,10 @@
                         $ctrl.retrieveData();
                     });
                 };
+
+                function getRequiredAuthentication() {
+                    return $ctrl.requireAuthentication ? ($ctrl.requireAuthentication === 'true') : true;
+                }
 
                 function addTimeZoneToUrl(url) {
                     return `${url +
@@ -274,7 +277,7 @@
                     return {
                         url: $ctrl.serverUrl,
                         method: $ctrl.requestMethod || 'POST',
-                        requireAuthentication: $ctrl.requireAuthentication,
+                        requireAuthentication: getRequiredAuthentication(),
                         data: {
                             Count: $ctrl.requestCounter,
                             Columns: $ctrl.columns,
@@ -309,7 +312,7 @@
                     if ($ctrl.requestedPage > newPages) $ctrl.requestedPage = newPages;
 
                     const request = $ctrl.getRequestObject(-1);
-
+                    
                     $scope.$emit('tbGrid_OnBeforeRequest', request, $ctrl);
 
                     $ctrl.currentRequest = $http(request);

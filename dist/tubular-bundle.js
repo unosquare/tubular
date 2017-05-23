@@ -110,7 +110,7 @@
                                 InitFromColumns();
                                 const template = tubularTemplateService.generateColumnsDefinitions(scope.columns);
                                 const content = $compile(template)(scope);
-                                element.append(content);
+                                element.find('tr').append(content);
                             }
                         },
                         post: scope => scope.$component.hasColumnsDefinitions = true
@@ -251,7 +251,9 @@
          * This directive is replace by an `tbody` HTML element.
          */
         .directive('tbRowSet', [
-            function () {
+            'tubularTemplateService',
+            '$compile',
+            function (tubularTemplateService, $compile) {
 
                 return {
                     require: '^tbGrid',
@@ -259,13 +261,36 @@
                     restrict: 'E',
                     replace: true,
                     transclude: true,
-                    scope: false,
+                    scope: {
+                        columns: '=?'
+                    },
                     controller: [
                         '$scope', function ($scope) {
                             $scope.$component = $scope.$parent.$component || $scope.$parent.$parent.$component;
                             $scope.tubularDirective = 'tubular-row-set';
                         }
-                    ]
+                    ],
+                    compile: () => ({
+                        pre: (scope, element) => {
+
+                            function InitFromColumns() {
+                                let isValid = true;
+
+                                angular.forEach(scope.columns, column => isValid = isValid && column.Name);
+
+                                if (!isValid) {
+                                    throw 'Column attribute contains invalid';
+                                }
+                            }
+
+                            if (scope.columns && scope.$component) {
+                                InitFromColumns();
+                                const template = tubularTemplateService.generateCells(scope.columns, '');
+                                const content = $compile(template)(scope);
+                                element.find('tr').append(content);
+                            }
+                        }
+                    })
                 };
             }
         ])
@@ -372,7 +397,7 @@
                     controller: ['$scope', function ($scope) {
                         $scope.column = { Visible: true };
                         $scope.columnName = $scope.columnName || null;
-                        $scope.$component = $scope.$parent.$parent.$component;
+                        $scope.$component = $scope.$parent.$component || $scope.$parent.$parent.$component;
 
                         // TODO: Implement a form in inline editors
                         $scope.getFormScope = () => null;
@@ -956,7 +981,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
                     $ctrl.isEmpty = false;
                     $ctrl.tempRow = new TubularModel($ctrl, {});
-                    $ctrl.requireAuthentication = $ctrl.requireAuthentication ? ($ctrl.requireAuthentication === 'true') : true;
                     $ctrl.editorMode = $ctrl.editorMode || 'none';
                     $ctrl.canSaveState = false;
                     $ctrl.showLoading = angular.isUndefined($ctrl.showLoading) ? true : $ctrl.showLoading;
@@ -1061,7 +1085,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     }
 
                     $ctrl.currentRequest = $http.delete(url, {
-                        requireAuthentication: $ctrl.requireAuthentication
+                        requireAuthentication: getRequiredAuthentication()
                     })
                     .then(response => $scope.$emit('tbGrid_OnRemove', response.data),
                         error => $scope.$emit('tbGrid_OnConnectionError', error))
@@ -1070,6 +1094,10 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         $ctrl.retrieveData();
                     });
                 };
+
+                function getRequiredAuthentication() {
+                    return $ctrl.requireAuthentication ? ($ctrl.requireAuthentication === 'true') : true;
+                }
 
                 function addTimeZoneToUrl(url) {
                     return `${url +
@@ -1180,7 +1208,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     return {
                         url: $ctrl.serverUrl,
                         method: $ctrl.requestMethod || 'POST',
-                        requireAuthentication: $ctrl.requireAuthentication,
+                        requireAuthentication: getRequiredAuthentication(),
                         data: {
                             Count: $ctrl.requestCounter,
                             Columns: $ctrl.columns,
@@ -1215,7 +1243,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     if ($ctrl.requestedPage > newPages) $ctrl.requestedPage = newPages;
 
                     const request = $ctrl.getRequestObject(-1);
-
+                    
                     $scope.$emit('tbGrid_OnBeforeRequest', request, $ctrl);
 
                     $ctrl.currentRequest = $http(request);
@@ -3698,8 +3726,8 @@ function exportToCsv(header, rows, visibility) {
                  * @returns {string}
                  */
                 me.generateCells = (columns, mode) => columns.reduce((prev, el) => {
-                        const editorTag = el.EditorType
-                            .replace(/([A-Z])/g, $1 => `-${  $1.toLowerCase()}`);
+                        const editorTag = mode === 'Inline' ? el.EditorType
+                            .replace(/([A-Z])/g, $1 => `-${$1.toLowerCase()}`) : '';
 
                         return `${prev}\r\n\t\t<tb-cell-template column-name="${el.Name}">
                             \t\t\t${mode === 'Inline' ? `<${editorTag} is-editing="row.$isEditing" value="row.${el.Name}"></${editorTag}>` : el.Template}

@@ -32,10 +32,11 @@ describe('Component: Grid', () => {
     ]
   }));
 
-  function generate() {
+  function generate(flush) {
     var tpl = templateCache.get('columns-as-attribute.case.html');
     template = angular.element(tpl);
     element = compile(template)(scope);
+    if (flush) $httpBackend.flush();
     scope.$digest();
   }
 
@@ -45,8 +46,6 @@ describe('Component: Grid', () => {
     generate();
 
     const headers = element.find("th");
-
-
     expect(headers.length).toBe(2, 'should have 2 columns');
     expect($j(headers[0]).text().trim()).toBe('ID');
     expect($j(headers[1]).text().trim()).toBe('Nombre');
@@ -72,19 +71,15 @@ describe('Component: Grid', () => {
   }).pend('El simio dijo que no va a jalar');
 
   it('should bind columns correctly', () => {
-    $httpBackend.expectGET(serverUrl).respond(200, {
-      data: [{
-        id: 1,
-        name: 'geo',
-        value: 'tubular'
-      }]
+    $httpBackend.expectPOST(serverUrl)
+    .respond(200, {
+      data: {"Counter":0,"Payload":[[1,"Geo","Tubular"]],"TotalRecordCount":1,"FilteredRecordCount":1,"TotalPages":1,"CurrentPage":1,"AggregationPayload":{}}
     });
 
-    generate();
-    $httpBackend.flush();
-    scope.$digest();
+    generate(true);
 
     const data = element.find("td");
+    
     expect($j(data[0]).text().trim()).toBe('1');
     expect($j(data[1]).text().trim()).toBe('Geo');
     expect($j(data[2]).text().trim()).toBe('Tubular');

@@ -166,8 +166,8 @@
                  * @returns {string}
                  */
                 me.generateCells = (columns, mode) => columns.reduce((prev, el) => {
-                        const editorTag = el.EditorType
-                            .replace(/([A-Z])/g, $1 => `-${  $1.toLowerCase()}`);
+                        const editorTag = mode === 'Inline' ? el.EditorType
+                            .replace(/([A-Z])/g, $1 => `-${$1.toLowerCase()}`) : '';
 
                         return `${prev}\r\n\t\t<tb-cell-template column-name="${el.Name}">
                             \t\t\t${mode === 'Inline' ? `<${editorTag} is-editing="row.$isEditing" value="row.${el.Name}"></${editorTag}>` : el.Template}

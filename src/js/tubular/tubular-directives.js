@@ -233,7 +233,9 @@
          * This directive is replace by an `tbody` HTML element.
          */
         .directive('tbRowSet', [
-            function () {
+            'tubularTemplateService',
+            '$compile',
+            function (tubularTemplateService, $compile) {
 
                 return {
                     require: '^tbGrid',
@@ -241,13 +243,36 @@
                     restrict: 'E',
                     replace: true,
                     transclude: true,
-                    scope: false,
+                    scope: {
+                        columns: '=?'
+                    },
                     controller: [
                         '$scope', function ($scope) {
                             $scope.$component = $scope.$parent.$component || $scope.$parent.$parent.$component;
                             $scope.tubularDirective = 'tubular-row-set';
                         }
-                    ]
+                    ],
+                    compile: () => ({
+                        pre: (scope, element) => {
+
+                            function InitFromColumns() {
+                                let isValid = true;
+
+                                angular.forEach(scope.columns, column => isValid = isValid && column.Name);
+
+                                if (!isValid) {
+                                    throw 'Column attribute contains invalid';
+                                }
+                            }
+
+                            if (scope.columns && scope.$component) {
+                                InitFromColumns();
+                                const template = tubularTemplateService.generateCells(scope.columns, '');
+                                const content = $compile(template)(scope);
+                                element.find('tr').append(content);
+                            }
+                        }
+                    })
                 };
             }
         ])
@@ -354,7 +379,7 @@
                     controller: ['$scope', function ($scope) {
                         $scope.column = { Visible: true };
                         $scope.columnName = $scope.columnName || null;
-                        $scope.$component = $scope.$parent.$parent.$component;
+                        $scope.$component = $scope.$parent.$component || $scope.$parent.$parent.$component;
 
                         // TODO: Implement a form in inline editors
                         $scope.getFormScope = () => null;
