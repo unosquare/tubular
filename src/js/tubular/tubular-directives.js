@@ -25,20 +25,53 @@
          * This directive is replace by a `table` HTML element.
          */
         .directive('tbGridTable', [
-            function () {
+            'tubularTemplateService',
+            '$compile',
+            function (tubularTemplateService, $compile) {
                 return {
                     require: '^tbGrid',
                     templateUrl: 'tbGridTable.tpl.html',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
-                    scope: true,
+                    scope: {
+                        columns: '=?'
+                    },
                     controller: [
                         '$scope', function ($scope) {
                             $scope.$component = $scope.$parent.$parent.$ctrl;
                             $scope.tubularDirective = 'tubular-grid-table';
                         }
-                    ]
+                    ],
+                    compile: () => ({
+                        pre: (scope, element) => {
+
+                            function InitFromColumns() {
+                                let isValid = true;
+
+                                angular.forEach(scope.columns, column => isValid = isValid && column.Name);
+
+                                if (!isValid) {
+                                    throw 'Column attribute contains invalid';
+                                }
+                            }
+
+                            if (scope.columns && scope.$component) {
+
+                                InitFromColumns();
+
+                                const headersTemplate = tubularTemplateService.generateColumnsDefinitions(scope.columns);
+                                const headersContent = $compile(headersTemplate)(scope);
+                                element.append('<thead><tr ng-transclude></tr></thead>');
+                                element.find('tr').append(headersContent);
+
+                                const cellsTemplate = tubularTemplateService.generateCells(scope.columns, '');
+                                const cellsContent = $compile('<tbody><tr ng-repeat="row in $component.rows" row-model="row">' + cellsTemplate + '</tr></tbody>')(scope);
+                                element.append(cellsContent);
+                            }
+                        },
+                        post: scope => scope.$component.hasColumnsDefinitions = angular.isDefined(scope.columns) && angular.isDefined(scope.$component)
+                    })
                 };
             }
         ])
@@ -241,7 +274,6 @@
                     restrict: 'E',
                     replace: true,
                     transclude: true,
-                    scope: false,
                     controller: [
                         '$scope', function ($scope) {
                             $scope.$component = $scope.$parent.$component || $scope.$parent.$parent.$component;
