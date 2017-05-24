@@ -221,6 +221,7 @@
                     }
 
                     const columnDefinitions = me.generateColumnsDefinitions(columns);
+                    const rowsDefinitions = me.generateCells(columns, options.Mode);
 
                     return `${'<div class="container">' +
                         '\r\n<tb-grid server-url="'}${options.dataUrl}" request-method="${options.RequestMethod}" class="row" ` +
@@ -237,7 +238,7 @@
                             ? `\r\n\t\t<tb-cell-template>${options.Mode === 'Inline' ? '\r\n\t\t\t<tb-save-button model="row"></tb-save-button>' : ''}\r\n\t\t\t<tb-edit-button model="row"></tb-edit-button>` +
                             '\r\n\t\t</tb-cell-template>'
                             : ''
-                        }${me.generateCells(columns, options.Mode)}\r\n\t</tb-row-template>` +
+                        }${rowsDefinitions}\r\n\t</tb-row-template>` +
                         `\r\n\t</tb-row-set>
                         \t</tb-grid-table>
                         \t</div>
