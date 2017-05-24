@@ -381,6 +381,38 @@
                     ]
                 };
             }
+        ])
+        .directive('tbCell', [
+            function () {
+
+                return {
+                    require: '^tbRowTemplate',
+                    restrict: 'A',
+                    replace: false,
+                    transclude: true,
+                    scope: {
+                        columnName: '@?'
+                    },
+                    controller: ['$scope', function ($scope) {
+                        $scope.column = { Visible: true };
+                        $scope.columnName = $scope.columnName || null;
+                        $scope.$component = $scope.$parent.$component || $scope.$parent.$parent.$component;
+
+                        // TODO: Implement a form in inline editors
+                        $scope.getFormScope = () => null;
+
+                        if ($scope.columnName != null) {
+                            const columnModel = $scope.$component.columns
+                                .filter(el => el.Name === $scope.columnName);
+
+                            if (columnModel.length > 0) {
+                                $scope.column = columnModel[0];
+                            }
+                        }
+                    }
+                    ]
+                };
+            }
         ]);
 })(angular);
 (function(angular){
@@ -3686,9 +3718,9 @@ function exportToCsv(header, rows, visibility) {
                             .replace(/([A-Z])/g, $1 => `-${$1.toLowerCase()}`) : '';
                         const templateExpression = el.Template || `<span ng-bind="row.${el.Name}"></span>`;
 
-                        return `${prev}\r\n\t\t<tb-cell-template column-name="${el.Name}">
+                        return `${prev}\r\n\t\t<td tb-cell ng-transclude column-name="${el.Name}">
                             \t\t\t${mode === 'Inline' ? `<${editorTag} is-editing="row.$isEditing" value="row.${el.Name}"></${editorTag}>` : templateExpression}
-                            \t\t</tb-cell-template>`;
+                            \t\t</td>`;
                     }, '');
 
                 me.generateColumnsDefinitions = (columns) => columns.reduce((prev, el) => 
@@ -3737,6 +3769,7 @@ function exportToCsv(header, rows, visibility) {
                     }
 
                     const columnDefinitions = me.generateColumnsDefinitions(columns);
+                    const rowsDefinitions = me.generateCells(columns, options.Mode);
 
                     return `${'<div class="container">' +
                         '\r\n<tb-grid server-url="'}${options.dataUrl}" request-method="${options.RequestMethod}" class="row" ` +
@@ -3753,7 +3786,7 @@ function exportToCsv(header, rows, visibility) {
                             ? `\r\n\t\t<tb-cell-template>${options.Mode === 'Inline' ? '\r\n\t\t\t<tb-save-button model="row"></tb-save-button>' : ''}\r\n\t\t\t<tb-edit-button model="row"></tb-edit-button>` +
                             '\r\n\t\t</tb-cell-template>'
                             : ''
-                        }${me.generateCells(columns, options.Mode)}\r\n\t</tb-row-template>` +
+                        }${rowsDefinitions}\r\n\t</tb-row-template>` +
                         `\r\n\t</tb-row-set>
                         \t</tb-grid-table>
                         \t</div>
