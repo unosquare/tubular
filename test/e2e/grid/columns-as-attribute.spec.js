@@ -71,6 +71,11 @@ describe('Component: Grid', () => {
   }).pend('El simio dijo que no va a jalar');
 
   it('should bind columns correctly', () => {
+    scope.columns.push(new tubularColumn("value", {
+      "Label": "Valor",
+      "DataType": "string",
+      "Sortable": false
+    }));
     $httpBackend.expectPOST(serverUrl)
     .respond(200, {
       data: {"Counter":0,"Payload":[[1,"Geo","Tubular"]],"TotalRecordCount":1,"FilteredRecordCount":1,"TotalPages":1,"CurrentPage":1,"AggregationPayload":{}}
@@ -78,10 +83,12 @@ describe('Component: Grid', () => {
 
     generate(true);
 
-    const data = element.find("td");
-    
-    expect($j(data[0]).text().trim()).toBe('1');
-    expect($j(data[1]).text().trim()).toBe('Geo');
-    expect($j(data[2]).text().trim()).toBe('Tubular');
+    const dataRow = element.find("tbody tr");
+    expect(dataRow.length).toBe(1, 'should have 1 data row');
+    const data = $j(dataRow).find("tbody td");
+    expect(data.length).toBe(3, 'should have 3 columns');
+    expect($j(data[0]).text().trim()).toBe('1', 'column 1 should have correct data');
+    expect($j(data[1]).text().trim()).toBe('Geo', 'column 2 should have correct data');
+    expect($j(data[2]).text().trim()).toBe('Tubular', 'column 3 should have correct data');
   });
 });
