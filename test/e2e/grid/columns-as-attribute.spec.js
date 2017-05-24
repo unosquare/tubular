@@ -10,8 +10,6 @@ describe('Component: Grid', () => {
   beforeEach(module('tubular.tests'));
   beforeEach(module('tubular'));
 
-
-
   beforeEach(inject(function(_$compile_, _$rootScope_, _$templateCache_, _$httpBackend_, _tubularColumn_) {
     scope = _$rootScope_;
     compile = _$compile_;
@@ -40,8 +38,6 @@ describe('Component: Grid', () => {
     scope.$digest();
   }
 
-
-
   it('should render specified columns', () => {
     generate();
 
@@ -63,7 +59,6 @@ describe('Component: Grid', () => {
 
     const headers = element.find("th");
 
-
     expect(headers.length).toBe(3, 'should have 3 columns');
     expect($j(headers[0]).text().trim()).toBe('ID');
     expect($j(headers[1]).text().trim()).toBe('Nombre');
@@ -77,15 +72,13 @@ describe('Component: Grid', () => {
       "Sortable": false
     }));
     $httpBackend.expectPOST(serverUrl)
-    .respond(200, {
-      data: {"Counter":0,"Payload":[[1,"Geo","Tubular"]],"TotalRecordCount":1,"FilteredRecordCount":1,"TotalPages":1,"CurrentPage":1,"AggregationPayload":{}}
-    });
+    .respond(200, {"Counter":0,"Payload":[[1,"Geo","Tubular"]],"TotalRecordCount":1,"FilteredRecordCount":1,"TotalPages":1,"CurrentPage":1,"AggregationPayload":{}});
 
     generate(true);
 
     const dataRow = element.find("tbody tr");
     expect(dataRow.length).toBe(1, 'should have 1 data row');
-    const data = $j(dataRow).find("tbody td");
+    const data = $j(dataRow).find("td");
     expect(data.length).toBe(3, 'should have 3 columns');
     expect($j(data[0]).text().trim()).toBe('1', 'column 1 should have correct data');
     expect($j(data[1]).text().trim()).toBe('Geo', 'column 2 should have correct data');

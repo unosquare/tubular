@@ -326,26 +326,14 @@
                 $ctrl.processPayload = response => {
                     $ctrl.requestCounter += 1;
 
-                    if (!response || !response.data) {
-                        $scope.$emit('tbGrid_OnConnectionError',
-                            {
-                                statusText: 'Data is empty',
-                                status: 0
-                            });
-
-                        return;
-                    }
-
-                    const data = response.data;
-
-                    $ctrl.dataSource = data;
-
-                    if (!data.Payload) {
+                    if (!response || !response.data || !response.data.Payload) {
                         $scope.$emit('tbGrid_OnConnectionError', `tubularGrid(${$ctrl.$id}): response is invalid.`);
                         return;
                     }
 
-                    $ctrl.rows = data.Payload.map(el => {
+                    $ctrl.dataSource = response.data;
+                    
+                    $ctrl.rows = response.data.Payload.map(el => {
                         const model = new TubularModel($ctrl, el);
                         model.$component = $ctrl;
 
@@ -355,14 +343,14 @@
 
                         return model;
                     });
-
+                    
                     $scope.$emit('tbGrid_OnDataLoaded', $ctrl);
 
-                    $ctrl.aggregationFunctions = data.AggregationPayload;
-                    $ctrl.currentPage = data.CurrentPage;
-                    $ctrl.totalPages = data.TotalPages;
-                    $ctrl.totalRecordCount = data.TotalRecordCount;
-                    $ctrl.filteredRecordCount = data.FilteredRecordCount;
+                    $ctrl.aggregationFunctions = response.data.AggregationPayload;
+                    $ctrl.currentPage = response.data.CurrentPage;
+                    $ctrl.totalPages = response.data.TotalPages;
+                    $ctrl.totalRecordCount = response.data.TotalRecordCount;
+                    $ctrl.filteredRecordCount = response.data.FilteredRecordCount;
                     $ctrl.isEmpty = $ctrl.filteredRecordCount === 0;
 
                     if ($ctrl.savePage) {
