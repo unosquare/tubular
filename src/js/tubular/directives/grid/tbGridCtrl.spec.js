@@ -354,8 +354,9 @@ describe('Module: tubular.directives', () => {
             });
 
             it('should emit tbGrid_OnConnectionError on null data', () => {
+                sut.$id = 12;
                 sut.processPayload();
-                expect(scope.$emit).toHaveBeenCalledWith('tbGrid_OnConnectionError', { statusText: 'Data is empty', status: 0 });
+                expect(scope.$emit).toHaveBeenCalledWith('tbGrid_OnConnectionError', 'tubularGrid(12): response is invalid.');
             })
 
             it('should emit tbGrid_OnConnectionError on false data.Payload ', () => {
