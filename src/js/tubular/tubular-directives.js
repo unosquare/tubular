@@ -261,7 +261,6 @@
 
                 return {
                     require: '^tbGrid',
-                    templateUrl: 'tbRowSet.tpl.html',
                     restrict: 'A',
                     replace: false,
                     transclude: true,
