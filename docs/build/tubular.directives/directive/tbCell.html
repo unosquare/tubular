@@ -1,0 +1,49 @@
+
+
+<div class="page-header">
+    <h1>tbCell <small>directive in tubular.directives</small></h1>
+</div>
+
+<div>
+    <p>The <code>tbCell</code> directive represents the final table element, a cell, where it can
+hold an in-line editor or a plain AngularJS expression related to the current element in the <code>ngRepeat</code>.</p>
+<p>Suggested container:</p>
+<td ng-transclude ng-show="column.Visible" data-label="{{::column.Label}}" style="height:auto;"></td>
+
+    
+    <h3>Directive's attributes</h3>
+    
+<table class="table table-bordered table-hover">
+  <thead>
+    <tr>
+      <th>Param</th>
+      <th>Type</th>
+      <th>Details</th>
+    </tr>
+  </thead>
+  <tbody>
+    
+    <tr>
+      <td>
+        columnName
+        
+        
+      </td>
+      <td>
+        string
+      </td>
+      <td>
+        <p>Setting the related column, by passing the name, the cell can share attributes (like visibility) with the column.</p>
+
+        
+      </td>
+    </tr>
+    
+  </tbody>
+</table>
+
+    
+
+    
+    
+</div>

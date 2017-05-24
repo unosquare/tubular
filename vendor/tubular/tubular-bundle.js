@@ -34,7 +34,7 @@
          * @ngdoc directive
          * @name tbGridTable
          * @module tubular.directives
-         * @restrict E
+         * @restrict C
          *
          * @description
          * The `tbGridTable` directive generate the HTML table where all the columns and rowsets can be defined.
@@ -94,12 +94,10 @@
          * @ngdoc directive
          * @name tbColumnDefinitions
          * @module tubular.directives
-         * @restrict E
+         * @restrict A
          *
          * @description
          * The `tbColumnDefinitions` directive is a parent node to fill with `tbColumn`.
-         *
-         * This directive is replace by a `thead` HTML element.
          *
          * @param {array} columns Set an array of TubularColumn to use. Using this attribute will create a template for columns and rows overwritting any template inside.
          */
@@ -109,9 +107,8 @@
             function (tubularTemplateService, $compile) {
                 return {
                     require: '^tbGridTable',
-                    templateUrl: 'tbColumnDefinitions.tpl.html',
-                    restrict: 'E',
-                    replace: true,
+                    restrict: 'A',
+                    replace: false,
                     transclude: true,
                     scope: {
                         columns: '=?'
@@ -138,9 +135,9 @@
 
                             if (scope.columns && scope.$component) {
                                 InitFromColumns();
-                                const template = tubularTemplateService.generateColumnsDefinitions(scope.columns);
+                                const template = '<tr>' + tubularTemplateService.generateColumnsDefinitions(scope.columns) + '</tr>';
                                 const content = $compile(template)(scope);
-                                element.find('tr').append(content);
+                                element.append(content);
                             }
                         },
                         post: scope => scope.$component.hasColumnsDefinitions = true
@@ -174,7 +171,6 @@
             function () {
                 return {
                     require: '^tbColumnDefinitions',
-                    // TODO: I was not able to move to templateUrl, I need to research
                     template: '<th ng-transclude ng-class="{sortable: column.Sortable}" ng-show="column.Visible"></th>',
                     restrict: 'E',
                     replace: true,
@@ -273,12 +269,10 @@
          * @ngdoc directive
          * @name tbRowSet
          * @module tubular.directives
-         * @restrict E
+         * @restrict A
          *
          * @description
          * The `tbRowSet` directive is used to handle any `tbRowTemplate`. You can define multiples `tbRowSet` for grouping.
-         *
-         * This directive is replace by an `tbody` HTML element.
          */
         .directive('tbRowSet', [
             function () {
@@ -286,8 +280,8 @@
                 return {
                     require: '^tbGrid',
                     templateUrl: 'tbRowSet.tpl.html',
-                    restrict: 'E',
-                    replace: true,
+                    restrict: 'A',
+                    replace: false,
                     transclude: true,
                     controller: [
                         '$scope', function ($scope) {
@@ -302,19 +296,16 @@
          * @ngdoc directive
          * @name tbRowTemplate
          * @module tubular.directives
-         * @restrict E
+         * @restrict A
          *
          * @description
          * The `tbRowTemplate` directive should be use with a `ngRepeat` to iterate all the rows or grouped rows in a rowset.
          *
-         * This directive is replace by an `tr` HTML element.
-         *
          * @param {object} rowModel Set the current row, if you are using a ngRepeat you must to use the current element variable here.
          */
         .directive('tbRowTemplate', ['$timeout', $timeout => ({
-            templateUrl: 'tbRowTemplate.tpl.html',
-            restrict: 'E',
-            replace: true,
+            restrict: 'A',
+            replace: false,
             transclude: true,
             scope: {
                 model: '=rowModel'
@@ -334,51 +325,19 @@
         ])
         /**
          * @ngdoc directive
-         * @name tbCellTemplate
+         * @name tbCell
          * @module tubular.directives
          * @restrict E
          *
          * @description
-         * The `tbCellTemplate` directive represents the final table element, a cell, where it can
+         * The `tbCell` directive represents the final table element, a cell, where it can
          * hold an in-line editor or a plain AngularJS expression related to the current element in the `ngRepeat`.
          *
-         * This directive is replace by an `td` HTML element.
-         *
+         * Suggested container:
+         * <td ng-transclude ng-show="column.Visible" data-label="{{::column.Label}}" style="height:auto;"></td>
+         * 
          * @param {string} columnName Setting the related column, by passing the name, the cell can share attributes (like visibility) with the column.
          */
-        .directive('tbCellTemplate', [
-            function () {
-
-                return {
-                    require: '^tbRowTemplate',
-                    templateUrl: 'tbCellTemplate.tpl.html',
-                    restrict: 'E',
-                    replace: true,
-                    transclude: true,
-                    scope: {
-                        columnName: '@?'
-                    },
-                    controller: ['$scope', function ($scope) {
-                        $scope.column = { Visible: true };
-                        $scope.columnName = $scope.columnName || null;
-                        $scope.$component = $scope.$parent.$component || $scope.$parent.$parent.$component;
-
-                        // TODO: Implement a form in inline editors
-                        $scope.getFormScope = () => null;
-
-                        if ($scope.columnName != null) {
-                            const columnModel = $scope.$component.columns
-                                .filter(el => el.Name === $scope.columnName);
-
-                            if (columnModel.length > 0) {
-                                $scope.column = columnModel[0];
-                            }
-                        }
-                    }
-                    ]
-                };
-            }
-        ])
         .directive('tbCell', [
             function () {
 
@@ -459,10 +418,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
     "<button class=\"btn btn-sm btn-default\" ng-click=$ctrl.openColumnsSelector() ng-bind=\"'CAPTION_SELECTCOLUMNS' | translate\"></button>");
   $templateCache.put("tbColumnSelectorDialog.tpl.html",
     "<div class=modal-header><h3 class=modal-title ng-bind=\"'CAPTION_SELECTCOLUMNS' | translate\"></h3></div><div class=modal-body><table class=\"table table-bordered table-responsive table-striped table-hover table-condensed\"><thead><tr><th>Visible?</th><th>Name</th></tr></thead><tbody><tr ng-repeat=\"col in Model\"><td><input type=checkbox ng-model=col.Visible ng-disabled=\"col.Visible && isInvalid()\"></td><td ng-bind=col.Label></td></tr></tbody></table></div><div class=modal-footer><button class=\"btn btn-warning\" ng-click=closePopup() ng-bind=\"'CAPTION_CLOSE' | translate\"></button></div>");
-  $templateCache.put("tbCellTemplate.tpl.html",
-    "<td ng-transclude ng-show=column.Visible data-label={{::column.Label}} style=height:auto></td>");
-  $templateCache.put("tbColumnDefinitions.tpl.html",
-    "<thead><tr ng-transclude></tr></thead>");
   $templateCache.put("tbColumnFilterButtons.tpl.html",
     "<div class=text-right><button class=\"btn btn-sm btn-success\" ng-click=$ctrl.currentFilter.applyFilter() ng-disabled=\"$ctrl.currentFilter.filter.Operator == 'None'\" ng-bind=\"'CAPTION_APPLY' | translate\"></button>&nbsp; <button class=\"btn btn-sm btn-danger\" ng-click=$ctrl.currentFilter.clearFilter() ng-bind=\"'CAPTION_CLEAR' | translate\"></button></div>");
   $templateCache.put("tbColumnHeader.tpl.html",
@@ -473,10 +428,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
     "<div><div class=tubular-overlay ng-show=\"$ctrl.showLoading && $ctrl.currentRequest != null\"><div><div class=\"fa fa-refresh fa-2x fa-spin\"></div></div></div><ng-transclude></ng-transclude></div>");
   $templateCache.put("tbGridTable.tpl.html",
     "<table ng-transclude class=\"table tubular-grid-table\"></table>");
-  $templateCache.put("tbRowSet.tpl.html",
-    "<tbody ng-transclude></tbody>");
-  $templateCache.put("tbRowTemplate.tpl.html",
-    "<tr ng-transclude></tr>");
 }]);
 })(angular);
 
@@ -985,7 +936,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         return;
                     }
 
-                    storage.setItem(`${prefix + $ctrl.name  }_columns`, angular.toJson($ctrl.columns));
+                    storage.setItem(`${prefix + $ctrl.name}_columns`, angular.toJson($ctrl.columns));
                 };
 
                 $scope.$watch('$ctrl.columns', $scope.columnWatcher, true);
@@ -1010,10 +961,10 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
                 $scope.$watch('$ctrl.hasColumnsDefinitions', $scope.hasColumnsDefinitionsWatcher);
 
-                $scope.pageSizeWatcher =  () => {
+                $scope.pageSizeWatcher = () => {
                     if ($ctrl.hasColumnsDefinitions && $ctrl.requestCounter > 0) {
                         if ($ctrl.savePageSize) {
-                            storage.setItem(`${prefix + $ctrl.name  }_pageSize`, $ctrl.pageSize);
+                            storage.setItem(`${prefix + $ctrl.name}_pageSize`, $ctrl.pageSize);
                         }
 
                         $ctrl.retrieveData();
@@ -1036,14 +987,14 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     }
 
                     if ($ctrl.search.Text === '') {
-                        storage.removeItem(`${prefix + $ctrl.name  }_search`);
+                        storage.removeItem(`${prefix + $ctrl.name}_search`);
                     } else {
-                        storage.setItem(`${prefix + $ctrl.name  }_search`, $ctrl.search.Text);
+                        storage.setItem(`${prefix + $ctrl.name}_search`, $ctrl.search.Text);
                     }
                 };
 
                 $ctrl.addColumn = item => {
-                    if (item.Name == null){
+                    if (item.Name == null) {
                         return;
                     }
 
@@ -1067,21 +1018,21 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
                 $ctrl.deleteRow = row => {
                     const urlparts = $ctrl.serverDeleteUrl.split('?');
-                    let url = `${urlparts[0]  }/${  row.$key}`;
+                    let url = `${urlparts[0]}/${row.$key}`;
 
                     if (urlparts.length > 1) {
-                        url += `?${  urlparts[1]}`;
+                        url += `?${urlparts[1]}`;
                     }
 
                     $ctrl.currentRequest = $http.delete(url, {
                         requireAuthentication: getRequiredAuthentication()
                     })
-                    .then(response => $scope.$emit('tbGrid_OnRemove', response.data),
+                        .then(response => $scope.$emit('tbGrid_OnRemove', response.data),
                         error => $scope.$emit('tbGrid_OnConnectionError', error))
-                    .then(() => {
-                        $ctrl.currentRequest = null;
-                        $ctrl.retrieveData();
-                    });
+                        .then(() => {
+                            $ctrl.currentRequest = null;
+                            $ctrl.retrieveData();
+                        });
                 };
 
                 function getRequiredAuthentication() {
@@ -1137,7 +1088,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         row.$isEditing = false;
                         $ctrl.currentRequest = null;
                         $ctrl.retrieveData();
-                        
+
                         return data;
                     }, error => {
                         $scope.$emit('tbForm_OnConnectionError', error);
@@ -1151,41 +1102,41 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 };
 
                 $ctrl.verifyColumns = () => {
-                    const columns = angular.fromJson(storage.getItem(`${prefix + $ctrl.name  }_columns`));
+                    const columns = angular.fromJson(storage.getItem(`${prefix + $ctrl.name}_columns`));
                     if (columns == null || columns === '') {
                         // Nothing in settings, saving initial state
-                        storage.setItem(`${prefix + $ctrl.name  }_columns`, angular.toJson($ctrl.columns));
+                        storage.setItem(`${prefix + $ctrl.name}_columns`, angular.toJson($ctrl.columns));
                         return;
                     }
 
                     angular.forEach(columns, column => {
-                            const filtered = $ctrl.columns.filter(el => el.Name === column.Name);
+                        const filtered = $ctrl.columns.filter(el => el.Name === column.Name);
 
-                            if (filtered.length === 0) {
-                                return;
-                            }
+                        if (filtered.length === 0) {
+                            return;
+                        }
 
-                            const current = filtered[0];
-                            // Updates visibility by now
-                            current.Visible = column.Visible;
+                        const current = filtered[0];
+                        // Updates visibility by now
+                        current.Visible = column.Visible;
 
-                            // Update sorting
-                            if ($ctrl.requestCounter < 1) {
-                                current.SortOrder = column.SortOrder;
-                                current.SortDirection = column.SortDirection;
-                            }
+                        // Update sorting
+                        if ($ctrl.requestCounter < 1) {
+                            current.SortOrder = column.SortOrder;
+                            current.SortDirection = column.SortDirection;
+                        }
 
-                            // Update Filters
-                            if (current.Filter != null && current.Filter.Text != null) {
-                                return;
-                            }
+                        // Update Filters
+                        if (current.Filter != null && current.Filter.Text != null) {
+                            return;
+                        }
 
-                            if (column.Filter != null &&
-                                column.Filter.Text != null &&
-                                column.Filter.Operator !== 'None') {
-                                current.Filter = column.Filter;
-                            }
-                        });
+                        if (column.Filter != null &&
+                            column.Filter.Text != null &&
+                            column.Filter.Operator !== 'None') {
+                            current.Filter = column.Filter;
+                        }
+                    });
                 };
 
                 $ctrl.getRequestObject = skip => {
@@ -1223,7 +1174,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     $ctrl.verifyColumns();
 
                     if ($ctrl.savePageSize) {
-                        $ctrl.pageSize = (parseInt(storage.getItem(`${prefix + $ctrl.name  }_pageSize`)) || $ctrl.pageSize);
+                        $ctrl.pageSize = (parseInt(storage.getItem(`${prefix + $ctrl.name}_pageSize`)) || $ctrl.pageSize);
                     }
 
                     $ctrl.pageSize = $ctrl.pageSize < 10 ? 20 : $ctrl.pageSize; // default
@@ -1232,7 +1183,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     if ($ctrl.requestedPage > newPages) $ctrl.requestedPage = newPages;
 
                     const request = $ctrl.getRequestObject(-1);
-                    
+
                     $scope.$emit('tbGrid_OnBeforeRequest', request, $ctrl);
 
                     $ctrl.currentRequest = $http(request);
@@ -1252,7 +1203,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     }
 
                     $ctrl.dataSource = response.data;
-                    
+
                     $ctrl.rows = response.data.Payload.map(el => {
                         const model = new TubularModel($ctrl, el);
                         model.$component = $ctrl;
@@ -1263,7 +1214,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
                         return model;
                     });
-                    
+
                     $scope.$emit('tbGrid_OnDataLoaded', $ctrl);
 
                     $ctrl.aggregationFunctions = response.data.AggregationPayload;
@@ -1274,7 +1225,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     $ctrl.isEmpty = $ctrl.filteredRecordCount === 0;
 
                     if ($ctrl.savePage) {
-                        storage.setItem(`${prefix + $ctrl.name  }_page`, $ctrl.currentPage);
+                        storage.setItem(`${prefix + $ctrl.name}_page`, $ctrl.currentPage);
                     }
                 };
 
@@ -1339,7 +1290,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
                     return $http(request)
                         .then(response => response.data.Payload,
-                            error => $scope.$emit('tbGrid_OnConnectionError', error))
+                        error => $scope.$emit('tbGrid_OnConnectionError', error))
                         .then(() => $ctrl.currentRequest = null);
                 };
 
