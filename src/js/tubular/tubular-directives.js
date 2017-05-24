@@ -363,5 +363,37 @@
                     ]
                 };
             }
+        ])
+        .directive('tbCell', [
+            function () {
+
+                return {
+                    require: '^tbRowTemplate',
+                    restrict: 'A',
+                    replace: false,
+                    transclude: true,
+                    scope: {
+                        columnName: '@?'
+                    },
+                    controller: ['$scope', function ($scope) {
+                        $scope.column = { Visible: true };
+                        $scope.columnName = $scope.columnName || null;
+                        $scope.$component = $scope.$parent.$component || $scope.$parent.$parent.$component;
+
+                        // TODO: Implement a form in inline editors
+                        $scope.getFormScope = () => null;
+
+                        if ($scope.columnName != null) {
+                            const columnModel = $scope.$component.columns
+                                .filter(el => el.Name === $scope.columnName);
+
+                            if (columnModel.length > 0) {
+                                $scope.column = columnModel[0];
+                            }
+                        }
+                    }
+                    ]
+                };
+            }
         ]);
 })(angular);
