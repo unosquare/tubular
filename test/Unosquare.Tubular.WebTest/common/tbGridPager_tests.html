@@ -6,8 +6,8 @@
 </ul>
 <br />
 
-<tb-grid server-url="http://tubular.azurewebsites.net/api/orders/paged" request-method="POST" grid-name="sampleshap1"
-         page-size="10" require-authentication="false">
+<tb-grid server-url="http://tubular.azurewebsites.net/api/orders/paged" request-method="POST" grid-name="sampleshap1" page-size="10"
+    require-authentication="false">
     <div class="row">
         <tb-grid-pager class="col-md-6 col-xs-12"></tb-grid-pager>
         <tb-page-size-selector class="col-md-3 col-xs-6" selectorcss="input-sm"></tb-page-size-selector>
@@ -16,34 +16,33 @@
     <div class="row">
         <div class="col-md-12">
             <div class="panel panel-default panel-rounded">
-                <table class="table tb-grid-table table-bordered table-hover table-striped responsive-mobile">
-                    <thead tb-column-definitions>
+                <table class="table table-bordered table-hover table-striped responsive-mobile" ng-transclude tb-grid-table>
+                    <thead>
                         <tr>
-                        <tb-column name="OrderID" column-type="numeric" sortable="true">
-                            <tb-column-header>
-                                <span>{{label}}</span>
-                            </tb-column-header>
-                        </tb-column>
-                        <tb-column name="CustomerName" searchable="true">
-                            <tb-column-header>
-                                <span>{{label}}</span>
-                            </tb-column-header>
-                        </tb-column>
-                        <tb-column name="ShippedDate">
-                            <tb-column-header>
-                                <span>{{label}}</span>
-                            </tb-column-header>
-                        </tb-column>
-                        <tb-column name="ShipperCity" aggregate="count">
-                            <tb-column-header>
-                                <span>{{label}}</span>
-                            </tb-column-header>
-                        </tb-column>
+                            <th tb-column name="OrderID" column-type="numeric" sortable="true" ng-transclude>
+                                <tb-column-header>
+                                    <span>{{column.label}}</span>
+                                </tb-column-header>
+                            </th>
+                            <th tb-column name="CustomerName" searchable="true">
+                                <tb-column-header>
+                                    <span>{{label}}</span>
+                                </tb-column-header>
+                            </th>
+                            <th tb-column name="ShippedDate">
+                                <tb-column-header>
+                                    <span>{{label}}</span>
+                                </tb-column-header>
+                            </th>
+                            <th tb-column name="ShipperCity" aggregate="count">
+                                <tb-column-header>
+                                    <span>{{label}}</span>
+                                </tb-column-header>
+                            </th>
                         </tr>
                     </thead>
-                    <tbody tb-row-set>
-                        <tr tb-row-template ng-repeat="row in $component.rows"
-                                         row-model="row">
+                    <!--<tbody tb-row-set>
+                        <tr tb-row-template ng-repeat="row in $component.rows" row-model="row">
                             <td tb-cell>
                                 {{row.OrderID}}
                             </td>
@@ -67,7 +66,7 @@
                                 <b>COUNT <span id="count">{{$component.aggregationFunctions.ShipperCity}}</span></b>
                             </td>
                         </tb-row-template>
-                    </tfoot>
+                    </tfoot>-->
                 </table>
             </div>
         </div>
