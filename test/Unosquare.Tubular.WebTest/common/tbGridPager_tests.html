@@ -9,27 +9,19 @@
         <div class="col-md-12">
             <div class="panel panel-default panel-rounded">
                 <table class="table table-bordered table-hover table-striped responsive-mobile" tb-grid-table>
-                    <thead tb-column-definitions>
+                    <thead>
                         <tr>
-                            <th tb-column name="OrderID" column-type="numeric" sortable="true">
-                                <tb-column-header>
-                                    <span>{{column.label}}</span>
-                                </tb-column-header>
+                            <th tb-column name="OrderID" column-type="numeric" sortable="true" ng-transclude>
+                                Order ID
                             </th>
-                            <th tb-column name="CustomerName" searchable="true">
-                                <tb-column-header>
-                                    <span>{{label}}</span>
-                                </tb-column-header>
+                            <th tb-column name="CustomerName" searchable="true" ng-transclude>
+                                Customer Name
                             </th>
-                            <th tb-column name="ShippedDate">
-                                <tb-column-header>
-                                    <span>{{label}}</span>
-                                </tb-column-header>
+                            <th tb-column name="ShippedDate"  ng-transclude>
+                                Shipped Date
                             </th>
-                            <th tb-column name="ShipperCity" aggregate="count">
-                                <tb-column-header>
-                                    <span>{{label}}</span>
-                                </tb-column-header>
+                            <th tb-column name="ShipperCity" aggregate="count"  ng-transclude>
+                                City
                             </th>
                         </tr>
                     </thead>
