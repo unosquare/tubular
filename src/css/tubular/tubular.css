@@ -140,15 +140,15 @@ table.tb-grid-table {
     display: none;
 }
 
-table.tb-grid-table thead tr th.column-sm {
+th.column-sm {
     width: 50px;
 }
 
-table.tb-grid-table thead tr th.column-date {
+th.column-date {
     width: 140px;
 }
 
-table.tb-grid-table thead tr th.column-md {
+th.column-md {
     width: 90px;
 }
 
@@ -162,15 +162,15 @@ table.tb-grid-table thead tr th.column-md {
         min-width: 37px;
     }
 
-    table.tb-grid-table thead tr th.column-sm {
+    th.column-sm {
         width: 80px;
     }
 
-    table.tb-grid-table thead tr th.column-date {
+    th.column-date {
         width: 90px;
     }
 
-    table.tb-grid-table thead tr th.column-md {
+    th.column-md {
         width: 130px;
     }
 }
@@ -197,12 +197,11 @@ table.tb-grid-table tr th {
     padding: 2px;
 }
 
-table.tb-grid-table thead tr .column-action {
+th.column-action {
     width: 75px;
 }
 
-
-table.tb-grid-table tbody tr .cell-menu {
+th.cell-menu {
     overflow: visible;
 }
 
@@ -214,7 +213,7 @@ table.tb-grid-table thead tr th i.fa {
     cursor: default;
 }
 
-table.tb-grid-table thead tr th div.tubular-column-menu {
+div.tubular-column-menu {
     position: relative;
     display: block;
     text-align: center;
@@ -222,23 +221,23 @@ table.tb-grid-table thead tr th div.tubular-column-menu {
     float: right;
 }
 
-    table.tb-grid-table thead tr th div.tubular-column-menu:active {
+    div.tubular-column-menu:active {
         outline: none;
     }
 
-    table.tb-grid-table thead tr th div.tubular-column-menu > button,
-    table.tb-grid-table thead tr th div.tubular-column-menu > div.btn-group > button {
+    div.tubular-column-menu > button,
+    div.tubular-column-menu > div.btn-group > button {
         border-radius: 30px !important;
         line-height: 10px;
         margin: 0;
     }
 
-        table.tb-grid-table thead tr th div.tubular-column-menu > button:active,
-        table.tb-grid-table thead tr th div.tubular-column-menu > div.btn-group > button:active {
+        div.tubular-column-menu > button:active,
+        div.tubular-column-menu > div.btn-group > button:active {
             outline: none;
         }
 
-    table.tb-grid-table thead tr th div.tubular-column-menu button i.fa {
+    div.tubular-column-menu button i.fa {
         font-size: 10px;
     }
 

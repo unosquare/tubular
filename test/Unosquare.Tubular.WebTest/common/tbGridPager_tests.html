@@ -1,11 +1,3 @@
-<h1>Testing: </h1>
-<ul>
-    <li>tbGridPager component and its related page-navigation functionality </li>
-    <li>tbPageSizeSelector component </li>
-    <li>tbGridPagerInfo component
-</ul>
-<br />
-
 <tb-grid server-url="http://tubular.azurewebsites.net/api/orders/paged" request-method="POST" grid-name="sampleshap1" page-size="10"
     require-authentication="false">
     <div class="row">
@@ -16,10 +8,10 @@
     <div class="row">
         <div class="col-md-12">
             <div class="panel panel-default panel-rounded">
-                <table class="table table-bordered table-hover table-striped responsive-mobile" ng-transclude tb-grid-table>
-                    <thead>
+                <table class="table table-bordered table-hover table-striped responsive-mobile" tb-grid-table>
+                    <thead tb-column-definitions>
                         <tr>
-                            <th tb-column name="OrderID" column-type="numeric" sortable="true" ng-transclude>
+                            <th tb-column name="OrderID" column-type="numeric" sortable="true">
                                 <tb-column-header>
                                     <span>{{column.label}}</span>
                                 </tb-column-header>
@@ -41,7 +33,7 @@
                             </th>
                         </tr>
                     </thead>
-                    <!--<tbody tb-row-set>
+                    <tbody tb-row-set>
                         <tr tb-row-template ng-repeat="row in $component.rows" row-model="row">
                             <td tb-cell>
                                 {{row.OrderID}}
@@ -58,15 +50,15 @@
                         </tr>
                     </tbody>
                     <tfoot tb-row-set>
-                        <tb-row-template class="bg-info">
+                        <tr class="bg-info">
                             <td tb-cell></td>
                             <td tb-cell></td>
                             <td tb-cell></td>
                             <td tb-cell>
                                 <b>COUNT <span id="count">{{$component.aggregationFunctions.ShipperCity}}</span></b>
                             </td>
-                        </tb-row-template>
-                    </tfoot>-->
+                        </tr>
+                    </tfoot>
                 </table>
             </div>
         </div>
