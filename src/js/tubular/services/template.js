@@ -175,13 +175,14 @@
                             \t\t</td>`;
                     }, '');
 
+                // TODO: ${el.Filter ? '\r\n\t\t\t<tb-column-filter></tb-column-filter>' : ''}
                 me.generateColumnsDefinitions = (columns) => columns.reduce((prev, el) => 
                         `${prev}
-                        \t\t<tb-column name="${el.Name}" label="${el.Label}" column-type="${el.DataType}" sortable="${el.Sortable}" 
-                        \t\t\tis-key="${el.IsKey}" searchable="${el.Searchable}" ${el.Sortable ? `\r\n\t\t\tsort-direction="${el.SortDirection}" sort-order="${el.SortOrder}" ` : ' '}
-                                visible="${el.Visible}">${el.Filter ? '\r\n\t\t\t<tb-column-filter></tb-column-filter>' : ''}
-                        \t\t\t<tb-column-header><span>{{label}}</span></tb-column-header>
-                        \t\t</tb-column>`, '');
+                        \t\t<th tb-column name="${el.Name}" label="${el.Label}" column-type="${el.DataType}" sortable="${el.Sortable}" 
+                        \t\t\tis-key="${el.IsKey}" searchable="${el.Searchable}" ${el.Sortable ? ` sort-direction="${el.SortDirection}" 
+                        sort-order="${el.SortOrder}" ` : ' '}
+                                visible="${el.Visible}">
+                        \t\t</th>`, '');
 
                 /**
                  * Generates a grid markup using a columns model and grids options
@@ -225,25 +226,25 @@
 
                     return `${'<div class="container">' +
                         '\r\n<tb-grid server-url="'}${options.dataUrl}" request-method="${options.RequestMethod}" class="row" ` +
-                        `page-size="10" require-authentication="${options.RequireAuthentication }" ${options.Mode !== 'Read-Only' ? ` editor-mode="${  options.Mode.toLowerCase()  }"` : ''}>${topToolbar === '' ? '' : `\r\n\t<div class="row">${  topToolbar  }\r\n\t</div>`}\r\n\t<div class="row">` +
+                        `page-size="10" require-authentication="${options.RequireAuthentication }" ${options.Mode !== 'Read-Only' ? ` editor-mode="${options.Mode.toLowerCase()}"` : ''}>
+                        ${topToolbar === '' ? '' : `\r\n\t<div class="row">${  topToolbar  }\r\n\t</div>`}\r\n\t<div class="row">` +
                         '\r\n\t<div class="col-md-12">' +
                         '\r\n\t<div class="panel panel-default panel-rounded">' +
                         `\r\n\t<tb-grid-table class="table-bordered">
                         \t<tb-column-definitions>
                         ${columnDefinitions}
                         </tb-column-definitions>` +
-                        '\r\n\t<tb-row-set>' +
-                        `\r\n\t<tb-row-template ng-repeat="row in $component.rows" row-model="row">${
+                        '\r\n\t<tbody>' +
+                        `\r\n\t<tr tb-row-template ng-repeat="row in $component.rows" row-model="row">${
                         options.Mode !== 'Read-Only'
-                            ? `\r\n\t\t<tb-cell-template>${options.Mode === 'Inline' ? '\r\n\t\t\t<tb-save-button model="row"></tb-save-button>' : ''}\r\n\t\t\t<tb-edit-button model="row"></tb-edit-button>` +
-                            '\r\n\t\t</tb-cell-template>'
+                            ? `\r\n\t\t<td>${options.Mode === 'Inline' ? '\r\n\t\t\t<tb-save-button model="row"></tb-save-button>' : ''}\r\n\t\t\t<tb-edit-button model="row"></tb-edit-button></td>`
                             : ''
-                        }${rowsDefinitions}\r\n\t</tb-row-template>` +
-                        `\r\n\t</tb-row-set>
+                        }${rowsDefinitions}\r\n\t</tr>` +
+                        `\r\n\t</tbody>
                         \t</tb-grid-table>
                         \t</div>
                         \t</div>
-                        \t</div>${bottomToolbar === '' ? '' : `\r\n\t<div class="row">${  bottomToolbar  }\r\n\t</div>`}\r\n</tb-grid>
+                        \t</div>${bottomToolbar === '' ? '' : `\r\n\t<div class="row">${bottomToolbar}\r\n\t</div>`}\r\n</tb-grid>
                         </div>`;
                 };
 
@@ -342,12 +343,8 @@
                     const columns = me.createColumns(model);
 
                     return `${'<tb-form model="Model">' +
-                        '<div class="modal-header"><h3 class="modal-title">'}${
-                        title || 'Edit Row'
-                        }</h3></div>` +
-                        `<div class="modal-body">${
-                        me.generateFieldsArray(columns).join('')
-                        }</div>` +
+                        '<div class="modal-header"><h3 class="modal-title">'}${title || 'Edit Row'}</h3></div>` +
+                        `<div class="modal-body">${me.generateFieldsArray(columns).join('')}</div>` +
                         '<div class="modal-footer">' +
                         '<button class="btn btn-primary" ng-click="savePopup()" ng-disabled="!Model.$valid()">Save</button>' +
                         '<button class="btn btn-danger" ng-click="closePopup()" formnovalidate>Cancel</button>' +
