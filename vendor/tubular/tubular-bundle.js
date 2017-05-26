@@ -19,6 +19,16 @@
 (angular => {
     'use strict';
 
+    function validateColumns(columns) {
+        let isValid = true;
+
+        angular.forEach(columns, column => isValid = isValid && column.Name);
+
+        if (!isValid) {
+            throw 'Column attribute contains invalid';
+        }
+    }
+
     /**
      * @ngdoc module
      * @name tubular.directives
@@ -43,7 +53,8 @@
         .directive('tbGridTable', [
             'tubularTemplateService',
             '$compile',
-            function (tubularTemplateService, $compile) {
+            '$timeout',
+            function (tubularTemplateService, $compile, $timeout) {
                 return {
                     require: '^tbGrid',
                     restrict: 'A',
@@ -54,18 +65,8 @@
                         pre: (scope, element, attributes, tbGridCtrl) => {
                             scope.tubularDirective = 'tubular-grid-table';
 
-                            function InitFromColumns() {
-                                let isValid = true;
-
-                                angular.forEach(scope.columns, column => isValid = isValid && column.Name);
-
-                                if (!isValid) {
-                                    throw 'Column attribute contains invalid';
-                                }
-                            }
-
                             if (scope.columns && tbGridCtrl) {
-                                InitFromColumns();
+                                validateColumns(scope.columns);
 
                                 const headersTemplate = tubularTemplateService.generateColumnsDefinitions(scope.columns);
                                 const headersContent = $compile(headersTemplate)(scope);
@@ -77,7 +78,9 @@
                                 element.append(cellsContent);
                             }
                         },
-                        post: (scope, element, attributes, tbGridCtrl) => tbGridCtrl.hasColumnsDefinitions = true
+                        post: (scope, element, attributes, tbGridCtrl) => {
+                            $timeout(() => tbGridCtrl.hasColumnsDefinitions = true, 500);
+                        }
                     }
                 };
             }
@@ -109,18 +112,8 @@
                         pre: (scope, element, attributes) => {
                             scope.tubularDirective = 'tubular-column-definitions';
 
-                            function InitFromColumns() {
-                                let isValid = true;
-
-                                angular.forEach(scope.columns, column => isValid = isValid && column.Name);
-
-                                if (!isValid) {
-                                    throw 'Column attribute contains invalid';
-                                }
-                            }
-
                             if (scope.columns) {
-                                InitFromColumns();
+                                validateColumns(scope.columns);
                                 const template = '<tr>' + tubularTemplateService.generateColumnsDefinitions(scope.columns) + '</tr>';
                                 const content = $compile(template)(scope);
                                 element.append(content);
@@ -200,17 +193,16 @@
 
                             tbGridCtrl.addColumn(scope.column);
 
-                            if (scope.column.Sortable)
-                            {
+                            if (scope.column.Sortable) {
                                 var template = `<a title="Click to sort. Press Ctrl to sort by multiple columns" class="column-header" href ng-click="sortColumn($event)"><span class="column-header-default">{{column.Label}}</span></a>
                                             <i class="fa sort-icon" ng-class="{'fa-long-arrow-up': column.SortDirection == 'Ascending', 'fa-long-arrow-down': column.SortDirection == 'Descending'}">&nbsp;</i>`;
-                                
+
                                 element.empty();
                                 element.append($compile(template)(scope));
                             }
                         },
                         post: (scope, element) => {
-                            if (element.children().length === 0){
+                            if (element.children().length === 0) {
                                 element.append($compile('<span>{{column.Label}}</span>')(scope));
                             }
                         }
