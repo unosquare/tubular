@@ -285,36 +285,6 @@
         ])
         /**
          * @ngdoc directive
-         * @name tbFootSet
-         * @module tubular.directives
-         * @restrict E
-         *
-         * @description
-         * The `tbFootSet` directive is to handle footer.
-         *
-         * This directive is replace by an `tfoot` HTML element.
-         */
-        .directive('tbFootSet', [
-            function () {
-
-                return {
-                    require: '^tbGrid',
-                    templateUrl: 'tbFootSet.tpl.html',
-                    restrict: 'E',
-                    replace: true,
-                    transclude: true,
-                    scope: false,
-                    controller: [
-                        '$scope', function ($scope) {
-                            $scope.$component = $scope.$parent.$component || $scope.$parent.$parent.$component;
-                            $scope.tubularDirective = 'tubular-foot-set';
-                        }
-                    ]
-                };
-            }
-        ])
-        /**
-         * @ngdoc directive
          * @name tbRowTemplate
          * @module tubular.directives
          * @restrict E
@@ -347,7 +317,6 @@
             compile: () => ({ post: scope => $timeout(() => scope.bindFields(), 300) })
         })
         ])
-
         /**
          * @ngdoc directive
          * @name tbCellTemplate
@@ -370,6 +339,38 @@
                     templateUrl: 'tbCellTemplate.tpl.html',
                     restrict: 'E',
                     replace: true,
+                    transclude: true,
+                    scope: {
+                        columnName: '@?'
+                    },
+                    controller: ['$scope', function ($scope) {
+                        $scope.column = { Visible: true };
+                        $scope.columnName = $scope.columnName || null;
+                        $scope.$component = $scope.$parent.$component || $scope.$parent.$parent.$component;
+
+                        // TODO: Implement a form in inline editors
+                        $scope.getFormScope = () => null;
+
+                        if ($scope.columnName != null) {
+                            const columnModel = $scope.$component.columns
+                                .filter(el => el.Name === $scope.columnName);
+
+                            if (columnModel.length > 0) {
+                                $scope.column = columnModel[0];
+                            }
+                        }
+                    }
+                    ]
+                };
+            }
+        ])
+        .directive('tbCell', [
+            function () {
+
+                return {
+                    require: '^tbRowTemplate',
+                    restrict: 'A',
+                    replace: false,
                     transclude: true,
                     scope: {
                         columnName: '@?'
