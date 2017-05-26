@@ -43,53 +43,20 @@
          * This directive is replace by a `table` HTML element.
          */
         .directive('tbGridTable', [
-            'tubularTemplateService',
-            '$compile',
-            function (tubularTemplateService, $compile) {
+            function () {
                 return {
                     require: '^tbGrid',
                     templateUrl: 'tbGridTable.tpl.html',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
-                    scope: {
-                        columns: '=?'
-                    },
+                    scope: true,
                     controller: [
                         '$scope', function ($scope) {
                             $scope.$component = $scope.$parent.$parent.$ctrl;
                             $scope.tubularDirective = 'tubular-grid-table';
                         }
-                    ],
-                    compile: () => ({
-                        pre: (scope, element) => {
-
-                            function InitFromColumns() {
-                                let isValid = true;
-
-                                angular.forEach(scope.columns, column => isValid = isValid && column.Name);
-
-                                if (!isValid) {
-                                    throw 'Column attribute contains invalid';
-                                }
-                            }
-
-                            if (scope.columns && scope.$component) {
-
-                                InitFromColumns();
-
-                                const headersTemplate = tubularTemplateService.generateColumnsDefinitions(scope.columns);
-                                const headersContent = $compile(headersTemplate)(scope);
-                                element.append('<thead><tr ng-transclude></tr></thead>');
-                                element.find('tr').append(headersContent);
-
-                                const cellsTemplate = tubularTemplateService.generateCells(scope.columns, '');
-                                const cellsContent = $compile('<tbody><tr ng-repeat="row in $component.rows" row-model="row">' + cellsTemplate + '</tr></tbody>')(scope);
-                                element.append(cellsContent);
-                            }
-                        },
-                        post: scope => scope.$component.hasColumnsDefinitions = angular.isDefined(scope.columns) && angular.isDefined(scope.$component)
-                    })
+                    ]
                 };
             }
         ])
@@ -284,7 +251,9 @@
          * This directive is replace by an `tbody` HTML element.
          */
         .directive('tbRowSet', [
-            function () {
+            'tubularTemplateService',
+            '$compile',
+            function (tubularTemplateService, $compile) {
 
                 return {
                     require: '^tbGrid',
@@ -292,10 +261,64 @@
                     restrict: 'E',
                     replace: true,
                     transclude: true,
+                    scope: {
+                        columns: '=?'
+                    },
                     controller: [
                         '$scope', function ($scope) {
                             $scope.$component = $scope.$parent.$component || $scope.$parent.$parent.$component;
                             $scope.tubularDirective = 'tubular-row-set';
+                        }
+                    ],
+                    compile: () => ({
+                        pre: (scope, element) => {
+
+                            function InitFromColumns() {
+                                let isValid = true;
+
+                                angular.forEach(scope.columns, column => isValid = isValid && column.Name);
+
+                                if (!isValid) {
+                                    throw 'Column attribute contains invalid';
+                                }
+                            }
+
+                            if (scope.columns && scope.$component) {
+                                InitFromColumns();
+                                const template = tubularTemplateService.generateCells(scope.columns, '');
+                                const content = $compile(template)(scope);
+                                element.find('tr').append(content);
+                            }
+                        }
+                    })
+                };
+            }
+        ])
+        /**
+         * @ngdoc directive
+         * @name tbFootSet
+         * @module tubular.directives
+         * @restrict E
+         *
+         * @description
+         * The `tbFootSet` directive is to handle footer.
+         *
+         * This directive is replace by an `tfoot` HTML element.
+         */
+        .directive('tbFootSet', [
+            function () {
+
+                return {
+                    require: '^tbGrid',
+                    templateUrl: 'tbFootSet.tpl.html',
+                    restrict: 'E',
+                    replace: true,
+                    transclude: true,
+                    scope: false,
+                    controller: [
+                        '$scope', function ($scope) {
+                            $scope.$component = $scope.$parent.$component || $scope.$parent.$parent.$component;
+                            $scope.tubularDirective = 'tubular-foot-set';
                         }
                     ]
                 };
@@ -326,15 +349,25 @@
                 '$scope', function ($scope) {
                     $scope.tubularDirective = 'tubular-rowset';
                     $scope.fields = [];
+                    $scope.hasFieldsDefinitions = false;
                     $scope.$component = $scope.$parent.$parent.$parent.$component;
+
+                    $scope.$watch('hasFieldsDefinitions', newVal => {
+                        if (newVal !== true || angular.isUndefined($scope.model)) {
+                            return;
+                        }
+
+                        $scope.bindFields();
+                    });
 
                     $scope.bindFields = () => angular.forEach($scope.fields, field => field.bindScope());
                 }
             ],
             // Wait a little bit before to connect to the fields
-            compile: () => ({ post: scope => $timeout(() => scope.bindFields(), 300) })
+            compile: () => ({ post: scope => $timeout(() => scope.hasFieldsDefinitions = true, 300) })
         })
         ])
+
         /**
          * @ngdoc directive
          * @name tbCellTemplate
@@ -621,6 +654,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 $http) {
                 // we need this to find the parent of a field
                 $scope.tubularDirective = 'tubular-form';
+                $scope.hasFieldsDefinitions = false;
                 $scope.fields = [];
 
                 function getUrlWithKey() {
@@ -647,6 +681,12 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 $ctrl.requireAuthentication = angular.isUndefined($scope.requireAuthentication)
                     ? true
                     : $scope.requireAuthentication;
+
+                $scope.$watch('hasFieldsDefinitions', newVal => {
+                    if (newVal) {
+                        $ctrl.retrieveData();
+                    }
+                });
 
                 $scope.cloneModel = model => {
                     const data = {};
@@ -752,7 +792,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
                 $scope.finishDefinition = () => {
                     const timer = $timeout(() => {
-                        $ctrl.retrieveData();
+                        $scope.hasFieldsDefinitions = true;
 
                         if ($element.find('input').length > 0) {
                             $element.find('input')[0].focus();
@@ -3080,6 +3120,10 @@ angular.module('tubular.services', ['ui.bootstrap'])
             return;
           }
 
+          if (parent.hasFieldsDefinitions !== false) {
+            throw 'Cannot define more fields. Field definitions have been sealed';
+          }
+
           ctrl.$component = parent.tubularDirective === 'tubular-form' ? parent : parent.$component;
 
           scope.Name = ctrl.name;
@@ -3684,10 +3728,9 @@ function exportToCsv(header, rows, visibility) {
                 me.generateCells = (columns, mode) => columns.reduce((prev, el) => {
                         const editorTag = mode === 'Inline' ? el.EditorType
                             .replace(/([A-Z])/g, $1 => `-${$1.toLowerCase()}`) : '';
-                        const templateExpression = el.Template || `<span ng-bind="row.${el.Name}"></span>`;
 
                         return `${prev}\r\n\t\t<tb-cell-template column-name="${el.Name}">
-                            \t\t\t${mode === 'Inline' ? `<${editorTag} is-editing="row.$isEditing" value="row.${el.Name}"></${editorTag}>` : templateExpression}
+                            \t\t\t${mode === 'Inline' ? `<${editorTag} is-editing="row.$isEditing" value="row.${el.Name}"></${editorTag}>` : el.Template}
                             \t\t</tb-cell-template>`;
                     }, '');
 
