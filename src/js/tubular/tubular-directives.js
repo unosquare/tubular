@@ -35,7 +35,7 @@
                         columns: '=?'
                     },
                     link: {
-                        pre: (scope, element, attributes) => {
+                        pre: (scope, element, attributes, tbGridCtrl) => {
                             scope.tubularDirective = 'tubular-grid-table';
                             function InitFromColumns() {
                                 let isValid = true;
@@ -241,7 +241,7 @@
                     link: (scope, element, attributes, ctrls) => {
                         const tbGridCtrl = ctrls[0];
                         const tbColumnCtrl = ctrls[1];
-
+                        
                         scope.sortColumn = $event => tbGridCtrl.sortColumn($event.ctrlKey);
 
                         // this listener here is used for backwards compatibility with tbColumnHeader requiring a scope.label value on its own
@@ -327,7 +327,7 @@
          *
          * Suggested container:
          * <td ng-transclude ng-show="column.Visible" data-label="{{::column.Label}}" style="height:auto;"></td>
-         *
+         * 
          * @param {string} columnName Setting the related column, by passing the name, the cell can share attributes (like visibility) with the column.
          */
         .directive('tbCell', [
