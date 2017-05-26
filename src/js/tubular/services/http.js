@@ -93,7 +93,7 @@
 
                         return response.data;
                     }, errorResponse => $q.reject(errorResponse.data));
-                };
+                }
 
 
                 function initAuth(data, username) {
