@@ -154,8 +154,9 @@
          * @param {string} columnType Set the column data type. Values: string, numeric, date, datetime, or boolean.
          */
         .directive('tbColumn', [
+            '$compile',
             'tubularColumn',
-            function (tubularColumn) {
+            function ($compile, tubularColumn) {
                 return {
                     require: '^tbGrid',
                     priority: 10,
@@ -197,15 +198,21 @@
                                 }
                             });
 
-                            scope.$watch('label', () => scope.column.Label = scope.label);
-
                             tbGridCtrl.addColumn(scope.column);
 
-                            /*<a title="Click to sort. Press Ctrl to sort by multiple columns" class="column-header" href ng-click="sortColumn($event)">
-        <span class="column-header-default">{{ $parent.column.Label }}</span>
-        <ng-transclude></ng-transclude>
-    </a>
-    <i class="fa sort-icon" ng-class="{'fa-long-arrow-up': $parent.column.SortDirection == 'Ascending', 'fa-long-arrow-down': $parent.column.SortDirection == 'Descending'}">&nbsp;</i>*/
+                            if (scope.column.Sortable)
+                            {
+                                var template = `<a title="Click to sort. Press Ctrl to sort by multiple columns" class="column-header" href ng-click="sortColumn($event)"><span class="column-header-default">{{column.Label}}</span></a>
+                                            <i class="fa sort-icon" ng-class="{'fa-long-arrow-up': column.SortDirection == 'Ascending', 'fa-long-arrow-down': column.SortDirection == 'Descending'}">&nbsp;</i>`;
+                                
+                                element.empty();
+                                element.append($compile(template)(scope));
+                            }
+                        },
+                        post: (scope, element) => {
+                            if (element.children().length === 0){
+                                element.append($compile('<span>{{column.Label}}</span>')(scope));
+                            }
                         }
                     })
                 };
