@@ -21,6 +21,8 @@
          * @description
          * The `tbGridTable` directive generate the HTML table where all the columns and rowsets can be defined.
          * `tbGridTable` requires a parent `tbGrid`.
+         *
+         * This directive is replace by a `table` HTML element.
          */
         .directive('tbGridTable', [
             'tubularTemplateService',
@@ -28,8 +30,9 @@
             function (tubularTemplateService, $compile) {
                 return {
                     require: '^tbGrid',
-                    restrict: 'C',
-                    replace: false,
+                    templateUrl: 'tbGridTable.tpl.html',
+                    restrict: 'E',
+                    replace: true,
                     transclude: true,
                     scope: {
                         columns: '=?'

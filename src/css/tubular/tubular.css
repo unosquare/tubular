@@ -111,28 +111,28 @@ div.tubular-general-overlay {
     }
 
 /* Tubular Grid Heading and Heading Filter Styles */
-div.panel > table.tb-grid-table.table-bordered > thead > tr > th {
+div.panel > table.tubular-grid-table.table-bordered > thead > tr > th {
     vertical-align: top;
     border-bottom: 2px solid #ddd;
     border-right: 1px solid #ddd;
     line-height: 22px;
 }
 
-    div.panel > table.tb-grid-table.table-bordered > thead > tr > th:last-child {
+    div.panel > table.tubular-grid-table.table-bordered > thead > tr > th:last-child {
         border-right-width: 0;
     }
 
-table.tb-grid-table {
+table.tubular-grid-table {
     font-size: 11px;
     table-layout: fixed;
     width: 100%;
 }
 
-    table.tb-grid-table .form-group {
+    table.tubular-grid-table .form-group {
         margin-bottom: 0;
     }
 
-    table.tb-grid-table .radio, table.tb-grid-table .tubular-checkbox {
+    table.tubular-grid-table .radio, table.tubular-grid-table .tubular-checkbox {
         margin: 0;
     }
 
@@ -140,20 +140,20 @@ table.tb-grid-table {
     display: none;
 }
 
-table.tb-grid-table thead tr th.column-sm {
+table.tubular-grid-table thead tr th.column-sm {
     width: 50px;
 }
 
-table.tb-grid-table thead tr th.column-date {
+table.tubular-grid-table thead tr th.column-date {
     width: 140px;
 }
 
-table.tb-grid-table thead tr th.column-md {
+table.tubular-grid-table thead tr th.column-md {
     width: 90px;
 }
 
 @media (min-width: 768px) {
-    table.tb-grid-table {
+    table.tubular-grid-table {
         font-size: 12px;
     }
 
@@ -162,15 +162,15 @@ table.tb-grid-table thead tr th.column-md {
         min-width: 37px;
     }
 
-    table.tb-grid-table thead tr th.column-sm {
+    table.tubular-grid-table thead tr th.column-sm {
         width: 80px;
     }
 
-    table.tb-grid-table thead tr th.column-date {
+    table.tubular-grid-table thead tr th.column-date {
         width: 90px;
     }
 
-    table.tb-grid-table thead tr th.column-md {
+    table.tubular-grid-table thead tr th.column-md {
         width: 130px;
     }
 }
@@ -180,7 +180,7 @@ table.tb-grid-table thead tr th.column-md {
         display: table-cell;
     }
 
-    table.tb-grid-table {
+    table.tubular-grid-table {
         font-size: 14px;
     }
 
@@ -193,20 +193,20 @@ table.tb-grid-table thead tr th.column-md {
         }
 }
 
-table.tb-grid-table tr th {
+table.tubular-grid-table tr th {
     padding: 2px;
 }
 
-table.tb-grid-table thead tr .column-action {
+table.tubular-grid-table thead tr .column-action {
     width: 75px;
 }
 
 
-table.tb-grid-table tbody tr .cell-menu {
+table.tubular-grid-table tbody tr .cell-menu {
     overflow: visible;
 }
 
-table.tb-grid-table thead tr th i.fa {
+table.tubular-grid-table thead tr th i.fa {
     font-weight: normal;
     font-size: 10px;
     line-height: 16px;
@@ -214,7 +214,7 @@ table.tb-grid-table thead tr th i.fa {
     cursor: default;
 }
 
-table.tb-grid-table thead tr th div.tubular-column-menu {
+table.tubular-grid-table thead tr th div.tubular-column-menu {
     position: relative;
     display: block;
     text-align: center;
@@ -222,27 +222,27 @@ table.tb-grid-table thead tr th div.tubular-column-menu {
     float: right;
 }
 
-    table.tb-grid-table thead tr th div.tubular-column-menu:active {
+    table.tubular-grid-table thead tr th div.tubular-column-menu:active {
         outline: none;
     }
 
-    table.tb-grid-table thead tr th div.tubular-column-menu > button,
-    table.tb-grid-table thead tr th div.tubular-column-menu > div.btn-group > button {
+    table.tubular-grid-table thead tr th div.tubular-column-menu > button,
+    table.tubular-grid-table thead tr th div.tubular-column-menu > div.btn-group > button {
         border-radius: 30px !important;
         line-height: 10px;
         margin: 0;
     }
 
-        table.tb-grid-table thead tr th div.tubular-column-menu > button:active,
-        table.tb-grid-table thead tr th div.tubular-column-menu > div.btn-group > button:active {
+        table.tubular-grid-table thead tr th div.tubular-column-menu > button:active,
+        table.tubular-grid-table thead tr th div.tubular-column-menu > div.btn-group > button:active {
             outline: none;
         }
 
-    table.tb-grid-table thead tr th div.tubular-column-menu button i.fa {
+    table.tubular-grid-table thead tr th div.tubular-column-menu button i.fa {
         font-size: 10px;
     }
 
-table.tb-grid-table tbody .row-group {
+table.tubular-grid-table tbody .row-group {
     font-weight: bolder;
     text-transform: capitalize;
 }
@@ -356,27 +356,27 @@ tb-edit-button.btn {
     padding: 0;
 }
 
-div.panel > table.tb-grid-table.table-bordered > tbody > tr > td {
+div.panel > table.tubular-grid-table.table-bordered > tbody > tr > td {
     border-right: 1px solid #ddd;
 }
 
-    div.panel > table.tb-grid-table.table-bordered > tbody > tr > td:last-child {
+    div.panel > table.tubular-grid-table.table-bordered > tbody > tr > td:last-child {
         border-right-width: 0;
     }
 
 
-table.tb-grid-table tr td {
+table.tubular-grid-table tr td {
     padding: 2px;
 }
 
-table.tb-grid-table tbody tr td {
+table.tubular-grid-table tbody tr td {
     overflow: hidden;
     -ms-text-overflow: ellipsis;
     -o-text-overflow: ellipsis;
     text-overflow: ellipsis;
 }
 
-    table.tb-grid-table tbody tr td.no-wrap, table.tb-grid-table tbody tr td.no-wrap span {
+    table.tubular-grid-table tbody tr td.no-wrap, table.tubular-grid-table tbody tr td.no-wrap span {
         white-space: nowrap;
     }
 
