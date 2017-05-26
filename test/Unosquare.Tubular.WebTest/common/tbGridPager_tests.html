@@ -1,3 +1,10 @@
+<!--
+    This template is used to test the following components:
+        - tbGridPager
+        - tbGridPagerInfo
+        - tbPageSizeSelector
+    -->
+
 <h1>Testing: </h1>
 <ul>
     <li>tbGridPager component and its related page-navigation functionality </li>
@@ -16,9 +23,8 @@
     <div class="row">
         <div class="col-md-12">
             <div class="panel panel-default panel-rounded">
-                <table class="table tb-grid-table table-bordered table-hover table-striped responsive-mobile">
-                    <thead tb-column-definitions>
-                        <tr>
+                <tb-grid-table class="table-bordered">
+                    <tb-column-definitions>
                         <tb-column name="OrderID" column-type="numeric" sortable="true">
                             <tb-column-header>
                                 <span>{{label}}</span>
@@ -39,36 +45,35 @@
                                 <span>{{label}}</span>
                             </tb-column-header>
                         </tb-column>
-                        </tr>
-                    </thead>
-                    <tbody tb-row-set>
-                        <tr tb-row-template ng-repeat="row in $component.rows"
+                    </tb-column-definitions>
+                    <tb-row-set>
+                        <tb-row-template ng-repeat="row in $component.rows"
                                          row-model="row">
-                            <td tb-cell>
+                            <tb-cell-template>
                                 {{row.OrderID}}
-                            </td>
-                            <td tb-cell>
+                            </tb-cell-template>
+                            <tb-cell-template>
                                 {{row.CustomerName}}
-                            </td>
-                            <td tb-cell>
+                            </tb-cell-template>
+                            <tb-cell-template>
                                 {{row.ShippedDate | moment }}
-                            </td>
-                            <td tb-cell>
+                            </tb-cell-template>
+                            <tb-cell-template>
                                 {{row.ShipperCity}}
-                            </td>
-                        </tr>
-                    </tbody>
-                    <tfoot tb-row-set>
-                        <tb-row-template class="bg-info">
-                            <td tb-cell></td>
-                            <td tb-cell></td>
-                            <td tb-cell></td>
-                            <td tb-cell>
-                                <b>COUNT <span id="count">{{$component.aggregationFunctions.ShipperCity}}</span></b>
-                            </td>
+                            </tb-cell-template>
                         </tb-row-template>
-                    </tfoot>
-                </table>
+                    </tb-row-set>
+                    <tb-foot-set>
+                        <tb-row-template class="bg-info">
+                            <tb-cell-template></tb-cell-template>
+                            <tb-cell-template></tb-cell-template>
+                            <tb-cell-template></tb-cell-template>
+                            <tb-cell-template>
+                                <b>COUNT <span id="count">{{$component.aggregationFunctions.ShipperCity}}</span></b>
+                            </tb-cell-template>
+                        </tb-row-template>
+                    </tb-foot-set>
+                </tb-grid-table>
             </div>
         </div>
     </div>
