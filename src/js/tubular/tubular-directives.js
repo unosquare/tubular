@@ -51,9 +51,7 @@
                                 validateColumns(scope.columns);
 
                                 const headersTemplate = tubularTemplateService.generateColumnsDefinitions(scope.columns);
-                                const headersContent = $compile(headersTemplate)(scope, undefined, {
-                                    transcludeControllers: { tbGrid: { instance: tbGridCtrl } }
-                                });
+                                const headersContent = $compile(headersTemplate)(scope);
                                 element.append('<thead><tr ng-transclude></tr></thead>');
                                 element.find('tr').append(headersContent);
 
