@@ -22,24 +22,24 @@ tb-grid {
         }
 
 /* Tubular Pager Styles */
-iv.tubular-pager {
+div.tubular-pager {
     margin: 0;
     min-height: 32px;
 }
 
-    .tubular-pager .pagination {
+    div.tubular-pager .pagination {
         margin: 0 !important;
         display: block !important;
     }
 
-        .tubular-pager .pagination > li > a {
+        div.tubular-pager .pagination > li > a {
             text-align: center;
             font-size: 10px;
             outline: none;
         }
 
 /* Tubular Grid Overlay and animation */
-.tubular-overlay {
+div.tubular-overlay {
     position: absolute;
     width: 100%;
     height: 100%;
@@ -51,7 +51,7 @@ iv.tubular-pager {
     color: #fff;
 }
 
-    .tubular-overlay > div {
+    div.tubular-overlay > div {
         position: absolute;
         background-color: #b4b4b4;
         color: #fff;
@@ -87,7 +87,7 @@ iv.tubular-pager {
         padding: 0 0;
     }
 
-.tubular-general-overlay {
+div.tubular-general-overlay {
     position: absolute;
     width: 100%;
     height: 100%;
@@ -97,7 +97,7 @@ iv.tubular-pager {
     color: #fff;
 }
 
-    .tubular-general-overlay > div {
+    div.tubular-general-overlay > div {
         position: absolute;
         background-color: #b4b4b4;
         color: #fff;
@@ -111,28 +111,28 @@ iv.tubular-pager {
     }
 
 /* Tubular Grid Heading and Heading Filter Styles */
-.panel > .tb-grid-table.table-bordered > thead > tr > th {
+div.panel > table.tb-grid-table.table-bordered > thead > tr > th {
     vertical-align: top;
     border-bottom: 2px solid #ddd;
     border-right: 1px solid #ddd;
     line-height: 22px;
 }
 
-    .panel > .tb-grid-table.table-bordered > thead > tr > th:last-child {
+    div.panel > table.tb-grid-table.table-bordered > thead > tr > th:last-child {
         border-right-width: 0;
     }
 
-.tb-grid-table {
+table.tb-grid-table {
     font-size: 11px;
     table-layout: fixed;
     width: 100%;
 }
 
-    .tb-grid-table .form-group {
+    table.tb-grid-table .form-group {
         margin-bottom: 0;
     }
 
-    .tb-grid-table .radio, table.tb-grid-table .tubular-checkbox {
+    table.tb-grid-table .radio, table.tb-grid-table .tubular-checkbox {
         margin: 0;
     }
 
@@ -140,37 +140,37 @@ iv.tubular-pager {
     display: none;
 }
 
-.column-sm {
+th.column-sm {
     width: 50px;
 }
 
-.column-date {
+th.column-date {
     width: 140px;
 }
 
-.column-md {
+th.column-md {
     width: 90px;
 }
 
 @media (min-width: 768px) {
-    .tb-grid-table {
+    table.tb-grid-table {
         font-size: 12px;
     }
 
-    .tubular-pager .pagination > li > a {
+    div.tubular-pager .pagination > li > a {
         font-size: 12px;
         min-width: 37px;
     }
 
-    .column-sm {
+    th.column-sm {
         width: 80px;
     }
 
-    .column-date {
+    th.column-date {
         width: 90px;
     }
 
-    .column-md {
+    th.column-md {
         width: 130px;
     }
 }
@@ -197,15 +197,15 @@ table.tb-grid-table tr th {
     padding: 2px;
 }
 
-.column-action {
+th.column-action {
     width: 75px;
 }
 
-.cell-menu {
+th.cell-menu {
     overflow: visible;
 }
 
-.tb-grid-table thead tr th i.fa {
+table.tb-grid-table thead tr th i.fa {
     font-weight: normal;
     font-size: 10px;
     line-height: 16px;
@@ -213,7 +213,7 @@ table.tb-grid-table tr th {
     cursor: default;
 }
 
-.tubular-column-menu {
+div.tubular-column-menu {
     position: relative;
     display: block;
     text-align: center;
@@ -221,36 +221,36 @@ table.tb-grid-table tr th {
     float: right;
 }
 
-    .tubular-column-menu:active {
+    div.tubular-column-menu:active {
         outline: none;
     }
 
-    .tubular-column-menu > button,
-    .tubular-column-menu > div.btn-group > button {
+    div.tubular-column-menu > button,
+    div.tubular-column-menu > div.btn-group > button {
         border-radius: 30px !important;
         line-height: 10px;
         margin: 0;
     }
 
-        .tubular-column-menu > button:active,
-        .tubular-column-menu > div.btn-group > button:active {
+        div.tubular-column-menu > button:active,
+        div.tubular-column-menu > div.btn-group > button:active {
             outline: none;
         }
 
-    .tubular-column-menu button i.fa {
+    div.tubular-column-menu button i.fa {
         font-size: 10px;
     }
 
-.tb-grid-table tbody .row-group {
+table.tb-grid-table tbody .row-group {
     font-weight: bolder;
     text-transform: capitalize;
 }
 
-.tubular-column-filter-form {
+form.tubular-column-filter-form {
     min-width: 230px;
 }
 
-    .tubular-column-filter-form input[type=checkbox] {
+    form.tubular-column-filter-form input[type=checkbox] {
         height: inherit;
     }
 
@@ -310,36 +310,36 @@ select.checkbox-list:hover option:checked, select.checkbox-list:focus option:che
 /* Responsive table for mobiles https://techblog.livingsocial.com/blog/2015/04/06/responsive-tables-in-pure-css/ */
 @media screen and (max-width: 500px) {
 
-    .responsive-mobile {
+    table.responsive-mobile {
         border: 0;
     }
 
-    .responsive-mobile thead {
+        table.responsive-mobile thead {
             display: none;
         }
 
-        .responsive-mobile tr {
+        table.responsive-mobile tr {
             margin-bottom: 10px;
             display: block;
             border-bottom: 2px solid #ddd;
         }
 
-        .responsive-mobile td {
+        table.responsive-mobile td {
             display: block;
             font-size: 14px;
             height: 28px;
             border-bottom: 1px dotted #ccc;
         }
 
-            .responsive-mobile td:not(.text-center) {
+            table.responsive-mobile td:not(.text-center) {
                 text-align: right;
             }
 
-            .responsive-mobile td:last-child {
+            table.responsive-mobile td:last-child {
                 border-bottom: 0;
             }
 
-            .responsive-mobile td:before {
+            table.responsive-mobile td:before {
                 content: attr(data-label);
                 float: left;
                 font-weight: bold;
@@ -355,27 +355,27 @@ tb-edit-button.btn {
     padding: 0;
 }
 
-.panel > .tb-grid-table.table-bordered > tbody > tr > td {
+div.panel > table.tb-grid-table.table-bordered > tbody > tr > td {
     border-right: 1px solid #ddd;
 }
 
-    .panel > .tb-grid-table.table-bordered > tbody > tr > td:last-child {
+    div.panel > table.tb-grid-table.table-bordered > tbody > tr > td:last-child {
         border-right-width: 0;
     }
 
 
-.tb-grid-table tr td {
+table.tb-grid-table tr td {
     padding: 2px;
 }
 
-.tb-grid-table tbody tr td {
+table.tb-grid-table tbody tr td {
     overflow: hidden;
     -ms-text-overflow: ellipsis;
     -o-text-overflow: ellipsis;
     text-overflow: ellipsis;
 }
 
-    .tb-grid-table tbody tr td.no-wrap, table.tb-grid-table tbody tr td.no-wrap span {
+    table.tb-grid-table tbody tr td.no-wrap, table.tb-grid-table tbody tr td.no-wrap span {
         white-space: nowrap;
     }
 
