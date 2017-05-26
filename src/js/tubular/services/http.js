@@ -51,24 +51,24 @@
                     if (savedData != null) {
                         service.userData = savedData;
                     }
-                }
+                };
 
                 function isAuthenticationExpired(expirationDate) {
                     const now = new Date();
                     expirationDate = new Date(expirationDate);
 
                     return expirationDate - now <= 0;
-                }
+                };
 
 
 
                 function isBearerTokenExpired() {
                   return isAuthenticationExpired(service.userData.expirationDate);
-                }
+                };
 
                 function isAuthenticated() {
                   return service.userData.isAuthenticated && !isAuthenticationExpired(service.userData.expirationDate)
-                }
+                };
 
                 function removeAuthentication() {
                     $window.localStorage.removeItem(prefix + authData);
@@ -77,7 +77,7 @@
                     service.userData.bearerToken = '';
                     service.userData.expirationDate = null;
                     service.userData.refreshToken = null;
-                }
+                };
 
                 function authenticate(username, password) {
                     this.removeAuthentication();
@@ -106,7 +106,7 @@
                     service.userData.refreshToken = data.refresh_token;
 
                     $window.localStorage.setItem(prefix + authData, angular.toJson(service.userData));
-                }
+                };
 
 
             }
