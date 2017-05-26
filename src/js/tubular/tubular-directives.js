@@ -16,7 +16,7 @@
          * @ngdoc directive
          * @name tbGridTable
          * @module tubular.directives
-         * @restrict C
+         * @restrict E
          *
          * @description
          * The `tbGridTable` directive generate the HTML table where all the columns and rowsets can be defined.
@@ -76,10 +76,12 @@
          * @ngdoc directive
          * @name tbColumnDefinitions
          * @module tubular.directives
-         * @restrict A
+         * @restrict E
          *
          * @description
          * The `tbColumnDefinitions` directive is a parent node to fill with `tbColumn`.
+         *
+         * This directive is replace by a `thead` HTML element.
          *
          * @param {array} columns Set an array of TubularColumn to use. Using this attribute will create a template for columns and rows overwritting any template inside.
          */
@@ -89,8 +91,9 @@
             function (tubularTemplateService, $compile) {
                 return {
                     require: '^tbGridTable',
-                    restrict: 'A',
-                    replace: false,
+                    templateUrl: 'tbColumnDefinitions.tpl.html',
+                    restrict: 'E',
+                    replace: true,
                     transclude: true,
                     scope: {
                         columns: '=?'
@@ -117,9 +120,9 @@
 
                             if (scope.columns && scope.$component) {
                                 InitFromColumns();
-                                const template = '<tr>' + tubularTemplateService.generateColumnsDefinitions(scope.columns) + '</tr>';
+                                const template = tubularTemplateService.generateColumnsDefinitions(scope.columns);
                                 const content = $compile(template)(scope);
-                                element.append(content);
+                                element.find('tr').append(content);
                             }
                         },
                         post: scope => scope.$component.hasColumnsDefinitions = true
@@ -153,6 +156,7 @@
             function () {
                 return {
                     require: '^tbColumnDefinitions',
+                    // TODO: I was not able to move to templateUrl, I need to research
                     template: '<th ng-transclude ng-class="{sortable: column.Sortable}" ng-show="column.Visible"></th>',
                     restrict: 'E',
                     replace: true,
@@ -251,10 +255,12 @@
          * @ngdoc directive
          * @name tbRowSet
          * @module tubular.directives
-         * @restrict A
+         * @restrict E
          *
          * @description
          * The `tbRowSet` directive is used to handle any `tbRowTemplate`. You can define multiples `tbRowSet` for grouping.
+         *
+         * This directive is replace by an `tbody` HTML element.
          */
         .directive('tbRowSet', [
             function () {
@@ -262,8 +268,8 @@
                 return {
                     require: '^tbGrid',
                     templateUrl: 'tbRowSet.tpl.html',
-                    restrict: 'A',
-                    replace: false,
+                    restrict: 'E',
+                    replace: true,
                     transclude: true,
                     controller: [
                         '$scope', function ($scope) {
@@ -278,16 +284,19 @@
          * @ngdoc directive
          * @name tbRowTemplate
          * @module tubular.directives
-         * @restrict A
+         * @restrict E
          *
          * @description
          * The `tbRowTemplate` directive should be use with a `ngRepeat` to iterate all the rows or grouped rows in a rowset.
          *
+         * This directive is replace by an `tr` HTML element.
+         *
          * @param {object} rowModel Set the current row, if you are using a ngRepeat you must to use the current element variable here.
          */
         .directive('tbRowTemplate', ['$timeout', $timeout => ({
-            restrict: 'A',
-            replace: false,
+            templateUrl: 'tbRowTemplate.tpl.html',
+            restrict: 'E',
+            replace: true,
             transclude: true,
             scope: {
                 model: '=rowModel'
@@ -307,19 +316,51 @@
         ])
         /**
          * @ngdoc directive
-         * @name tbCell
+         * @name tbCellTemplate
          * @module tubular.directives
          * @restrict E
          *
          * @description
-         * The `tbCell` directive represents the final table element, a cell, where it can
+         * The `tbCellTemplate` directive represents the final table element, a cell, where it can
          * hold an in-line editor or a plain AngularJS expression related to the current element in the `ngRepeat`.
          *
-         * Suggested container:
-         * <td ng-transclude ng-show="column.Visible" data-label="{{::column.Label}}" style="height:auto;"></td>
-         * 
+         * This directive is replace by an `td` HTML element.
+         *
          * @param {string} columnName Setting the related column, by passing the name, the cell can share attributes (like visibility) with the column.
          */
+        .directive('tbCellTemplate', [
+            function () {
+
+                return {
+                    require: '^tbRowTemplate',
+                    templateUrl: 'tbCellTemplate.tpl.html',
+                    restrict: 'E',
+                    replace: true,
+                    transclude: true,
+                    scope: {
+                        columnName: '@?'
+                    },
+                    controller: ['$scope', function ($scope) {
+                        $scope.column = { Visible: true };
+                        $scope.columnName = $scope.columnName || null;
+                        $scope.$component = $scope.$parent.$component || $scope.$parent.$parent.$component;
+
+                        // TODO: Implement a form in inline editors
+                        $scope.getFormScope = () => null;
+
+                        if ($scope.columnName != null) {
+                            const columnModel = $scope.$component.columns
+                                .filter(el => el.Name === $scope.columnName);
+
+                            if (columnModel.length > 0) {
+                                $scope.column = columnModel[0];
+                            }
+                        }
+                    }
+                    ]
+                };
+            }
+        ])
         .directive('tbCell', [
             function () {
 
