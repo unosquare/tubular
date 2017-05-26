@@ -15,16 +15,13 @@
                             </th>
                             <th tb-column name="CustomerName" searchable="true">
                             </th>
-                            <th tb-column name="ShippedDate"  ng-transclude>
-                                Shipped Date
-                            </th>
-                            <th tb-column name="ShipperCity" aggregate="count"  ng-transclude>
-                                City
+                            <th tb-column name="ShippedDate"></th>
+                            <th tb-column name="ShipperCity" label="City">
                             </th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr tb-row-template ng-repeat="row in $component.rows" row-model="row">
+                        <tr tb-row ng-repeat="row in rows" row-model="row">
                             <td tb-cell>
                                 {{row.OrderID}}
                             </td>
@@ -39,16 +36,6 @@
                             </td>
                         </tr>
                     </tbody>
-                    <tfoot>
-                        <tr class="bg-info">
-                            <td tb-cell></td>
-                            <td tb-cell></td>
-                            <td tb-cell></td>
-                            <td tb-cell>
-                                <b>COUNT <span id="count">{{$component.aggregationFunctions.ShipperCity}}</span></b>
-                            </td>
-                        </tr>
-                    </tfoot>
                 </table>
             </div>
         </div>
