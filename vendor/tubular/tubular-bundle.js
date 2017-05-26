@@ -34,7 +34,7 @@
          * @ngdoc directive
          * @name tbGridTable
          * @module tubular.directives
-         * @restrict A
+         * @restrict C
          *
          * @description
          * The `tbGridTable` directive generate the HTML table where all the columns and rowsets can be defined.
@@ -46,13 +46,20 @@
             function (tubularTemplateService, $compile) {
                 return {
                     require: '^tbGrid',
-                    restrict: 'A',
+                    restrict: 'C',
+                    replace: false,
+                    transclude: true,
                     scope: {
                         columns: '=?'
                     },
-                    link: {
-                        pre: (scope, element, attributes, tbGridCtrl) => {
-                            scope.tubularDirective = 'tubular-grid-table';
+                    controller: [
+                        '$scope', function ($scope) {
+                            $scope.$component = $scope.$parent.$parent.$ctrl;
+                            $scope.tubularDirective = 'tubular-grid-table';
+                        }
+                    ],
+                    compile: () => ({
+                        pre: (scope, element) => {
 
                             function InitFromColumns() {
                                 let isValid = true;
@@ -64,7 +71,8 @@
                                 }
                             }
 
-                            if (scope.columns && tbGridCtrl) {
+                            if (scope.columns && scope.$component) {
+
                                 InitFromColumns();
 
                                 const headersTemplate = tubularTemplateService.generateColumnsDefinitions(scope.columns);
@@ -77,8 +85,8 @@
                                 element.append(cellsContent);
                             }
                         },
-                        post: (scope, element, attributes, tbGridCtrl) => tbGridCtrl.hasColumnsDefinitions = true
-                    }
+                        post: scope => scope.$component.hasColumnsDefinitions = angular.isDefined(scope.columns) && angular.isDefined(scope.$component)
+                    })
                 };
             }
         ])
@@ -98,16 +106,22 @@
             '$compile',
             function (tubularTemplateService, $compile) {
                 return {
-                    require: '^tbGrid',
+                    require: '^tbGridTable',
                     restrict: 'A',
                     replace: false,
                     transclude: true,
                     scope: {
                         columns: '=?'
                     },
+                    controller: [
+                        '$scope',
+                        function ($scope) {
+                            $scope.$component = $scope.$parent.$parent.$component;
+                            $scope.tubularDirective = 'tubular-column-definitions';
+                        }
+                    ],
                     compile: () => ({
-                        pre: (scope, element, attributes) => {
-                            scope.tubularDirective = 'tubular-column-definitions';
+                        pre: (scope, element) => {
 
                             function InitFromColumns() {
                                 let isValid = true;
@@ -119,13 +133,14 @@
                                 }
                             }
 
-                            if (scope.columns) {
+                            if (scope.columns && scope.$component) {
                                 InitFromColumns();
                                 const template = '<tr>' + tubularTemplateService.generateColumnsDefinitions(scope.columns) + '</tr>';
                                 const content = $compile(template)(scope);
                                 element.append(content);
                             }
-                        }
+                        },
+                        post: scope => scope.$component.hasColumnsDefinitions = true
                     })
                 };
             }
@@ -134,14 +149,13 @@
          * @ngdoc directive
          * @name tbColumn
          * @module tubular.directives
-         * @restrict A
+         * @restrict E
          *
          * @description
          * The `tbColumn` directive creates a column in the grid's model.
          * All the attributes are used to generate a `ColumnModel`.
-         * 
-         * Suggested layout:
-         * <th ng-class="{sortable: column.Sortable}" ng-show="column.Visible"></th>
+         *
+         * This directive is replace by a `th` HTML element.
          *
          * @param {string} name Set the column name.
          * @param {string} label Set the column label, if empty column's name is used.
@@ -154,13 +168,12 @@
          * @param {string} columnType Set the column data type. Values: string, numeric, date, datetime, or boolean.
          */
         .directive('tbColumn', [
-            '$compile',
-            'tubularColumn',
-            function ($compile, tubularColumn) {
+            function () {
                 return {
-                    require: '^tbGrid',
-                    priority: 10,
-                    restrict: 'A',
+                    require: '^tbColumnDefinitions',
+                    template: '<th ng-transclude ng-class="{sortable: column.Sortable}" ng-show="column.Visible"></th>',
+                    restrict: 'E',
+                    replace: true,
                     transclude: true,
                     scope: {
                         visible: '=',
@@ -174,49 +187,111 @@
                         aggregate: '@?',
                         sortDirection: '@?'
                     },
-                    compile: () => ({
-                        pre: (scope, element, attributes, tbGridCtrl) => {
-                            scope.tubularDirective = 'tubular-column';
+                    controller: ['$scope', 'tubularColumn',
+                        function ($scope, tubularColumn) {
+                            $scope.$component = $scope.$parent.$component || $scope.$parent.$parent.$component;
+                            $scope.tubularDirective = 'tubular-column';
 
-                            scope.column = tubularColumn(scope.name, {
-                                Label: scope.label,
-                                Sortable: scope.sortable,
-                                SortOrder: scope.sortOrder,
-                                SortDirection: scope.sortDirection,
-                                IsKey: scope.isKey,
-                                Searchable: scope.searchable,
-                                Visible: scope.visible,
-                                DataType: scope.columnType,
-                                Aggregate: scope.aggregate
-                            });
+                            $scope.sortColumn = multiple => $scope.$component.sortColumn($scope.column.Name, multiple);
 
-                            scope.sortColumn = $event => tbGridCtrl.sortColumn(scope.column.Name, $event);
-
-                            scope.$watch('visible', val => {
+                            $scope.$watch('visible', val => {
                                 if (angular.isDefined(val)) {
-                                    scope.column.Visible = val;
+                                    $scope.column.Visible = val;
                                 }
                             });
 
-                            tbGridCtrl.addColumn(scope.column);
+                            $scope.$watch('label', () => {
+                                $scope.column.Label = $scope.label;
+                                // this broadcast here is used for backwards compatibility with tbColumnHeader requiring a scope.label value on its own
+                                $scope.$broadcast('tbColumn_LabelChanged', $scope.label);
+                            });
 
-                            if (scope.column.Sortable)
-                            {
-                                var template = `<a title="Click to sort. Press Ctrl to sort by multiple columns" class="column-header" href ng-click="sortColumn($event)"><span class="column-header-default">{{column.Label}}</span></a>
-                                            <i class="fa sort-icon" ng-class="{'fa-long-arrow-up': column.SortDirection == 'Ascending', 'fa-long-arrow-down': column.SortDirection == 'Descending'}">&nbsp;</i>`;
-                                
-                                element.empty();
-                                element.append($compile(template)(scope));
-                            }
-                        },
-                        post: (scope, element) => {
-                            if (element.children().length === 0){
-                                element.append($compile('<span>{{column.Label}}</span>')(scope));
-                            }
+                            $scope.column = tubularColumn($scope.name, {
+                                Label: $scope.label,
+                                Sortable: $scope.sortable,
+                                SortOrder: $scope.sortOrder,
+                                SortDirection: $scope.sortDirection,
+                                IsKey: $scope.isKey,
+                                Searchable: $scope.searchable,
+                                Visible: $scope.visible,
+                                DataType: $scope.columnType,
+                                Aggregate: $scope.aggregate
+                            });
+
+                            $scope.$component.addColumn($scope.column);
+                            $scope.label = $scope.column.Label;
                         }
-                    })
+                    ]
                 };
             }])
+        /**
+         * @ngdoc directive
+         * @module tubular.directives
+         * @name tbColumnHeader
+         * @restrict E
+         *
+         * @description
+         * The `tbColumnHeader` directive creates a column header, and it must be inside a `tbColumn`.
+         * This directive has functionality to sort the column, the `sortable` attribute is declared in the parent element.
+         *
+         * This directive is replace by an `a` HTML element.
+         */
+        .directive('tbColumnHeader', [
+            function () {
+                return {
+                    require: '^tbColumn',
+                    templateUrl: 'tbColumnHeader.tpl.html',
+                    restrict: 'E',
+                    replace: true,
+                    transclude: true,
+                    scope: false,
+                    controller: [
+                        '$scope', function ($scope) {
+                            $scope.sortColumn = $event => $scope.$parent.sortColumn($event.ctrlKey);
+
+                            // this listener here is used for backwards compatibility with tbColumnHeader requiring a scope.label value on its own
+                            $scope.$on('tbColumn_LabelChanged', ($event, value) => $scope.label = value);
+                        }
+                    ],
+                    link: ($scope, $element) => {
+                        if ($element.find('ng-transclude').length > 0) {
+                            $element.find('span')[0].remove();
+                        }
+
+                        if (!$scope.$parent.column.Sortable) {
+                            $element.find('a').replaceWith($element.find('a').children());
+                        }
+                    }
+                };
+            }
+        ])
+        /**
+         * @ngdoc directive
+         * @name tbRowSet
+         * @module tubular.directives
+         * @restrict A
+         *
+         * @description
+         * The `tbRowSet` directive is used to handle any `tbRowTemplate`. You can define multiples `tbRowSet` for grouping.
+         */
+        .directive('tbRowSet', [
+            function () {
+
+                return {
+                    require: '^tbGrid',
+                    templateUrl: 'tbRowSet.tpl.html',
+                    restrict: 'A',
+                    replace: false,
+                    transclude: true,
+                    controller: [
+                        '$scope', function ($scope) {
+                            $scope.$component = $scope.$parent.$component || $scope.$parent.$parent.$component;
+                            $scope.tubularDirective = 'tubular-row-set';
+                        }
+                    ]
+                };
+            }
+        ])
         /**
          * @ngdoc directive
          * @name tbRowTemplate
@@ -230,6 +305,7 @@
          */
         .directive('tbRowTemplate', ['$timeout', $timeout => ({
             restrict: 'A',
+            replace: false,
             transclude: true,
             scope: {
                 model: '=rowModel'
@@ -238,6 +314,7 @@
                 '$scope', function ($scope) {
                     $scope.tubularDirective = 'tubular-rowset';
                     $scope.fields = [];
+                    $scope.$component = $scope.$parent.$parent.$parent.$component;
 
                     $scope.bindFields = () => angular.forEach($scope.fields, field => field.bindScope());
                 }
@@ -250,7 +327,7 @@
          * @ngdoc directive
          * @name tbCell
          * @module tubular.directives
-         * @restrict A
+         * @restrict E
          *
          * @description
          * The `tbCell` directive represents the final table element, a cell, where it can
@@ -258,7 +335,7 @@
          *
          * Suggested container:
          * <td ng-transclude ng-show="column.Visible" data-label="{{::column.Label}}" style="height:auto;"></td>
-         *
+         * 
          * @param {string} columnName Setting the related column, by passing the name, the cell can share attributes (like visibility) with the column.
          */
         .directive('tbCell', [
@@ -275,12 +352,12 @@
                     controller: ['$scope', function ($scope) {
                         $scope.column = { Visible: true };
                         $scope.columnName = $scope.columnName || null;
+                        $scope.$component = $scope.$parent.$component || $scope.$parent.$parent.$component;
 
                         // TODO: Implement a form in inline editors
                         $scope.getFormScope = () => null;
 
                         if ($scope.columnName != null) {
-                            // TODO: How?
                             const columnModel = $scope.$component.columns
                                 .filter(el => el.Name === $scope.columnName);
 
@@ -343,6 +420,8 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
     "<div class=modal-header><h3 class=modal-title ng-bind=\"'CAPTION_SELECTCOLUMNS' | translate\"></h3></div><div class=modal-body><table class=\"table table-bordered table-responsive table-striped table-hover table-condensed\"><thead><tr><th>Visible?</th><th>Name</th></tr></thead><tbody><tr ng-repeat=\"col in Model\"><td><input type=checkbox ng-model=col.Visible ng-disabled=\"col.Visible && isInvalid()\"></td><td ng-bind=col.Label></td></tr></tbody></table></div><div class=modal-footer><button class=\"btn btn-warning\" ng-click=closePopup() ng-bind=\"'CAPTION_CLOSE' | translate\"></button></div>");
   $templateCache.put("tbColumnFilterButtons.tpl.html",
     "<div class=text-right><button class=\"btn btn-sm btn-success\" ng-click=$ctrl.currentFilter.applyFilter() ng-disabled=\"$ctrl.currentFilter.filter.Operator == 'None'\" ng-bind=\"'CAPTION_APPLY' | translate\"></button>&nbsp; <button class=\"btn btn-sm btn-danger\" ng-click=$ctrl.currentFilter.clearFilter() ng-bind=\"'CAPTION_CLEAR' | translate\"></button></div>");
+  $templateCache.put("tbColumnHeader.tpl.html",
+    "<span><a title=\"Click to sort. Press Ctrl to sort by multiple columns\" class=column-header href ng-click=sortColumn($event)><span class=column-header-default>{{ $parent.column.Label }}</span><ng-transclude></ng-transclude></a><i class=\"fa sort-icon\" ng-class=\"{'fa-long-arrow-up': $parent.column.SortDirection == 'Ascending', 'fa-long-arrow-down': $parent.column.SortDirection == 'Descending'}\">&nbsp;</i></span>");
   $templateCache.put("tbFootSet.tpl.html",
     "<tfoot ng-transclude></tfoot>");
   $templateCache.put("tbGrid.tpl.html",
