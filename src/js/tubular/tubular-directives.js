@@ -29,13 +29,14 @@
                 return {
                     require: '^tbGrid',
                     restrict: 'A',
+                    replace: false,
+                    transclude: true,
                     scope: {
                         columns: '=?'
                     },
                     link: {
-                        pre: (scope, element, attributes, tbGridCtrl) => {
+                        pre: (scope, element, attributes) => {
                             scope.tubularDirective = 'tubular-grid-table';
-
                             function InitFromColumns() {
                                 let isValid = true;
 
@@ -46,7 +47,8 @@
                                 }
                             }
 
-                            if (scope.columns && tbGridCtrl) {
+                            if (scope.columns && scope.$component) {
+
                                 InitFromColumns();
 
                                 const headersTemplate = tubularTemplateService.generateColumnsDefinitions(scope.columns);
@@ -59,7 +61,7 @@
                                 element.append(cellsContent);
                             }
                         },
-                        post: (scope, element, attributes, tbGridCtrl) => tbGridCtrl.hasColumnsDefinitions = true
+                        post: (scope, element, attributes, tbGridCtrl) => tbGridCtrl.hasColumnsDefinitions = angular.isDefined(scope.columns)
                     }
                 };
             }
@@ -80,16 +82,22 @@
             '$compile',
             function (tubularTemplateService, $compile) {
                 return {
-                    require: '^tbGrid',
+                    require: '^tbGridTable',
                     restrict: 'A',
                     replace: false,
                     transclude: true,
                     scope: {
                         columns: '=?'
                     },
+                    controller: [
+                        '$scope',
+                        function ($scope) {
+                            $scope.$component = $scope.$parent.$parent.$component;
+                            $scope.tubularDirective = 'tubular-column-definitions';
+                        }
+                    ],
                     compile: () => ({
-                        pre: (scope, element, attributes) => {
-                            scope.tubularDirective = 'tubular-column-definitions';
+                        pre: (scope, element) => {
 
                             function InitFromColumns() {
                                 let isValid = true;
@@ -101,13 +109,14 @@
                                 }
                             }
 
-                            if (scope.columns) {
+                            if (scope.columns && scope.$component) {
                                 InitFromColumns();
                                 const template = '<tr>' + tubularTemplateService.generateColumnsDefinitions(scope.columns) + '</tr>';
                                 const content = $compile(template)(scope);
                                 element.append(content);
                             }
-                        }
+                        },
+                        post: scope => scope.$component.hasColumnsDefinitions = true
                     })
                 };
             }
@@ -121,6 +130,8 @@
          * @description
          * The `tbColumn` directive creates a column in the grid's model.
          * All the attributes are used to generate a `ColumnModel`.
+         *
+         * This directive is replace by a `th` HTML element.
          *
          * @param {string} name Set the column name.
          * @param {string} label Set the column label, if empty column's name is used.
@@ -137,9 +148,9 @@
             function (tubularColumn) {
                 return {
                     require: '^tbGrid',
-                    priority: 10,
                     // template: '<th ng-transclude ng-class="{sortable: column.Sortable}" ng-show="column.Visible"></th>',
                     restrict: 'A',
+                    replace: true,
                     transclude: true,
                     scope: {
                         visible: '=',
@@ -153,21 +164,38 @@
                         aggregate: '@?',
                         sortDirection: '@?'
                     },
-                    compile: () => ({
+                    controller: function ($scope) {
+                        $scope.column = tubularColumn($scope.name, {
+                            Label: $scope.label,
+                            Sortable: $scope.sortable,
+                            SortOrder: $scope.sortOrder,
+                            SortDirection: $scope.sortDirection,
+                            IsKey: $scope.isKey,
+                            Searchable: $scope.searchable,
+                            Visible: $scope.visible,
+                            DataType: $scope.columnType,
+                            Aggregate: $scope.aggregate
+                        });
+
+                        this.column = () => { return $scope.column; };
+                    },
+                    link: {
                         pre: (scope, element, attributes, tbGridCtrl) => {
                             scope.tubularDirective = 'tubular-column';
 
-                            scope.column = tubularColumn(scope.name, {
-                                Label: scope.label,
-                                Sortable: scope.sortable,
-                                SortOrder: scope.sortOrder,
-                                SortDirection: scope.sortDirection,
-                                IsKey: scope.isKey,
-                                Searchable: scope.searchable,
-                                Visible: scope.visible,
-                                DataType: scope.columnType,
-                                Aggregate: scope.aggregate
-                            });
+                            // scope.column = tubularColumn(scope.name, {
+                            //     Label: scope.label,
+                            //     Sortable: scope.sortable,
+                            //     SortOrder: scope.sortOrder,
+                            //     SortDirection: scope.sortDirection,
+                            //     IsKey: scope.isKey,
+                            //     Searchable: scope.searchable,
+                            //     Visible: scope.visible,
+                            //     DataType: scope.columnType,
+                            //     Aggregate: scope.aggregate
+                            // });
+                        },
+                        post: (scope, element, attributes, tbGridCtrl) => {
 
                             scope.sortColumn = multiple => tbGridCtrl.sortColumn(scope.column.Name, multiple);
 
@@ -186,7 +214,7 @@
                             tbGridCtrl.addColumn(scope.column);
                             scope.label = scope.column.Label;
                         }
-                    })
+                    }
                 };
             }])
         /**
@@ -204,14 +232,17 @@
         .directive('tbColumnHeader', [
             function () {
                 return {
-                    require: '^tbColumn',
+                    require: '^tbGrid',
                     templateUrl: 'tbColumnHeader.tpl.html',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
                     scope: true,
-                    link: (scope, element, attributes, tbColumn) => {
-                        scope.sortColumn = $event => tbColumn.sortColumn($event.ctrlKey);
+                    link: (scope, element, attributes, ctrls) => {
+                        const tbGridCtrl = ctrls[0];
+                        const tbColumnCtrl = ctrls[1];
+
+                        scope.sortColumn = $event => tbGridCtrl.sortColumn($event.ctrlKey);
 
                         // this listener here is used for backwards compatibility with tbColumnHeader requiring a scope.label value on its own
                         scope.$on('tbColumn_LabelChanged', ($event, value) => scope.label = value);
