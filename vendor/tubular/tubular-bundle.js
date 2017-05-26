@@ -76,7 +76,7 @@
                                 element.find('tr').append(headersContent);
 
                                 const cellsTemplate = tubularTemplateService.generateCells(scope.columns, '');
-                                const cellsContent = $compile('<tbody><tr ng-repeat="row in $component.rows" row-model="row">' + cellsTemplate + '</tr></tbody>')(scope);
+                                const cellsContent = $compile('<tbody><tr tb-row ng-repeat="row in rows" row-model="row">' + cellsTemplate + '</tr></tbody>')(scope);
                                 element.append(cellsContent);
                             }
                         },
@@ -213,33 +213,35 @@
             }])
         /**
          * @ngdoc directive
-         * @name tbRowTemplate
+         * @name tbRow
          * @module tubular.directives
          * @restrict A
          *
          * @description
-         * The `tbRowTemplate` directive should be use with a `ngRepeat` to iterate all the rows or grouped rows in a rowset.
+         * The `tbRow` directive should be use with a `ngRepeat` to iterate all the rows or grouped rows in a rowset.
          *
          * @param {object} rowModel Set the current row, if you are using a ngRepeat you must to use the current element variable here.
          */
-        .directive('tbRowTemplate', ['$timeout', $timeout => ({
-            restrict: 'A',
-            transclude: true,
-            scope: {
-                model: '=rowModel'
-            },
-            controller: [
-                '$scope', function ($scope) {
-                    $scope.tubularDirective = 'tubular-rowset';
-                    $scope.fields = [];
+        .directive('tbRow', ['$timeout', function($timeout) {
+            return {
+                require: '^tbGrid',
+                restrict: 'A',
+                transclude: true,
+                scope: {
+                    model: '=rowModel'
+                },
+                link: {
+                    pre: (scope, element, attributes, tbGridCtrl) => {
+                        scope.tubularDirective = 'tubular-rowset';
+                        scope.fields = [];
 
-                    $scope.bindFields = () => angular.forEach($scope.fields, field => field.bindScope());
+                        scope.bindFields = () => angular.forEach(scope.fields, field => field.bindScope());
+                        scope.rows = tbGridCtrl.rows;
+                    },
+                    post: scope => $timeout(() => scope.bindFields(), 500)
                 }
-            ],
-            // Wait a little bit before to connect to the fields
-            compile: () => ({ post: scope => $timeout(() => scope.bindFields(), 300) })
-        })
-        ])
+            };
+        }])
         /**
          * @ngdoc directive
          * @name tbCell
@@ -259,7 +261,7 @@
             function () {
 
                 return {
-                    require: '^tbRowTemplate',
+                    require: '^tbRow',
                     restrict: 'A',
                     replace: false,
                     transclude: true,
