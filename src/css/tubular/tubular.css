@@ -22,24 +22,24 @@ tb-grid {
         }
 
 /* Tubular Pager Styles */
-div.tubular-pager {
+iv.tubular-pager {
     margin: 0;
     min-height: 32px;
 }
 
-    div.tubular-pager .pagination {
+    .tubular-pager .pagination {
         margin: 0 !important;
         display: block !important;
     }
 
-        div.tubular-pager .pagination > li > a {
+        .tubular-pager .pagination > li > a {
             text-align: center;
             font-size: 10px;
             outline: none;
         }
 
 /* Tubular Grid Overlay and animation */
-div.tubular-overlay {
+.tubular-overlay {
     position: absolute;
     width: 100%;
     height: 100%;
@@ -51,7 +51,7 @@ div.tubular-overlay {
     color: #fff;
 }
 
-    div.tubular-overlay > div {
+    .tubular-overlay > div {
         position: absolute;
         background-color: #b4b4b4;
         color: #fff;
@@ -87,7 +87,7 @@ div.tubular-overlay {
         padding: 0 0;
     }
 
-div.tubular-general-overlay {
+.tubular-general-overlay {
     position: absolute;
     width: 100%;
     height: 100%;
@@ -97,7 +97,7 @@ div.tubular-general-overlay {
     color: #fff;
 }
 
-    div.tubular-general-overlay > div {
+    .tubular-general-overlay > div {
         position: absolute;
         background-color: #b4b4b4;
         color: #fff;
@@ -111,28 +111,28 @@ div.tubular-general-overlay {
     }
 
 /* Tubular Grid Heading and Heading Filter Styles */
-div.panel > table.tb-grid-table.table-bordered > thead > tr > th {
+.panel > .tb-grid-table.table-bordered > thead > tr > th {
     vertical-align: top;
     border-bottom: 2px solid #ddd;
     border-right: 1px solid #ddd;
     line-height: 22px;
 }
 
-    div.panel > table.tb-grid-table.table-bordered > thead > tr > th:last-child {
+    .panel > .tb-grid-table.table-bordered > thead > tr > th:last-child {
         border-right-width: 0;
     }
 
-table.tb-grid-table {
+.tb-grid-table {
     font-size: 11px;
     table-layout: fixed;
     width: 100%;
 }
 
-    table.tb-grid-table .form-group {
+    .tb-grid-table .form-group {
         margin-bottom: 0;
     }
 
-    table.tb-grid-table .radio, table.tb-grid-table .tubular-checkbox {
+    .tb-grid-table .radio, table.tb-grid-table .tubular-checkbox {
         margin: 0;
     }
 
@@ -140,37 +140,37 @@ table.tb-grid-table {
     display: none;
 }
 
-th.column-sm {
+.column-sm {
     width: 50px;
 }
 
-th.column-date {
+.column-date {
     width: 140px;
 }
 
-th.column-md {
+.column-md {
     width: 90px;
 }
 
 @media (min-width: 768px) {
-    table.tb-grid-table {
+    .tb-grid-table {
         font-size: 12px;
     }
 
-    div.tubular-pager .pagination > li > a {
+    .tubular-pager .pagination > li > a {
         font-size: 12px;
         min-width: 37px;
     }
 
-    th.column-sm {
+    .column-sm {
         width: 80px;
     }
 
-    th.column-date {
+    .column-date {
         width: 90px;
     }
 
-    th.column-md {
+    .column-md {
         width: 130px;
     }
 }
@@ -197,15 +197,15 @@ table.tb-grid-table tr th {
     padding: 2px;
 }
 
-th.column-action {
+.column-action {
     width: 75px;
 }
 
-th.cell-menu {
+.cell-menu {
     overflow: visible;
 }
 
-table.tb-grid-table thead tr th i.fa {
+.tb-grid-table thead tr th i.fa {
     font-weight: normal;
     font-size: 10px;
     line-height: 16px;
@@ -213,7 +213,7 @@ table.tb-grid-table thead tr th i.fa {
     cursor: default;
 }
 
-div.tubular-column-menu {
+.tubular-column-menu {
     position: relative;
     display: block;
     text-align: center;
@@ -221,36 +221,36 @@ div.tubular-column-menu {
     float: right;
 }
 
-    div.tubular-column-menu:active {
+    .tubular-column-menu:active {
         outline: none;
     }
 
-    div.tubular-column-menu > button,
-    div.tubular-column-menu > div.btn-group > button {
+    .tubular-column-menu > button,
+    .tubular-column-menu > div.btn-group > button {
         border-radius: 30px !important;
         line-height: 10px;
         margin: 0;
     }
 
-        div.tubular-column-menu > button:active,
-        div.tubular-column-menu > div.btn-group > button:active {
+        .tubular-column-menu > button:active,
+        .tubular-column-menu > div.btn-group > button:active {
             outline: none;
         }
 
-    div.tubular-column-menu button i.fa {
+    .tubular-column-menu button i.fa {
         font-size: 10px;
     }
 
-table.tb-grid-table tbody .row-group {
+.tb-grid-table tbody .row-group {
     font-weight: bolder;
     text-transform: capitalize;
 }
 
-form.tubular-column-filter-form {
+.tubular-column-filter-form {
     min-width: 230px;
 }
 
-    form.tubular-column-filter-form input[type=checkbox] {
+    .tubular-column-filter-form input[type=checkbox] {
         height: inherit;
     }
 
@@ -310,36 +310,36 @@ select.checkbox-list:hover option:checked, select.checkbox-list:focus option:che
 /* Responsive table for mobiles https://techblog.livingsocial.com/blog/2015/04/06/responsive-tables-in-pure-css/ */
 @media screen and (max-width: 500px) {
 
-    table.responsive-mobile {
+    .responsive-mobile {
         border: 0;
     }
 
-        table.responsive-mobile thead {
+    .responsive-mobile thead {
             display: none;
         }
 
-        table.responsive-mobile tr {
+        .responsive-mobile tr {
             margin-bottom: 10px;
             display: block;
             border-bottom: 2px solid #ddd;
         }
 
-        table.responsive-mobile td {
+        .responsive-mobile td {
             display: block;
             font-size: 14px;
             height: 28px;
             border-bottom: 1px dotted #ccc;
         }
 
-            table.responsive-mobile td:not(.text-center) {
+            .responsive-mobile td:not(.text-center) {
                 text-align: right;
             }
 
-            table.responsive-mobile td:last-child {
+            .responsive-mobile td:last-child {
                 border-bottom: 0;
             }
 
-            table.responsive-mobile td:before {
+            .responsive-mobile td:before {
                 content: attr(data-label);
                 float: left;
                 font-weight: bold;
@@ -355,27 +355,27 @@ tb-edit-button.btn {
     padding: 0;
 }
 
-div.panel > table.tb-grid-table.table-bordered > tbody > tr > td {
+.panel > .tb-grid-table.table-bordered > tbody > tr > td {
     border-right: 1px solid #ddd;
 }
 
-    div.panel > table.tb-grid-table.table-bordered > tbody > tr > td:last-child {
+    .panel > .tb-grid-table.table-bordered > tbody > tr > td:last-child {
         border-right-width: 0;
     }
 
 
-table.tb-grid-table tr td {
+.tb-grid-table tr td {
     padding: 2px;
 }
 
-table.tb-grid-table tbody tr td {
+.tb-grid-table tbody tr td {
     overflow: hidden;
     -ms-text-overflow: ellipsis;
     -o-text-overflow: ellipsis;
     text-overflow: ellipsis;
 }
 
-    table.tb-grid-table tbody tr td.no-wrap, table.tb-grid-table tbody tr td.no-wrap span {
+    .tb-grid-table tbody tr td.no-wrap, table.tb-grid-table tbody tr td.no-wrap span {
         white-space: nowrap;
     }
 
