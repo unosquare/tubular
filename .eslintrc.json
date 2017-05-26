@@ -20,6 +20,7 @@
   "rules": {
     "quotes": [ 2, "single" ],
     "no-unused-labels": "off",
+    "no-unused-vars": "warn",
     "prefer-const": "warn",
     "no-trailing-spaces": "warn",
     "no-continue": "warn",
