@@ -12,7 +12,7 @@
          *
          * This service provides authentication using bearer-tokens. Based on https://bitbucket.org/david.antaramian/so-21662778-spa-authentication-example
          */
-        .service('tubularHttp', [
+        .factory('tubularHttp', [
             '$http',
             '$q',
             '$document',
@@ -26,44 +26,60 @@
                 $window) {
                 const authData = 'auth_data';
                 const prefix = tubularConfig.localStorage.prefix();
-                const me = this;
+
+                const service = {
+                  userData : {
+                      isAuthenticated: false,
+                      username: '',
+                      bearerToken: '',
+                      expirationDate: null
+                  },
+                  authenticate : authenticate,
+                  isAuthenticationExpired : isAuthenticationExpired,
+                  removeAuthentication: removeAuthentication,
+                  isAuthenticated: isAuthenticated,
+                  isBearerTokenExpired: isBearerTokenExpired,
+                  initAuth: initAuth
+                }
+
+                init();
+                return service;
 
                 function init() {
                     const savedData = angular.fromJson($window.localStorage.getItem(prefix + authData));
 
                     if (savedData != null) {
-                        me.userData = savedData;
+                        service.userData = savedData;
                     }
-                }
+                };
 
                 function isAuthenticationExpired(expirationDate) {
                     const now = new Date();
                     expirationDate = new Date(expirationDate);
 
                     return expirationDate - now <= 0;
-                }
-
-                me.userData = {
-                    isAuthenticated: false,
-                    username: '',
-                    bearerToken: '',
-                    expirationDate: null
                 };
 
-                me.isBearerTokenExpired = () => isAuthenticationExpired(me.userData.expirationDate);
 
-                me.isAuthenticated = () => me.userData.isAuthenticated && !isAuthenticationExpired(me.userData.expirationDate);
 
-                me.removeAuthentication = function () {
+                function isBearerTokenExpired() {
+                  return isAuthenticationExpired(service.userData.expirationDate);
+                };
+
+                function isAuthenticated() {
+                  return service.userData.isAuthenticated && !isAuthenticationExpired(service.userData.expirationDate)
+                };
+
+                function removeAuthentication() {
                     $window.localStorage.removeItem(prefix + authData);
-                    me.userData.isAuthenticated = false;
-                    me.userData.username = '';
-                    me.userData.bearerToken = '';
-                    me.userData.expirationDate = null;
-                    me.userData.refreshToken = null;
+                    service.userData.isAuthenticated = false;
+                    service.userData.username = '';
+                    service.userData.bearerToken = '';
+                    service.userData.expirationDate = null;
+                    service.userData.refreshToken = null;
                 };
 
-                me.authenticate = function (username, password) {
+                function authenticate(username, password) {
                     this.removeAuthentication();
 
                     return $http({
@@ -72,27 +88,27 @@
                         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                         data: `grant_type=password&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`
                     }).then(response => {
-                        me.initAuth(response.data, username);
+                        initAuth(response.data, username);
                         response.data.authenticated = true;
 
                         return response.data;
                     }, errorResponse => $q.reject(errorResponse.data));
                 };
 
-                // TODO: make private this function
-                me.initAuth = (data, username) => {
-                    me.userData.isAuthenticated = true;
-                    me.userData.username = data.userName || username || me.userData.username;
-                    me.userData.bearerToken = data.access_token;
-                    me.userData.expirationDate = new Date();
-                    me.userData.expirationDate = new Date(me.userData.expirationDate.getTime() + data.expires_in * 1000);
-                    me.userData.role = data.role;
-                    me.userData.refreshToken = data.refresh_token;
 
-                    $window.localStorage.setItem(prefix + authData, angular.toJson(me.userData));
+                function initAuth(data, username) {
+                    service.userData.isAuthenticated = true;
+                    service.userData.username = data.userName || username || service.userData.username;
+                    service.userData.bearerToken = data.access_token;
+                    service.userData.expirationDate = new Date();
+                    service.userData.expirationDate = new Date(service.userData.expirationDate.getTime() + data.expires_in * 1000);
+                    service.userData.role = data.role;
+                    service.userData.refreshToken = data.refresh_token;
+
+                    $window.localStorage.setItem(prefix + authData, angular.toJson(service.userData));
                 };
 
-                init();
+
             }
         ]);
 })(angular);
