@@ -189,7 +189,7 @@
                                 Aggregate: scope.aggregate
                             });
 
-                            scope.sortColumn = multiple => tbGridCtrl.sortColumn(scope.column.Name, multiple);
+                            scope.sortColumn = $event => tbGridCtrl.sortColumn(scope.column.Name, $event);
 
                             scope.$watch('visible', val => {
                                 if (angular.isDefined(val)) {
@@ -197,56 +197,19 @@
                                 }
                             });
 
-                            scope.$watch('label', () => {
-                                scope.column.Label = scope.label;
-                                // this broadcast here is used for backwards compatibility with tbColumnHeader requiring a scope.label value on its own
-                                scope.$broadcast('tbColumn_LabelChanged', scope.label);
-                            });
+                            scope.$watch('label', () => scope.column.Label = scope.label);
 
                             tbGridCtrl.addColumn(scope.column);
-                            scope.label = scope.column.Label;
+
+                            /*<a title="Click to sort. Press Ctrl to sort by multiple columns" class="column-header" href ng-click="sortColumn($event)">
+        <span class="column-header-default">{{ $parent.column.Label }}</span>
+        <ng-transclude></ng-transclude>
+    </a>
+    <i class="fa sort-icon" ng-class="{'fa-long-arrow-up': $parent.column.SortDirection == 'Ascending', 'fa-long-arrow-down': $parent.column.SortDirection == 'Descending'}">&nbsp;</i>*/
                         }
                     })
                 };
             }])
-        /**
-         * @ngdoc directive
-         * @module tubular.directives
-         * @name tbColumnHeader
-         * @restrict E
-         *
-         * @description
-         * The `tbColumnHeader` directive creates a column header, and it must be inside a `tbColumn`.
-         * This directive has functionality to sort the column, the `sortable` attribute is declared in the parent element.
-         *
-         * This directive is replace by an `a` HTML element.
-         */
-        .directive('tbColumnHeader', [
-            function () {
-                return {
-                    require: '^tbColumn',
-                    templateUrl: 'tbColumnHeader.tpl.html',
-                    restrict: 'E',
-                    replace: true,
-                    transclude: true,
-                    scope: true,
-                    link: (scope, element, attributes, tbColumn) => {
-                        scope.sortColumn = $event => tbColumn.sortColumn($event.ctrlKey);
-
-                        // this listener here is used for backwards compatibility with tbColumnHeader requiring a scope.label value on its own
-                        scope.$on('tbColumn_LabelChanged', ($event, value) => scope.label = value);
-
-                        if (element.find('ng-transclude').length > 0) {
-                            element.find('span')[0].remove();
-                        }
-
-                        if (!scope.$parent.column.Sortable) {
-                            element.find('a').replaceWith(element.find('a').children());
-                        }
-                    }
-                };
-            }
-        ])
         /**
          * @ngdoc directive
          * @name tbRowTemplate
@@ -373,8 +336,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
     "<div class=modal-header><h3 class=modal-title ng-bind=\"'CAPTION_SELECTCOLUMNS' | translate\"></h3></div><div class=modal-body><table class=\"table table-bordered table-responsive table-striped table-hover table-condensed\"><thead><tr><th>Visible?</th><th>Name</th></tr></thead><tbody><tr ng-repeat=\"col in Model\"><td><input type=checkbox ng-model=col.Visible ng-disabled=\"col.Visible && isInvalid()\"></td><td ng-bind=col.Label></td></tr></tbody></table></div><div class=modal-footer><button class=\"btn btn-warning\" ng-click=closePopup() ng-bind=\"'CAPTION_CLOSE' | translate\"></button></div>");
   $templateCache.put("tbColumnFilterButtons.tpl.html",
     "<div class=text-right><button class=\"btn btn-sm btn-success\" ng-click=$ctrl.currentFilter.applyFilter() ng-disabled=\"$ctrl.currentFilter.filter.Operator == 'None'\" ng-bind=\"'CAPTION_APPLY' | translate\"></button>&nbsp; <button class=\"btn btn-sm btn-danger\" ng-click=$ctrl.currentFilter.clearFilter() ng-bind=\"'CAPTION_CLEAR' | translate\"></button></div>");
-  $templateCache.put("tbColumnHeader.tpl.html",
-    "<span><a title=\"Click to sort. Press Ctrl to sort by multiple columns\" class=column-header href ng-click=sortColumn($event)><span class=column-header-default>{{ $parent.column.Label }}</span><ng-transclude></ng-transclude></a><i class=\"fa sort-icon\" ng-class=\"{'fa-long-arrow-up': $parent.column.SortDirection == 'Ascending', 'fa-long-arrow-down': $parent.column.SortDirection == 'Descending'}\">&nbsp;</i></span>");
   $templateCache.put("tbFootSet.tpl.html",
     "<tfoot ng-transclude></tfoot>");
   $templateCache.put("tbGrid.tpl.html",
