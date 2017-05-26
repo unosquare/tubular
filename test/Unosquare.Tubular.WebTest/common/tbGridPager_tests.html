@@ -33,7 +33,7 @@
                             </th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody tb-row-set>
                         <tr tb-row-template ng-repeat="row in $component.rows" row-model="row">
                             <td tb-cell>
                                 {{row.OrderID}}
@@ -49,7 +49,7 @@
                             </td>
                         </tr>
                     </tbody>
-                    <tfoot>
+                    <tfoot tb-row-set>
                         <tr class="bg-info">
                             <td tb-cell></td>
                             <td tb-cell></td>

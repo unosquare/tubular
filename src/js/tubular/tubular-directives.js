@@ -16,7 +16,7 @@
          * @ngdoc directive
          * @name tbGridTable
          * @module tubular.directives
-         * @restrict A
+         * @restrict C
          *
          * @description
          * The `tbGridTable` directive generate the HTML table where all the columns and rowsets can be defined.
@@ -116,14 +116,11 @@
          * @ngdoc directive
          * @name tbColumn
          * @module tubular.directives
-         * @restrict A
+         * @restrict E
          *
          * @description
          * The `tbColumn` directive creates a column in the grid's model.
          * All the attributes are used to generate a `ColumnModel`.
-         * 
-         * Suggested layout:
-         * <th ng-class="{sortable: column.Sortable}" ng-show="column.Visible"></th>
          *
          * @param {string} name Set the column name.
          * @param {string} label Set the column label, if empty column's name is used.
@@ -141,6 +138,7 @@
                 return {
                     require: '^tbGrid',
                     priority: 10,
+                    // template: '<th ng-transclude ng-class="{sortable: column.Sortable}" ng-show="column.Visible"></th>',
                     restrict: 'A',
                     transclude: true,
                     scope: {
@@ -231,6 +229,32 @@
         ])
         /**
          * @ngdoc directive
+         * @name tbRowSet
+         * @module tubular.directives
+         * @restrict A
+         *
+         * @description
+         * The `tbRowSet` directive is used to handle any `tbRowTemplate`. You can define multiples `tbRowSet` for grouping.
+         */
+        .directive('tbRowSet', [
+            function () {
+
+                return {
+                    require: '^tbGrid',
+                    restrict: 'A',
+                    replace: false,
+                    transclude: true,
+                    controller: [
+                        '$scope', function ($scope) {
+                            $scope.$component = $scope.$parent.$component || $scope.$parent.$parent.$component;
+                            $scope.tubularDirective = 'tubular-row-set';
+                        }
+                    ]
+                };
+            }
+        ])
+        /**
+         * @ngdoc directive
          * @name tbRowTemplate
          * @module tubular.directives
          * @restrict A
@@ -242,6 +266,7 @@
          */
         .directive('tbRowTemplate', ['$timeout', $timeout => ({
             restrict: 'A',
+            replace: false,
             transclude: true,
             scope: {
                 model: '=rowModel'
@@ -250,6 +275,7 @@
                 '$scope', function ($scope) {
                     $scope.tubularDirective = 'tubular-rowset';
                     $scope.fields = [];
+                    $scope.$component = $scope.$parent.$parent.$parent.$component;
 
                     $scope.bindFields = () => angular.forEach($scope.fields, field => field.bindScope());
                 }
@@ -262,7 +288,7 @@
          * @ngdoc directive
          * @name tbCell
          * @module tubular.directives
-         * @restrict A
+         * @restrict E
          *
          * @description
          * The `tbCell` directive represents the final table element, a cell, where it can
@@ -287,12 +313,12 @@
                     controller: ['$scope', function ($scope) {
                         $scope.column = { Visible: true };
                         $scope.columnName = $scope.columnName || null;
+                        $scope.$component = $scope.$parent.$component || $scope.$parent.$parent.$component;
 
                         // TODO: Implement a form in inline editors
                         $scope.getFormScope = () => null;
 
                         if ($scope.columnName != null) {
-                            // TODO: How?
                             const columnModel = $scope.$component.columns
                                 .filter(el => el.Name === $scope.columnName);
 
