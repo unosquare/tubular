@@ -28,15 +28,21 @@
             function (tubularTemplateService, $compile) {
                 return {
                     require: '^tbGrid',
-                    restrict: 'A',
+                    restrict: 'C',
                     replace: false,
                     transclude: true,
                     scope: {
                         columns: '=?'
                     },
-                    link: {
-                        pre: (scope, element, attributes, tbGridCtrl) => {
-                            scope.tubularDirective = 'tubular-grid-table';
+                    controller: [
+                        '$scope', function ($scope) {
+                            $scope.$component = $scope.$parent.$parent.$ctrl;
+                            $scope.tubularDirective = 'tubular-grid-table';
+                        }
+                    ],
+                    compile: () => ({
+                        pre: (scope, element) => {
+
                             function InitFromColumns() {
                                 let isValid = true;
 
@@ -61,8 +67,8 @@
                                 element.append(cellsContent);
                             }
                         },
-                        post: (scope, element, attributes, tbGridCtrl) => tbGridCtrl.hasColumnsDefinitions = angular.isDefined(scope.columns)
-                    }
+                        post: scope => scope.$component.hasColumnsDefinitions = angular.isDefined(scope.columns) && angular.isDefined(scope.$component)
+                    })
                 };
             }
         ])
@@ -144,12 +150,11 @@
          * @param {string} columnType Set the column data type. Values: string, numeric, date, datetime, or boolean.
          */
         .directive('tbColumn', [
-            'tubularColumn',
-            function (tubularColumn) {
+            function () {
                 return {
-                    require: '^tbGrid',
-                    // template: '<th ng-transclude ng-class="{sortable: column.Sortable}" ng-show="column.Visible"></th>',
-                    restrict: 'A',
+                    require: '^tbColumnDefinitions',
+                    template: '<th ng-transclude ng-class="{sortable: column.Sortable}" ng-show="column.Visible"></th>',
+                    restrict: 'E',
                     replace: true,
                     transclude: true,
                     scope: {
@@ -164,57 +169,41 @@
                         aggregate: '@?',
                         sortDirection: '@?'
                     },
-                    controller: function ($scope) {
-                        $scope.column = tubularColumn($scope.name, {
-                            Label: $scope.label,
-                            Sortable: $scope.sortable,
-                            SortOrder: $scope.sortOrder,
-                            SortDirection: $scope.sortDirection,
-                            IsKey: $scope.isKey,
-                            Searchable: $scope.searchable,
-                            Visible: $scope.visible,
-                            DataType: $scope.columnType,
-                            Aggregate: $scope.aggregate
-                        });
+                    controller: ['$scope', 'tubularColumn',
+                        function ($scope, tubularColumn) {
+                            $scope.$component = $scope.$parent.$component || $scope.$parent.$parent.$component;
+                            $scope.tubularDirective = 'tubular-column';
 
-                        this.column = () => { return $scope.column; };
-                    },
-                    link: {
-                        pre: (scope, element, attributes, tbGridCtrl) => {
-                            scope.tubularDirective = 'tubular-column';
+                            $scope.sortColumn = multiple => $scope.$component.sortColumn($scope.column.Name, multiple);
 
-                            // scope.column = tubularColumn(scope.name, {
-                            //     Label: scope.label,
-                            //     Sortable: scope.sortable,
-                            //     SortOrder: scope.sortOrder,
-                            //     SortDirection: scope.sortDirection,
-                            //     IsKey: scope.isKey,
-                            //     Searchable: scope.searchable,
-                            //     Visible: scope.visible,
-                            //     DataType: scope.columnType,
-                            //     Aggregate: scope.aggregate
-                            // });
-                        },
-                        post: (scope, element, attributes, tbGridCtrl) => {
-
-                            scope.sortColumn = multiple => tbGridCtrl.sortColumn(scope.column.Name, multiple);
-
-                            scope.$watch('visible', val => {
+                            $scope.$watch('visible', val => {
                                 if (angular.isDefined(val)) {
-                                    scope.column.Visible = val;
+                                    $scope.column.Visible = val;
                                 }
                             });
 
-                            scope.$watch('label', () => {
-                                scope.column.Label = scope.label;
+                            $scope.$watch('label', () => {
+                                $scope.column.Label = $scope.label;
                                 // this broadcast here is used for backwards compatibility with tbColumnHeader requiring a scope.label value on its own
-                                scope.$broadcast('tbColumn_LabelChanged', scope.label);
+                                $scope.$broadcast('tbColumn_LabelChanged', $scope.label);
                             });
 
-                            tbGridCtrl.addColumn(scope.column);
-                            scope.label = scope.column.Label;
+                            $scope.column = tubularColumn($scope.name, {
+                                Label: $scope.label,
+                                Sortable: $scope.sortable,
+                                SortOrder: $scope.sortOrder,
+                                SortDirection: $scope.sortDirection,
+                                IsKey: $scope.isKey,
+                                Searchable: $scope.searchable,
+                                Visible: $scope.visible,
+                                DataType: $scope.columnType,
+                                Aggregate: $scope.aggregate
+                            });
+
+                            $scope.$component.addColumn($scope.column);
+                            $scope.label = $scope.column.Label;
                         }
-                    }
+                    ]
                 };
             }])
         /**
@@ -232,27 +221,27 @@
         .directive('tbColumnHeader', [
             function () {
                 return {
-                    require: '^tbGrid',
+                    require: '^tbColumn',
                     templateUrl: 'tbColumnHeader.tpl.html',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
-                    scope: true,
-                    link: (scope, element, attributes, ctrls) => {
-                        const tbGridCtrl = ctrls[0];
-                        const tbColumnCtrl = ctrls[1];
-                        
-                        scope.sortColumn = $event => tbGridCtrl.sortColumn($event.ctrlKey);
+                    scope: false,
+                    controller: [
+                        '$scope', function ($scope) {
+                            $scope.sortColumn = $event => $scope.$parent.sortColumn($event.ctrlKey);
 
-                        // this listener here is used for backwards compatibility with tbColumnHeader requiring a scope.label value on its own
-                        scope.$on('tbColumn_LabelChanged', ($event, value) => scope.label = value);
-
-                        if (element.find('ng-transclude').length > 0) {
-                            element.find('span')[0].remove();
+                            // this listener here is used for backwards compatibility with tbColumnHeader requiring a scope.label value on its own
+                            $scope.$on('tbColumn_LabelChanged', ($event, value) => $scope.label = value);
+                        }
+                    ],
+                    link: ($scope, $element) => {
+                        if ($element.find('ng-transclude').length > 0) {
+                            $element.find('span')[0].remove();
                         }
 
-                        if (!scope.$parent.column.Sortable) {
-                            element.find('a').replaceWith(element.find('a').children());
+                        if (!$scope.$parent.column.Sortable) {
+                            $element.find('a').replaceWith($element.find('a').children());
                         }
                     }
                 };
