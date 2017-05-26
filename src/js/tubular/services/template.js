@@ -170,9 +170,9 @@
                             .replace(/([A-Z])/g, $1 => `-${$1.toLowerCase()}`) : '';
                         const templateExpression = el.Template || `<span ng-bind="row.${el.Name}"></span>`;
 
-                        return `${prev}\r\n\t\t<td tb-cell ng-transclude column-name="${el.Name}">
+                        return `${prev}\r\n\t\t<tb-cell-template column-name="${el.Name}">
                             \t\t\t${mode === 'Inline' ? `<${editorTag} is-editing="row.$isEditing" value="row.${el.Name}"></${editorTag}>` : templateExpression}
-                            \t\t</td>`;
+                            \t\t</tb-cell-template>`;
                     }, '');
 
                 me.generateColumnsDefinitions = (columns) => columns.reduce((prev, el) => 
