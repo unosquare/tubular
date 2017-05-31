@@ -415,7 +415,7 @@
             }
         ]);
 })(angular);
-(function (angular, moment) {
+(function (angular) {
     'use strict';
 
     /**
@@ -428,7 +428,7 @@
      * It contains model's factories to be use in {@link tubular.directives} like `tubularModel` and `tubularColumn`.
      */
     angular.module('tubular.models', []);
-})(angular, moment);
+})(angular);
 
 (function(angular){
 angular.module('tubular.directives').run(['$templateCache', function ($templateCache) {
@@ -479,6 +479,10 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
     "<div class=modal-header><h3 class=modal-title ng-bind=\"'CAPTION_SELECTCOLUMNS' | translate\"></h3></div><div class=modal-body><table class=\"table table-bordered table-responsive table-striped table-hover table-condensed\"><thead><tr><th>Visible?</th><th>Name</th></tr></thead><tbody><tr ng-repeat=\"col in Model\"><td><input type=checkbox ng-model=col.Visible ng-disabled=\"col.Visible && isInvalid()\"></td><td ng-bind=col.Label></td></tr></tbody></table></div><div class=modal-footer><button class=\"btn btn-warning\" ng-click=closePopup() ng-bind=\"'CAPTION_CLOSE' | translate\"></button></div>");
   $templateCache.put("tbCellTemplate.tpl.html",
     "<td ng-transclude ng-show=column.Visible data-label={{::column.Label}} style=height:auto></td>");
+  $templateCache.put("tbColumnDateTimeFilterPopoverBs.tpl.html",
+    "<div><form class=tubular-column-filter-form onsubmit=\"return false;\"><select class=form-control ng-options=\"key as value for (key , value) in $ctrl.filterOperators\" ng-model=$ctrl.filter.Operator ng-hide=\"$ctrl.dataType == 'boolean'\"></select><div class=input-group><input class=form-control uib-datepicker-popup=MM/dd/yyyy ng-model=$ctrl.filter.Text autofocus ng-keypress=$ctrl.checkEvent($event) placeholder=\"{{'CAPTION_VALUE' | translate}}\" ng-disabled=\"$ctrl.filter.Operator == 'None'\" is-open=$ctrl.dateOpen> <span class=input-group-btn><button type=button class=\"btn btn-default\" ng-click=\"$ctrl.dateOpen = !$ctrl.dateOpen\"><i class=\"fa fa-calendar\"></i></button></span></div><hr><tb-column-filter-buttons></tb-column-filter-buttons></form></div>");
+  $templateCache.put("tbColumnDateTimeFilterPopoverHtml5.tpl.html",
+    "<div><form class=tubular-column-filter-form onsubmit=\"return false;\"><select class=form-control ng-options=\"key as value for (key , value) in $ctrl.filterOperators\" ng-model=$ctrl.filter.Operator ng-hide=\"$ctrl.dataType == 'boolean'\"></select><input class=form-control type=date ng-model=$ctrl.filter.Text autofocus ng-keypress=$ctrl.checkEvent($event) placeholder=\"{{'CAPTION_VALUE' | translate}}\" ng-disabled=\"$ctrl.filter.Operator == 'None'\"> <input type=date class=form-control ng-model=$ctrl.filter.Argument[0] ng-keypress=$ctrl.checkEvent($event) ng-show=\"$ctrl.filter.Operator == 'Between'\"><hr><tb-column-filter-buttons></tb-column-filter-buttons></form></div>");
   $templateCache.put("tbColumnDefinitions.tpl.html",
     "<thead><tr ng-transclude></tr></thead>");
   $templateCache.put("tbColumnFilterButtons.tpl.html",
@@ -3686,32 +3690,7 @@ function exportToCsv(header, rows, visibility) {
                 };
 
                 // Loading popovers templates
-                me.tbColumnDateTimeFilterPopoverTemplateName = 'tbColumnDateTimeFilterPopoverTemplate.html';
-
-                if (!$templateCache.get(me.tbColumnDateTimeFilterPopoverTemplateName)) {
-                    const htmlDateSelector = `<input class="form-control" type="date" ng-model="$ctrl.filter.Text" autofocus ng-keypress="$ctrl.checkEvent($event)" 
-                            placeholder="{{'CAPTION_VALUE' | translate}}" ng-disabled="$ctrl.filter.Operator == 'None'" />
-                            <input type="date" class="form-control" ng-model="$ctrl.filter.Argument[0]" ng-keypress="$ctrl.checkEvent($event)" ng-show="$ctrl.filter.Operator == 'Between'" />`;
-
-                    const bootstrapDateSelector = `<div class="input-group">
-                        <input type="text" class="form-control" uib-datepicker-popup="MM/dd/yyyy" ng-model="$ctrl.filter.Text" autofocus ng-keypress="$ctrl.checkEvent($event)" 
-                        placeholder="{{'CAPTION_VALUE' | translate}}" ng-disabled="$ctrl.filter.Operator == 'None'" is-open="$ctrl.dateOpen" />
-                        <span class="input-group-btn">
-                        <button type="button" class="btn btn-default" ng-click="$ctrl.dateOpen = !$ctrl.dateOpen;"><i class="fa fa-calendar"></i></button>
-                        </span>
-                        </div>`;
-
-                    me.tbColumnDateTimeFilterPopoverTemplate = `<div>
-                        <form class="tubular-column-filter-form" onsubmit="return false;">
-                        <select class="form-control" ng-options="key as value for (key , value) in $ctrl.filterOperators" ng-model="$ctrl.filter.Operator" ng-hide="$ctrl.dataType == 'boolean'"></select>
-                        ${me.canUseHtml5Date() ? htmlDateSelector : bootstrapDateSelector}<hr />
-                        <tb-column-filter-buttons></tb-column-filter-buttons>
-                        </form>
-                        </div>`;
-
-                    $templateCache.put(me.tbColumnDateTimeFilterPopoverTemplateName,
-                        me.tbColumnDateTimeFilterPopoverTemplate);
-                }
+                me.tbColumnDateTimeFilterPopoverTemplateName = me.canUseHtml5Date() ? 'tbColumnDateTimeFilterPopoverHtml5.tpl.html' : 'tbColumnDateTimeFilterPopoverBs.tpl.html';
 
                 /**
                  * Generates the grid's cells markup
