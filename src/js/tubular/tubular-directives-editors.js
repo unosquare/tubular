@@ -316,22 +316,7 @@
          * @param {string} defaultValue Set the default value.
          */
         .component('tbDateTimeEditor', {
-            template: `<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">
-            <span ng-hide="$ctrl.isEditing">{{ $ctrl.value | date: format }}</span>
-            <label ng-show="$ctrl.showLabel" ng-bind="$ctrl.label"></label>${
-            canUseHtml5Date() ?
-                `<input type="datetime-local" ng-show="$ctrl.isEditing" ng-model="$ctrl.dateValue" class="form-control" 
-                ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}"/>` :
-                `<div class="input-group" ng-show="$ctrl.isEditing">
-                <input type="text" uib-datepicker-popup="{{$ctrl.format}}" ng-model="$ctrl.dateValue" class="form-control" 
-                ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}" is-open="$ctrl.open" />
-                <span class="input-group-btn">
-                <button type="button" class="btn btn-default" ng-click="$ctrl.open = !$ctrl.open"><i class="fa fa-calendar"></i></button>
-                </span></div>
-                <div uib-timepicker ng-model="$ctrl.dateValue"  show-seconds="true" show-meridian="false"></div>`
-            }<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">{{error}}</span>
-            <span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help" ng-bind="$ctrl.help"></span>
-            </div>`,
+            templateUrl: canUseHtml5Date() ? 'tbDateTimeEditorHtml5.tpl.html' : 'tbDateTimeEditorBs.tpl.html',
             bindings: {
                 value: '=?',
                 isEditing: '=?',

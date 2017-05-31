@@ -315,14 +315,10 @@
 
                 me.generatePopupTemplate = (model, title) => {
                     const columns = me.createColumns(model);
+                    title = title || 'Edit Row';
 
-                    return `${'<tb-form model="Model">' +
-                        '<div class="modal-header"><h3 class="modal-title">'}${
-                        title || 'Edit Row'
-                        }</h3></div>` +
-                        `<div class="modal-body">${
-                        me.generateFieldsArray(columns).join('')
-                        }</div>` +
+                    return `<tb-form model="Model"><div class="modal-header"><h3 class="modal-title">${title}</h3></div>` +
+                        `<div class="modal-body">${me.generateFieldsArray(columns).join('')}</div>` +
                         '<div class="modal-footer">' +
                         '<button class="btn btn-primary" ng-click="savePopup()" ng-disabled="!Model.$valid()">Save</button>' +
                         '<button class="btn btn-danger" ng-click="closePopup()" formnovalidate>Cancel</button>' +
