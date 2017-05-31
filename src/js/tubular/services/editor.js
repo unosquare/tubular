@@ -123,10 +123,6 @@
             return;
           }
 
-          if (parent.hasFieldsDefinitions !== false) {
-            throw 'Cannot define more fields. Field definitions have been sealed';
-          }
-
           ctrl.$component = parent.tubularDirective === 'tubular-form' ? parent : parent.$component;
 
           scope.Name = ctrl.name;

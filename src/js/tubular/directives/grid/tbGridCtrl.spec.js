@@ -1,7 +1,25 @@
 ﻿'use strict';
 
 describe('Module: tubular.directives', () => {
-    
+    var sut, scope, tubularPopupService, tubularModel, storage, window, tubularColumn;
+    var $controller, storageMock, storage, data;
+
+    beforeEach(() => {
+        module('tubular.directives');
+        module(($provide) => {
+            tubularModel = jasmine.createSpy();
+
+            $provide.value('tubularModel', tubularModel);
+        });
+    })
+
+    beforeEach(inject((_$controller_, $rootScope, _tubularPopupService_, _tubularColumn_) => {
+        scope = $rootScope.$new();
+        $controller = _$controller_;
+        tubularColumn = _tubularColumn_;
+        tubularPopupService = _tubularPopupService_;
+    }));
+
     const models = [{
         'Id': 8,
         'Name': 'Guzman Webster',
@@ -14,49 +32,30 @@ describe('Module: tubular.directives', () => {
 
     const payload = [[8, 'Guzman Webster', 'IDEGO', 'guzmanwebster@idego.com']];
 
+    function create() {
+        storage = {};
+        window = {};
+        window.localStorage = {
+            setItem: function (key, value) {
+                storage[key] = value || '';
+            },
+            removeItem: function (key) {
+                delete storage[key];
+            },
+            key: function (i) {
+                var keys = Object.keys(storage);
+                return keys[i] || null;
+            },
+            getItem: function (key) {
+                return key in storage ? storage[key] : null;
+            },
+            length: 0
+        };
+
+        sut = $controller('tbGridController', { '$scope': scope, '$window': window });
+    }
+
     describe('Controller: tbGridController', () => {
-        var sut, scope, tubularPopupService, tubularModel, $routeParams, storage, window;
-        var $controller, storageMock, storage, data;
-
-        beforeEach(() => {
-            module('tubular.directives');
-            module(($provide) => {
-                tubularModel = jasmine.createSpy();
-                $routeParams = jasmine.createSpyObj('$routeParams', ['name']);
-
-                $provide.value('tubularModel', tubularModel);
-                $provide.value('$routeParams', $routeParams);
-            });
-        })
-
-        beforeEach(inject((_$controller_, $rootScope, _tubularPopupService_) => {
-            scope = $rootScope.$new();
-            $controller = _$controller_;
-            tubularPopupService = _tubularPopupService_;
-        }));
-
-        var create = () => {
-            storage = {};
-            window = {};
-            window.localStorage = {
-                setItem: function (key, value) {
-                    storage[key] = value || '';
-                },
-                removeItem: function (key) {
-                    delete storage[key];
-                },
-                key: function (i) {
-                    var keys = Object.keys(storage);
-                    return keys[i] || null;
-                },
-                getItem: function (key) {
-                    return key in storage ? storage[key] : null;
-                },
-                length: 0
-            };
-            sut = $controller('tbGridController', { '$scope': scope, '$window': window });
-        }
-
         beforeEach(() => {
             create();
             sut.$onInit();
@@ -150,10 +149,6 @@ describe('Module: tubular.directives', () => {
 
             it('should have tempRow', () => {
                 expect(sut.tempRow).toBeDefined();
-            })
-
-            it('should have requireAuthentication', () => {
-                expect(sut.requireAuthentication).toBe(true);
             })
 
             it('should have editorMode', () => {
@@ -261,9 +256,7 @@ describe('Module: tubular.directives', () => {
         })
 
         describe('newRow function', () => {
-            beforeEach(() => {
-                spyOn(tubularPopupService, 'openDialog');
-            });
+            beforeEach(() => spyOn(tubularPopupService, 'openDialog'));
 
             it('should not have properties', () => {
                 var keys = Object.keys(sut.tempRow);

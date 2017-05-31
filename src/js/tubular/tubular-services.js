@@ -18,7 +18,7 @@ angular.module('tubular.services', ['ui.bootstrap'])
       $httpProvider.interceptors.push('tubularAuthInterceptor');
       $httpProvider.interceptors.push('tubularNoCacheInterceptor');
     }
-  ])
+  ]);
 
 
 })(angular);

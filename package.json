@@ -1,7 +1,7 @@
 {
   "name": "tubular",
   "filename": "tubular-bundle.min.js",
-  "version": "1.5.1",
+  "version": "1.6.0",
   "description": "A set of AngularJS directives and designed to rapidly build modern web applications.",
   "repository": {
     "type": "git",
@@ -28,7 +28,8 @@
   "homepage": "http://unosquare.github.io/tubular",
   "main": "dist/tubular-bundle.js",
   "files": [
-    "dist/tubular-bundle.js"
+    "dist/tubular-bundle.js",
+    "dist/tubular-bundle.css"
   ],
   "dependencies": {},
   "devDependencies": {

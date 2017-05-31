@@ -2,7 +2,7 @@
 
 describe('Module: tubular.directives', () => {
     describe('Controller: tbFormController', () => {
-        var sut, scope, $element, $routeParams, tubularModel, tubularEditorService;
+        var sut, scope, $element, tubularModel, tubularEditorService;
         var $controller;
 
         beforeEach(() => {

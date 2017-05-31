@@ -11,7 +11,7 @@
      *
      * It depends upon {@link tubular.services} and {@link tubular.models}.
      */
-    angular.module('tubular.directives', ['tubular.models','tubular.services'])
+    angular.module('tubular.directives', ['tubular.models', 'tubular.services'])
         /**
          * @ngdoc directive
          * @name tbGridTable
@@ -25,20 +25,53 @@
          * This directive is replace by a `table` HTML element.
          */
         .directive('tbGridTable', [
-            function () {
+            'tubularTemplateService',
+            '$compile',
+            function (tubularTemplateService, $compile) {
                 return {
                     require: '^tbGrid',
                     templateUrl: 'tbGridTable.tpl.html',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
-                    scope: true,
+                    scope: {
+                        columns: '=?'
+                    },
                     controller: [
-                        '$scope', function($scope) {
+                        '$scope', function ($scope) {
                             $scope.$component = $scope.$parent.$parent.$ctrl;
                             $scope.tubularDirective = 'tubular-grid-table';
                         }
-                    ]
+                    ],
+                    compile: () => ({
+                        pre: (scope, element) => {
+
+                            function InitFromColumns() {
+                                let isValid = true;
+
+                                angular.forEach(scope.columns, column => isValid = isValid && column.Name);
+
+                                if (!isValid) {
+                                    throw 'Column attribute contains invalid';
+                                }
+                            }
+
+                            if (scope.columns && scope.$component) {
+
+                                InitFromColumns();
+
+                                const headersTemplate = tubularTemplateService.generateColumnsDefinitions(scope.columns);
+                                const headersContent = $compile(headersTemplate)(scope);
+                                element.append('<thead><tr ng-transclude></tr></thead>');
+                                element.find('tr').append(headersContent);
+
+                                const cellsTemplate = tubularTemplateService.generateCells(scope.columns, '');
+                                const cellsContent = $compile('<tbody><tr ng-repeat="row in $component.rows" row-model="row">' + cellsTemplate + '</tr></tbody>')(scope);
+                                element.append(cellsContent);
+                            }
+                        },
+                        post: scope => scope.$component.hasColumnsDefinitions = angular.isDefined(scope.columns) && angular.isDefined(scope.$component)
+                    })
                 };
             }
         ])
@@ -52,22 +85,51 @@
          * The `tbColumnDefinitions` directive is a parent node to fill with `tbColumn`.
          *
          * This directive is replace by a `thead` HTML element.
+         *
+         * @param {array} columns Set an array of TubularColumn to use. Using this attribute will create a template for columns and rows overwritting any template inside.
          */
-        .directive('tbColumnDefinitions', [function() {
+        .directive('tbColumnDefinitions', [
+            'tubularTemplateService',
+            '$compile',
+            function (tubularTemplateService, $compile) {
                 return {
                     require: '^tbGridTable',
                     templateUrl: 'tbColumnDefinitions.tpl.html',
                     restrict: 'E',
                     replace: true,
                     transclude: true,
-                    scope: true,
+                    scope: {
+                        columns: '=?'
+                    },
                     controller: [
-                        '$scope', function($scope) {
+                        '$scope',
+                        function ($scope) {
                             $scope.$component = $scope.$parent.$parent.$component;
                             $scope.tubularDirective = 'tubular-column-definitions';
                         }
                     ],
-                    compile: () => ({ post: scope => scope.$component.hasColumnsDefinitions = true })
+                    compile: () => ({
+                        pre: (scope, element) => {
+
+                            function InitFromColumns() {
+                                let isValid = true;
+
+                                angular.forEach(scope.columns, column => isValid = isValid && column.Name);
+
+                                if (!isValid) {
+                                    throw 'Column attribute contains invalid';
+                                }
+                            }
+
+                            if (scope.columns && scope.$component) {
+                                InitFromColumns();
+                                const template = tubularTemplateService.generateColumnsDefinitions(scope.columns);
+                                const content = $compile(template)(scope);
+                                element.find('tr').append(content);
+                            }
+                        },
+                        post: scope => scope.$component.hasColumnsDefinitions = true
+                    })
                 };
             }
         ])
@@ -114,12 +176,10 @@
                         aggregate: '@?',
                         sortDirection: '@?'
                     },
-                    controller: [
-                        '$scope', function ($scope) {
-                            $scope.column = { Label: '' };
-                            $scope.$component = $scope.$parent.$parent.$component;
+                    controller: ['$scope', 'tubularColumn',
+                        function ($scope, tubularColumn) {
+                            $scope.$component = $scope.$parent.$component || $scope.$parent.$parent.$component;
                             $scope.tubularDirective = 'tubular-column';
-                            $scope.label = $scope.label || ($scope.name || '').replace(/([a-z])([A-Z])/g, '$1 $2');
 
                             $scope.sortColumn = multiple => $scope.$component.sortColumn($scope.column.Name, multiple);
 
@@ -135,38 +195,20 @@
                                 $scope.$broadcast('tbColumn_LabelChanged', $scope.label);
                             });
 
-                            const column = new function () {
-                                this.Name = $scope.name || null;
-                                this.Label = $scope.label || null;
-                                this.Sortable = $scope.sortable;
-                                this.SortOrder = parseInt($scope.sortOrder) || -1;
-                                this.SortDirection = function () {
-                                    if (angular.isUndefined($scope.sortDirection)) {
-                                        return 'None';
-                                    }
+                            $scope.column = tubularColumn($scope.name, {
+                                Label: $scope.label,
+                                Sortable: $scope.sortable,
+                                SortOrder: $scope.sortOrder,
+                                SortDirection: $scope.sortDirection,
+                                IsKey: $scope.isKey,
+                                Searchable: $scope.searchable,
+                                Visible: $scope.visible,
+                                DataType: $scope.columnType,
+                                Aggregate: $scope.aggregate
+                            });
 
-                                    if ($scope.sortDirection.toLowerCase().indexOf('asc') === 0) {
-                                        return 'Ascending';
-                                    }
-
-                                    if ($scope.sortDirection.toLowerCase().indexOf('desc') === 0) {
-                                        return 'Descending';
-                                    }
-
-                                    return 'None';
-                                }();
-
-                                this.IsKey = angular.isDefined($scope.isKey) ? $scope.isKey : false;
-                                this.Searchable = angular.isDefined($scope.searchable) ? $scope.searchable : false;
-                                this.Visible = $scope.visible === 'false' ? false : true;
-                                this.Filter = null;
-                                this.DataType = $scope.columnType || 'string';
-                                this.Aggregate = $scope.aggregate || 'none';
-                            };
-
-                            $scope.$component.addColumn(column);
-                            $scope.column = column;
-                            $scope.label = column.Label;
+                            $scope.$component.addColumn($scope.column);
+                            $scope.label = $scope.column.Label;
                         }
                     ]
                 };
@@ -193,7 +235,7 @@
                     transclude: true,
                     scope: false,
                     controller: [
-                        '$scope', function($scope) {
+                        '$scope', function ($scope) {
                             $scope.sortColumn = $event => $scope.$parent.sortColumn($event.ctrlKey);
 
                             // this listener here is used for backwards compatibility with tbColumnHeader requiring a scope.label value on its own
@@ -232,41 +274,10 @@
                     restrict: 'E',
                     replace: true,
                     transclude: true,
-                    scope: false,
                     controller: [
-                        '$scope', function($scope) {
+                        '$scope', function ($scope) {
                             $scope.$component = $scope.$parent.$component || $scope.$parent.$parent.$component;
                             $scope.tubularDirective = 'tubular-row-set';
-                        }
-                    ]
-                };
-            }
-        ])
-        /**
-         * @ngdoc directive
-         * @name tbFootSet
-         * @module tubular.directives
-         * @restrict E
-         *
-         * @description
-         * The `tbFootSet` directive is to handle footer.
-         *
-         * This directive is replace by an `tfoot` HTML element.
-         */
-        .directive('tbFootSet', [
-            function () {
-
-                return {
-                    require: '^tbGrid',
-                    templateUrl: 'tbFootSet.tpl.html',
-                    restrict: 'E',
-                    replace: true,
-                    transclude: true,
-                    scope: false,
-                    controller: [
-                        '$scope', function($scope) {
-                            $scope.$component = $scope.$parent.$component || $scope.$parent.$parent.$component;
-                            $scope.tubularDirective = 'tubular-foot-set';
                         }
                     ]
                 };
@@ -286,37 +297,26 @@
          * @param {object} rowModel Set the current row, if you are using a ngRepeat you must to use the current element variable here.
          */
         .directive('tbRowTemplate', ['$timeout', $timeout => ({
-                    templateUrl: 'tbRowTemplate.tpl.html',
-                    restrict: 'E',
-                    replace: true,
-                    transclude: true,
-                    scope: {
-                        model: '=rowModel'
-                    },
-                    controller: [
-                        '$scope', function($scope) {
-                            $scope.tubularDirective = 'tubular-rowset';
-                            $scope.fields = [];
-                            $scope.hasFieldsDefinitions = false;
-                            $scope.$component = $scope.$parent.$parent.$parent.$component;
+            templateUrl: 'tbRowTemplate.tpl.html',
+            restrict: 'E',
+            replace: true,
+            transclude: true,
+            scope: {
+                model: '=rowModel'
+            },
+            controller: [
+                '$scope', function ($scope) {
+                    $scope.tubularDirective = 'tubular-rowset';
+                    $scope.fields = [];
+                    $scope.$component = $scope.$parent.$parent.$parent.$component;
 
-                            $scope.$watch('hasFieldsDefinitions', newVal => {
-                                if (newVal !== true || angular.isUndefined($scope.model)) {
-                                    return;
-                                }
-
-                                $scope.bindFields();
-                            });
-
-                            $scope.bindFields = () => angular.forEach($scope.fields, field => field.bindScope());
-                        }
-                    ],
-
-                    // Wait a little bit before to connect to the fields
-                    compile: ()  => ({ post: scope => $timeout(() => scope.hasFieldsDefinitions = true, 300) })
-                })
+                    $scope.bindFields = () => angular.forEach($scope.fields, field => field.bindScope());
+                }
+            ],
+            // Wait a little bit before to connect to the fields
+            compile: () => ({ post: scope => $timeout(() => scope.bindFields(), 300) })
+        })
         ])
-
         /**
          * @ngdoc directive
          * @name tbCellTemplate
@@ -343,23 +343,55 @@
                     scope: {
                         columnName: '@?'
                     },
-                    controller: ['$scope', function($scope) {
-                            $scope.column = { Visible: true };
-                            $scope.columnName = $scope.columnName || null;
-                            $scope.$component = $scope.$parent.$parent.$component;
+                    controller: ['$scope', function ($scope) {
+                        $scope.column = { Visible: true };
+                        $scope.columnName = $scope.columnName || null;
+                        $scope.$component = $scope.$parent.$component || $scope.$parent.$parent.$component;
 
-                            // TODO: Implement a form in inline editors
-                            $scope.getFormScope = () => null;
+                        // TODO: Implement a form in inline editors
+                        $scope.getFormScope = () => null;
 
-                            if ($scope.columnName != null) {
-                                const columnModel = $scope.$component.columns
-                                    .filter(el => el.Name === $scope.columnName);
+                        if ($scope.columnName != null) {
+                            const columnModel = $scope.$component.columns
+                                .filter(el => el.Name === $scope.columnName);
 
-                                if (columnModel.length > 0) {
-                                    $scope.column = columnModel[0];
-                                }
+                            if (columnModel.length > 0) {
+                                $scope.column = columnModel[0];
                             }
                         }
+                    }
+                    ]
+                };
+            }
+        ])
+        .directive('tbCell', [
+            function () {
+
+                return {
+                    require: '^tbRowTemplate',
+                    restrict: 'A',
+                    replace: false,
+                    transclude: true,
+                    scope: {
+                        columnName: '@?'
+                    },
+                    controller: ['$scope', function ($scope) {
+                        $scope.column = { Visible: true };
+                        $scope.columnName = $scope.columnName || null;
+                        $scope.$component = $scope.$parent.$component || $scope.$parent.$parent.$component;
+
+                        // TODO: Implement a form in inline editors
+                        $scope.getFormScope = () => null;
+
+                        if ($scope.columnName != null) {
+                            const columnModel = $scope.$component.columns
+                                .filter(el => el.Name === $scope.columnName);
+
+                            if (columnModel.length > 0) {
+                                $scope.column = columnModel[0];
+                            }
+                        }
+                    }
                     ]
                 };
             }
