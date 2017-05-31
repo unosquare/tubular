@@ -435,6 +435,10 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
   "use strict";
   $templateCache.put("tbCheckboxField.tpl.html",
     "<div ng-class=\"{ 'checkbox' : $ctrl.isEditing, 'has-error' : !$ctrl.$valid && $ctrl.$dirty() }\" class=tubular-checkbox><input type=checkbox ng-model=$ctrl.value ng-disabled=\"$ctrl.readOnly || !$ctrl.isEditing\" class=tubular-checkbox id={{$ctrl.name}} name={{$ctrl.name}}><label ng-show=$ctrl.isEditing for={{$ctrl.name}} ng-bind=$ctrl.label></label><span class=\"help-block error-block\" ng-show=$ctrl.isEditing ng-repeat=\"error in $ctrl.state.$errors\">{{error}}</span> <span class=help-block ng-show=\"$ctrl.isEditing && $ctrl.help\" ng-bind=$ctrl.help></span></div>");
+  $templateCache.put("tbDateTimeEditorBs.tpl.html",
+    "<div ng-class=\"{ \\'form-group\\' : $ctrl.showLabel && $ctrl.isEditing, \\'has-error\\' : !$ctrl.$valid && $ctrl.$dirty() }\"><span ng-hide=$ctrl.isEditing>{{ $ctrl.value | date: format }}</span><label ng-show=$ctrl.showLabel ng-bind=$ctrl.label></label><div class=input-group ng-show=$ctrl.isEditing><input uib-datepicker-popup={{$ctrl.format}} ng-model=$ctrl.dateValue class=form-control ng-required=$ctrl.required ng-readonly=$ctrl.readOnly name={{$ctrl.name}} is-open=$ctrl.open> <span class=input-group-btn><button type=button class=\"btn btn-default\" ng-click=\"$ctrl.open = !$ctrl.open\"><i class=\"fa fa-calendar\"></i></button></span></div><div uib-timepicker ng-model=$ctrl.dateValue show-seconds=true show-meridian=false></div><span class=\"help-block error-block\" ng-show=$ctrl.isEditing ng-repeat=\"error in $ctrl.state.$errors\">{{error}}</span> <span class=help-block ng-show=\"$ctrl.isEditing && $ctrl.help\" ng-bind=$ctrl.help></span></div>");
+  $templateCache.put("tbDateTimeEditorHtml5.tpl.html",
+    "<div ng-class=\"{ \\'form-group\\' : $ctrl.showLabel && $ctrl.isEditing, \\'has-error\\' : !$ctrl.$valid && $ctrl.$dirty() }\"><span ng-hide=$ctrl.isEditing>{{ $ctrl.value | date: format }}</span><label ng-show=$ctrl.showLabel ng-bind=$ctrl.label></label><input type=datetime-local ng-show=$ctrl.isEditing ng-model=$ctrl.dateValue class=form-control ng-required=$ctrl.required ng-readonly=$ctrl.readOnly name={{$ctrl.name}}> <span class=\"help-block error-block\" ng-show=$ctrl.isEditing ng-repeat=\"error in $ctrl.state.$errors\">{{error}}</span> <span class=help-block ng-show=\"$ctrl.isEditing && $ctrl.help\" ng-bind=$ctrl.help></span></div>");
   $templateCache.put("tbDropdownEditor.tpl.html",
     "<div ng-class=\"{ 'form-group' : $ctrl.showLabel && $ctrl.isEditing, 'has-error' : !$ctrl.$valid && $ctrl.$dirty() }\"><span ng-hide=$ctrl.isEditing ng-bind=$ctrl.readOnlyValue></span><label ng-show=$ctrl.showLabel ng-bind=$ctrl.label></label><select ng-options=\"{{ $ctrl.selectOptions }}\" ng-show=$ctrl.isEditing ng-model=$ctrl.value class=form-control ng-required=$ctrl.required ng-disabled=$ctrl.readOnly name={{$ctrl.name}} ng-change=\"onChange({value: value})\"></select><span class=\"help-block error-block\" ng-show=$ctrl.isEditing ng-repeat=\"error in $ctrl.state.$errors\">{{error}}</span> <span class=help-block ng-show=\"$ctrl.isEditing && $ctrl.help\" ng-bind=$ctrl.help></span></div>");
   $templateCache.put("tbNumericEditor.tpl.html",
@@ -1825,22 +1829,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
          * @param {string} defaultValue Set the default value.
          */
         .component('tbDateTimeEditor', {
-            template: `<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">
-            <span ng-hide="$ctrl.isEditing">{{ $ctrl.value | date: format }}</span>
-            <label ng-show="$ctrl.showLabel" ng-bind="$ctrl.label"></label>${
-            canUseHtml5Date() ?
-                `<input type="datetime-local" ng-show="$ctrl.isEditing" ng-model="$ctrl.dateValue" class="form-control" 
-                ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}"/>` :
-                `<div class="input-group" ng-show="$ctrl.isEditing">
-                <input type="text" uib-datepicker-popup="{{$ctrl.format}}" ng-model="$ctrl.dateValue" class="form-control" 
-                ng-required="$ctrl.required" ng-readonly="$ctrl.readOnly" name="{{$ctrl.name}}" is-open="$ctrl.open" />
-                <span class="input-group-btn">
-                <button type="button" class="btn btn-default" ng-click="$ctrl.open = !$ctrl.open"><i class="fa fa-calendar"></i></button>
-                </span></div>
-                <div uib-timepicker ng-model="$ctrl.dateValue"  show-seconds="true" show-meridian="false"></div>`
-            }<span class="help-block error-block" ng-show="$ctrl.isEditing" ng-repeat="error in $ctrl.state.$errors">{{error}}</span>
-            <span class="help-block" ng-show="$ctrl.isEditing && $ctrl.help" ng-bind="$ctrl.help"></span>
-            </div>`,
+            templateUrl: canUseHtml5Date() ? 'tbDateTimeEditorHtml5.tpl.html' : 'tbDateTimeEditorBs.tpl.html',
             bindings: {
                 value: '=?',
                 isEditing: '=?',
@@ -3873,14 +3862,10 @@ function exportToCsv(header, rows, visibility) {
 
                 me.generatePopupTemplate = (model, title) => {
                     const columns = me.createColumns(model);
+                    title = title || 'Edit Row';
 
-                    return `${'<tb-form model="Model">' +
-                        '<div class="modal-header"><h3 class="modal-title">'}${
-                        title || 'Edit Row'
-                        }</h3></div>` +
-                        `<div class="modal-body">${
-                        me.generateFieldsArray(columns).join('')
-                        }</div>` +
+                    return `<tb-form model="Model"><div class="modal-header"><h3 class="modal-title">${title}</h3></div>` +
+                        `<div class="modal-body">${me.generateFieldsArray(columns).join('')}</div>` +
                         '<div class="modal-footer">' +
                         '<button class="btn btn-primary" ng-click="savePopup()" ng-disabled="!Model.$valid()">Save</button>' +
                         '<button class="btn btn-danger" ng-click="closePopup()" formnovalidate>Cancel</button>' +
