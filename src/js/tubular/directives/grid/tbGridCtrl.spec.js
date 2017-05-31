@@ -1,17 +1,15 @@
 ﻿'use strict';
 
 describe('Module: tubular.directives', () => {
-    var sut, scope, tubularPopupService, tubularModel, $routeParams, storage, window, tubularColumn;
+    var sut, scope, tubularPopupService, tubularModel, storage, window, tubularColumn;
     var $controller, storageMock, storage, data;
 
     beforeEach(() => {
         module('tubular.directives');
         module(($provide) => {
             tubularModel = jasmine.createSpy();
-            $routeParams = jasmine.createSpyObj('$routeParams', ['name']);
 
             $provide.value('tubularModel', tubularModel);
-            $provide.value('$routeParams', $routeParams);
         });
     })
 
