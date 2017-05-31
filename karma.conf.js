@@ -22,11 +22,10 @@ module.exports = (config) => {
           '../../bower_components/highchart-ng/dist/highcharts-ng.js',
           '../../bower_components/chart.js/dist/Chart.js',
           '../../bower_components/angular-chart.js/dist/angular-chart.js',
-          'tubular/tubular-models.js',
-          'tubular/tubular-column.js',
           'tubular/tubular-services.js',
+          'tubular/tubular-models.js',
           'tubular*/**/*.module.js',
-
+          'tubular/models/**/*.js',
           'tubular/services/**/*.js',
           'tubular/interceptors/**/*.js',
           'tubular/tubular-directives.js',

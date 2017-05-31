@@ -12,7 +12,7 @@
    */
   angular
     .module('tubular', ['tubular.directives', 'tubular.services', 'tubular.models'])
-    .info({ version: '1.5.1' });
+    .info({ version: '1.6.0' });
 
 })(angular);
 
@@ -415,6 +415,21 @@
             }
         ]);
 })(angular);
+(function (angular, moment) {
+    'use strict';
+
+    /**
+     * @ngdoc module
+     * @name tubular.models
+     *
+     * @description
+     * Tubular Models module.
+     *
+     * It contains model's factories to be use in {@link tubular.directives} like `tubularModel` and `tubularColumn`.
+     */
+    angular.module('tubular.models', []);
+})(angular, moment);
+
 (function(angular){
 angular.module('tubular.directives').run(['$templateCache', function ($templateCache) {
   "use strict";
@@ -482,6 +497,131 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
     "<tr ng-transclude></tr>");
 }]);
 })(angular);
+
+(angular => {
+    'use strict';
+
+    angular.module('tubular.models')
+        /**
+         * @ngdoc factory
+         * @name tubularColumn
+         * @module tubular.models
+         *
+         * @description
+         * The `tubularColumn` factory is the base to generate a column model to use with `tbGrid`.
+         */
+        .factory('tubularColumn', [function() {
+            return function(columnName, options) {
+                options = options || {};
+                
+                const obj = {
+                    Label: options.Label  || (columnName || '').replace(/([a-z])([A-Z])/g, '$1 $2'),
+                    Name: columnName,
+                    Sortable: options.Sortable,
+                    SortOrder: parseInt(options.SortOrder) || -1,
+                    SortDirection: function(){
+                        if (angular.isUndefined(options.SortDirection)) {
+                            return 'None';
+                        }
+
+                        if (options.SortDirection.toLowerCase().indexOf('asc') === 0) {
+                            return 'Ascending';
+                        }
+
+                        if (options.SortDirection.toLowerCase().indexOf('desc') === 0) {
+                            return 'Descending';
+                        }
+
+                        return 'None';
+                    }(),
+                    IsKey: angular.isDefined(options.IsKey) ? options.IsKey : false,
+                    Searchable: angular.isDefined(options.Searchable) ? options.Searchable : false,
+                    Visible: options.Visible === 'false' ? false : true,
+                    Filter: null,
+                    DataType: options.DataType || 'string',
+                    Aggregate: options.Aggregate || 'none'
+                };
+
+                return obj;
+            };
+        }]);
+})(angular);
+
+(function (angular, moment) {
+    'use strict';
+
+    angular.module('tubular.models')
+        /**
+         * @ngdoc factory
+         * @name tubularModel
+         * @module tubular.models
+         *
+         * @description
+         * The `tubularModel` factory is the base to generate a row model to use with `tbGrid` and `tbForm`.
+         */
+        .factory('tubularModel', [function() {
+            return function($ctrl, data) {
+                const obj = {
+                    $hasChanges: () => obj.$fields.some(k => angular.isDefined(obj.$original[k]) && obj[k] !== obj.$original[k]),
+                    $isEditing: false,
+                    $isNew: false,
+                    $key: '',
+                    $fields: [],
+                    $state: {},
+                    $original: {},
+                    $valid: () => Object.keys(obj.$state).filter(k => angular.isDefined(obj.$state[k]) && !obj.$state[k].$valid()).length == 0,
+                    $addField: (key, value, ignoreOriginal) => {
+                        if (obj.$fields.indexOf(key) >= 0) {
+                            return;
+                        }
+
+                        obj[key] = value;
+                        obj.$fields.push(key);
+                        obj.$original[key] = ignoreOriginal ? undefined : value;
+                    },
+                    resetOriginal: () => angular.forEach(obj.$original, (v, k) => obj.$original[k] = obj[k]),
+                    revertChanges: () => {
+                        angular.forEach(obj, (v, k) => {
+                            if (angular.isDefined(obj.$original[k])) {
+                                obj[k] = obj.$original[k];
+                            }
+                        });
+
+                        obj.$isEditing = false;
+                    }
+                };
+
+                if (!angular.isArray(data)) {
+                    angular.forEach(data, (v,k) => obj.$addField(k, v));
+                }
+
+                if (angular.isDefined($ctrl.columns)) {
+                    angular.forEach($ctrl.columns, (col, key) => {
+                        let value = angular.isDefined(data[key]) ? data[key] : data[col.Name];
+
+                        if (col.DataType === 'date' || col.DataType === 'datetime' || col.DataType === 'datetimeutc') {
+                            if (value === null || value === '' || moment(value).year() <= 1900)
+                                value = '';
+                            else
+                                value = col.DataType === 'datetimeutc' ? moment.utc(value) : moment(value);
+                        }
+
+                        obj.$addField(col.Name, value);
+
+                        if (col.IsKey) {
+                            obj.$key += `${value},`;
+                        }
+                    });
+                }
+
+                if (obj.$key.length > 1) {
+                    obj.$key = obj.$key.substring(0, obj.$key.length - 1);
+                }
+
+                return obj;
+            };
+        }]);
+})(angular, moment);
 
 (angular => {
     'use strict';
@@ -2551,140 +2691,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             ]
         });
 })(angular);
-(function (angular, moment) {
-    'use strict';
-
-    /**
-     * @ngdoc module
-     * @name tubular.models
-     *
-     * @description
-     * Tubular Models module.
-     *
-     * It contains model's factories to be use in {@link tubular.directives} like `tubularModel` and `tubularGridColumnModel`.
-     */
-    angular.module('tubular.models', [])
-        /**
-         * @ngdoc factory
-         * @name tubularModel
-         * @module tubular.models
-         *
-         * @description
-         * The `tubularModel` factory is the base to generate a row model to use with `tbGrid` and `tbForm`.
-         */
-        .factory('tubularModel', [function() {
-            return function($ctrl, data) {
-                const obj = {
-                    $hasChanges: () => obj.$fields.some(k => angular.isDefined(obj.$original[k]) && obj[k] !== obj.$original[k]),
-                    $isEditing: false,
-                    $isNew: false,
-                    $key: '',
-                    $fields: [],
-                    $state: {},
-                    $original: {},
-                    $valid: () => Object.keys(obj.$state).filter(k => angular.isDefined(obj.$state[k]) && !obj.$state[k].$valid()).length == 0,
-                    $addField: (key, value, ignoreOriginal) => {
-                        if (obj.$fields.indexOf(key) >= 0) {
-                            return;
-                        }
-
-                        obj[key] = value;
-                        obj.$fields.push(key);
-                        obj.$original[key] = ignoreOriginal ? undefined : value;
-                    },
-                    resetOriginal: () => angular.forEach(obj.$original, (v, k) => obj.$original[k] = obj[k]),
-                    revertChanges: () => {
-                        angular.forEach(obj, (v, k) => {
-                            if (angular.isDefined(obj.$original[k])) {
-                                obj[k] = obj.$original[k];
-                            }
-                        });
-
-                        obj.$isEditing = false;
-                    }
-                };
-
-                if (!angular.isArray(data)) {
-                    angular.forEach(data, (v,k) => obj.$addField(k, v));
-                }
-
-                if (angular.isDefined($ctrl.columns)) {
-                    angular.forEach($ctrl.columns, (col, key) => {
-                        let value = angular.isDefined(data[key]) ? data[key] : data[col.Name];
-
-                        if (col.DataType === 'date' || col.DataType === 'datetime' || col.DataType === 'datetimeutc') {
-                            if (value === null || value === '' || moment(value).year() <= 1900)
-                                value = '';
-                            else
-                                value = col.DataType === 'datetimeutc' ? moment.utc(value) : moment(value);
-                        }
-
-                        obj.$addField(col.Name, value);
-
-                        if (col.IsKey) {
-                            obj.$key += `${value},`;
-                        }
-                    });
-                }
-
-                if (obj.$key.length > 1) {
-                    obj.$key = obj.$key.substring(0, obj.$key.length - 1);
-                }
-
-                return obj;
-            };
-        }]);
-})(angular, moment);
-
-(angular => {
-    'use strict';
-
-    angular.module('tubular.models')
-        /**
-         * @ngdoc factory
-         * @name tubularColumn
-         * @module tubular.models
-         *
-         * @description
-         * The `tubularColumn` factory is the base to generate a column model to use with `tbGrid`.
-         */
-        .factory('tubularColumn', [function() {
-            return function(columnName, options) {
-                options = options || {};
-                
-                const obj = {
-                    Label: options.Label  || (columnName || '').replace(/([a-z])([A-Z])/g, '$1 $2'),
-                    Name: columnName,
-                    Sortable: options.Sortable,
-                    SortOrder: parseInt(options.SortOrder) || -1,
-                    SortDirection: function(){
-                        if (angular.isUndefined(options.SortDirection)) {
-                            return 'None';
-                        }
-
-                        if (options.SortDirection.toLowerCase().indexOf('asc') === 0) {
-                            return 'Ascending';
-                        }
-
-                        if (options.SortDirection.toLowerCase().indexOf('desc') === 0) {
-                            return 'Descending';
-                        }
-
-                        return 'None';
-                    }(),
-                    IsKey: angular.isDefined(options.IsKey) ? options.IsKey : false,
-                    Searchable: angular.isDefined(options.Searchable) ? options.Searchable : false,
-                    Visible: options.Visible === 'false' ? false : true,
-                    Filter: null,
-                    DataType: options.DataType || 'string',
-                    Aggregate: options.Aggregate || 'none'
-                };
-
-                return obj;
-            };
-        }]);
-})(angular);
-
 
 (function(angular) {
 'use strict';
