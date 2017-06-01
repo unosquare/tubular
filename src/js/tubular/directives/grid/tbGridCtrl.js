@@ -8,7 +8,6 @@
             'tubularPopupService',
             'tubularModel',
             '$http',
-            '$routeParams',
             'tubularConfig',
             '$window',
             function (
@@ -16,7 +15,6 @@
                 tubularPopupService,
                 TubularModel,
                 $http,
-                $routeParams,
                 tubularConfig,
                 $window) {
                 const $ctrl = this;
@@ -27,11 +25,11 @@
                     $ctrl.tubularDirective = 'tubular-grid';
 
                     $ctrl.name = $ctrl.name || 'tbgrid';
-                    $ctrl.columns = [];
                     $ctrl.rows = [];
+                    $ctrl.columns = [];
 
                     $ctrl.savePage = angular.isUndefined($ctrl.savePage) ? true : $ctrl.savePage;
-                    $ctrl.currentPage = $ctrl.savePage ? (parseInt(storage.getItem(`${prefix + $ctrl.name  }_page`)) || 1) : 1;
+                    $ctrl.currentPage = $ctrl.savePage ? (parseInt(storage.getItem(`${prefix + $ctrl.name}_page`)) || 1) : 1;
                     $ctrl.savePageSize = angular.isUndefined($ctrl.savePageSize) ? true : $ctrl.savePageSize;
                     $ctrl.pageSize = $ctrl.pageSize || 20;
                     $ctrl.saveSearchText = angular.isUndefined($ctrl.saveSearchText) ? true : $ctrl.saveSearchText;
@@ -44,8 +42,7 @@
                     $ctrl.requestMethod = $ctrl.requestMethod || 'POST';
                     $ctrl.serverSaveMethod = $ctrl.serverSaveMethod || 'POST';
                     $ctrl.currentRequest = null;
-                    $ctrl.autoSearch = $routeParams.param ||
-                        ($ctrl.saveSearchText ? (storage.getItem(`${prefix + $ctrl.name  }_search`) || '') : '');
+                    $ctrl.autoSearch = $ctrl.saveSearchText ? (storage.getItem(`${prefix + $ctrl.name}_search`) || '') : '';
                     $ctrl.search = {
                         Text: $ctrl.autoSearch,
                         Operator: $ctrl.autoSearch === '' ? 'None' : 'Auto'
@@ -53,7 +50,6 @@
 
                     $ctrl.isEmpty = false;
                     $ctrl.tempRow = new TubularModel($ctrl, {});
-                    $ctrl.requireAuthentication = $ctrl.requireAuthentication ? ($ctrl.requireAuthentication === 'true') : true;
                     $ctrl.editorMode = $ctrl.editorMode || 'none';
                     $ctrl.canSaveState = false;
                     $ctrl.showLoading = angular.isUndefined($ctrl.showLoading) ? true : $ctrl.showLoading;
@@ -158,7 +154,7 @@
                     }
 
                     $ctrl.currentRequest = $http.delete(url, {
-                        requireAuthentication: $ctrl.requireAuthentication
+                        requireAuthentication: getRequiredAuthentication()
                     })
                     .then(response => $scope.$emit('tbGrid_OnRemove', response.data),
                         error => $scope.$emit('tbGrid_OnConnectionError', error))
@@ -167,6 +163,10 @@
                         $ctrl.retrieveData();
                     });
                 };
+
+                function getRequiredAuthentication() {
+                    return $ctrl.requireAuthentication ? ($ctrl.requireAuthentication === 'true') : true;
+                }
 
                 function addTimeZoneToUrl(url) {
                     return `${url +
@@ -277,7 +277,7 @@
                     return {
                         url: $ctrl.serverUrl,
                         method: $ctrl.requestMethod || 'POST',
-                        requireAuthentication: $ctrl.requireAuthentication,
+                        requireAuthentication: getRequiredAuthentication(),
                         data: {
                             Count: $ctrl.requestCounter,
                             Columns: $ctrl.columns,
@@ -295,6 +295,10 @@
                         return;
                     }
 
+                    if ($ctrl.columns.length === 0) {
+                        throw 'You need to define at least one column';
+                    }
+
                     $ctrl.canSaveState = true;
                     $ctrl.verifyColumns();
 
@@ -308,7 +312,7 @@
                     if ($ctrl.requestedPage > newPages) $ctrl.requestedPage = newPages;
 
                     const request = $ctrl.getRequestObject(-1);
-
+                    
                     $scope.$emit('tbGrid_OnBeforeRequest', request, $ctrl);
 
                     $ctrl.currentRequest = $http(request);

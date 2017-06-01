@@ -18,8 +18,8 @@ module.exports = (config) => {
           '../../bower_components/moment/moment.js',
           '../../bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
           '../../dist/tubular-bundle.js',
-          '*.spec.js',
-          '*.case.html'
+          '**/*.spec.js',
+          '**/*.case.html'
         ],
 
         // list of files to exclude
@@ -30,7 +30,7 @@ module.exports = (config) => {
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
-            '*case.html': ['ng-html2js']
+            '**/*case.html': ['ng-html2js']
         },
 
         ngHtml2JsPreprocessor: {

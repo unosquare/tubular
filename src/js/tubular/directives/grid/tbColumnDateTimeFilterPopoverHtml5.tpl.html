@@ -1,0 +1,12 @@
+<div>
+    <form class="tubular-column-filter-form" onsubmit="return false;">
+        <select class="form-control" ng-options="key as value for (key , value) in $ctrl.filterOperators" ng-model="$ctrl.filter.Operator"
+            ng-hide="$ctrl.dataType == 'boolean'"></select>
+        <input class="form-control" type="date" ng-model="$ctrl.filter.Text" autofocus ng-keypress="$ctrl.checkEvent($event)" placeholder="{{'CAPTION_VALUE' | translate}}"
+            ng-disabled="$ctrl.filter.Operator == 'None'" />
+        <input type="date" class="form-control" ng-model="$ctrl.filter.Argument[0]" ng-keypress="$ctrl.checkEvent($event)" ng-show="$ctrl.filter.Operator == 'Between'"
+        />
+        <hr />
+        <tb-column-filter-buttons></tb-column-filter-buttons>
+    </form>
+</div>

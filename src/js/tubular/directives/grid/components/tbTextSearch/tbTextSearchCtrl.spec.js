@@ -2,7 +2,7 @@
 
 describe('Module: tubular.directives', () => {
     describe('Controller: tbTextSearchController', () => {
-        var sut, scope, $element, $routeParams, tubularEditorService;
+        var sut, scope, $element, tubularEditorService;
         var $controller;
 
         beforeEach(() => {

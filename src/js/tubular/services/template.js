@@ -1,4 +1,4 @@
-﻿(function (angular) {
+﻿(angular => {
     'use strict';
 
     angular.module('tubular.services')
@@ -132,34 +132,7 @@
                 };
 
                 // Loading popovers templates
-                me.tbColumnDateTimeFilterPopoverTemplateName = 'tbColumnDateTimeFilterPopoverTemplate.html';
-
-                if (!$templateCache.get(me.tbColumnDateTimeFilterPopoverTemplateName)) {
-                    const htmlDateSelector =
-                        '<input class="form-control" type="date" ng-model="$ctrl.filter.Text" autofocus ng-keypress="$ctrl.checkEvent($event)" ' +
-                            'placeholder="{{\'CAPTION_VALUE\' | translate}}" ng-disabled="$ctrl.filter.Operator == \'None\'" />' +
-                            '<input type="date" class="form-control" ng-model="$ctrl.filter.Argument[0]" ng-keypress="$ctrl.checkEvent($event)" ng-show="$ctrl.filter.Operator == \'Between\'" />';
-
-                    const bootstrapDateSelector = '<div class="input-group">' +
-                        '<input type="text" class="form-control" uib-datepicker-popup="MM/dd/yyyy" ng-model="$ctrl.filter.Text" autofocus ng-keypress="$ctrl.checkEvent($event)" ' +
-                        'placeholder="{{\'CAPTION_VALUE\' | translate}}" ng-disabled="$ctrl.filter.Operator == \'None\'" is-open="$ctrl.dateOpen" />' +
-                        '<span class="input-group-btn">' +
-                        '<button type="button" class="btn btn-default" ng-click="$ctrl.dateOpen = !$ctrl.dateOpen;"><i class="fa fa-calendar"></i></button>' +
-                        '</span>' +
-                        '</div>';
-
-                    me.tbColumnDateTimeFilterPopoverTemplate = `${'<div>' +
-                        '<form class="tubular-column-filter-form" onsubmit="return false;">' +
-                        '<select class="form-control" ng-options="key as value for (key , value) in $ctrl.filterOperators" ng-model="$ctrl.filter.Operator" ng-hide="$ctrl.dataType == \'boolean\'"></select>&nbsp;'}${
-                        me.canUseHtml5Date() ? htmlDateSelector : bootstrapDateSelector
-                        }<hr />` +
-                        '<tb-column-filter-buttons></tb-column-filter-buttons>' +
-                        '</form>' +
-                        '</div>';
-
-                    $templateCache.put(me.tbColumnDateTimeFilterPopoverTemplateName,
-                        me.tbColumnDateTimeFilterPopoverTemplate);
-                }
+                me.tbColumnDateTimeFilterPopoverTemplateName = me.canUseHtml5Date() ? 'tbColumnDateTimeFilterPopoverHtml5.tpl.html' : 'tbColumnDateTimeFilterPopoverBs.tpl.html';
 
                 /**
                  * Generates the grid's cells markup
@@ -168,16 +141,22 @@
                  * @returns {string}
                  */
                 me.generateCells = (columns, mode) => columns.reduce((prev, el) => {
-                        const editorTag = el.EditorType
-                            .replace(/([A-Z])/g, $1 => `-${  $1.toLowerCase()}`);
+                        const editorTag = mode === 'Inline' ? el.EditorType
+                            .replace(/([A-Z])/g, $1 => `-${$1.toLowerCase()}`) : '';
+                        const templateExpression = el.Template || `<span ng-bind="row.${el.Name}"></span>`;
 
-                        return `${prev  }\r\n\t\t<tb-cell-template column-name="${el.Name}">` +
-                            `\r\n\t\t\t${
-                            mode === 'Inline'
-                                ? `<${editorTag} is-editing="row.$isEditing" value="row.${el.Name}"></${editorTag}>`
-                                : el.Template
-                            }\r\n\t\t</tb-cell-template>`;
+                        return `${prev}\r\n\t\t<td tb-cell ng-transclude column-name="${el.Name}">
+                            \t\t\t${mode === 'Inline' ? `<${editorTag} is-editing="row.$isEditing" value="row.${el.Name}"></${editorTag}>` : templateExpression}
+                            \t\t</td>`;
                     }, '');
+
+                me.generateColumnsDefinitions = (columns) => columns.reduce((prev, el) => 
+                        `${prev}
+                        \t\t<tb-column name="${el.Name}" label="${el.Label}" column-type="${el.DataType}" sortable="${el.Sortable}" 
+                        \t\t\tis-key="${el.IsKey}" searchable="${el.Searchable}" ${el.Sortable ? `\r\n\t\t\tsort-direction="${el.SortDirection}" sort-order="${el.SortOrder}" ` : ' '}
+                                visible="${el.Visible}">${el.Filter ? '\r\n\t\t\t<tb-column-filter></tb-column-filter>' : ''}
+                        \t\t\t<tb-column-header><span>{{label}}</span></tb-column-header>
+                        \t\t</tb-column>`, '');
 
                 /**
                  * Generates a grid markup using a columns model and grids options
@@ -216,65 +195,31 @@
                         bottomToolbar += '\r\n\t<tb-grid-pager-info class="col-md-3"></tb-grid-pager-info>';
                     }
 
+                    const columnDefinitions = me.generateColumnsDefinitions(columns);
+                    const rowsDefinitions = me.generateCells(columns, options.Mode);
+
                     return `${'<div class="container">' +
-                        '\r\n<tb-grid server-url="'}${
-                        options.dataUrl
-                        }" request-method="${
-                        options.RequestMethod
-                        }" class="row" ` +
-                        `page-size="10" require-authentication="${  options.RequireAuthentication  }" ${
-                        options.Mode !== 'Read-Only' ? ` editor-mode="${  options.Mode.toLowerCase()  }"` : ''
-                        }>${
-                        topToolbar === '' ? '' : `\r\n\t<div class="row">${  topToolbar  }\r\n\t</div>`
-                        }\r\n\t<div class="row">` +
+                        '\r\n<tb-grid server-url="'}${options.dataUrl}" request-method="${options.RequestMethod}" class="row" ` +
+                        `page-size="10" require-authentication="${options.RequireAuthentication }" ${options.Mode !== 'Read-Only' ? ` editor-mode="${  options.Mode.toLowerCase()  }"` : ''}>${topToolbar === '' ? '' : `\r\n\t<div class="row">${  topToolbar  }\r\n\t</div>`}\r\n\t<div class="row">` +
                         '\r\n\t<div class="col-md-12">' +
                         '\r\n\t<div class="panel panel-default panel-rounded">' +
-                        '\r\n\t<tb-grid-table class="table-bordered">' +
-                        `\r\n\t<tb-column-definitions>${
-                        options.Mode !== 'Read-Only'
-                            ? '\r\n\t\t<tb-column label="Actions"><tb-column-header>{{label}}</tb-column-header></tb-column>'
-                            : ''
-                        }${columns.reduce((prev, el) => `${prev  }\r\n\t\t<tb-column name="${  el.Name  }" label="${  el.Label
-                                }" column-type="${  el.DataType  }" sortable="${  el.Sortable
-                                }" ` +
-                                `\r\n\t\t\tis-key="${  el.IsKey  }" searchable="${  el.Searchable
-                                }" ${
-                                el.Sortable
-                                    ? `\r\n\t\t\tsort-direction="${
-                                    el.SortDirection
-                                    }" sort-order="${
-                                    el.SortOrder
-                                    }" `
-                                    : ' '
-                                }visible="${
-                                el.Visible
-                                }">${
-                                el.Filter ? '\r\n\t\t\t<tb-column-filter></tb-column-filter>' : ''
-                                }\r\n\t\t\t<tb-column-header>{{label}}</tb-column-header>` +
-                                '\r\n\t\t</tb-column>')
-                        }\r\n\t</tb-column-definitions>` +
+                        `\r\n\t<tb-grid-table class="table-bordered">
+                        \t<tb-column-definitions>
+                        ${columnDefinitions}
+                        </tb-column-definitions>` +
                         '\r\n\t<tb-row-set>' +
                         `\r\n\t<tb-row-template ng-repeat="row in $component.rows" row-model="row">${
                         options.Mode !== 'Read-Only'
-                            ? `\r\n\t\t<tb-cell-template>${
-                            options
-                                .Mode ===
-                                'Inline'
-                                ? '\r\n\t\t\t<tb-save-button model="row"></tb-save-button>'
-                                : ''
-                            }\r\n\t\t\t<tb-edit-button model="row"></tb-edit-button>` +
+                            ? `\r\n\t\t<tb-cell-template>${options.Mode === 'Inline' ? '\r\n\t\t\t<tb-save-button model="row"></tb-save-button>' : ''}\r\n\t\t\t<tb-edit-button model="row"></tb-edit-button>` +
                             '\r\n\t\t</tb-cell-template>'
                             : ''
-                        }${me.generateCells(columns, options.Mode)
-                        }\r\n\t</tb-row-template>` +
-                        '\r\n\t</tb-row-set>' +
-                        '\r\n\t</tb-grid-table>' +
-                        '\r\n\t</div>' +
-                        '\r\n\t</div>' +
-                        `\r\n\t</div>${
-                        bottomToolbar === '' ? '' : `\r\n\t<div class="row">${  bottomToolbar  }\r\n\t</div>`
-                        }\r\n</tb-grid>` +
-                        '\r\n</div>';
+                        }${rowsDefinitions}\r\n\t</tb-row-template>` +
+                        `\r\n\t</tb-row-set>
+                        \t</tb-grid-table>
+                        \t</div>
+                        \t</div>
+                        \t</div>${bottomToolbar === '' ? '' : `\r\n\t<div class="row">${  bottomToolbar  }\r\n\t</div>`}\r\n</tb-grid>
+                        </div>`;
                 };
 
                 me.getEditorTypeByDateType = dataType => {
@@ -370,14 +315,10 @@
 
                 me.generatePopupTemplate = (model, title) => {
                     const columns = me.createColumns(model);
+                    title = title || 'Edit Row';
 
-                    return `${'<tb-form model="Model">' +
-                        '<div class="modal-header"><h3 class="modal-title">'}${
-                        title || 'Edit Row'
-                        }</h3></div>` +
-                        `<div class="modal-body">${
-                        me.generateFieldsArray(columns).join('')
-                        }</div>` +
+                    return `<tb-form model="Model"><div class="modal-header"><h3 class="modal-title">${title}</h3></div>` +
+                        `<div class="modal-body">${me.generateFieldsArray(columns).join('')}</div>` +
                         '<div class="modal-footer">' +
                         '<button class="btn btn-primary" ng-click="savePopup()" ng-disabled="!Model.$valid()">Save</button>' +
                         '<button class="btn btn-danger" ng-click="closePopup()" formnovalidate>Cancel</button>' +
