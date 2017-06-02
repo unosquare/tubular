@@ -308,7 +308,7 @@ describe('Module: tubular.directives', () => {
                 expect(keys[0]).toBe('tubular.tbgrid_columns');
             })
 
-            it('should storage columns', () => {
+            it('should columns be visible', () => {
                 scope.columnWatcher();
                 sut.columns = [
                     { 'DataType': 'string', 'IsKey': true, 'Name': 'Id', 'Visible': false }
@@ -546,12 +546,6 @@ describe('Module: tubular.directives', () => {
                 window.localStorage.setItem('tubular.tbgrid_pageSize', 30);
                 sut.retrieveData();
                 expect(sut.pageSize).toBe(30);
-            })
-
-            it('should update pageSize on pageSize < 10', () => {
-                sut.pageSize = 5;
-                sut.retrieveData();
-                expect(sut.pageSize).toBe(20);
             })
 
             it('should update pageSize on pageSize < 10', () => {
