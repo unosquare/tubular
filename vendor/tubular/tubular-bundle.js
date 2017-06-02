@@ -2832,7 +2832,7 @@ angular.module('tubular.services', ['ui.bootstrap'])
     angular.module('tubular.services')
         .factory('tubularAuthInterceptor', ['$q', '$injector', 'tubularConfig', function ($q, $injector, tubularConfig) {
 
-            let authRequestRunning = null;
+            let refreshTokenRequest = null;
             const tubularHttpName = 'tubularHttp';
             const evtInvalidAuthData = 'tbAuthentication_OnInvalidAuthenticationData';
 
@@ -2899,8 +2899,8 @@ angular.module('tubular.services', ['ui.bootstrap'])
 
                 rejection.triedRefreshTokens = true;
 
-                if (!authRequestRunning) {
-                    authRequestRunning = $injector.get('$http')({
+                if (!refreshTokenRequest) {
+                    refreshTokenRequest = $injector.get('$http')({
                         method: 'POST',
                         url: webApiSettings.refreshTokenUrl(),
                         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -2908,8 +2908,8 @@ angular.module('tubular.services', ['ui.bootstrap'])
                     });
                 }
 
-                authRequestRunning.then(r => {
-                    authRequestRunning = null;
+                refreshTokenRequest.then(r => {
+                    refreshTokenRequest = null;
                     tubularHttp.initAuth(r.data);
 
                     if (tubularHttp.isAuthenticated()) {
@@ -2921,7 +2921,7 @@ angular.module('tubular.services', ['ui.bootstrap'])
                         deferred.reject(rejection);
                     }
                 }, response => {
-                    authRequestRunning = null;
+                    refreshTokenRequest = null;
                     tubularHttp.removeAuthentication();
                     deferred.reject(response);
 
