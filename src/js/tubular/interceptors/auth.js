@@ -92,7 +92,7 @@
                     authRequestRunning = null;
                     tubularHttp.initAuth(r.data);
 
-                    if (webApiSettings.requireAuthentication() && tubularHttp.isAuthenticated()) {
+                    if (tubularHttp.isAuthenticated()) {
                         rejection.config.headers.Authorization = `Bearer ${tubularHttp.userData.bearerToken}`;
                         $injector.get('$http')(rejection.config)
                             .then(resp => deferred.resolve(resp), () => deferred.reject(r));
