@@ -25,15 +25,15 @@ describe('Component: Grid.Pager', () => {
     scope.$digest();
   }
 
-  fit('should render pager', () => {
+  it('should render pager', () => {
     generate();
 
     const buttons = element.find("li");
     expect(buttons.length).toBe(5, 'should have 5 buttons');
   });
 
-  fit('should have more pages', () => {
-        var payload = [];
+  it('should have more pages', () => {
+    var payload = [];
     for (var index = 0; index < 100; index++) {
       payload.push([index, 'Name' + index]);
     }
@@ -45,4 +45,25 @@ describe('Component: Grid.Pager', () => {
     const buttons = element.find("li");
     expect(buttons.length).toBe(9, 'should have 9 buttons');
   });
+
+  it('state of the buttons',() => {
+    const buttons = element.find('a').toArray();
+
+    expect(buttons[0].hasAttribute('disabled')).toBe(true);
+    expect(buttons[1].hasAttribute('disabled')).toBe(true);
+    expect(buttons[2].hasAttribute('disabled')).toBe(false);
+    expect(buttons[3].hasAttribute('disabled')).toBe(false);
+    expect(buttons[4].hasAttribute('disabled')).toBe(false);
+    expect(buttons[5].hasAttribute('disabled')).toBe(false);
+    expect(buttons[6].hasAttribute('disabled')).toBe(false);
+    expect(buttons[7].hasAttribute('disabled')).toBe(false);
+    expect(buttons[8].hasAttribute('disabled')).toBe(false);
+  })
+
+  it('click 2 page', () => {
+    const buttons = element.find('li a');
+    const data = element.find('td');
+    buttons[3].click();
+  });
+
 });
