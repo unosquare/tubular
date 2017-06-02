@@ -129,6 +129,7 @@
                             return deferred.promise;
                         }
                         else {
+                            tubularHttp.removeAuthentication();
                             $injector.get('$rootScope').$emit('tbAuthentication_OnInvalidAuthenticationData');
                         }
                     }
