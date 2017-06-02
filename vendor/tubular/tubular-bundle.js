@@ -2834,6 +2834,7 @@ angular.module('tubular.services', ['ui.bootstrap'])
 
             let authRequestRunning = null;
             const tubularHttpName = 'tubularHttp';
+            const evtInvalidAuthData = 'tbAuthentication_OnInvalidAuthenticationData';
 
             const service = {
                 request: request,
@@ -2911,7 +2912,7 @@ angular.module('tubular.services', ['ui.bootstrap'])
                     authRequestRunning = null;
                     tubularHttp.initAuth(r.data);
 
-                    if (webApiSettings.requireAuthentication() && tubularHttp.isAuthenticated()) {
+                    if (tubularHttp.isAuthenticated()) {
                         rejection.config.headers.Authorization = `Bearer ${tubularHttp.userData.bearerToken}`;
                         $injector.get('$http')(rejection.config)
                             .then(resp => deferred.resolve(resp), () => deferred.reject(r));
@@ -2924,7 +2925,7 @@ angular.module('tubular.services', ['ui.bootstrap'])
                     tubularHttp.removeAuthentication();
                     deferred.reject(response);
 
-                    $injector.get('$rootScope').$emit('tbAuthentication_OnInvalidAuthenticationData');
+                    $injector.get('$rootScope').$emit(evtInvalidAuthData);
                     return;
                 });
             }
@@ -2949,7 +2950,7 @@ angular.module('tubular.services', ['ui.bootstrap'])
                         }
                         else {
                             tubularHttp.removeAuthentication();
-                            $injector.get('$rootScope').$emit('tbAuthentication_OnInvalidAuthenticationData');
+                            $injector.get('$rootScope').$emit(evtInvalidAuthData);
                         }
                     }
                 }
