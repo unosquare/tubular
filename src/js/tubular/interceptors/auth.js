@@ -15,6 +15,7 @@
 
             let authRequestRunning = null;
             const tubularHttpName = 'tubularHttp';
+            const evtInvalidAuthData = 'tbAuthentication_OnInvalidAuthenticationData';
 
             const service = {
                 request: request,
@@ -105,7 +106,7 @@
                     tubularHttp.removeAuthentication();
                     deferred.reject(response);
 
-                    $injector.get('$rootScope').$emit('tbAuthentication_OnInvalidAuthenticationData');
+                    $injector.get('$rootScope').$emit(evtInvalidAuthData);
                     return;
                 });
             }
@@ -130,7 +131,7 @@
                         }
                         else {
                             tubularHttp.removeAuthentication();
-                            $injector.get('$rootScope').$emit('tbAuthentication_OnInvalidAuthenticationData');
+                            $injector.get('$rootScope').$emit(evtInvalidAuthData);
                         }
                     }
                 }
