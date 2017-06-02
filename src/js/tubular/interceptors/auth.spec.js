@@ -162,7 +162,7 @@ describe('Module: tubular.services', function () {
             tubularHttp.userData.isAuthenticated = true;
             tubularHttp.userData.expirationDate = new Date((new Date()).getTime() - 10000);
             tubularHttp.userData.refreshToken = 'original_refresh';
-            tubularHttp.userData.bearerToken = "original_bearer";
+            tubularHttp.userData.bearerToken = 'original_bearer';
 
             expect(rejection.triedRefreshTokens).toBeUndefined();
 
@@ -172,7 +172,7 @@ describe('Module: tubular.services', function () {
 
             AuthInterceptor
                 .responseError(rejection)
-                .then(function (resp) {
+                .then(resp => {
                     expect(resp).toBeUndefined();
                     done();
                 }, rejection => {
@@ -183,6 +183,30 @@ describe('Module: tubular.services', function () {
 
             $httpBackend.flush();
             $rootScope.$digest();
+        });
+
+        it('should broadcast invalid authentication', done => {
+            var config = {
+                method: 'GET',
+                url: '/api/dummy',
+                headers: {
+                }
+            };
+
+            var rejection = {
+                config: config,
+                status: 401
+            };
+            
+            $rootScope.$on('tbAuthentication_OnInvalidAuthenticationData', done);
+            
+            AuthInterceptor
+                .responseError(rejection)
+                .then(resp => {
+                    expect(resp).toBeUndefined();
+                }, rejection => {
+                    expect(rejection).toBeDefined();
+                });
         });
     });
 });

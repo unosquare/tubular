@@ -78,54 +78,59 @@
                 const deferred = $q.defer();
 
                 if (rejection.status === 401) {
-                    const tubularHttp = $injector.get(tubularHttpName);
                     const webApiSettings = tubularConfig.webApi;
 
                     if (webApiSettings.tokenUrl() !== rejection.config.url &&
-                        webApiSettings.refreshTokenUrl() !== rejection.config.url &&
-                        webApiSettings.enableRefreshTokens() &&
-                        webApiSettings.requireAuthentication() &&
-                        tubularHttp.isBearerTokenExpired() &&
-                        tubularHttp.userData.refreshToken) {
+                        webApiSettings.requireAuthentication()) {
+                        
+                        const tubularHttp = $injector.get(tubularHttpName);
 
-                        rejection.triedRefreshTokens = true;
+                        if (webApiSettings.enableRefreshTokens() &&
+                            webApiSettings.refreshTokenUrl() !== rejection.config.url &&
+                            tubularHttp.isBearerTokenExpired() &&
+                            tubularHttp.userData.refreshToken) {
 
-                        if (!authRequestRunning) {
-                            authRequestRunning = $injector.get('$http')({
-                                method: 'POST',
-                                url: webApiSettings.refreshTokenUrl(),
-                                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                                data: `grant_type=refresh_token&refresh_token=${tubularHttp.userData.refreshToken}`
+                            rejection.triedRefreshTokens = true;
+
+                            if (!authRequestRunning) {
+                                authRequestRunning = $injector.get('$http')({
+                                    method: 'POST',
+                                    url: webApiSettings.refreshTokenUrl(),
+                                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                                    data: `grant_type=refresh_token&refresh_token=${tubularHttp.userData.refreshToken}`
+                                });
+                            }
+
+                            authRequestRunning.then(r => {
+                                authRequestRunning = null;
+                                tubularHttp.initAuth(r.data);
+
+                                if (webApiSettings.requireAuthentication() && tubularHttp.isAuthenticated()) {
+                                    rejection.config.headers.Authorization = `Bearer ${tubularHttp.userData.bearerToken}`;
+                                    $injector.get('$http')(rejection.config)
+                                        .then(resp => deferred.resolve(resp), () => deferred.reject(r));
+                                }
+                                else {
+                                    deferred.reject(rejection);
+                                }
+                            }, response => {
+                                authRequestRunning = null;
+                                tubularHttp.removeAuthentication();
+                                deferred.reject(response);
+
+                                $injector.get('$rootScope').$emit('tbAuthentication_OnInvalidAuthenticationData');
+                                return;
                             });
+                            
+                            return deferred.promise;
                         }
-
-                        authRequestRunning.then(r => {
-                            authRequestRunning = null;
-                            tubularHttp.initAuth(r.data);
-
-                            if (webApiSettings.requireAuthentication() && tubularHttp.isAuthenticated()) {
-                                rejection.config.headers.Authorization = `Bearer ${tubularHttp.userData.bearerToken}`;
-                                $injector.get('$http')(rejection.config)
-                                    .then(resp => deferred.resolve(resp), () => deferred.reject(r));
-                            }
-                            else {
-                                deferred.reject(rejection);
-                            }
-                        }, response => {
-                            authRequestRunning = null;
-                            tubularHttp.removeAuthentication();
-                            deferred.reject(response);
-                            $injector.get('$location').path('/Login');
-                            return;
-                        });
-                    }
-                    else {
-                        deferred.reject(rejection);
+                        else {
+                            $injector.get('$rootScope').$emit('tbAuthentication_OnInvalidAuthenticationData');
+                        }
                     }
                 }
-                else {
-                    deferred.reject(rejection);
-                }
+
+                deferred.reject(rejection);
 
                 return deferred.promise;
             }
