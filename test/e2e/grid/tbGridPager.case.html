@@ -1,12 +1,12 @@
-<tb-grid server-url="{{serverUrl}}" require-authentication="false" page-size="10" require-authentication="false">
+<tb-grid server-url="{{serverUrl}}" require-authentication="false" page-size="10">
     <tb-grid-table>
         <tb-column-definitions>
-            <tb-column name="ID" sortable="true" sort-order="1" sort-direction="Ascending" is-key="true" column-type="numeric">
+            <tb-column name="ID">
                 <tb-column-header>
                     <span>{{label}}</span>
                 </tb-column-header>
             </tb-column>
-            <tb-column name="Name" sortable="true" aggregate="count" searchable="true">
+            <tb-column name="Name">
                 <tb-column-header>
                     <span>{{label}}</span>
                 </tb-column-header>
@@ -14,7 +14,7 @@
         </tb-column-definitions>
 
         <tb-row-set>
-            <tb-row-template ng-repeat="row in $component.rows" row-model="row" selectable="false">
+            <tb-row-template ng-repeat="row in $component.rows" row-model="row">
                 <tb-cell-template column-name="ID">
                     {{row.ID}}
                 </tb-cell-template>
@@ -25,7 +25,5 @@
         </tb-row-set>
     </tb-grid-table>
 
-    <tb-grid-pager class="col-md-6 col-xs-12"></tb-grid-pager>
-    <tb-page-size-selector class="col-md-3 col-xs-6" selectorcss="input-sm"></tb-page-size-selector>
-    <tb-grid-pager-info class="col-md-3 col-xs-6"></tb-grid-pager-info>
+    <tb-grid-pager></tb-grid-pager>
 </tb-grid>
