@@ -21,15 +21,16 @@ describe('Component: Grid', () => {
   }));
 
   function generate(flush) {
-    var tpl = templateCache.get('columns-as-attribute.case.html');
+    var tpl = templateCache.get('local-data-array.case.html');
     template = angular.element(tpl);
     element = compile(template)(scope);
     scope.$digest();
   }
 
-  it('should render rows', () => {
+  it('should render rows correctly', () => {
     generate();
 
-    expect(true).toBe(true);
+    const dataRow = element.find("tbody tr");
+    expect(dataRow.length).toBe(3, 'should have 3 data rows');
   });
 });
