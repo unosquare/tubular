@@ -33,20 +33,22 @@ describe('Component: Grid.Pager', () => {
   });
 
   it('should have more pages', () => {
-    var payload = [];
-    for (var index = 0; index < 100; index++) {
-      payload.push([index, 'Name' + index]);
-    }
     $httpBackend.expectPOST(serverUrl)
-      .respond(200, {"Counter": 0, "Payload": payload, "TotalRecordCount": 100, "FilteredRecordCount": 100, "TotalPages": 10, "CurrentPage": 1, "AggregationPayload": {}});
+      .respond(200, {"Counter": 0, "Payload": [], "TotalRecordCount": 100, "FilteredRecordCount": 100, "TotalPages": 10, "CurrentPage": 1, "AggregationPayload": {}});
 
     generate(true);
 
     const buttons = element.find("li");
     expect(buttons.length).toBe(9, 'should have 9 buttons');
+
   });
 
   it('state of the buttons',() => {
+     $httpBackend.expectPOST(serverUrl)
+      .respond(200, {"Counter": 0, "Payload": [], "TotalRecordCount": 100, "FilteredRecordCount": 100, "TotalPages": 10, "CurrentPage": 1, "AggregationPayload": {}});
+
+    generate(true);
+
     const buttons = element.find('a').toArray();
 
     expect(buttons[0].hasAttribute('disabled')).toBe(true);
@@ -58,12 +60,33 @@ describe('Component: Grid.Pager', () => {
     expect(buttons[6].hasAttribute('disabled')).toBe(false);
     expect(buttons[7].hasAttribute('disabled')).toBe(false);
     expect(buttons[8].hasAttribute('disabled')).toBe(false);
-  })
 
-  it('click 2 page', () => {
-    const buttons = element.find('li a');
-    const data = element.find('td');
-    buttons[3].click();
+  });
+
+  it('click second page', () => {
+    $httpBackend.expectPOST(serverUrl)
+      .respond(200, {"Counter": 0, "Payload": [], "TotalRecordCount": 100, "FilteredRecordCount": 100, "TotalPages": 10, "CurrentPage": 2, "AggregationPayload": {}});
+
+    generate(true);
+    
+    const buttons = element.find('a').toArray();
+
+    expect(buttons[0].hasAttribute('disabled')).toBe(false);
+    expect(buttons[1].hasAttribute('disabled')).toBe(false);
+
+  });
+
+  it('click last page', () => {
+    $httpBackend.expectPOST(serverUrl)
+      .respond(200, {"Counter": 0, "Payload": [], "TotalRecordCount": 100, "FilteredRecordCount": 100, "TotalPages": 10, "CurrentPage": 10, "AggregationPayload": {}});
+
+    generate(true);
+    
+    const buttons = element.find('a').toArray();
+
+    expect(buttons[7].hasAttribute('disabled')).toBe(true);
+    expect(buttons[8].hasAttribute('disabled')).toBe(true);
+
   });
 
 });
