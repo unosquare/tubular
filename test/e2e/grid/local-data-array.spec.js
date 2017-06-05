@@ -30,6 +30,8 @@ describe('Component: Grid', () => {
   it('should render rows correctly', () => {
     generate();
 
+    const headers = element.find("th");
+    expect(headers.length).toBe(2, 'should have 2 columns');
     const dataRow = element.find("tbody tr");
     expect(dataRow.length).toBe(3, 'should have 3 data rows');
   });
