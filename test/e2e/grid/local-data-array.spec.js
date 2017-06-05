@@ -20,7 +20,7 @@ describe('Component: Grid', () => {
     scope.dataSource = dataSource;
   }));
 
-  function generate(flush) {
+  function generate() {
     var tpl = templateCache.get('local-data-array.case.html');
     template = angular.element(tpl);
     element = compile(template)(scope);
