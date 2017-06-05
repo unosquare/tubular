@@ -13,8 +13,9 @@
     angular.module('tubular.services')
         .factory('tubularAuthInterceptor', ['$q', '$injector', 'tubularConfig', function ($q, $injector, tubularConfig) {
 
-            let authRequestRunning = null;
+            let refreshTokenRequest = null;
             const tubularHttpName = 'tubularHttp';
+            const evtInvalidAuthData = 'tbAuthentication_OnInvalidAuthenticationData';
 
             const service = {
                 request: request,
@@ -74,58 +75,68 @@
                 return response;
             }
 
-            function responseError(rejection) {
-                const deferred = $q.defer();
+            function resolveRefreshToken(tubularHttp, deferred, rejection) {
+                const webApiSettings = tubularConfig.webApi;
 
-                if (rejection.status === 401) {
-                    const tubularHttp = $injector.get(tubularHttpName);
-                    const webApiSettings = tubularConfig.webApi;
+                rejection.triedRefreshTokens = true;
 
-                    if (webApiSettings.tokenUrl() !== rejection.config.url &&
-                        webApiSettings.refreshTokenUrl() !== rejection.config.url &&
-                        webApiSettings.enableRefreshTokens() &&
-                        webApiSettings.requireAuthentication() &&
-                        tubularHttp.isBearerTokenExpired() &&
-                        tubularHttp.userData.refreshToken) {
+                if (!refreshTokenRequest) {
+                    refreshTokenRequest = $injector.get('$http')({
+                        method: 'POST',
+                        url: webApiSettings.refreshTokenUrl(),
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        data: `grant_type=refresh_token&refresh_token=${tubularHttp.userData.refreshToken}`
+                    });
+                }
 
-                        rejection.triedRefreshTokens = true;
+                refreshTokenRequest.then(r => {
+                    refreshTokenRequest = null;
+                    tubularHttp.initAuth(r.data);
 
-                        if (!authRequestRunning) {
-                            authRequestRunning = $injector.get('$http')({
-                                method: 'POST',
-                                url: webApiSettings.refreshTokenUrl(),
-                                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                                data: `grant_type=refresh_token&refresh_token=${tubularHttp.userData.refreshToken}`
-                            });
-                        }
-
-                        authRequestRunning.then(r => {
-                            authRequestRunning = null;
-                            tubularHttp.initAuth(r.data);
-
-                            if (webApiSettings.requireAuthentication() && tubularHttp.isAuthenticated()) {
-                                rejection.config.headers.Authorization = `Bearer ${tubularHttp.userData.bearerToken}`;
-                                $injector.get('$http')(rejection.config)
-                                    .then(resp => deferred.resolve(resp), () => deferred.reject(r));
-                            }
-                            else {
-                                deferred.reject(rejection);
-                            }
-                        }, response => {
-                            authRequestRunning = null;
-                            tubularHttp.removeAuthentication();
-                            deferred.reject(response);
-                            $injector.get('$location').path('/Login');
-                            return;
-                        });
+                    if (tubularHttp.isAuthenticated()) {
+                        rejection.config.headers.Authorization = `Bearer ${tubularHttp.userData.bearerToken}`;
+                        $injector.get('$http')(rejection.config)
+                            .then(resp => deferred.resolve(resp), () => deferred.reject(r));
                     }
                     else {
                         deferred.reject(rejection);
                     }
+                }, response => {
+                    refreshTokenRequest = null;
+                    tubularHttp.removeAuthentication();
+                    deferred.reject(response);
+
+                    $injector.get('$rootScope').$emit(evtInvalidAuthData);
+                    return;
+                });
+            }
+
+            function responseError(rejection) {
+                const deferred = $q.defer();
+
+                if (rejection.status === 401) {
+                    const webApiSettings = tubularConfig.webApi;
+
+                    if (webApiSettings.tokenUrl() !== rejection.config.url &&
+                        webApiSettings.requireAuthentication()) {
+
+                        const tubularHttp = $injector.get(tubularHttpName);
+
+                        if (webApiSettings.enableRefreshTokens() &&
+                            webApiSettings.refreshTokenUrl() !== rejection.config.url &&
+                            tubularHttp.isBearerTokenExpired() &&
+                            tubularHttp.userData.refreshToken) {
+                            resolveRefreshToken(tubularHttp, deferred, rejection);
+                            return deferred.promise;
+                        }
+                        else {
+                            tubularHttp.removeAuthentication();
+                            $injector.get('$rootScope').$emit(evtInvalidAuthData);
+                        }
+                    }
                 }
-                else {
-                    deferred.reject(rejection);
-                }
+
+                deferred.reject(rejection);
 
                 return deferred.promise;
             }
