@@ -126,7 +126,7 @@
                             webApiSettings.refreshTokenUrl() !== rejection.config.url &&
                             tubularHttp.isBearerTokenExpired() &&
                             tubularHttp.userData.refreshToken) {
-                            resolveRefreshToken(tubularHttp, deferred, rejection)
+                            resolveRefreshToken(tubularHttp, deferred, rejection);
                             return deferred.promise;
                         }
                         else {
