@@ -7,18 +7,29 @@ describe('Module: tubular.services', () => {
             rootScope;
 
         const emptyResponse = {
-            Counter: 0,
-            CurrentPage: 1,
-            FilteredRecordCount: 0,
-            TotalRecordCount: 0,
-            Payload: [],
-            TotalPages: 0
+            data: {
+                Counter: 0,
+                CurrentPage: 1,
+                FilteredRecordCount: 0,
+                TotalRecordCount: 0,
+                Payload: [],
+                TotalPages: 0
+            }
         };
 
         const dataSource = [
             [1, 'Alexei'],
             [2, 'Alejandro'],
-            [3, 'Geovanni']
+            [3, 'Geovanni'],
+            [4, 'Alexei'],
+            [5, 'Alejandro'],
+            [6, 'Geovanni'],
+            [7, 'Alexei'],
+            [8, 'Alejandro'],
+            [9, 'Geovanni'],
+            [10, 'Alexei'],
+            [11, 'Alejandro'],
+            [12, 'Geovanni'],
         ];
 
         const emptyRequest = {
@@ -53,9 +64,9 @@ describe('Module: tubular.services', () => {
         });
 
         it('should return empty response with null data', done => {
-            
+
             localPager.process(null, null).then(data => {
-                expect(data).toBe(emptyResponse);
+                expect(data).toEqual(emptyResponse);
                 done();
             });
 
@@ -64,7 +75,19 @@ describe('Module: tubular.services', () => {
 
         it('should return the data in the format', done => {
             localPager.process(emptyRequest, dataSource).then(data => {
-                expect(data).toBe(emptyResponse);
+                const expectedResponse = {
+                    data: {
+                        Counter: 0,
+                        CurrentPage: 1,
+                        FilteredRecordCount: 12,
+                        TotalRecordCount: 12,
+                        Payload: [ [ 1, 'Alexei' ], [ 2, 'Alejandro' ], [ 3, 'Geovanni' ], [ 4, 'Alexei' ], [ 5, 'Alejandro' ], [ 6, 'Geovanni' ], [ 7, 'Alexei' ], [ 8, 'Alejandro' ], [ 9, 'Geovanni' ],
+ [ 10, 'Alexei' ] ],
+                        TotalPages: 2
+                    }
+                };
+
+                expect(data).toEqual(expectedResponse);
                 done();
             });
 

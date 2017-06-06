@@ -72,17 +72,10 @@
             response.FilteredRecordCount = set.length;
             response.TotalRecordCount = set.length;
             response.Payload = set.slice(request.Skip, request.Take + request.Skip);
-            response.TotalPages = (response.FilteredRecordCount + request.Take - 1) / request.Take;
+            response.TotalPages = Math.trunc((response.FilteredRecordCount + request.Take - 1) / request.Take);
 
             if (response.TotalPages > 0) {
-                const shift = Math.pow(10, 0);
-                const number = 1 + ((request.Skip / response.FilteredRecordCount) * response.TotalPages);
-
-                response.CurrentPage = ((number * shift) | 0) / shift;
-
-                if (response.CurrentPage < 1) {
-                    response.CurrentPage = 1;
-                }
+                response.CurrentPage = request.Skip / set.length + 1;
             }
 
             return response;
