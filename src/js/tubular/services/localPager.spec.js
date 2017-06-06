@@ -3,7 +3,9 @@
 describe('Module: tubular.services', () => {
 
     describe('Service: localPager', () => {
-        var localPager;
+        var localPager,
+            rootScope;
+
         const emptyResponse = {
             Counter: 0,
             CurrentPage: 1,
@@ -37,8 +39,9 @@ describe('Module: tubular.services', () => {
         beforeEach(() => {
             module('tubular.services');
 
-            inject((_localPager_) => {
+            inject((_localPager_, _$rootScope_) => {
                 localPager = _localPager_;
+                rootScope = _$rootScope_;
             });
         });
 
@@ -46,13 +49,17 @@ describe('Module: tubular.services', () => {
 
         it('should return a promise', () => {
             expect(localPager.process(null, null)).toBeDefined();
+            rootScope.$digest();
         });
 
         it('should return empty response with null data', done => {
+            
             localPager.process(null, null).then(data => {
                 expect(data).toBe(emptyResponse);
                 done();
             });
+
+            rootScope.$digest();
         });
 
         it('should return the data in the format', done => {
@@ -60,6 +67,8 @@ describe('Module: tubular.services', () => {
                 expect(data).toBe(emptyResponse);
                 done();
             });
+
+            rootScope.$digest();
         });
     });
 });
