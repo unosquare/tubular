@@ -7,7 +7,7 @@
          * @name localPager
          *
          * @description
-         * TODO
+         * Represents a service to handle a Tubular Grid Request in client side
          */
         .service('localPager', localPager);
 
@@ -37,56 +37,33 @@
 
         function doProcess(deferred, request, data) {
             data = search(request, data);
-            console.log("search", data);
             data = filter(request, data);
-            console.log("filter", data);
             data = sort(request, data);
-            console.log("sort", data);
 
-            var response = format(request, data);
-
-            deferred.resolve({ data: response });
+            deferred.resolve({ data: format(request, data) });
         }
 
         function sort(request, set) {
-            // Get columns with sort
-            // TODO: Check SortOrder 
             var sorts = request.Columns
-                .filter(function (el) { return el.SortOrder > 0; })
-                .map(function (el) { return (el.SortDirection === 'Descending' ? '-' : '') + el.Name; });
+                .filter(el => el.SortOrder > 0)
+                .map(el => (el.SortDirection === 'Descending' ? '-' : '') + el.Name);
 
-            for (var sort in sorts) {
-                if (sorts.hasOwnProperty(sort)) {
-                    set = orderByFilter(set, sorts[sort]);
-                }
-            }
+            angular.forEach(sort, sort => set = orderByFilter(set, sort));
+
             return set;
         }
 
         function search(request, set) {
             if (request.Search && request.Search.Operator === 'Auto' && request.Search.Text) {
-                var searchables = request.Columns
-                    .filter(function (el) { return el.Searchable; })
-                    .map(function (el) {
-                        var obj = {};
-                        obj[el.Name] = request.Search.Text;
-                        return obj;
-                    });
+                const searchables = request.Columns
+                    .filter(el => el.Searchable)
+                    .map(el => ({ [el.Name] : request.Search.Text }));
 
                 if (searchables.length > 0) {
-                    return filterFilter(set, function (value) {
-                        var filters = reduceFilterArray(searchables);
-                        var result = false;
-                        angular.forEach(filters, function (filter, column) {
-                            if (value[column] && value[column].toLocaleLowerCase().indexOf(filter) >= 0) {
-                                result = true;
-                            }
-                        });
-
-                        return result;
-                    });
+                    return filterFilter(set, value => reduceFilterArray(searchables).some(column => value[column] && value[column].toLocaleLowerCase().indexOf(filter) >= 0));
                 }
             }
+
             return set;
         }
 
@@ -94,35 +71,32 @@
             // Get filters (only Contains)
             // TODO: Implement all operators
             var filters = request.Columns
-                .filter(function (el) { return el.Filter && el.Filter.Text; })
-                .map(function (el) {
-                    var obj = {};
-                    if (el.Filter.Operator === 'Contains') {
-                        obj[el.Name] = el.Filter.Text;
-                    }
-
-                    return obj;
-                });
+                .filter(el => el.Filter && el.Filter.Text)
+                .map(el => ({ [el.Name]: el.Filter.Text}));
 
             if (filters.length > 0) {
                 return filterFilter(set, reduceFilterArray(filters));
             }
+            
             return set;
         }
 
         function format(request, set) {
-            var response = createEmptyResponse();
+            const response = createEmptyResponse();
             response.FilteredRecordCount = set.length;
             response.TotalRecordCount = set.length;
             response.Payload = set.slice(request.Skip, request.Take + request.Skip);
             response.TotalPages = (response.FilteredRecordCount + request.Take - 1) / request.Take;
 
             if (response.TotalPages > 0) {
-                var shift = Math.pow(10, 0);
-                var number = 1 + ((request.Skip / response.FilteredRecordCount) * response.TotalPages);
+                const shift = Math.pow(10, 0);
+                const number = 1 + ((request.Skip / response.FilteredRecordCount) * response.TotalPages);
 
                 response.CurrentPage = ((number * shift) | 0) / shift;
-                if (response.CurrentPage < 1) response.CurrentPage = 1;
+
+                if (response.CurrentPage < 1) {
+                    response.CurrentPage = 1;
+                }
             }
 
             return response;
@@ -138,6 +112,7 @@
                 TotalPages: 0
             };
         }
+
         function reduceFilterArray(filters) {
             var filtersPattern = {};
 
@@ -154,5 +129,4 @@
             return filtersPattern;
         }
     }
-
 })(angular);
