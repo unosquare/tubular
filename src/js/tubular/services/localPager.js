@@ -17,11 +17,12 @@
         this.process = (request, data) => {
             return $q(resolve => {
                 if (data && data.length > 0) {
+                    const totalRecords = data.length;
                     data = search(request.data, data);
                     data = filter(request.data, data);
                     data = sort(request.data, data);
 
-                    resolve({ data: format(request.data, data) });
+                    resolve({ data: format(request.data, data, totalRecords) });
                 }
                 else {
                     resolve({ data: createEmptyResponse() });
@@ -42,11 +43,13 @@
         function search(request, set) {
             if (request.Search && request.Search.Operator === 'Auto' && request.Search.Text) {
                 const searchables = request.Columns
-                    .filter(el => el.Searchable)
-                    .map(el => ({ [el.Name]: request.Search.Text }));
-
+                    .map((el, index) => el.Searchable ? index : null)
+                    .filter(el => el != null);
+                
                 if (searchables.length > 0) {
-                    return filterFilter(set, value => reduceFilterArray(searchables).some(column => value[column] && value[column].toLocaleLowerCase().indexOf(filter) >= 0));
+                    return set.filter(value => searchables.some((el, index) => 
+                        angular.isString(value[index]) && value[index].toLocaleLowerCase().indexOf(request.Search.Text.toLocaleLowerCase()) >= 0
+                    ));
                 }
             }
 
@@ -58,7 +61,7 @@
             // TODO: Implement all operators
             var filters = request.Columns
                 .filter(el => el.Filter && el.Filter.Text)
-                .map(el => ({ [el.Name]: el.Filter.Text }));
+                .map(el => ({ [el.Name]: el.Filter.Text.toLocaleLowerCase() }));
 
             if (filters.length > 0) {
                 return filterFilter(set, reduceFilterArray(filters));
@@ -67,10 +70,10 @@
             return set;
         }
 
-        function format(request, set) {
+        function format(request, set, totalRecords) {
             const response = createEmptyResponse();
             response.FilteredRecordCount = set.length;
-            response.TotalRecordCount = set.length;
+            response.TotalRecordCount = totalRecords;
             response.Payload = set.slice(request.Skip, request.Take + request.Skip);
             response.TotalPages = Math.trunc((response.FilteredRecordCount + request.Take - 1) / request.Take);
 
