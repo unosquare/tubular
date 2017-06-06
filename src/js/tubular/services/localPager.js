@@ -15,23 +15,18 @@
 
     function localPager($q, filterFilter, orderByFilter) {
         this.process = (request, data) => {
-            var deferred = $q.defer();
+            return $q(resolve => {
+                if (data && data.length > 0) {
+                    data = search(request.data, data);
+                    data = filter(request.data, data);
+                    data = sort(request.data, data);
 
-            if (data && data.length > 0) {
-                data = search(request, data);
-                data = filter(request, data);
-                data = sort(request, data);
-
-                deferred.resolve({ data: format(request, data) });
-            }
-            else 
-            {
-                const response = { data: createEmptyResponse() };
-                console.log(response);
-                deferred.resolve(response);
-            }
-
-            return deferred.promise;
+                    resolve({ data: format(request.data, data) });
+                }
+                else {
+                    resolve({ data: createEmptyResponse() });
+                }
+            });
         };
 
         function sort(request, set) {
@@ -48,7 +43,7 @@
             if (request.Search && request.Search.Operator === 'Auto' && request.Search.Text) {
                 const searchables = request.Columns
                     .filter(el => el.Searchable)
-                    .map(el => ({ [el.Name] : request.Search.Text }));
+                    .map(el => ({ [el.Name]: request.Search.Text }));
 
                 if (searchables.length > 0) {
                     return filterFilter(set, value => reduceFilterArray(searchables).some(column => value[column] && value[column].toLocaleLowerCase().indexOf(filter) >= 0));
@@ -63,7 +58,7 @@
             // TODO: Implement all operators
             var filters = request.Columns
                 .filter(el => el.Filter && el.Filter.Text)
-                .map(el => ({ [el.Name]: el.Filter.Text}));
+                .map(el => ({ [el.Name]: el.Filter.Text }));
 
             if (filters.length > 0) {
                 return filterFilter(set, reduceFilterArray(filters));
