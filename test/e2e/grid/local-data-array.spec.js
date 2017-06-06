@@ -5,15 +5,15 @@ describe('Component: Grid', () => {
   let scope, compile, templateCache, template, element;
 
   const dataSource = [
-      { 'ID': 1, 'Name': 'Alexei' },
-      { 'ID': 2, 'Name': 'Alejandro' },
-      { 'ID': 3, 'Name': 'Geovanni' }
+    [1, 'Alexei'],
+    [2, 'Alejandro'],
+    [3, 'Geovanni']
   ];
 
   beforeEach(module('tubular.tests'));
   beforeEach(module('tubular'));
 
-  beforeEach(inject(function(_$compile_, _$rootScope_, _$templateCache_) {
+  beforeEach(inject(function (_$compile_, _$rootScope_, _$templateCache_) {
     scope = _$rootScope_;
     compile = _$compile_;
     templateCache = _$templateCache_;

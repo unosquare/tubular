@@ -10,18 +10,23 @@
             '$http',
             'tubularConfig',
             '$window',
+            'localPager',
             function (
                 $scope,
                 tubularPopupService,
                 TubularModel,
                 $http,
                 tubularConfig,
-                $window) {
+                $window,
+                localPager) {
                 const $ctrl = this;
                 const prefix = tubularConfig.localStorage.prefix();
                 const storage = $window.localStorage;
 
                 $ctrl.$onInit = () => {
+                    if (angular.isDefined($ctrl.gridDatasource) && angular.isDefined($ctrl.serverUrl))
+                        throw 'Cannot define gridDatasource and serverUrl at the same time.';
+
                     $ctrl.tubularDirective = 'tubular-grid';
 
                     $ctrl.name = $ctrl.name || 'tbgrid';
@@ -65,13 +70,13 @@
                         return;
                     }
 
-                    storage.setItem(`${prefix + $ctrl.name  }_columns`, angular.toJson($ctrl.columns));
+                    storage.setItem(`${prefix + $ctrl.name}_columns`, angular.toJson($ctrl.columns));
                 };
 
                 $scope.$watch('$ctrl.columns', $scope.columnWatcher, true);
 
                 $scope.serverUrlWatcher = (newVal, prevVal) => {
-                    if ($ctrl.hasColumnsDefinitions === false || $ctrl.currentRequest || newVal === prevVal) {
+                    if ($ctrl.hasColumnsDefinitions === false || $ctrl.currentRequest || newVal === prevVal || angular.isDefined($ctrl.gridDatasource)) {
                         return;
                     }
 
@@ -79,6 +84,16 @@
                 };
 
                 $scope.$watch('$ctrl.serverUrl', $scope.serverUrlWatcher);
+
+                $scope.gridDatasourceWatcher = (newVal, prevVal) => {
+                    if ($ctrl.hasColumnsDefinitions === false || $ctrl.currentRequest || newVal === prevVal || angular.isDefined($ctrl.serverUrl)) {
+                        return;
+                    }
+
+                    $ctrl.retrieveData();
+                };
+
+                $scope.$watch('$ctrl.gridDatasource', $scope.gridDatasourceWatcher);
 
                 $scope.hasColumnsDefinitionsWatcher = newVal => {
                     if (newVal !== true) {
@@ -90,10 +105,10 @@
 
                 $scope.$watch('$ctrl.hasColumnsDefinitions', $scope.hasColumnsDefinitionsWatcher);
 
-                $scope.pageSizeWatcher =  () => {
+                $scope.pageSizeWatcher = () => {
                     if ($ctrl.hasColumnsDefinitions && $ctrl.requestCounter > 0) {
                         if ($ctrl.savePageSize) {
-                            storage.setItem(`${prefix + $ctrl.name  }_pageSize`, $ctrl.pageSize);
+                            storage.setItem(`${prefix + $ctrl.name}_pageSize`, $ctrl.pageSize);
                         }
 
                         $ctrl.retrieveData();
@@ -116,14 +131,14 @@
                     }
 
                     if ($ctrl.search.Text === '') {
-                        storage.removeItem(`${prefix + $ctrl.name  }_search`);
+                        storage.removeItem(`${prefix + $ctrl.name}_search`);
                     } else {
-                        storage.setItem(`${prefix + $ctrl.name  }_search`, $ctrl.search.Text);
+                        storage.setItem(`${prefix + $ctrl.name}_search`, $ctrl.search.Text);
                     }
                 };
 
                 $ctrl.addColumn = item => {
-                    if (item.Name == null){
+                    if (item.Name == null) {
                         return;
                     }
 
@@ -147,21 +162,21 @@
 
                 $ctrl.deleteRow = row => {
                     const urlparts = $ctrl.serverDeleteUrl.split('?');
-                    let url = `${urlparts[0]  }/${  row.$key}`;
+                    let url = `${urlparts[0]}/${row.$key}`;
 
                     if (urlparts.length > 1) {
-                        url += `?${  urlparts[1]}`;
+                        url += `?${urlparts[1]}`;
                     }
 
                     $ctrl.currentRequest = $http.delete(url, {
                         requireAuthentication: getRequiredAuthentication()
                     })
-                    .then(response => $scope.$emit('tbGrid_OnRemove', response.data),
+                        .then(response => $scope.$emit('tbGrid_OnRemove', response.data),
                         error => $scope.$emit('tbGrid_OnConnectionError', error))
-                    .then(() => {
-                        $ctrl.currentRequest = null;
-                        $ctrl.retrieveData();
-                    });
+                        .then(() => {
+                            $ctrl.currentRequest = null;
+                            $ctrl.retrieveData();
+                        });
                 };
 
                 function getRequiredAuthentication() {
@@ -217,7 +232,7 @@
                         row.$isEditing = false;
                         $ctrl.currentRequest = null;
                         $ctrl.retrieveData();
-                        
+
                         return data;
                     }, error => {
                         $scope.$emit('tbForm_OnConnectionError', error);
@@ -231,47 +246,61 @@
                 };
 
                 $ctrl.verifyColumns = () => {
-                    const columns = angular.fromJson(storage.getItem(`${prefix + $ctrl.name  }_columns`));
+                    const columns = angular.fromJson(storage.getItem(`${prefix + $ctrl.name}_columns`));
                     if (columns == null || columns === '') {
                         // Nothing in settings, saving initial state
-                        storage.setItem(`${prefix + $ctrl.name  }_columns`, angular.toJson($ctrl.columns));
+                        storage.setItem(`${prefix + $ctrl.name}_columns`, angular.toJson($ctrl.columns));
                         return;
                     }
 
                     angular.forEach(columns, column => {
-                            const filtered = $ctrl.columns.filter(el => el.Name === column.Name);
+                        const filtered = $ctrl.columns.filter(el => el.Name === column.Name);
 
-                            if (filtered.length === 0) {
-                                return;
-                            }
+                        if (filtered.length === 0) {
+                            return;
+                        }
 
-                            const current = filtered[0];
-                            // Updates visibility by now
-                            current.Visible = column.Visible;
+                        const current = filtered[0];
+                        // Updates visibility by now
+                        current.Visible = column.Visible;
 
-                            // Update sorting
-                            if ($ctrl.requestCounter < 1) {
-                                current.SortOrder = column.SortOrder;
-                                current.SortDirection = column.SortDirection;
-                            }
+                        // Update sorting
+                        if ($ctrl.requestCounter < 1) {
+                            current.SortOrder = column.SortOrder;
+                            current.SortDirection = column.SortDirection;
+                        }
 
-                            // Update Filters
-                            if (current.Filter != null && current.Filter.Text != null) {
-                                return;
-                            }
+                        // Update Filters
+                        if (current.Filter != null && current.Filter.Text != null) {
+                            return;
+                        }
 
-                            if (column.Filter != null &&
-                                column.Filter.Text != null &&
-                                column.Filter.Operator !== 'None') {
-                                current.Filter = column.Filter;
-                            }
-                        });
+                        if (column.Filter != null &&
+                            column.Filter.Text != null &&
+                            column.Filter.Operator !== 'None') {
+                            current.Filter = column.Filter;
+                        }
+                    });
                 };
 
                 $ctrl.getRequestObject = skip => {
                     if (skip === -1) {
                         skip = ($ctrl.requestedPage - 1) * $ctrl.pageSize;
                         if (skip < 0) skip = 0;
+                    }
+
+                    if (angular.isDefined($ctrl.gridDatasource)) {
+                        return {
+                            requireAuthentication: getRequiredAuthentication(),
+                            data: {
+                                Count: $ctrl.requestCounter,
+                                Columns: $ctrl.columns,
+                                Skip: skip,
+                                Take: parseInt($ctrl.pageSize),
+                                Search: $ctrl.search,
+                                TimezoneOffset: new Date().getTimezoneOffset()
+                            }
+                        }
                     }
 
                     return {
@@ -289,9 +318,35 @@
                     };
                 };
 
+                $ctrl.retrieveLocalData = () => {
+
+                    const request = $ctrl.getRequestObject(-1);
+
+                    if (angular.isArray($ctrl.gridDatasource)) {
+                        // TODO: Use tb local pager service
+                        localPager.process(request.data, $ctrl.gridDatasource).then($ctrl.processPayload, error => {
+                            $ctrl.requestedPage = $ctrl.currentPage;
+                            $scope.$emit('tbGrid_OnConnectionError', error);
+                        }).then(() => $ctrl.currentRequest = null);
+                    }
+                };
+
+                $ctrl.retrieveRemoteData = () => {
+                    const request = $ctrl.getRequestObject(-1);
+
+                    $scope.$emit('tbGrid_OnBeforeRequest', request, $ctrl);
+
+                    $ctrl.currentRequest = $http(request);
+
+                    $ctrl.currentRequest.then($ctrl.processPayload, error => {
+                        $ctrl.requestedPage = $ctrl.currentPage;
+                        $scope.$emit('tbGrid_OnConnectionError', error);
+                    }).then(() => $ctrl.currentRequest = null);
+                };
+
                 $ctrl.retrieveData = () => {
                     // If the ServerUrl is empty skip data load
-                    if (!$ctrl.serverUrl || $ctrl.currentRequest !== null) {
+                    if ((!$ctrl.gridDatasource && !$ctrl.serverUrl) || $ctrl.currentRequest !== null) {
                         return;
                     }
 
@@ -303,7 +358,7 @@
                     $ctrl.verifyColumns();
 
                     if ($ctrl.savePageSize) {
-                        $ctrl.pageSize = (parseInt(storage.getItem(`${prefix + $ctrl.name  }_pageSize`)) || $ctrl.pageSize);
+                        $ctrl.pageSize = (parseInt(storage.getItem(`${prefix + $ctrl.name}_pageSize`)) || $ctrl.pageSize);
                     }
 
                     $ctrl.pageSize = $ctrl.pageSize < 10 ? 20 : $ctrl.pageSize; // default
@@ -311,16 +366,12 @@
                     const newPages = Math.ceil($ctrl.totalRecordCount / $ctrl.pageSize);
                     if ($ctrl.requestedPage > newPages) $ctrl.requestedPage = newPages;
 
-                    const request = $ctrl.getRequestObject(-1);
-                    
-                    $scope.$emit('tbGrid_OnBeforeRequest', request, $ctrl);
-
-                    $ctrl.currentRequest = $http(request);
-
-                    $ctrl.currentRequest.then($ctrl.processPayload, error => {
-                        $ctrl.requestedPage = $ctrl.currentPage;
-                        $scope.$emit('tbGrid_OnConnectionError', error);
-                    }).then(() => $ctrl.currentRequest = null);
+                    if (angular.isDefined($ctrl.gridDatasource)) {
+                        $ctrl.retrieveLocalData();
+                    }
+                    else {
+                        $ctrl.retrieveRemoteData();
+                    }
                 };
 
                 $ctrl.processPayload = response => {
@@ -366,7 +417,7 @@
                     $ctrl.isEmpty = $ctrl.filteredRecordCount === 0;
 
                     if ($ctrl.savePage) {
-                        storage.setItem(`${prefix + $ctrl.name  }_page`, $ctrl.currentPage);
+                        storage.setItem(`${prefix + $ctrl.name}_page`, $ctrl.currentPage);
                     }
                 };
 
@@ -431,7 +482,7 @@
 
                     return $http(request)
                         .then(response => response.data.Payload,
-                            error => $scope.$emit('tbGrid_OnConnectionError', error))
+                        error => $scope.$emit('tbGrid_OnConnectionError', error))
                         .then(() => $ctrl.currentRequest = null);
                 };
 
