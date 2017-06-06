@@ -14,41 +14,32 @@
     localPager.$inject = ['$q', 'filterFilter', 'orderByFilter'];
 
     function localPager($q, filterFilter, orderByFilter) {
-        this.process = function (request, data) {
+        this.process = (request, data) => {
             var deferred = $q.defer();
 
-            if (angular.isUndefined(data) || data.length === 0) {
-                deferred.resolve({
-                    Counter: 0,
-                    CurrentPage: 1,
-                    FilteredRecordCount: 0,
-                    TotalRecordCount: 0,
-                    Payload: [],
-                    TotalPages: 0
-                });
+            if (data && data.length > 0) {
+                data = search(request, data);
+                data = filter(request, data);
+                data = sort(request, data);
 
-                return deferred.promise;
+                deferred.resolve({ data: format(request, data) });
             }
-
-            doProcess(deferred, request, data);
+            else 
+            {
+                const response = { data: createEmptyResponse() };
+                console.log(response);
+                deferred.resolve(response);
+            }
 
             return deferred.promise;
         };
-
-        function doProcess(deferred, request, data) {
-            data = search(request, data);
-            data = filter(request, data);
-            data = sort(request, data);
-
-            deferred.resolve({ data: format(request, data) });
-        }
 
         function sort(request, set) {
             var sorts = request.Columns
                 .filter(el => el.SortOrder > 0)
                 .map(el => (el.SortDirection === 'Descending' ? '-' : '') + el.Name);
 
-            angular.forEach(sort, sort => set = orderByFilter(set, sort));
+            angular.forEach(sorts, sort => set = orderByFilter(set, sort));
 
             return set;
         }
@@ -77,7 +68,7 @@
             if (filters.length > 0) {
                 return filterFilter(set, reduceFilterArray(filters));
             }
-            
+
             return set;
         }
 

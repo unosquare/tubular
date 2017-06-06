@@ -319,12 +319,10 @@
                 };
 
                 $ctrl.retrieveLocalData = () => {
-
                     const request = $ctrl.getRequestObject(-1);
 
                     if (angular.isArray($ctrl.gridDatasource)) {
-                        // TODO: Use tb local pager service
-                        localPager.process(request.data, $ctrl.gridDatasource).then($ctrl.processPayload, error => {
+                        localPager.process(request, $ctrl.gridDatasource).then($ctrl.processPayload, error => {
                             $ctrl.requestedPage = $ctrl.currentPage;
                             $scope.$emit('tbGrid_OnConnectionError', error);
                         }).then(() => $ctrl.currentRequest = null);
