@@ -11,18 +11,27 @@
          */
         .service('localPager', localPager);
 
-    localPager.$inject = ['$q', 'filterFilter', 'orderByFilter'];
+    localPager.$inject = ['$q'];
 
-    function localPager($q, filterFilter, orderByFilter) {
+    function localPager($q) {
         this.process = (request, data) => {
             return $q(resolve => {
                 if (data && data.length > 0) {
                     const totalRecords = data.length;
-                    data = search(request.data, data);
-                    data = filter(request.data, data);
-                    data = sort(request.data, data);
+                    let set = data;
 
-                    resolve({ data: format(request.data, data, totalRecords) });
+                    if (angular.isArray(set[0]) == false) {
+                        const columnIndexes = request.data.Columns
+                            .map((el, index) => el.Name);
+                        
+                        set = set.map(el => columnIndexes.map(name => el[name]));
+                    }
+                    
+                    set = search(request.data, set);
+                    set = filter(request.data, set);
+                    set = sort(request.data, set);
+
+                    resolve({ data: format(request.data, set, totalRecords) });
                 }
                 else {
                     resolve({ data: createEmptyResponse() });
@@ -31,25 +40,36 @@
         };
 
         function sort(request, set) {
-            var sorts = request.Columns
-                .filter(el => el.SortOrder > 0)
-                .map(el => (el.SortDirection === 'Descending' ? '-' : '') + el.Name);
+            const sorts = request.Columns
+                .map((el, index) => el.SortOrder > 0 ? (el.SortDirection === 'Descending' ? '-' : '') + index : null)
+                .filter(el => el != null);
+            
+            angular.forEach(sorts, sort => {
+                const idx = Math.abs(sort);
+                set = set.sort((a, b) => {
+                    if (a[idx] === b[idx])
+                        return 0;
 
-            angular.forEach(sorts, sort => set = orderByFilter(set, sort));
+                    if (sort[0] === '-')
+                        return a[idx] >= b[idx] ? -1 : 1;
+
+                    return a[idx] <= b[idx] ? -1 : 1;
+                });
+            });
 
             return set;
         }
 
         function search(request, set) {
             if (request.Search && request.Search.Operator === 'Auto' && request.Search.Text) {
-                const searchables = request.Columns
+                const filters = request.Columns
                     .map((el, index) => el.Searchable ? index : null)
                     .filter(el => el != null);
                 
-                if (searchables.length > 0) {
-                    return set.filter(value => searchables.some((el, index) => 
-                        angular.isString(value[index]) && value[index].toLocaleLowerCase().indexOf(request.Search.Text.toLocaleLowerCase()) >= 0
-                    ));
+                if (filters.length > 0) {
+                    const searchValue = request.Search.Text.toLocaleLowerCase();
+
+                    return set.filter(value => filters.some(el => angular.isString(value[el]) && value[el].toLocaleLowerCase().indexOf(searchValue) >= 0));
                 }
             }
 
@@ -59,15 +79,22 @@
         function filter(request, set) {
             // Get filters (only Contains)
             // TODO: Implement all operators
-            var filters = request.Columns
-                .filter(el => el.Filter && el.Filter.Text)
-                .map(el => ({ [el.Name]: el.Filter.Text.toLocaleLowerCase() }));
-
-            if (filters.length > 0) {
-                return filterFilter(set, reduceFilterArray(filters));
+            const filters = request.Columns
+                .map((el, index) => el.Filter && el.Filter.Text ? { idx: index, text: el.Filter.Text.toLocaleLowerCase() } : null)
+                .filter(el => el != null);
+                
+            if (filters.length === 0) {
+                return set;
             }
 
-            return set;
+            //This is applying OR operator to all filters and CONTAINS
+            return set.filter(value => filters.some(el => {
+                // if string apply contains
+                if (angular.isString(value[el.idx]) && value[el.idx].toLocaleLowerCase().indexOf(el.text) >= 0)
+                    return true;
+                // otherwise just compare without type
+                return value[el.idx] == el.text;
+            }));
         }
 
         function format(request, set, totalRecords) {
@@ -93,22 +120,6 @@
                 Payload: [],
                 TotalPages: 0
             };
-        }
-
-        function reduceFilterArray(filters) {
-            var filtersPattern = {};
-
-            for (var i in filters) {
-                if (filters.hasOwnProperty(i)) {
-                    for (var k in filters[i]) {
-                        if (filters[i].hasOwnProperty(k)) {
-                            filtersPattern[k] = filters[i][k].toLocaleLowerCase();
-                        }
-                    }
-                }
-            }
-
-            return filtersPattern;
         }
     }
 })(angular);
