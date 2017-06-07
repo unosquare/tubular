@@ -318,9 +318,7 @@
                     };
                 };
 
-                $ctrl.retrieveLocalData = () => {
-                    const request = $ctrl.getRequestObject(-1);
-
+                $ctrl.retrieveLocalData = (request) => {
                     if (angular.isArray($ctrl.gridDatasource)) {
                         $ctrl.currentRequest = localPager.process(request, $ctrl.gridDatasource)
                             .then($ctrl.processPayload, $ctrl.processError)
@@ -328,16 +326,15 @@
                     }
                 };
 
-                $ctrl.retrieveRemoteData = () => {
-                    const request = $ctrl.getRequestObject(-1);
-
-                    if (angular.isDefined($ctrl.onBeforeGetData)) {
-                        $ctrl.onBeforeGetData(request);
-                    }
-
-                    $scope.$emit('tbGrid_OnBeforeRequest', request, $ctrl);
-
+                $ctrl.retrieveRemoteDataServerside = (request) => {
                     $ctrl.currentRequest = $http(request)
+                        .then($ctrl.processPayload, $ctrl.processError)
+                        .then(() => $ctrl.currentRequest = null);
+                };
+
+                $ctrl.retrieveRemoteDataClientside = (request) => {
+                    $ctrl.currentRequest = $http(request)
+                        .then(response => localPager.process(request, response.data), $ctrl.processError)
                         .then($ctrl.processPayload, $ctrl.processError)
                         .then(() => $ctrl.currentRequest = null);
                 };
@@ -364,11 +361,22 @@
                     const newPages = Math.ceil($ctrl.totalRecordCount / $ctrl.pageSize);
                     if ($ctrl.requestedPage > newPages) $ctrl.requestedPage = newPages;
 
+                    const request = $ctrl.getRequestObject(-1);
+
+                    if (angular.isDefined($ctrl.onBeforeGetData)) {
+                        $ctrl.onBeforeGetData(request);
+                    }
+
+                    $scope.$emit('tbGrid_OnBeforeRequest', request, $ctrl);
+
                     if (angular.isDefined($ctrl.gridDatasource)) {
-                        $ctrl.retrieveLocalData();
+                        $ctrl.retrieveLocalData(request);
+                    }
+                    else if ($ctrl.localPaging) {
+                        $ctrl.retrieveRemoteDataClientside(request);
                     }
                     else {
-                        $ctrl.retrieveRemoteData();
+                        $ctrl.retrieveRemoteDataServerside(request);
                     }
                 };
 
@@ -382,9 +390,9 @@
 
                     if (!response || !response.data || !response.data.Payload) {
                         $scope.$emit('tbGrid_OnConnectionError', {
-                                statusText: `tubularGrid(${$ctrl.$id}): response is invalid.`,
-                                status: 0
-                    });
+                            statusText: `tubularGrid(${$ctrl.$id}): response is invalid.`,
+                            status: 0
+                        });
                         return;
                     }
 
