@@ -1077,6 +1077,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
          * @param {bool} savePage Set if the grid autosave current page, default true.
          * @param {bool} savePageSize Set if the grid autosave page size, default true.
          * @param {bool} saveSearchText Set if the grid autosave search text, default true.
+         * @param {bool} localPaging Set if the paging occurs in client side, default false.
          */
         .component('tbGrid',
         {
@@ -1098,7 +1099,8 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 autoRefresh: '=?',
                 savePage: '=?',
                 savePageSize: '=?',
-                saveSearchText: '=?'
+                saveSearchText: '=?',
+                localPaging: '=?'
             },
             controller: 'tbGridController'
         });
@@ -1423,9 +1425,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     };
                 };
 
-                $ctrl.retrieveLocalData = () => {
-                    const request = $ctrl.getRequestObject(-1);
-
+                $ctrl.retrieveLocalData = (request) => {
                     if (angular.isArray($ctrl.gridDatasource)) {
                         $ctrl.currentRequest = localPager.process(request, $ctrl.gridDatasource)
                             .then($ctrl.processPayload, $ctrl.processError)
@@ -1433,16 +1433,15 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     }
                 };
 
-                $ctrl.retrieveRemoteData = () => {
-                    const request = $ctrl.getRequestObject(-1);
-
-                    if (angular.isDefined($ctrl.onBeforeGetData)) {
-                        $ctrl.onBeforeGetData(request);
-                    }
-
-                    $scope.$emit('tbGrid_OnBeforeRequest', request, $ctrl);
-
+                $ctrl.retrieveRemoteDataServerside = (request) => {
                     $ctrl.currentRequest = $http(request)
+                        .then($ctrl.processPayload, $ctrl.processError)
+                        .then(() => $ctrl.currentRequest = null);
+                };
+
+                $ctrl.retrieveRemoteDataClientside = (request) => {
+                    $ctrl.currentRequest = $http(request)
+                        .then(response => localPager.process(request, response.data), $ctrl.processError)
                         .then($ctrl.processPayload, $ctrl.processError)
                         .then(() => $ctrl.currentRequest = null);
                 };
@@ -1469,11 +1468,22 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     const newPages = Math.ceil($ctrl.totalRecordCount / $ctrl.pageSize);
                     if ($ctrl.requestedPage > newPages) $ctrl.requestedPage = newPages;
 
+                    const request = $ctrl.getRequestObject(-1);
+
+                    if (angular.isDefined($ctrl.onBeforeGetData)) {
+                        $ctrl.onBeforeGetData(request);
+                    }
+
+                    $scope.$emit('tbGrid_OnBeforeRequest', request, $ctrl);
+
                     if (angular.isDefined($ctrl.gridDatasource)) {
-                        $ctrl.retrieveLocalData();
+                        $ctrl.retrieveLocalData(request);
+                    }
+                    else if ($ctrl.localPaging) {
+                        $ctrl.retrieveRemoteDataClientside(request);
                     }
                     else {
-                        $ctrl.retrieveRemoteData();
+                        $ctrl.retrieveRemoteDataServerside(request);
                     }
                 };
 
@@ -1487,9 +1497,9 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
                     if (!response || !response.data || !response.data.Payload) {
                         $scope.$emit('tbGrid_OnConnectionError', {
-                                statusText: `tubularGrid(${$ctrl.$id}): response is invalid.`,
-                                status: 0
-                    });
+                            statusText: `tubularGrid(${$ctrl.$id}): response is invalid.`,
+                            status: 0
+                        });
                         return;
                     }
 
