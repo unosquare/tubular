@@ -114,12 +114,6 @@ module.exports = grunt => {
                 module: 'tubular.directives',
                 src: ['src/js/tubular/**/*.tpl.html'],
                 dest: 'src/js/templates.js'
-            },
-            chartjs: {
-                base: 'src/js/tubular-chart/chartjs/',
-                module: 'tubular-chart.directives',
-                src: ['src/js/tubular-chart/chartjs/**/*.tpl.html'],
-                dest: 'src/js/templates-chartjs.js'
             }
         },
         concat: {
@@ -145,26 +139,9 @@ module.exports = grunt => {
                 ],
                 dest: 'src/js/tubular-bundle.js'
             },
-            chart_js: {
-                src: [
-                    'bower_components/angular-chart.js/dist/angular-chart.js',
-                    'src/js/tubular-chart/chartjs/*.module.js',
-                    'src/js/templates-chartjs.js',
-                    'src/js/tubular-chart/chartjs/*.js'
-                ],
-                dest: 'src/js/tubular-chartjs-bundle.js'
-            },
-            highchart_js: {
-                src: [
-                    'bower_components/highchart-ng/dist/highcharts-ng.js',
-                    'src/js/tubular-chart/tubular-directives-highcharts.js'
-                ],
-                dest: 'src/js/tubular-highcharts-bundle.js'
-            },
             tubular_css: {
                 src: [
                     'bower_components/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css',
-                    'src/css/angular-chartjs/angular-chart.css',
                     'src/css/tubular/tubular.css'
                 ],
                 dest: 'src/css/tubular-bundle.css'
@@ -174,16 +151,6 @@ module.exports = grunt => {
             tubular_js: {
                 files: {
                     'src/js/tubular-bundle.min.js': ['src/js/tubular-bundle.es5.js']
-                }
-            },
-            chart_js: {
-                files: {
-                    'src/js/tubular-chartjs-bundle.min.js': ['src/js/tubular-chartjs-bundle.es5.js']
-                }
-            },
-            highchart_js: {
-                files: {
-                    'src/js/tubular-highcharts-bundle.min.js': ['src/js/tubular-highcharts-bundle.es5.js']
                 }
             }
         },
@@ -219,25 +186,15 @@ module.exports = grunt => {
                 files: {
                     'src/js/tubular-bundle.es5.js': ['src/js/tubular-bundle.js']
                 }
-            },
-            chart_js: {
-                files: {
-                    'src/js/tubular-chartjs-bundle.es5.js': ['src/js/tubular-chartjs-bundle.js']
-                }
-            },
-            highchart_js: {
-                files: {
-                    'src/js/tubular-highcharts-bundle.es5.js': ['src/js/tubular-highcharts-bundle.js']
-                }
             }
         }
     });
 
-    grunt.registerTask('build-js', ['concat:tubular_js', 'concat:chart_js', 'concat:highchart_js']);
+    grunt.registerTask('build-js', ['concat:tubular_js']);
 
-    grunt.registerTask('build', ['html2js:main', 'html2js:chartjs', 'build-js', 'concat:tubular_css']);
+    grunt.registerTask('build', ['html2js:main', 'build-js', 'concat:tubular_css']);
 
-    grunt.registerTask('compress', ['uglify:tubular_js', 'uglify:chart_js', 'uglify:highchart_js']);
+    grunt.registerTask('compress', ['uglify:tubular_js']);
 
     grunt.registerTask('min', ['build', 'babel', 'uglify', 'cssmin:main']);
 
