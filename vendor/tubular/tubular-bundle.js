@@ -12,7 +12,7 @@
    */
   angular
     .module('tubular', ['tubular.directives', 'tubular.services', 'tubular.models'])
-    .info({ version: '1.6.2' });
+    .info({ version: '1.6.3' });
 
 })(angular);
 
@@ -1057,7 +1057,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 serverDeleteUrl: '@',
                 serverSaveMethod: '@',
                 pageSize: '=?',
-                onBeforeGetData: '&',
+                onBeforeGetData: '=?',
                 requestMethod: '@',
                 requireAuthentication: '@?',
                 name: '@?gridName',
