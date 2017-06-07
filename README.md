@@ -86,10 +86,6 @@ The npm package only contains the **Tubular Template Generator Module**, if you 
 $ npm install tubular --save
 </pre>
 
-## Charts
-
-An experimental support to chart is running with Tubular and you can choose between [ChartJS](http://www.chartjs.org/) or [Highcharts](http://www.highcharts.com/). If you want to use any of them, be sure to load the library before Tubular and check [Tubular OWIN Sample](https://github.com/unosquare/tubular-dotnet/tree/master/src/Unosquare.Tubular.OwinSample) with easy to understand code on how to start using charts.
-
 ## Samples
 
 You can check out the <a href="http://unosquare.github.io/tubular" target="_blank">Tubular GitHub Page</a> to get a few examples. We still need to work on more samples and better documentation, but we feel what we have now will get you up to speed very quickly :).

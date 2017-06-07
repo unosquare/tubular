@@ -19,9 +19,6 @@ module.exports = (config) => {
           '../../bower_components/angular-loader/angular-loader.js',
           '../../bower_components/moment/moment.js',
           '../../bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
-          '../../bower_components/highchart-ng/dist/highcharts-ng.js',
-          '../../bower_components/chart.js/dist/Chart.js',
-          '../../bower_components/angular-chart.js/dist/angular-chart.js',
           'tubular/tubular-services.js',
           'tubular/tubular-models.js',
           'tubular*/**/*.module.js',
@@ -33,7 +30,6 @@ module.exports = (config) => {
           'tubular/directives/**/*.js',
           'tubular/tubular.js',
           'tubular/filters/**/*.js',
-          'tubular-chart/**/*.js',
           'tubular*/**/*.spec.js'
         ],
 

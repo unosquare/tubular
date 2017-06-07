@@ -1,6 +1,6 @@
 {
   "name": "tubular",
-  "version": "1.5.0",
+  "version": "1.7.1",
   "description": "A set of AngularJS directives and designed to rapidly build modern web applications.",
   "homepage": "http://unosquare.github.io/tubular",
   "repository": {
@@ -29,11 +29,8 @@
   "dependencies": {
     "angular": "^1.6.4",
     "angular-bootstrap": "^2.5.0",
-    "highchart-ng": "~0.0.13",
-    "angular-chart.js": "^1.1.1",
     "awesome-bootstrap-checkbox": "^0.3.7",
-    "moment": "^2.17.1",
-    "highcharts-ng": "highchart-ng#^1.0.1"
+    "moment": "^2.17.1"
   },
   "devDependencies":{
     "angular-route": "^1.6.4",
