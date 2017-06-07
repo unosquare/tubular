@@ -36,7 +36,7 @@
                 serverDeleteUrl: '@',
                 serverSaveMethod: '@',
                 pageSize: '=?',
-                onBeforeGetData: '&',
+                onBeforeGetData: '=?',
                 requestMethod: '@',
                 requireAuthentication: '@?',
                 name: '@?gridName',
