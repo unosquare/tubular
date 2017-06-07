@@ -322,10 +322,9 @@
                     const request = $ctrl.getRequestObject(-1);
 
                     if (angular.isArray($ctrl.gridDatasource)) {
-                        localPager.process(request, $ctrl.gridDatasource).then($ctrl.processPayload, error => {
-                            $ctrl.requestedPage = $ctrl.currentPage;
-                            $scope.$emit('tbGrid_OnConnectionError', error);
-                        }).then(() => $ctrl.currentRequest = null);
+                        $ctrl.currentRequest = localPager.process(request, $ctrl.gridDatasource)
+                            .then($ctrl.processPayload, $ctrl.processError)
+                            .then(() => $ctrl.currentRequest = null);
                     }
                 };
 
@@ -334,12 +333,9 @@
 
                     $scope.$emit('tbGrid_OnBeforeRequest', request, $ctrl);
 
-                    $ctrl.currentRequest = $http(request);
-
-                    $ctrl.currentRequest.then($ctrl.processPayload, error => {
-                        $ctrl.requestedPage = $ctrl.currentPage;
-                        $scope.$emit('tbGrid_OnConnectionError', error);
-                    }).then(() => $ctrl.currentRequest = null);
+                    $ctrl.currentRequest = $http(request)
+                        .then($ctrl.processPayload, $ctrl.processError)
+                        .then(() => $ctrl.currentRequest = null);
                 };
 
                 $ctrl.retrieveData = () => {
@@ -372,27 +368,25 @@
                     }
                 };
 
+                $ctrl.processError = error => {
+                    $ctrl.requestedPage = $ctrl.currentPage;
+                    $scope.$emit('tbGrid_OnConnectionError', error);
+                };
+
                 $ctrl.processPayload = response => {
                     $ctrl.requestCounter += 1;
 
-                    if (!response || !response.data) {
-                        $scope.$emit('tbGrid_OnConnectionError',
-                            {
-                                statusText: 'Data is empty',
+                    if (!response || !response.data || !response.data.Payload) {
+                        $scope.$emit('tbGrid_OnConnectionError', {
+                                statusText: `tubularGrid(${$ctrl.$id}): response is invalid.`,
                                 status: 0
-                            });
-
+                    });
                         return;
                     }
 
                     const data = response.data;
 
                     $ctrl.dataSource = data;
-
-                    if (!data.Payload) {
-                        $scope.$emit('tbGrid_OnConnectionError', `tubularGrid(${$ctrl.$id}): response is invalid.`);
-                        return;
-                    }
 
                     $ctrl.rows = data.Payload.map(el => {
                         const model = new TubularModel($ctrl, el);
@@ -479,8 +473,7 @@
                     };
 
                     return $http(request)
-                        .then(response => response.data.Payload,
-                        error => $scope.$emit('tbGrid_OnConnectionError', error))
+                        .then(response => response.data.Payload, error => $scope.$emit('tbGrid_OnConnectionError', error))
                         .then(() => $ctrl.currentRequest = null);
                 };
 
