@@ -331,6 +331,10 @@
                 $ctrl.retrieveRemoteData = () => {
                     const request = $ctrl.getRequestObject(-1);
 
+                    if (angular.isDefined($ctrl.onBeforeGetData)) {
+                        $ctrl.onBeforeGetData(request);
+                    }
+
                     $scope.$emit('tbGrid_OnBeforeRequest', request, $ctrl);
 
                     $ctrl.currentRequest = $http(request)

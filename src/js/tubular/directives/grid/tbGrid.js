@@ -16,6 +16,7 @@
          * @param {string} serverDeleteUrl Set the HTTP URL where the data will be saved.
          * @param {string} serverSaveMethod Set HTTP Method to save data.
          * @param {int} pageSize Define how many records to show in a page, default 20.
+         * @param {function} onBeforeGetData Callback to execute before to get data from service.
          * @param {string} requestMethod Set HTTP Method to get data.
          * @param {bool} requireAuthentication Set if authentication check must be executed, default true.
          * @param {string} gridName Grid's name, used to store metainfo in localstorage.
@@ -37,6 +38,7 @@
                 serverDeleteUrl: '@',
                 serverSaveMethod: '@',
                 pageSize: '=?',
+                onBeforeGetData: '=?',
                 requestMethod: '@',
                 requireAuthentication: '@?',
                 name: '@?gridName',
