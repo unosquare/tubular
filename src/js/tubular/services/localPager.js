@@ -22,11 +22,11 @@
 
                     if (angular.isArray(set[0]) == false) {
                         const columnIndexes = request.data.Columns
-                            .map((el, index) => el.Name);
+                            .map(el => el.Name);
                         
                         set = set.map(el => columnIndexes.map(name => el[name]));
                     }
-                    
+
                     set = search(request.data, set);
                     set = filter(request.data, set);
                     set = sort(request.data, set);
