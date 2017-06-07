@@ -314,6 +314,10 @@
                     const request = $ctrl.getRequestObject(-1);
                     
                     $scope.$emit('tbGrid_OnBeforeRequest', request, $ctrl);
+                    
+                    if (angular.isDefined($ctrl.onBeforeGetData)) {
+                        $ctrl.onBeforeGetData(request);
+                    }
 
                     $ctrl.currentRequest = $http(request);
 
