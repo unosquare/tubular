@@ -11,9 +11,9 @@
          */
         .service('localPager', localPager);
 
-    localPager.$inject = ['$q'];
+    localPager.$inject = ['$q','orderByFilter'];
 
-    function localPager($q) {
+    function localPager($q, orderByFilter) {
         this.process = (request, data) => {
             return $q(resolve => {
                 if (data && data.length > 0) {
@@ -45,16 +45,7 @@
                 .filter(el => el != null);
             
             angular.forEach(sorts, sort => {
-                const idx = Math.abs(sort);
-                set = set.sort((a, b) => {
-                    if (a[idx] === b[idx])
-                        return 0;
-
-                    if (sort[0] === '-')
-                        return a[idx] >= b[idx] ? -1 : 1;
-
-                    return a[idx] <= b[idx] ? -1 : 1;
-                });
+                set = orderByFilter(set, sort);
             });
 
             return set;

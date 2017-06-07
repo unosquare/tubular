@@ -281,9 +281,8 @@ describe('Module: tubular.services', () => {
                         FilteredRecordCount: 12,
                         TotalRecordCount: 12,
                         Payload: [
-                           [ 8, 'Alejandro', 'Al' ], [ 11, 'Alejandro', 'Al' ], [ 5, 'Alejandro', 'Al' ], [ 2, 'Alejandro', 'Al' ], 
-                           [ 1, 'Alexei', 'Al' ], [ 10, 'Alexei', 'Al' ], [ 7, 'Alexei','Al' ], [ 4, 'Alexei', 'Al' ], 
-                           [ 12, 'Geovanni', 'Al' ], [ 3, 'Geovanni', 'Al' ]
+                           [ 2, 'Alejandro', 'Al' ], [ 5, 'Alejandro', 'Al' ], [ 8, 'Alejandro', 'Al' ], [ 11, 'Alejandro', 'Al' ], [ 1, 'Alexei', 'Al' ], 
+                           [ 4, 'Alexei', 'Al' ], [ 7, 'Alexei', 'Al' ], [ 10, 'Alexei', 'Al' ], [ 3, 'Geovanni', 'Al' ], [ 6, 'Geovanni', 'Al' ]
                         ],
                         TotalPages: 2
                     }
