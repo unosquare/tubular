@@ -26,6 +26,7 @@
          * @param {bool} savePage Set if the grid autosave current page, default true.
          * @param {bool} savePageSize Set if the grid autosave page size, default true.
          * @param {bool} saveSearchText Set if the grid autosave search text, default true.
+         * @param {bool} localPaging Set if the paging occurs in client side, default false.
          */
         .component('tbGrid',
         {
@@ -47,7 +48,8 @@
                 autoRefresh: '=?',
                 savePage: '=?',
                 savePageSize: '=?',
-                saveSearchText: '=?'
+                saveSearchText: '=?',
+                localPaging: '=?'
             },
             controller: 'tbGridController'
         });
