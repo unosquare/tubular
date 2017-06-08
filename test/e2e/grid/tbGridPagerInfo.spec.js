@@ -45,4 +45,32 @@ describe('Component: Grid.Pager-Info', () => {
     const pagerInfo = element.find('tb-grid-pager-info div');
     expect(pagerInfo.text().trim()).toBe('Showing 1 to 10 of 100 records (Filtered from 100 total records)');
   });
+
+  it('should show correct message with 200 records', () => {
+    var payload = [];
+    for (var index = 0; index < 200; index++) {
+      payload.push([index, 'Name' + index]);
+    }
+    $httpBackend.expectPOST(serverUrl)
+      .respond(200, {"Counter": 0, "Payload": payload, "TotalRecordCount": 200, "FilteredRecordCount": 200, "TotalPages": 20, "CurrentPage": 1, "AggregationPayload": {}});
+
+    generate(true);
+
+    const pagerInfo = element.find('tb-grid-pager-info div');
+    expect(pagerInfo.text().trim()).toBe('Showing 1 to 10 of 200 records (Filtered from 200 total records)');
+  });
+
+  it('should show correct message with 500 records', () => {
+    var payload = [];
+    for (var index = 0; index < 500; index++) {
+      payload.push([index, 'Name' + index]);
+    }
+    $httpBackend.expectPOST(serverUrl)
+      .respond(200, {"Counter": 0, "Payload": payload, "TotalRecordCount": 500, "FilteredRecordCount": 500, "TotalPages": 50, "CurrentPage": 1, "AggregationPayload": {}});
+
+    generate(true);
+
+    const pagerInfo = element.find('tb-grid-pager-info div');
+    expect(pagerInfo.text().trim()).toBe('Showing 1 to 10 of 500 records (Filtered from 500 total records)');
+  });
 });
