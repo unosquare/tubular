@@ -63,7 +63,7 @@ describe('Component: Grid.Pager', () => {
 
   });
 
-  it('click second page', () => {
+  it('get second page', () => {
     $httpBackend.expectPOST(serverUrl)
       .respond(200, {"Counter": 0, "Payload": [], "TotalRecordCount": 100, "FilteredRecordCount": 100, "TotalPages": 10, "CurrentPage": 2, "AggregationPayload": {}});
 
@@ -74,6 +74,23 @@ describe('Component: Grid.Pager', () => {
     expect(buttons[0].hasAttribute('disabled')).toBe(false);
     expect(buttons[1].hasAttribute('disabled')).toBe(false);
 
+  });
+
+  it('click second page', () => {
+    $httpBackend.expectPOST(serverUrl)
+      .respond(200, {"Counter": 0, "Payload": [], "TotalRecordCount": 100, "FilteredRecordCount": 100, "TotalPages": 10, "CurrentPage": 1, "AggregationPayload": {}});
+
+    generate(true);
+    
+    $httpBackend.expectPOST(serverUrl)
+      .respond(200, {"Counter": 0, "Payload": [], "TotalRecordCount": 100, "FilteredRecordCount": 100, "TotalPages": 10, "CurrentPage": 2, "AggregationPayload": {}});
+
+    $j(element.find('a')[3]).click();
+
+    $httpBackend.flush();
+    scope.$digest();
+
+    expect($j(element.find('li')[3]).hasClass('active')).toBeTruthy();
   });
 
   it('click last page', () => {
