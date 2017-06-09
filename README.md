@@ -7,7 +7,7 @@
 
 :star: *Please star this project if you find it useful!*
 
-Tubular provides a set of directives and services using AngularJS as framework, the main component is a grid with multiple options:
+Tubular provides a set of directives and services using AngularJS as framework. The main component is a grid with multiple options:
 
 * **Full markup design**, you don't need to write even a Controller in AngularJS to start using our Grid or Form
 * Common functionality like **Sorting, Filtering (specific to the data type), Free-text search, Paging** and more.
@@ -15,15 +15,13 @@ Tubular provides a set of directives and services using AngularJS as framework, 
 * Basic services like **Print and Export to CSV** in client-side.
 
 Developing with .NET as backend? check [Tubular DotNet](https://github.com/unosquare/tubular-dotnet) project.
-If you are looking for Angular2 support, check [Tubular2](https://github.com/unosquare/tubular2) project.
+If you are looking for Angular2 support, check [Tubular2](https://github.com/unosquare/tubular2) beta project.
 
 Please visit the <a href="http://unosquare.github.io/tubular" target="_blank">Tubular GitHub Page</a> to learn how quickly you can start coding. Don't forget to check out the Tubular Generator which quickly turns models into an awesome UIs!
 
 ## Dependencies
 
 You will need to reference the following JS libraries in order to use Tubular in your HTML:
-
-### Mandatory
 
 * [AngularJS (optionally Animate and Route)](https://angularjs.org/) - 1.6
 * [AngularJS UI Bootstrap](https://angular-ui.github.io/bootstrap/) - 2.5 with the Bootstrap CSS
@@ -55,21 +53,14 @@ Then you will need to either grab your own copy of Tubular or you use jsDelivr t
 
 ```html
 <link rel="stylesheet" href="//cdn.jsdelivr.net/tubular/latest/tubular-bundle.min.css" />
-<script src="//cdn.jsdelivr.net/npm/tubular@1.5.1"></script>
+<script src="//cdn.jsdelivr.net/npm/tubular@1.7.2"></script>
 ```
 
-Finally update your modules to include Tubular, for example if your module is called <i>app</i>, then you will need to add Tubular as a dependency as follows:
+Finally include Tubular to your module as follows:
 
 ```javascript
 angular.module('app', ['tubular']);
 ```
-
-## NuGet Installation [![NuGet version](https://badge.fury.io/nu/tubular.svg)](http://badge.fury.io/nu/tubular)
-
-<pre>
-PM> Install-Package Tubular
-</pre>
-
 ## Bower Installation [![Bower version](https://badge.fury.io/bo/tubular.svg)](http://badge.fury.io/bo/tubular)
 
 <pre>
@@ -78,8 +69,6 @@ $ bower install tubular --save
 </pre>
 
 ## npm Installation [![npm version](https://badge.fury.io/js/tubular.svg)](http://badge.fury.io/js/tubular)
-
-The npm package only contains the **Tubular Template Generator Module**, if you want to use all of Tubular's features, please install the Bower package instead.
 
 <pre>
 # install Tubular package and add it to package.json
