@@ -111,21 +111,186 @@ describe('Component: Grid.Filter', () => {
             })
 
             it('should filter Equals', () => {
+                var payload = [];
+                var value = 1;
                 $j(select).val('string:Equals').change();
 
                 input = $j(form).find('input');
-                input.val('1');
+                input.val(value);
 
                 $j(apply).click();
 
+                for (var index = 1; index <= 500; index++) {
+                    if(value == index)
+                        payload.push([index, 'Name: ' + index]);                    
+                }
                 $httpBackend.expectPOST(serverUrl)
-                    .respond(200, {"Counter": 0, "Payload": [[1, 'Name1']], "TotalRecordCount": 500, "FilteredRecordCount": 1, "TotalPages": 0, "CurrentPage": 0, "AggregationPayload": {}});
+                    .respond(200, {"Counter": 0, "Payload": payload, "TotalRecordCount": 500, "FilteredRecordCount": payload.length, "TotalPages": payload.length/10, "CurrentPage": 1, "AggregationPayload": {}});
+
+                generate(true);
+                var data = element.find('tbody tr');
+                expect(data.length).toBe(1);
+            });
+
+            it('should filter Not Equals', () => {
+                var payload = [];
+                var value = 1;
+                $j(select).val('string:NotEquals').change();
+
+                input = $j(form).find('input');
+                input.val(value);
+
+                $j(apply).click();
+                
+                for (var index = 1; index <= 500; index++) {
+                    if(value != index)
+                        payload.push([index, 'Name: ' + index]);                    
+                }
+                $httpBackend.expectPOST(serverUrl)
+                    .respond(200, {"Counter": 0, "Payload": payload, "TotalRecordCount": 500, "FilteredRecordCount": payload.length, "TotalPages": payload.length/10, "CurrentPage": 1, "AggregationPayload": {}});
 
                 generate(true);
 
                 var data = element.find('tbody tr');
+                expect(data.length).toBe(499);
+            });
 
-                expect(data.length).toBe(1);
+            it('should filter Contains', () => {
+                var payload = [];
+                var value = 1;
+                $j(select).val('string:Contains').change();
+
+                input = $j(form).find('input');
+                input.val(value);
+
+                $j(apply).click();
+                
+                for (var index = 1; index <= 500; index++) {
+                    if(index.toString().includes(value.toString()))
+                        payload.push([index, 'Name: ' + index]);                    
+                }
+                $httpBackend.expectPOST(serverUrl)
+                    .respond(200, {"Counter": 0, "Payload": payload, "TotalRecordCount": 500, "FilteredRecordCount": payload.length, "TotalPages": payload.length/10, "CurrentPage": 1, "AggregationPayload": {}});
+
+                generate(true);
+
+                var data = element.find('tbody tr');
+                expect(data.length).toBe(176);
+            });
+
+            it('should filter Not Contains', () => {
+                var payload = [];
+                var value = 1;
+                $j(select).val('string:NotContains').change();
+
+                input = $j(form).find('input');
+                input.val(value);
+
+                $j(apply).click();
+                
+                for (var index = 1; index <= 500; index++) {
+                    if(!index.toString().includes(value.toString()))
+                        payload.push([index, 'Name: ' + index]);                    
+                }
+                $httpBackend.expectPOST(serverUrl)
+                    .respond(200, {"Counter": 0, "Payload": payload, "TotalRecordCount": 500, "FilteredRecordCount": payload.length, "TotalPages": payload.length/10, "CurrentPage": 1, "AggregationPayload": {}});
+
+                generate(true);
+
+                var data = element.find('tbody tr');
+                expect(data.length).toBe(324);
+            });
+
+            it('should filter Starts With', () => {
+                var payload = [];
+                var value = 1;
+                $j(select).val('string:StartsWith').change();
+
+                input = $j(form).find('input');
+                input.val(value);
+
+                $j(apply).click();
+                
+                for (var index = 1; index <= 500; index++) {
+                    if(index.toString().startsWith(value.toString()))
+                        payload.push([index, 'Name: ' + index]);                    
+                }
+                $httpBackend.expectPOST(serverUrl)
+                    .respond(200, {"Counter": 0, "Payload": payload, "TotalRecordCount": 500, "FilteredRecordCount": payload.length, "TotalPages": payload.length/10, "CurrentPage": 1, "AggregationPayload": {}});
+
+                generate(true);
+
+                var data = element.find('tbody tr');
+                expect(data.length).toBe(111);
+            });
+
+            it('should filter Not Starts With', () => {
+                var payload = [];
+                var value = 1;
+                $j(select).val('string:NotStartsWith').change();
+
+                input = $j(form).find('input');
+                input.val(value);
+
+                $j(apply).click();
+                
+                for (var index = 1; index <= 500; index++) {
+                    if(!index.toString().startsWith(value.toString()))
+                        payload.push([index, 'Name: ' + index]);                    
+                }
+                $httpBackend.expectPOST(serverUrl)
+                    .respond(200, {"Counter": 0, "Payload": payload, "TotalRecordCount": 500, "FilteredRecordCount": payload.length, "TotalPages": payload.length/10, "CurrentPage": 1, "AggregationPayload": {}});
+
+                generate(true);
+
+                var data = element.find('tbody tr');
+                expect(data.length).toBe(389);
+            });
+
+            it('should filter Ends With', () => {
+                var payload = [];
+                var value = 1;
+                $j(select).val('string:EndsWith').change();
+
+                input = $j(form).find('input');
+                input.val(value);
+
+                $j(apply).click();
+                
+                for (var index = 1; index <= 500; index++) {
+                    if(index.toString().endsWith(value.toString()))
+                        payload.push([index, 'Name: ' + index]);                    
+                }
+                $httpBackend.expectPOST(serverUrl)
+                    .respond(200, {"Counter": 0, "Payload": payload, "TotalRecordCount": 500, "FilteredRecordCount": payload.length, "TotalPages": payload.length/10, "CurrentPage": 1, "AggregationPayload": {}});
+
+                generate(true);
+
+                var data = element.find('tbody tr');
+                expect(data.length).toBe(50);
+            });
+
+            it('should filter Not Ends With', () => {
+                var payload = [];
+                var value = 1;
+                $j(select).val('string:NotEndsWith').change();
+
+                input = $j(form).find('input');
+                input.val(value);
+
+                $j(apply).click();
+                
+                for (var index = 1; index <= 500; index++) {
+                    if(!index.toString().endsWith(value.toString()))
+                        payload.push([index, 'Name: ' + index]);                    
+                }
+                $httpBackend.expectPOST(serverUrl)
+                    .respond(200, {"Counter": 0, "Payload": payload, "TotalRecordCount": 500, "FilteredRecordCount": payload.length, "TotalPages": payload.length/10, "CurrentPage": 1, "AggregationPayload": {}});
+
+                generate(true);
+
+                var data = element.find('tbody tr');
+                expect(data.length).toBe(450);
             });
         });
     });
