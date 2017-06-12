@@ -40,6 +40,8 @@
                 serverSaveMethod: '@',
                 pageSize: '=?',
                 onBeforeGetData: '=?',
+                onRowUpdated: '=?',
+                onRowAdded: '=?',
                 requestMethod: '@',
                 requireAuthentication: '@?',
                 name: '@?gridName',
