@@ -1359,29 +1359,27 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 }
 
                 $ctrl.saveRow = (row, forceUpdate) => {
+
                     if ($ctrl.isInLocalMode) {
 
                         if (row.$isNew) {
-                            if (angular.isDefined($ctrl.onRowAdded)) {
-                                $ctrl.onRowAdded(row);
-                            }
-                            else {
+
+                            if (angular.isUndefined($ctrl.onRowAdded)) {
                                 throw 'Define a Save Function using "onRowAdded".';
                             }
+
+                            $ctrl.onRowAdded(row);
                         }
                         else {
-                            if (angular.isDefined($ctrl.onRowUpdated)) {
-                                $ctrl.onRowUpdated(row, forceUpdate);
-                            }
-                            else {
+                            if (angular.isUndefined($ctrl.onRowUpdated)) {
                                 throw 'Define a Save Function using "onRowUpdated".';
                             }
+
+                            $ctrl.onRowUpdated(row, forceUpdate);
                         }
                     }
-                    else {
-                        return $ctrl.remoteSave(row, forceUpdate);
-                    }
 
+                    return $ctrl.remoteSave(row, forceUpdate);
                 };
 
                 $ctrl.verifyColumns = () => {
