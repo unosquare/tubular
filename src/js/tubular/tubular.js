@@ -12,6 +12,6 @@
    */
   angular
     .module('tubular', ['tubular.directives', 'tubular.services', 'tubular.models'])
-    .info({ version: '1.7.2' });
+    .info({ version: '1.7.3' });
 
 })(angular);
