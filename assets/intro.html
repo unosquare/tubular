@@ -3,7 +3,7 @@
         <div class="col-md-12">
             <h1 id="features">Features</h1>
 
-            <p>Tubular provides a set of directives and services using AngularJS as framework, the main component is a grid
+            <p>Tubular provides a set of directives and services using AngularJS as framework. The main component is a grid
                 with multiple options:</p>
 
             <ul>
@@ -13,54 +13,25 @@
                 <li>Easy to implement inline editors, page or popup forms totally bound to your grid.</li>
                 <li>Basic services like <b>Print and Export to CSV</b> in client-side.</li>
             </ul>
+            
 <p>Developing with .NET as backend? check <a href="https://github.com/unosquare/tubular-dotnet">Tubular DotNet</a> project.
 If you are looking for Angular2 support, check <a href="https://github.com/unosquare/tubular2">Tubular2</a> project.</p>
             <p>If you are looking for Angular2 support, check <a href="https://github.com/unosquare/tubular2">Tubular2</a> project.</p>
 
             <hr/>
-            <h1 id="nuget">NuGet Installation</h1>
-
-            <div hljs>PM Install-Package Tubular</div>
-
-            <hr/>
-            <h1 id="bower">Bower Installation</h1>
-
-            <div hljs>$ bower install tubular --save</div>
-
-            <hr />
-            <h1 id="npm">npm Installation</h1>
-
-            <p>
-                The npm package only contains the <b>Tubular Template Module</b>, if you want to use all of Tubular's features,
-                please install the Bower package instead.
-            </p>
-            <div hljs>$ npm install tubular --save</div>
-
-            <hr />
+            
             <h1 id="dependencies">Dependencies</h1>
-            <p>You will need to reference the following JS libraries in order to use Tubular in your HTML:</p>
-            <h3>Mandatory</h3>
+            <p>You will need to reference the following JS libraries in order to use Tubularin your project:</p>
+            
             <ul>
 <li><a href="https://angularjs.org/">AngularJS (optionally Animate and Route)</a> - 1.6</li>
 <li><a href="https://angular-ui.github.io/bootstrap/">AngularJS UI Bootstrap</a> - 2.5 with the Bootstrap CSS</li>
 <li><a href="http://momentjs.com/">Moment.js</a> - 2.17</li>
 <li><a href="http://fortawesome.github.io/Font-Awesome/">Font Awesome</a></li>
 </ul>
-            <h3>Deprecated</h3>
-            <ul>
-<li><s><a href="https://github.com/eligrey/FileSaver.js">FileSaver.js</a></s> Only with Tubular &lt; 1.4.0</li>
-<li><s><a href="https://github.com/grevory/angular-local-storage">AngularJS Local Storage</a></s> Only with Tubular &lt; 1.4.0</li>
-<li><s><a href="http://jquery.com/">jQuery</a> - 2.1.4</s> Only with Tubular &lt; v1.0.0</li>
-<li><s><a href="http://getbootstrap.com/">Twitter Bootstrap</a></s> Only with Tubular &lt; 1.0.0</li>
-</ul>
-            <h3>Charts</h3>
-            <p>
-                An experimental support to chart is running with Tubular and you can choose between <a href="http://www.chartjs.org/">ChartJS</a> 
-                or <a href="http://www.highcharts.com/">Highcharts</a>. If you want to use any of them, be sure to load the
-                library before Tubular and check <a href="https://github.com/unosquare/tubular-dotnet/tree/master/src/Unosquare.Tubular.OwinSample">Tubular OWIN Sample</a> 
-                with easy to understand code on how to start using charts.
-            </p>
+           
             <hr />
+            
             <h1 id="cdn">Using a CDN</h1>
             <p>
                 You can get all the dependencies using the following links in your master HTML page. <a href="http://www.jsdelivr.com/">jsDelivr</a>
@@ -69,8 +40,11 @@ If you are looking for Angular2 support, check <a href="https://github.com/unosq
             <div hljs>
                 <link rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap/latest/css/bootstrap.min.css" />
                 <link rel="stylesheet" href="//cdn.jsdelivr.net/fontawesome/latest/css/font-awesome.min.css" />
-
-                <script src="//cdn.jsdelivr.net/g/angularjs@1.6.0(angular.min.js+angular-animate.min.js+angular-route.min.js),angular.bootstrap@2.5.0(ui-bootstrap.min.js+ui-bootstrap-tpls.min.js),momentjs@2.17.1"></script>
+                
+                <script src="//cdn.jsdelivr.net/npm/angular@1.6.4/angular.js"></script>
+                <script src="//cdn.jsdelivr.net/npm/angular-route@1.6.4/angular-route.js"></script>
+                <script src="//cdn.jsdelivr.net/npm/angular-animate@1.6.4/angular-animate.js"></script>
+                <script src="//cdn.jsdelivr.net/g/angular.bootstrap@2.5.0(ui-bootstrap.min.js+ui-bootstrap-tpls.min.js),momentjs@2.17.1"></script>
             </div>
 
             <p>Then you will need to either grab your own copy of Tubular or you use jsDelivr to reference Tubular CSS and JS
@@ -78,18 +52,33 @@ If you are looking for Angular2 support, check <a href="https://github.com/unosq
 
             <div hljs>
                 <link rel="stylesheet" href="//cdn.jsdelivr.net/tubular/latest/tubular-bundle.min.css" />
-                <script src="//cdn.jsdelivr.net/tubular/latest/tubular-bundle.min.js"></script>
+                <script src="//cdn.jsdelivr.net/npm/tubular@1.7.2"></script>
             </div>
 
             <p>
-                Finally update your modules to include Tubular, for example if your module is called <i>app</i>, then you
-                will need to add Tubular as a dependency as follows:
+                Finally include Tubular to your module as follows:
             </p>
 
             <div hljs>angular.module('app', [tubular']);</div>
 
             <hr />
             
+            <h1 id="bower">Bower Installation</h1>
+
+            <div hljs>$ bower install tubular --save</div>
+
+            <hr />
+            <h1 id="npm">npm Installation</h1>
+
+            <div hljs>$ npm install tubular --save</div>
+
+            <hr />
+            
+            <h1 id="nuget">NuGet Installation</h1>
+
+            <div hljs>PM Install-Package Tubular</div>
+
+            <hr/>
             <h1 id="code">Samples</h1>
 
             <p>
