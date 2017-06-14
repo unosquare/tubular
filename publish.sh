@@ -41,6 +41,5 @@ git add vendor/tubular/*
 git add docs/build/*
 git commit -m "Deploy to GitHub Pages: ${SHA}"
 
-cd out
 # Now that we're all set up, we can push.
 git push $SSH_REPO $TARGET_BRANCH
