@@ -28,13 +28,6 @@ You will need to reference the following JS libraries in order to use Tubular in
 * [Moment.js](http://momentjs.com/) - 2.17
 * [Font Awesome](http://fortawesome.github.io/Font-Awesome/)
 
-### Deprecated
-
-* <s>[FileSaver.js](https://github.com/eligrey/FileSaver.js)</s> Only with Tubular < 1.4.0 
-* <s>[AngularJS Local Storage](https://github.com/grevory/angular-local-storage)</s> Only with Tubular < 1.4.0 
-* <s>[jQuery](http://jquery.com/) - 2.1.4</s> Only with Tubular < v1.0.0
-* <s>[Twitter Bootstrap](http://getbootstrap.com/)</s> Only with Tubular < 1.0.0
-
 ## Using a CDN
 
 You can get all the dependencies using the following links in your master HTML page. <a href="http://www.jsdelivr.com/">jsDelivr</a> provides almost everything you need to import.
