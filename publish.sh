@@ -30,6 +30,7 @@ npm install
 gulp dgeni
 gulp reports
 
+git config credential.helper "store --file=.git/credentials"; echo "https://${GITHUBKEY}:@github.com" > .git/credentials 2>/dev/null
 git config user.name "Travis CI"
 git config user.email "geovanni.perez@gmail.com"
 
@@ -39,13 +40,6 @@ git add reports/*
 git add vendor/tubular/*
 git add docs/build/*
 git commit -m "Deploy to GitHub Pages: ${SHA}"
-
-# Get the deploy key by using Travis's stored variables to decrypt deploy_key.enc
-cd ..
-openssl aes-256-cbc -K $encrypted_b7840835169d_key -iv $encrypted_b7840835169d_iv -in tubular.enc -out tubular -d
-chmod 600 tubular
-eval `ssh-agent -s`
-ssh-add tubular
 
 cd out
 # Now that we're all set up, we can push.

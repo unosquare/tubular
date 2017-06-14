@@ -6,13 +6,14 @@ node_js:
 notifications:
   slack: unolabs:cbusXPH6pBwZ35rVDzi4k4ve
 addons:
-  firefox: 'latest'
+  firefox: latest
 env:
   global:
-    secure: beog7sTAvmzWIYC9fEFCVr/ok60aU796/t2cO6oaHpsZxqwM9u2PYBae3o4gJsrZywv9yfKzUku5j/ugHYtrVTt6edCZOGydOwm1vjZINrxvf8zf+dMUicOIu1SfiPAMYbCwq8xlB/MeyzTggkcxymHcr1ARTeqjXpC8XJDFCnQ=
+  - secure: beog7sTAvmzWIYC9fEFCVr/ok60aU796/t2cO6oaHpsZxqwM9u2PYBae3o4gJsrZywv9yfKzUku5j/ugHYtrVTt6edCZOGydOwm1vjZINrxvf8zf+dMUicOIu1SfiPAMYbCwq8xlB/MeyzTggkcxymHcr1ARTeqjXpC8XJDFCnQ=
+  - secure: fTilfs77DNFxmSwAGGGxAIDpfbglmEJzSSIaS+LWddasoKHOEIdB3Yo9uFYZ3Rq+iC4HMKu807wVZVhHtf3mIJummvePIIlCVGl/Q8nTb74rv4iH1xHc682Psl23BlogthvcbXcJ1PSfS9KUXLnDI2/wk0GoOivx4Yv6HDidJv4=
   matrix:
-    - BROWSER=chrome CHROME_BIN=/usr/bin/google-chrome DISPLAY=:99.0
-    - BROWSER=firefox DISPLAY=:99.0
+  - BROWSER=chrome CHROME_BIN=/usr/bin/google-chrome DISPLAY=:99.0
+  - BROWSER=firefox DISPLAY=:99.0
 install:
 - npm install
 - bower update
