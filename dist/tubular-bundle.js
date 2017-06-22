@@ -12,7 +12,7 @@
    */
   angular
     .module('tubular', ['tubular.directives', 'tubular.services', 'tubular.models'])
-    .info({ version: '1.7.2' });
+    .info({ version: '1.7.3' });
 
 })(angular);
 
@@ -1091,6 +1091,8 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 serverSaveMethod: '@',
                 pageSize: '=?',
                 onBeforeGetData: '=?',
+                onRowUpdated: '=?',
+                onRowAdded: '=?',
                 requestMethod: '@',
                 requireAuthentication: '@?',
                 name: '@?gridName',
@@ -1131,7 +1133,9 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 const storage = $window.localStorage;
 
                 $ctrl.$onInit = () => {
-                    if (angular.isDefined($ctrl.gridDatasource) && angular.isDefined($ctrl.serverUrl))
+                    $ctrl.isInLocalMode = angular.isDefined($ctrl.gridDatasource);
+
+                    if ($ctrl.isInLocalMode && angular.isDefined($ctrl.serverUrl))
                         throw 'Cannot define gridDatasource and serverUrl at the same time.';
 
                     $ctrl.tubularDirective = 'tubular-grid';
@@ -1139,6 +1143,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     $ctrl.name = $ctrl.name || 'tbgrid';
                     $ctrl.rows = [];
                     $ctrl.columns = [];
+
 
                     $ctrl.savePage = angular.isUndefined($ctrl.savePage) ? true : $ctrl.savePage;
                     $ctrl.currentPage = $ctrl.savePage ? (parseInt(storage.getItem(`${prefix + $ctrl.name}_page`)) || 1) : 1;
@@ -1183,7 +1188,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 $scope.$watch('$ctrl.columns', $scope.columnWatcher, true);
 
                 $scope.serverUrlWatcher = (newVal, prevVal) => {
-                    if ($ctrl.hasColumnsDefinitions === false || $ctrl.currentRequest || newVal === prevVal || angular.isDefined($ctrl.gridDatasource)) {
+                    if ($ctrl.hasColumnsDefinitions === false || $ctrl.currentRequest || newVal === prevVal || $ctrl.isInLocalMode) {
                         return;
                     }
 
@@ -1268,6 +1273,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 };
 
                 $ctrl.deleteRow = row => {
+
                     const urlparts = $ctrl.serverDeleteUrl.split('?');
                     let url = `${urlparts[0]}/${row.$key}`;
 
@@ -1297,7 +1303,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         new Date().getTimezoneOffset()}`;
                 }
 
-                $ctrl.saveRow = (row, forceUpdate) => {
+                $ctrl.remoteSave = (row, forceUpdate) => {
                     if (!$ctrl.serverSaveUrl) {
                         throw 'Define a Save URL.';
                     }
@@ -1350,6 +1356,30 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     });
 
                     return $ctrl.currentRequest;
+                }
+
+                $ctrl.saveRow = (row, forceUpdate) => {
+
+                    if ($ctrl.isInLocalMode) {
+
+                        if (row.$isNew) {
+
+                            if (angular.isUndefined($ctrl.onRowAdded)) {
+                                throw 'Define a Save Function using "onRowAdded".';
+                            }
+
+                            $ctrl.onRowAdded(row);
+                        }
+                        else {
+                            if (angular.isUndefined($ctrl.onRowUpdated)) {
+                                throw 'Define a Save Function using "onRowUpdated".';
+                            }
+
+                            $ctrl.onRowUpdated(row, forceUpdate);
+                        }
+                    }
+
+                    return $ctrl.remoteSave(row, forceUpdate);
                 };
 
                 $ctrl.verifyColumns = () => {
@@ -1396,7 +1426,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         if (skip < 0) skip = 0;
                     }
 
-                    if (angular.isDefined($ctrl.gridDatasource)) {
+                    if ($ctrl.isInLocalMode) {
                         return {
                             requireAuthentication: getRequiredAuthentication(),
                             data: {
@@ -1448,7 +1478,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
                 $ctrl.retrieveData = () => {
                     // If the ServerUrl is empty skip data load
-                    if ((!$ctrl.gridDatasource && !$ctrl.serverUrl) || $ctrl.currentRequest !== null) {
+                    if ((!$ctrl.isInLocalMode && !$ctrl.serverUrl) || $ctrl.currentRequest !== null) {
                         return;
                     }
 
@@ -1476,7 +1506,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
                     $scope.$emit('tbGrid_OnBeforeRequest', request, $ctrl);
 
-                    if (angular.isDefined($ctrl.gridDatasource)) {
+                    if ($ctrl.isInLocalMode) {
                         $ctrl.retrieveLocalData(request);
                     }
                     else if ($ctrl.localPaging) {

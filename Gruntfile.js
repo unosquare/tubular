@@ -184,7 +184,7 @@ module.exports = grunt => {
             },
             tubular_js: {
                 files: {
-                    'src/js/tubular-bundle.es5.js': ['src/js/tubular-bundle.js']
+                    'dist/tubular-bundle.es5.js': ['src/js/tubular-bundle.js']
                 }
             }
         }
