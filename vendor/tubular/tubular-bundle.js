@@ -12,7 +12,7 @@
    */
   angular
     .module('tubular', ['tubular.directives', 'tubular.services', 'tubular.models'])
-    .info({ version: '1.7.3' });
+    .info({ version: '1.7.6' });
 
 })(angular);
 
@@ -1621,9 +1621,16 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         Operator: 'None'
                     };
 
-                    return $http(request)
-                        .then(response => response.data.Payload, error => $scope.$emit('tbGrid_OnConnectionError', error))
-                        .then(() => $ctrl.currentRequest = null);
+                    $ctrl.currentRequest = $http(request)
+                        .then(response => {
+                            $ctrl.currentRequest = null;
+                            return response.data.Payload;
+                        }, error => {
+                            $scope.$emit('tbGrid_OnConnectionError', error);
+                            $ctrl.currentRequest = null;
+                        });
+
+                    return $ctrl.currentRequest;
                 };
 
                 $ctrl.visibleColumns = () => $ctrl.columns.filter(el => el.Visible).length;
