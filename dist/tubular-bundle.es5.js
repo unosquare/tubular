@@ -13,7 +13,7 @@
      * It depends upon  {@link tubular.directives}, {@link tubular.services} and {@link tubular.models}.
      */
 
-    angular.module('tubular', ['tubular.directives', 'tubular.services', 'tubular.models']).info({ version: '1.7.3' });
+    angular.module('tubular', ['tubular.directives', 'tubular.services', 'tubular.models']).info({ version: '1.7.6' });
 })(angular);
 
 (function (angular) {
@@ -1569,13 +1569,15 @@
                 Operator: 'None'
             };
 
-            return $http(request).then(function (response) {
+            $ctrl.currentRequest = $http(request).then(function (response) {
+                $ctrl.currentRequest = null;
                 return response.data.Payload;
             }, function (error) {
-                return $scope.$emit('tbGrid_OnConnectionError', error);
-            }).then(function () {
-                return $ctrl.currentRequest = null;
+                $scope.$emit('tbGrid_OnConnectionError', error);
+                $ctrl.currentRequest = null;
             });
+
+            return $ctrl.currentRequest;
         };
 
         $ctrl.visibleColumns = function () {
