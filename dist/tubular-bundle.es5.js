@@ -13,7 +13,7 @@
      * It depends upon  {@link tubular.directives}, {@link tubular.services} and {@link tubular.models}.
      */
 
-    angular.module('tubular', ['tubular.directives', 'tubular.services', 'tubular.models']).info({ version: '1.7.6' });
+    angular.module('tubular', ['tubular.directives', 'tubular.services', 'tubular.models']).info({ version: '1.7.8' });
 })(angular);
 
 (function (angular) {
@@ -2864,15 +2864,19 @@
         return service;
 
         function request(config) {
+
             // If the request ignore the authentication bypass
             if (config.requireAuthentication === false) {
+                return config;
+            }
+
+            if (checkIsWhiteListedUrl(config.url)) {
                 return config;
             }
 
             // Get the service here because otherwise, a circular dependency injection will be detected
             var tubularHttp = $injector.get(tubularHttpName);
             var webApiSettings = tubularConfig.webApi;
-
             config.headers = config.headers || {};
 
             // Handle requests going to API
@@ -2892,6 +2896,13 @@
             }
 
             return config;
+        }
+
+        function checkIsWhiteListedUrl(url) {
+            var webApiSettings = tubularConfig.webApi;
+            return webApiSettings.urlWhiteList().find(function (item) {
+                return url.indexOf(item) > 0;
+            }) ? true : false;
         }
 
         function checkStatic(url) {
@@ -4353,7 +4364,8 @@
                 refreshTokenUrl: PLATFORM,
                 enableRefreshTokens: PLATFORM,
                 requireAuthentication: PLATFORM,
-                baseUrl: PLATFORM
+                baseUrl: PLATFORM,
+                urlWhiteList: PLATFORM
             },
             platform: {},
             localStorage: {
@@ -4371,7 +4383,8 @@
                 refreshTokenUrl: '/api/token',
                 enableRefreshTokens: false,
                 requireAuthentication: true,
-                baseUrl: '/api'
+                baseUrl: '/api',
+                urlWhiteList: []
             },
             localStorage: {
                 prefix: 'tubular.'
