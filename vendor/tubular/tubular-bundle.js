@@ -12,7 +12,7 @@
    */
   angular
     .module('tubular', ['tubular.directives', 'tubular.services', 'tubular.models'])
-    .info({ version: '1.7.6' });
+    .info({ version: '1.7.8' });
 
 })(angular);
 
