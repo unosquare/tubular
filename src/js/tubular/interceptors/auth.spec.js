@@ -56,6 +56,23 @@ describe('Module: tubular.services', function () {
             expect(actual.headers.Authorization).toBeUndefined();
         });
 
+        all('should not add any authorization header for white listed urls', ['api/unsecure', 'api/nottoken'], function (url) {
+            var config = {
+                method: 'GET',
+                url: '/' + url + '?someendpoint=true'
+            };
+            tubularConfig.webApi.tokenUrl('/api/token');
+            tubularConfig.webApi.requireAuthentication(true);
+            tubularConfig.webApi.urlWhiteList(['api/unsecure', 'api/nottoken']);
+            tubularHttp.userData.bearerToken = "yeah";
+
+            var actual = AuthInterceptor.request(config);
+
+            expect(actual.headers).toBeUndefined();
+
+            $rootScope.$digest();
+        });
+
         it('should NOT add authorization header (Unauthenticated user)', function () {
             var config = {
                 method: 'GET',
@@ -124,7 +141,7 @@ describe('Module: tubular.services', function () {
 
             $httpBackend.expectPOST(tubularConfig.webApi.refreshTokenUrl(), data => {
                 return data === 'grant_type=refresh_token&refresh_token=' + tubularHttp.userData.refreshToken;
-            }).respond(200, { access_token: 'modified_bearer', refresh_token: 'modified_refresh', expires_in : 14399 });
+            }).respond(200, { access_token: 'modified_bearer', refresh_token: 'modified_refresh', expires_in: 14399 });
 
             $httpBackend.expectGET(/.*?api\/dummy?.*/).respond(200);
 
@@ -197,9 +214,9 @@ describe('Module: tubular.services', function () {
                 config: config,
                 status: 401
             };
-            
+
             $rootScope.$on('tbAuthentication_OnInvalidAuthenticationData', done);
-            
+
             AuthInterceptor
                 .responseError(rejection)
                 .then(resp => {

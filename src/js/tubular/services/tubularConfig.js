@@ -14,7 +14,8 @@
                     refreshTokenUrl: PLATFORM,
                     enableRefreshTokens: PLATFORM,
                     requireAuthentication: PLATFORM,
-                    baseUrl: PLATFORM
+                    baseUrl: PLATFORM,
+                    urlWhiteList: PLATFORM
                 },
                 platform: {},
                 localStorage: {
@@ -32,7 +33,8 @@
                     refreshTokenUrl: '/api/token',
                     enableRefreshTokens: false,
                     requireAuthentication: true,
-                    baseUrl: '/api'
+                    baseUrl: '/api',
+                    urlWhiteList : []
                 },
                 localStorage: {
                     prefix: 'tubular.'

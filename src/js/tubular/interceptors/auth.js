@@ -27,15 +27,20 @@
             return service;
 
             function request(config) {
+
+
                 // If the request ignore the authentication bypass
                 if (config.requireAuthentication === false) {
+                    return config;
+                }
+
+                if (checkIsWhiteListedUrl(config.url)) {
                     return config;
                 }
 
                 // Get the service here because otherwise, a circular dependency injection will be detected
                 const tubularHttp = $injector.get(tubularHttpName);
                 const webApiSettings = tubularConfig.webApi;
-
                 config.headers = config.headers || {};
 
                 // Handle requests going to API
@@ -61,6 +66,11 @@
                 }
 
                 return config;
+            }
+
+            function checkIsWhiteListedUrl(url) {
+                const webApiSettings = tubularConfig.webApi;
+                return webApiSettings.urlWhiteList().find(item => url.indexOf(item) > 0) ? true : false;
             }
 
             function checkStatic(url) {
