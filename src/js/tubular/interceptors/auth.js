@@ -27,8 +27,6 @@
             return service;
 
             function request(config) {
-
-
                 // If the request ignore the authentication bypass
                 if (config.requireAuthentication === false) {
                     return config;
@@ -69,8 +67,7 @@
             }
 
             function checkIsWhiteListedUrl(url) {
-                const webApiSettings = tubularConfig.webApi;
-                return webApiSettings.urlWhiteList().find(item => url.indexOf(item) >= 0) ? true : false;
+                return tubularConfig.webApi.urlWhiteList().find(item => url.indexOf(item) >= 0);
             }
 
             function checkStatic(url) {

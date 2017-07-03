@@ -13,7 +13,7 @@
      * It depends upon  {@link tubular.directives}, {@link tubular.services} and {@link tubular.models}.
      */
 
-    angular.module('tubular', ['tubular.directives', 'tubular.services', 'tubular.models']).info({ version: '1.7.8' });
+    angular.module('tubular', ['tubular.directives', 'tubular.services', 'tubular.models']).info({ version: '1.7.9' });
 })(angular);
 
 (function (angular) {
@@ -2864,7 +2864,6 @@
         return service;
 
         function request(config) {
-
             // If the request ignore the authentication bypass
             if (config.requireAuthentication === false) {
                 return config;
@@ -2899,10 +2898,9 @@
         }
 
         function checkIsWhiteListedUrl(url) {
-            var webApiSettings = tubularConfig.webApi;
-            return webApiSettings.urlWhiteList().find(function (item) {
-                return url.indexOf(item) > 0;
-            }) ? true : false;
+            return tubularConfig.webApi.urlWhiteList().find(function (item) {
+                return url.indexOf(item) >= 0;
+            });
         }
 
         function checkStatic(url) {

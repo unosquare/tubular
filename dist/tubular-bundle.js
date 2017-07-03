@@ -12,7 +12,7 @@
    */
   angular
     .module('tubular', ['tubular.directives', 'tubular.services', 'tubular.models'])
-    .info({ version: '1.7.8' });
+    .info({ version: '1.7.9' });
 
 })(angular);
 
@@ -2973,8 +2973,6 @@ angular.module('tubular.services', ['ui.bootstrap'])
             return service;
 
             function request(config) {
-
-
                 // If the request ignore the authentication bypass
                 if (config.requireAuthentication === false) {
                     return config;
@@ -3015,8 +3013,7 @@ angular.module('tubular.services', ['ui.bootstrap'])
             }
 
             function checkIsWhiteListedUrl(url) {
-                const webApiSettings = tubularConfig.webApi;
-                return webApiSettings.urlWhiteList().find(item => url.indexOf(item) > 0) ? true : false;
+                return tubularConfig.webApi.urlWhiteList().find(item => url.indexOf(item) >= 0);
             }
 
             function checkStatic(url) {
