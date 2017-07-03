@@ -2901,7 +2901,7 @@
         function checkIsWhiteListedUrl(url) {
             var webApiSettings = tubularConfig.webApi;
             return webApiSettings.urlWhiteList().find(function (item) {
-                return url.indexOf(item) > 0;
+                return url.indexOf(item) >= 0;
             }) ? true : false;
         }
 

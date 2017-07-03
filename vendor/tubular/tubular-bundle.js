@@ -3016,7 +3016,7 @@ angular.module('tubular.services', ['ui.bootstrap'])
 
             function checkIsWhiteListedUrl(url) {
                 const webApiSettings = tubularConfig.webApi;
-                return webApiSettings.urlWhiteList().find(item => url.indexOf(item) > 0) ? true : false;
+                return webApiSettings.urlWhiteList().find(item => url.indexOf(item) >= 0) ? true : false;
             }
 
             function checkStatic(url) {
