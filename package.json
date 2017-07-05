@@ -1,7 +1,7 @@
 {
   "name": "tubular",
   "filename": "tubular-bundle.min.js",
-  "version": "1.7.9",
+  "version": "1.7.10",
   "description": "A set of AngularJS directives and designed to rapidly build modern web applications.",
   "repository": {
     "type": "git",
@@ -30,7 +30,8 @@
   "files": [
     "dist/tubular-bundle.js",
     "dist/tubular-bundle.es5.js",
-    "dist/tubular-bundle.css"
+    "dist/tubular-bundle.css",
+    "dist/tubular.plain.css"
   ],
   "dependencies": {},
   "devDependencies": {
@@ -46,10 +47,7 @@
     "grunt-bower": "0.21.4",
     "grunt-contrib-concat": "^1.0.1",
     "grunt-contrib-copy": "^1.0.0",
-    "grunt-contrib-cssmin": "^2.2.0",
     "grunt-contrib-jshint": "^1.1.0",
-    "grunt-contrib-uglify": "^3.0.0",
-    "grunt-contrib-watch": "^1.0.0",
     "grunt-coveralls": "^1.0.1",
     "grunt-html2js": "0.3.8",
     "grunt-karma": "2.0.0",

@@ -209,3 +209,4 @@ src/js/tubular/templates*
 src/js/templates*
 src/js/*bundle.*
 src/css/*bundle.*
+src/css/*plain.css

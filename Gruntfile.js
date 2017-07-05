@@ -9,9 +9,6 @@ module.exports = grunt => {
     grunt.loadNpmTasks('grunt-karma');
     grunt.loadNpmTasks('grunt-html2js');
     grunt.loadNpmTasks('grunt-contrib-concat');
-    grunt.loadNpmTasks('grunt-contrib-uglify');
-    grunt.loadNpmTasks('grunt-contrib-cssmin');
-    grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-csslint');
 
     // Project configuration.
@@ -24,9 +21,8 @@ module.exports = grunt => {
                         expand: true,
                         src: [
                             'src/js/tubular*-bundle.js',
-                            'src/js/tubular*-bundle.min.js',
                             'src/css/tubular-bundle.css',
-                            'src/css/tubular-bundle.min.css'
+                            'src/css/tubular.plain.css',
                         ],
                         dest: 'dist/',
                         filter: 'isFile',
@@ -145,36 +141,12 @@ module.exports = grunt => {
                     'src/css/tubular/tubular.css'
                 ],
                 dest: 'src/css/tubular-bundle.css'
-            }
-        },
-        uglify: {
-            tubular_js: {
-                files: {
-                    'src/js/tubular-bundle.min.js': ['src/js/tubular-bundle.es5.js']
-                }
-            }
-        },
-        cssmin: {
-            options: {
-                mergeIntoShorthands: false,
-                roundingPrecision: -1
             },
-            main: {
-                files: {
-                    'src/css/tubular-bundle.min.css': ['src/css/tubular-bundle.css']
-                }
-            }
-        },
-        watch: {
-            scripts: {
-                files: [
-                    'src/js/**/*.js',
-                    'src/js/**/*.html'
+            tubular_core_css: {
+                src: [
+                    'src/css/tubular/tubular.css'
                 ],
-                tasks: ['min'],
-                options: {
-                    spawn: false
-                }
+                dest: 'src/css/tubular.plain.css'
             }
         },
         babel: {
@@ -190,16 +162,12 @@ module.exports = grunt => {
         }
     });
 
-    grunt.registerTask('build-js', ['concat:tubular_js']);
-
-    grunt.registerTask('build', ['html2js:main', 'build-js', 'concat:tubular_css']);
-
-    grunt.registerTask('compress', ['uglify:tubular_js']);
-
-    grunt.registerTask('min', ['build', 'babel', 'uglify', 'cssmin:main']);
-
     grunt.registerTask('lint', ['eslint']);
-    grunt.registerTask('dist', ['build-js', 'min', 'copy']);
+
+    grunt.registerTask('build', ['html2js:main', 'concat:tubular_js', 'concat:tubular_css', 'concat:tubular_core_css']);
+
+    grunt.registerTask('dist', ['build', 'babel', 'copy']);
+
     grunt.registerTask('unit', ['karma:dev']);
     grunt.registerTask('unit:ci', ['karma:ci']);
 
