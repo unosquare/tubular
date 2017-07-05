@@ -1,4 +1,4 @@
-<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">
+<div ng-class="{ 'form-group' : $ctrl.showLabel && $ctrl.isEditing, 'has-error' : !$ctrl.$valid && $ctrl.$dirty() }">
     <span ng-hide="$ctrl.isEditing">{{ $ctrl.value | date: format }}</span>
     <label ng-show="$ctrl.showLabel" ng-bind="$ctrl.label"></label>
     <div class="input-group" ng-show="$ctrl.isEditing">

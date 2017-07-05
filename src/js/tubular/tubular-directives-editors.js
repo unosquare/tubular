@@ -360,7 +360,7 @@
          * @param {string} defaultValue Set the default value.
          */
         .component('tbDateEditor', {
-            template: `<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">
+            template: `<div ng-class="{ 'form-group' : $ctrl.showLabel && $ctrl.isEditing, 'has-error' : !$ctrl.$valid && $ctrl.$dirty() }">
             <span ng-hide="$ctrl.isEditing">{{ $ctrl.value | moment: $ctrl.format }}</span>
             <label ng-show="$ctrl.showLabel" ng-bind="$ctrl.label"></label>${
             canUseHtml5Date() ?
@@ -488,7 +488,7 @@
                         css: '@?'
                     },
                     link: function (scope, element) {
-                        const template = `<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid && $dirty() }">
+                        const template = `<div ng-class="{ 'form-group' : showLabel && isEditing, 'has-error' : !$valid && $dirty() }">
                             <span ng-hide="isEditing" ng-bind="value"></span>
                             <label ng-show="showLabel" ng-bind="label"></label>
                             <div class="input-group" ng-show="isEditing">
