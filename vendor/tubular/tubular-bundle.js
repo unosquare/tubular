@@ -12,7 +12,7 @@
    */
   angular
     .module('tubular', ['tubular.directives', 'tubular.services', 'tubular.models'])
-    .info({ version: '1.7.9' });
+    .info({ version: '1.7.11' });
 
 })(angular);
 
@@ -466,7 +466,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
   $templateCache.put("tbCheckboxField.tpl.html",
     "<div ng-class=\"{ 'checkbox' : $ctrl.isEditing, 'has-error' : !$ctrl.$valid && $ctrl.$dirty() }\" class=tubular-checkbox><input type=checkbox ng-model=$ctrl.value ng-disabled=\"$ctrl.readOnly || !$ctrl.isEditing\" class=tubular-checkbox id={{$ctrl.name}} name={{$ctrl.name}}><label ng-show=$ctrl.isEditing for={{$ctrl.name}} ng-bind=$ctrl.label></label><span class=\"help-block error-block\" ng-show=$ctrl.isEditing ng-repeat=\"error in $ctrl.state.$errors\">{{error}}</span> <span class=help-block ng-show=\"$ctrl.isEditing && $ctrl.help\" ng-bind=$ctrl.help></span></div>");
   $templateCache.put("tbDateTimeEditorBs.tpl.html",
-    "<div ng-class=\"{ \\'form-group\\' : $ctrl.showLabel && $ctrl.isEditing, \\'has-error\\' : !$ctrl.$valid && $ctrl.$dirty() }\"><span ng-hide=$ctrl.isEditing>{{ $ctrl.value | date: format }}</span><label ng-show=$ctrl.showLabel ng-bind=$ctrl.label></label><div class=input-group ng-show=$ctrl.isEditing><input uib-datepicker-popup={{$ctrl.format}} ng-model=$ctrl.dateValue class=form-control ng-required=$ctrl.required ng-readonly=$ctrl.readOnly name={{$ctrl.name}} is-open=$ctrl.open> <span class=input-group-btn><button type=button class=\"btn btn-default\" ng-click=\"$ctrl.open = !$ctrl.open\"><i class=\"fa fa-calendar\"></i></button></span></div><div uib-timepicker ng-model=$ctrl.dateValue show-seconds=true show-meridian=false></div><span class=\"help-block error-block\" ng-show=$ctrl.isEditing ng-repeat=\"error in $ctrl.state.$errors\">{{error}}</span> <span class=help-block ng-show=\"$ctrl.isEditing && $ctrl.help\" ng-bind=$ctrl.help></span></div>");
+    "<div ng-class=\"{ 'form-group' : $ctrl.showLabel && $ctrl.isEditing, 'has-error' : !$ctrl.$valid && $ctrl.$dirty() }\"><span ng-hide=$ctrl.isEditing>{{ $ctrl.value | date: format }}</span><label ng-show=$ctrl.showLabel ng-bind=$ctrl.label></label><div class=input-group ng-show=$ctrl.isEditing><input uib-datepicker-popup={{$ctrl.format}} ng-model=$ctrl.dateValue class=form-control ng-required=$ctrl.required ng-readonly=$ctrl.readOnly name={{$ctrl.name}} is-open=$ctrl.open> <span class=input-group-btn><button type=button class=\"btn btn-default\" ng-click=\"$ctrl.open = !$ctrl.open\"><i class=\"fa fa-calendar\"></i></button></span></div><div uib-timepicker ng-model=$ctrl.dateValue show-seconds=true show-meridian=false></div><span class=\"help-block error-block\" ng-show=$ctrl.isEditing ng-repeat=\"error in $ctrl.state.$errors\">{{error}}</span> <span class=help-block ng-show=\"$ctrl.isEditing && $ctrl.help\" ng-bind=$ctrl.help></span></div>");
   $templateCache.put("tbDateTimeEditorHtml5.tpl.html",
     "<div ng-class=\"{ 'form-group' : $ctrl.showLabel && $ctrl.isEditing, 'has-error' : !$ctrl.$valid && $ctrl.$dirty() }\"><span ng-hide=$ctrl.isEditing>{{ $ctrl.value | date: format }}</span><label ng-show=$ctrl.showLabel ng-bind=$ctrl.label></label><input type=datetime-local ng-show=$ctrl.isEditing ng-model=$ctrl.dateValue class=form-control ng-required=$ctrl.required ng-readonly=$ctrl.readOnly name={{$ctrl.name}}> <span class=\"help-block error-block\" ng-show=$ctrl.isEditing ng-repeat=\"error in $ctrl.state.$errors\">{{error}}</span> <span class=help-block ng-show=\"$ctrl.isEditing && $ctrl.help\" ng-bind=$ctrl.help></span></div>");
   $templateCache.put("tbDropdownEditor.tpl.html",
@@ -2000,7 +2000,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
          * @param {string} defaultValue Set the default value.
          */
         .component('tbDateEditor', {
-            template: `<div ng-class="{ \'form-group\' : $ctrl.showLabel && $ctrl.isEditing, \'has-error\' : !$ctrl.$valid && $ctrl.$dirty() }">
+            template: `<div ng-class="{ 'form-group' : $ctrl.showLabel && $ctrl.isEditing, 'has-error' : !$ctrl.$valid && $ctrl.$dirty() }">
             <span ng-hide="$ctrl.isEditing">{{ $ctrl.value | moment: $ctrl.format }}</span>
             <label ng-show="$ctrl.showLabel" ng-bind="$ctrl.label"></label>${
             canUseHtml5Date() ?
@@ -2128,7 +2128,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         css: '@?'
                     },
                     link: function (scope, element) {
-                        const template = `<div ng-class="{ \'form-group\' : showLabel && isEditing, \'has-error\' : !$valid && $dirty() }">
+                        const template = `<div ng-class="{ 'form-group' : showLabel && isEditing, 'has-error' : !$valid && $dirty() }">
                             <span ng-hide="isEditing" ng-bind="value"></span>
                             <label ng-show="showLabel" ng-bind="label"></label>
                             <div class="input-group" ng-show="isEditing">
