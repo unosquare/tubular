@@ -1,0 +1,399 @@
+.panel-rounded {
+    margin: 0;
+}
+
+/* Tubular Grid General Styles */
+tb-grid {
+    position: relative;
+    display: block;
+}
+
+    tb-grid div.row {
+        margin-top: 4px;
+        margin-bottom: 4px;
+    }
+
+        tb-grid div.row:first-child {
+            margin-top: 0;
+        }
+
+        tb-grid div.row:last-child {
+            margin-bottom: 0;
+        }
+
+/* Tubular Pager Styles */
+div.tubular-pager {
+    margin: 0;
+    min-height: 32px;
+}
+
+    div.tubular-pager .pagination {
+        margin: 0 !important;
+        display: block !important;
+    }
+
+        div.tubular-pager .pagination > li > a {
+            text-align: center;
+            font-size: 10px;
+            outline: none;
+        }
+
+/* Tubular Grid Overlay and animation */
+div.tubular-overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 5000;
+    padding-left: 0;
+    padding-right: 0;
+    opacity: 0.4;
+    text-align: center;
+    color: #fff;
+}
+
+    div.tubular-overlay > div {
+        position: absolute;
+        background-color: #b4b4b4;
+        color: #fff;
+        height: 100%;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: block;
+        padding-right: 0;
+        border-radius: 4px;
+    }
+
+.tubular-overlay, .tubular-general-overlay {
+    line-height: 20px;
+    opacity: 0.4;
+    background: white;
+}
+
+    .tubular-overlay.ng-hide-add.ng-hide-add-active,
+    .tubular-overlay.ng-hide-remove.ng-hide-remove-active,
+    .tubular-general-overlay.ng-hide-add.ng-hide-add-active,
+    .tubular-general-overlay.ng-hide-remove.ng-hide-remove-active {
+        -webkit-transition: all linear 0.1s;
+        -moz-transition: all linear 0.1s;
+        -o-transition: all linear 0.1s;
+        transition: all linear 0.1s;
+    }
+
+    .tubular-overlay.ng-hide, .tubular-general-overlay.ng-hide {
+        line-height: 0;
+        opacity: 0;
+        padding: 0 0;
+    }
+
+div.tubular-general-overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 5000;
+    opacity: 0.4;
+    text-align: center;
+    color: #fff;
+}
+
+    div.tubular-general-overlay > div {
+        position: absolute;
+        background-color: #b4b4b4;
+        color: #fff;
+        height: 100%;
+        width: 100%;
+        top: 0;
+        bottom: 0;
+        display: block;
+        right: 15px;
+        border-radius: 4px;
+    }
+
+/* Tubular Grid Heading and Heading Filter Styles */
+div.panel > table.tubular-grid-table.table-bordered > thead > tr > th {
+    vertical-align: top;
+    border-bottom: 2px solid #ddd;
+    border-right: 1px solid #ddd;
+    line-height: 22px;
+}
+
+    div.panel > table.tubular-grid-table.table-bordered > thead > tr > th:last-child {
+        border-right-width: 0;
+    }
+
+table.tubular-grid-table {
+    font-size: 11px;
+    table-layout: fixed;
+    width: 100%;
+}
+
+    table.tubular-grid-table .form-group {
+        margin-bottom: 0;
+    }
+
+    table.tubular-grid-table .radio, table.tubular-grid-table .tubular-checkbox {
+        margin: 0;
+    }
+
+.show-xl {
+    display: none;
+}
+
+table.tubular-grid-table thead tr th.column-sm {
+    width: 50px;
+}
+
+table.tubular-grid-table thead tr th.column-date {
+    width: 140px;
+}
+
+table.tubular-grid-table thead tr th.column-md {
+    width: 90px;
+}
+
+@media (min-width: 768px) {
+    table.tubular-grid-table {
+        font-size: 12px;
+    }
+
+    div.tubular-pager .pagination > li > a {
+        font-size: 12px;
+        min-width: 37px;
+    }
+
+    table.tubular-grid-table thead tr th.column-sm {
+        width: 80px;
+    }
+
+    table.tubular-grid-table thead tr th.column-date {
+        width: 90px;
+    }
+
+    table.tubular-grid-table thead tr th.column-md {
+        width: 130px;
+    }
+}
+
+@media (min-width: 1400px) {
+    .show-xl {
+        display: table-cell;
+    }
+
+    table.tubular-grid-table {
+        font-size: 14px;
+    }
+
+    .tubular-pager ul.pagination li {
+        font-size: 14px;
+    }
+
+        .tubular-pager ul.pagination li a {
+            min-width: 42px;
+        }
+}
+
+table.tubular-grid-table tr th {
+    padding: 2px;
+}
+
+table.tubular-grid-table thead tr .column-action {
+    width: 75px;
+}
+
+
+table.tubular-grid-table tbody tr .cell-menu {
+    overflow: visible;
+}
+
+table.tubular-grid-table thead tr th i.fa {
+    font-weight: normal;
+    font-size: 10px;
+    line-height: 16px;
+    vertical-align: middle;
+    cursor: default;
+}
+
+table.tubular-grid-table thead tr th div.tubular-column-menu {
+    position: relative;
+    display: block;
+    text-align: center;
+    vertical-align: top;
+    float: right;
+}
+
+    table.tubular-grid-table thead tr th div.tubular-column-menu:active {
+        outline: none;
+    }
+
+    table.tubular-grid-table thead tr th div.tubular-column-menu > button,
+    table.tubular-grid-table thead tr th div.tubular-column-menu > div.btn-group > button {
+        border-radius: 30px !important;
+        line-height: 10px;
+        margin: 0;
+    }
+
+        table.tubular-grid-table thead tr th div.tubular-column-menu > button:active,
+        table.tubular-grid-table thead tr th div.tubular-column-menu > div.btn-group > button:active {
+            outline: none;
+        }
+
+    table.tubular-grid-table thead tr th div.tubular-column-menu button i.fa {
+        font-size: 10px;
+    }
+
+table.tubular-grid-table tbody .row-group {
+    font-weight: bolder;
+    text-transform: capitalize;
+}
+
+form.tubular-column-filter-form {
+    min-width: 230px;
+}
+
+    form.tubular-column-filter-form input[type=checkbox] {
+        height: inherit;
+    }
+
+.fullHeight, .modal-backdrop.in {
+    height: 100%;
+}
+
+.tubular-remove-popover {
+    min-width: 120px;
+}
+
+input.ng-pristine + .help-block.error-block {
+    display: none;
+}
+
+.has-error .form-control.ng-pristine {
+    border: 1px solid #e7e7e7;
+}
+
+.dropdown-menu a {
+    cursor: pointer;
+}
+
+select.checkbox-list option:before {
+    content: "";
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 1px solid #cccccc;
+    border-radius: 3px;
+    background-color: #fff;
+    margin-right: 2px;
+    -webkit-transition: border 0.15s ease-in-out, color 0.15s ease-in-out;
+    -o-transition: border 0.15s ease-in-out, color 0.15s ease-in-out;
+    -moz-transition: border 0.15s ease-in-out, color 0.15s ease-in-out;
+    transition: border 0.15s ease-in-out, color 0.15s ease-in-out;
+}
+
+select.checkbox-list option:checked:before {
+    font-family: 'FontAwesome';
+    content: "\f00c";
+}
+
+select.checkbox-list option:checked, select.checkbox-list option:hover, select.checkbox-list option:focus,
+select.checkbox-list:hover option:checked {
+    background: #CCC repeat url("data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=");
+}
+
+select.checkbox-list:hover option:checked, select.checkbox-list:focus option:checked {
+    background: none;
+}
+
+    select.checkbox-list:hover option:checked:before, select.checkbox-list:focus option:checked {
+        background-color: #ccc;
+    }
+
+/* Responsive table for mobiles https://techblog.livingsocial.com/blog/2015/04/06/responsive-tables-in-pure-css/ */
+@media screen and (max-width: 500px) {
+
+    table.responsive-mobile {
+        border: 0;
+    }
+
+        table.responsive-mobile thead {
+            display: none;
+        }
+
+        table.responsive-mobile tr {
+            margin-bottom: 10px;
+            display: block;
+            border-bottom: 2px solid #ddd;
+        }
+
+        table.responsive-mobile td {
+            display: block;
+            font-size: 14px;
+            height: 28px;
+            border-bottom: 1px dotted #ccc;
+        }
+
+            table.responsive-mobile td:not(.text-center) {
+                text-align: right;
+            }
+
+            table.responsive-mobile td:last-child {
+                border-bottom: 0;
+            }
+
+            table.responsive-mobile td:before {
+                content: attr(data-label);
+                float: left;
+                font-weight: bold;
+            }
+}
+
+.input-group-addon.fa {
+    font-size: 10px;
+}
+
+/* Components styling */
+tb-edit-button.btn {
+    padding: 0;
+}
+
+div.panel > table.tubular-grid-table.table-bordered > tbody > tr > td {
+    border-right: 1px solid #ddd;
+}
+
+    div.panel > table.tubular-grid-table.table-bordered > tbody > tr > td:last-child {
+        border-right-width: 0;
+    }
+
+
+table.tubular-grid-table tr td {
+    padding: 2px;
+}
+
+table.tubular-grid-table tbody tr td {
+    overflow: hidden;
+    -ms-text-overflow: ellipsis;
+    -o-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+}
+
+    table.tubular-grid-table tbody tr td.no-wrap, table.tubular-grid-table tbody tr td.no-wrap span {
+        white-space: nowrap;
+    }
+
+li.pagination-first, li.pagination-prev, li.pagination-next, li.pagination-last {
+    font-family: 'FontAwesome';
+}
+
+.btn-group > tb-print-button, .btn-group > tb-export-button, .btn-group > tb-column-selector {
+    position: relative;
+    float: left;
+}
+
+.nopadding {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+.nomarging {
+    margin: 0 !important;
+}
