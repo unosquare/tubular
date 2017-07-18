@@ -1,0 +1,1790 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for tubular/services/template.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../prettify.css" />
+    <link rel="stylesheet" href="../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../index.html">all files</a> / <a href="index.html">tubular/services/</a> template.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">63.28% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>112/177</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">47.59% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>69/145</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">60% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>3/5</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">64.12% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>109/170</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line medium'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275
+276
+277
+278
+279
+280
+281
+282
+283
+284
+285
+286
+287
+288
+289
+290
+291
+292
+293
+294
+295
+296
+297
+298
+299
+300
+301
+302
+303
+304
+305
+306
+307
+308
+309
+310
+311
+312
+313
+314
+315
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326
+327
+328
+329
+330
+331
+332
+333
+334
+335
+336
+337
+338
+339
+340
+341
+342
+343
+344
+345
+346
+347
+348
+349
+350
+351
+352
+353
+354
+355
+356
+357
+358
+359
+360
+361
+362
+363
+364
+365
+366
+367
+368
+369
+370
+371
+372
+373
+374
+375
+376
+377
+378
+379
+380
+381
+382
+383
+384
+385
+386
+387
+388
+389
+390
+391
+392
+393
+394
+395
+396
+397
+398
+399
+400
+401
+402
+403
+404
+405
+406
+407
+408
+409
+410
+411
+412
+413
+414
+415
+416
+417
+418
+419
+420
+421
+422
+423
+424
+425
+426
+427
+428
+429
+430
+431
+432
+433
+434
+435
+436
+437
+438
+439
+440
+441
+442
+443
+444
+445
+446
+447
+448
+449
+450
+451
+452
+453
+454
+455
+456
+457
+458
+459
+460
+461
+462
+463
+464
+465
+466
+467
+468
+469
+470
+471
+472
+473
+474
+475
+476
+477
+478
+479
+480
+481
+482
+483
+484
+485
+486
+487
+488
+489
+490
+491
+492
+493
+494
+495
+496
+497
+498
+499
+500
+501
+502
+503
+504
+505
+506
+507
+508
+509
+510
+511
+512
+513
+514
+515
+516
+517
+518
+519
+520
+521
+522
+523
+524
+525
+526
+527
+528
+529
+530
+531
+532
+533
+534
+535
+536
+537
+538
+539
+540
+541
+542
+543
+544
+545
+546
+547
+548
+549
+550
+551
+552
+553
+554
+555
+556
+557
+558
+559
+560
+561
+562
+563
+564
+565
+566
+567
+568
+569
+570
+571
+572
+573
+574
+575
+576</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">93×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">93×</span>
+<span class="cline-any cline-yes">93×</span>
+<span class="cline-any cline-yes">93×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">93×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">93×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">93×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">93×</span>
+<span class="cline-any cline-yes">14×</span>
+<span class="cline-any cline-yes">15×</span>
+<span class="cline-any cline-yes">14×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">14×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">93×</span>
+<span class="cline-any cline-yes">14×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">93×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">93×</span>
+<span class="cline-any cline-yes">151×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">22×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">22×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">22×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">85×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">93×</span>
+<span class="cline-any cline-yes">21×</span>
+<span class="cline-any cline-yes">21×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">21×</span>
+<span class="cline-any cline-yes">149×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">149×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">147×</span>
+<span class="cline-any cline-yes">21×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">126×</span>
+<span class="cline-any cline-yes">21×</span>
+<span class="cline-any cline-yes">105×</span>
+<span class="cline-any cline-yes">21×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">84×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">84×</span>
+<span class="cline-any cline-yes">21×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">84×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">21×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">21×</span>
+<span class="cline-any cline-yes">147×</span>
+<span class="cline-any cline-yes">147×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">147×</span>
+<span class="cline-any cline-yes">147×</span>
+<span class="cline-any cline-yes">147×</span>
+<span class="cline-any cline-yes">147×</span>
+<span class="cline-any cline-yes">147×</span>
+<span class="cline-any cline-yes">147×</span>
+<span class="cline-any cline-yes">147×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">147×</span>
+<span class="cline-any cline-yes">147×</span>
+<span class="cline-any cline-yes">147×</span>
+<span class="cline-any cline-yes">147×</span>
+<span class="cline-any cline-yes">147×</span>
+<span class="cline-any cline-yes">147×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">147×</span>
+<span class="cline-any cline-yes">126×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">21×</span>
+<span class="cline-any cline-yes">21×</span>
+<span class="cline-any cline-yes">21×</span>
+<span class="cline-any cline-yes">21×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">21×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">93×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">93×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">93×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">93×</span>
+<span class="cline-any cline-yes">56×</span>
+<span class="cline-any cline-yes">120×</span>
+<span class="cline-any cline-yes">56×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">56×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">93×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">﻿(angular =&gt; {
+    'use strict';
+&nbsp;
+    angular.module('tubular.services')
+        /**
+         * @ngdoc service
+         * @name tubularTemplateService
+         *
+         * @description
+         * Use `tubularTemplateService` to generate `tbGrid` and `tbForm` templates.
+         */
+        .service('tubularTemplateService',
+        [
+            '$templateCache',
+            'translateFilter',
+            function (
+                $templateCache,
+                translateFilter) {
+                const me = this;
+&nbsp;
+                me.canUseHtml5Date = () =&gt; {
+                    const el = angular.element('&lt;input type="date" value=":)" /&gt;');
+                    return el.attr('type') === 'date' &amp;&amp; el.val() === '';
+                };
+&nbsp;
+                me.enums = {
+                    dataTypes: ['numeric', 'date', 'boolean', 'string'],
+                    editorTypes: [
+                        'tbSimpleEditor', 'tbNumericEditor', 'tbDateTimeEditor', 'tbDateEditor',
+                        'tbDropdownEditor', 'tbTypeaheadEditor', 'tbCheckboxField', 'tbTextArea'
+                    ],
+                    httpMethods: ['POST', 'PUT', 'GET', 'DELETE'],
+                    gridModes: ['Read-Only', 'Inline', 'Popup', 'Page'],
+                    formLayouts: ['Simple', 'Two-columns', 'Three-columns'],
+                    sortDirections: ['Ascending', 'Descending']
+                };
+&nbsp;
+                me.defaults = {
+                    gridOptions: {
+                        Pager: true,
+                        FreeTextSearch: true,
+                        PageSizeSelector: true,
+                        PagerInfo: true,
+                        ExportCsv: true,
+                        Mode: 'Read-Only',
+                        RequireAuthentication: false,
+                        RequestMethod: 'GET',
+                        GridName: 'grid'
+                    },
+                    formOptions: {
+                        CancelButton: true,
+                        SaveUrl: '',
+                        SaveMethod: 'POST',
+                        Layout: 'Simple',
+                        ModelKey: '',
+                        RequireAuthentication: false,
+                        dataUrl: ''
+                    },
+                    fieldsSettings: {
+                        tbSimpleEditor: {
+                            ShowLabel: true,
+                            Placeholder: true,
+                            Format: false,
+                            Help: true,
+                            Required: true,
+                            ReadOnly: true,
+                            EditorType: true
+                        },
+                        tbNumericEditor: {
+                            ShowLabel: true,
+                            Placeholder: true,
+                            Format: true,
+                            Help: true,
+                            Required: true,
+                            ReadOnly: true,
+                            EditorType: false
+                        },
+                        tbDateTimeEditor: {
+                            ShowLabel: true,
+                            Placeholder: false,
+                            Format: true,
+                            Help: true,
+                            Required: true,
+                            ReadOnly: true,
+                            EditorType: false
+                        },
+                        tbDateEditor: {
+                            ShowLabel: true,
+                            Placeholder: false,
+                            Format: true,
+                            Help: true,
+                            Required: true,
+                            ReadOnly: true,
+                            EditorType: false
+                        },
+                        tbDropdownEditor: {
+                            ShowLabel: true,
+                            Placeholder: false,
+                            Format: false,
+                            Help: true,
+                            Required: true,
+                            ReadOnly: true,
+                            EditorType: false
+                        },
+                        tbTypeaheadEditor: {
+                            ShowLabel: true,
+                            Placeholder: true,
+                            Format: false,
+                            Help: true,
+                            Required: true,
+                            ReadOnly: true,
+                            EditorType: false
+                        },
+                        tbCheckboxField: {
+                            ShowLabel: false,
+                            Placeholder: false,
+                            Format: false,
+                            Help: true,
+                            Required: false,
+                            ReadOnly: true,
+                            EditorType: false
+                        },
+                        tbTextArea: {
+                            ShowLabel: true,
+                            Placeholder: true,
+                            Help: true,
+                            Required: true,
+                            ReadOnly: true,
+                            EditorType: false
+                        }
+                    }
+                };
+&nbsp;
+                // Loading popovers templates
+                me.tbColumnDateTimeFilterPopoverTemplateName = me.canUseHtml5Date() ? <span class="branch-0 cbranch-no" title="branch not covered" >'tbColumnDateTimeFilterPopoverHtml5.tpl.html' </span>: 'tbColumnDateTimeFilterPopoverBs.tpl.html';
+&nbsp;
+                /**
+                 * Generates the grid's cells markup
+                 * @param {array} columns
+                 * @param {string} mode
+                 * @returns {string}
+                 */
+                me.generateCells = (columns, mode) =&gt; columns.reduce((prev, el) =&gt; {
+                        const editorTag = mode === 'Inline' ? el.EditorType
+                            .replace(/([A-Z])/g, $1 =&gt; `-${$1.toLowerCase()}`) : '';
+                        const templateExpression = el.Template || <span class="branch-1 cbranch-no" title="branch not covered" >`&lt;span ng-bind="row.${el.Name}"&gt;&lt;/span&gt;`;</span>
+&nbsp;
+                        return `${prev}\r\n\t\t&lt;td tb-cell ng-transclude column-name="${el.Name}"&gt;
+                            \t\t\t${mode === 'Inline' ? `&lt;${editorTag} is-editing="row.$isEditing" value="row.${el.Name}"&gt;&lt;/${editorTag}&gt;` : templateExpression}
+                            \t\t&lt;/td&gt;`;
+                    }, '');
+&nbsp;
+                me.generateColumnsDefinitions = (columns) =&gt; columns.reduce((prev, el) =&gt; 
+                        `${prev}
+                        \t\t&lt;tb-column name="${el.Name}" label="${el.Label}" column-type="${el.DataType}" sortable="${el.Sortable}" 
+                        \t\t\tis-key="${el.IsKey}" searchable="${el.Searchable}" ${el.Sortable ? `\r\n\t\t\tsort-direction="${el.SortDirection}" sort-order="${el.SortOrder}" ` : <span class="branch-1 cbranch-no" title="branch not covered" >' '}</span>
+                                visible="${el.Visible}"&gt;${el.Filter ? '\r\n\t\t\t&lt;tb-column-filter&gt;&lt;/tb-column-filter&gt;' : <span class="branch-1 cbranch-no" title="branch not covered" >''}</span>
+                        \t\t\t&lt;tb-column-header&gt;&lt;span&gt;{{label}}&lt;/span&gt;&lt;/tb-column-header&gt;
+                        \t\t&lt;/tb-column&gt;`, '');
+&nbsp;
+                /**
+                 * Generates a grid markup using a columns model and grids options
+                 * @param {array} columns
+                 * @param {object} options
+                 * @returns {string}
+                 */
+                me.generateGrid = function (columns, options) {
+                    let topToolbar = '';
+                    let bottomToolbar = '';
+&nbsp;
+                    <span class="missing-if-branch" title="else path not taken" >E</span>if (options.Pager) {
+                        topToolbar += '\r\n\t&lt;tb-grid-pager class="col-md-6"&gt;&lt;/tb-grid-pager&gt;';
+                        bottomToolbar += '\r\n\t&lt;tb-grid-pager class="col-md-6"&gt;&lt;/tb-grid-pager&gt;';
+                    }
+&nbsp;
+                    <span class="missing-if-branch" title="else path not taken" >E</span>if (options.ExportCsv) {
+                        topToolbar += '\r\n\t&lt;div class="col-md-3"&gt;' +
+                            '\r\n\t\t&lt;div class="btn-group"&gt;' +
+                            '\r\n\t\t&lt;tb-print-button title="Tubular"&gt;&lt;/tb-print-button&gt;' +
+                            '\r\n\t\t&lt;tb-export-button filename="tubular.csv" css="btn-sm"&gt;&lt;/tb-export-button&gt;' +
+                            '\r\n\t\t&lt;/div&gt;' +
+                            '\r\n\t&lt;/div&gt;';
+                    }
+&nbsp;
+                    <span class="missing-if-branch" title="else path not taken" >E</span>if (options.FreeTextSearch) {
+                        topToolbar += '\r\n\t&lt;tb-text-search class="col-md-3" css="input-sm"&gt;&lt;/tb-text-search&gt;';
+                    }
+&nbsp;
+                    <span class="missing-if-branch" title="else path not taken" >E</span>if (options.PageSizeSelector) {
+                        bottomToolbar +=
+                            '\r\n\t&lt;tb-page-size-selector class="col-md-3" selectorcss="input-sm"&gt;&lt;/tb-page-size-selector&gt;';
+                    }
+&nbsp;
+                    <span class="missing-if-branch" title="else path not taken" >E</span>if (options.PagerInfo) {
+                        bottomToolbar += '\r\n\t&lt;tb-grid-pager-info class="col-md-3"&gt;&lt;/tb-grid-pager-info&gt;';
+                    }
+&nbsp;
+                    const columnDefinitions = me.generateColumnsDefinitions(columns);
+                    const rowsDefinitions = me.generateCells(columns, options.Mode);
+&nbsp;
+                    return `${'&lt;div class="container"&gt;' +
+                        '\r\n&lt;tb-grid server-url="'}${options.dataUrl}" request-method="${options.RequestMethod}" class="row" ` +
+                        `page-size="10" require-authentication="${options.RequireAuthentication }" ${options.Mode !== 'Read-Only' ? <span class="branch-0 cbranch-no" title="branch not covered" >` editor-mode="${  options.Mode.toLowerCase()  }"` </span>: ''}&gt;${topToolbar === '' ? <span class="branch-0 cbranch-no" title="branch not covered" >'' </span>: `\r\n\t&lt;div class="row"&gt;${  topToolbar  }\r\n\t&lt;/div&gt;`}\r\n\t&lt;div class="row"&gt;` +
+                        '\r\n\t&lt;div class="col-md-12"&gt;' +
+                        '\r\n\t&lt;div class="panel panel-default panel-rounded"&gt;' +
+                        `\r\n\t&lt;tb-grid-table class="table-bordered"&gt;
+                        \t&lt;tb-column-definitions&gt;
+                        ${columnDefinitions}
+                        &lt;/tb-column-definitions&gt;` +
+                        '\r\n\t&lt;tb-row-set&gt;' +
+                        `\r\n\t&lt;tb-row-template ng-repeat="row in $component.rows" row-model="row"&gt;${
+                        options.Mode !== 'Read-Only'
+                            ? <span class="branch-0 cbranch-no" title="branch not covered" >`\r\n\t\t&lt;tb-cell-template&gt;${options.Mode === 'Inline' ? '\r\n\t\t\t&lt;tb-save-button model="row"&gt;&lt;/tb-save-button&gt;' : ''}\r\n\t\t\t&lt;tb-edit-button model="row"&gt;&lt;/tb-edit-button&gt;` +</span>
+                            '\r\n\t\t&lt;/tb-cell-template&gt;'
+                            : ''
+                        }${rowsDefinitions}\r\n\t&lt;/tb-row-template&gt;` +
+                        `\r\n\t&lt;/tb-row-set&gt;
+                        \t&lt;/tb-grid-table&gt;
+                        \t&lt;/div&gt;
+                        \t&lt;/div&gt;
+                        \t&lt;/div&gt;${bottomToolbar === '' ? <span class="branch-0 cbranch-no" title="branch not covered" >'' </span>: `\r\n\t&lt;div class="row"&gt;${  bottomToolbar  }\r\n\t&lt;/div&gt;`}\r\n&lt;/tb-grid&gt;
+                        &lt;/div&gt;`;
+                };
+&nbsp;
+                me.getEditorTypeByDateType = dataType =&gt; {
+                    switch (dataType) {
+                        case 'date':
+                            return 'tbDateTimeEditor';
+                        case 'numeric':
+                            return 'tbNumericEditor';
+                        case 'boolean':
+                            return 'tbCheckboxField';
+                        default:
+                            return 'tbSimpleEditor';
+                    }
+                };
+&nbsp;
+                /*
+                 * Create a columns array using a model.
+                 *
+                 * @param {object} model
+                 * @returns {array} The columns
+                 */
+                me.createColumns = function (model) {
+                    const jsonModel = (angular.isArray(model) &amp;&amp; model.length &gt; 0) ? model[0] : model;
+                    const columns = [];
+&nbsp;
+                    angular.forEach(Object.keys(jsonModel), prop =&gt; {
+                        const value = jsonModel[prop];
+&nbsp;
+                        // Ignore functions and  null value, but maybe evaluate another item if there is anymore
+                        if (prop[0] === '$' || angular.isFunction(value) || value == null) {
+                            return;
+                        }
+&nbsp;
+                        if (angular.isNumber(value) || parseFloat(value).toString() === value) {
+                            columns.push({
+                                Name: prop,
+                                DataType: 'numeric',
+                                Template: `{{row.${prop} | number}}`
+                            });
+                        } else if (angular.isDate(value) || !isNaN((new Date(value)).getTime())) {
+                            columns.push({ Name: prop, DataType: 'date', Template: `{{row.${prop} | moment }}` });
+                        } else if (value.toLowerCase() === 'true' || value.toLowerCase() === 'false') {
+                            columns.push({
+                                Name: prop,
+                                DataType: 'boolean',
+                                Template: `{{row.${prop} ? "TRUE" : "FALSE" }}`
+                            });
+                        } else {
+                            const newColumn = { Name: prop, DataType: 'string', Template: `{{row.${prop}}}` };
+&nbsp;
+                            if ((/e(-|)mail/ig).test(newColumn.Name)) {
+                                newColumn.Template = `&lt;a href="mailto:${newColumn.Template}"&gt;${newColumn.Template}&lt;/a&gt;`;
+                            }
+&nbsp;
+                            columns.push(newColumn);
+                        }
+                    });
+&nbsp;
+                    let firstSort = false;
+&nbsp;
+                    angular.forEach(columns, columnObj =&gt; {
+                        columnObj.Label = columnObj.Name.replace(/([a-z])([A-Z])/g, '$1 $2');
+                        columnObj.EditorType = me.getEditorTypeByDateType(columnObj.DataType);
+&nbsp;
+                        // Grid attributes
+                        columnObj.Searchable = columnObj.DataType === 'string';
+                        columnObj.Filter = true;
+                        columnObj.Visible = true;
+                        columnObj.Sortable = true;
+                        columnObj.IsKey = false;
+                        columnObj.SortOrder = 0;
+                        columnObj.SortDirection = '';
+                        // Form attributes
+                        columnObj.ShowLabel = true;
+                        columnObj.Placeholder = '';
+                        columnObj.Format = '';
+                        columnObj.Help = '';
+                        columnObj.Required = true;
+                        columnObj.ReadOnly = false;
+&nbsp;
+                        if (firstSort) {
+                            return;
+                        }
+&nbsp;
+                        columnObj.IsKey = true;
+                        columnObj.SortOrder = 1;
+                        columnObj.SortDirection = 'Ascending';
+                        firstSort = true;
+                    });
+&nbsp;
+                    return columns;
+                };
+&nbsp;
+                me.generatePopupTemplate = (model, title) =&gt; {
+                    const columns = me.createColumns(model);
+                    title = title || 'Edit Row';
+&nbsp;
+                    return `&lt;tb-form model="Model"&gt;&lt;div class="modal-header"&gt;&lt;h3 class="modal-title"&gt;${title}&lt;/h3&gt;&lt;/div&gt;` +
+                        `&lt;div class="modal-body"&gt;${me.generateFieldsArray(columns).join('')}&lt;/div&gt;` +
+                        '&lt;div class="modal-footer"&gt;' +
+                        '&lt;button class="btn btn-primary" ng-click="savePopup()" ng-disabled="!Model.$valid()"&gt;Save&lt;/button&gt;' +
+                        '&lt;button class="btn btn-danger" ng-click="closePopup()" formnovalidate&gt;Cancel&lt;/button&gt;' +
+                        '&lt;/div&gt;' +
+                        '&lt;/tb-form&gt;';
+                };
+&nbsp;
+                me.generatePopup = (model, title) =&gt; {
+                    const templateName = `temp${new Date().getTime()}.html`;
+                    const template = me.generatePopupTemplate(model, title);
+&nbsp;
+                    $templateCache.put(templateName, template);
+&nbsp;
+                    return templateName;
+                };
+&nbsp;
+                /**
+                 * Generates a new form using the fields model and options
+                 *
+                 * @param {array} fields
+                 * @param {object} options
+                 * @returns {string}
+                 */
+                me.generateForm = (fields, options) =&gt; {
+                    const layout = options.Layout === 'Simple' ? '' : options.Layout.toLowerCase();
+                    const fieldsArray = me.generateFieldsArray(fields);
+                    let fieldsMarkup;
+&nbsp;
+                    if (layout === '') {
+                        fieldsMarkup = fieldsArray.join('');
+                    } else {
+                        fieldsMarkup = `\r\n\t&lt;div class="row"&gt;${
+                            layout === 'two-columns'
+                                ? `\r\n\t&lt;div class="col-md-6"&gt;${
+                                fieldsArray.filter((i, e) =&gt; (e % 2) === 0).join('')
+                                }\r\n\t&lt;/div&gt;\r\n\t&lt;div class="col-md-6"&gt;${
+                                fieldsArray.filter((i, e) =&gt; (e % 2) === 1).join('')
+                                }&lt;/div&gt;`
+                                : `\r\n\t&lt;div class="col-md-4"&gt;${
+                                fieldsArray.filter((i, e) =&gt; (e % 3) === 0).join('')
+                                }\r\n\t&lt;/div&gt;\r\n\t&lt;div class="col-md-4"&gt;${
+                                fieldsArray.filter((i, e) =&gt; (e % 3) === 1).join('')
+                                }\r\n\t&lt;/div&gt;\r\n\t&lt;div class="col-md-4"&gt;${
+                                fieldsArray.filter((i, e) =&gt; (e % 3) === 2).join('')
+                                }\r\n\t&lt;/div&gt;`
+                            }\r\n\t&lt;/div&gt;`;
+                    }
+&nbsp;
+                    return `${`&lt;tb-form server-save-method="${options.SaveMethod}" 
+                                model-key="${options.ModelKey}" 
+                                require-authentication="${options.RequireAuthentication}" 
+                                server-url="${options.dataUrl}" 
+                                server-save-url="${options.SaveUrl}"&gt;` +
+                        '\r\n\t'}${
+                        fieldsMarkup
+                        }\r\n\t&lt;div&gt;` +
+                        `\r\n\t\t&lt;button class="btn btn-primary" ng-click="$parent.save()" ng-disabled="!$parent.model.$valid()"&gt;Save&lt;/button&gt;${
+                        options.CancelButton
+                            ? '\r\n\t\t&lt;button class="btn btn-danger" ng-click="$parent.cancel()" formnovalidate&gt;Cancel&lt;/button&gt;'
+                            : <span class="branch-1 cbranch-no" title="branch not covered" >''</span>
+                        }\r\n\t&lt;/div&gt;` +
+                        '\r\n&lt;/tb-form&gt;';
+                };
+&nbsp;
+                /**
+                 * Generates a array with a template for every column
+                 *
+                 * @param {array} columns
+                 * @returns {array}
+                 */
+                me.generateFieldsArray = columns =&gt; columns.map(el =&gt; {
+                        const editorTag = el.EditorType
+                            .replace(/([A-Z])/g, $1 =&gt; `-${  $1.toLowerCase()}`);
+                        const defaults = me.defaults.fieldsSettings[el.EditorType];
+&nbsp;
+                        return `${'\r\n\t' +`&lt;${editorTag} name="${el.Name}"`}${
+                            defaults.EditorType ? `\r\n\t\teditor-type="${  el.DataType  }" ` : ''
+                            }${defaults.ShowLabel
+                                ? `\r\n\t\tlabel="${  el.Label  }" show-label="${  el.ShowLabel  }"`
+                                : ''
+                            }${defaults.Placeholder ? `\r\n\t\tplaceholder="${  el.Placeholder  }"` : ''
+                            }${defaults.Required ? `\r\n\t\trequired="${  el.Required  }"` : ''
+                            }${defaults.ReadOnly ? `\r\n\t\tread-only="${  el.ReadOnly  }"` : <span class="branch-1 cbranch-no" title="branch not covered" >''</span>
+                            }${defaults.Format ? `\r\n\t\tformat="${  el.Format  }"` : ''
+                            }${defaults.Help ? `\r\n\t\thelp="${  el.Help  }"` : <span class="branch-1 cbranch-no" title="branch not covered" >''</span>
+                            }&gt;\r\n\t` +`&lt;/${editorTag}&gt;`;
+                    });
+&nbsp;
+                me.setupFilter = ($scope, $ctrl) =&gt; {
+<span class="cstat-no" title="statement not covered" >                    const dateOps = {</span>
+                        'None': translateFilter('OP_NONE'),
+                        'Equals': translateFilter('OP_EQUALS'),
+                        'NotEquals': translateFilter('OP_NOTEQUALS'),
+                        'Between': translateFilter('OP_BETWEEN'),
+                        'Gte': '&gt;=',
+                        'Gt': '&gt;',
+                        'Lte': '&lt;=',
+                        'Lt': '&lt;'
+                    };
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    const filterOperators = {</span>
+                        'string': {
+                            'None': translateFilter('OP_NONE'),
+                            'Equals': translateFilter('OP_EQUALS'),
+                            'NotEquals': translateFilter('OP_NOTEQUALS'),
+                            'Contains': translateFilter('OP_CONTAINS'),
+                            'NotContains': translateFilter('OP_NOTCONTAINS'),
+                            'StartsWith': translateFilter('OP_STARTSWITH'),
+                            'NotStartsWith': translateFilter('OP_NOTSTARTSWITH'),
+                            'EndsWith': translateFilter('OP_ENDSWITH'),
+                            'NotEndsWith': translateFilter('OP_NOTENDSWITH')
+                        },
+                        'numeric': {
+                            'None': translateFilter('OP_NONE'),
+                            'Equals': translateFilter('OP_EQUALS'),
+                            'Between': translateFilter('OP_BETWEEN'),
+                            'Gte': '&gt;=',
+                            'Gt': '&gt;',
+                            'Lte': '&lt;=',
+                            'Lt': '&lt;'
+                        },
+                        'date': dateOps,
+                        'datetime': dateOps,
+                        'datetimeutc': dateOps,
+                        'boolean': {
+                            'None': translateFilter('OP_NONE'),
+                            'Equals': translateFilter('OP_EQUALS'),
+                            'NotEquals': translateFilter('OP_NOTEQUALS')
+                        }
+                    };
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    $ctrl.filter = {</span>
+                        Text: $ctrl.text || null,
+                        Argument: $ctrl.argument ? [$ctrl.argument] : null,
+                        Operator: $ctrl.operator || 'Contains',
+                        OptionsUrl: $ctrl.optionsUrl || null,
+                        HasFilter: !($ctrl.text == null || $ctrl.text === '' || angular.isUndefined($ctrl.text)),
+                        Name: $scope.$parent.$parent.column.Name
+                    };
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    $ctrl.filterTitle = $ctrl.title || translateFilter('CAPTION_FILTER');</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    $scope.$watch(() =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >                        const c = $ctrl.$component.columns.filter(e =&gt; <span class="cstat-no" title="statement not covered" >e.Name === $ctrl.filter.Name)</span>;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                        return c.length !== 0 ? c[0] : null;</span>
+                    }, val =&gt; {
+<span class="cstat-no" title="statement not covered" >                            if (!val) {</span>
+<span class="cstat-no" title="statement not covered" >                                return;</span>
+                            }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                            if ((val.DataType === 'date' || val.DataType === 'datetime' || val.DataType === 'datetimeutc')</span>
+                                &amp;&amp; !($ctrl.filter.Text === '' || $ctrl.filter.Text == null))
+                            {
+<span class="cstat-no" title="statement not covered" >                                $ctrl.filter.Text = new Date($ctrl.filter.Text);</span>
+                            }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                            if ($ctrl.filter.HasFilter !== val.Filter.HasFilter) {</span>
+<span class="cstat-no" title="statement not covered" >                                $ctrl.filter.HasFilter = val.Filter.HasFilter;</span>
+<span class="cstat-no" title="statement not covered" >                                $ctrl.filter.Text = val.Filter.Text;</span>
+<span class="cstat-no" title="statement not covered" >                                $ctrl.retrieveData();</span>
+                            }
+                        },
+                        true);
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    $ctrl.retrieveData = <span class="fstat-no" title="function not covered" >function () {</span></span>
+<span class="cstat-no" title="statement not covered" >                        const c = $ctrl.$component.columns.filter(e =&gt; <span class="cstat-no" title="statement not covered" >e.Name === $ctrl.filter.Name)</span>;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                        if (c.length !== 0) {</span>
+<span class="cstat-no" title="statement not covered" >                            c[0].Filter = $ctrl.filter;</span>
+                        }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                        $ctrl.$component.retrieveData();</span>
+<span class="cstat-no" title="statement not covered" >                        $ctrl.close();</span>
+                    };
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    $ctrl.clearFilter = <span class="fstat-no" title="function not covered" >function () {</span></span>
+<span class="cstat-no" title="statement not covered" >                        if ($ctrl.filter.Operator !== 'Multiple') {</span>
+<span class="cstat-no" title="statement not covered" >                            $ctrl.filter.Operator = 'None';</span>
+                        }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                        if (angular.isDefined($ctrl.onlyContains) &amp;&amp; $ctrl.onlyContains) {</span>
+<span class="cstat-no" title="statement not covered" >                            $ctrl.filter.Operator = 'Contains';</span>
+                        }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                        $ctrl.filter.Text = '';</span>
+<span class="cstat-no" title="statement not covered" >                        $ctrl.filter.Argument = [];</span>
+<span class="cstat-no" title="statement not covered" >                        $ctrl.filter.HasFilter = false;</span>
+<span class="cstat-no" title="statement not covered" >                        $ctrl.retrieveData();</span>
+                    };
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    $ctrl.applyFilter = () =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >                        $ctrl.filter.HasFilter = true;</span>
+<span class="cstat-no" title="statement not covered" >                        $ctrl.retrieveData();</span>
+                    };
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    $ctrl.close = () =&gt; <span class="cstat-no" title="statement not covered" >$ctrl.isOpen = false;</span></span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    $ctrl.checkEvent = (keyEvent) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >                        if (keyEvent.which === 13) {</span>
+<span class="cstat-no" title="statement not covered" >                            $ctrl.applyFilter();</span>
+<span class="cstat-no" title="statement not covered" >                            keyEvent.preventDefault();</span>
+                        }
+                    };
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    const columns = $ctrl.$component.columns.filter(e =&gt; <span class="cstat-no" title="statement not covered" >e.Name === $ctrl.filter.Name)</span>;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    $scope.$watch('$ctrl.filter.Operator', val =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >                        if (val === 'None') {</span>
+<span class="cstat-no" title="statement not covered" >                            $ctrl.filter.Text = '';</span>
+                        }
+                    });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    if (columns.length === 0) {</span>
+<span class="cstat-no" title="statement not covered" >                        return;</span>
+                    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    $scope.$watch('$ctrl.filter', n =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >                        if (columns[0].Filter.Text !== n.Text) {</span>
+<span class="cstat-no" title="statement not covered" >                            n.Text = columns[0].Filter.Text;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                            if (columns[0].Filter.Operator !== n.Operator) {</span>
+<span class="cstat-no" title="statement not covered" >                                n.Operator = columns[0].Filter.Operator;</span>
+                            }
+                        }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                        $ctrl.filter.HasFilter = columns[0].Filter.HasFilter;</span>
+                    });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    columns[0].Filter = $ctrl.filter;</span>
+<span class="cstat-no" title="statement not covered" >                    $ctrl.dataType = columns[0].DataType;</span>
+<span class="cstat-no" title="statement not covered" >                    $ctrl.filterOperators = filterOperators[$ctrl.dataType];</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    if ($ctrl.dataType === 'date' ||</span>
+                        $ctrl.dataType === 'datetime' ||
+                        $ctrl.dataType === 'datetimeutc') {
+<span class="cstat-no" title="statement not covered" >                        $ctrl.filter.Argument = [new Date()];</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                        if ($ctrl.filter.Operator === 'Contains') {</span>
+<span class="cstat-no" title="statement not covered" >                            $ctrl.filter.Operator = 'Equals';</span>
+                        }
+                    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    if ($ctrl.dataType === 'numeric' || $ctrl.dataType === 'boolean') {</span>
+<span class="cstat-no" title="statement not covered" >                        $ctrl.filter.Argument = [1];</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                        if ($ctrl.filter.Operator === 'Contains') {</span>
+<span class="cstat-no" title="statement not covered" >                            $ctrl.filter.Operator = 'Equals';</span>
+                        }
+                    }
+                };
+&nbsp;
+            }
+        ]);
+})(angular);</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Tue Jul 18 2017 18:28:18 GMT+0000 (UTC)
+</div>
+</div>
+<script src="../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../sorter.js"></script>
+</body>
+</html>
