@@ -13,9 +13,12 @@ Tubular provides a set of directives and services using AngularJS as framework. 
 * Common functionality like **Sorting, Filtering (specific to the data type), Free-text search, Paging** and more.
 * Easy to implement inline editors, page or popup forms totally bound to your grid.
 * Basic services like **Print and Export to CSV** in client-side.
+* Independent backend platform (.NET and Node.js)
 
 Developing with .NET as backend? check [Tubular DotNet](https://github.com/unosquare/tubular-dotnet) project.
-If you are looking for Angular2 support, check [Tubular2](https://github.com/unosquare/tubular2) beta project.
+Developing with Node.js as backend? check [Tubular Node.js](https://github.com/unosquare/tubular-nodejs) project.
+
+If you are looking for Angular2 components, check [Tubular2](https://github.com/unosquare/tubular2) beta project.
 
 Please visit the <a href="http://unosquare.github.io/tubular" target="_blank">Tubular GitHub Page</a> to learn how quickly you can start coding. Don't forget to check out the Tubular Generator which quickly turns models into an awesome UIs!
 
@@ -46,7 +49,7 @@ Then you will need to either grab your own copy of Tubular or you use jsDelivr t
 
 ```html
 <link rel="stylesheet" href="//cdn.jsdelivr.net/tubular/latest/tubular-bundle.min.css" />
-<script src="//cdn.jsdelivr.net/npm/tubular@1.7.2"></script>
+<script src="//cdn.jsdelivr.net/npm/tubular@1.7.11"></script>
 ```
 
 Finally include Tubular to your module as follows:
