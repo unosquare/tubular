@@ -10,6 +10,9 @@ module.exports = grunt => {
     grunt.loadNpmTasks('grunt-html2js');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-csslint');
+    grunt.loadNpmTasks('grunt-protractor-coverage');
+    grunt.loadNpmTasks('grunt-express-server');
+
 
     // Project configuration.
     grunt.initConfig({
@@ -29,6 +32,23 @@ module.exports = grunt => {
                         flatten: true
                     }
                 ]
+            },
+            integration: {
+
+                files: [
+                    // includes files within path
+                    {
+                        expand: true,
+                        src: [
+                            'src/js/tubular*-bundle.js',
+                            'src/css/tubular-bundle.css',
+                            'src/css/tubular.plain.css',
+                        ],
+                        dest: 'test/integration/tbnodejs/public/javascripts',
+                        filter: 'isFile',
+                        flatten: true
+                    }
+                ]
             }
         },
         coveralls: {
@@ -40,11 +60,11 @@ module.exports = grunt => {
             }
         },
         csslint: {
-          options: {
-            quiet: true,
-            formatters: [{id:'compact', dest: 'report/csslint/report.txt'}]
-          },
-          src: ['src/css/**/*.css', '!src/css/**/*min.css']
+            options: {
+                quiet: true,
+                formatters: [{ id: 'compact', dest: 'report/csslint/report.txt' }]
+            },
+            src: ['src/css/**/*.css', '!src/css/**/*min.css']
         },
         eslint: {
             options: {
@@ -66,13 +86,13 @@ module.exports = grunt => {
 
             },
             e2eci: {
-              configFile: 'test/e2e/karma.conf.js',
-              browsers: ff ? ['Firefox'] : ['Chrome'],
-              singleRun: true
+                configFile: 'test/e2e/karma.conf.js',
+                browsers: ff ? ['Firefox'] : ['Chrome'],
+                singleRun: true
             },
             e2e: {
-              configFile: 'test/e2e/karma.conf.js',
-              singleRun: false
+                configFile: 'test/e2e/karma.conf.js',
+                singleRun: false
             },
             dev: {
                 singleRun: false,
@@ -159,6 +179,52 @@ module.exports = grunt => {
                     'dist/tubular-bundle.es5.js': ['src/js/tubular-bundle.js']
                 }
             }
+        },
+        connect: {
+            server: {
+                options: {
+                    port: 9000,
+                    hostname: 'localhost'
+                }
+            }
+        },
+        express: {
+            options: {
+                // Override defaults here
+            },
+            dev: {
+                options: {
+                    background: true,
+                    script: 'test/integration/tbnodejs/app.js'
+                }
+            },
+            prod: {
+                options: {
+                    script: 'path/to/prod/server.js',
+                    node_env: 'production'
+                }
+            },
+            test: {
+                options: {
+                    script: 'path/to/test/server.js'
+                }
+            }
+        },
+        protractor_coverage: {
+            options: {
+                keepAlive: true,
+                collectorPort: 9001,
+                webdriverManagerUpdate: true,
+                coverageDir: './test/integration/tbnodejs/coverage/dir',
+                args: {
+                    baseUrl: 'http://localhost:9000'
+                }
+            },
+            local: {
+                options: {
+                    configFile: './test/integration/tbnodejs/protractor.conf.js'
+                }
+            }
         }
     });
 
@@ -171,6 +237,14 @@ module.exports = grunt => {
     grunt.registerTask('unit', ['karma:dev']);
     grunt.registerTask('unit:ci', ['karma:ci']);
 
-    grunt.registerTask('e2e:ci', ['dist','karma:e2eci']);
-    grunt.registerTask('e2e', ['dist','karma:e2e']);
+    grunt.registerTask('e2e:ci', ['dist', 'karma:e2eci']);
+    grunt.registerTask('e2e', ['dist', 'karma:e2e']);
+
+    grunt.registerTask('server', 'Start a custom web server', function () {
+        grunt.log.writeln('Started web server on port 9000');
+        require('./test/integration/tbnodejs/app.js').listen(9000);
+    });
+
+
+    grunt.registerTask('tbnodejs', ['copy:integration', 'server', 'protractor_coverage:local']);
 };
