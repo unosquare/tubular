@@ -1,0 +1,17 @@
+doctype html
+html
+  head
+    title= title
+    link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel='stylesheet', href='//maxcdn.bootstrapcdn.com/bootswatch/latest/lumen/bootstrap.min.css')
+    link(rel='stylesheet', href='//cdn.jsdelivr.net/fontawesome/latest/css/font-awesome.min.css')
+    link(rel='stylesheet', href='../../../../../src/css/tubular-bundle.min.css')
+  body(ng-app="app").ng-cloak
+    block content
+    script(src="//cdn.jsdelivr.net/npm/angular@1.6.4/angular.js")
+    script(src="//cdn.jsdelivr.net/npm/angular-route@1.6.4/angular-route.js")
+    script(src="//cdn.jsdelivr.net/npm/angular-animate@1.6.4/angular-animate.js")
+    script(src="//cdn.jsdelivr.net/g/angular.bootstrap@2.5.0(ui-bootstrap.min.js+ui-bootstrap-tpls.min.js),momentjs@2.17.1")
+    script(src='../../../../../src/js/tubular-bundle.js')
+    script.
+      angular.module('app', ['tubular']);

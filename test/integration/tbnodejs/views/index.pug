@@ -1,0 +1,33 @@
+extends layout
+
+block content
+  h1= title
+  p Using tubular-nodejs
+  div.container
+    tb-grid(server-url="/clients", page-size="20", class="row", grid-name="mygrid", require-authentication="false")
+      div.row
+        tb-grid-pager.col-md-8.col-xs-12
+        tb-text-search.col-md-4.col-xs-12
+      div.row
+        div.col-md-12
+          div.panel.panel-default-panel-rounded
+            tb-grid-table.table-bordered
+              tb-column-definitions
+                tb-column(name="address_id", label="Address id", sortable="true")
+                  tb-column-header
+                    span {{label}}
+                tb-column(name="first_name", label="First Name", searchable="true", sortable="true")
+                  tb-column-filter(operator="Contains")
+                  tb-column-header
+                    span {{label}}
+                tb-column(name="last_name", label="Last Name", searchable="true")
+                  tb-column-header
+                    span {{label}}
+              tb-row-set
+                tb-row-template(ng-repeat="row in $component.rows", row-model="row")
+                  tb-cell-template {{row.address_id}}
+                  tb-cell-template {{row.first_name}}
+                  tb-cell-template {{row.last_name}}
+      div.row
+        tb-page-size-selector.col-md-3.col-xs-6
+        tb-grid-pager-info.col-md-9.col-xs-6
