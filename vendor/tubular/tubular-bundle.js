@@ -12,8 +12,7 @@
    */
   angular
     .module('tubular', ['tubular.directives', 'tubular.services', 'tubular.models'])
-    // Holding this a little bit
-    //.info({ version: '1.7.11' });
+    .info({ version: '1.8.0' });
 
 })(angular);
 
@@ -355,7 +354,7 @@
             },
             controller: [
                 '$scope', function ($scope) {
-                    $scope.tubularDirective = 'tubular-rowset';
+                    $scope.tubularDirective = 'tubular-row-template';
                     $scope.fields = [];
                     $scope.$component = $scope.$parent.$parent.$parent.$component;
 
@@ -1308,47 +1307,45 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     }
 
                     $ctrl.currentRequest = modelSaver.save($ctrl.serverSaveUrl, $ctrl.serverSaveMethod, row)
-                    .then(data => {
-                        $scope.$emit('tbForm_OnSuccessfulSave', data);
-                        row.$isLoading = false;
-                        row.$isEditing = false;
-                        $ctrl.currentRequest = null;
-                        $ctrl.retrieveData();
+                        .then(data => {
+                            $scope.$emit('tbForm_OnSuccessfulSave', data);
+                            row.$isLoading = false;
+                            row.$isEditing = false;
+                            $ctrl.currentRequest = null;
+                            $ctrl.retrieveData();
 
-                        return data;
-                    }, error => {
-                        $scope.$emit('tbForm_OnConnectionError', error);
-                        row.$isLoading = false;
-                        $ctrl.currentRequest = null;
+                            return data;
+                        }, error => {
+                            $scope.$emit('tbForm_OnConnectionError', error);
+                            row.$isLoading = false;
+                            $ctrl.currentRequest = null;
 
-                        return error;
-                    });
+                            return error;
+                        });
 
                     return $ctrl.currentRequest;
                 }
 
                 $ctrl.saveRow = (row, forceUpdate) => {
-
-                    if ($ctrl.isInLocalMode) {
-
-                        if (row.$isNew) {
-
-                            if (angular.isUndefined($ctrl.onRowAdded)) {
-                                throw 'Define a Save Function using "onRowAdded".';
-                            }
-
-                            $ctrl.onRowAdded(row);
-                        }
-                        else {
-                            if (angular.isUndefined($ctrl.onRowUpdated)) {
-                                throw 'Define a Save Function using "onRowUpdated".';
-                            }
-
-                            $ctrl.onRowUpdated(row, forceUpdate);
-                        }
+                    if (!$ctrl.isInLocalMode) {
+                        return $ctrl.remoteSave(row, forceUpdate);
                     }
 
-                    return $ctrl.remoteSave(row, forceUpdate);
+                    if (row.$isNew) {
+
+                        if (angular.isUndefined($ctrl.onRowAdded)) {
+                            throw 'Define a Save Function using "onRowAdded".';
+                        }
+
+                        $ctrl.onRowAdded(row);
+                    }
+                    else {
+                        if (angular.isUndefined($ctrl.onRowUpdated)) {
+                            throw 'Define a Save Function using "onRowUpdated".';
+                        }
+
+                        $ctrl.onRowUpdated(row, forceUpdate);
+                    }
                 };
 
                 $ctrl.verifyColumns = () => {
@@ -1508,7 +1505,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
                     $ctrl.rows = data.Payload.map(el => {
                         const model = new TubularModel($ctrl, el);
-                        
+
                         model.editPopup = (template, size) => {
                             tubularPopupService.openDialog(template, new TubularModel($ctrl, el), $ctrl, size);
                         };
@@ -3099,7 +3096,7 @@ angular.module('tubular.services', ['ui.bootstrap'])
             };
         }]);
 })(angular);
-(function(angular) {
+(function(angular, moment) {
   'use strict';
 
   angular.module('tubular.services')
@@ -3218,7 +3215,7 @@ angular.module('tubular.services', ['ui.bootstrap'])
       // We try to find a Tubular Form in the parents
       while (parent != null) {
         if (parent.tubularDirective === 'tubular-form' ||
-          parent.tubularDirective === 'tubular-rowset') {
+          parent.tubularDirective === 'tubular-row-template') {
 
           if (ctrl.name === null) {
             return;
@@ -3244,13 +3241,13 @@ angular.module('tubular.services', ['ui.bootstrap'])
                   ctrl.value = parent.model[scope.Name];
                 }
               }
+            }
 
-              parent.$watch(() => ctrl.value, value => {
+            scope.$watch(() => ctrl.value, value => {
                 if (value !== parent.model[scope.Name]) {
                   parent.model[scope.Name] = value;
                 }
               });
-            }
 
             scope.$watch(() => parent.model[scope.Name], value => {
               if (value !== ctrl.value) {
@@ -3304,7 +3301,7 @@ angular.module('tubular.services', ['ui.bootstrap'])
       }
     }
   }
-})(angular);
+})(angular, moment);
 
 
 (function(angular) {
