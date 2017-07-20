@@ -36,6 +36,11 @@
 
                     $uibModalInstance.close();
                 };
+
+                $scope.onSave = () => {
+                    $scope.closePopup();
+                    gridScope.retrieveData();
+                };
             }
         ]);
 })(angular);

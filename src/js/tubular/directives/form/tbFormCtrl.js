@@ -10,12 +10,14 @@
             '$element',
             'tubularModel',
             '$http',
+            'modelSaver',
             function (
                 $scope,
                 $timeout,
                 $element,
                 TubularModel,
-                $http) {
+                $http,
+                modelSaver) {
                 // we need this to find the parent of a field
                 $scope.tubularDirective = 'tubular-form';
                 $scope.fields = [];
@@ -25,7 +27,7 @@
                     let getUrl = urlData[0] + $scope.modelKey;
 
                     if (urlData.length > 1) {
-                        getUrl += `?${  urlData[1]}`;
+                        getUrl += `?${urlData[1]}`;
                     }
 
                     return getUrl;
@@ -34,7 +36,7 @@
                 const $ctrl = this;
 
                 $ctrl.serverSaveMethod = $scope.serverSaveMethod || 'POST';
-                $ctrl.name = $scope.name || (`tbForm${  tbFormCounter++}`);
+                $ctrl.name = $scope.name || (`tbForm${tbFormCounter++}`);
 
                 // This method is meant to provide a reference to the Angular Form
                 // so we can get information about: $pristine, $dirty, $submitted, etc.
@@ -62,12 +64,10 @@
 
                 $ctrl.retrieveData = function () {
                     if (angular.isDefined($scope.serverUrl)) {
-                        $http.get(getUrlWithKey(), {
-                            requireAuthentication: $ctrl.requireAuthentication
-                        }).then(response => {
-                            $scope.model = new TubularModel($scope.model && $scope.model.$component || $scope, response.data);
+                        $http.get(getUrlWithKey(), { requireAuthentication: $ctrl.requireAuthentication })
+                        .then(response => {
+                            $scope.model = new TubularModel($scope, response.data);
                             $ctrl.bindFields();
-                            $scope.model.$isNew = true;
                         }, error => $scope.$emit('tbForm_OnConnectionError', error));
 
                         return;
@@ -92,28 +92,31 @@
 
                     $scope.model.$isLoading = true;
 
-                    $scope.currentRequest = $http({
-                        data: $scope.model,
-                        url: $ctrl.serverSaveUrl,
-                        method: $scope.model.$isNew ? ($ctrl.serverSaveMethod || 'POST') : 'PUT',
-                        requireAuthentication: $ctrl.requireAuthentication
-                    });
+                    $scope.currentRequest = modelSaver
+                        .save($scope.serverSaveUrl, $scope.serverSaveMethod, $scope.model)
+                        .then(response => {
+                            if (angular.isDefined($scope.onSave)) {
+                                $scope.onSave(response);
+                            }
 
-                    $scope.currentRequest.then(response => {
-                        const data = response.data;
+                            $scope.$emit('tbForm_OnSuccessfulSave', response.data, $scope);
 
-                        $scope.$emit('tbForm_OnSuccessfulSave', data, $scope);
+                            if (!keepData) {
+                                $scope.clear();
+                            }
 
-                        if (!keepData) {
-                            $scope.clear();
-                        }
+                            const formScope = $scope.getFormScope();
 
-                        const formScope = $scope.getFormScope();
+                            if (formScope) {
+                                formScope.$setPristine();
+                            }
+                        }, error => {
+                            if (angular.isDefined($scope.onError)) {
+                                $scope.onError(error);
+                            }
 
-                        if (formScope) {
-                            formScope.$setPristine();
-                        }
-                    }, error => $scope.$emit('tbForm_OnConnectionError', error, $scope))
+                            $scope.$emit('tbForm_OnConnectionError', error, $scope);
+                        })
                         .then(() => {
                             $scope.model.$isLoading = false;
                             $scope.currentRequest = null;
