@@ -50,7 +50,7 @@ Then you will need to either grab your own copy of Tubular or you use jsDelivr t
 
 ```html
 <link rel="stylesheet" href="//cdn.jsdelivr.net/tubular/latest/tubular-bundle.min.css" />
-<script src="//cdn.jsdelivr.net/npm/tubular@1.7.11"></script>
+<script src="//cdn.jsdelivr.net/npm/tubular@1.8.0"></script>
 ```
 
 Finally include Tubular to your module as follows:

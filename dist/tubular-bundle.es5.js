@@ -347,7 +347,7 @@
                 model: '=rowModel'
             },
             controller: ['$scope', function ($scope) {
-                $scope.tubularDirective = 'tubular-rowset';
+                $scope.tubularDirective = 'tubular-row-template';
                 $scope.fields = [];
                 $scope.$component = $scope.$parent.$parent.$parent.$component;
 
@@ -1268,26 +1268,24 @@
         };
 
         $ctrl.saveRow = function (row, forceUpdate) {
-
-            if ($ctrl.isInLocalMode) {
-
-                if (row.$isNew) {
-
-                    if (angular.isUndefined($ctrl.onRowAdded)) {
-                        throw 'Define a Save Function using "onRowAdded".';
-                    }
-
-                    $ctrl.onRowAdded(row);
-                } else {
-                    if (angular.isUndefined($ctrl.onRowUpdated)) {
-                        throw 'Define a Save Function using "onRowUpdated".';
-                    }
-
-                    $ctrl.onRowUpdated(row, forceUpdate);
-                }
+            if (!$ctrl.isInLocalMode) {
+                return $ctrl.remoteSave(row, forceUpdate);
             }
 
-            return $ctrl.remoteSave(row, forceUpdate);
+            if (row.$isNew) {
+
+                if (angular.isUndefined($ctrl.onRowAdded)) {
+                    throw 'Define a Save Function using "onRowAdded".';
+                }
+
+                $ctrl.onRowAdded(row);
+            } else {
+                if (angular.isUndefined($ctrl.onRowUpdated)) {
+                    throw 'Define a Save Function using "onRowUpdated".';
+                }
+
+                $ctrl.onRowUpdated(row, forceUpdate);
+            }
         };
 
         $ctrl.verifyColumns = function () {
@@ -2979,7 +2977,7 @@
         };
     }]);
 })(angular);
-(function (angular) {
+(function (angular, moment) {
     'use strict';
 
     angular.module('tubular.services')
@@ -3098,7 +3096,7 @@
 
             // We try to find a Tubular Form in the parents
             while (parent != null) {
-                if (parent.tubularDirective === 'tubular-form' || parent.tubularDirective === 'tubular-rowset') {
+                if (parent.tubularDirective === 'tubular-form' || parent.tubularDirective === 'tubular-row-template') {
 
                     if (ctrl.name === null) {
                         return;
@@ -3123,15 +3121,15 @@
                                     ctrl.value = parent.model[scope.Name];
                                 }
                             }
-
-                            parent.$watch(function () {
-                                return ctrl.value;
-                            }, function (value) {
-                                if (value !== parent.model[scope.Name]) {
-                                    parent.model[scope.Name] = value;
-                                }
-                            });
                         }
+
+                        scope.$watch(function () {
+                            return ctrl.value;
+                        }, function (value) {
+                            if (value !== parent.model[scope.Name]) {
+                                parent.model[scope.Name] = value;
+                            }
+                        });
 
                         scope.$watch(function () {
                             return parent.model[scope.Name];
@@ -3187,7 +3185,7 @@
             }
         }
     }
-})(angular);
+})(angular, moment);
 
 (function (angular) {
     'use strict';

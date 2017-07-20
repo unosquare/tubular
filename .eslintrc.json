@@ -10,8 +10,7 @@
   },
   "plugins": [ "angular" ],
   "globals": {
-    "moment": true,
-    "saveAs": true
+    "moment": true
   },
   "extends": [
     "eslint:recommended",

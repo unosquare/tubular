@@ -12,7 +12,6 @@
    */
   angular
     .module('tubular', ['tubular.directives', 'tubular.services', 'tubular.models'])
-    // Holding this a little bit
-    //.info({ version: '1.7.11' });
+    .info({ version: '1.8.0' });
 
 })(angular);
