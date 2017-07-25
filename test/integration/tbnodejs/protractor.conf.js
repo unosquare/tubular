@@ -1,7 +1,7 @@
 exports.config = {
     allScriptsTimeout: 11000000,
     specs: [
-        './test/integration/tbnodejs/test/*.js'
+        './test/integration/tests/*.js'
     ],
 
     capabilities: {
