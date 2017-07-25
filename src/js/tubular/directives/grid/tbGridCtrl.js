@@ -11,6 +11,7 @@
             'tubularConfig',
             '$window',
             'localPager',
+            'modelSaver',
             function (
                 $scope,
                 tubularPopupService,
@@ -18,7 +19,8 @@
                 $http,
                 tubularConfig,
                 $window,
-                localPager) {
+                localPager,
+                modelSaver) {
                 const $ctrl = this;
                 const prefix = tubularConfig.localStorage.prefix();
                 const storage = $window.localStorage;
@@ -34,7 +36,6 @@
                     $ctrl.name = $ctrl.name || 'tbgrid';
                     $ctrl.rows = [];
                     $ctrl.columns = [];
-
 
                     $ctrl.savePage = angular.isUndefined($ctrl.savePage) ? true : $ctrl.savePage;
                     $ctrl.currentPage = $ctrl.savePage ? (parseInt(storage.getItem(`${prefix + $ctrl.name}_page`)) || 1) : 1;
@@ -156,7 +157,6 @@
                     $ctrl.tempRow = new TubularModel($ctrl, data || {});
                     $ctrl.tempRow.$isNew = true;
                     $ctrl.tempRow.$isEditing = true;
-                    $ctrl.tempRow.$component = $ctrl;
 
                     if (angular.isDefined(template) && angular.isDefined(popup) && popup) {
                         tubularPopupService.openDialog(template, $ctrl.tempRow, $ctrl, size);
@@ -164,7 +164,6 @@
                 };
 
                 $ctrl.deleteRow = row => {
-
                     const urlparts = $ctrl.serverDeleteUrl.split('?');
                     let url = `${urlparts[0]}/${row.$key}`;
 
@@ -187,90 +186,52 @@
                     return $ctrl.requireAuthentication ? ($ctrl.requireAuthentication === 'true') : true;
                 }
 
-                function addTimeZoneToUrl(url) {
-                    return `${url +
-                        (url.indexOf('?') === -1 ? '?' : '&')
-                        }timezoneOffset=${
-                        new Date().getTimezoneOffset()}`;
-                }
-
                 $ctrl.remoteSave = (row, forceUpdate) => {
-                    if (!$ctrl.serverSaveUrl) {
-                        throw 'Define a Save URL.';
-                    }
-
                     if (!forceUpdate && !row.$isNew && !row.$hasChanges()) {
                         row.$isEditing = false;
                         return null;
                     }
 
-                    row.$isLoading = true;
-                    const component = row.$component;
-                    row.$component = null;
-                    const clone = angular.copy(row);
-                    row.$component = component;
+                    $ctrl.currentRequest = modelSaver.save($ctrl.serverSaveUrl, $ctrl.serverSaveMethod, row)
+                        .then(data => {
+                            $scope.$emit('tbForm_OnSuccessfulSave', data);
+                            row.$isLoading = false;
+                            row.$isEditing = false;
+                            $ctrl.currentRequest = null;
+                            $ctrl.retrieveData();
 
-                    const originalClone = angular.copy(row.$original);
+                            return data;
+                        }, error => {
+                            $scope.$emit('tbForm_OnConnectionError', error);
+                            row.$isLoading = false;
+                            $ctrl.currentRequest = null;
 
-                    delete clone.$isEditing;
-                    delete clone.$original;
-                    delete clone.$state;
-                    delete clone.$valid;
-                    delete clone.$component;
-                    delete clone.$isLoading;
-                    delete clone.$isNew;
-
-                    $ctrl.currentRequest = $http({
-                        url: row.$isNew ? addTimeZoneToUrl($ctrl.serverSaveUrl) : $ctrl.serverSaveUrl,
-                        method: row.$isNew ? ($ctrl.serverSaveMethod || 'POST') : 'PUT',
-                        data: row.$isNew ? clone : {
-                            Old: originalClone,
-                            New: clone,
-                            TimezoneOffset: new Date().getTimezoneOffset()
-                        }
-                    });
-
-                    $ctrl.currentRequest.then(data => {
-                        $scope.$emit('tbForm_OnSuccessfulSave', data);
-                        row.$isLoading = false;
-                        row.$isEditing = false;
-                        $ctrl.currentRequest = null;
-                        $ctrl.retrieveData();
-
-                        return data;
-                    }, error => {
-                        $scope.$emit('tbForm_OnConnectionError', error);
-                        row.$isLoading = false;
-                        $ctrl.currentRequest = null;
-
-                        return error;
-                    });
+                            return error;
+                        });
 
                     return $ctrl.currentRequest;
                 }
 
                 $ctrl.saveRow = (row, forceUpdate) => {
-
-                    if ($ctrl.isInLocalMode) {
-
-                        if (row.$isNew) {
-
-                            if (angular.isUndefined($ctrl.onRowAdded)) {
-                                throw 'Define a Save Function using "onRowAdded".';
-                            }
-
-                            $ctrl.onRowAdded(row);
-                        }
-                        else {
-                            if (angular.isUndefined($ctrl.onRowUpdated)) {
-                                throw 'Define a Save Function using "onRowUpdated".';
-                            }
-
-                            $ctrl.onRowUpdated(row, forceUpdate);
-                        }
+                    if (!$ctrl.isInLocalMode) {
+                        return $ctrl.remoteSave(row, forceUpdate);
                     }
 
-                    return $ctrl.remoteSave(row, forceUpdate);
+                    if (row.$isNew) {
+
+                        if (angular.isUndefined($ctrl.onRowAdded)) {
+                            throw 'Define a Save Function using "onRowAdded".';
+                        }
+
+                        $ctrl.onRowAdded(row);
+                    }
+                    else {
+                        if (angular.isUndefined($ctrl.onRowUpdated)) {
+                            throw 'Define a Save Function using "onRowUpdated".';
+                        }
+
+                        $ctrl.onRowUpdated(row, forceUpdate);
+                    }
                 };
 
                 $ctrl.verifyColumns = () => {
@@ -430,7 +391,6 @@
 
                     $ctrl.rows = data.Payload.map(el => {
                         const model = new TubularModel($ctrl, el);
-                        model.$component = $ctrl;
 
                         model.editPopup = (template, size) => {
                             tubularPopupService.openDialog(template, new TubularModel($ctrl, el), $ctrl, size);

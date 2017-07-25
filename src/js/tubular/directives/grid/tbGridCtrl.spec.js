@@ -267,7 +267,7 @@ describe('Module: tubular.directives', () => {
                 sut.newRow(models);
 
                 var keys = Object.keys(sut.tempRow);
-                expect(keys.length).not.toBeLessThan(3);
+                expect(keys.length).not.toBeLessThan(2);
             })
 
             it('should not call tubularPopupService.openDialog', () => {
@@ -366,7 +366,6 @@ describe('Module: tubular.directives', () => {
 
             it('should create ctrl.rows', () => {
                 sut.processPayload({ data: data });
-                expect(sut.rows[0].$component).toBeDefined();
                 expect(sut.rows[0].editPopup).toBeDefined();
             })
 

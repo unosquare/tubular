@@ -336,7 +336,7 @@
             },
             controller: [
                 '$scope', function ($scope) {
-                    $scope.tubularDirective = 'tubular-rowset';
+                    $scope.tubularDirective = 'tubular-row-template';
                     $scope.fields = [];
                     $scope.$component = $scope.$parent.$parent.$parent.$component;
 

@@ -42,7 +42,9 @@
                         serverSaveMethod: '@',
                         modelKey: '@?',
                         requireAuthentication: '=?',
-                        name: '@?formName'
+                        name: '@?formName',
+                        onSave: '=?',
+                        onError: '=?',
                     },
                     controller: 'tbFormController',
                     compile: () => ({ post: scope => scope.finishDefinition() })

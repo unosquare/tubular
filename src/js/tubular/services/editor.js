@@ -1,4 +1,4 @@
-﻿(function(angular) {
+﻿(function(angular, moment) {
   'use strict';
 
   angular.module('tubular.services')
@@ -117,7 +117,7 @@
       // We try to find a Tubular Form in the parents
       while (parent != null) {
         if (parent.tubularDirective === 'tubular-form' ||
-          parent.tubularDirective === 'tubular-rowset') {
+          parent.tubularDirective === 'tubular-row-template') {
 
           if (ctrl.name === null) {
             return;
@@ -143,13 +143,13 @@
                   ctrl.value = parent.model[scope.Name];
                 }
               }
+            }
 
-              parent.$watch(() => ctrl.value, value => {
+            scope.$watch(() => ctrl.value, value => {
                 if (value !== parent.model[scope.Name]) {
                   parent.model[scope.Name] = value;
                 }
               });
-            }
 
             scope.$watch(() => parent.model[scope.Name], value => {
               if (value !== ctrl.value) {
@@ -203,4 +203,4 @@
       }
     }
   }
-})(angular);
+})(angular, moment);
