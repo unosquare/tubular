@@ -62,37 +62,38 @@
         }
     }
 
-    const tbNumericEditorCtrl = ['tubularEditorService', '$scope', 'translateFilter', function (tubular, $scope, translateFilter) {
-        const $ctrl = this;
+    const tbNumericEditorCtrl = ['tubularEditorService', '$scope', 'translateFilter', 'dataTypes',
+        function (tubular, $scope, translateFilter, dataTypes) {
+            const $ctrl = this;
 
-        $ctrl.validate = () => {
-            if (angular.isDefined($ctrl.min) && $ctrl.min != null && angular.isDefined($ctrl.value) && $ctrl.value != null) {
-                $ctrl.$valid = $ctrl.value >= $ctrl.min;
+            $ctrl.validate = () => {
+                if (angular.isDefined($ctrl.min) && $ctrl.min != null && angular.isDefined($ctrl.value) && $ctrl.value != null) {
+                    $ctrl.$valid = $ctrl.value >= $ctrl.min;
 
-                if (!$ctrl.$valid) {
-                    $ctrl.state.$errors = [translateFilter('EDITOR_MIN_NUMBER', $ctrl.min)];
-                    return;
+                    if (!$ctrl.$valid) {
+                        $ctrl.state.$errors = [translateFilter('EDITOR_MIN_NUMBER', $ctrl.min)];
+                        return;
+                    }
                 }
-            }
 
-            if (angular.isDefined($ctrl.max) && $ctrl.max != null && angular.isDefined($ctrl.value) && $ctrl.value != null) {
-                $ctrl.$valid = $ctrl.value <= $ctrl.max;
+                if (angular.isDefined($ctrl.max) && $ctrl.max != null && angular.isDefined($ctrl.value) && $ctrl.value != null) {
+                    $ctrl.$valid = $ctrl.value <= $ctrl.max;
 
-                if (!$ctrl.$valid) {
-                    $ctrl.state.$errors = [translateFilter('EDITOR_MAX_NUMBER', $ctrl.max)];
+                    if (!$ctrl.$valid) {
+                        $ctrl.state.$errors = [translateFilter('EDITOR_MAX_NUMBER', $ctrl.max)];
+                    }
                 }
-            }
-        };
+            };
 
-        $ctrl.$onInit = () => {
-            $ctrl.DataType = 'numeric';
-            tubular.setupScope($scope, 0, $ctrl, false);
-        };
-    }
+            $ctrl.$onInit = () => {
+                $ctrl.DataType = dataTypes.NUMERIC;
+                tubular.setupScope($scope, 0, $ctrl, false);
+            };
+        }
     ];
 
-    const tbDateTimeEditorCtrl = ['$scope', '$element', 'tubularEditorService', 'translateFilter', 'dateFilter',
-        function ($scope, $element, tubular, translateFilter, dateFilter) {
+    const tbDateTimeEditorCtrl = ['$scope', '$element', 'tubularEditorService', 'translateFilter', 'dateFilter', 'dataTypes',
+        function ($scope, $element, tubular, translateFilter, dateFilter, dataTypes) {
             const $ctrl = this;
 
             // This could be $onChange??
@@ -107,7 +108,7 @@
             $ctrl.validate = () => validateDate($ctrl, translateFilter, dateFilter);
 
             $ctrl.$onInit = () => {
-                $ctrl.DataType = 'datetime';
+                $ctrl.DataType = dataTypes.DATE_TIME;
                 tubular.setupScope($scope, $ctrl.format, $ctrl);
                 $ctrl.format = $ctrl.format || 'MMM D, Y';
             };
@@ -120,12 +121,14 @@
         'tubularEditorService',
         'translateFilter',
         'dateFilter',
+        'dataTypes',
         function (
             $scope,
             $element,
             tubular,
             translateFilter,
-            dateFilter) {
+            dateFilter,
+            dataTypes) {
             const $ctrl = this;
 
             $scope.$watch(() => $ctrl.value, changeValueFn($ctrl));
@@ -139,7 +142,7 @@
             $ctrl.validate = () => validateDate($ctrl, translateFilter, dateFilter);
 
             $ctrl.$onInit = () => {
-                $ctrl.DataType = 'date';
+                $ctrl.DataType = dataTypes.DATE;
                 tubular.setupScope($scope, $ctrl.format, $ctrl);
                 $ctrl.format = $ctrl.format || 'MMM D, Y'; // TODO: Add hours?
             };

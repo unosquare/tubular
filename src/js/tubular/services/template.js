@@ -13,26 +13,16 @@
         [
             '$templateCache',
             'translateFilter',
+            'dataTypes',
             function (
                 $templateCache,
-                translateFilter) {
+                translateFilter,
+                dataTypes) {
                 const me = this;
 
                 me.canUseHtml5Date = () => {
                     const el = angular.element('<input type="date" value=":)" />');
                     return el.attr('type') === 'date' && el.val() === '';
-                };
-
-                me.enums = {
-                    dataTypes: ['numeric', 'date', 'boolean', 'string'],
-                    editorTypes: [
-                        'tbSimpleEditor', 'tbNumericEditor', 'tbDateTimeEditor', 'tbDateEditor',
-                        'tbDropdownEditor', 'tbTypeaheadEditor', 'tbCheckboxField', 'tbTextArea'
-                    ],
-                    httpMethods: ['POST', 'PUT', 'GET', 'DELETE'],
-                    gridModes: ['Read-Only', 'Inline', 'Popup', 'Page'],
-                    formLayouts: ['Simple', 'Two-columns', 'Three-columns'],
-                    sortDirections: ['Ascending', 'Descending']
                 };
 
                 me.defaults = {
@@ -141,17 +131,17 @@
                  * @returns {string}
                  */
                 me.generateCells = (columns, mode) => columns.reduce((prev, el) => {
-                        const editorTag = mode === 'Inline' ? el.EditorType
-                            .replace(/([A-Z])/g, $1 => `-${$1.toLowerCase()}`) : '';
-                        const templateExpression = el.Template || `<span ng-bind="row.${el.Name}"></span>`;
+                    const editorTag = mode === 'Inline' ? el.EditorType
+                        .replace(/([A-Z])/g, $1 => `-${$1.toLowerCase()}`) : '';
+                    const templateExpression = el.Template || `<span ng-bind="row.${el.Name}"></span>`;
 
-                        return `${prev}\r\n\t\t<td tb-cell ng-transclude column-name="${el.Name}">
+                    return `${prev}\r\n\t\t<td tb-cell ng-transclude column-name="${el.Name}">
                             \t\t\t${mode === 'Inline' ? `<${editorTag} is-editing="row.$isEditing" value="row.${el.Name}"></${editorTag}>` : templateExpression}
                             \t\t</td>`;
-                    }, '');
+                }, '');
 
-                me.generateColumnsDefinitions = (columns) => columns.reduce((prev, el) => 
-                        `${prev}
+                me.generateColumnsDefinitions = (columns) => columns.reduce((prev, el) =>
+                    `${prev}
                         \t\t<tb-column name="${el.Name}" label="${el.Label}" column-type="${el.DataType}" sortable="${el.Sortable}" 
                         \t\t\tis-key="${el.IsKey}" searchable="${el.Searchable}" ${el.Sortable ? `\r\n\t\t\tsort-direction="${el.SortDirection}" sort-order="${el.SortOrder}" ` : ' '}
                                 visible="${el.Visible}">${el.Filter ? '\r\n\t\t\t<tb-column-filter></tb-column-filter>' : ''}
@@ -200,7 +190,7 @@
 
                     return `${'<div class="container">' +
                         '\r\n<tb-grid server-url="'}${options.dataUrl}" request-method="${options.RequestMethod}" class="row" ` +
-                        `page-size="10" require-authentication="${options.RequireAuthentication }" ${options.Mode !== 'Read-Only' ? ` editor-mode="${  options.Mode.toLowerCase()  }"` : ''}>${topToolbar === '' ? '' : `\r\n\t<div class="row">${  topToolbar  }\r\n\t</div>`}\r\n\t<div class="row">` +
+                        `page-size="10" require-authentication="${options.RequireAuthentication}" ${options.Mode !== 'Read-Only' ? ` editor-mode="${options.Mode.toLowerCase()}"` : ''}>${topToolbar === '' ? '' : `\r\n\t<div class="row">${topToolbar}\r\n\t</div>`}\r\n\t<div class="row">` +
                         '\r\n\t<div class="col-md-12">' +
                         '\r\n\t<div class="panel panel-default panel-rounded">' +
                         `\r\n\t<tb-grid-table class="table-bordered">
@@ -218,17 +208,17 @@
                         \t</tb-grid-table>
                         \t</div>
                         \t</div>
-                        \t</div>${bottomToolbar === '' ? '' : `\r\n\t<div class="row">${  bottomToolbar  }\r\n\t</div>`}\r\n</tb-grid>
+                        \t</div>${bottomToolbar === '' ? '' : `\r\n\t<div class="row">${bottomToolbar}\r\n\t</div>`}\r\n</tb-grid>
                         </div>`;
                 };
 
                 me.getEditorTypeByDateType = dataType => {
                     switch (dataType) {
-                        case 'date':
+                        case dataTypes.DATE:
                             return 'tbDateTimeEditor';
-                        case 'numeric':
+                        case dataTypes.NUMERIC:
                             return 'tbNumericEditor';
-                        case 'boolean':
+                        case dataTypes.BOOLEAN:
                             return 'tbCheckboxField';
                         default:
                             return 'tbSimpleEditor';
@@ -256,19 +246,19 @@
                         if (angular.isNumber(value) || parseFloat(value).toString() === value) {
                             columns.push({
                                 Name: prop,
-                                DataType: 'numeric',
+                                DataType: dataTypes.NUMERIC,
                                 Template: `{{row.${prop} | number}}`
                             });
                         } else if (angular.isDate(value) || !isNaN((new Date(value)).getTime())) {
-                            columns.push({ Name: prop, DataType: 'date', Template: `{{row.${prop} | moment }}` });
+                            columns.push({ Name: prop, DataType: dataTypes.DATE, Template: `{{row.${prop} | moment }}` });
                         } else if (value.toLowerCase() === 'true' || value.toLowerCase() === 'false') {
                             columns.push({
                                 Name: prop,
-                                DataType: 'boolean',
+                                DataType: dataTypes.BOOLEAN,
                                 Template: `{{row.${prop} ? "TRUE" : "FALSE" }}`
                             });
                         } else {
-                            const newColumn = { Name: prop, DataType: 'string', Template: `{{row.${prop}}}` };
+                            const newColumn = { Name: prop, DataType: dataTypes.STRING, Template: `{{row.${prop}}}` };
 
                             if ((/e(-|)mail/ig).test(newColumn.Name)) {
                                 newColumn.Template = `<a href="mailto:${newColumn.Template}">${newColumn.Template}</a>`;
@@ -285,7 +275,7 @@
                         columnObj.EditorType = me.getEditorTypeByDateType(columnObj.DataType);
 
                         // Grid attributes
-                        columnObj.Searchable = columnObj.DataType === 'string';
+                        columnObj.Searchable = columnObj.DataType === dataTypes.STRING;
                         columnObj.Filter = true;
                         columnObj.Visible = true;
                         columnObj.Sortable = true;
@@ -390,22 +380,22 @@
                  * @returns {array}
                  */
                 me.generateFieldsArray = columns => columns.map(el => {
-                        const editorTag = el.EditorType
-                            .replace(/([A-Z])/g, $1 => `-${  $1.toLowerCase()}`);
-                        const defaults = me.defaults.fieldsSettings[el.EditorType];
+                    const editorTag = el.EditorType
+                        .replace(/([A-Z])/g, $1 => `-${$1.toLowerCase()}`);
+                    const defaults = me.defaults.fieldsSettings[el.EditorType];
 
-                        return `${'\r\n\t' +`<${editorTag} name="${el.Name}"`}${
-                            defaults.EditorType ? `\r\n\t\teditor-type="${  el.DataType  }" ` : ''
-                            }${defaults.ShowLabel
-                                ? `\r\n\t\tlabel="${  el.Label  }" show-label="${  el.ShowLabel  }"`
-                                : ''
-                            }${defaults.Placeholder ? `\r\n\t\tplaceholder="${  el.Placeholder  }"` : ''
-                            }${defaults.Required ? `\r\n\t\trequired="${  el.Required  }"` : ''
-                            }${defaults.ReadOnly ? `\r\n\t\tread-only="${  el.ReadOnly  }"` : ''
-                            }${defaults.Format ? `\r\n\t\tformat="${  el.Format  }"` : ''
-                            }${defaults.Help ? `\r\n\t\thelp="${  el.Help  }"` : ''
-                            }>\r\n\t` +`</${editorTag}>`;
-                    });
+                    return `${'\r\n\t' + `<${editorTag} name="${el.Name}"`}${
+                        defaults.EditorType ? `\r\n\t\teditor-type="${el.DataType}" ` : ''
+                        }${defaults.ShowLabel
+                            ? `\r\n\t\tlabel="${el.Label}" show-label="${el.ShowLabel}"`
+                            : ''
+                        }${defaults.Placeholder ? `\r\n\t\tplaceholder="${el.Placeholder}"` : ''
+                        }${defaults.Required ? `\r\n\t\trequired="${el.Required}"` : ''
+                        }${defaults.ReadOnly ? `\r\n\t\tread-only="${el.ReadOnly}"` : ''
+                        }${defaults.Format ? `\r\n\t\tformat="${el.Format}"` : ''
+                        }${defaults.Help ? `\r\n\t\thelp="${el.Help}"` : ''
+                        }>\r\n\t` + `</${editorTag}>`;
+                });
 
                 me.setupFilter = ($scope, $ctrl) => {
                     const dateOps = {
@@ -420,7 +410,7 @@
                     };
 
                     const filterOperators = {
-                        'string': {
+                        [dataTypes.STRING]: {
                             'None': translateFilter('OP_NONE'),
                             'Equals': translateFilter('OP_EQUALS'),
                             'NotEquals': translateFilter('OP_NOTEQUALS'),
@@ -431,7 +421,7 @@
                             'EndsWith': translateFilter('OP_ENDSWITH'),
                             'NotEndsWith': translateFilter('OP_NOTENDSWITH')
                         },
-                        'numeric': {
+                        [dataTypes.NUMERIC]: {
                             'None': translateFilter('OP_NONE'),
                             'Equals': translateFilter('OP_EQUALS'),
                             'Between': translateFilter('OP_BETWEEN'),
@@ -440,10 +430,10 @@
                             'Lte': '<=',
                             'Lt': '<'
                         },
-                        'date': dateOps,
-                        'datetime': dateOps,
-                        'datetimeutc': dateOps,
-                        'boolean': {
+                        [dataTypes.DATE]: dateOps,
+                        [dataTypes.DATE_TIME]: dateOps,
+                        [dataTypes.DATE_TIME_UTC]: dateOps,
+                        [dataTypes.BOOLEAN]: {
                             'None': translateFilter('OP_NONE'),
                             'Equals': translateFilter('OP_EQUALS'),
                             'NotEquals': translateFilter('OP_NOTEQUALS')
@@ -466,22 +456,21 @@
 
                         return c.length !== 0 ? c[0] : null;
                     }, val => {
-                            if (!val) {
-                                return;
-                            }
+                        if (!val) {
+                            return;
+                        }
 
-                            if ((val.DataType === 'date' || val.DataType === 'datetime' || val.DataType === 'datetimeutc')
-                                && !($ctrl.filter.Text === '' || $ctrl.filter.Text == null))
-                            {
-                                $ctrl.filter.Text = new Date($ctrl.filter.Text);
-                            }
+                        if ((val.DataType === dataTypes.DATE || val.DataType === dataTypes.DATE_TIME || val.DataType === dataTypes.DATE_TIME_UTC)
+                            && !($ctrl.filter.Text === '' || $ctrl.filter.Text == null)) {
+                            $ctrl.filter.Text = new Date($ctrl.filter.Text);
+                        }
 
-                            if ($ctrl.filter.HasFilter !== val.Filter.HasFilter) {
-                                $ctrl.filter.HasFilter = val.Filter.HasFilter;
-                                $ctrl.filter.Text = val.Filter.Text;
-                                $ctrl.retrieveData();
-                            }
-                        },
+                        if ($ctrl.filter.HasFilter !== val.Filter.HasFilter) {
+                            $ctrl.filter.HasFilter = val.Filter.HasFilter;
+                            $ctrl.filter.Text = val.Filter.Text;
+                            $ctrl.retrieveData();
+                        }
+                    },
                         true);
 
                     $ctrl.retrieveData = function () {
@@ -552,9 +541,9 @@
                     $ctrl.dataType = columns[0].DataType;
                     $ctrl.filterOperators = filterOperators[$ctrl.dataType];
 
-                    if ($ctrl.dataType === 'date' ||
-                        $ctrl.dataType === 'datetime' ||
-                        $ctrl.dataType === 'datetimeutc') {
+                    if ($ctrl.dataType === dataTypes.DATE ||
+                        $ctrl.dataType === dataTypes.DATE_TIME ||
+                        $ctrl.dataType === dataTypes.DATE_TIME_UTC) {
                         $ctrl.filter.Argument = [new Date()];
 
                         if ($ctrl.filter.Operator === 'Contains') {
@@ -562,7 +551,7 @@
                         }
                     }
 
-                    if ($ctrl.dataType === 'numeric' || $ctrl.dataType === 'boolean') {
+                    if ($ctrl.dataType === dataTypes.NUMERIC || $ctrl.dataType === dataTypes.BOOLEAN) {
                         $ctrl.filter.Argument = [1];
 
                         if ($ctrl.filter.Operator === 'Contains') {

@@ -1,4 +1,4 @@
-﻿(function(angular, moment) {
+﻿(function (angular, moment) {
   'use strict';
 
   angular.module('tubular.services')
@@ -9,9 +9,9 @@
      * @description
      * The `tubularEditorService` service is a internal helper to setup any `TubularModel` with a UI.
      */
-    .factory('tubularEditorService', ['translateFilter', editorService]);
+    .factory('tubularEditorService', ['translateFilter', 'dataTypes', editorService]);
 
-  function editorService(translateFilter) {
+  function editorService(translateFilter, dataTypes) {
     return {
 
       /**
@@ -132,7 +132,7 @@
 
             if (angular.equals(ctrl.value, parent.model[scope.Name]) === false) {
               if (angular.isDefined(parent.model[scope.Name])) {
-                if ((ctrl.DataType === 'date' || ctrl.DataType === 'datetime') &&
+                if ((ctrl.DataType === dataTypes.DATE || ctrl.DataType === dataTypes.DATE_TIME) &&
                   parent.model[scope.Name] != null && angular.isString(parent.model[scope.Name])) {
                   if (parent.model[scope.Name] === '' || parent.model[scope.Name] === null) {
                     ctrl.value = parent.model[scope.Name];
@@ -146,10 +146,10 @@
             }
 
             scope.$watch(() => ctrl.value, value => {
-                if (value !== parent.model[scope.Name]) {
-                  parent.model[scope.Name] = value;
-                }
-              });
+              if (value !== parent.model[scope.Name]) {
+                parent.model[scope.Name] = value;
+              }
+            });
 
             scope.$watch(() => parent.model[scope.Name], value => {
               if (value !== ctrl.value) {
@@ -158,11 +158,11 @@
             }, true);
 
             if (ctrl.value == null && (ctrl.defaultValue && ctrl.defaultValue != null)) {
-              if ((ctrl.DataType === 'date' || ctrl.DataType === 'datetime') && angular.isString(ctrl.defaultValue)) {
+              if ((ctrl.DataType === dataTypes.DATE || ctrl.DataType === dataTypes.DATE_TIME) && angular.isString(ctrl.defaultValue)) {
                 ctrl.defaultValue = new Date(ctrl.defaultValue);
               }
 
-              if (ctrl.DataType === 'numeric' && angular.isString(ctrl.defaultValue)) {
+              if (ctrl.DataType === dataTypes.NUMERIC && angular.isString(ctrl.defaultValue)) {
                 ctrl.defaultValue = parseFloat(ctrl.defaultValue);
               }
 

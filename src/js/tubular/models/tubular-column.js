@@ -10,16 +10,21 @@
          * @description
          * The `tubularColumn` factory is the base to generate a column model to use with `tbGrid`.
          */
-        .factory('tubularColumn', [function() {
-            return function(columnName, options) {
+        .factory('tubularColumn', ['dataTypes', function (dataTypes) {
+            return function (columnName, options) {
                 options = options || {};
-                
+                options.DataType = options.DataType || 'string';
+
+                if (Object.values(dataTypes).indexOf(options.DataType) < 0) {
+                    throw `Invalid data type: '${options.DataType}' for column '${columnName}'`;
+                }
+
                 const obj = {
-                    Label: options.Label  || (columnName || '').replace(/([a-z])([A-Z])/g, '$1 $2'),
+                    Label: options.Label || (columnName || '').replace(/([a-z])([A-Z])/g, '$1 $2'),
                     Name: columnName,
                     Sortable: options.Sortable,
                     SortOrder: parseInt(options.SortOrder) || -1,
-                    SortDirection: function(){
+                    SortDirection: function () {
                         if (angular.isUndefined(options.SortDirection)) {
                             return 'None';
                         }
