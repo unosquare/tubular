@@ -11,7 +11,6 @@ module.exports = grunt => {
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-csslint');
     grunt.loadNpmTasks('grunt-protractor-coverage');
-    grunt.loadNpmTasks('grunt-express-server');
 
 
     // Project configuration.
@@ -34,9 +33,7 @@ module.exports = grunt => {
                 ]
             },
             integration: {
-
                 files: [
-                    // includes files within path
                     {
                         expand: true,
                         src: [
@@ -180,43 +177,13 @@ module.exports = grunt => {
                 }
             }
         },
-        connect: {
-            server: {
-                options: {
-                    port: 9000,
-                    hostname: 'localhost'
-                }
-            }
-        },
-        express: {
-            options: {
-                // Override defaults here
-            },
-            dev: {
-                options: {
-                    background: true,
-                    script: 'test/integration/tbnodejs/app.js'
-                }
-            },
-            prod: {
-                options: {
-                    script: 'path/to/prod/server.js',
-                    node_env: 'production'
-                }
-            },
-            test: {
-                options: {
-                    script: 'path/to/test/server.js'
-                }
-            }
-        },
         protractor_coverage: {
             options: {
                 keepAlive: true,
                 directConnect: true,
                 collectorPort: 9001,
                 webdriverManagerUpdate: true,
-                coverageDir: './test/integration/tbnodejs/coverage/dir',
+                // coverageDir: 'report/e2e/coverage',
                 args: {
                     baseUrl: 'http://localhost:9000'
                 }
@@ -241,11 +208,11 @@ module.exports = grunt => {
     grunt.registerTask('e2e:ci', ['dist', 'karma:e2eci']);
     grunt.registerTask('e2e', ['dist', 'karma:e2e']);
 
-    grunt.registerTask('server', 'Start a custom web server', function () {
+    grunt.registerTask('server', 'Start web server for express app', function () {
         grunt.log.writeln('Started web server on port 9000');
         require('./test/integration/tbnodejs/app.js').listen(9000);
     });
 
 
-    grunt.registerTask('tbnodejs', ['copy:integration', 'server', 'protractor_coverage:local']);
+    grunt.registerTask('e2e-nodejs', ['copy:integration', 'server', 'protractor_coverage:local']);
 };
