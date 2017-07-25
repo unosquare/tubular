@@ -548,16 +548,21 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
          * @description
          * The `tubularColumn` factory is the base to generate a column model to use with `tbGrid`.
          */
-        .factory('tubularColumn', [function() {
-            return function(columnName, options) {
+        .factory('tubularColumn', ['dataTypes', function (dataTypes) {
+            return function (columnName, options) {
                 options = options || {};
-                
+                options.DataType = options.DataType || 'string';
+
+                if (Object.values(dataTypes).indexOf(options.DataType) < 0) {
+                    throw `Invalid data type: '${options.DataType}' for column '${columnName}'`;
+                }
+
                 const obj = {
-                    Label: options.Label  || (columnName || '').replace(/([a-z])([A-Z])/g, '$1 $2'),
+                    Label: options.Label || (columnName || '').replace(/([a-z])([A-Z])/g, '$1 $2'),
                     Name: columnName,
                     Sortable: options.Sortable,
                     SortOrder: parseInt(options.SortOrder) || -1,
-                    SortDirection: function(){
+                    SortDirection: function () {
                         if (angular.isUndefined(options.SortDirection)) {
                             return 'None';
                         }
@@ -597,8 +602,8 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
          * @description
          * The `tubularModel` factory is the base to generate a row model to use with `tbGrid` and `tbForm`.
          */
-        .factory('tubularModel', [function() {
-            return function($ctrl, data) {
+        .factory('tubularModel', ['dataTypes', function (dataTypes) {
+            return function ($ctrl, data) {
                 const obj = {
                     $hasChanges: () => obj.$fields.some(k => angular.isDefined(obj.$original[k]) && obj[k] !== obj.$original[k]),
                     $isEditing: false,
@@ -630,18 +635,18 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 };
 
                 if (!angular.isArray(data)) {
-                    angular.forEach(data, (v,k) => obj.$addField(k, v));
+                    angular.forEach(data, (v, k) => obj.$addField(k, v));
                 }
 
                 if (angular.isDefined($ctrl.columns)) {
                     angular.forEach($ctrl.columns, (col, key) => {
                         let value = angular.isDefined(data[key]) ? data[key] : data[col.Name];
 
-                        if (col.DataType === 'date' || col.DataType === 'datetime' || col.DataType === 'datetimeutc') {
+                        if (col.DataType === dataTypes.DATE || col.DataType === dataTypes.DATE_TIME || col.DataType === dataTypes.DATE_TIME_UTC) {
                             if (value === null || value === '' || moment(value).year() <= 1900)
                                 value = '';
                             else
-                                value = col.DataType === 'datetimeutc' ? moment.utc(value) : moment(value);
+                                value = col.DataType === dataTypes.DATE_TIME_UTC ? moment.utc(value) : moment(value);
                         }
 
                         obj.$addField(col.Name, value);
@@ -1667,37 +1672,38 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
         }
     }
 
-    const tbNumericEditorCtrl = ['tubularEditorService', '$scope', 'translateFilter', function (tubular, $scope, translateFilter) {
-        const $ctrl = this;
+    const tbNumericEditorCtrl = ['tubularEditorService', '$scope', 'translateFilter', 'dataTypes',
+        function (tubular, $scope, translateFilter, dataTypes) {
+            const $ctrl = this;
 
-        $ctrl.validate = () => {
-            if (angular.isDefined($ctrl.min) && $ctrl.min != null && angular.isDefined($ctrl.value) && $ctrl.value != null) {
-                $ctrl.$valid = $ctrl.value >= $ctrl.min;
+            $ctrl.validate = () => {
+                if (angular.isDefined($ctrl.min) && $ctrl.min != null && angular.isDefined($ctrl.value) && $ctrl.value != null) {
+                    $ctrl.$valid = $ctrl.value >= $ctrl.min;
 
-                if (!$ctrl.$valid) {
-                    $ctrl.state.$errors = [translateFilter('EDITOR_MIN_NUMBER', $ctrl.min)];
-                    return;
+                    if (!$ctrl.$valid) {
+                        $ctrl.state.$errors = [translateFilter('EDITOR_MIN_NUMBER', $ctrl.min)];
+                        return;
+                    }
                 }
-            }
 
-            if (angular.isDefined($ctrl.max) && $ctrl.max != null && angular.isDefined($ctrl.value) && $ctrl.value != null) {
-                $ctrl.$valid = $ctrl.value <= $ctrl.max;
+                if (angular.isDefined($ctrl.max) && $ctrl.max != null && angular.isDefined($ctrl.value) && $ctrl.value != null) {
+                    $ctrl.$valid = $ctrl.value <= $ctrl.max;
 
-                if (!$ctrl.$valid) {
-                    $ctrl.state.$errors = [translateFilter('EDITOR_MAX_NUMBER', $ctrl.max)];
+                    if (!$ctrl.$valid) {
+                        $ctrl.state.$errors = [translateFilter('EDITOR_MAX_NUMBER', $ctrl.max)];
+                    }
                 }
-            }
-        };
+            };
 
-        $ctrl.$onInit = () => {
-            $ctrl.DataType = 'numeric';
-            tubular.setupScope($scope, 0, $ctrl, false);
-        };
-    }
+            $ctrl.$onInit = () => {
+                $ctrl.DataType = dataTypes.NUMERIC;
+                tubular.setupScope($scope, 0, $ctrl, false);
+            };
+        }
     ];
 
-    const tbDateTimeEditorCtrl = ['$scope', '$element', 'tubularEditorService', 'translateFilter', 'dateFilter',
-        function ($scope, $element, tubular, translateFilter, dateFilter) {
+    const tbDateTimeEditorCtrl = ['$scope', '$element', 'tubularEditorService', 'translateFilter', 'dateFilter', 'dataTypes',
+        function ($scope, $element, tubular, translateFilter, dateFilter, dataTypes) {
             const $ctrl = this;
 
             // This could be $onChange??
@@ -1712,7 +1718,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             $ctrl.validate = () => validateDate($ctrl, translateFilter, dateFilter);
 
             $ctrl.$onInit = () => {
-                $ctrl.DataType = 'datetime';
+                $ctrl.DataType = dataTypes.DATE_TIME;
                 tubular.setupScope($scope, $ctrl.format, $ctrl);
                 $ctrl.format = $ctrl.format || 'MMM D, Y';
             };
@@ -1725,12 +1731,14 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
         'tubularEditorService',
         'translateFilter',
         'dateFilter',
+        'dataTypes',
         function (
             $scope,
             $element,
             tubular,
             translateFilter,
-            dateFilter) {
+            dateFilter,
+            dataTypes) {
             const $ctrl = this;
 
             $scope.$watch(() => $ctrl.value, changeValueFn($ctrl));
@@ -1744,7 +1752,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             $ctrl.validate = () => validateDate($ctrl, translateFilter, dateFilter);
 
             $ctrl.$onInit = () => {
-                $ctrl.DataType = 'date';
+                $ctrl.DataType = dataTypes.DATE;
                 tubular.setupScope($scope, $ctrl.format, $ctrl);
                 $ctrl.format = $ctrl.format || 'MMM D, Y'; // TODO: Add hours?
             };
@@ -3096,7 +3104,20 @@ angular.module('tubular.services', ['ui.bootstrap'])
             };
         }]);
 })(angular);
-(function(angular, moment) {
+(angular => {
+    'use strict';
+
+    angular.module('tubular.services')
+        .constant('dataTypes', {
+            STRING: 'string',
+            BOOLEAN: 'boolean',
+            NUMERIC: 'numeric',
+            DATE_TIME: 'datetime',
+            DATE: 'date',
+            DATE_TIME_UTC: 'datetimeutc'
+        });
+})(angular);
+(function (angular, moment) {
   'use strict';
 
   angular.module('tubular.services')
@@ -3107,9 +3128,9 @@ angular.module('tubular.services', ['ui.bootstrap'])
      * @description
      * The `tubularEditorService` service is a internal helper to setup any `TubularModel` with a UI.
      */
-    .factory('tubularEditorService', ['translateFilter', editorService]);
+    .factory('tubularEditorService', ['translateFilter', 'dataTypes', editorService]);
 
-  function editorService(translateFilter) {
+  function editorService(translateFilter, dataTypes) {
     return {
 
       /**
@@ -3230,7 +3251,7 @@ angular.module('tubular.services', ['ui.bootstrap'])
 
             if (angular.equals(ctrl.value, parent.model[scope.Name]) === false) {
               if (angular.isDefined(parent.model[scope.Name])) {
-                if ((ctrl.DataType === 'date' || ctrl.DataType === 'datetime') &&
+                if ((ctrl.DataType === dataTypes.DATE || ctrl.DataType === dataTypes.DATE_TIME) &&
                   parent.model[scope.Name] != null && angular.isString(parent.model[scope.Name])) {
                   if (parent.model[scope.Name] === '' || parent.model[scope.Name] === null) {
                     ctrl.value = parent.model[scope.Name];
@@ -3244,10 +3265,10 @@ angular.module('tubular.services', ['ui.bootstrap'])
             }
 
             scope.$watch(() => ctrl.value, value => {
-                if (value !== parent.model[scope.Name]) {
-                  parent.model[scope.Name] = value;
-                }
-              });
+              if (value !== parent.model[scope.Name]) {
+                parent.model[scope.Name] = value;
+              }
+            });
 
             scope.$watch(() => parent.model[scope.Name], value => {
               if (value !== ctrl.value) {
@@ -3256,11 +3277,11 @@ angular.module('tubular.services', ['ui.bootstrap'])
             }, true);
 
             if (ctrl.value == null && (ctrl.defaultValue && ctrl.defaultValue != null)) {
-              if ((ctrl.DataType === 'date' || ctrl.DataType === 'datetime') && angular.isString(ctrl.defaultValue)) {
+              if ((ctrl.DataType === dataTypes.DATE || ctrl.DataType === dataTypes.DATE_TIME) && angular.isString(ctrl.defaultValue)) {
                 ctrl.defaultValue = new Date(ctrl.defaultValue);
               }
 
-              if (ctrl.DataType === 'numeric' && angular.isString(ctrl.defaultValue)) {
+              if (ctrl.DataType === dataTypes.NUMERIC && angular.isString(ctrl.defaultValue)) {
                 ctrl.defaultValue = parseFloat(ctrl.defaultValue);
               }
 
@@ -3852,26 +3873,16 @@ function exportToCsv(header, rows, visibility) {
         [
             '$templateCache',
             'translateFilter',
+            'dataTypes',
             function (
                 $templateCache,
-                translateFilter) {
+                translateFilter,
+                dataTypes) {
                 const me = this;
 
                 me.canUseHtml5Date = () => {
                     const el = angular.element('<input type="date" value=":)" />');
                     return el.attr('type') === 'date' && el.val() === '';
-                };
-
-                me.enums = {
-                    dataTypes: ['numeric', 'date', 'boolean', 'string'],
-                    editorTypes: [
-                        'tbSimpleEditor', 'tbNumericEditor', 'tbDateTimeEditor', 'tbDateEditor',
-                        'tbDropdownEditor', 'tbTypeaheadEditor', 'tbCheckboxField', 'tbTextArea'
-                    ],
-                    httpMethods: ['POST', 'PUT', 'GET', 'DELETE'],
-                    gridModes: ['Read-Only', 'Inline', 'Popup', 'Page'],
-                    formLayouts: ['Simple', 'Two-columns', 'Three-columns'],
-                    sortDirections: ['Ascending', 'Descending']
                 };
 
                 me.defaults = {
@@ -3980,17 +3991,17 @@ function exportToCsv(header, rows, visibility) {
                  * @returns {string}
                  */
                 me.generateCells = (columns, mode) => columns.reduce((prev, el) => {
-                        const editorTag = mode === 'Inline' ? el.EditorType
-                            .replace(/([A-Z])/g, $1 => `-${$1.toLowerCase()}`) : '';
-                        const templateExpression = el.Template || `<span ng-bind="row.${el.Name}"></span>`;
+                    const editorTag = mode === 'Inline' ? el.EditorType
+                        .replace(/([A-Z])/g, $1 => `-${$1.toLowerCase()}`) : '';
+                    const templateExpression = el.Template || `<span ng-bind="row.${el.Name}"></span>`;
 
-                        return `${prev}\r\n\t\t<td tb-cell ng-transclude column-name="${el.Name}">
+                    return `${prev}\r\n\t\t<td tb-cell ng-transclude column-name="${el.Name}">
                             \t\t\t${mode === 'Inline' ? `<${editorTag} is-editing="row.$isEditing" value="row.${el.Name}"></${editorTag}>` : templateExpression}
                             \t\t</td>`;
-                    }, '');
+                }, '');
 
-                me.generateColumnsDefinitions = (columns) => columns.reduce((prev, el) => 
-                        `${prev}
+                me.generateColumnsDefinitions = (columns) => columns.reduce((prev, el) =>
+                    `${prev}
                         \t\t<tb-column name="${el.Name}" label="${el.Label}" column-type="${el.DataType}" sortable="${el.Sortable}" 
                         \t\t\tis-key="${el.IsKey}" searchable="${el.Searchable}" ${el.Sortable ? `\r\n\t\t\tsort-direction="${el.SortDirection}" sort-order="${el.SortOrder}" ` : ' '}
                                 visible="${el.Visible}">${el.Filter ? '\r\n\t\t\t<tb-column-filter></tb-column-filter>' : ''}
@@ -4039,7 +4050,7 @@ function exportToCsv(header, rows, visibility) {
 
                     return `${'<div class="container">' +
                         '\r\n<tb-grid server-url="'}${options.dataUrl}" request-method="${options.RequestMethod}" class="row" ` +
-                        `page-size="10" require-authentication="${options.RequireAuthentication }" ${options.Mode !== 'Read-Only' ? ` editor-mode="${  options.Mode.toLowerCase()  }"` : ''}>${topToolbar === '' ? '' : `\r\n\t<div class="row">${  topToolbar  }\r\n\t</div>`}\r\n\t<div class="row">` +
+                        `page-size="10" require-authentication="${options.RequireAuthentication}" ${options.Mode !== 'Read-Only' ? ` editor-mode="${options.Mode.toLowerCase()}"` : ''}>${topToolbar === '' ? '' : `\r\n\t<div class="row">${topToolbar}\r\n\t</div>`}\r\n\t<div class="row">` +
                         '\r\n\t<div class="col-md-12">' +
                         '\r\n\t<div class="panel panel-default panel-rounded">' +
                         `\r\n\t<tb-grid-table class="table-bordered">
@@ -4057,17 +4068,17 @@ function exportToCsv(header, rows, visibility) {
                         \t</tb-grid-table>
                         \t</div>
                         \t</div>
-                        \t</div>${bottomToolbar === '' ? '' : `\r\n\t<div class="row">${  bottomToolbar  }\r\n\t</div>`}\r\n</tb-grid>
+                        \t</div>${bottomToolbar === '' ? '' : `\r\n\t<div class="row">${bottomToolbar}\r\n\t</div>`}\r\n</tb-grid>
                         </div>`;
                 };
 
                 me.getEditorTypeByDateType = dataType => {
                     switch (dataType) {
-                        case 'date':
+                        case dataTypes.DATE:
                             return 'tbDateTimeEditor';
-                        case 'numeric':
+                        case dataTypes.NUMERIC:
                             return 'tbNumericEditor';
-                        case 'boolean':
+                        case dataTypes.BOOLEAN:
                             return 'tbCheckboxField';
                         default:
                             return 'tbSimpleEditor';
@@ -4095,19 +4106,19 @@ function exportToCsv(header, rows, visibility) {
                         if (angular.isNumber(value) || parseFloat(value).toString() === value) {
                             columns.push({
                                 Name: prop,
-                                DataType: 'numeric',
+                                DataType: dataTypes.NUMERIC,
                                 Template: `{{row.${prop} | number}}`
                             });
                         } else if (angular.isDate(value) || !isNaN((new Date(value)).getTime())) {
-                            columns.push({ Name: prop, DataType: 'date', Template: `{{row.${prop} | moment }}` });
+                            columns.push({ Name: prop, DataType: dataTypes.DATE, Template: `{{row.${prop} | moment }}` });
                         } else if (value.toLowerCase() === 'true' || value.toLowerCase() === 'false') {
                             columns.push({
                                 Name: prop,
-                                DataType: 'boolean',
+                                DataType: dataTypes.BOOLEAN,
                                 Template: `{{row.${prop} ? "TRUE" : "FALSE" }}`
                             });
                         } else {
-                            const newColumn = { Name: prop, DataType: 'string', Template: `{{row.${prop}}}` };
+                            const newColumn = { Name: prop, DataType: dataTypes.STRING, Template: `{{row.${prop}}}` };
 
                             if ((/e(-|)mail/ig).test(newColumn.Name)) {
                                 newColumn.Template = `<a href="mailto:${newColumn.Template}">${newColumn.Template}</a>`;
@@ -4124,7 +4135,7 @@ function exportToCsv(header, rows, visibility) {
                         columnObj.EditorType = me.getEditorTypeByDateType(columnObj.DataType);
 
                         // Grid attributes
-                        columnObj.Searchable = columnObj.DataType === 'string';
+                        columnObj.Searchable = columnObj.DataType === dataTypes.STRING;
                         columnObj.Filter = true;
                         columnObj.Visible = true;
                         columnObj.Sortable = true;
@@ -4229,22 +4240,22 @@ function exportToCsv(header, rows, visibility) {
                  * @returns {array}
                  */
                 me.generateFieldsArray = columns => columns.map(el => {
-                        const editorTag = el.EditorType
-                            .replace(/([A-Z])/g, $1 => `-${  $1.toLowerCase()}`);
-                        const defaults = me.defaults.fieldsSettings[el.EditorType];
+                    const editorTag = el.EditorType
+                        .replace(/([A-Z])/g, $1 => `-${$1.toLowerCase()}`);
+                    const defaults = me.defaults.fieldsSettings[el.EditorType];
 
-                        return `${'\r\n\t' +`<${editorTag} name="${el.Name}"`}${
-                            defaults.EditorType ? `\r\n\t\teditor-type="${  el.DataType  }" ` : ''
-                            }${defaults.ShowLabel
-                                ? `\r\n\t\tlabel="${  el.Label  }" show-label="${  el.ShowLabel  }"`
-                                : ''
-                            }${defaults.Placeholder ? `\r\n\t\tplaceholder="${  el.Placeholder  }"` : ''
-                            }${defaults.Required ? `\r\n\t\trequired="${  el.Required  }"` : ''
-                            }${defaults.ReadOnly ? `\r\n\t\tread-only="${  el.ReadOnly  }"` : ''
-                            }${defaults.Format ? `\r\n\t\tformat="${  el.Format  }"` : ''
-                            }${defaults.Help ? `\r\n\t\thelp="${  el.Help  }"` : ''
-                            }>\r\n\t` +`</${editorTag}>`;
-                    });
+                    return `${'\r\n\t' + `<${editorTag} name="${el.Name}"`}${
+                        defaults.EditorType ? `\r\n\t\teditor-type="${el.DataType}" ` : ''
+                        }${defaults.ShowLabel
+                            ? `\r\n\t\tlabel="${el.Label}" show-label="${el.ShowLabel}"`
+                            : ''
+                        }${defaults.Placeholder ? `\r\n\t\tplaceholder="${el.Placeholder}"` : ''
+                        }${defaults.Required ? `\r\n\t\trequired="${el.Required}"` : ''
+                        }${defaults.ReadOnly ? `\r\n\t\tread-only="${el.ReadOnly}"` : ''
+                        }${defaults.Format ? `\r\n\t\tformat="${el.Format}"` : ''
+                        }${defaults.Help ? `\r\n\t\thelp="${el.Help}"` : ''
+                        }>\r\n\t` + `</${editorTag}>`;
+                });
 
                 me.setupFilter = ($scope, $ctrl) => {
                     const dateOps = {
@@ -4259,7 +4270,7 @@ function exportToCsv(header, rows, visibility) {
                     };
 
                     const filterOperators = {
-                        'string': {
+                        [dataTypes.STRING]: {
                             'None': translateFilter('OP_NONE'),
                             'Equals': translateFilter('OP_EQUALS'),
                             'NotEquals': translateFilter('OP_NOTEQUALS'),
@@ -4270,7 +4281,7 @@ function exportToCsv(header, rows, visibility) {
                             'EndsWith': translateFilter('OP_ENDSWITH'),
                             'NotEndsWith': translateFilter('OP_NOTENDSWITH')
                         },
-                        'numeric': {
+                        [dataTypes.NUMERIC]: {
                             'None': translateFilter('OP_NONE'),
                             'Equals': translateFilter('OP_EQUALS'),
                             'Between': translateFilter('OP_BETWEEN'),
@@ -4279,10 +4290,10 @@ function exportToCsv(header, rows, visibility) {
                             'Lte': '<=',
                             'Lt': '<'
                         },
-                        'date': dateOps,
-                        'datetime': dateOps,
-                        'datetimeutc': dateOps,
-                        'boolean': {
+                        [dataTypes.DATE]: dateOps,
+                        [dataTypes.DATE_TIME]: dateOps,
+                        [dataTypes.DATE_TIME_UTC]: dateOps,
+                        [dataTypes.BOOLEAN]: {
                             'None': translateFilter('OP_NONE'),
                             'Equals': translateFilter('OP_EQUALS'),
                             'NotEquals': translateFilter('OP_NOTEQUALS')
@@ -4305,22 +4316,21 @@ function exportToCsv(header, rows, visibility) {
 
                         return c.length !== 0 ? c[0] : null;
                     }, val => {
-                            if (!val) {
-                                return;
-                            }
+                        if (!val) {
+                            return;
+                        }
 
-                            if ((val.DataType === 'date' || val.DataType === 'datetime' || val.DataType === 'datetimeutc')
-                                && !($ctrl.filter.Text === '' || $ctrl.filter.Text == null))
-                            {
-                                $ctrl.filter.Text = new Date($ctrl.filter.Text);
-                            }
+                        if ((val.DataType === dataTypes.DATE || val.DataType === dataTypes.DATE_TIME || val.DataType === dataTypes.DATE_TIME_UTC)
+                            && !($ctrl.filter.Text === '' || $ctrl.filter.Text == null)) {
+                            $ctrl.filter.Text = new Date($ctrl.filter.Text);
+                        }
 
-                            if ($ctrl.filter.HasFilter !== val.Filter.HasFilter) {
-                                $ctrl.filter.HasFilter = val.Filter.HasFilter;
-                                $ctrl.filter.Text = val.Filter.Text;
-                                $ctrl.retrieveData();
-                            }
-                        },
+                        if ($ctrl.filter.HasFilter !== val.Filter.HasFilter) {
+                            $ctrl.filter.HasFilter = val.Filter.HasFilter;
+                            $ctrl.filter.Text = val.Filter.Text;
+                            $ctrl.retrieveData();
+                        }
+                    },
                         true);
 
                     $ctrl.retrieveData = function () {
@@ -4391,9 +4401,9 @@ function exportToCsv(header, rows, visibility) {
                     $ctrl.dataType = columns[0].DataType;
                     $ctrl.filterOperators = filterOperators[$ctrl.dataType];
 
-                    if ($ctrl.dataType === 'date' ||
-                        $ctrl.dataType === 'datetime' ||
-                        $ctrl.dataType === 'datetimeutc') {
+                    if ($ctrl.dataType === dataTypes.DATE ||
+                        $ctrl.dataType === dataTypes.DATE_TIME ||
+                        $ctrl.dataType === dataTypes.DATE_TIME_UTC) {
                         $ctrl.filter.Argument = [new Date()];
 
                         if ($ctrl.filter.Operator === 'Contains') {
@@ -4401,7 +4411,7 @@ function exportToCsv(header, rows, visibility) {
                         }
                     }
 
-                    if ($ctrl.dataType === 'numeric' || $ctrl.dataType === 'boolean') {
+                    if ($ctrl.dataType === dataTypes.NUMERIC || $ctrl.dataType === dataTypes.BOOLEAN) {
                         $ctrl.filter.Argument = [1];
 
                         if ($ctrl.filter.Operator === 'Contains') {
