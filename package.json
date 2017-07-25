@@ -10,7 +10,7 @@
   "scripts": {
     "protractor": "protractor test/integration/tbnodejs/protractor.conf.js",
     "pretest": "./node_modules/protractor/bin/webdriver-manager update",
-    "test": "grunt csslint && grunt eslint && grunt unit:ci && grunt e2e:ci && grunt coveralls:ci && grunt tbnodejs"
+    "test": "grunt csslint && grunt eslint && grunt unit:ci && grunt e2e:ci && grunt coveralls:ci && grunt e2e-nodejs"
   },
   "keywords": [
     "grid",
