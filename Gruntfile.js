@@ -213,6 +213,7 @@ module.exports = grunt => {
         protractor_coverage: {
             options: {
                 keepAlive: true,
+                directConnect: true,
                 collectorPort: 9001,
                 webdriverManagerUpdate: true,
                 coverageDir: './test/integration/tbnodejs/coverage/dir',
