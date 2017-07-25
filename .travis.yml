@@ -25,6 +25,7 @@ before_install:
 before_script:
 - sh -e /etc/init.d/xvfb start
 script:
+- npm run pretest
 - npm test
 - if [[ "$BROWSER" = "firefox" ]]; then chmod +x ./publish.sh; fi
 - if [[ "$BROWSER" = "firefox" ]]; then ./publish.sh; fi

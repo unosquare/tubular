@@ -3096,7 +3096,9 @@ angular.module('tubular.services', ['ui.bootstrap'])
                 }
             };
         }]);
+
 })(angular);
+
 (function(angular, moment) {
   'use strict';
 
@@ -3302,8 +3304,8 @@ angular.module('tubular.services', ['ui.bootstrap'])
       }
     }
   }
-})(angular, moment);
 
+})(angular, moment);
 
 (function(angular) {
 'use strict';
