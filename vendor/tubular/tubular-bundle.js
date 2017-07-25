@@ -12,7 +12,7 @@
    */
   angular
     .module('tubular', ['tubular.directives', 'tubular.services', 'tubular.models'])
-    .info({ version: '1.7.11' });
+    .info({ version: '1.8.0' });
 
 })(angular);
 
@@ -354,7 +354,7 @@
             },
             controller: [
                 '$scope', function ($scope) {
-                    $scope.tubularDirective = 'tubular-rowset';
+                    $scope.tubularDirective = 'tubular-row-template';
                     $scope.fields = [];
                     $scope.$component = $scope.$parent.$parent.$parent.$component;
 
@@ -803,7 +803,9 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         serverSaveMethod: '@',
                         modelKey: '@?',
                         requireAuthentication: '=?',
-                        name: '@?formName'
+                        name: '@?formName',
+                        onSave: '=?',
+                        onError: '=?',
                     },
                     controller: 'tbFormController',
                     compile: () => ({ post: scope => scope.finishDefinition() })
@@ -823,12 +825,14 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             '$element',
             'tubularModel',
             '$http',
+            'modelSaver',
             function (
                 $scope,
                 $timeout,
                 $element,
                 TubularModel,
-                $http) {
+                $http,
+                modelSaver) {
                 // we need this to find the parent of a field
                 $scope.tubularDirective = 'tubular-form';
                 $scope.fields = [];
@@ -838,7 +842,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     let getUrl = urlData[0] + $scope.modelKey;
 
                     if (urlData.length > 1) {
-                        getUrl += `?${  urlData[1]}`;
+                        getUrl += `?${urlData[1]}`;
                     }
 
                     return getUrl;
@@ -847,7 +851,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 const $ctrl = this;
 
                 $ctrl.serverSaveMethod = $scope.serverSaveMethod || 'POST';
-                $ctrl.name = $scope.name || (`tbForm${  tbFormCounter++}`);
+                $ctrl.name = $scope.name || (`tbForm${tbFormCounter++}`);
 
                 // This method is meant to provide a reference to the Angular Form
                 // so we can get information about: $pristine, $dirty, $submitted, etc.
@@ -875,12 +879,10 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
                 $ctrl.retrieveData = function () {
                     if (angular.isDefined($scope.serverUrl)) {
-                        $http.get(getUrlWithKey(), {
-                            requireAuthentication: $ctrl.requireAuthentication
-                        }).then(response => {
-                            $scope.model = new TubularModel($scope.model && $scope.model.$component || $scope, response.data);
+                        $http.get(getUrlWithKey(), { requireAuthentication: $ctrl.requireAuthentication })
+                        .then(response => {
+                            $scope.model = new TubularModel($scope, response.data);
                             $ctrl.bindFields();
-                            $scope.model.$isNew = true;
                         }, error => $scope.$emit('tbForm_OnConnectionError', error));
 
                         return;
@@ -905,28 +907,31 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
                     $scope.model.$isLoading = true;
 
-                    $scope.currentRequest = $http({
-                        data: $scope.model,
-                        url: $ctrl.serverSaveUrl,
-                        method: $scope.model.$isNew ? ($ctrl.serverSaveMethod || 'POST') : 'PUT',
-                        requireAuthentication: $ctrl.requireAuthentication
-                    });
+                    $scope.currentRequest = modelSaver
+                        .save($scope.serverSaveUrl, $scope.serverSaveMethod, $scope.model)
+                        .then(response => {
+                            if (angular.isDefined($scope.onSave)) {
+                                $scope.onSave(response);
+                            }
 
-                    $scope.currentRequest.then(response => {
-                        const data = response.data;
+                            $scope.$emit('tbForm_OnSuccessfulSave', response.data, $scope);
 
-                        $scope.$emit('tbForm_OnSuccessfulSave', data, $scope);
+                            if (!keepData) {
+                                $scope.clear();
+                            }
 
-                        if (!keepData) {
-                            $scope.clear();
-                        }
+                            const formScope = $scope.getFormScope();
 
-                        const formScope = $scope.getFormScope();
+                            if (formScope) {
+                                formScope.$setPristine();
+                            }
+                        }, error => {
+                            if (angular.isDefined($scope.onError)) {
+                                $scope.onError(error);
+                            }
 
-                        if (formScope) {
-                            formScope.$setPristine();
-                        }
-                    }, error => $scope.$emit('tbForm_OnConnectionError', error, $scope))
+                            $scope.$emit('tbForm_OnConnectionError', error, $scope);
+                        })
                         .then(() => {
                             $scope.model.$isLoading = false;
                             $scope.currentRequest = null;
@@ -1120,6 +1125,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             'tubularConfig',
             '$window',
             'localPager',
+            'modelSaver',
             function (
                 $scope,
                 tubularPopupService,
@@ -1127,7 +1133,8 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 $http,
                 tubularConfig,
                 $window,
-                localPager) {
+                localPager,
+                modelSaver) {
                 const $ctrl = this;
                 const prefix = tubularConfig.localStorage.prefix();
                 const storage = $window.localStorage;
@@ -1143,7 +1150,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     $ctrl.name = $ctrl.name || 'tbgrid';
                     $ctrl.rows = [];
                     $ctrl.columns = [];
-
 
                     $ctrl.savePage = angular.isUndefined($ctrl.savePage) ? true : $ctrl.savePage;
                     $ctrl.currentPage = $ctrl.savePage ? (parseInt(storage.getItem(`${prefix + $ctrl.name}_page`)) || 1) : 1;
@@ -1265,7 +1271,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     $ctrl.tempRow = new TubularModel($ctrl, data || {});
                     $ctrl.tempRow.$isNew = true;
                     $ctrl.tempRow.$isEditing = true;
-                    $ctrl.tempRow.$component = $ctrl;
 
                     if (angular.isDefined(template) && angular.isDefined(popup) && popup) {
                         tubularPopupService.openDialog(template, $ctrl.tempRow, $ctrl, size);
@@ -1273,7 +1278,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 };
 
                 $ctrl.deleteRow = row => {
-
                     const urlparts = $ctrl.serverDeleteUrl.split('?');
                     let url = `${urlparts[0]}/${row.$key}`;
 
@@ -1296,90 +1300,52 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     return $ctrl.requireAuthentication ? ($ctrl.requireAuthentication === 'true') : true;
                 }
 
-                function addTimeZoneToUrl(url) {
-                    return `${url +
-                        (url.indexOf('?') === -1 ? '?' : '&')
-                        }timezoneOffset=${
-                        new Date().getTimezoneOffset()}`;
-                }
-
                 $ctrl.remoteSave = (row, forceUpdate) => {
-                    if (!$ctrl.serverSaveUrl) {
-                        throw 'Define a Save URL.';
-                    }
-
                     if (!forceUpdate && !row.$isNew && !row.$hasChanges()) {
                         row.$isEditing = false;
                         return null;
                     }
 
-                    row.$isLoading = true;
-                    const component = row.$component;
-                    row.$component = null;
-                    const clone = angular.copy(row);
-                    row.$component = component;
+                    $ctrl.currentRequest = modelSaver.save($ctrl.serverSaveUrl, $ctrl.serverSaveMethod, row)
+                        .then(data => {
+                            $scope.$emit('tbForm_OnSuccessfulSave', data);
+                            row.$isLoading = false;
+                            row.$isEditing = false;
+                            $ctrl.currentRequest = null;
+                            $ctrl.retrieveData();
 
-                    const originalClone = angular.copy(row.$original);
+                            return data;
+                        }, error => {
+                            $scope.$emit('tbForm_OnConnectionError', error);
+                            row.$isLoading = false;
+                            $ctrl.currentRequest = null;
 
-                    delete clone.$isEditing;
-                    delete clone.$original;
-                    delete clone.$state;
-                    delete clone.$valid;
-                    delete clone.$component;
-                    delete clone.$isLoading;
-                    delete clone.$isNew;
-
-                    $ctrl.currentRequest = $http({
-                        url: row.$isNew ? addTimeZoneToUrl($ctrl.serverSaveUrl) : $ctrl.serverSaveUrl,
-                        method: row.$isNew ? ($ctrl.serverSaveMethod || 'POST') : 'PUT',
-                        data: row.$isNew ? clone : {
-                            Old: originalClone,
-                            New: clone,
-                            TimezoneOffset: new Date().getTimezoneOffset()
-                        }
-                    });
-
-                    $ctrl.currentRequest.then(data => {
-                        $scope.$emit('tbForm_OnSuccessfulSave', data);
-                        row.$isLoading = false;
-                        row.$isEditing = false;
-                        $ctrl.currentRequest = null;
-                        $ctrl.retrieveData();
-
-                        return data;
-                    }, error => {
-                        $scope.$emit('tbForm_OnConnectionError', error);
-                        row.$isLoading = false;
-                        $ctrl.currentRequest = null;
-
-                        return error;
-                    });
+                            return error;
+                        });
 
                     return $ctrl.currentRequest;
                 }
 
                 $ctrl.saveRow = (row, forceUpdate) => {
-
-                    if ($ctrl.isInLocalMode) {
-
-                        if (row.$isNew) {
-
-                            if (angular.isUndefined($ctrl.onRowAdded)) {
-                                throw 'Define a Save Function using "onRowAdded".';
-                            }
-
-                            $ctrl.onRowAdded(row);
-                        }
-                        else {
-                            if (angular.isUndefined($ctrl.onRowUpdated)) {
-                                throw 'Define a Save Function using "onRowUpdated".';
-                            }
-
-                            $ctrl.onRowUpdated(row, forceUpdate);
-                        }
+                    if (!$ctrl.isInLocalMode) {
+                        return $ctrl.remoteSave(row, forceUpdate);
                     }
 
-                    return $ctrl.remoteSave(row, forceUpdate);
+                    if (row.$isNew) {
+
+                        if (angular.isUndefined($ctrl.onRowAdded)) {
+                            throw 'Define a Save Function using "onRowAdded".';
+                        }
+
+                        $ctrl.onRowAdded(row);
+                    }
+                    else {
+                        if (angular.isUndefined($ctrl.onRowUpdated)) {
+                            throw 'Define a Save Function using "onRowUpdated".';
+                        }
+
+                        $ctrl.onRowUpdated(row, forceUpdate);
+                    }
                 };
 
                 $ctrl.verifyColumns = () => {
@@ -1539,7 +1505,6 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
                     $ctrl.rows = data.Payload.map(el => {
                         const model = new TubularModel($ctrl, el);
-                        model.$component = $ctrl;
 
                         model.editPopup = (template, size) => {
                             tubularPopupService.openDialog(template, new TubularModel($ctrl, el), $ctrl, size);
@@ -3131,7 +3096,7 @@ angular.module('tubular.services', ['ui.bootstrap'])
             };
         }]);
 })(angular);
-(function(angular) {
+(function(angular, moment) {
   'use strict';
 
   angular.module('tubular.services')
@@ -3250,7 +3215,7 @@ angular.module('tubular.services', ['ui.bootstrap'])
       // We try to find a Tubular Form in the parents
       while (parent != null) {
         if (parent.tubularDirective === 'tubular-form' ||
-          parent.tubularDirective === 'tubular-rowset') {
+          parent.tubularDirective === 'tubular-row-template') {
 
           if (ctrl.name === null) {
             return;
@@ -3276,13 +3241,13 @@ angular.module('tubular.services', ['ui.bootstrap'])
                   ctrl.value = parent.model[scope.Name];
                 }
               }
+            }
 
-              parent.$watch(() => ctrl.value, value => {
+            scope.$watch(() => ctrl.value, value => {
                 if (value !== parent.model[scope.Name]) {
                   parent.model[scope.Name] = value;
                 }
               });
-            }
 
             scope.$watch(() => parent.model[scope.Name], value => {
               if (value !== ctrl.value) {
@@ -3336,7 +3301,7 @@ angular.module('tubular.services', ['ui.bootstrap'])
       }
     }
   }
-})(angular);
+})(angular, moment);
 
 
 (function(angular) {
@@ -3708,6 +3673,67 @@ function exportToCsv(header, rows, visibility) {
     angular.module('tubular.services')
         /**
          * @ngdoc factory
+         * @name modelSaver
+         *
+         * @description
+         * Use `modelSaver` to save a `tubularModel` 
+         */
+        .factory('modelSaver', [
+            '$http',
+            function ($http) {
+                function addTimeZoneToUrl(url) {
+                    return `${url}${(url.indexOf('?') === -1 ? '?' : '&')}timezoneOffset=${new Date().getTimezoneOffset()}`;
+                }
+
+                return {
+                    
+                    /**
+                     * Save a model using the url and method
+                     *
+                     * @param {string} url
+                     * @param {string} method
+                     * @param {any} model
+                     */
+                    save: (url, method, model) => {
+                        // TODO: RequiredAuthentication bypass?
+                        if (!url) {
+                            throw 'Define a Save URL.';
+                        }
+
+                        model.$isLoading = true;
+                        const clone = angular.copy(model);
+                        const originalClone = angular.copy(model.$original);
+
+                        delete clone.$isEditing;
+                        delete clone.$original;
+                        delete clone.$state;
+                        delete clone.$valid;
+                        delete clone.$isLoading;
+                        delete clone.$isNew;
+                        delete clone.$fields;
+                        delete clone.$key;
+
+                        return $http({
+                            url: model.$isNew ? addTimeZoneToUrl(url) : url,
+                            method: model.$isNew ? (method || 'POST') : 'PUT',
+                            data: model.$isNew ? clone : {
+                                Old: originalClone,
+                                New: clone,
+                                TimezoneOffset: new Date().getTimezoneOffset()
+                            }
+                        });
+
+                    }
+                };
+            }
+        ]);
+})(angular);
+(function (angular) {
+    'use strict';
+
+    angular.module('tubular.services')
+        /**
+         * @ngdoc factory
          * @name tubularPopupService
          *
          * @description
@@ -3802,6 +3828,11 @@ function exportToCsv(header, rows, visibility) {
                     }
 
                     $uibModalInstance.close();
+                };
+
+                $scope.onSave = () => {
+                    $scope.closePopup();
+                    gridScope.retrieveData();
                 };
             }
         ]);
