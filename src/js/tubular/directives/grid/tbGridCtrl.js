@@ -12,6 +12,8 @@
             '$window',
             'localPager',
             'modelSaver',
+            'compareOperators',
+            'sortDirection',
             function (
                 $scope,
                 tubularPopupService,
@@ -20,7 +22,9 @@
                 tubularConfig,
                 $window,
                 localPager,
-                modelSaver) {
+                modelSaver,
+                compareOperators,
+                sortDirection) {
                 const $ctrl = this;
                 const prefix = tubularConfig.localStorage.prefix();
                 const storage = $window.localStorage;
@@ -54,7 +58,7 @@
                     $ctrl.autoSearch = $ctrl.saveSearchText ? (storage.getItem(`${prefix + $ctrl.name}_search`) || '') : '';
                     $ctrl.search = {
                         Text: $ctrl.autoSearch,
-                        Operator: $ctrl.autoSearch === '' ? 'None' : 'Auto'
+                        Operator: $ctrl.autoSearch === '' ? compareOperators.NONE : compareOperators.AUTO
                     };
 
                     $ctrl.isEmpty = false;
@@ -266,7 +270,7 @@
 
                         if (column.Filter != null &&
                             column.Filter.Text != null &&
-                            column.Filter.Operator !== 'None') {
+                            column.Filter.Operator !== compareOperators.NONE) {
                             current.Filter = column.Filter;
                         }
                     });
@@ -428,14 +432,14 @@
 
                     // need to know if it's currently sorted before we reset stuff
                     const currentSortDirection = column.SortDirection;
-                    const toBeSortDirection = currentSortDirection === 'None'
-                        ? 'Ascending'
-                        : currentSortDirection === 'Ascending' ? 'Descending' : 'None';
+                    const toBeSortDirection = currentSortDirection === sortDirection.NONE
+                        ? sortDirection.ASCENDING
+                        : currentSortDirection === sortDirection.ASCENDING ? sortDirection.DESCENDING : sortDirection.NONE;
 
                     // the latest sorting takes less priority than previous sorts
-                    if (toBeSortDirection === 'None') {
+                    if (toBeSortDirection === sortDirection.NONE) {
                         column.SortOrder = -1;
-                        column.SortDirection = 'None';
+                        column.SortDirection = sortDirection.NONE;
                     } else {
                         column.SortOrder = Number.MAX_VALUE;
                         column.SortDirection = toBeSortDirection;
@@ -446,7 +450,7 @@
                         angular.forEach($ctrl.columns.filter(col => col.Name !== columnName),
                             col => {
                                 col.SortOrder = -1;
-                                col.SortDirection = 'None';
+                                col.SortDirection = sortDirection.NONE;
                             });
                     }
 
@@ -469,7 +473,7 @@
                     request.data.Take = -1;
                     request.data.Search = {
                         Text: '',
-                        Operator: 'None'
+                        Operator: compareOperators.NONE
                     };
 
                     $ctrl.currentRequest = $http(request)

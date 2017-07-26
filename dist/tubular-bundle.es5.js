@@ -516,7 +516,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
      * @description
      * The `tubularColumn` factory is the base to generate a column model to use with `tbGrid`.
      */
-    .factory('tubularColumn', ['dataTypes', function (dataTypes) {
+    .factory('tubularColumn', ['dataTypes', 'sortDirection', function (dataTypes, sortDirection) {
         return function (columnName, options) {
             options = options || {};
             options.DataType = options.DataType || 'string';
@@ -532,18 +532,18 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                 SortOrder: parseInt(options.SortOrder) || -1,
                 SortDirection: function () {
                     if (angular.isUndefined(options.SortDirection)) {
-                        return 'None';
+                        return sortDirection.NONE;
                     }
 
                     if (options.SortDirection.toLowerCase().indexOf('asc') === 0) {
-                        return 'Ascending';
+                        return sortDirection.ASCENDING;
                     }
 
                     if (options.SortDirection.toLowerCase().indexOf('desc') === 0) {
-                        return 'Descending';
+                        return sortDirection.DESCENDING;
                     }
 
-                    return 'None';
+                    return sortDirection.NONE;
                 }(),
                 IsKey: angular.isDefined(options.IsKey) ? options.IsKey : false,
                 Searchable: angular.isDefined(options.Searchable) ? options.Searchable : false,
@@ -986,7 +986,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 (function (angular) {
     'use strict';
 
-    angular.module('tubular.directives').controller('tbTextSearchController', ['$scope', function ($scope) {
+    angular.module('tubular.directives').controller('tbTextSearchController', ['$scope', 'compareOperators', function ($scope, compareOperators) {
         var $ctrl = this;
 
         $ctrl.$onInit = function () {
@@ -1002,7 +1002,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             $ctrl.$component.search.Text = val;
 
             if ($ctrl.lastSearch && val === '') {
-                search('None');
+                search(compareOperators.NONE);
                 return;
             }
 
@@ -1011,7 +1011,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             }
 
             $ctrl.lastSearch = val;
-            search('Auto');
+            search(compareOperators.AUTO);
         });
 
         function search(operator) {
@@ -1081,7 +1081,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 (function (angular) {
     'use strict';
 
-    angular.module('tubular.directives').controller('tbGridController', ['$scope', 'tubularPopupService', 'tubularModel', '$http', 'tubularConfig', '$window', 'localPager', 'modelSaver', function ($scope, tubularPopupService, TubularModel, $http, tubularConfig, $window, localPager, modelSaver) {
+    angular.module('tubular.directives').controller('tbGridController', ['$scope', 'tubularPopupService', 'tubularModel', '$http', 'tubularConfig', '$window', 'localPager', 'modelSaver', 'compareOperators', 'sortDirection', function ($scope, tubularPopupService, TubularModel, $http, tubularConfig, $window, localPager, modelSaver, compareOperators, sortDirection) {
         var $ctrl = this;
         var prefix = tubularConfig.localStorage.prefix();
         var storage = $window.localStorage;
@@ -1114,7 +1114,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             $ctrl.autoSearch = $ctrl.saveSearchText ? storage.getItem(prefix + $ctrl.name + '_search') || '' : '';
             $ctrl.search = {
                 Text: $ctrl.autoSearch,
-                Operator: $ctrl.autoSearch === '' ? 'None' : 'Auto'
+                Operator: $ctrl.autoSearch === '' ? compareOperators.NONE : compareOperators.AUTO
             };
 
             $ctrl.isEmpty = false;
@@ -1325,7 +1325,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                     return;
                 }
 
-                if (column.Filter != null && column.Filter.Text != null && column.Filter.Operator !== 'None') {
+                if (column.Filter != null && column.Filter.Text != null && column.Filter.Operator !== compareOperators.NONE) {
                     current.Filter = column.Filter;
                 }
             });
@@ -1488,12 +1488,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
             // need to know if it's currently sorted before we reset stuff
             var currentSortDirection = column.SortDirection;
-            var toBeSortDirection = currentSortDirection === 'None' ? 'Ascending' : currentSortDirection === 'Ascending' ? 'Descending' : 'None';
+            var toBeSortDirection = currentSortDirection === sortDirection.NONE ? sortDirection.ASCENDING : currentSortDirection === sortDirection.ASCENDING ? sortDirection.DESCENDING : sortDirection.NONE;
 
             // the latest sorting takes less priority than previous sorts
-            if (toBeSortDirection === 'None') {
+            if (toBeSortDirection === sortDirection.NONE) {
                 column.SortOrder = -1;
-                column.SortDirection = 'None';
+                column.SortDirection = sortDirection.NONE;
             } else {
                 column.SortOrder = Number.MAX_VALUE;
                 column.SortDirection = toBeSortDirection;
@@ -1505,7 +1505,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                     return col.Name !== columnName;
                 }), function (col) {
                     col.SortOrder = -1;
-                    col.SortDirection = 'None';
+                    col.SortDirection = sortDirection.NONE;
                 });
             }
 
@@ -1532,7 +1532,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             request.data.Take = -1;
             request.data.Search = {
                 Text: '',
-                Operator: 'None'
+                Operator: compareOperators.NONE
             };
 
             $ctrl.currentRequest = $http(request).then(function (response) {
@@ -1621,7 +1621,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         }
     }
 
-    var tbNumericEditorCtrl = ['tubularEditorService', '$scope', 'translateFilter', function (tubular, $scope, translateFilter) {
+    var tbNumericEditorCtrl = ['tubularEditorService', '$scope', 'translateFilter', 'dataTypes', function (tubular, $scope, translateFilter, dataTypes) {
         var $ctrl = this;
 
         $ctrl.validate = function () {
@@ -1644,12 +1644,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         };
 
         $ctrl.$onInit = function () {
-            $ctrl.DataType = 'numeric';
+            $ctrl.DataType = dataTypes.NUMERIC;
             tubular.setupScope($scope, 0, $ctrl, false);
         };
     }];
 
-    var tbDateTimeEditorCtrl = ['$scope', '$element', 'tubularEditorService', 'translateFilter', 'dateFilter', function ($scope, $element, tubular, translateFilter, dateFilter) {
+    var tbDateTimeEditorCtrl = ['$scope', '$element', 'tubularEditorService', 'translateFilter', 'dateFilter', 'dataTypes', function ($scope, $element, tubular, translateFilter, dateFilter, dataTypes) {
         var $ctrl = this;
 
         // This could be $onChange??
@@ -1670,13 +1670,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         };
 
         $ctrl.$onInit = function () {
-            $ctrl.DataType = 'datetime';
+            $ctrl.DataType = dataTypes.DATE_TIME;
             tubular.setupScope($scope, $ctrl.format, $ctrl);
             $ctrl.format = $ctrl.format || 'MMM D, Y';
         };
     }];
 
-    var tbDateEditorCtrl = ['$scope', '$element', 'tubularEditorService', 'translateFilter', 'dateFilter', function ($scope, $element, tubular, translateFilter, dateFilter) {
+    var tbDateEditorCtrl = ['$scope', '$element', 'tubularEditorService', 'translateFilter', 'dateFilter', 'dataTypes', function ($scope, $element, tubular, translateFilter, dateFilter, dataTypes) {
         var $ctrl = this;
 
         $scope.$watch(function () {
@@ -1696,7 +1696,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         };
 
         $ctrl.$onInit = function () {
-            $ctrl.DataType = 'date';
+            $ctrl.DataType = dataTypes.DATE;
             tubular.setupScope($scope, $ctrl.format, $ctrl);
             $ctrl.format = $ctrl.format || 'MMM D, Y'; // TODO: Add hours?
         };
@@ -2992,6 +2992,27 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         DATE_TIME: 'datetime',
         DATE: 'date',
         DATE_TIME_UTC: 'datetimeutc'
+    }).constant('sortDirection', {
+        NONE: 'None',
+        ASCENDING: 'Ascending',
+        DESCENDING: 'Descending'
+    }).constant('compareOperators', {
+        NONE: 'None',
+        AUTO: 'Auto',
+        EQUALS: 'Equals',
+        NOT_EQUALS: 'NotEquals',
+        CONTAINS: 'Contains',
+        STARTS_WITH: 'StartsWith',
+        ENDS_WITH: 'EndsWith',
+        GTE: 'Gte',
+        GT: 'Gt',
+        LTE: 'Lte',
+        LT: 'Lt',
+        MULTIPLE: 'Multiple',
+        BETWEEN: 'Between',
+        NOT_CONTAINS: 'NotContains',
+        NOT_STARTS_WITH: 'NotStartsWith',
+        NOT_ENDS_WITH: 'NotEndsWith'
     });
 })(angular);
 (function (angular, moment) {
@@ -3462,9 +3483,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
      */
     .service('localPager', localPager);
 
-    localPager.$inject = ['$q', 'orderByFilter'];
+    localPager.$inject = ['$q', 'orderByFilter', 'sortDirection', 'compareOperators'];
 
-    function localPager($q, orderByFilter) {
+    function localPager($q, orderByFilter, sortDirection, compareOperators) {
         this.process = function (request, data) {
             return $q(function (resolve) {
                 if (data && data.length > 0) {
@@ -3496,7 +3517,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
         function sort(request, set) {
             var sorts = request.Columns.map(function (el, index) {
-                return el.SortOrder > 0 ? (el.SortDirection === 'Descending' ? '-' : '') + index : null;
+                return el.SortOrder > 0 ? (el.SortDirection === sortDirection.DESCENDING ? '-' : '') + index : null;
             }).filter(function (el) {
                 return el != null;
             });
@@ -3509,7 +3530,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         }
 
         function search(request, set) {
-            if (request.Search && request.Search.Operator === 'Auto' && request.Search.Text) {
+            if (request.Search && request.Search.Operator === compareOperators.AUTO && request.Search.Text) {
                 var filters = request.Columns.map(function (el, index) {
                     return el.Searchable ? index : null;
                 }).filter(function (el) {
@@ -3742,7 +3763,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
      * @description
      * Use `tubularTemplateService` to generate `tbGrid` and `tbForm` templates.
      */
-    .service('tubularTemplateService', ['$templateCache', 'translateFilter', 'dataTypes', function ($templateCache, translateFilter, dataTypes) {
+    .service('tubularTemplateService', ['$templateCache', 'translateFilter', 'dataTypes', 'compareOperators', 'sortDirection', function ($templateCache, translateFilter, dataTypes, compareOperators, sortDirection) {
         var me = this;
 
         me.canUseHtml5Date = function () {
@@ -3993,7 +4014,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
                 columnObj.IsKey = true;
                 columnObj.SortOrder = 1;
-                columnObj.SortDirection = 'Ascending';
+                columnObj.SortDirection = sortDirection.ASCENDING;
                 firstSort = true;
             });
 
@@ -4065,47 +4086,16 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         };
 
         me.setupFilter = function ($scope, $ctrl) {
-            var _filterOperators;
+            var _dateOps, _dataTypes$STRING, _dataTypes$NUMERIC, _dataTypes$BOOLEAN, _filterOperators;
 
-            var dateOps = {
-                'None': translateFilter('OP_NONE'),
-                'Equals': translateFilter('OP_EQUALS'),
-                'NotEquals': translateFilter('OP_NOTEQUALS'),
-                'Between': translateFilter('OP_BETWEEN'),
-                'Gte': '>=',
-                'Gt': '>',
-                'Lte': '<=',
-                'Lt': '<'
-            };
+            var dateOps = (_dateOps = {}, _defineProperty(_dateOps, compareOperators.NONE, translateFilter('OP_NONE')), _defineProperty(_dateOps, compareOperators.EQUALS, translateFilter('OP_EQUALS')), _defineProperty(_dateOps, compareOperators.NOT_EQUALS, translateFilter('OP_NOTEQUALS')), _defineProperty(_dateOps, compareOperators.BETWEEN, translateFilter('OP_BETWEEN')), _defineProperty(_dateOps, compareOperators.GTE, '>='), _defineProperty(_dateOps, compareOperators.GT, '>'), _defineProperty(_dateOps, compareOperators.LTE, '<='), _defineProperty(_dateOps, compareOperators.LT, '<'), _dateOps);
 
-            var filterOperators = (_filterOperators = {}, _defineProperty(_filterOperators, dataTypes.STRING, {
-                'None': translateFilter('OP_NONE'),
-                'Equals': translateFilter('OP_EQUALS'),
-                'NotEquals': translateFilter('OP_NOTEQUALS'),
-                'Contains': translateFilter('OP_CONTAINS'),
-                'NotContains': translateFilter('OP_NOTCONTAINS'),
-                'StartsWith': translateFilter('OP_STARTSWITH'),
-                'NotStartsWith': translateFilter('OP_NOTSTARTSWITH'),
-                'EndsWith': translateFilter('OP_ENDSWITH'),
-                'NotEndsWith': translateFilter('OP_NOTENDSWITH')
-            }), _defineProperty(_filterOperators, dataTypes.NUMERIC, {
-                'None': translateFilter('OP_NONE'),
-                'Equals': translateFilter('OP_EQUALS'),
-                'Between': translateFilter('OP_BETWEEN'),
-                'Gte': '>=',
-                'Gt': '>',
-                'Lte': '<=',
-                'Lt': '<'
-            }), _defineProperty(_filterOperators, dataTypes.DATE, dateOps), _defineProperty(_filterOperators, dataTypes.DATE_TIME, dateOps), _defineProperty(_filterOperators, dataTypes.DATE_TIME_UTC, dateOps), _defineProperty(_filterOperators, dataTypes.BOOLEAN, {
-                'None': translateFilter('OP_NONE'),
-                'Equals': translateFilter('OP_EQUALS'),
-                'NotEquals': translateFilter('OP_NOTEQUALS')
-            }), _filterOperators);
+            var filterOperators = (_filterOperators = {}, _defineProperty(_filterOperators, dataTypes.STRING, (_dataTypes$STRING = {}, _defineProperty(_dataTypes$STRING, compareOperators.NONE, translateFilter('OP_NONE')), _defineProperty(_dataTypes$STRING, compareOperators.EQUALS, translateFilter('OP_EQUALS')), _defineProperty(_dataTypes$STRING, compareOperators.NOT_EQUALS, translateFilter('OP_NOTEQUALS')), _defineProperty(_dataTypes$STRING, compareOperators.CONTAINS, translateFilter('OP_CONTAINS')), _defineProperty(_dataTypes$STRING, compareOperators.NOT_CONTAINS, translateFilter('OP_NOTCONTAINS')), _defineProperty(_dataTypes$STRING, compareOperators.STARTS_WITH, translateFilter('OP_STARTSWITH')), _defineProperty(_dataTypes$STRING, compareOperators.NOT_STARTS_WITH, translateFilter('OP_NOTSTARTSWITH')), _defineProperty(_dataTypes$STRING, compareOperators.ENDS_WITH, translateFilter('OP_ENDSWITH')), _defineProperty(_dataTypes$STRING, compareOperators.NOT_ENDS_WITH, translateFilter('OP_NOTENDSWITH')), _dataTypes$STRING)), _defineProperty(_filterOperators, dataTypes.NUMERIC, (_dataTypes$NUMERIC = {}, _defineProperty(_dataTypes$NUMERIC, compareOperators.NONE, translateFilter('OP_NONE')), _defineProperty(_dataTypes$NUMERIC, compareOperators.EQUALS, translateFilter('OP_EQUALS')), _defineProperty(_dataTypes$NUMERIC, compareOperators.BETWEEN, translateFilter('OP_BETWEEN')), _defineProperty(_dataTypes$NUMERIC, compareOperators.GTE, '>='), _defineProperty(_dataTypes$NUMERIC, compareOperators.GT, '>'), _defineProperty(_dataTypes$NUMERIC, compareOperators.LTE, '<='), _defineProperty(_dataTypes$NUMERIC, compareOperators.LT, '<'), _dataTypes$NUMERIC)), _defineProperty(_filterOperators, dataTypes.DATE, dateOps), _defineProperty(_filterOperators, dataTypes.DATE_TIME, dateOps), _defineProperty(_filterOperators, dataTypes.DATE_TIME_UTC, dateOps), _defineProperty(_filterOperators, dataTypes.BOOLEAN, (_dataTypes$BOOLEAN = {}, _defineProperty(_dataTypes$BOOLEAN, compareOperators.NONE, translateFilter('OP_NONE')), _defineProperty(_dataTypes$BOOLEAN, compareOperators.EQUALS, translateFilter('OP_EQUALS')), _defineProperty(_dataTypes$BOOLEAN, compareOperators.NOT_EQUALS, translateFilter('OP_NOTEQUALS')), _dataTypes$BOOLEAN)), _filterOperators);
 
             $ctrl.filter = {
                 Text: $ctrl.text || null,
                 Argument: $ctrl.argument ? [$ctrl.argument] : null,
-                Operator: $ctrl.operator || 'Contains',
+                Operator: $ctrl.operator || compareOperators.CONTAINS,
                 OptionsUrl: $ctrl.optionsUrl || null,
                 HasFilter: !($ctrl.text == null || $ctrl.text === '' || angular.isUndefined($ctrl.text)),
                 Name: $scope.$parent.$parent.column.Name
@@ -4149,12 +4139,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             };
 
             $ctrl.clearFilter = function () {
-                if ($ctrl.filter.Operator !== 'Multiple') {
-                    $ctrl.filter.Operator = 'None';
+                if ($ctrl.filter.Operator !== compareOperators.MULTIPLE) {
+                    $ctrl.filter.Operator = compareOperators.NONE;
                 }
 
                 if (angular.isDefined($ctrl.onlyContains) && $ctrl.onlyContains) {
-                    $ctrl.filter.Operator = 'Contains';
+                    $ctrl.filter.Operator = compareOperators.CONTAINS;
                 }
 
                 $ctrl.filter.Text = '';
@@ -4184,7 +4174,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             });
 
             $scope.$watch('$ctrl.filter.Operator', function (val) {
-                if (val === 'None') {
+                if (val === compareOperators.NONE) {
                     $ctrl.filter.Text = '';
                 }
             });
@@ -4212,16 +4202,16 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             if ($ctrl.dataType === dataTypes.DATE || $ctrl.dataType === dataTypes.DATE_TIME || $ctrl.dataType === dataTypes.DATE_TIME_UTC) {
                 $ctrl.filter.Argument = [new Date()];
 
-                if ($ctrl.filter.Operator === 'Contains') {
-                    $ctrl.filter.Operator = 'Equals';
+                if ($ctrl.filter.Operator === compareOperators.CONTAINS) {
+                    $ctrl.filter.Operator = compareOperators.EQUALS;
                 }
             }
 
             if ($ctrl.dataType === dataTypes.NUMERIC || $ctrl.dataType === dataTypes.BOOLEAN) {
                 $ctrl.filter.Argument = [1];
 
-                if ($ctrl.filter.Operator === 'Contains') {
-                    $ctrl.filter.Operator = 'Equals';
+                if ($ctrl.filter.Operator === compareOperators.CONTAINS) {
+                    $ctrl.filter.Operator = compareOperators.EQUALS;
                 }
             }
         };

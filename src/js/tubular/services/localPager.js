@@ -11,9 +11,9 @@
          */
         .service('localPager', localPager);
 
-    localPager.$inject = ['$q','orderByFilter'];
+    localPager.$inject = ['$q','orderByFilter', 'sortDirection', 'compareOperators'];
 
-    function localPager($q, orderByFilter) {
+    function localPager($q, orderByFilter, sortDirection, compareOperators) {
         this.process = (request, data) => {
             return $q(resolve => {
                 if (data && data.length > 0) {
@@ -41,7 +41,7 @@
 
         function sort(request, set) {
             const sorts = request.Columns
-                .map((el, index) => el.SortOrder > 0 ? (el.SortDirection === 'Descending' ? '-' : '') + index : null)
+                .map((el, index) => el.SortOrder > 0 ? (el.SortDirection === sortDirection.DESCENDING ? '-' : '') + index : null)
                 .filter(el => el != null);
             
             angular.forEach(sorts, sort => {
@@ -52,7 +52,7 @@
         }
 
         function search(request, set) {
-            if (request.Search && request.Search.Operator === 'Auto' && request.Search.Text) {
+            if (request.Search && request.Search.Operator === compareOperators.AUTO && request.Search.Text) {
                 const filters = request.Columns
                     .map((el, index) => el.Searchable ? index : null)
                     .filter(el => el != null);
