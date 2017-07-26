@@ -12,6 +12,7 @@
             '$window',
             'localPager',
             'modelSaver',
+            'sortDirection',
             function (
                 $scope,
                 tubularPopupService,
@@ -20,7 +21,8 @@
                 tubularConfig,
                 $window,
                 localPager,
-                modelSaver) {
+                modelSaver,
+                sortDirection) {
                 const $ctrl = this;
                 const prefix = tubularConfig.localStorage.prefix();
                 const storage = $window.localStorage;
@@ -243,13 +245,12 @@
                     }
 
                     angular.forEach(columns, column => {
-                        const filtered = $ctrl.columns.filter(el => el.Name === column.Name);
+                        const current = $ctrl.columns.find(el => el.Name === column.Name);
 
-                        if (filtered.length === 0) {
+                        if (!current) {
                             return;
                         }
 
-                        const current = filtered[0];
                         // Updates visibility by now
                         current.Visible = column.Visible;
 
@@ -428,14 +429,14 @@
 
                     // need to know if it's currently sorted before we reset stuff
                     const currentSortDirection = column.SortDirection;
-                    const toBeSortDirection = currentSortDirection === 'None'
-                        ? 'Ascending'
-                        : currentSortDirection === 'Ascending' ? 'Descending' : 'None';
+                    const toBeSortDirection = currentSortDirection === sortDirection.NONE
+                        ? sortDirection.ASC
+                        : currentSortDirection === sortDirection.ASC ? sortDirection.DESC : sortDirection.NONE;
 
                     // the latest sorting takes less priority than previous sorts
-                    if (toBeSortDirection === 'None') {
+                    if (toBeSortDirection === sortDirection.NONE) {
                         column.SortOrder = -1;
-                        column.SortDirection = 'None';
+                        column.SortDirection = sortDirection.NONE;
                     } else {
                         column.SortOrder = Number.MAX_VALUE;
                         column.SortDirection = toBeSortDirection;
@@ -446,7 +447,7 @@
                         angular.forEach($ctrl.columns.filter(col => col.Name !== columnName),
                             col => {
                                 col.SortOrder = -1;
-                                col.SortDirection = 'None';
+                                col.SortDirection = sortDirection.NONE;
                             });
                     }
 
@@ -454,9 +455,7 @@
                     const currentlySortedColumns = $ctrl.columns.filter(col => col.SortOrder > 0);
 
                     // re-index the sort order
-                    currentlySortedColumns.sort((a, b) => {
-                        return a.SortOrder === b.SortOrder ? 0 : a.SortOrder > b.SortOrder
-                    });
+                    currentlySortedColumns.sort((a, b) => a.SortOrder === b.SortOrder ? 0 : a.SortOrder > b.SortOrder);
 
                     angular.forEach(currentlySortedColumns, (col, index) => col.SortOrder = index + 1);
 

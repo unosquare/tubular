@@ -10,10 +10,11 @@
          * @description
          * The `tubularColumn` factory is the base to generate a column model to use with `tbGrid`.
          */
-        .factory('tubularColumn', ['dataTypes', function (dataTypes) {
+        .factory('tubularColumn', ['dataTypes', 'sortDirection', 
+        function (dataTypes, sortDirection) {
             return function (columnName, options) {
                 options = options || {};
-                options.DataType = options.DataType || 'string';
+                options.DataType = options.DataType || dataTypes.STRING;
 
                 if (Object.values(dataTypes).indexOf(options.DataType) < 0) {
                     throw `Invalid data type: '${options.DataType}' for column '${columnName}'`;
@@ -26,24 +27,24 @@
                     SortOrder: parseInt(options.SortOrder) || -1,
                     SortDirection: function () {
                         if (angular.isUndefined(options.SortDirection)) {
-                            return 'None';
+                            return sortDirection.NONE;
                         }
 
                         if (options.SortDirection.toLowerCase().indexOf('asc') === 0) {
-                            return 'Ascending';
+                            return sortDirection.ASC;
                         }
 
                         if (options.SortDirection.toLowerCase().indexOf('desc') === 0) {
-                            return 'Descending';
+                            return sortDirection.DESC;
                         }
 
-                        return 'None';
+                        return sortDirection.NONE;
                     }(),
                     IsKey: angular.isDefined(options.IsKey) ? options.IsKey : false,
                     Searchable: angular.isDefined(options.Searchable) ? options.Searchable : false,
                     Visible: options.Visible === 'false' ? false : true,
                     Filter: null,
-                    DataType: options.DataType || 'string',
+                    DataType: options.DataType || dataTypes.STRING,
                     Aggregate: options.Aggregate || 'none'
                 };
 

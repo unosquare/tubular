@@ -11,39 +11,37 @@
          */
         .service('localPager', localPager);
 
-    localPager.$inject = ['$q','orderByFilter'];
+    localPager.$inject = ['$q', 'orderByFilter'];
 
     function localPager($q, orderByFilter) {
-        this.process = (request, data) => {
-            return $q(resolve => {
-                if (data && data.length > 0) {
-                    const totalRecords = data.length;
-                    let set = data;
+        this.process = (request, data) => $q(resolve => {
+            if (data && data.length > 0) {
+                const totalRecords = data.length;
+                let set = data;
 
-                    if (angular.isArray(set[0]) == false) {
-                        const columnIndexes = request.data.Columns
-                            .map(el => el.Name);
-                        
-                        set = set.map(el => columnIndexes.map(name => el[name]));
-                    }
+                if (angular.isArray(set[0]) == false) {
+                    const columnIndexes = request.data.Columns
+                        .map(el => el.Name);
 
-                    set = search(request.data, set);
-                    set = filter(request.data, set);
-                    set = sort(request.data, set);
-
-                    resolve({ data: format(request.data, set, totalRecords) });
+                    set = set.map(el => columnIndexes.map(name => el[name]));
                 }
-                else {
-                    resolve({ data: createEmptyResponse() });
-                }
-            });
-        };
+
+                set = search(request.data, set);
+                set = filter(request.data, set);
+                set = sort(request.data, set);
+
+                resolve({ data: format(request.data, set, totalRecords) });
+            }
+            else {
+                resolve({ data: createEmptyResponse() });
+            }
+        });
 
         function sort(request, set) {
             const sorts = request.Columns
                 .map((el, index) => el.SortOrder > 0 ? (el.SortDirection === 'Descending' ? '-' : '') + index : null)
                 .filter(el => el != null);
-            
+
             angular.forEach(sorts, sort => {
                 set = orderByFilter(set, sort);
             });
@@ -56,7 +54,7 @@
                 const filters = request.Columns
                     .map((el, index) => el.Searchable ? index : null)
                     .filter(el => el != null);
-                
+
                 if (filters.length > 0) {
                     const searchValue = request.Search.Text.toLocaleLowerCase();
 
@@ -73,7 +71,7 @@
             const filters = request.Columns
                 .map((el, index) => el.Filter && el.Filter.Text ? { idx: index, text: el.Filter.Text.toLocaleLowerCase() } : null)
                 .filter(el => el != null);
-                
+
             if (filters.length === 0) {
                 return set;
             }

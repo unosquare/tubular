@@ -9,5 +9,10 @@
             DATE_TIME: 'datetime',
             DATE: 'date',
             DATE_TIME_UTC: 'datetimeutc'
+        })
+        .constant('sortDirection', {
+            ASC: 'Ascending',
+            DESC: 'Descending',
+            NONE: 'None'
         });
 })(angular);
