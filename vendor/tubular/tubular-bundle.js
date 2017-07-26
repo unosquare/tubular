@@ -12,7 +12,7 @@
    */
   angular
     .module('tubular', ['tubular.directives', 'tubular.services', 'tubular.models'])
-    .info({ version: '1.8.1' });
+    .info({ version: '1.8.0' });
 
 })(angular);
 
@@ -84,7 +84,7 @@
                                 element.find('tr').append(headersContent);
 
                                 const cellsTemplate = tubularTemplateService.generateCells(scope.columns, '');
-                                const cellsContent = $compile(`<tbody><tr ng-repeat="row in $component.rows" row-model="row">${cellsTemplate}</tr></tbody>`)(scope);
+                                const cellsContent = $compile('<tbody><tr ng-repeat="row in $component.rows" row-model="row">' + cellsTemplate + '</tr></tbody>')(scope);
                                 element.append(cellsContent);
                             }
                         },
@@ -548,14 +548,18 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
          * @description
          * The `tubularColumn` factory is the base to generate a column model to use with `tbGrid`.
          */
-        .factory('tubularColumn', ['dataTypes', 'sortDirection', 
-        function (dataTypes, sortDirection) {
+        .factory('tubularColumn', ['dataTypes', 'sortDirection', 'aggregateFunctions', function (dataTypes, sortDirection, aggregateFunctions) {
             return function (columnName, options) {
                 options = options || {};
                 options.DataType = options.DataType || dataTypes.STRING;
+                options.Aggregate = options.Aggregate || aggregateFunctions.NONE;
 
                 if (Object.values(dataTypes).indexOf(options.DataType) < 0) {
                     throw `Invalid data type: '${options.DataType}' for column '${columnName}'`;
+                }
+
+                if (Object.values(aggregateFunctions).indexOf(options.Aggregate) < 0) {
+                    throw `Invalid aggregate function: '${options.Aggregate}' for column '${columnName}'`;
                 }
 
                 const obj = {
@@ -569,11 +573,11 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         }
 
                         if (options.SortDirection.toLowerCase().indexOf('asc') === 0) {
-                            return sortDirection.ASC;
+                            return sortDirection.ASCENDING;
                         }
 
                         if (options.SortDirection.toLowerCase().indexOf('desc') === 0) {
-                            return sortDirection.DESC;
+                            return sortDirection.DESCENDING;
                         }
 
                         return sortDirection.NONE;
@@ -582,8 +586,8 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     Searchable: angular.isDefined(options.Searchable) ? options.Searchable : false,
                     Visible: options.Visible === 'false' ? false : true,
                     Filter: null,
-                    DataType: options.DataType || dataTypes.STRING,
-                    Aggregate: options.Aggregate || 'none'
+                    DataType: options.DataType,
+                    Aggregate: options.Aggregate || aggregateFunctions.NONE
                 };
 
                 return obj;
@@ -1022,7 +1026,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
     angular.module('tubular.directives')
         .controller('tbTextSearchController', [
-            '$scope', function ($scope) {
+            '$scope', 'compareOperators', function ($scope, compareOperators) {
                 const $ctrl = this;
 
                 $ctrl.$onInit = () => {
@@ -1038,7 +1042,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     $ctrl.$component.search.Text = val;
 
                     if ($ctrl.lastSearch && val === '') {
-                        search('None');
+                        search(compareOperators.NONE);
                         return;
                     }
 
@@ -1047,7 +1051,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     }
 
                     $ctrl.lastSearch = val;
-                    search('Auto');
+                    search(compareOperators.AUTO);
                 });
 
                 function search(operator) {
@@ -1132,6 +1136,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             '$window',
             'localPager',
             'modelSaver',
+            'compareOperators',
             'sortDirection',
             function (
                 $scope,
@@ -1142,6 +1147,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 $window,
                 localPager,
                 modelSaver,
+                compareOperators,
                 sortDirection) {
                 const $ctrl = this;
                 const prefix = tubularConfig.localStorage.prefix();
@@ -1176,7 +1182,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     $ctrl.autoSearch = $ctrl.saveSearchText ? (storage.getItem(`${prefix + $ctrl.name}_search`) || '') : '';
                     $ctrl.search = {
                         Text: $ctrl.autoSearch,
-                        Operator: $ctrl.autoSearch === '' ? 'None' : 'Auto'
+                        Operator: $ctrl.autoSearch === '' ? compareOperators.NONE : compareOperators.AUTO
                     };
 
                     $ctrl.isEmpty = false;
@@ -1365,12 +1371,13 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     }
 
                     angular.forEach(columns, column => {
-                        const current = $ctrl.columns.find(el => el.Name === column.Name);
+                        const filtered = $ctrl.columns.filter(el => el.Name === column.Name);
 
-                        if (!current) {
+                        if (filtered.length === 0) {
                             return;
                         }
 
+                        const current = filtered[0];
                         // Updates visibility by now
                         current.Visible = column.Visible;
 
@@ -1387,7 +1394,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
                         if (column.Filter != null &&
                             column.Filter.Text != null &&
-                            column.Filter.Operator !== 'None') {
+                            column.Filter.Operator !== compareOperators.NONE) {
                             current.Filter = column.Filter;
                         }
                     });
@@ -1550,8 +1557,8 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     // need to know if it's currently sorted before we reset stuff
                     const currentSortDirection = column.SortDirection;
                     const toBeSortDirection = currentSortDirection === sortDirection.NONE
-                        ? sortDirection.ASC
-                        : currentSortDirection === sortDirection.ASC ? sortDirection.DESC : sortDirection.NONE;
+                        ? sortDirection.ASCENDING
+                        : currentSortDirection === sortDirection.ASCENDING ? sortDirection.DESCENDING : sortDirection.NONE;
 
                     // the latest sorting takes less priority than previous sorts
                     if (toBeSortDirection === sortDirection.NONE) {
@@ -1575,7 +1582,9 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     const currentlySortedColumns = $ctrl.columns.filter(col => col.SortOrder > 0);
 
                     // re-index the sort order
-                    currentlySortedColumns.sort((a, b) => a.SortOrder === b.SortOrder ? 0 : a.SortOrder > b.SortOrder);
+                    currentlySortedColumns.sort((a, b) => {
+                        return a.SortOrder === b.SortOrder ? 0 : a.SortOrder > b.SortOrder
+                    });
 
                     angular.forEach(currentlySortedColumns, (col, index) => col.SortOrder = index + 1);
 
@@ -1588,7 +1597,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     request.data.Take = -1;
                     request.data.Search = {
                         Text: '',
-                        Operator: 'None'
+                        Operator: compareOperators.NONE
                     };
 
                     $ctrl.currentRequest = $http(request)
@@ -2377,8 +2386,12 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 onlyContains: '=?'
             },
             controller: [
-                '$scope', 'tubularTemplateService', function ($scope, tubular) {
+                '$scope', 'tubularTemplateService', 'compareOperators', function ($scope, tubular, compareOperators) {
                     const $ctrl = this;
+
+                    if (Object.values(compareOperators).indexOf($ctrl.operator) < 0) {
+                        throw `Invalid compare operator: '${$ctrl.operator}'.`;
+                    }
 
                     $ctrl.$onInit = () => {
                         $ctrl.onlyContains = angular.isUndefined($ctrl.onlyContains) ? false : $ctrl.onlyContains;
@@ -2452,7 +2465,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 title: '@'
             },
             controller: [
-                '$scope', 'tubularTemplateService', '$http', function ($scope, tubular, $http) {
+                '$scope', 'tubularTemplateService', '$http', 'compareOperators', function ($scope, tubular, $http, compareOperators) {
                     const $ctrl = this;
 
                     $ctrl.getOptionsFromUrl = () => {
@@ -2473,7 +2486,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         tubular.setupFilter($scope, $ctrl);
                         $ctrl.getOptionsFromUrl();
 
-                        $ctrl.filter.Operator = 'Multiple';
+                        $ctrl.filter.Operator = compareOperators.MULTIPLE;
                     };
                 }
             ]
@@ -2835,7 +2848,7 @@ angular.module('tubular.services', ['ui.bootstrap'])
     })
 })(angular);
 
-(function (angular, moment) {
+(function(angular, moment) {
   'use strict';
 
   angular.module('tubular')
@@ -2848,9 +2861,12 @@ angular.module('tubular.services', ['ui.bootstrap'])
      * @description
      * `moment` is a filter to call format from moment or, if the input is a Date, call Angular's `date` filter.
      */
-    .filter('moment', ['dateFilter',
-      function (dateFilter) {
-        return (input, format) => moment.isMoment(input) ? input.format(format || 'M/DD/YYYY') : dateFilter(input);
+    .filter('moment', [
+      'dateFilter',
+      function(dateFilter) {
+        return (input, format) => {
+          return moment.isMoment(input) ? input.format(format || 'M/DD/YYYY') : dateFilter(input);
+        }
       }
     ]);
 })(angular, moment);
@@ -3114,9 +3130,36 @@ angular.module('tubular.services', ['ui.bootstrap'])
             DATE_TIME_UTC: 'datetimeutc'
         })
         .constant('sortDirection', {
-            ASC: 'Ascending',
-            DESC: 'Descending',
-            NONE: 'None'
+            NONE : 'None',
+            ASCENDING: 'Ascending',
+            DESCENDING: 'Descending'
+        })
+        .constant('compareOperators', {
+            NONE : 'None',
+            AUTO: 'Auto',
+            EQUALS: 'Equals',
+            NOT_EQUALS: 'NotEquals',
+            CONTAINS: 'Contains',
+            STARTS_WITH: 'StartsWith',
+            ENDS_WITH: 'EndsWith',
+            GTE: 'Gte',
+            GT: 'Gt',
+            LTE: 'Lte',
+            LT: 'Lt',
+            MULTIPLE: 'Multiple',
+            BETWEEN: 'Between',
+            NOT_CONTAINS: 'NotContains',
+            NOT_STARTS_WITH: 'NotStartsWith',
+            NOT_ENDS_WITH: 'NotEndsWith'
+        })
+        .constant('aggregateFunctions', {
+            NONE : 'None',
+            SUM: 'Sum',
+            AVERAGE: 'Average',
+            COUNT: 'Count',
+            DISTINCT_COUNT: 'Distinctcount',
+            MAX: 'Max',
+            MIN: 'Min'
         });
 })(angular);
 (function (angular, moment) {
@@ -3587,37 +3630,39 @@ function exportToCsv(header, rows, visibility) {
          */
         .service('localPager', localPager);
 
-    localPager.$inject = ['$q', 'orderByFilter'];
+    localPager.$inject = ['$q','orderByFilter', 'sortDirection', 'compareOperators'];
 
-    function localPager($q, orderByFilter) {
-        this.process = (request, data) => $q(resolve => {
-            if (data && data.length > 0) {
-                const totalRecords = data.length;
-                let set = data;
+    function localPager($q, orderByFilter, sortDirection, compareOperators) {
+        this.process = (request, data) => {
+            return $q(resolve => {
+                if (data && data.length > 0) {
+                    const totalRecords = data.length;
+                    let set = data;
 
-                if (angular.isArray(set[0]) == false) {
-                    const columnIndexes = request.data.Columns
-                        .map(el => el.Name);
+                    if (angular.isArray(set[0]) == false) {
+                        const columnIndexes = request.data.Columns
+                            .map(el => el.Name);
+                        
+                        set = set.map(el => columnIndexes.map(name => el[name]));
+                    }
 
-                    set = set.map(el => columnIndexes.map(name => el[name]));
+                    set = search(request.data, set);
+                    set = filter(request.data, set);
+                    set = sort(request.data, set);
+
+                    resolve({ data: format(request.data, set, totalRecords) });
                 }
-
-                set = search(request.data, set);
-                set = filter(request.data, set);
-                set = sort(request.data, set);
-
-                resolve({ data: format(request.data, set, totalRecords) });
-            }
-            else {
-                resolve({ data: createEmptyResponse() });
-            }
-        });
+                else {
+                    resolve({ data: createEmptyResponse() });
+                }
+            });
+        };
 
         function sort(request, set) {
             const sorts = request.Columns
-                .map((el, index) => el.SortOrder > 0 ? (el.SortDirection === 'Descending' ? '-' : '') + index : null)
+                .map((el, index) => el.SortOrder > 0 ? (el.SortDirection === sortDirection.DESCENDING ? '-' : '') + index : null)
                 .filter(el => el != null);
-
+            
             angular.forEach(sorts, sort => {
                 set = orderByFilter(set, sort);
             });
@@ -3626,11 +3671,11 @@ function exportToCsv(header, rows, visibility) {
         }
 
         function search(request, set) {
-            if (request.Search && request.Search.Operator === 'Auto' && request.Search.Text) {
+            if (request.Search && request.Search.Operator === compareOperators.AUTO && request.Search.Text) {
                 const filters = request.Columns
                     .map((el, index) => el.Searchable ? index : null)
                     .filter(el => el != null);
-
+                
                 if (filters.length > 0) {
                     const searchValue = request.Search.Text.toLocaleLowerCase();
 
@@ -3647,7 +3692,7 @@ function exportToCsv(header, rows, visibility) {
             const filters = request.Columns
                 .map((el, index) => el.Filter && el.Filter.Text ? { idx: index, text: el.Filter.Text.toLocaleLowerCase() } : null)
                 .filter(el => el != null);
-
+                
             if (filters.length === 0) {
                 return set;
             }
@@ -3697,7 +3742,7 @@ function exportToCsv(header, rows, visibility) {
          * @name modelSaver
          *
          * @description
-         * Use `modelSaver` to save a `tubularModel`
+         * Use `modelSaver` to save a `tubularModel` 
          */
         .factory('modelSaver', [
             '$http',
@@ -3707,6 +3752,7 @@ function exportToCsv(header, rows, visibility) {
                 }
 
                 return {
+                    
                     /**
                      * Save a model using the url and method
                      *
@@ -3873,10 +3919,14 @@ function exportToCsv(header, rows, visibility) {
             '$templateCache',
             'translateFilter',
             'dataTypes',
+            'compareOperators',
+            'sortDirection',
             function (
                 $templateCache,
                 translateFilter,
-                dataTypes) {
+                dataTypes,
+                compareOperators,
+                sortDirection) {
                 const me = this;
 
                 me.canUseHtml5Date = () => {
@@ -4155,7 +4205,7 @@ function exportToCsv(header, rows, visibility) {
 
                         columnObj.IsKey = true;
                         columnObj.SortOrder = 1;
-                        columnObj.SortDirection = 'Ascending';
+                        columnObj.SortDirection = sortDirection.ASCENDING;
                         firstSort = true;
                     });
 
@@ -4258,51 +4308,51 @@ function exportToCsv(header, rows, visibility) {
 
                 me.setupFilter = ($scope, $ctrl) => {
                     const dateOps = {
-                        'None': translateFilter('OP_NONE'),
-                        'Equals': translateFilter('OP_EQUALS'),
-                        'NotEquals': translateFilter('OP_NOTEQUALS'),
-                        'Between': translateFilter('OP_BETWEEN'),
-                        'Gte': '>=',
-                        'Gt': '>',
-                        'Lte': '<=',
-                        'Lt': '<'
+                        [compareOperators.NONE]: translateFilter('OP_NONE'),
+                        [compareOperators.EQUALS]: translateFilter('OP_EQUALS'),
+                        [compareOperators.NOT_EQUALS]: translateFilter('OP_NOTEQUALS'),
+                        [compareOperators.BETWEEN]: translateFilter('OP_BETWEEN'),
+                        [compareOperators.GTE]: '>=',
+                        [compareOperators.GT]: '>',
+                        [compareOperators.LTE]: '<=',
+                        [compareOperators.LT]: '<'
                     };
 
                     const filterOperators = {
                         [dataTypes.STRING]: {
-                            'None': translateFilter('OP_NONE'),
-                            'Equals': translateFilter('OP_EQUALS'),
-                            'NotEquals': translateFilter('OP_NOTEQUALS'),
-                            'Contains': translateFilter('OP_CONTAINS'),
-                            'NotContains': translateFilter('OP_NOTCONTAINS'),
-                            'StartsWith': translateFilter('OP_STARTSWITH'),
-                            'NotStartsWith': translateFilter('OP_NOTSTARTSWITH'),
-                            'EndsWith': translateFilter('OP_ENDSWITH'),
-                            'NotEndsWith': translateFilter('OP_NOTENDSWITH')
+                            [compareOperators.NONE]: translateFilter('OP_NONE'),
+                            [compareOperators.EQUALS]: translateFilter('OP_EQUALS'),
+                            [compareOperators.NOT_EQUALS]: translateFilter('OP_NOTEQUALS'),
+                            [compareOperators.CONTAINS]: translateFilter('OP_CONTAINS'),
+                            [compareOperators.NOT_CONTAINS]: translateFilter('OP_NOTCONTAINS'),
+                            [compareOperators.STARTS_WITH]: translateFilter('OP_STARTSWITH'),
+                            [compareOperators.NOT_STARTS_WITH]: translateFilter('OP_NOTSTARTSWITH'),
+                            [compareOperators.ENDS_WITH]: translateFilter('OP_ENDSWITH'),
+                            [compareOperators.NOT_ENDS_WITH]: translateFilter('OP_NOTENDSWITH')
                         },
                         [dataTypes.NUMERIC]: {
-                            'None': translateFilter('OP_NONE'),
-                            'Equals': translateFilter('OP_EQUALS'),
-                            'Between': translateFilter('OP_BETWEEN'),
-                            'Gte': '>=',
-                            'Gt': '>',
-                            'Lte': '<=',
-                            'Lt': '<'
+                            [compareOperators.NONE]: translateFilter('OP_NONE'),
+                            [compareOperators.EQUALS]: translateFilter('OP_EQUALS'),
+                            [compareOperators.BETWEEN]: translateFilter('OP_BETWEEN'),
+                            [compareOperators.GTE]: '>=',
+                            [compareOperators.GT]: '>',
+                            [compareOperators.LTE]: '<=',
+                            [compareOperators.LT]: '<'
                         },
                         [dataTypes.DATE]: dateOps,
                         [dataTypes.DATE_TIME]: dateOps,
                         [dataTypes.DATE_TIME_UTC]: dateOps,
                         [dataTypes.BOOLEAN]: {
-                            'None': translateFilter('OP_NONE'),
-                            'Equals': translateFilter('OP_EQUALS'),
-                            'NotEquals': translateFilter('OP_NOTEQUALS')
+                            [compareOperators.NONE]: translateFilter('OP_NONE'),
+                            [compareOperators.EQUALS]: translateFilter('OP_EQUALS'),
+                            [compareOperators.NOT_EQUALS]: translateFilter('OP_NOTEQUALS')
                         }
                     };
 
                     $ctrl.filter = {
                         Text: $ctrl.text || null,
                         Argument: $ctrl.argument ? [$ctrl.argument] : null,
-                        Operator: $ctrl.operator || 'Contains',
+                        Operator: $ctrl.operator || compareOperators.CONTAINS,
                         OptionsUrl: $ctrl.optionsUrl || null,
                         HasFilter: !($ctrl.text == null || $ctrl.text === '' || angular.isUndefined($ctrl.text)),
                         Name: $scope.$parent.$parent.column.Name
@@ -4344,12 +4394,12 @@ function exportToCsv(header, rows, visibility) {
                     };
 
                     $ctrl.clearFilter = function () {
-                        if ($ctrl.filter.Operator !== 'Multiple') {
-                            $ctrl.filter.Operator = 'None';
+                        if ($ctrl.filter.Operator !== compareOperators.MULTIPLE) {
+                            $ctrl.filter.Operator = compareOperators.NONE;
                         }
 
                         if (angular.isDefined($ctrl.onlyContains) && $ctrl.onlyContains) {
-                            $ctrl.filter.Operator = 'Contains';
+                            $ctrl.filter.Operator = compareOperators.CONTAINS;
                         }
 
                         $ctrl.filter.Text = '';
@@ -4375,7 +4425,7 @@ function exportToCsv(header, rows, visibility) {
                     const columns = $ctrl.$component.columns.filter(e => e.Name === $ctrl.filter.Name);
 
                     $scope.$watch('$ctrl.filter.Operator', val => {
-                        if (val === 'None') {
+                        if (val === compareOperators.NONE) {
                             $ctrl.filter.Text = '';
                         }
                     });
@@ -4405,16 +4455,16 @@ function exportToCsv(header, rows, visibility) {
                         $ctrl.dataType === dataTypes.DATE_TIME_UTC) {
                         $ctrl.filter.Argument = [new Date()];
 
-                        if ($ctrl.filter.Operator === 'Contains') {
-                            $ctrl.filter.Operator = 'Equals';
+                        if ($ctrl.filter.Operator === compareOperators.CONTAINS) {
+                            $ctrl.filter.Operator = compareOperators.EQUALS;
                         }
                     }
 
                     if ($ctrl.dataType === dataTypes.NUMERIC || $ctrl.dataType === dataTypes.BOOLEAN) {
                         $ctrl.filter.Argument = [1];
 
-                        if ($ctrl.filter.Operator === 'Contains') {
-                            $ctrl.filter.Operator = 'Equals';
+                        if ($ctrl.filter.Operator === compareOperators.CONTAINS) {
+                            $ctrl.filter.Operator = compareOperators.EQUALS;
                         }
                     }
                 };
