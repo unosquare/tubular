@@ -15,7 +15,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
      * It depends upon  {@link tubular.directives}, {@link tubular.services} and {@link tubular.models}.
      */
 
-    angular.module('tubular', ['tubular.directives', 'tubular.services', 'tubular.models']).info({ version: '1.8.0' });
+    angular.module('tubular', ['tubular.directives', 'tubular.services', 'tubular.models']).info({ version: '1.8.1' });
 })(angular);
 
 (function (angular) {
@@ -516,10 +516,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
      * @description
      * The `tubularColumn` factory is the base to generate a column model to use with `tbGrid`.
      */
-    .factory('tubularColumn', ['dataTypes', function (dataTypes) {
+    .factory('tubularColumn', ['dataTypes', 'sortDirection', function (dataTypes, sortDirection) {
         return function (columnName, options) {
             options = options || {};
-            options.DataType = options.DataType || 'string';
+            options.DataType = options.DataType || dataTypes.STRING;
 
             if (Object.values(dataTypes).indexOf(options.DataType) < 0) {
                 throw 'Invalid data type: \'' + options.DataType + '\' for column \'' + columnName + '\'';
@@ -532,24 +532,24 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                 SortOrder: parseInt(options.SortOrder) || -1,
                 SortDirection: function () {
                     if (angular.isUndefined(options.SortDirection)) {
-                        return 'None';
+                        return sortDirection.NONE;
                     }
 
                     if (options.SortDirection.toLowerCase().indexOf('asc') === 0) {
-                        return 'Ascending';
+                        return sortDirection.ASC;
                     }
 
                     if (options.SortDirection.toLowerCase().indexOf('desc') === 0) {
-                        return 'Descending';
+                        return sortDirection.DESC;
                     }
 
-                    return 'None';
+                    return sortDirection.NONE;
                 }(),
                 IsKey: angular.isDefined(options.IsKey) ? options.IsKey : false,
                 Searchable: angular.isDefined(options.Searchable) ? options.Searchable : false,
                 Visible: options.Visible === 'false' ? false : true,
                 Filter: null,
-                DataType: options.DataType || 'string',
+                DataType: options.DataType || dataTypes.STRING,
                 Aggregate: options.Aggregate || 'none'
             };
 
@@ -1081,7 +1081,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 (function (angular) {
     'use strict';
 
-    angular.module('tubular.directives').controller('tbGridController', ['$scope', 'tubularPopupService', 'tubularModel', '$http', 'tubularConfig', '$window', 'localPager', 'modelSaver', function ($scope, tubularPopupService, TubularModel, $http, tubularConfig, $window, localPager, modelSaver) {
+    angular.module('tubular.directives').controller('tbGridController', ['$scope', 'tubularPopupService', 'tubularModel', '$http', 'tubularConfig', '$window', 'localPager', 'modelSaver', 'sortDirection', function ($scope, tubularPopupService, TubularModel, $http, tubularConfig, $window, localPager, modelSaver, sortDirection) {
         var $ctrl = this;
         var prefix = tubularConfig.localStorage.prefix();
         var storage = $window.localStorage;
@@ -1302,15 +1302,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             }
 
             angular.forEach(columns, function (column) {
-                var filtered = $ctrl.columns.filter(function (el) {
+                var current = $ctrl.columns.find(function (el) {
                     return el.Name === column.Name;
                 });
 
-                if (filtered.length === 0) {
+                if (!current) {
                     return;
                 }
 
-                var current = filtered[0];
                 // Updates visibility by now
                 current.Visible = column.Visible;
 
@@ -1488,12 +1487,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
             // need to know if it's currently sorted before we reset stuff
             var currentSortDirection = column.SortDirection;
-            var toBeSortDirection = currentSortDirection === 'None' ? 'Ascending' : currentSortDirection === 'Ascending' ? 'Descending' : 'None';
+            var toBeSortDirection = currentSortDirection === sortDirection.NONE ? sortDirection.ASC : currentSortDirection === sortDirection.ASC ? sortDirection.DESC : sortDirection.NONE;
 
             // the latest sorting takes less priority than previous sorts
-            if (toBeSortDirection === 'None') {
+            if (toBeSortDirection === sortDirection.NONE) {
                 column.SortOrder = -1;
-                column.SortDirection = 'None';
+                column.SortDirection = sortDirection.NONE;
             } else {
                 column.SortOrder = Number.MAX_VALUE;
                 column.SortDirection = toBeSortDirection;
@@ -1505,7 +1504,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                     return col.Name !== columnName;
                 }), function (col) {
                     col.SortOrder = -1;
-                    col.SortDirection = 'None';
+                    col.SortDirection = sortDirection.NONE;
                 });
             }
 
@@ -2992,6 +2991,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         DATE_TIME: 'datetime',
         DATE: 'date',
         DATE_TIME_UTC: 'datetimeutc'
+    }).constant('sortDirection', {
+        ASC: 'Ascending',
+        DESC: 'Descending',
+        NONE: 'None'
     });
 })(angular);
 (function (angular, moment) {
@@ -3589,7 +3592,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
      * @name modelSaver
      *
      * @description
-     * Use `modelSaver` to save a `tubularModel` 
+     * Use `modelSaver` to save a `tubularModel`
      */
     .factory('modelSaver', ['$http', function ($http) {
         function addTimeZoneToUrl(url) {
@@ -3597,7 +3600,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         }
 
         return {
-
             /**
              * Save a model using the url and method
              *

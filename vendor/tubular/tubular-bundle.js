@@ -12,7 +12,7 @@
    */
   angular
     .module('tubular', ['tubular.directives', 'tubular.services', 'tubular.models'])
-    .info({ version: '1.8.0' });
+    .info({ version: '1.8.1' });
 
 })(angular);
 
@@ -84,7 +84,7 @@
                                 element.find('tr').append(headersContent);
 
                                 const cellsTemplate = tubularTemplateService.generateCells(scope.columns, '');
-                                const cellsContent = $compile('<tbody><tr ng-repeat="row in $component.rows" row-model="row">' + cellsTemplate + '</tr></tbody>')(scope);
+                                const cellsContent = $compile(`<tbody><tr ng-repeat="row in $component.rows" row-model="row">${cellsTemplate}</tr></tbody>`)(scope);
                                 element.append(cellsContent);
                             }
                         },
@@ -548,10 +548,11 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
          * @description
          * The `tubularColumn` factory is the base to generate a column model to use with `tbGrid`.
          */
-        .factory('tubularColumn', ['dataTypes', function (dataTypes) {
+        .factory('tubularColumn', ['dataTypes', 'sortDirection', 
+        function (dataTypes, sortDirection) {
             return function (columnName, options) {
                 options = options || {};
-                options.DataType = options.DataType || 'string';
+                options.DataType = options.DataType || dataTypes.STRING;
 
                 if (Object.values(dataTypes).indexOf(options.DataType) < 0) {
                     throw `Invalid data type: '${options.DataType}' for column '${columnName}'`;
@@ -564,24 +565,24 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     SortOrder: parseInt(options.SortOrder) || -1,
                     SortDirection: function () {
                         if (angular.isUndefined(options.SortDirection)) {
-                            return 'None';
+                            return sortDirection.NONE;
                         }
 
                         if (options.SortDirection.toLowerCase().indexOf('asc') === 0) {
-                            return 'Ascending';
+                            return sortDirection.ASC;
                         }
 
                         if (options.SortDirection.toLowerCase().indexOf('desc') === 0) {
-                            return 'Descending';
+                            return sortDirection.DESC;
                         }
 
-                        return 'None';
+                        return sortDirection.NONE;
                     }(),
                     IsKey: angular.isDefined(options.IsKey) ? options.IsKey : false,
                     Searchable: angular.isDefined(options.Searchable) ? options.Searchable : false,
                     Visible: options.Visible === 'false' ? false : true,
                     Filter: null,
-                    DataType: options.DataType || 'string',
+                    DataType: options.DataType || dataTypes.STRING,
                     Aggregate: options.Aggregate || 'none'
                 };
 
@@ -1131,6 +1132,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             '$window',
             'localPager',
             'modelSaver',
+            'sortDirection',
             function (
                 $scope,
                 tubularPopupService,
@@ -1139,7 +1141,8 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 tubularConfig,
                 $window,
                 localPager,
-                modelSaver) {
+                modelSaver,
+                sortDirection) {
                 const $ctrl = this;
                 const prefix = tubularConfig.localStorage.prefix();
                 const storage = $window.localStorage;
@@ -1362,13 +1365,12 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     }
 
                     angular.forEach(columns, column => {
-                        const filtered = $ctrl.columns.filter(el => el.Name === column.Name);
+                        const current = $ctrl.columns.find(el => el.Name === column.Name);
 
-                        if (filtered.length === 0) {
+                        if (!current) {
                             return;
                         }
 
-                        const current = filtered[0];
                         // Updates visibility by now
                         current.Visible = column.Visible;
 
@@ -1547,14 +1549,14 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
                     // need to know if it's currently sorted before we reset stuff
                     const currentSortDirection = column.SortDirection;
-                    const toBeSortDirection = currentSortDirection === 'None'
-                        ? 'Ascending'
-                        : currentSortDirection === 'Ascending' ? 'Descending' : 'None';
+                    const toBeSortDirection = currentSortDirection === sortDirection.NONE
+                        ? sortDirection.ASC
+                        : currentSortDirection === sortDirection.ASC ? sortDirection.DESC : sortDirection.NONE;
 
                     // the latest sorting takes less priority than previous sorts
-                    if (toBeSortDirection === 'None') {
+                    if (toBeSortDirection === sortDirection.NONE) {
                         column.SortOrder = -1;
-                        column.SortDirection = 'None';
+                        column.SortDirection = sortDirection.NONE;
                     } else {
                         column.SortOrder = Number.MAX_VALUE;
                         column.SortDirection = toBeSortDirection;
@@ -1565,7 +1567,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         angular.forEach($ctrl.columns.filter(col => col.Name !== columnName),
                             col => {
                                 col.SortOrder = -1;
-                                col.SortDirection = 'None';
+                                col.SortDirection = sortDirection.NONE;
                             });
                     }
 
@@ -1573,9 +1575,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     const currentlySortedColumns = $ctrl.columns.filter(col => col.SortOrder > 0);
 
                     // re-index the sort order
-                    currentlySortedColumns.sort((a, b) => {
-                        return a.SortOrder === b.SortOrder ? 0 : a.SortOrder > b.SortOrder
-                    });
+                    currentlySortedColumns.sort((a, b) => a.SortOrder === b.SortOrder ? 0 : a.SortOrder > b.SortOrder);
 
                     angular.forEach(currentlySortedColumns, (col, index) => col.SortOrder = index + 1);
 
@@ -2835,7 +2835,7 @@ angular.module('tubular.services', ['ui.bootstrap'])
     })
 })(angular);
 
-(function(angular, moment) {
+(function (angular, moment) {
   'use strict';
 
   angular.module('tubular')
@@ -2848,12 +2848,9 @@ angular.module('tubular.services', ['ui.bootstrap'])
      * @description
      * `moment` is a filter to call format from moment or, if the input is a Date, call Angular's `date` filter.
      */
-    .filter('moment', [
-      'dateFilter',
-      function(dateFilter) {
-        return (input, format) => {
-          return moment.isMoment(input) ? input.format(format || 'M/DD/YYYY') : dateFilter(input);
-        }
+    .filter('moment', ['dateFilter',
+      function (dateFilter) {
+        return (input, format) => moment.isMoment(input) ? input.format(format || 'M/DD/YYYY') : dateFilter(input);
       }
     ]);
 })(angular, moment);
@@ -3115,6 +3112,11 @@ angular.module('tubular.services', ['ui.bootstrap'])
             DATE_TIME: 'datetime',
             DATE: 'date',
             DATE_TIME_UTC: 'datetimeutc'
+        })
+        .constant('sortDirection', {
+            ASC: 'Ascending',
+            DESC: 'Descending',
+            NONE: 'None'
         });
 })(angular);
 (function (angular, moment) {
@@ -3585,39 +3587,37 @@ function exportToCsv(header, rows, visibility) {
          */
         .service('localPager', localPager);
 
-    localPager.$inject = ['$q','orderByFilter'];
+    localPager.$inject = ['$q', 'orderByFilter'];
 
     function localPager($q, orderByFilter) {
-        this.process = (request, data) => {
-            return $q(resolve => {
-                if (data && data.length > 0) {
-                    const totalRecords = data.length;
-                    let set = data;
+        this.process = (request, data) => $q(resolve => {
+            if (data && data.length > 0) {
+                const totalRecords = data.length;
+                let set = data;
 
-                    if (angular.isArray(set[0]) == false) {
-                        const columnIndexes = request.data.Columns
-                            .map(el => el.Name);
-                        
-                        set = set.map(el => columnIndexes.map(name => el[name]));
-                    }
+                if (angular.isArray(set[0]) == false) {
+                    const columnIndexes = request.data.Columns
+                        .map(el => el.Name);
 
-                    set = search(request.data, set);
-                    set = filter(request.data, set);
-                    set = sort(request.data, set);
-
-                    resolve({ data: format(request.data, set, totalRecords) });
+                    set = set.map(el => columnIndexes.map(name => el[name]));
                 }
-                else {
-                    resolve({ data: createEmptyResponse() });
-                }
-            });
-        };
+
+                set = search(request.data, set);
+                set = filter(request.data, set);
+                set = sort(request.data, set);
+
+                resolve({ data: format(request.data, set, totalRecords) });
+            }
+            else {
+                resolve({ data: createEmptyResponse() });
+            }
+        });
 
         function sort(request, set) {
             const sorts = request.Columns
                 .map((el, index) => el.SortOrder > 0 ? (el.SortDirection === 'Descending' ? '-' : '') + index : null)
                 .filter(el => el != null);
-            
+
             angular.forEach(sorts, sort => {
                 set = orderByFilter(set, sort);
             });
@@ -3630,7 +3630,7 @@ function exportToCsv(header, rows, visibility) {
                 const filters = request.Columns
                     .map((el, index) => el.Searchable ? index : null)
                     .filter(el => el != null);
-                
+
                 if (filters.length > 0) {
                     const searchValue = request.Search.Text.toLocaleLowerCase();
 
@@ -3647,7 +3647,7 @@ function exportToCsv(header, rows, visibility) {
             const filters = request.Columns
                 .map((el, index) => el.Filter && el.Filter.Text ? { idx: index, text: el.Filter.Text.toLocaleLowerCase() } : null)
                 .filter(el => el != null);
-                
+
             if (filters.length === 0) {
                 return set;
             }
@@ -3697,7 +3697,7 @@ function exportToCsv(header, rows, visibility) {
          * @name modelSaver
          *
          * @description
-         * Use `modelSaver` to save a `tubularModel` 
+         * Use `modelSaver` to save a `tubularModel`
          */
         .factory('modelSaver', [
             '$http',
@@ -3707,7 +3707,6 @@ function exportToCsv(header, rows, visibility) {
                 }
 
                 return {
-                    
                     /**
                      * Save a model using the url and method
                      *
