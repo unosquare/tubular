@@ -92,14 +92,15 @@
             controller: [
                 '$scope', 'tubularTemplateService', 'compareOperators', function ($scope, tubular, compareOperators) {
                     const $ctrl = this;
-                    console.log($ctrl, $scope.operator)
-                    if (Object.values(compareOperators).indexOf($ctrl.operator) < 0) {
-                        throw `Invalid compare operator: '${$ctrl.operator}'.`;
-                    }
 
                     $ctrl.$onInit = () => {
                         $ctrl.onlyContains = angular.isUndefined($ctrl.onlyContains) ? false : $ctrl.onlyContains;
                         $ctrl.templateName = 'tbColumnFilterPopover.tpl.html';
+
+                        if (Object.values(compareOperators).indexOf($ctrl.operator) < 0) {
+                            throw `Invalid compare operator: '${$ctrl.operator}'.`;
+                        }
+
                         tubular.setupFilter($scope, $ctrl);
                     };
                 }
