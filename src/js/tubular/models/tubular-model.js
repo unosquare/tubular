@@ -10,8 +10,8 @@
          * @description
          * The `tubularModel` factory is the base to generate a row model to use with `tbGrid` and `tbForm`.
          */
-        .factory('tubularModel', [function() {
-            return function($ctrl, data) {
+        .factory('tubularModel', ['dataTypes', function (dataTypes) {
+            return function ($ctrl, data) {
                 const obj = {
                     $hasChanges: () => obj.$fields.some(k => angular.isDefined(obj.$original[k]) && obj[k] !== obj.$original[k]),
                     $isEditing: false,
@@ -43,18 +43,18 @@
                 };
 
                 if (!angular.isArray(data)) {
-                    angular.forEach(data, (v,k) => obj.$addField(k, v));
+                    angular.forEach(data, (v, k) => obj.$addField(k, v));
                 }
 
                 if (angular.isDefined($ctrl.columns)) {
                     angular.forEach($ctrl.columns, (col, key) => {
                         let value = angular.isDefined(data[key]) ? data[key] : data[col.Name];
 
-                        if (col.DataType === 'date' || col.DataType === 'datetime' || col.DataType === 'datetimeutc') {
+                        if (col.DataType === dataTypes.DATE || col.DataType === dataTypes.DATE_TIME || col.DataType === dataTypes.DATE_TIME_UTC) {
                             if (value === null || value === '' || moment(value).year() <= 1900)
                                 value = '';
                             else
-                                value = col.DataType === 'datetimeutc' ? moment.utc(value) : moment(value);
+                                value = col.DataType === dataTypes.DATE_TIME_UTC ? moment.utc(value) : moment(value);
                         }
 
                         obj.$addField(col.Name, value);

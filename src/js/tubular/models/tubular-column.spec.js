@@ -6,6 +6,7 @@ describe('Module: tubular.models', () => {
 
         beforeEach(() => {
             module('tubular.models');
+            module('tubular.services');
 
             inject(_tubularColumn_ => tubularColumn = _tubularColumn_);
         });
@@ -38,7 +39,7 @@ describe('Module: tubular.models', () => {
         });
 
         it('should constructor with name and option define label', () => {
-            var sut = tubularColumn('Test', {Label: 'My Column'});
+            var sut = tubularColumn('Test', { Label: 'My Column' });
             expect(sut.Label).toBe('My Column');
         });
     });

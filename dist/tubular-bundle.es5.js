@@ -1,5 +1,7 @@
 'use strict';
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 (function (angular) {
     'use strict';
 
@@ -13,9 +15,7 @@
      * It depends upon  {@link tubular.directives}, {@link tubular.services} and {@link tubular.models}.
      */
 
-    angular.module('tubular', ['tubular.directives', 'tubular.services', 'tubular.models']);
-    // Holding this a little bit
-    //.info({ version: '1.7.11' });
+    angular.module('tubular', ['tubular.directives', 'tubular.services', 'tubular.models']).info({ version: '1.8.0' });
 })(angular);
 
 (function (angular) {
@@ -516,9 +516,14 @@
      * @description
      * The `tubularColumn` factory is the base to generate a column model to use with `tbGrid`.
      */
-    .factory('tubularColumn', [function () {
+    .factory('tubularColumn', ['dataTypes', function (dataTypes) {
         return function (columnName, options) {
             options = options || {};
+            options.DataType = options.DataType || 'string';
+
+            if (Object.values(dataTypes).indexOf(options.DataType) < 0) {
+                throw 'Invalid data type: \'' + options.DataType + '\' for column \'' + columnName + '\'';
+            }
 
             var obj = {
                 Label: options.Label || (columnName || '').replace(/([a-z])([A-Z])/g, '$1 $2'),
@@ -565,7 +570,7 @@
      * @description
      * The `tubularModel` factory is the base to generate a row model to use with `tbGrid` and `tbForm`.
      */
-    .factory('tubularModel', [function () {
+    .factory('tubularModel', ['dataTypes', function (dataTypes) {
         return function ($ctrl, data) {
             var obj = {
                 $hasChanges: function $hasChanges() {
@@ -619,8 +624,8 @@
                 angular.forEach($ctrl.columns, function (col, key) {
                     var value = angular.isDefined(data[key]) ? data[key] : data[col.Name];
 
-                    if (col.DataType === 'date' || col.DataType === 'datetime' || col.DataType === 'datetimeutc') {
-                        if (value === null || value === '' || moment(value).year() <= 1900) value = '';else value = col.DataType === 'datetimeutc' ? moment.utc(value) : moment(value);
+                    if (col.DataType === dataTypes.DATE || col.DataType === dataTypes.DATE_TIME || col.DataType === dataTypes.DATE_TIME_UTC) {
+                        if (value === null || value === '' || moment(value).year() <= 1900) value = '';else value = col.DataType === dataTypes.DATE_TIME_UTC ? moment.utc(value) : moment(value);
                     }
 
                     obj.$addField(col.Name, value);
@@ -2977,6 +2982,18 @@
         };
     }]);
 })(angular);
+(function (angular) {
+    'use strict';
+
+    angular.module('tubular.services').constant('dataTypes', {
+        STRING: 'string',
+        BOOLEAN: 'boolean',
+        NUMERIC: 'numeric',
+        DATE_TIME: 'datetime',
+        DATE: 'date',
+        DATE_TIME_UTC: 'datetimeutc'
+    });
+})(angular);
 (function (angular, moment) {
     'use strict';
 
@@ -2988,9 +3005,9 @@
      * @description
      * The `tubularEditorService` service is a internal helper to setup any `TubularModel` with a UI.
      */
-    .factory('tubularEditorService', ['translateFilter', editorService]);
+    .factory('tubularEditorService', ['translateFilter', 'dataTypes', editorService]);
 
-    function editorService(translateFilter) {
+    function editorService(translateFilter, dataTypes) {
         return {
 
             /**
@@ -3111,7 +3128,7 @@
 
                         if (angular.equals(ctrl.value, parent.model[scope.Name]) === false) {
                             if (angular.isDefined(parent.model[scope.Name])) {
-                                if ((ctrl.DataType === 'date' || ctrl.DataType === 'datetime') && parent.model[scope.Name] != null && angular.isString(parent.model[scope.Name])) {
+                                if ((ctrl.DataType === dataTypes.DATE || ctrl.DataType === dataTypes.DATE_TIME) && parent.model[scope.Name] != null && angular.isString(parent.model[scope.Name])) {
                                     if (parent.model[scope.Name] === '' || parent.model[scope.Name] === null) {
                                         ctrl.value = parent.model[scope.Name];
                                     } else {
@@ -3140,11 +3157,11 @@
                         }, true);
 
                         if (ctrl.value == null && ctrl.defaultValue && ctrl.defaultValue != null) {
-                            if ((ctrl.DataType === 'date' || ctrl.DataType === 'datetime') && angular.isString(ctrl.defaultValue)) {
+                            if ((ctrl.DataType === dataTypes.DATE || ctrl.DataType === dataTypes.DATE_TIME) && angular.isString(ctrl.defaultValue)) {
                                 ctrl.defaultValue = new Date(ctrl.defaultValue);
                             }
 
-                            if (ctrl.DataType === 'numeric' && angular.isString(ctrl.defaultValue)) {
+                            if (ctrl.DataType === dataTypes.NUMERIC && angular.isString(ctrl.defaultValue)) {
                                 ctrl.defaultValue = parseFloat(ctrl.defaultValue);
                             }
 
@@ -3725,21 +3742,12 @@
      * @description
      * Use `tubularTemplateService` to generate `tbGrid` and `tbForm` templates.
      */
-    .service('tubularTemplateService', ['$templateCache', 'translateFilter', function ($templateCache, translateFilter) {
+    .service('tubularTemplateService', ['$templateCache', 'translateFilter', 'dataTypes', function ($templateCache, translateFilter, dataTypes) {
         var me = this;
 
         me.canUseHtml5Date = function () {
             var el = angular.element('<input type="date" value=":)" />');
             return el.attr('type') === 'date' && el.val() === '';
-        };
-
-        me.enums = {
-            dataTypes: ['numeric', 'date', 'boolean', 'string'],
-            editorTypes: ['tbSimpleEditor', 'tbNumericEditor', 'tbDateTimeEditor', 'tbDateEditor', 'tbDropdownEditor', 'tbTypeaheadEditor', 'tbCheckboxField', 'tbTextArea'],
-            httpMethods: ['POST', 'PUT', 'GET', 'DELETE'],
-            gridModes: ['Read-Only', 'Inline', 'Popup', 'Page'],
-            formLayouts: ['Simple', 'Two-columns', 'Three-columns'],
-            sortDirections: ['Ascending', 'Descending']
         };
 
         me.defaults = {
@@ -3903,11 +3911,11 @@
 
         me.getEditorTypeByDateType = function (dataType) {
             switch (dataType) {
-                case 'date':
+                case dataTypes.DATE:
                     return 'tbDateTimeEditor';
-                case 'numeric':
+                case dataTypes.NUMERIC:
                     return 'tbNumericEditor';
-                case 'boolean':
+                case dataTypes.BOOLEAN:
                     return 'tbCheckboxField';
                 default:
                     return 'tbSimpleEditor';
@@ -3935,19 +3943,19 @@
                 if (angular.isNumber(value) || parseFloat(value).toString() === value) {
                     columns.push({
                         Name: prop,
-                        DataType: 'numeric',
+                        DataType: dataTypes.NUMERIC,
                         Template: '{{row.' + prop + ' | number}}'
                     });
                 } else if (angular.isDate(value) || !isNaN(new Date(value).getTime())) {
-                    columns.push({ Name: prop, DataType: 'date', Template: '{{row.' + prop + ' | moment }}' });
+                    columns.push({ Name: prop, DataType: dataTypes.DATE, Template: '{{row.' + prop + ' | moment }}' });
                 } else if (value.toLowerCase() === 'true' || value.toLowerCase() === 'false') {
                     columns.push({
                         Name: prop,
-                        DataType: 'boolean',
+                        DataType: dataTypes.BOOLEAN,
                         Template: '{{row.' + prop + ' ? "TRUE" : "FALSE" }}'
                     });
                 } else {
-                    var newColumn = { Name: prop, DataType: 'string', Template: '{{row.' + prop + '}}' };
+                    var newColumn = { Name: prop, DataType: dataTypes.STRING, Template: '{{row.' + prop + '}}' };
 
                     if (/e(-|)mail/ig.test(newColumn.Name)) {
                         newColumn.Template = '<a href="mailto:' + newColumn.Template + '">' + newColumn.Template + '</a>';
@@ -3964,7 +3972,7 @@
                 columnObj.EditorType = me.getEditorTypeByDateType(columnObj.DataType);
 
                 // Grid attributes
-                columnObj.Searchable = columnObj.DataType === 'string';
+                columnObj.Searchable = columnObj.DataType === dataTypes.STRING;
                 columnObj.Filter = true;
                 columnObj.Visible = true;
                 columnObj.Sortable = true;
@@ -4057,6 +4065,8 @@
         };
 
         me.setupFilter = function ($scope, $ctrl) {
+            var _filterOperators;
+
             var dateOps = {
                 'None': translateFilter('OP_NONE'),
                 'Equals': translateFilter('OP_EQUALS'),
@@ -4068,36 +4078,29 @@
                 'Lt': '<'
             };
 
-            var filterOperators = {
-                'string': {
-                    'None': translateFilter('OP_NONE'),
-                    'Equals': translateFilter('OP_EQUALS'),
-                    'NotEquals': translateFilter('OP_NOTEQUALS'),
-                    'Contains': translateFilter('OP_CONTAINS'),
-                    'NotContains': translateFilter('OP_NOTCONTAINS'),
-                    'StartsWith': translateFilter('OP_STARTSWITH'),
-                    'NotStartsWith': translateFilter('OP_NOTSTARTSWITH'),
-                    'EndsWith': translateFilter('OP_ENDSWITH'),
-                    'NotEndsWith': translateFilter('OP_NOTENDSWITH')
-                },
-                'numeric': {
-                    'None': translateFilter('OP_NONE'),
-                    'Equals': translateFilter('OP_EQUALS'),
-                    'Between': translateFilter('OP_BETWEEN'),
-                    'Gte': '>=',
-                    'Gt': '>',
-                    'Lte': '<=',
-                    'Lt': '<'
-                },
-                'date': dateOps,
-                'datetime': dateOps,
-                'datetimeutc': dateOps,
-                'boolean': {
-                    'None': translateFilter('OP_NONE'),
-                    'Equals': translateFilter('OP_EQUALS'),
-                    'NotEquals': translateFilter('OP_NOTEQUALS')
-                }
-            };
+            var filterOperators = (_filterOperators = {}, _defineProperty(_filterOperators, dataTypes.STRING, {
+                'None': translateFilter('OP_NONE'),
+                'Equals': translateFilter('OP_EQUALS'),
+                'NotEquals': translateFilter('OP_NOTEQUALS'),
+                'Contains': translateFilter('OP_CONTAINS'),
+                'NotContains': translateFilter('OP_NOTCONTAINS'),
+                'StartsWith': translateFilter('OP_STARTSWITH'),
+                'NotStartsWith': translateFilter('OP_NOTSTARTSWITH'),
+                'EndsWith': translateFilter('OP_ENDSWITH'),
+                'NotEndsWith': translateFilter('OP_NOTENDSWITH')
+            }), _defineProperty(_filterOperators, dataTypes.NUMERIC, {
+                'None': translateFilter('OP_NONE'),
+                'Equals': translateFilter('OP_EQUALS'),
+                'Between': translateFilter('OP_BETWEEN'),
+                'Gte': '>=',
+                'Gt': '>',
+                'Lte': '<=',
+                'Lt': '<'
+            }), _defineProperty(_filterOperators, dataTypes.DATE, dateOps), _defineProperty(_filterOperators, dataTypes.DATE_TIME, dateOps), _defineProperty(_filterOperators, dataTypes.DATE_TIME_UTC, dateOps), _defineProperty(_filterOperators, dataTypes.BOOLEAN, {
+                'None': translateFilter('OP_NONE'),
+                'Equals': translateFilter('OP_EQUALS'),
+                'NotEquals': translateFilter('OP_NOTEQUALS')
+            }), _filterOperators);
 
             $ctrl.filter = {
                 Text: $ctrl.text || null,
@@ -4121,7 +4124,7 @@
                     return;
                 }
 
-                if ((val.DataType === 'date' || val.DataType === 'datetime' || val.DataType === 'datetimeutc') && !($ctrl.filter.Text === '' || $ctrl.filter.Text == null)) {
+                if ((val.DataType === dataTypes.DATE || val.DataType === dataTypes.DATE_TIME || val.DataType === dataTypes.DATE_TIME_UTC) && !($ctrl.filter.Text === '' || $ctrl.filter.Text == null)) {
                     $ctrl.filter.Text = new Date($ctrl.filter.Text);
                 }
 
@@ -4206,7 +4209,7 @@
             $ctrl.dataType = columns[0].DataType;
             $ctrl.filterOperators = filterOperators[$ctrl.dataType];
 
-            if ($ctrl.dataType === 'date' || $ctrl.dataType === 'datetime' || $ctrl.dataType === 'datetimeutc') {
+            if ($ctrl.dataType === dataTypes.DATE || $ctrl.dataType === dataTypes.DATE_TIME || $ctrl.dataType === dataTypes.DATE_TIME_UTC) {
                 $ctrl.filter.Argument = [new Date()];
 
                 if ($ctrl.filter.Operator === 'Contains') {
@@ -4214,7 +4217,7 @@
                 }
             }
 
-            if ($ctrl.dataType === 'numeric' || $ctrl.dataType === 'boolean') {
+            if ($ctrl.dataType === dataTypes.NUMERIC || $ctrl.dataType === dataTypes.BOOLEAN) {
                 $ctrl.filter.Argument = [1];
 
                 if ($ctrl.filter.Operator === 'Contains') {
