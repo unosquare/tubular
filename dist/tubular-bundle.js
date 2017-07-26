@@ -548,13 +548,18 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
          * @description
          * The `tubularColumn` factory is the base to generate a column model to use with `tbGrid`.
          */
-        .factory('tubularColumn', ['dataTypes', 'sortDirection', function (dataTypes, sortDirection) {
+        .factory('tubularColumn', ['dataTypes', 'sortDirection', 'aggregateFunctions', function (dataTypes, sortDirection, aggregateFunctions) {
             return function (columnName, options) {
                 options = options || {};
-                options.DataType = options.DataType || 'string';
+                options.DataType = options.DataType || dataTypes.STRING;
+                options.Aggregate = options.Aggregate || aggregateFunctions.NONE;
 
                 if (Object.values(dataTypes).indexOf(options.DataType) < 0) {
                     throw `Invalid data type: '${options.DataType}' for column '${columnName}'`;
+                }
+
+                if (Object.values(aggregateFunctions).indexOf(options.Aggregate) < 0) {
+                    throw `Invalid aggregate function: '${options.Aggregate}' for column '${columnName}'`;
                 }
 
                 const obj = {
@@ -581,8 +586,8 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     Searchable: angular.isDefined(options.Searchable) ? options.Searchable : false,
                     Visible: options.Visible === 'false' ? false : true,
                     Filter: null,
-                    DataType: options.DataType || 'string',
-                    Aggregate: options.Aggregate || 'none'
+                    DataType: options.DataType,
+                    Aggregate: options.Aggregate || aggregateFunctions.NONE
                 };
 
                 return obj;
@@ -2381,8 +2386,12 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 onlyContains: '=?'
             },
             controller: [
-                '$scope', 'tubularTemplateService', function ($scope, tubular) {
+                '$scope', 'tubularTemplateService', 'compareOperators', function ($scope, tubular, compareOperators) {
                     const $ctrl = this;
+                    console.log($ctrl, $scope.operator)
+                    if (Object.values(compareOperators).indexOf($ctrl.operator) < 0) {
+                        throw `Invalid compare operator: '${$ctrl.operator}'.`;
+                    }
 
                     $ctrl.$onInit = () => {
                         $ctrl.onlyContains = angular.isUndefined($ctrl.onlyContains) ? false : $ctrl.onlyContains;
@@ -2456,7 +2465,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 title: '@'
             },
             controller: [
-                '$scope', 'tubularTemplateService', '$http', function ($scope, tubular, $http) {
+                '$scope', 'tubularTemplateService', '$http', 'compareOperators', function ($scope, tubular, $http, compareOperators) {
                     const $ctrl = this;
 
                     $ctrl.getOptionsFromUrl = () => {
@@ -2477,7 +2486,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         tubular.setupFilter($scope, $ctrl);
                         $ctrl.getOptionsFromUrl();
 
-                        $ctrl.filter.Operator = 'Multiple';
+                        $ctrl.filter.Operator = compareOperators.MULTIPLE;
                     };
                 }
             ]
@@ -3143,6 +3152,15 @@ angular.module('tubular.services', ['ui.bootstrap'])
             NOT_STARTS_WITH: 'NotStartsWith',
             NOT_ENDS_WITH: 'NotEndsWith'
         })
+        .constant('aggregateFunctions', {
+            NONE : 'None',
+            SUM: 'Sum',
+            AVERAGE: 'Average',
+            COUNT: 'Count',
+            DISTINCT_COUNT: 'Distinctcount',
+            MAX: 'Max',
+            MIN: 'Min'
+        });
 })(angular);
 (function (angular, moment) {
   'use strict';
@@ -4339,6 +4357,8 @@ function exportToCsv(header, rows, visibility) {
                         HasFilter: !($ctrl.text == null || $ctrl.text === '' || angular.isUndefined($ctrl.text)),
                         Name: $scope.$parent.$parent.column.Name
                     };
+
+                    console.log($ctrl.filter)
 
                     $ctrl.filterTitle = $ctrl.title || translateFilter('CAPTION_FILTER');
 
