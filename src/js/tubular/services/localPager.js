@@ -14,8 +14,7 @@
     localPager.$inject = ['$q','orderByFilter', 'sortDirection', 'compareOperators'];
 
     function localPager($q, orderByFilter, sortDirection, compareOperators) {
-        this.process = (request, data) => {
-            return $q(resolve => {
+        this.process = (request, data) => $q(resolve => {
                 if (data && data.length > 0) {
                     const totalRecords = data.length;
                     let set = data;
@@ -37,7 +36,6 @@
                     resolve({ data: createEmptyResponse() });
                 }
             });
-        };
 
         function sort(request, set) {
             const sorts = request.Columns

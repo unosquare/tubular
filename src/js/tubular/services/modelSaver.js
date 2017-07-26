@@ -7,7 +7,7 @@
          * @name modelSaver
          *
          * @description
-         * Use `modelSaver` to save a `tubularModel` 
+         * Use `modelSaver` to save a `tubularModel`
          */
         .factory('modelSaver', [
             '$http',
@@ -17,7 +17,6 @@
                 }
 
                 return {
-                    
                     /**
                      * Save a model using the url and method
                      *

@@ -14,6 +14,7 @@ Tubular provides a set of directives and services using AngularJS as framework. 
 * Easy to implement inline editors, page or popup forms totally bound to your grid.
 * Basic services like **Print and Export to CSV** in client-side.
 * Independent backend platform (.NET and Node.js)
+* Compatible with modern browsers (Chrome, Firefox and Edge). We are not supporting old browsers like Internet Explorer, you may need include some polyfills.
 
 Developing with .NET as backend? check [Tubular DotNet](https://github.com/unosquare/tubular-dotnet) project.
 
@@ -50,7 +51,7 @@ Then you will need to either grab your own copy of Tubular or you use jsDelivr t
 
 ```html
 <link rel="stylesheet" href="//cdn.jsdelivr.net/tubular/latest/tubular-bundle.min.css" />
-<script src="//cdn.jsdelivr.net/npm/tubular@1.8.0"></script>
+<script src="//cdn.jsdelivr.net/npm/tubular@1.8.1"></script>
 ```
 
 Finally include Tubular to your module as follows:

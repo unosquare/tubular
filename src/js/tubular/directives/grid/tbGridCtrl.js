@@ -247,13 +247,12 @@
                     }
 
                     angular.forEach(columns, column => {
-                        const filtered = $ctrl.columns.filter(el => el.Name === column.Name);
+                        const current = $ctrl.columns.find(el => el.Name === column.Name);
 
-                        if (filtered.length === 0) {
+                        if (!current) {
                             return;
                         }
 
-                        const current = filtered[0];
                         // Updates visibility by now
                         current.Visible = column.Visible;
 
@@ -458,9 +457,7 @@
                     const currentlySortedColumns = $ctrl.columns.filter(col => col.SortOrder > 0);
 
                     // re-index the sort order
-                    currentlySortedColumns.sort((a, b) => {
-                        return a.SortOrder === b.SortOrder ? 0 : a.SortOrder > b.SortOrder
-                    });
+                    currentlySortedColumns.sort((a, b) => a.SortOrder === b.SortOrder ? 0 : a.SortOrder > b.SortOrder);
 
                     angular.forEach(currentlySortedColumns, (col, index) => col.SortOrder = index + 1);
 

@@ -1,4 +1,4 @@
-(function(angular, moment) {
+(function (angular, moment) {
   'use strict';
 
   angular.module('tubular')
@@ -11,12 +11,9 @@
      * @description
      * `moment` is a filter to call format from moment or, if the input is a Date, call Angular's `date` filter.
      */
-    .filter('moment', [
-      'dateFilter',
-      function(dateFilter) {
-        return (input, format) => {
-          return moment.isMoment(input) ? input.format(format || 'M/DD/YYYY') : dateFilter(input);
-        }
+    .filter('moment', ['dateFilter',
+      function (dateFilter) {
+        return (input, format) => moment.isMoment(input) ? input.format(format || 'M/DD/YYYY') : dateFilter(input);
       }
     ]);
 })(angular, moment);

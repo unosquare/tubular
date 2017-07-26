@@ -66,7 +66,7 @@
                                 element.find('tr').append(headersContent);
 
                                 const cellsTemplate = tubularTemplateService.generateCells(scope.columns, '');
-                                const cellsContent = $compile('<tbody><tr ng-repeat="row in $component.rows" row-model="row">' + cellsTemplate + '</tr></tbody>')(scope);
+                                const cellsContent = $compile(`<tbody><tr ng-repeat="row in $component.rows" row-model="row">${cellsTemplate}</tr></tbody>`)(scope);
                                 element.append(cellsContent);
                             }
                         },
