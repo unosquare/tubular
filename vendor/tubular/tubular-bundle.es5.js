@@ -540,11 +540,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                         return sortDirection.NONE;
                     }
 
-                    if (options.SortDirection.toLowerCase().indexOf('asc') === 0) {
+                    if (options.SortDirection.toLowerCase().startsWith('asc')) {
                         return sortDirection.ASCENDING;
                     }
 
-                    if (options.SortDirection.toLowerCase().indexOf('desc') === 0) {
+                    if (options.SortDirection.toLowerCase().startsWith('desc')) {
                         return sortDirection.DESCENDING;
                     }
 
@@ -555,7 +555,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                 Visible: options.Visible === 'false' ? false : true,
                 Filter: null,
                 DataType: options.DataType,
-                Aggregate: options.Aggregate || aggregateFunctions.NONE
+                Aggregate: options.Aggregate
             };
 
             return obj;
@@ -3027,7 +3027,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         SUM: 'Sum',
         AVERAGE: 'Average',
         COUNT: 'Count',
-        DISTINCT_COUNT: 'Distinctcount',
+        DISTINCT_COUNT: 'DistinctCount',
         MAX: 'Max',
         MIN: 'Min'
     });
@@ -3509,7 +3509,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                     var totalRecords = data.length;
                     var set = data;
 
-                    if (angular.isArray(set[0]) == false) {
+                    if (!angular.isArray(set[0])) {
                         var columnIndexes = request.data.Columns.map(function (el) {
                             return el.Name;
                         });
