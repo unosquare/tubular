@@ -12,7 +12,7 @@
    */
   angular
     .module('tubular', ['tubular.directives', 'tubular.services', 'tubular.models'])
-    .info({ version: '1.8.0' });
+    .info({ version: '1.8.1' });
 
 })(angular);
 
@@ -84,7 +84,7 @@
                                 element.find('tr').append(headersContent);
 
                                 const cellsTemplate = tubularTemplateService.generateCells(scope.columns, '');
-                                const cellsContent = $compile('<tbody><tr ng-repeat="row in $component.rows" row-model="row">' + cellsTemplate + '</tr></tbody>')(scope);
+                                const cellsContent = $compile(`<tbody><tr ng-repeat="row in $component.rows" row-model="row">${cellsTemplate}</tr></tbody>`)(scope);
                                 element.append(cellsContent);
                             }
                         },
@@ -1371,13 +1371,12 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     }
 
                     angular.forEach(columns, column => {
-                        const filtered = $ctrl.columns.filter(el => el.Name === column.Name);
+                        const current = $ctrl.columns.find(el => el.Name === column.Name);
 
-                        if (filtered.length === 0) {
+                        if (!current) {
                             return;
                         }
 
-                        const current = filtered[0];
                         // Updates visibility by now
                         current.Visible = column.Visible;
 
@@ -1582,9 +1581,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     const currentlySortedColumns = $ctrl.columns.filter(col => col.SortOrder > 0);
 
                     // re-index the sort order
-                    currentlySortedColumns.sort((a, b) => {
-                        return a.SortOrder === b.SortOrder ? 0 : a.SortOrder > b.SortOrder
-                    });
+                    currentlySortedColumns.sort((a, b) => a.SortOrder === b.SortOrder ? 0 : a.SortOrder > b.SortOrder);
 
                     angular.forEach(currentlySortedColumns, (col, index) => col.SortOrder = index + 1);
 
@@ -2389,13 +2386,14 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 '$scope', 'tubularTemplateService', 'compareOperators', function ($scope, tubular, compareOperators) {
                     const $ctrl = this;
 
-                    if (Object.values(compareOperators).indexOf($ctrl.operator) < 0) {
-                        throw `Invalid compare operator: '${$ctrl.operator}'.`;
-                    }
-
                     $ctrl.$onInit = () => {
                         $ctrl.onlyContains = angular.isUndefined($ctrl.onlyContains) ? false : $ctrl.onlyContains;
                         $ctrl.templateName = 'tbColumnFilterPopover.tpl.html';
+
+                        if (Object.values(compareOperators).indexOf($ctrl.operator) < 0) {
+                            throw `Invalid compare operator: '${$ctrl.operator}'.`;
+                        }
+
                         tubular.setupFilter($scope, $ctrl);
                     };
                 }
@@ -2848,7 +2846,7 @@ angular.module('tubular.services', ['ui.bootstrap'])
     })
 })(angular);
 
-(function(angular, moment) {
+(function (angular, moment) {
   'use strict';
 
   angular.module('tubular')
@@ -2861,12 +2859,9 @@ angular.module('tubular.services', ['ui.bootstrap'])
      * @description
      * `moment` is a filter to call format from moment or, if the input is a Date, call Angular's `date` filter.
      */
-    .filter('moment', [
-      'dateFilter',
-      function(dateFilter) {
-        return (input, format) => {
-          return moment.isMoment(input) ? input.format(format || 'M/DD/YYYY') : dateFilter(input);
-        }
+    .filter('moment', ['dateFilter',
+      function (dateFilter) {
+        return (input, format) => moment.isMoment(input) ? input.format(format || 'M/DD/YYYY') : dateFilter(input);
       }
     ]);
 })(angular, moment);
@@ -3633,8 +3628,7 @@ function exportToCsv(header, rows, visibility) {
     localPager.$inject = ['$q','orderByFilter', 'sortDirection', 'compareOperators'];
 
     function localPager($q, orderByFilter, sortDirection, compareOperators) {
-        this.process = (request, data) => {
-            return $q(resolve => {
+        this.process = (request, data) => $q(resolve => {
                 if (data && data.length > 0) {
                     const totalRecords = data.length;
                     let set = data;
@@ -3656,7 +3650,6 @@ function exportToCsv(header, rows, visibility) {
                     resolve({ data: createEmptyResponse() });
                 }
             });
-        };
 
         function sort(request, set) {
             const sorts = request.Columns
@@ -3742,7 +3735,7 @@ function exportToCsv(header, rows, visibility) {
          * @name modelSaver
          *
          * @description
-         * Use `modelSaver` to save a `tubularModel` 
+         * Use `modelSaver` to save a `tubularModel`
          */
         .factory('modelSaver', [
             '$http',
@@ -3752,7 +3745,6 @@ function exportToCsv(header, rows, visibility) {
                 }
 
                 return {
-                    
                     /**
                      * Save a model using the url and method
                      *

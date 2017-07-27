@@ -15,7 +15,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
      * It depends upon  {@link tubular.directives}, {@link tubular.services} and {@link tubular.models}.
      */
 
-    angular.module('tubular', ['tubular.directives', 'tubular.services', 'tubular.models']).info({ version: '1.8.0' });
+    angular.module('tubular', ['tubular.directives', 'tubular.services', 'tubular.models']).info({ version: '1.8.1' });
 })(angular);
 
 (function (angular) {
@@ -1307,15 +1307,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             }
 
             angular.forEach(columns, function (column) {
-                var filtered = $ctrl.columns.filter(function (el) {
+                var current = $ctrl.columns.find(function (el) {
                     return el.Name === column.Name;
                 });
 
-                if (filtered.length === 0) {
+                if (!current) {
                     return;
                 }
 
-                var current = filtered[0];
                 // Updates visibility by now
                 current.Visible = column.Visible;
 
@@ -2286,13 +2285,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         controller: ['$scope', 'tubularTemplateService', 'compareOperators', function ($scope, tubular, compareOperators) {
             var $ctrl = this;
 
-            if (Object.values(compareOperators).indexOf($ctrl.operator) < 0) {
-                throw 'Invalid compare operator: \'' + $ctrl.operator + '\'.';
-            }
-
             $ctrl.$onInit = function () {
                 $ctrl.onlyContains = angular.isUndefined($ctrl.onlyContains) ? false : $ctrl.onlyContains;
                 $ctrl.templateName = 'tbColumnFilterPopover.tpl.html';
+
+                if (Object.values(compareOperators).indexOf($ctrl.operator) < 0) {
+                    throw 'Invalid compare operator: \'' + $ctrl.operator + '\'.';
+                }
+
                 tubular.setupFilter($scope, $ctrl);
             };
         }]
@@ -3627,7 +3627,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
      * @name modelSaver
      *
      * @description
-     * Use `modelSaver` to save a `tubularModel` 
+     * Use `modelSaver` to save a `tubularModel`
      */
     .factory('modelSaver', ['$http', function ($http) {
         function addTimeZoneToUrl(url) {
@@ -3635,7 +3635,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         }
 
         return {
-
             /**
              * Save a model using the url and method
              *
