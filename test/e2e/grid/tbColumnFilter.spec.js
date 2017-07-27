@@ -7,6 +7,7 @@ describe('Component: Grid.Filter', () => {
     const serverUrl = 'api/data';
 
     beforeEach(module('tubular.tests'));
+    beforeEach(module('tubular.services'));
     beforeEach(module('tubular'));
 
     beforeEach(inject(function (_$compile_, _$rootScope_, _$templateCache_, _$httpBackend_, _compareOperators_) {
