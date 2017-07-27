@@ -211,3 +211,4 @@ src/js/*bundle.*
 src/css/*bundle.*
 src/css/*plain.css
 /dist
+test/integration/tbnodejs/public/javascripts/*.*

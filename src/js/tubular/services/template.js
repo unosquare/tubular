@@ -14,10 +14,14 @@
             '$templateCache',
             'translateFilter',
             'dataTypes',
+            'compareOperators',
+            'sortDirection',
             function (
                 $templateCache,
                 translateFilter,
-                dataTypes) {
+                dataTypes,
+                compareOperators,
+                sortDirection) {
                 const me = this;
 
                 me.canUseHtml5Date = () => {
@@ -296,7 +300,7 @@
 
                         columnObj.IsKey = true;
                         columnObj.SortOrder = 1;
-                        columnObj.SortDirection = 'Ascending';
+                        columnObj.SortDirection = sortDirection.ASCENDING;
                         firstSort = true;
                     });
 
@@ -399,51 +403,51 @@
 
                 me.setupFilter = ($scope, $ctrl) => {
                     const dateOps = {
-                        'None': translateFilter('OP_NONE'),
-                        'Equals': translateFilter('OP_EQUALS'),
-                        'NotEquals': translateFilter('OP_NOTEQUALS'),
-                        'Between': translateFilter('OP_BETWEEN'),
-                        'Gte': '>=',
-                        'Gt': '>',
-                        'Lte': '<=',
-                        'Lt': '<'
+                        [compareOperators.NONE]: translateFilter('OP_NONE'),
+                        [compareOperators.EQUALS]: translateFilter('OP_EQUALS'),
+                        [compareOperators.NOT_EQUALS]: translateFilter('OP_NOTEQUALS'),
+                        [compareOperators.BETWEEN]: translateFilter('OP_BETWEEN'),
+                        [compareOperators.GTE]: '>=',
+                        [compareOperators.GT]: '>',
+                        [compareOperators.LTE]: '<=',
+                        [compareOperators.LT]: '<'
                     };
 
                     const filterOperators = {
                         [dataTypes.STRING]: {
-                            'None': translateFilter('OP_NONE'),
-                            'Equals': translateFilter('OP_EQUALS'),
-                            'NotEquals': translateFilter('OP_NOTEQUALS'),
-                            'Contains': translateFilter('OP_CONTAINS'),
-                            'NotContains': translateFilter('OP_NOTCONTAINS'),
-                            'StartsWith': translateFilter('OP_STARTSWITH'),
-                            'NotStartsWith': translateFilter('OP_NOTSTARTSWITH'),
-                            'EndsWith': translateFilter('OP_ENDSWITH'),
-                            'NotEndsWith': translateFilter('OP_NOTENDSWITH')
+                            [compareOperators.NONE]: translateFilter('OP_NONE'),
+                            [compareOperators.EQUALS]: translateFilter('OP_EQUALS'),
+                            [compareOperators.NOT_EQUALS]: translateFilter('OP_NOTEQUALS'),
+                            [compareOperators.CONTAINS]: translateFilter('OP_CONTAINS'),
+                            [compareOperators.NOT_CONTAINS]: translateFilter('OP_NOTCONTAINS'),
+                            [compareOperators.STARTS_WITH]: translateFilter('OP_STARTSWITH'),
+                            [compareOperators.NOT_STARTS_WITH]: translateFilter('OP_NOTSTARTSWITH'),
+                            [compareOperators.ENDS_WITH]: translateFilter('OP_ENDSWITH'),
+                            [compareOperators.NOT_ENDS_WITH]: translateFilter('OP_NOTENDSWITH')
                         },
                         [dataTypes.NUMERIC]: {
-                            'None': translateFilter('OP_NONE'),
-                            'Equals': translateFilter('OP_EQUALS'),
-                            'Between': translateFilter('OP_BETWEEN'),
-                            'Gte': '>=',
-                            'Gt': '>',
-                            'Lte': '<=',
-                            'Lt': '<'
+                            [compareOperators.NONE]: translateFilter('OP_NONE'),
+                            [compareOperators.EQUALS]: translateFilter('OP_EQUALS'),
+                            [compareOperators.BETWEEN]: translateFilter('OP_BETWEEN'),
+                            [compareOperators.GTE]: '>=',
+                            [compareOperators.GT]: '>',
+                            [compareOperators.LTE]: '<=',
+                            [compareOperators.LT]: '<'
                         },
                         [dataTypes.DATE]: dateOps,
                         [dataTypes.DATE_TIME]: dateOps,
                         [dataTypes.DATE_TIME_UTC]: dateOps,
                         [dataTypes.BOOLEAN]: {
-                            'None': translateFilter('OP_NONE'),
-                            'Equals': translateFilter('OP_EQUALS'),
-                            'NotEquals': translateFilter('OP_NOTEQUALS')
+                            [compareOperators.NONE]: translateFilter('OP_NONE'),
+                            [compareOperators.EQUALS]: translateFilter('OP_EQUALS'),
+                            [compareOperators.NOT_EQUALS]: translateFilter('OP_NOTEQUALS')
                         }
                     };
 
                     $ctrl.filter = {
                         Text: $ctrl.text || null,
                         Argument: $ctrl.argument ? [$ctrl.argument] : null,
-                        Operator: $ctrl.operator || 'Contains',
+                        Operator: $ctrl.operator || compareOperators.CONTAINS,
                         OptionsUrl: $ctrl.optionsUrl || null,
                         HasFilter: !($ctrl.text == null || $ctrl.text === '' || angular.isUndefined($ctrl.text)),
                         Name: $scope.$parent.$parent.column.Name
@@ -485,12 +489,12 @@
                     };
 
                     $ctrl.clearFilter = function () {
-                        if ($ctrl.filter.Operator !== 'Multiple') {
-                            $ctrl.filter.Operator = 'None';
+                        if ($ctrl.filter.Operator !== compareOperators.MULTIPLE) {
+                            $ctrl.filter.Operator = compareOperators.NONE;
                         }
 
                         if (angular.isDefined($ctrl.onlyContains) && $ctrl.onlyContains) {
-                            $ctrl.filter.Operator = 'Contains';
+                            $ctrl.filter.Operator = compareOperators.CONTAINS;
                         }
 
                         $ctrl.filter.Text = '';
@@ -516,7 +520,7 @@
                     const columns = $ctrl.$component.columns.filter(e => e.Name === $ctrl.filter.Name);
 
                     $scope.$watch('$ctrl.filter.Operator', val => {
-                        if (val === 'None') {
+                        if (val === compareOperators.NONE) {
                             $ctrl.filter.Text = '';
                         }
                     });
@@ -546,16 +550,16 @@
                         $ctrl.dataType === dataTypes.DATE_TIME_UTC) {
                         $ctrl.filter.Argument = [new Date()];
 
-                        if ($ctrl.filter.Operator === 'Contains') {
-                            $ctrl.filter.Operator = 'Equals';
+                        if ($ctrl.filter.Operator === compareOperators.CONTAINS) {
+                            $ctrl.filter.Operator = compareOperators.EQUALS;
                         }
                     }
 
                     if ($ctrl.dataType === dataTypes.NUMERIC || $ctrl.dataType === dataTypes.BOOLEAN) {
                         $ctrl.filter.Argument = [1];
 
-                        if ($ctrl.filter.Operator === 'Contains') {
-                            $ctrl.filter.Operator = 'Equals';
+                        if ($ctrl.filter.Operator === compareOperators.CONTAINS) {
+                            $ctrl.filter.Operator = compareOperators.EQUALS;
                         }
                     }
                 };

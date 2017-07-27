@@ -2,19 +2,20 @@
 
 describe('Component: Grid.Filter', () => {
 
-    let scope, compile, templateCache, template, element, $httpBackend;
+    let scope, compile, templateCache, template, element, $httpBackend, compareOperators;
 
     const serverUrl = 'api/data';
 
     beforeEach(module('tubular.tests'));
     beforeEach(module('tubular'));
 
-    beforeEach(inject(function (_$compile_, _$rootScope_, _$templateCache_, _$httpBackend_) {
+    beforeEach(inject(function (_$compile_, _$rootScope_, _$templateCache_, _$httpBackend_, _compareOperators_) {
         scope = _$rootScope_;
         compile = _$compile_;
         templateCache = _$templateCache_;
         $httpBackend = _$httpBackend_;
         scope.serverUrl = serverUrl;
+        compareOperators = _compareOperators_;
     }));
 
     function generate(flush) {

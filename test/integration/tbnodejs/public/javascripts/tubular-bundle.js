@@ -548,13 +548,18 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
          * @description
          * The `tubularColumn` factory is the base to generate a column model to use with `tbGrid`.
          */
-        .factory('tubularColumn', ['dataTypes', function (dataTypes) {
+        .factory('tubularColumn', ['dataTypes', 'sortDirection', 'aggregateFunctions', function (dataTypes, sortDirection, aggregateFunctions) {
             return function (columnName, options) {
                 options = options || {};
-                options.DataType = options.DataType || 'string';
+                options.DataType = options.DataType || dataTypes.STRING;
+                options.Aggregate = options.Aggregate || aggregateFunctions.NONE;
 
                 if (Object.values(dataTypes).indexOf(options.DataType) < 0) {
                     throw `Invalid data type: '${options.DataType}' for column '${columnName}'`;
+                }
+
+                if (Object.values(aggregateFunctions).indexOf(options.Aggregate) < 0) {
+                    throw `Invalid aggregate function: '${options.Aggregate}' for column '${columnName}'`;
                 }
 
                 const obj = {
@@ -564,25 +569,25 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     SortOrder: parseInt(options.SortOrder) || -1,
                     SortDirection: function () {
                         if (angular.isUndefined(options.SortDirection)) {
-                            return 'None';
+                            return sortDirection.NONE;
                         }
 
                         if (options.SortDirection.toLowerCase().indexOf('asc') === 0) {
-                            return 'Ascending';
+                            return sortDirection.ASCENDING;
                         }
 
                         if (options.SortDirection.toLowerCase().indexOf('desc') === 0) {
-                            return 'Descending';
+                            return sortDirection.DESCENDING;
                         }
 
-                        return 'None';
+                        return sortDirection.NONE;
                     }(),
                     IsKey: angular.isDefined(options.IsKey) ? options.IsKey : false,
                     Searchable: angular.isDefined(options.Searchable) ? options.Searchable : false,
                     Visible: options.Visible === 'false' ? false : true,
                     Filter: null,
-                    DataType: options.DataType || 'string',
-                    Aggregate: options.Aggregate || 'none'
+                    DataType: options.DataType,
+                    Aggregate: options.Aggregate || aggregateFunctions.NONE
                 };
 
                 return obj;
@@ -1021,7 +1026,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
     angular.module('tubular.directives')
         .controller('tbTextSearchController', [
-            '$scope', function ($scope) {
+            '$scope', 'compareOperators', function ($scope, compareOperators) {
                 const $ctrl = this;
 
                 $ctrl.$onInit = () => {
@@ -1037,7 +1042,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     $ctrl.$component.search.Text = val;
 
                     if ($ctrl.lastSearch && val === '') {
-                        search('None');
+                        search(compareOperators.NONE);
                         return;
                     }
 
@@ -1046,7 +1051,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     }
 
                     $ctrl.lastSearch = val;
-                    search('Auto');
+                    search(compareOperators.AUTO);
                 });
 
                 function search(operator) {
@@ -1131,6 +1136,8 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             '$window',
             'localPager',
             'modelSaver',
+            'compareOperators',
+            'sortDirection',
             function (
                 $scope,
                 tubularPopupService,
@@ -1139,7 +1146,9 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 tubularConfig,
                 $window,
                 localPager,
-                modelSaver) {
+                modelSaver,
+                compareOperators,
+                sortDirection) {
                 const $ctrl = this;
                 const prefix = tubularConfig.localStorage.prefix();
                 const storage = $window.localStorage;
@@ -1173,7 +1182,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     $ctrl.autoSearch = $ctrl.saveSearchText ? (storage.getItem(`${prefix + $ctrl.name}_search`) || '') : '';
                     $ctrl.search = {
                         Text: $ctrl.autoSearch,
-                        Operator: $ctrl.autoSearch === '' ? 'None' : 'Auto'
+                        Operator: $ctrl.autoSearch === '' ? compareOperators.NONE : compareOperators.AUTO
                     };
 
                     $ctrl.isEmpty = false;
@@ -1385,7 +1394,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
                         if (column.Filter != null &&
                             column.Filter.Text != null &&
-                            column.Filter.Operator !== 'None') {
+                            column.Filter.Operator !== compareOperators.NONE) {
                             current.Filter = column.Filter;
                         }
                     });
@@ -1547,14 +1556,14 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
                     // need to know if it's currently sorted before we reset stuff
                     const currentSortDirection = column.SortDirection;
-                    const toBeSortDirection = currentSortDirection === 'None'
-                        ? 'Ascending'
-                        : currentSortDirection === 'Ascending' ? 'Descending' : 'None';
+                    const toBeSortDirection = currentSortDirection === sortDirection.NONE
+                        ? sortDirection.ASCENDING
+                        : currentSortDirection === sortDirection.ASCENDING ? sortDirection.DESCENDING : sortDirection.NONE;
 
                     // the latest sorting takes less priority than previous sorts
-                    if (toBeSortDirection === 'None') {
+                    if (toBeSortDirection === sortDirection.NONE) {
                         column.SortOrder = -1;
-                        column.SortDirection = 'None';
+                        column.SortDirection = sortDirection.NONE;
                     } else {
                         column.SortOrder = Number.MAX_VALUE;
                         column.SortDirection = toBeSortDirection;
@@ -1565,7 +1574,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         angular.forEach($ctrl.columns.filter(col => col.Name !== columnName),
                             col => {
                                 col.SortOrder = -1;
-                                col.SortDirection = 'None';
+                                col.SortDirection = sortDirection.NONE;
                             });
                     }
 
@@ -1588,7 +1597,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     request.data.Take = -1;
                     request.data.Search = {
                         Text: '',
-                        Operator: 'None'
+                        Operator: compareOperators.NONE
                     };
 
                     $ctrl.currentRequest = $http(request)
@@ -1672,37 +1681,38 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
         }
     }
 
-    const tbNumericEditorCtrl = ['tubularEditorService', '$scope', 'translateFilter', function (tubular, $scope, translateFilter) {
-        const $ctrl = this;
+    const tbNumericEditorCtrl = ['tubularEditorService', '$scope', 'translateFilter', 'dataTypes',
+        function (tubular, $scope, translateFilter, dataTypes) {
+            const $ctrl = this;
 
-        $ctrl.validate = () => {
-            if (angular.isDefined($ctrl.min) && $ctrl.min != null && angular.isDefined($ctrl.value) && $ctrl.value != null) {
-                $ctrl.$valid = $ctrl.value >= $ctrl.min;
+            $ctrl.validate = () => {
+                if (angular.isDefined($ctrl.min) && $ctrl.min != null && angular.isDefined($ctrl.value) && $ctrl.value != null) {
+                    $ctrl.$valid = $ctrl.value >= $ctrl.min;
 
-                if (!$ctrl.$valid) {
-                    $ctrl.state.$errors = [translateFilter('EDITOR_MIN_NUMBER', $ctrl.min)];
-                    return;
+                    if (!$ctrl.$valid) {
+                        $ctrl.state.$errors = [translateFilter('EDITOR_MIN_NUMBER', $ctrl.min)];
+                        return;
+                    }
                 }
-            }
 
-            if (angular.isDefined($ctrl.max) && $ctrl.max != null && angular.isDefined($ctrl.value) && $ctrl.value != null) {
-                $ctrl.$valid = $ctrl.value <= $ctrl.max;
+                if (angular.isDefined($ctrl.max) && $ctrl.max != null && angular.isDefined($ctrl.value) && $ctrl.value != null) {
+                    $ctrl.$valid = $ctrl.value <= $ctrl.max;
 
-                if (!$ctrl.$valid) {
-                    $ctrl.state.$errors = [translateFilter('EDITOR_MAX_NUMBER', $ctrl.max)];
+                    if (!$ctrl.$valid) {
+                        $ctrl.state.$errors = [translateFilter('EDITOR_MAX_NUMBER', $ctrl.max)];
+                    }
                 }
-            }
-        };
+            };
 
-        $ctrl.$onInit = () => {
-            $ctrl.DataType = 'numeric';
-            tubular.setupScope($scope, 0, $ctrl, false);
-        };
-    }
+            $ctrl.$onInit = () => {
+                $ctrl.DataType = dataTypes.NUMERIC;
+                tubular.setupScope($scope, 0, $ctrl, false);
+            };
+        }
     ];
 
-    const tbDateTimeEditorCtrl = ['$scope', '$element', 'tubularEditorService', 'translateFilter', 'dateFilter',
-        function ($scope, $element, tubular, translateFilter, dateFilter) {
+    const tbDateTimeEditorCtrl = ['$scope', '$element', 'tubularEditorService', 'translateFilter', 'dateFilter', 'dataTypes',
+        function ($scope, $element, tubular, translateFilter, dateFilter, dataTypes) {
             const $ctrl = this;
 
             // This could be $onChange??
@@ -1717,7 +1727,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             $ctrl.validate = () => validateDate($ctrl, translateFilter, dateFilter);
 
             $ctrl.$onInit = () => {
-                $ctrl.DataType = 'datetime';
+                $ctrl.DataType = dataTypes.DATE_TIME;
                 tubular.setupScope($scope, $ctrl.format, $ctrl);
                 $ctrl.format = $ctrl.format || 'MMM D, Y';
             };
@@ -1730,12 +1740,14 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
         'tubularEditorService',
         'translateFilter',
         'dateFilter',
+        'dataTypes',
         function (
             $scope,
             $element,
             tubular,
             translateFilter,
-            dateFilter) {
+            dateFilter,
+            dataTypes) {
             const $ctrl = this;
 
             $scope.$watch(() => $ctrl.value, changeValueFn($ctrl));
@@ -1749,7 +1761,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
             $ctrl.validate = () => validateDate($ctrl, translateFilter, dateFilter);
 
             $ctrl.$onInit = () => {
-                $ctrl.DataType = 'date';
+                $ctrl.DataType = dataTypes.DATE;
                 tubular.setupScope($scope, $ctrl.format, $ctrl);
                 $ctrl.format = $ctrl.format || 'MMM D, Y'; // TODO: Add hours?
             };
@@ -2374,8 +2386,12 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 onlyContains: '=?'
             },
             controller: [
-                '$scope', 'tubularTemplateService', function ($scope, tubular) {
+                '$scope', 'tubularTemplateService', 'compareOperators', function ($scope, tubular, compareOperators) {
                     const $ctrl = this;
+                    console.log($ctrl, $scope.operator)
+                    if (Object.values(compareOperators).indexOf($ctrl.operator) < 0) {
+                        throw `Invalid compare operator: '${$ctrl.operator}'.`;
+                    }
 
                     $ctrl.$onInit = () => {
                         $ctrl.onlyContains = angular.isUndefined($ctrl.onlyContains) ? false : $ctrl.onlyContains;
@@ -2449,7 +2465,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 title: '@'
             },
             controller: [
-                '$scope', 'tubularTemplateService', '$http', function ($scope, tubular, $http) {
+                '$scope', 'tubularTemplateService', '$http', 'compareOperators', function ($scope, tubular, $http, compareOperators) {
                     const $ctrl = this;
 
                     $ctrl.getOptionsFromUrl = () => {
@@ -2470,7 +2486,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                         tubular.setupFilter($scope, $ctrl);
                         $ctrl.getOptionsFromUrl();
 
-                        $ctrl.filter.Operator = 'Multiple';
+                        $ctrl.filter.Operator = compareOperators.MULTIPLE;
                     };
                 }
             ]
@@ -3112,9 +3128,41 @@ angular.module('tubular.services', ['ui.bootstrap'])
             DATE_TIME: 'datetime',
             DATE: 'date',
             DATE_TIME_UTC: 'datetimeutc'
+        })
+        .constant('sortDirection', {
+            NONE : 'None',
+            ASCENDING: 'Ascending',
+            DESCENDING: 'Descending'
+        })
+        .constant('compareOperators', {
+            NONE : 'None',
+            AUTO: 'Auto',
+            EQUALS: 'Equals',
+            NOT_EQUALS: 'NotEquals',
+            CONTAINS: 'Contains',
+            STARTS_WITH: 'StartsWith',
+            ENDS_WITH: 'EndsWith',
+            GTE: 'Gte',
+            GT: 'Gt',
+            LTE: 'Lte',
+            LT: 'Lt',
+            MULTIPLE: 'Multiple',
+            BETWEEN: 'Between',
+            NOT_CONTAINS: 'NotContains',
+            NOT_STARTS_WITH: 'NotStartsWith',
+            NOT_ENDS_WITH: 'NotEndsWith'
+        })
+        .constant('aggregateFunctions', {
+            NONE : 'None',
+            SUM: 'Sum',
+            AVERAGE: 'Average',
+            COUNT: 'Count',
+            DISTINCT_COUNT: 'Distinctcount',
+            MAX: 'Max',
+            MIN: 'Min'
         });
 })(angular);
-(function(angular, moment) {
+(function (angular, moment) {
   'use strict';
 
   angular.module('tubular.services')
@@ -3262,10 +3310,10 @@ angular.module('tubular.services', ['ui.bootstrap'])
             }
 
             scope.$watch(() => ctrl.value, value => {
-                if (value !== parent.model[scope.Name]) {
-                  parent.model[scope.Name] = value;
-                }
-              });
+              if (value !== parent.model[scope.Name]) {
+                parent.model[scope.Name] = value;
+              }
+            });
 
             scope.$watch(() => parent.model[scope.Name], value => {
               if (value !== ctrl.value) {
@@ -3582,9 +3630,9 @@ function exportToCsv(header, rows, visibility) {
          */
         .service('localPager', localPager);
 
-    localPager.$inject = ['$q','orderByFilter'];
+    localPager.$inject = ['$q','orderByFilter', 'sortDirection', 'compareOperators'];
 
-    function localPager($q, orderByFilter) {
+    function localPager($q, orderByFilter, sortDirection, compareOperators) {
         this.process = (request, data) => {
             return $q(resolve => {
                 if (data && data.length > 0) {
@@ -3612,7 +3660,7 @@ function exportToCsv(header, rows, visibility) {
 
         function sort(request, set) {
             const sorts = request.Columns
-                .map((el, index) => el.SortOrder > 0 ? (el.SortDirection === 'Descending' ? '-' : '') + index : null)
+                .map((el, index) => el.SortOrder > 0 ? (el.SortDirection === sortDirection.DESCENDING ? '-' : '') + index : null)
                 .filter(el => el != null);
             
             angular.forEach(sorts, sort => {
@@ -3623,7 +3671,7 @@ function exportToCsv(header, rows, visibility) {
         }
 
         function search(request, set) {
-            if (request.Search && request.Search.Operator === 'Auto' && request.Search.Text) {
+            if (request.Search && request.Search.Operator === compareOperators.AUTO && request.Search.Text) {
                 const filters = request.Columns
                     .map((el, index) => el.Searchable ? index : null)
                     .filter(el => el != null);
@@ -3871,10 +3919,14 @@ function exportToCsv(header, rows, visibility) {
             '$templateCache',
             'translateFilter',
             'dataTypes',
+            'compareOperators',
+            'sortDirection',
             function (
                 $templateCache,
                 translateFilter,
-                dataTypes) {
+                dataTypes,
+                compareOperators,
+                sortDirection) {
                 const me = this;
 
                 me.canUseHtml5Date = () => {
@@ -4153,7 +4205,7 @@ function exportToCsv(header, rows, visibility) {
 
                         columnObj.IsKey = true;
                         columnObj.SortOrder = 1;
-                        columnObj.SortDirection = 'Ascending';
+                        columnObj.SortDirection = sortDirection.ASCENDING;
                         firstSort = true;
                     });
 
@@ -4256,55 +4308,57 @@ function exportToCsv(header, rows, visibility) {
 
                 me.setupFilter = ($scope, $ctrl) => {
                     const dateOps = {
-                        'None': translateFilter('OP_NONE'),
-                        'Equals': translateFilter('OP_EQUALS'),
-                        'NotEquals': translateFilter('OP_NOTEQUALS'),
-                        'Between': translateFilter('OP_BETWEEN'),
-                        'Gte': '>=',
-                        'Gt': '>',
-                        'Lte': '<=',
-                        'Lt': '<'
+                        [compareOperators.NONE]: translateFilter('OP_NONE'),
+                        [compareOperators.EQUALS]: translateFilter('OP_EQUALS'),
+                        [compareOperators.NOT_EQUALS]: translateFilter('OP_NOTEQUALS'),
+                        [compareOperators.BETWEEN]: translateFilter('OP_BETWEEN'),
+                        [compareOperators.GTE]: '>=',
+                        [compareOperators.GT]: '>',
+                        [compareOperators.LTE]: '<=',
+                        [compareOperators.LT]: '<'
                     };
 
                     const filterOperators = {
                         [dataTypes.STRING]: {
-                            'None': translateFilter('OP_NONE'),
-                            'Equals': translateFilter('OP_EQUALS'),
-                            'NotEquals': translateFilter('OP_NOTEQUALS'),
-                            'Contains': translateFilter('OP_CONTAINS'),
-                            'NotContains': translateFilter('OP_NOTCONTAINS'),
-                            'StartsWith': translateFilter('OP_STARTSWITH'),
-                            'NotStartsWith': translateFilter('OP_NOTSTARTSWITH'),
-                            'EndsWith': translateFilter('OP_ENDSWITH'),
-                            'NotEndsWith': translateFilter('OP_NOTENDSWITH')
+                            [compareOperators.NONE]: translateFilter('OP_NONE'),
+                            [compareOperators.EQUALS]: translateFilter('OP_EQUALS'),
+                            [compareOperators.NOT_EQUALS]: translateFilter('OP_NOTEQUALS'),
+                            [compareOperators.CONTAINS]: translateFilter('OP_CONTAINS'),
+                            [compareOperators.NOT_CONTAINS]: translateFilter('OP_NOTCONTAINS'),
+                            [compareOperators.STARTS_WITH]: translateFilter('OP_STARTSWITH'),
+                            [compareOperators.NOT_STARTS_WITH]: translateFilter('OP_NOTSTARTSWITH'),
+                            [compareOperators.ENDS_WITH]: translateFilter('OP_ENDSWITH'),
+                            [compareOperators.NOT_ENDS_WITH]: translateFilter('OP_NOTENDSWITH')
                         },
                         [dataTypes.NUMERIC]: {
-                            'None': translateFilter('OP_NONE'),
-                            'Equals': translateFilter('OP_EQUALS'),
-                            'Between': translateFilter('OP_BETWEEN'),
-                            'Gte': '>=',
-                            'Gt': '>',
-                            'Lte': '<=',
-                            'Lt': '<'
+                            [compareOperators.NONE]: translateFilter('OP_NONE'),
+                            [compareOperators.EQUALS]: translateFilter('OP_EQUALS'),
+                            [compareOperators.BETWEEN]: translateFilter('OP_BETWEEN'),
+                            [compareOperators.GTE]: '>=',
+                            [compareOperators.GT]: '>',
+                            [compareOperators.LTE]: '<=',
+                            [compareOperators.LT]: '<'
                         },
                         [dataTypes.DATE]: dateOps,
                         [dataTypes.DATE_TIME]: dateOps,
                         [dataTypes.DATE_TIME_UTC]: dateOps,
                         [dataTypes.BOOLEAN]: {
-                            'None': translateFilter('OP_NONE'),
-                            'Equals': translateFilter('OP_EQUALS'),
-                            'NotEquals': translateFilter('OP_NOTEQUALS')
+                            [compareOperators.NONE]: translateFilter('OP_NONE'),
+                            [compareOperators.EQUALS]: translateFilter('OP_EQUALS'),
+                            [compareOperators.NOT_EQUALS]: translateFilter('OP_NOTEQUALS')
                         }
                     };
 
                     $ctrl.filter = {
                         Text: $ctrl.text || null,
                         Argument: $ctrl.argument ? [$ctrl.argument] : null,
-                        Operator: $ctrl.operator || 'Contains',
+                        Operator: $ctrl.operator || compareOperators.CONTAINS,
                         OptionsUrl: $ctrl.optionsUrl || null,
                         HasFilter: !($ctrl.text == null || $ctrl.text === '' || angular.isUndefined($ctrl.text)),
                         Name: $scope.$parent.$parent.column.Name
                     };
+
+                    console.log($ctrl.filter)
 
                     $ctrl.filterTitle = $ctrl.title || translateFilter('CAPTION_FILTER');
 
@@ -4342,12 +4396,12 @@ function exportToCsv(header, rows, visibility) {
                     };
 
                     $ctrl.clearFilter = function () {
-                        if ($ctrl.filter.Operator !== 'Multiple') {
-                            $ctrl.filter.Operator = 'None';
+                        if ($ctrl.filter.Operator !== compareOperators.MULTIPLE) {
+                            $ctrl.filter.Operator = compareOperators.NONE;
                         }
 
                         if (angular.isDefined($ctrl.onlyContains) && $ctrl.onlyContains) {
-                            $ctrl.filter.Operator = 'Contains';
+                            $ctrl.filter.Operator = compareOperators.CONTAINS;
                         }
 
                         $ctrl.filter.Text = '';
@@ -4373,7 +4427,7 @@ function exportToCsv(header, rows, visibility) {
                     const columns = $ctrl.$component.columns.filter(e => e.Name === $ctrl.filter.Name);
 
                     $scope.$watch('$ctrl.filter.Operator', val => {
-                        if (val === 'None') {
+                        if (val === compareOperators.NONE) {
                             $ctrl.filter.Text = '';
                         }
                     });
@@ -4403,16 +4457,16 @@ function exportToCsv(header, rows, visibility) {
                         $ctrl.dataType === dataTypes.DATE_TIME_UTC) {
                         $ctrl.filter.Argument = [new Date()];
 
-                        if ($ctrl.filter.Operator === 'Contains') {
-                            $ctrl.filter.Operator = 'Equals';
+                        if ($ctrl.filter.Operator === compareOperators.CONTAINS) {
+                            $ctrl.filter.Operator = compareOperators.EQUALS;
                         }
                     }
 
                     if ($ctrl.dataType === dataTypes.NUMERIC || $ctrl.dataType === dataTypes.BOOLEAN) {
                         $ctrl.filter.Argument = [1];
 
-                        if ($ctrl.filter.Operator === 'Contains') {
-                            $ctrl.filter.Operator = 'Equals';
+                        if ($ctrl.filter.Operator === compareOperators.CONTAINS) {
+                            $ctrl.filter.Operator = compareOperators.EQUALS;
                         }
                     }
                 };

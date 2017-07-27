@@ -10,14 +10,18 @@
          * @description
          * The `tubularColumn` factory is the base to generate a column model to use with `tbGrid`.
          */
-        .factory('tubularColumn', ['dataTypes', 'sortDirection', 
-        function (dataTypes, sortDirection) {
+        .factory('tubularColumn', ['dataTypes', 'sortDirection', 'aggregateFunctions', function (dataTypes, sortDirection, aggregateFunctions) {
             return function (columnName, options) {
                 options = options || {};
                 options.DataType = options.DataType || dataTypes.STRING;
+                options.Aggregate = options.Aggregate || aggregateFunctions.NONE;
 
                 if (Object.values(dataTypes).indexOf(options.DataType) < 0) {
                     throw `Invalid data type: '${options.DataType}' for column '${columnName}'`;
+                }
+
+                if (Object.values(aggregateFunctions).indexOf(options.Aggregate) < 0) {
+                    throw `Invalid aggregate function: '${options.Aggregate}' for column '${columnName}'`;
                 }
 
                 const obj = {
@@ -30,12 +34,12 @@
                             return sortDirection.NONE;
                         }
 
-                        if (options.SortDirection.toLowerCase().indexOf('asc') === 0) {
-                            return sortDirection.ASC;
+                        if (options.SortDirection.toLowerCase().startsWith('asc')) {
+                            return sortDirection.ASCENDING;
                         }
 
-                        if (options.SortDirection.toLowerCase().indexOf('desc') === 0) {
-                            return sortDirection.DESC;
+                        if (options.SortDirection.toLowerCase().startsWith('desc')) {
+                            return sortDirection.DESCENDING;
                         }
 
                         return sortDirection.NONE;
@@ -44,8 +48,8 @@
                     Searchable: angular.isDefined(options.Searchable) ? options.Searchable : false,
                     Visible: options.Visible === 'false' ? false : true,
                     Filter: null,
-                    DataType: options.DataType || dataTypes.STRING,
-                    Aggregate: options.Aggregate || 'none'
+                    DataType: options.DataType,
+                    Aggregate: options.Aggregate
                 };
 
                 return obj;

@@ -3,7 +3,7 @@
 
     angular.module('tubular.directives')
         .controller('tbTextSearchController', [
-            '$scope', function ($scope) {
+            '$scope', 'compareOperators', function ($scope, compareOperators) {
                 const $ctrl = this;
 
                 $ctrl.$onInit = () => {
@@ -19,7 +19,7 @@
                     $ctrl.$component.search.Text = val;
 
                     if ($ctrl.lastSearch && val === '') {
-                        search('None');
+                        search(compareOperators.NONE);
                         return;
                     }
 
@@ -28,7 +28,7 @@
                     }
 
                     $ctrl.lastSearch = val;
-                    search('Auto');
+                    search(compareOperators.AUTO);
                 });
 
                 function search(operator) {

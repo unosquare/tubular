@@ -90,12 +90,17 @@
                 onlyContains: '=?'
             },
             controller: [
-                '$scope', 'tubularTemplateService', function ($scope, tubular) {
+                '$scope', 'tubularTemplateService', 'compareOperators', function ($scope, tubular, compareOperators) {
                     const $ctrl = this;
 
                     $ctrl.$onInit = () => {
                         $ctrl.onlyContains = angular.isUndefined($ctrl.onlyContains) ? false : $ctrl.onlyContains;
                         $ctrl.templateName = 'tbColumnFilterPopover.tpl.html';
+
+                        if (Object.values(compareOperators).indexOf($ctrl.operator) < 0) {
+                            throw `Invalid compare operator: '${$ctrl.operator}'.`;
+                        }
+
                         tubular.setupFilter($scope, $ctrl);
                     };
                 }
@@ -165,7 +170,7 @@
                 title: '@'
             },
             controller: [
-                '$scope', 'tubularTemplateService', '$http', function ($scope, tubular, $http) {
+                '$scope', 'tubularTemplateService', '$http', 'compareOperators', function ($scope, tubular, $http, compareOperators) {
                     const $ctrl = this;
 
                     $ctrl.getOptionsFromUrl = () => {
@@ -186,7 +191,7 @@
                         tubular.setupFilter($scope, $ctrl);
                         $ctrl.getOptionsFromUrl();
 
-                        $ctrl.filter.Operator = 'Multiple';
+                        $ctrl.filter.Operator = compareOperators.MULTIPLE;
                     };
                 }
             ]
