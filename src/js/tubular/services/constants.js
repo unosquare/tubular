@@ -38,7 +38,7 @@
             SUM: 'Sum',
             AVERAGE: 'Average',
             COUNT: 'Count',
-            DISTINCT_COUNT: 'Distinctcount',
+            DISTINCT_COUNT: 'DistinctCount',
             MAX: 'Max',
             MIN: 'Min'
         });

@@ -2,18 +2,20 @@
 
 describe('Module: tubular.models', () => {
     describe('Tubular Model', () => {
-        var tubularModel, ctrl, obj;
+        var tubularModel, ctrl, obj, dataTypes;
 
         beforeEach(() => {
             module('tubular.services');
             module('tubular.models');
 
-            inject(_tubularModel_ => tubularModel = _tubularModel_);
+            inject(
+                _tubularModel_ => tubularModel = _tubularModel_,
+                _dataTypes_ => dataTypes = _dataTypes_);
 
             ctrl = {
                 columns: [
-                    { 'DataType': 'string', 'IsKey': true, 'Name': 'Id' },
-                    { 'DataType': 'string', 'IsKey': false, 'Name': 'Name' }
+                    { 'DataType': dataTypes.STRING, 'IsKey': true, 'Name': 'Id' },
+                    { 'DataType': dataTypes.STRING, 'IsKey': false, 'Name': 'Name' }
                 ]
             };
         });
@@ -79,16 +81,16 @@ describe('Module: tubular.models', () => {
             beforeEach(() => {
                 var data = ["3", "ZAP", "", "2017-01-01 20:00:00", "2017-01-01", undefined];
                 ctrl.columns = [
-                    { 'DataType': 'string', 'IsKey': true, 'Name': 'Id' },
-                    { 'DataType': 'string', 'IsKey': true, 'Name': 'Name' },
-                    { 'DataType': 'date', 'IsKey': false, 'Name': 'Date' },
-                    { 'DataType': 'datetime', 'IsKey': false, 'Name': 'DateTime' },
-                    { 'DataType': 'datetimeutc', 'IsKey': false, 'Name': 'DateTimeUtc' },
-                    { 'DataType': 'string', 'IsKey': false, 'Name': 'Another' },
+                    { 'DataType': dataTypes.STRING, 'IsKey': true, 'Name': 'Id' },
+                    { 'DataType': dataTypes.STRING, 'IsKey': true, 'Name': 'Name' },
+                    { 'DataType': dataTypes.DATE, 'IsKey': false, 'Name': 'Date' },
+                    { 'DataType': dataTypes.DATE_TIME, 'IsKey': false, 'Name': 'DateTime' },
+                    { 'DataType': dataTypes.DATE_TIME_UTC, 'IsKey': false, 'Name': 'DateTimeUtc' },
+                    { 'DataType': dataTypes.STRING, 'IsKey': false, 'Name': 'Another' },
                 ];
                 obj = new tubularModel(ctrl, data);
             });
-            
+
             it('should $key have multiple values', () => {
                 expect(obj.$key).toBe('3,ZAP');
             });

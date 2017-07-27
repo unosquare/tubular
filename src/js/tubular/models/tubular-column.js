@@ -34,11 +34,11 @@
                             return sortDirection.NONE;
                         }
 
-                        if (options.SortDirection.toLowerCase().indexOf('asc') === 0) {
+                        if (options.SortDirection.toLowerCase().startsWith('asc')) {
                             return sortDirection.ASCENDING;
                         }
 
-                        if (options.SortDirection.toLowerCase().indexOf('desc') === 0) {
+                        if (options.SortDirection.toLowerCase().startsWith('desc')) {
                             return sortDirection.DESCENDING;
                         }
 
@@ -49,7 +49,7 @@
                     Visible: options.Visible === 'false' ? false : true,
                     Filter: null,
                     DataType: options.DataType,
-                    Aggregate: options.Aggregate || aggregateFunctions.NONE
+                    Aggregate: options.Aggregate
                 };
 
                 return obj;

@@ -4,7 +4,10 @@ describe('Module: tubular.services', () => {
 
     describe('Service: localPager', () => {
         var localPager,
-            rootScope;
+            rootScope,
+            compareOperators,
+            sortDirection,
+            dataTypes;
 
         const emptyResponse = {
             data: {
@@ -66,9 +69,12 @@ describe('Module: tubular.services', () => {
         beforeEach(() => {
             module('tubular.services');
 
-            inject((_localPager_, _$rootScope_) => {
+            inject((_localPager_, _$rootScope_, _compareOperators_, _dataTypes_, _sortDirection_) => {
                 localPager = _localPager_;
                 rootScope = _$rootScope_;
+                compareOperators = _compareOperators_;
+                dataTypes = _dataTypes_;
+                sortDirection = _sortDirection_;
             });
         });
 
@@ -138,7 +144,7 @@ describe('Module: tubular.services', () => {
 
         it('should return some rows with the free text search', done => {
             const request = angular.copy(emptyRequest);
-            request.data.Search = { Text: 'Alexei', Operator: 'Auto' };
+            request.data.Search = { Text: 'Alexei', Operator: compareOperators.AUTO };
 
             localPager.process(request, dataSource).then(data => {
                 const expectedResponse = {
@@ -163,7 +169,7 @@ describe('Module: tubular.services', () => {
 
         it('should return all rows with the free text search', done => {
             const request = angular.copy(emptyRequest);
-            request.data.Search = { Text: 'Al', Operator: 'Auto' };
+            request.data.Search = { Text: 'Al', Operator: compareOperators.AUTO };
 
             localPager.process(request, dataSource).then(data => {
                 const expectedResponse = {
@@ -191,7 +197,7 @@ describe('Module: tubular.services', () => {
         it('should return some rows with the string filter', done => {
             const request = angular.copy(emptyRequest);
             request.data.Columns[1].Filter.Text = 'Al';
-            request.data.Columns[1].Filter.Operator = 'Contains';
+            request.data.Columns[1].Filter.Operator = compareOperators.CONTAINS;
 
             localPager.process(request, dataSource).then(data => {
                 const expectedResponse = {
@@ -218,7 +224,7 @@ describe('Module: tubular.services', () => {
         it('should return some rows with the int filter', done => {
             const request = angular.copy(emptyRequest);
             request.data.Columns[0].Filter.Text = '1';
-            request.data.Columns[0].Filter.Operator = 'Equals';
+            request.data.Columns[0].Filter.Operator = compareOperators.EQUALS;
 
             localPager.process(request, dataSource).then(data => {
                 const expectedResponse = {
@@ -244,7 +250,7 @@ describe('Module: tubular.services', () => {
         it('should return sorted rows by id descending', done => {
             const request = angular.copy(emptyRequest);
             request.data.Columns[0].SortOrder = 1;
-            request.data.Columns[0].SortDirection = 'Descending';
+            request.data.Columns[0].SortDirection = sortDirection.DESCENDING;
 
             localPager.process(request, dataSource).then(data => {
                 const expectedResponse = {
@@ -271,7 +277,7 @@ describe('Module: tubular.services', () => {
         it('should return sorted rows by name ascending', done => {
             const request = angular.copy(emptyRequest);
             request.data.Columns[1].SortOrder = 1;
-            request.data.Columns[1].SortDirection = 'Ascending';
+            request.data.Columns[1].SortDirection = sortDirection.ASCENDING;
 
             localPager.process(request, dataSource).then(data => {
                 const expectedResponse = {

@@ -1,7 +1,7 @@
 ﻿'use strict';
 
 describe('Module: tubular.directives', () => {
-    var sut, scope, tubularPopupService, tubularModel, storage, window, tubularColumn;
+    var sut, scope, tubularPopupService, tubularModel, storage, window, tubularColumn, dataTypes, compareOperators, sortDirection;
     var $controller, storageMock, storage, data;
 
     beforeEach(() => {
@@ -13,11 +13,14 @@ describe('Module: tubular.directives', () => {
         });
     })
 
-    beforeEach(inject((_$controller_, $rootScope, _tubularPopupService_, _tubularColumn_) => {
+    beforeEach(inject((_$controller_, $rootScope, _tubularPopupService_, _tubularColumn_, _dataTypes_, _compareOperators_, _sortDirection_) => {
         scope = $rootScope.$new();
         $controller = _$controller_;
         tubularColumn = _tubularColumn_;
         tubularPopupService = _tubularPopupService_;
+        dataTypes = _dataTypes_;
+        compareOperators = _compareOperators_;
+        sortDirection = _sortDirection_;
     }));
 
     const models = [{
@@ -140,7 +143,7 @@ describe('Module: tubular.directives', () => {
 
             it('should have search', () => {
                 expect(sut.search.Text).toBe('');
-                expect(sut.search.Operator).toBe('None');
+                expect(sut.search.Operator).toBe(compareOperators.NONE);
             })
 
             it('should have isEmpty', () => {
@@ -172,7 +175,7 @@ describe('Module: tubular.directives', () => {
             })
 
             it('should watch columns', () => {
-                sut.columns = [{ 'DataType': 'string', 'IsKey': true, 'Name': 'Id', 'Visible': true }];
+                sut.columns = [{ 'DataType': dataTypes.STRING, 'IsKey': true, 'Name': 'Id', 'Visible': true }];
                 sut.hasColumnsDefinitions = true;
                 sut.canSaveState = true;
                 scope.columnWatcher();
@@ -250,7 +253,7 @@ describe('Module: tubular.directives', () => {
         it('should add columns', () => {
             expect(sut.columns.length).toBe(0);
 
-            sut.addColumn({ 'DataType': 'string', 'IsKey': true, 'Name': 'Id', 'Visible': true });
+            sut.addColumn({ 'DataType': dataTypes.STRING, 'IsKey': true, 'Name': 'Id', 'Visible': true });
 
             expect(sut.columns.length).toBe(1);
         })
@@ -296,7 +299,7 @@ describe('Module: tubular.directives', () => {
         describe('verifyColumns function', () => {
             beforeEach(() => {
                 sut.columns = [
-                    { 'DataType': 'string', 'IsKey': true, 'Name': 'Id', 'Visible': true }
+                    { 'DataType': dataTypes.STRING, 'IsKey': true, 'Name': 'Id', 'Visible': true }
                 ];
                 sut.hasColumnsDefinitions = true;
                 sut.canSaveState = true;
@@ -311,7 +314,7 @@ describe('Module: tubular.directives', () => {
             it('should columns be visible', () => {
                 scope.columnWatcher();
                 sut.columns = [
-                    { 'DataType': 'string', 'IsKey': true, 'Name': 'Id', 'Visible': false }
+                    { 'DataType': dataTypes.STRING, 'IsKey': true, 'Name': 'Id', 'Visible': false }
                 ];
                 sut.verifyColumns();
                 expect(sut.columns[0].Visible).toBe(true);
@@ -321,7 +324,7 @@ describe('Module: tubular.directives', () => {
         describe('getRequestObject function', () => {
             beforeEach(() => {
                 sut.columns = [
-                    { 'DataType': 'string', 'IsKey': true, 'Name': 'Id', 'Visible': true }
+                    { 'DataType': dataTypes.STRING, 'IsKey': true, 'Name': 'Id', 'Visible': true }
                 ];
                 sut.hasColumnsDefinitions = true;
                 sut.canSaveState = true;
@@ -431,36 +434,36 @@ describe('Module: tubular.directives', () => {
                 spyOn(sut, 'retrieveData');
                 spyOn(scope, '$broadcast');
                 sut.columns = [
-                    { 'DataType': 'string', 'IsKey': true, 'Name': 'Id', 'Visible': true, 'SortDirection': 'None', 'SortOrder': -1 },
-                    { 'DataType': 'string', 'IsKey': false, 'Name': 'Date', 'Visible': true, 'SortDirection': 'Ascending', 'SortOrder': 1 }
+                    { 'DataType': 'string', 'IsKey': true, 'Name': 'Id', 'Visible': true, 'SortDirection': sortDirection.NONE, 'SortOrder': -1 },
+                    { 'DataType': 'string', 'IsKey': false, 'Name': 'Date', 'Visible': true, 'SortDirection': sortDirection.ASCENDING, 'SortOrder': 1 }
                 ];
             });
 
             it('should not change wrong column', () => {
                 sut.sortColumn('Name', false);
                 expect(sut.columns[0].SortOrder).toBe(-1);
-                expect(sut.columns[0].SortDirection).toBe('None');
+                expect(sut.columns[0].SortDirection).toBe(sortDirection.NONE);
             })
 
             it('should change column SortOrder and SortDirection', () => {
                 sut.sortColumn('Id', false);
                 expect(sut.columns[0].SortOrder).toBe(1);
-                expect(sut.columns[0].SortDirection).toBe('Ascending');
+                expect(sut.columns[0].SortDirection).toBe(sortDirection.ASCENDING);
 
                 sut.sortColumn('Id', false);
-                expect(sut.columns[0].SortDirection).toBe('Descending');
+                expect(sut.columns[0].SortDirection).toBe(sortDirection.DESCENDING);
             })
 
             it('should remove sorting from other columns', () => {
                 sut.sortColumn('Id', false);
                 expect(sut.columns[1].SortOrder).toBe(-1);
-                expect(sut.columns[1].SortDirection).toBe('None');
+                expect(sut.columns[1].SortDirection).toBe(sortDirection.NONE);
             })
 
             it('should not remove sorting from other columns', () => {
                 sut.sortColumn('Id', true);
                 expect(sut.columns[1].SortOrder).toBe(1);
-                expect(sut.columns[1].SortDirection).toBe('Ascending');
+                expect(sut.columns[1].SortDirection).toBe(sortDirection.ASCENDING);
             })
 
             it('should broadcast', () => {
@@ -509,7 +512,7 @@ describe('Module: tubular.directives', () => {
 
         describe('visibleColumns function', () => {
             beforeEach(() => {
-                sut.columns = [{ 'DataType': 'string', 'IsKey': true, 'Name': 'Id', 'Visible': true }];
+                sut.columns = [{ 'DataType': dataTypes.STRING, 'IsKey': true, 'Name': 'Id', 'Visible': true }];
             });
 
             it('should get visibleColumns', () => {
@@ -527,7 +530,7 @@ describe('Module: tubular.directives', () => {
                 spyOn(sut, 'verifyColumns');
                 sut.serverUrl = 'api/order';
                 sut.currentRequest = null;
-                sut.columns = [{ 'DataType': 'string', 'IsKey': true, 'Name': 'Id', 'Visible': true }];
+                sut.columns = [{ 'DataType': dataTypes.STRING, 'IsKey': true, 'Name': 'Id', 'Visible': true }];
             });
 
             it('should change canSaveState', () => {
