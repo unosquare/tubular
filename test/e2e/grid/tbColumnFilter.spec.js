@@ -76,7 +76,6 @@ describe('Component: Grid.Filter', () => {
             var apply = $j(form).find('button')[2];
             var clear = $j(form).find('button')[3];
 
-            console.log($j(select), range);
             expect($j(select).val()).toBe(range);
 
             if(range == 'string:None'){

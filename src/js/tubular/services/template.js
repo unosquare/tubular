@@ -453,8 +453,6 @@
                         Name: $scope.$parent.$parent.column.Name
                     };
 
-                    console.log($ctrl.filter)
-
                     $ctrl.filterTitle = $ctrl.title || translateFilter('CAPTION_FILTER');
 
                     $scope.$watch(() => {
