@@ -90,18 +90,18 @@
                 onlyContains: '=?'
             },
             controller: [
-                '$scope', 'tubularTemplateService', 'compareOperators', function ($scope, tubular, compareOperators) {
+                '$scope', 'tubularTemplateService', 'compareOperators', 'tubular', function ($scope, tubularTemplateService, compareOperators, tubular) {
                     const $ctrl = this;
 
                     $ctrl.$onInit = () => {
                         $ctrl.onlyContains = angular.isUndefined($ctrl.onlyContains) ? false : $ctrl.onlyContains;
                         $ctrl.templateName = 'tbColumnFilterPopover.tpl.html';
 
-                        if (Object.values(compareOperators).indexOf($ctrl.operator) < 0) {
+                        if (!tubular.isValueInObject($ctrl.operator, compareOperators)) {
                             throw `Invalid compare operator: '${$ctrl.operator}'.`;
                         }
 
-                        tubular.setupFilter($scope, $ctrl);
+                        tubularTemplateService.setupFilter($scope, $ctrl);
                     };
                 }
             ]

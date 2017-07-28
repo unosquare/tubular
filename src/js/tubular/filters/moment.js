@@ -1,7 +1,7 @@
 (function (angular, moment) {
   'use strict';
 
-  angular.module('tubular')
+  angular.module('tubular.core')
 
     /**
      * @ngdoc filter

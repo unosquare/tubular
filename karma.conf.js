@@ -19,6 +19,7 @@ module.exports = (config) => {
           '../../bower_components/angular-loader/angular-loader.js',
           '../../bower_components/moment/moment.js',
           '../../bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
+          'tubular/tubular-core.js',
           'tubular/tubular-services.js',
           'tubular/tubular-models.js',
           'tubular*/**/*.module.js',

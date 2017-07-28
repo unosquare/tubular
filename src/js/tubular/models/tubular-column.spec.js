@@ -8,6 +8,7 @@ describe('Module: tubular.models', () => {
             dataTypes;
 
         beforeEach(() => {
+            module('tubular.core');
             module('tubular.models');
             module('tubular.services');
 

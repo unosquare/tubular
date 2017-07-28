@@ -212,3 +212,4 @@ src/css/*bundle.*
 src/css/*plain.css
 /dist
 test/integration/tbnodejs/public/javascripts/*.*
+test/integration/tbnodejs/public/javascripts/tubular-bundle.js
