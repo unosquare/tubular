@@ -15,23 +15,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
      * It depends upon  {@link tubular.directives}, {@link tubular.services} and {@link tubular.models}.
      */
 
-    angular.module('tubular', ['tubular.core', 'tubular.directives', 'tubular.services', 'tubular.models', 'tubular.common']).info({ version: '1.8.1' });
-})(angular);
-
-(function (angular) {
-    'use strict';
-
-    /**
-     * @ngdoc module
-     * @name tubular.common
-     *
-     * @description
-     * Tubular Common module.
-     *
-     * It contains common functions/utilities used in Tubular. ie. moment reference.
-     */
-
-    angular.module('tubular.common', []);
+    angular.module('tubular', ['tubular.core', 'tubular.directives', 'tubular.services', 'tubular.models']).info({ version: '1.8.1' });
 })(angular);
 
 (function (angular) {
@@ -2755,7 +2739,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 (function (angular) {
     'use strict';
 
-    angular.module('tubular.common')
+    angular.module('tubular.core')
     /**
      * @ngdoc filter
      * @name errormessage
@@ -2781,7 +2765,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 (function (angular, moment) {
     'use strict';
 
-    angular.module('tubular.common')
+    angular.module('tubular.core')
 
     /**
      * @ngdoc filter
@@ -2801,7 +2785,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 (function (angular) {
     'use strict';
 
-    angular.module('tubular.common')
+    angular.module('tubular.core')
 
     /**
      * @ngdoc filter

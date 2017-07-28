@@ -11,24 +11,9 @@
    * It depends upon  {@link tubular.directives}, {@link tubular.services} and {@link tubular.models}.
    */
   angular
-    .module('tubular', ['tubular.core', 'tubular.directives', 'tubular.services', 'tubular.models', 'tubular.common'])
+    .module('tubular', ['tubular.core', 'tubular.directives', 'tubular.services', 'tubular.models'])
     .info({ version: '1.8.1' });
 
-})(angular);
-
-(function (angular) {
-    'use strict';
-
-    /**
-     * @ngdoc module
-     * @name tubular.common
-     *
-     * @description
-     * Tubular Common module.
-     *
-     * It contains common functions/utilities used in Tubular. ie. moment reference.
-     */
-    angular.module('tubular.common', []);
 })(angular);
 
 (function (angular) {
@@ -2865,7 +2850,7 @@ angular.module('tubular.services', ['ui.bootstrap'])
 (function(angular) {
   'use strict';
 
-  angular.module('tubular.common')
+  angular.module('tubular.core')
     /**
      * @ngdoc filter
      * @name errormessage
@@ -2891,7 +2876,7 @@ angular.module('tubular.services', ['ui.bootstrap'])
 (function (angular, moment) {
   'use strict';
 
-  angular.module('tubular.common')
+  angular.module('tubular.core')
 
     /**
      * @ngdoc filter
@@ -2911,7 +2896,7 @@ angular.module('tubular.services', ['ui.bootstrap'])
 (function(angular) {
   'use strict';
 
-  angular.module('tubular.common')
+  angular.module('tubular.core')
 
     /**
      * @ngdoc filter
