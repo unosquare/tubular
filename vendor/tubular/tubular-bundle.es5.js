@@ -15,7 +15,45 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
      * It depends upon  {@link tubular.directives}, {@link tubular.services} and {@link tubular.models}.
      */
 
-    angular.module('tubular', ['tubular.directives', 'tubular.services', 'tubular.models']).info({ version: '1.8.1' });
+    angular.module('tubular', ['tubular.core', 'tubular.directives', 'tubular.services', 'tubular.models', 'tubular.common']).info({ version: '1.8.1' });
+})(angular);
+
+(function (angular) {
+    'use strict';
+
+    /**
+     * @ngdoc module
+     * @name tubular.common
+     *
+     * @description
+     * Tubular Common module.
+     *
+     * It contains common functions/utilities used in Tubular. ie. moment reference.
+     */
+
+    angular.module('tubular.common', []);
+})(angular);
+
+(function (angular) {
+    'use strict';
+
+    /**
+     * @ngdoc module
+     * @name tubular.common
+     *
+     * @description
+     * Tubular Common module.
+     *
+     * It contains common functions/utilities used in Tubular. ie. moment reference.
+     */
+
+    angular.module('tubular.core', []).service('tubular', tubular);
+
+    function tubular() {
+        this.isValueInObject = function (val, obj) {
+            return Object.values(obj).indexOf(val) >= 0;
+        };
+    }
 })(angular);
 
 (function (angular) {
@@ -516,17 +554,17 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
      * @description
      * The `tubularColumn` factory is the base to generate a column model to use with `tbGrid`.
      */
-    .factory('tubularColumn', ['dataTypes', 'sortDirection', 'aggregateFunctions', function (dataTypes, sortDirection, aggregateFunctions) {
+    .factory('tubularColumn', ['dataTypes', 'sortDirection', 'aggregateFunctions', 'tubular', function (dataTypes, sortDirection, aggregateFunctions, tubular) {
         return function (columnName, options) {
             options = options || {};
             options.DataType = options.DataType || dataTypes.STRING;
             options.Aggregate = options.Aggregate || aggregateFunctions.NONE;
 
-            if (Object.values(dataTypes).indexOf(options.DataType) < 0) {
+            if (!tubular.isValueInObject(options.DataType, dataTypes)) {
                 throw 'Invalid data type: \'' + options.DataType + '\' for column \'' + columnName + '\'';
             }
 
-            if (Object.values(aggregateFunctions).indexOf(options.Aggregate) < 0) {
+            if (!tubular.isValueInObject(options.Aggregate, aggregateFunctions)) {
                 throw 'Invalid aggregate function: \'' + options.Aggregate + '\' for column \'' + columnName + '\'';
             }
 
@@ -2282,18 +2320,18 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             title: '@',
             onlyContains: '=?'
         },
-        controller: ['$scope', 'tubularTemplateService', 'compareOperators', function ($scope, tubular, compareOperators) {
+        controller: ['$scope', 'tubularTemplateService', 'compareOperators', 'tubular', function ($scope, tubularTemplateService, compareOperators, tubular) {
             var $ctrl = this;
 
             $ctrl.$onInit = function () {
                 $ctrl.onlyContains = angular.isUndefined($ctrl.onlyContains) ? false : $ctrl.onlyContains;
                 $ctrl.templateName = 'tbColumnFilterPopover.tpl.html';
 
-                if (Object.values(compareOperators).indexOf($ctrl.operator) < 0) {
+                if (!tubular.isValueInObject($ctrl.operator, compareOperators)) {
                     throw 'Invalid compare operator: \'' + $ctrl.operator + '\'.';
                 }
 
-                tubular.setupFilter($scope, $ctrl);
+                tubularTemplateService.setupFilter($scope, $ctrl);
             };
         }]
     })
@@ -2717,7 +2755,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 (function (angular) {
     'use strict';
 
-    angular.module('tubular')
+    angular.module('tubular.common')
     /**
      * @ngdoc filter
      * @name errormessage
@@ -2743,7 +2781,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 (function (angular, moment) {
     'use strict';
 
-    angular.module('tubular')
+    angular.module('tubular.common')
 
     /**
      * @ngdoc filter
@@ -2763,7 +2801,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 (function (angular) {
     'use strict';
 
-    angular.module('tubular')
+    angular.module('tubular.common')
 
     /**
      * @ngdoc filter

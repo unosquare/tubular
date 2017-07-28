@@ -1,4 +1,4 @@
-(function(angular) {
+(function (angular) {
   'use strict';
 
   /**
@@ -11,9 +11,46 @@
    * It depends upon  {@link tubular.directives}, {@link tubular.services} and {@link tubular.models}.
    */
   angular
-    .module('tubular', ['tubular.directives', 'tubular.services', 'tubular.models'])
+    .module('tubular', ['tubular.core', 'tubular.directives', 'tubular.services', 'tubular.models', 'tubular.common'])
     .info({ version: '1.8.1' });
 
+})(angular);
+
+(function (angular) {
+    'use strict';
+
+    /**
+     * @ngdoc module
+     * @name tubular.common
+     *
+     * @description
+     * Tubular Common module.
+     *
+     * It contains common functions/utilities used in Tubular. ie. moment reference.
+     */
+    angular.module('tubular.common', []);
+})(angular);
+
+(function (angular) {
+    'use strict';
+
+    /**
+     * @ngdoc module
+     * @name tubular.common
+     *
+     * @description
+     * Tubular Common module.
+     *
+     * It contains common functions/utilities used in Tubular. ie. moment reference.
+     */
+    angular.module('tubular.core', [])
+        .service('tubular', tubular);
+
+    function tubular() {
+        this.isValueInObject = function (val, obj) {
+            return Object.values(obj).indexOf(val) >= 0;
+        }
+    }
 })(angular);
 
 (angular => {
@@ -548,51 +585,56 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
          * @description
          * The `tubularColumn` factory is the base to generate a column model to use with `tbGrid`.
          */
-        .factory('tubularColumn', ['dataTypes', 'sortDirection', 'aggregateFunctions', function (dataTypes, sortDirection, aggregateFunctions) {
-            return function (columnName, options) {
-                options = options || {};
-                options.DataType = options.DataType || dataTypes.STRING;
-                options.Aggregate = options.Aggregate || aggregateFunctions.NONE;
+        .factory('tubularColumn', [
+            'dataTypes',
+            'sortDirection',
+            'aggregateFunctions',
+            'tubular',
+            function (dataTypes, sortDirection, aggregateFunctions, tubular) {
+                return function (columnName, options) {
+                    options = options || {};
+                    options.DataType = options.DataType || dataTypes.STRING;
+                    options.Aggregate = options.Aggregate || aggregateFunctions.NONE;
 
-                if (Object.values(dataTypes).indexOf(options.DataType) < 0) {
-                    throw `Invalid data type: '${options.DataType}' for column '${columnName}'`;
-                }
+                    if (!tubular.isValueInObject(options.DataType, dataTypes)) {
+                        throw `Invalid data type: '${options.DataType}' for column '${columnName}'`;
+                    }
 
-                if (Object.values(aggregateFunctions).indexOf(options.Aggregate) < 0) {
-                    throw `Invalid aggregate function: '${options.Aggregate}' for column '${columnName}'`;
-                }
+                    if (!tubular.isValueInObject(options.Aggregate, aggregateFunctions)) {
+                        throw `Invalid aggregate function: '${options.Aggregate}' for column '${columnName}'`;
+                    }
 
-                const obj = {
-                    Label: options.Label || (columnName || '').replace(/([a-z])([A-Z])/g, '$1 $2'),
-                    Name: columnName,
-                    Sortable: options.Sortable,
-                    SortOrder: parseInt(options.SortOrder) || -1,
-                    SortDirection: function () {
-                        if (angular.isUndefined(options.SortDirection)) {
+                    const obj = {
+                        Label: options.Label || (columnName || '').replace(/([a-z])([A-Z])/g, '$1 $2'),
+                        Name: columnName,
+                        Sortable: options.Sortable,
+                        SortOrder: parseInt(options.SortOrder) || -1,
+                        SortDirection: function () {
+                            if (angular.isUndefined(options.SortDirection)) {
+                                return sortDirection.NONE;
+                            }
+
+                            if (options.SortDirection.toLowerCase().startsWith('asc')) {
+                                return sortDirection.ASCENDING;
+                            }
+
+                            if (options.SortDirection.toLowerCase().startsWith('desc')) {
+                                return sortDirection.DESCENDING;
+                            }
+
                             return sortDirection.NONE;
-                        }
+                        }(),
+                        IsKey: angular.isDefined(options.IsKey) ? options.IsKey : false,
+                        Searchable: angular.isDefined(options.Searchable) ? options.Searchable : false,
+                        Visible: options.Visible === 'false' ? false : true,
+                        Filter: null,
+                        DataType: options.DataType,
+                        Aggregate: options.Aggregate
+                    };
 
-                        if (options.SortDirection.toLowerCase().startsWith('asc')) {
-                            return sortDirection.ASCENDING;
-                        }
-
-                        if (options.SortDirection.toLowerCase().startsWith('desc')) {
-                            return sortDirection.DESCENDING;
-                        }
-
-                        return sortDirection.NONE;
-                    }(),
-                    IsKey: angular.isDefined(options.IsKey) ? options.IsKey : false,
-                    Searchable: angular.isDefined(options.Searchable) ? options.Searchable : false,
-                    Visible: options.Visible === 'false' ? false : true,
-                    Filter: null,
-                    DataType: options.DataType,
-                    Aggregate: options.Aggregate
+                    return obj;
                 };
-
-                return obj;
-            };
-        }]);
+            }]);
 })(angular);
 
 (function (angular, moment) {
@@ -2383,18 +2425,18 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 onlyContains: '=?'
             },
             controller: [
-                '$scope', 'tubularTemplateService', 'compareOperators', function ($scope, tubular, compareOperators) {
+                '$scope', 'tubularTemplateService', 'compareOperators', 'tubular', function ($scope, tubularTemplateService, compareOperators, tubular) {
                     const $ctrl = this;
 
                     $ctrl.$onInit = () => {
                         $ctrl.onlyContains = angular.isUndefined($ctrl.onlyContains) ? false : $ctrl.onlyContains;
                         $ctrl.templateName = 'tbColumnFilterPopover.tpl.html';
 
-                        if (Object.values(compareOperators).indexOf($ctrl.operator) < 0) {
+                        if (!tubular.isValueInObject($ctrl.operator, compareOperators)) {
                             throw `Invalid compare operator: '${$ctrl.operator}'.`;
                         }
 
-                        tubular.setupFilter($scope, $ctrl);
+                        tubularTemplateService.setupFilter($scope, $ctrl);
                     };
                 }
             ]
@@ -2823,7 +2865,7 @@ angular.module('tubular.services', ['ui.bootstrap'])
 (function(angular) {
   'use strict';
 
-  angular.module('tubular')
+  angular.module('tubular.common')
     /**
      * @ngdoc filter
      * @name errormessage
@@ -2849,7 +2891,7 @@ angular.module('tubular.services', ['ui.bootstrap'])
 (function (angular, moment) {
   'use strict';
 
-  angular.module('tubular')
+  angular.module('tubular.common')
 
     /**
      * @ngdoc filter
@@ -2869,7 +2911,7 @@ angular.module('tubular.services', ['ui.bootstrap'])
 (function(angular) {
   'use strict';
 
-  angular.module('tubular')
+  angular.module('tubular.common')
 
     /**
      * @ngdoc filter
