@@ -1,4 +1,4 @@
-﻿(function(angular) {
+﻿(function (angular) {
   'use strict';
 
   /**
@@ -11,7 +11,7 @@
    * It depends upon  {@link tubular.directives}, {@link tubular.services} and {@link tubular.models}.
    */
   angular
-    .module('tubular', ['tubular.directives', 'tubular.services', 'tubular.models'])
+    .module('tubular', ['tubular.core', 'tubular.directives', 'tubular.services', 'tubular.models', 'tubular.common'])
     .info({ version: '1.8.1' });
 
 })(angular);

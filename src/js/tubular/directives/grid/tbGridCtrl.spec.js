@@ -5,6 +5,7 @@ describe('Module: tubular.directives', () => {
     var $controller, storageMock, storage, data;
 
     beforeEach(() => {
+        module('tubular.core');
         module('tubular.directives');
         module(($provide) => {
             tubularModel = jasmine.createSpy();
