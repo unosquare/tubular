@@ -133,7 +133,6 @@ module.exports = grunt => {
             tubular_js: {
                 src: [
                     'src/js/tubular/tubular.js',
-                    'src/js/tubular/tubular-common.js',
                     'src/js/tubular/tubular-core.js',
                     'src/js/tubular/tubular-directives.js',
                     'src/js/tubular/tubular-models.js',

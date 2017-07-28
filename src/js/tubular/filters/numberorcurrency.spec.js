@@ -6,7 +6,7 @@ describe('Module: tubular', () => {
     var $filter, result;
 
     beforeEach(() => {
-      module('tubular.common');
+      module('tubular.core');
 
       inject(_$filter_ => $filter = _$filter_);
     });

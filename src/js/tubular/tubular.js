@@ -11,7 +11,7 @@
    * It depends upon  {@link tubular.directives}, {@link tubular.services} and {@link tubular.models}.
    */
   angular
-    .module('tubular', ['tubular.core', 'tubular.directives', 'tubular.services', 'tubular.models', 'tubular.common'])
+    .module('tubular', ['tubular.core', 'tubular.directives', 'tubular.services', 'tubular.models'])
     .info({ version: '1.8.1' });
 
 })(angular);

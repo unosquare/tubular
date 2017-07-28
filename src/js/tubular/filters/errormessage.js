@@ -1,7 +1,7 @@
 (function(angular) {
   'use strict';
 
-  angular.module('tubular.common')
+  angular.module('tubular.core')
     /**
      * @ngdoc filter
      * @name errormessage

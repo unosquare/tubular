@@ -22,7 +22,6 @@ module.exports = (config) => {
           'tubular/tubular-core.js',
           'tubular/tubular-services.js',
           'tubular/tubular-models.js',
-          'tubular/tubular-common.js',
           'tubular*/**/*.module.js',
           'tubular/models/**/*.js',
           'tubular/services/**/*.js',
