@@ -35,6 +35,22 @@
         this.isValueInObject = function (val, obj) {
             return Object.values(obj).indexOf(val) >= 0;
         }
+
+        this.isUrlInBypassList = function (bypassUrls, url) {
+            const subsetUrls = Object.values(bypassUrls);
+
+            if (subsetUrls.length == 0)
+                return false;
+
+            const plainUrls = [];
+
+            subsetUrls.reduce((all, subset) => {
+                subset.forEach((url) => all.push(url));
+                return all;
+            }, plainUrls);
+
+            return plainUrls.find(item => url.indexOf(item) >= 0);
+        }
     }
 })(angular);
 
@@ -2965,7 +2981,7 @@ angular.module('tubular.services', ['ui.bootstrap', 'tubular.core'])
      * @returns {Object} A httpInterceptor
      */
     angular.module('tubular.services')
-        .factory('tubularAuthInterceptor', ['$q', '$injector', 'tubularConfig', function ($q, $injector, tubularConfig) {
+        .factory('tubularAuthInterceptor', ['$q', '$injector', 'tubularConfig', 'tubular', function ($q, $injector, tubularConfig, tubular) {
 
             let refreshTokenRequest = null;
             const tubularHttpName = 'tubularHttp';
@@ -2986,7 +3002,7 @@ angular.module('tubular.services', ['ui.bootstrap', 'tubular.core'])
                     return config;
                 }
 
-                if (checkIsWhiteListedUrl(config.url)) {
+                if (tubular.isUrlInBypassList(tubularConfig.webApi.authBypassUrls(), config.url)) {
                     return config;
                 }
 
@@ -3018,10 +3034,6 @@ angular.module('tubular.services', ['ui.bootstrap', 'tubular.core'])
                 }
 
                 return config;
-            }
-
-            function checkIsWhiteListedUrl(url) {
-                return tubularConfig.webApi.urlWhiteList().find(item => url.indexOf(item) >= 0);
             }
 
             function checkStatic(url) {
@@ -3126,7 +3138,7 @@ angular.module('tubular.services', ['ui.bootstrap', 'tubular.core'])
                         return config;
                     }
 
-                    if (checkIsBypassedUrl(config.url)) {
+                    if (tubular.isUrlInBypassList(tubularConfig.webApi.noCacheBypassUrls(), config.url)) {
                         return config;
                     }
 
@@ -3141,22 +3153,6 @@ angular.module('tubular.services', ['ui.bootstrap', 'tubular.core'])
                     return config;
                 }
             };
-
-            function checkIsBypassedUrl(url) {
-                let subsetUrls = Object.values(tubularConfig.webApi.noCacheBypassUrls());
-
-                if (subsetUrls.length == 0)
-                    return false;
-
-                let plainUrls = [];
-
-                subsetUrls.reduce(function (all, item) {
-                    all.push(item);
-                    return all;
-                }, plainUrls);
-
-                return plainUrls.find(item => url.indexOf(item) >= 0);
-            }
         }]);
 })(angular);
 (angular => {
@@ -4675,7 +4671,7 @@ function exportToCsv(header, rows, visibility) {
                     enableRefreshTokens: PLATFORM,
                     requireAuthentication: PLATFORM,
                     baseUrl: PLATFORM,
-                    urlWhiteList: PLATFORM,
+                    authBypassUrls: PLATFORM,
                     noCacheBypassUrls: PLATFORM
                 },
                 platform: {},
@@ -4695,7 +4691,7 @@ function exportToCsv(header, rows, visibility) {
                     enableRefreshTokens: false,
                     requireAuthentication: true,
                     baseUrl: '/api',
-                    urlWhiteList : [],
+                    authBypassUrls : {},
                     noCacheBypassUrls: {}
                 },
                 localStorage: {

@@ -37,6 +37,25 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         this.isValueInObject = function (val, obj) {
             return Object.values(obj).indexOf(val) >= 0;
         };
+
+        this.isUrlInBypassList = function (bypassUrls, url) {
+            var subsetUrls = Object.values(bypassUrls);
+
+            if (subsetUrls.length == 0) return false;
+
+            var plainUrls = [];
+
+            subsetUrls.reduce(function (all, subset) {
+                subset.forEach(function (url) {
+                    return all.push(url);
+                });
+                return all;
+            }, plainUrls);
+
+            return plainUrls.find(function (item) {
+                return url.indexOf(item) >= 0;
+            });
+        };
     }
 })(angular);
 
@@ -2845,7 +2864,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
      * @returns {Object} A httpInterceptor
      */
 
-    angular.module('tubular.services').factory('tubularAuthInterceptor', ['$q', '$injector', 'tubularConfig', function ($q, $injector, tubularConfig) {
+    angular.module('tubular.services').factory('tubularAuthInterceptor', ['$q', '$injector', 'tubularConfig', 'tubular', function ($q, $injector, tubularConfig, tubular) {
 
         var refreshTokenRequest = null;
         var tubularHttpName = 'tubularHttp';
@@ -2866,7 +2885,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                 return config;
             }
 
-            if (checkIsWhiteListedUrl(config.url)) {
+            if (tubular.isUrlInBypassList(tubularConfig.webApi.authBypassUrls(), config.url)) {
                 return config;
             }
 
@@ -2892,12 +2911,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             }
 
             return config;
-        }
-
-        function checkIsWhiteListedUrl(url) {
-            return tubularConfig.webApi.urlWhiteList().find(function (item) {
-                return url.indexOf(item) >= 0;
-            });
         }
 
         function checkStatic(url) {
@@ -3000,7 +3013,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                     return config;
                 }
 
-                if (checkIsBypassedUrl(config.url)) {
+                if (tubular.isUrlInBypassList(tubularConfig.webApi.noCacheBypassUrls(), config.url)) {
                     return config;
                 }
 
@@ -3015,23 +3028,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                 return config;
             }
         };
-
-        function checkIsBypassedUrl(url) {
-            var subsetUrls = Object.values(tubularConfig.webApi.noCacheBypassUrls());
-
-            if (subsetUrls.length == 0) return false;
-
-            var plainUrls = [];
-
-            subsetUrls.reduce(function (all, item) {
-                all.push(item);
-                return all;
-            }, plainUrls);
-
-            return plainUrls.find(function (item) {
-                return url.indexOf(item) >= 0;
-            });
-        }
     }]);
 })(angular);
 (function (angular) {
@@ -4438,7 +4434,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                 enableRefreshTokens: PLATFORM,
                 requireAuthentication: PLATFORM,
                 baseUrl: PLATFORM,
-                urlWhiteList: PLATFORM,
+                authBypassUrls: PLATFORM,
                 noCacheBypassUrls: PLATFORM
             },
             platform: {},
@@ -4458,7 +4454,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                 enableRefreshTokens: false,
                 requireAuthentication: true,
                 baseUrl: '/api',
-                urlWhiteList: [],
+                authBypassUrls: {},
                 noCacheBypassUrls: {}
             },
             localStorage: {
