@@ -11,7 +11,7 @@
      * @returns {Object} A httpInterceptor
      */
     angular.module('tubular.services')
-        .factory('tubularAuthInterceptor', ['$q', '$injector', 'tubularConfig', function ($q, $injector, tubularConfig) {
+        .factory('tubularAuthInterceptor', ['$q', '$injector', 'tubularConfig', 'tubular', function ($q, $injector, tubularConfig, tubular) {
 
             let refreshTokenRequest = null;
             const tubularHttpName = 'tubularHttp';
@@ -32,7 +32,7 @@
                     return config;
                 }
 
-                if (checkIsWhiteListedUrl(config.url)) {
+                if (tubular.isUrlInBypassList(tubularConfig.webApi.authBypassUrls(), config.url)) {
                     return config;
                 }
 
@@ -64,10 +64,6 @@
                 }
 
                 return config;
-            }
-
-            function checkIsWhiteListedUrl(url) {
-                return tubularConfig.webApi.urlWhiteList().find(item => url.indexOf(item) >= 0);
             }
 
             function checkStatic(url) {

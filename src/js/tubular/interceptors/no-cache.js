@@ -20,7 +20,7 @@
                         return config;
                     }
 
-                    if (checkIsBypassedUrl(config.url)) {
+                    if (tubular.isUrlInBypassList(tubularConfig.webApi.noCacheBypassUrls(), config.url)) {
                         return config;
                     }
 
@@ -35,21 +35,5 @@
                     return config;
                 }
             };
-
-            function checkIsBypassedUrl(url) {
-                let subsetUrls = Object.values(tubularConfig.webApi.noCacheBypassUrls());
-
-                if (subsetUrls.length == 0)
-                    return false;
-
-                let plainUrls = [];
-
-                subsetUrls.reduce(function (all, item) {
-                    all.push(item);
-                    return all;
-                }, plainUrls);
-
-                return plainUrls.find(item => url.indexOf(item) >= 0);
-            }
         }]);
 })(angular);

@@ -15,7 +15,7 @@
                     enableRefreshTokens: PLATFORM,
                     requireAuthentication: PLATFORM,
                     baseUrl: PLATFORM,
-                    urlWhiteList: PLATFORM,
+                    authBypassUrls: PLATFORM,
                     noCacheBypassUrls: PLATFORM
                 },
                 platform: {},
@@ -35,7 +35,7 @@
                     enableRefreshTokens: false,
                     requireAuthentication: true,
                     baseUrl: '/api',
-                    urlWhiteList : [],
+                    authBypassUrls : {},
                     noCacheBypassUrls: {}
                 },
                 localStorage: {
