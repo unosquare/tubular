@@ -11,12 +11,16 @@
      * @returns {Object} A httpInterceptor
      */
     angular.module('tubular.services')
-        .factory('tubularNoCacheInterceptor', [function () {
+        .factory('tubularNoCacheInterceptor', ['tubularConfig', 'tubular', function (tubularConfig, tubular) {
 
             return {
                 request: (config) => {
 
                     if (config.method !== 'GET') {
+                        return config;
+                    }
+
+                    if (checkIsBypassedUrl(config.url)) {
                         return config;
                     }
 
@@ -31,5 +35,21 @@
                     return config;
                 }
             };
+
+            function checkIsBypassedUrl(url) {
+                let subsetUrls = Object.values(tubularConfig.webApi.noCacheBypassUrls());
+
+                if (subsetUrls.length == 0)
+                    return false;
+
+                let plainUrls = [];
+
+                subsetUrls.reduce(function (all, item) {
+                    all.push(item);
+                    return all;
+                }, plainUrls);
+
+                return plainUrls.find(item => url.indexOf(item) >= 0);
+            }
         }]);
 })(angular);

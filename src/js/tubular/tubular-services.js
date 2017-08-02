@@ -11,7 +11,7 @@
  * Tubular Services module.
  * It contains common services like HTTP client, filtering and printing services.
  */
-angular.module('tubular.services', ['ui.bootstrap'])
+angular.module('tubular.services', ['ui.bootstrap', 'tubular.core'])
   .config([
     '$httpProvider',
     ($httpProvider) => {
