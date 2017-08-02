@@ -54,7 +54,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
      * It depends upon {@link tubular.services} and {@link tubular.models}.
      */
 
-    angular.module('tubular.directives', ['tubular.models', 'tubular.services'])
+    angular.module('tubular.directives', ['tubular.models', 'tubular.services', 'tubular.core'])
     /**
      * @ngdoc directive
      * @name tbGridTable
@@ -2730,7 +2730,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
      * It contains common services like HTTP client, filtering and printing services.
      */
 
-    angular.module('tubular.services', ['ui.bootstrap']).config(['$httpProvider', function ($httpProvider) {
+    angular.module('tubular.services', ['ui.bootstrap', 'tubular.core']).config(['$httpProvider', function ($httpProvider) {
         $httpProvider.interceptors.push('tubularAuthInterceptor');
         $httpProvider.interceptors.push('tubularNoCacheInterceptor');
     }]);
@@ -2991,12 +2991,16 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
      * @returns {Object} A httpInterceptor
      */
 
-    angular.module('tubular.services').factory('tubularNoCacheInterceptor', [function () {
+    angular.module('tubular.services').factory('tubularNoCacheInterceptor', ['tubularConfig', 'tubular', function (tubularConfig, tubular) {
 
         return {
             request: function request(config) {
 
                 if (config.method !== 'GET') {
+                    return config;
+                }
+
+                if (checkIsBypassedUrl(config.url)) {
                     return config;
                 }
 
@@ -3011,6 +3015,23 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                 return config;
             }
         };
+
+        function checkIsBypassedUrl(url) {
+            var subsetUrls = Object.values(tubularConfig.webApi.noCacheBypassUrls());
+
+            if (subsetUrls.length == 0) return false;
+
+            var plainUrls = [];
+
+            subsetUrls.reduce(function (all, item) {
+                all.push(item);
+                return all;
+            }, plainUrls);
+
+            return plainUrls.find(function (item) {
+                return url.indexOf(item) >= 0;
+            });
+        }
     }]);
 })(angular);
 (function (angular) {
@@ -4417,7 +4438,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                 enableRefreshTokens: PLATFORM,
                 requireAuthentication: PLATFORM,
                 baseUrl: PLATFORM,
-                urlWhiteList: PLATFORM
+                urlWhiteList: PLATFORM,
+                noCacheBypassUrls: PLATFORM
             },
             platform: {},
             localStorage: {
@@ -4436,7 +4458,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                 enableRefreshTokens: false,
                 requireAuthentication: true,
                 baseUrl: '/api',
-                urlWhiteList: []
+                urlWhiteList: [],
+                noCacheBypassUrls: {}
             },
             localStorage: {
                 prefix: 'tubular.'

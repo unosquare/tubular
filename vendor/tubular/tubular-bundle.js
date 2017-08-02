@@ -51,7 +51,7 @@
      *
      * It depends upon {@link tubular.services} and {@link tubular.models}.
      */
-    angular.module('tubular.directives', ['tubular.models', 'tubular.services'])
+    angular.module('tubular.directives', ['tubular.models', 'tubular.services', 'tubular.core'])
         /**
          * @ngdoc directive
          * @name tbGridTable
@@ -2835,7 +2835,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
  * Tubular Services module.
  * It contains common services like HTTP client, filtering and printing services.
  */
-angular.module('tubular.services', ['ui.bootstrap'])
+angular.module('tubular.services', ['ui.bootstrap', 'tubular.core'])
   .config([
     '$httpProvider',
     ($httpProvider) => {
@@ -3117,12 +3117,16 @@ angular.module('tubular.services', ['ui.bootstrap'])
      * @returns {Object} A httpInterceptor
      */
     angular.module('tubular.services')
-        .factory('tubularNoCacheInterceptor', [function () {
+        .factory('tubularNoCacheInterceptor', ['tubularConfig', 'tubular', function (tubularConfig, tubular) {
 
             return {
                 request: (config) => {
 
                     if (config.method !== 'GET') {
+                        return config;
+                    }
+
+                    if (checkIsBypassedUrl(config.url)) {
                         return config;
                     }
 
@@ -3137,6 +3141,22 @@ angular.module('tubular.services', ['ui.bootstrap'])
                     return config;
                 }
             };
+
+            function checkIsBypassedUrl(url) {
+                let subsetUrls = Object.values(tubularConfig.webApi.noCacheBypassUrls());
+
+                if (subsetUrls.length == 0)
+                    return false;
+
+                let plainUrls = [];
+
+                subsetUrls.reduce(function (all, item) {
+                    all.push(item);
+                    return all;
+                }, plainUrls);
+
+                return plainUrls.find(item => url.indexOf(item) >= 0);
+            }
         }]);
 })(angular);
 (angular => {
@@ -4655,7 +4675,8 @@ function exportToCsv(header, rows, visibility) {
                     enableRefreshTokens: PLATFORM,
                     requireAuthentication: PLATFORM,
                     baseUrl: PLATFORM,
-                    urlWhiteList: PLATFORM
+                    urlWhiteList: PLATFORM,
+                    noCacheBypassUrls: PLATFORM
                 },
                 platform: {},
                 localStorage: {
@@ -4674,7 +4695,8 @@ function exportToCsv(header, rows, visibility) {
                     enableRefreshTokens: false,
                     requireAuthentication: true,
                     baseUrl: '/api',
-                    urlWhiteList : []
+                    urlWhiteList : [],
+                    noCacheBypassUrls: {}
                 },
                 localStorage: {
                     prefix: 'tubular.'
