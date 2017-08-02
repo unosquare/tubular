@@ -43,16 +43,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
             if (subsetUrls.length == 0) return false;
 
-            var plainUrls = [];
-
-            subsetUrls.reduce(function (all, subset) {
+            var plainUrls = subsetUrls.reduce(function (all, subset) {
                 subset.forEach(function (url) {
                     return all.push(url);
                 });
                 return all;
-            }, plainUrls);
+            }, []);
 
-            return plainUrls.find(function (item) {
+            return plainUrls.some(function (item) {
                 return url.indexOf(item) >= 0;
             });
         };
