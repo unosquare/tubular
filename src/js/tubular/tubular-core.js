@@ -24,14 +24,12 @@
             if (subsetUrls.length == 0)
                 return false;
 
-            const plainUrls = [];
-
-            subsetUrls.reduce((all, subset) => {
+            const plainUrls = subsetUrls.reduce((all, subset) => {
                 subset.forEach((url) => all.push(url));
                 return all;
-            }, plainUrls);
+            }, []);
 
-            return plainUrls.find(item => url.indexOf(item) >= 0);
+            return plainUrls.some(item => url.indexOf(item) >= 0);
         }
     }
 })(angular);
