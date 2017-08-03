@@ -59,7 +59,7 @@ describe('Module: tubular.services', () => {
                 url: '/' + url + '?someendpoint=true'
             };
 
-            tubularConfig.webApi.noCacheBypassUrls({ html: ['html/nocache1'], html2: ['html/nocache2'] });
+            tubularConfig.webApi.noCacheBypassUrls(['html/nocache1', 'html/nocache2']);
 
             var actual = NoCacheInterceptor.request(config);
 

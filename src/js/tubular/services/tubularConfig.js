@@ -35,8 +35,8 @@
                     enableRefreshTokens: false,
                     requireAuthentication: true,
                     baseUrl: '/api',
-                    authBypassUrls : {},
-                    noCacheBypassUrls: {}
+                    authBypassUrls : [],
+                    noCacheBypassUrls: []
                 },
                 localStorage: {
                     prefix: 'tubular.'

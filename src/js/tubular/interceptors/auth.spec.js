@@ -63,7 +63,7 @@ describe('Module: tubular.services', function () {
             };
             tubularConfig.webApi.tokenUrl('/api/token');
             tubularConfig.webApi.requireAuthentication(true);
-            tubularConfig.webApi.authBypassUrls({ api: ['api/unsecure', 'api/nottoken'] });
+            tubularConfig.webApi.authBypassUrls(['api/unsecure', 'api/nottoken']);
             tubularHttp.userData.bearerToken = "yeah";
 
             var actual = AuthInterceptor.request(config);
