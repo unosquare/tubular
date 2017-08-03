@@ -31,29 +31,24 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
      * It contains common functions/utilities used in Tubular. ie. moment reference.
      */
 
-    angular.module('tubular.core', []).service('tubular', tubular);
+    angular.module('tubular.core', []).factory('tubular', tubular);
 
     function tubular() {
-        this.isValueInObject = function (val, obj) {
-            return Object.values(obj).indexOf(val) >= 0;
+
+        return {
+            isValueInObject: isValueInObject,
+            isUrlInBypassList: isUrlInBypassList
         };
 
-        this.isUrlInBypassList = function (bypassUrls, url) {
-            var subsetUrls = Object.values(bypassUrls);
+        function isValueInObject(val, obj) {
+            return Object.values(obj).indexOf(val) >= 0;
+        }
 
-            if (subsetUrls.length == 0) return false;
-
-            var plainUrls = subsetUrls.reduce(function (all, subset) {
-                subset.forEach(function (url) {
-                    return all.push(url);
-                });
-                return all;
-            }, []);
-
-            return plainUrls.some(function (item) {
+        function isUrlInBypassList(bypassUrls, url) {
+            return bypassUrls.some(function (item) {
                 return url.indexOf(item) >= 0;
             });
-        };
+        }
     }
 })(angular);
 
@@ -4452,8 +4447,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                 enableRefreshTokens: false,
                 requireAuthentication: true,
                 baseUrl: '/api',
-                authBypassUrls: {},
-                noCacheBypassUrls: {}
+                authBypassUrls: [],
+                noCacheBypassUrls: []
             },
             localStorage: {
                 prefix: 'tubular.'
