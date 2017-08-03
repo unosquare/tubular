@@ -15,7 +15,8 @@
                     enableRefreshTokens: PLATFORM,
                     requireAuthentication: PLATFORM,
                     baseUrl: PLATFORM,
-                    urlWhiteList: PLATFORM
+                    authBypassUrls: PLATFORM,
+                    noCacheBypassUrls: PLATFORM
                 },
                 platform: {},
                 localStorage: {
@@ -34,7 +35,8 @@
                     enableRefreshTokens: false,
                     requireAuthentication: true,
                     baseUrl: '/api',
-                    urlWhiteList : []
+                    authBypassUrls : [],
+                    noCacheBypassUrls: []
                 },
                 localStorage: {
                     prefix: 'tubular.'

@@ -11,10 +11,15 @@
      * It contains common functions/utilities used in Tubular. ie. moment reference.
      */
     angular.module('tubular.core', [])
-        .service('tubular', tubular);
+        .factory('tubular', tubular);
 
     function tubular() {
-        this.isValueInObject = function (val, obj) {
+
+        return {
+            isValueInObject: isValueInObject
+        }
+
+        function isValueInObject(val, obj) {
             return Object.values(obj).indexOf(val) >= 0;
         }
     }

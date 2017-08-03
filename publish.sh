@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e # Exit with nonzero exit code if anything fails
 
+# Generate dist folder
+grunt dist
+
 TARGET_BRANCH="gh-pages"
 
 # Save some useful information

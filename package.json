@@ -73,6 +73,6 @@
     "load-grunt-tasks": "^3.5.2",
     "protractor": "^5.1.2",
     "pug": "~2.0.0-beta11",
-    "tubular-nodejs": "^0.1.7"
+    "tubular-nodejs": "^0.1.8"
   }
 }

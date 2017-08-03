@@ -216,4 +216,6 @@ module.exports = grunt => {
 
 
     grunt.registerTask('e2e-nodejs', ['copy:integration', 'server', 'protractor_coverage:local']);
+
+    grunt.registerTask('local-check', ['dist', 'unit:ci', 'e2e:ci', 'eslint']);
 };

@@ -32,7 +32,7 @@
                     return config;
                 }
 
-                if (checkIsWhiteListedUrl(config.url)) {
+                if (tubularConfig.webApi.authBypassUrls().some(item => config.url.indexOf(item) >= 0)) {
                     return config;
                 }
 
@@ -64,10 +64,6 @@
                 }
 
                 return config;
-            }
-
-            function checkIsWhiteListedUrl(url) {
-                return tubularConfig.webApi.urlWhiteList().find(item => url.indexOf(item) >= 0);
             }
 
             function checkStatic(url) {
