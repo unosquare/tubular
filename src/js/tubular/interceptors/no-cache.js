@@ -20,7 +20,7 @@
                         return config;
                     }
 
-                    if (tubular.isUrlInBypassList(tubularConfig.webApi.noCacheBypassUrls(), config.url)) {
+                    if (tubular.isUrlInList(tubularConfig.webApi.noCacheBypassUrls(), config.url)) {
                         return config;
                     }
 

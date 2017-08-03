@@ -32,7 +32,7 @@
                     return config;
                 }
 
-                if (tubular.isUrlInBypassList(tubularConfig.webApi.authBypassUrls(), config.url)) {
+                if (tubular.isUrlInList(tubularConfig.webApi.authBypassUrls(), config.url)) {
                     return config;
                 }
 

@@ -17,14 +17,14 @@
 
         return {
             isValueInObject: isValueInObject,
-            isUrlInBypassList: isUrlInBypassList
+            isUrlInList: isUrlInList
         }
 
         function isValueInObject(val, obj) {
             return Object.values(obj).indexOf(val) >= 0;
         }
 
-        function isUrlInBypassList(bypassUrls, url) {
+        function isUrlInList(bypassUrls, url) {
             return bypassUrls.some(item => url.indexOf(item) >= 0);
         }
     }
