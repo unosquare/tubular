@@ -11,7 +11,7 @@
      * @returns {Object} A httpInterceptor
      */
     angular.module('tubular.services')
-        .factory('tubularAuthInterceptor', ['$q', '$injector', 'tubularConfig', 'tubular', function ($q, $injector, tubularConfig, tubular) {
+        .factory('tubularAuthInterceptor', ['$q', '$injector', 'tubularConfig', function ($q, $injector, tubularConfig) {
 
             let refreshTokenRequest = null;
             const tubularHttpName = 'tubularHttp';
@@ -32,7 +32,7 @@
                     return config;
                 }
 
-                if (tubular.isUrlInList(tubularConfig.webApi.authBypassUrls(), config.url)) {
+                if (tubularConfig.webApi.authBypassUrls().some(item => config.url.indexOf(item) >= 0)) {
                     return config;
                 }
 

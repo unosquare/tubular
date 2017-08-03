@@ -11,7 +11,7 @@
      * @returns {Object} A httpInterceptor
      */
     angular.module('tubular.services')
-        .factory('tubularNoCacheInterceptor', ['tubularConfig', 'tubular', function (tubularConfig, tubular) {
+        .factory('tubularNoCacheInterceptor', ['tubularConfig', function (tubularConfig) {
 
             return {
                 request: (config) => {
@@ -20,7 +20,7 @@
                         return config;
                     }
 
-                    if (tubular.isUrlInList(tubularConfig.webApi.noCacheBypassUrls(), config.url)) {
+                    if (tubularConfig.webApi.noCacheBypassUrls().some(item => config.url.indexOf(item) >= 0)) {
                         return config;
                     }
 
@@ -29,7 +29,7 @@
 
                     if (!matchesEscapePatterns) {
                         const separator = config.url.indexOf('?') === -1 ? '?' : '&';
-                        config.url = `${config.url + separator}noCache=${new Date().getTime()}`;
+                        config.url = `${config.url}${separator}noCache=${new Date().getTime()}`;
                     }
 
                     return config;

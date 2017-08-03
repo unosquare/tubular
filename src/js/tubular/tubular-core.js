@@ -16,16 +16,11 @@
     function tubular() {
 
         return {
-            isValueInObject: isValueInObject,
-            isUrlInList: isUrlInList
+            isValueInObject: isValueInObject
         }
 
         function isValueInObject(val, obj) {
             return Object.values(obj).indexOf(val) >= 0;
-        }
-
-        function isUrlInList(bypassUrls, url) {
-            return bypassUrls.some(item => url.indexOf(item) >= 0);
         }
     }
 })(angular);

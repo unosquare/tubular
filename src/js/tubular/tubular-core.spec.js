@@ -20,12 +20,4 @@ describe('Module: tubular.core', () => {
         expect(tubular.isValueInObject('ASC', testObject)).toBe(false);
         expect(tubular.isValueInObject('ascending', testObject)).toBe(true);
     });
-
-    it('should find url in list', () => {
-        const testObject = ['some/endpoint/url', 'other/endpoint/url2'];
-
-        expect(tubular.isUrlInList(testObject, 'http://unosquarelabs.com/some/endpoint/url')).toBe(true);
-        expect(tubular.isUrlInList(testObject, 'http://unosquarelabs.com/other/endpoint/url2')).toBe(true);
-        expect(tubular.isUrlInList(testObject, 'http://unosquarelabs.com/unknown/endpoint/url')).toBe(false);
-    });
 });
