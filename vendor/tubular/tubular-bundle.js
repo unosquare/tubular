@@ -34,16 +34,11 @@
     function tubular() {
 
         return {
-            isValueInObject: isValueInObject,
-            isUrlInList: isUrlInList
+            isValueInObject: isValueInObject
         }
 
         function isValueInObject(val, obj) {
             return Object.values(obj).indexOf(val) >= 0;
-        }
-
-        function isUrlInList(bypassUrls, url) {
-            return bypassUrls.some(item => url.indexOf(item) >= 0);
         }
     }
 })(angular);
@@ -2978,7 +2973,7 @@ angular.module('tubular.services', ['ui.bootstrap', 'tubular.core'])
      * @returns {Object} A httpInterceptor
      */
     angular.module('tubular.services')
-        .factory('tubularAuthInterceptor', ['$q', '$injector', 'tubularConfig', 'tubular', function ($q, $injector, tubularConfig, tubular) {
+        .factory('tubularAuthInterceptor', ['$q', '$injector', 'tubularConfig', function ($q, $injector, tubularConfig) {
 
             let refreshTokenRequest = null;
             const tubularHttpName = 'tubularHttp';
@@ -2999,7 +2994,7 @@ angular.module('tubular.services', ['ui.bootstrap', 'tubular.core'])
                     return config;
                 }
 
-                if (tubular.isUrlInList(tubularConfig.webApi.authBypassUrls(), config.url)) {
+                if (tubularConfig.webApi.authBypassUrls().some(item => config.url.indexOf(item) >= 0)) {
                     return config;
                 }
 
@@ -3126,7 +3121,7 @@ angular.module('tubular.services', ['ui.bootstrap', 'tubular.core'])
      * @returns {Object} A httpInterceptor
      */
     angular.module('tubular.services')
-        .factory('tubularNoCacheInterceptor', ['tubularConfig', 'tubular', function (tubularConfig, tubular) {
+        .factory('tubularNoCacheInterceptor', ['tubularConfig', function (tubularConfig) {
 
             return {
                 request: (config) => {
@@ -3135,7 +3130,7 @@ angular.module('tubular.services', ['ui.bootstrap', 'tubular.core'])
                         return config;
                     }
 
-                    if (tubular.isUrlInList(tubularConfig.webApi.noCacheBypassUrls(), config.url)) {
+                    if (tubularConfig.webApi.noCacheBypassUrls().some(item => config.url.indexOf(item) >= 0)) {
                         return config;
                     }
 
@@ -3144,7 +3139,7 @@ angular.module('tubular.services', ['ui.bootstrap', 'tubular.core'])
 
                     if (!matchesEscapePatterns) {
                         const separator = config.url.indexOf('?') === -1 ? '?' : '&';
-                        config.url = `${config.url + separator}noCache=${new Date().getTime()}`;
+                        config.url = `${config.url}${separator}noCache=${new Date().getTime()}`;
                     }
 
                     return config;

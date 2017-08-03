@@ -36,18 +36,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     function tubular() {
 
         return {
-            isValueInObject: isValueInObject,
-            isUrlInList: isUrlInList
+            isValueInObject: isValueInObject
         };
 
         function isValueInObject(val, obj) {
             return Object.values(obj).indexOf(val) >= 0;
-        }
-
-        function isUrlInList(bypassUrls, url) {
-            return bypassUrls.some(function (item) {
-                return url.indexOf(item) >= 0;
-            });
         }
     }
 })(angular);
@@ -2860,7 +2853,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
      * @returns {Object} A httpInterceptor
      */
 
-    angular.module('tubular.services').factory('tubularAuthInterceptor', ['$q', '$injector', 'tubularConfig', 'tubular', function ($q, $injector, tubularConfig, tubular) {
+    angular.module('tubular.services').factory('tubularAuthInterceptor', ['$q', '$injector', 'tubularConfig', function ($q, $injector, tubularConfig) {
 
         var refreshTokenRequest = null;
         var tubularHttpName = 'tubularHttp';
@@ -2881,7 +2874,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                 return config;
             }
 
-            if (tubular.isUrlInList(tubularConfig.webApi.authBypassUrls(), config.url)) {
+            if (tubularConfig.webApi.authBypassUrls().some(function (item) {
+                return config.url.indexOf(item) >= 0;
+            })) {
                 return config;
             }
 
@@ -3000,7 +2995,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
      * @returns {Object} A httpInterceptor
      */
 
-    angular.module('tubular.services').factory('tubularNoCacheInterceptor', ['tubularConfig', 'tubular', function (tubularConfig, tubular) {
+    angular.module('tubular.services').factory('tubularNoCacheInterceptor', ['tubularConfig', function (tubularConfig) {
 
         return {
             request: function request(config) {
@@ -3009,7 +3004,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                     return config;
                 }
 
-                if (tubular.isUrlInList(tubularConfig.webApi.noCacheBypassUrls(), config.url)) {
+                if (tubularConfig.webApi.noCacheBypassUrls().some(function (item) {
+                    return config.url.indexOf(item) >= 0;
+                })) {
                     return config;
                 }
 
@@ -3018,7 +3015,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
                 if (!matchesEscapePatterns) {
                     var separator = config.url.indexOf('?') === -1 ? '?' : '&';
-                    config.url = config.url + separator + 'noCache=' + new Date().getTime();
+                    config.url = '' + config.url + separator + 'noCache=' + new Date().getTime();
                 }
 
                 return config;
