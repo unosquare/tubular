@@ -626,7 +626,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                 $valid: function $valid() {
                     return Object.keys(obj.$state).filter(function (k) {
                         return angular.isDefined(obj.$state[k]) && !obj.$state[k].$valid();
-                    }).length == 0;
+                    }).length === 0;
                 },
                 $addField: function $addField(key, value, ignoreOriginal) {
                     if (obj.$fields.indexOf(key) >= 0) {
@@ -635,7 +635,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
                     obj[key] = value;
                     obj.$fields.push(key);
-                    obj.$original[key] = ignoreOriginal ? undefined : value;
+
+                    if (!ignoreOriginal) {
+                        obj.$original[key] = value;
+                    }
                 },
                 resetOriginal: function resetOriginal() {
                     return angular.forEach(obj.$original, function (v, k) {

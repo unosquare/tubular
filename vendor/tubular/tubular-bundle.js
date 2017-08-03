@@ -654,7 +654,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     $fields: [],
                     $state: {},
                     $original: {},
-                    $valid: () => Object.keys(obj.$state).filter(k => angular.isDefined(obj.$state[k]) && !obj.$state[k].$valid()).length == 0,
+                    $valid: () => Object.keys(obj.$state).filter(k => angular.isDefined(obj.$state[k]) && !obj.$state[k].$valid()).length === 0,
                     $addField: (key, value, ignoreOriginal) => {
                         if (obj.$fields.indexOf(key) >= 0) {
                             return;
@@ -662,7 +662,10 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
                         obj[key] = value;
                         obj.$fields.push(key);
-                        obj.$original[key] = ignoreOriginal ? undefined : value;
+                        
+                        if (!ignoreOriginal) {
+                            obj.$original[key] = value;
+                        }
                     },
                     resetOriginal: () => angular.forEach(obj.$original, (v, k) => obj.$original[k] = obj[k]),
                     revertChanges: () => {
