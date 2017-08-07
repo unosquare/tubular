@@ -96,6 +96,7 @@
                     $ctrl.$onInit = () => {
                         $ctrl.onlyContains = angular.isUndefined($ctrl.onlyContains) ? false : $ctrl.onlyContains;
                         $ctrl.templateName = 'tbColumnFilterPopover.tpl.html';
+                        $ctrl.operator = $ctrl.operator || compareOperators.NONE;
 
                         if (!tubular.isValueInObject($ctrl.operator, compareOperators)) {
                             throw `Invalid compare operator: '${$ctrl.operator}'.`;
