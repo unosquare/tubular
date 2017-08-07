@@ -2318,6 +2318,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             $ctrl.$onInit = function () {
                 $ctrl.onlyContains = angular.isUndefined($ctrl.onlyContains) ? false : $ctrl.onlyContains;
                 $ctrl.templateName = 'tbColumnFilterPopover.tpl.html';
+                $ctrl.operator = $ctrl.operator || compareOperators.NONE;
 
                 if (!tubular.isValueInObject($ctrl.operator, compareOperators)) {
                     throw 'Invalid compare operator: \'' + $ctrl.operator + '\'.';
