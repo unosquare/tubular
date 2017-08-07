@@ -4130,6 +4130,53 @@ function exportToCsv(header, rows, visibility) {
                         `page-size="10" require-authentication="${options.RequireAuthentication}" ${options.Mode !== 'Read-Only' ? ` editor-mode="${options.Mode.toLowerCase()}"` : ''}>${topToolbar === '' ? '' : `\r\n\t<div class="row">${topToolbar}\r\n\t</div>`}\r\n\t<div class="row">` +
                         '\r\n\t<div class="col-md-12">' +
                         '\r\n\t<div class="panel panel-default panel-rounded">' +
+                        `\r\n\t<tb-grid-table class="table-bordered" columns="columns">
+                        \t</tb-grid-table>
+                        \t</div>
+                        \t</div>
+                        \t</div>${bottomToolbar === '' ? '' : `\r\n\t<div class="row">${bottomToolbar}\r\n\t</div>`}\r\n</tb-grid>
+                        </div>`;
+                };
+
+                me.generateGridToExport = function (columns, options) {
+                    let topToolbar = '';
+                    let bottomToolbar = '';
+
+                    if (options.Pager) {
+                        topToolbar += '\r\n\t<tb-grid-pager class="col-md-6"></tb-grid-pager>';
+                        bottomToolbar += '\r\n\t<tb-grid-pager class="col-md-6"></tb-grid-pager>';
+                    }
+
+                    if (options.ExportCsv) {
+                        topToolbar += '\r\n\t<div class="col-md-3">' +
+                            '\r\n\t\t<div class="btn-group">' +
+                            '\r\n\t\t<tb-print-button title="Tubular"></tb-print-button>' +
+                            '\r\n\t\t<tb-export-button filename="tubular.csv" css="btn-sm"></tb-export-button>' +
+                            '\r\n\t\t</div>' +
+                            '\r\n\t</div>';
+                    }
+
+                    if (options.FreeTextSearch) {
+                        topToolbar += '\r\n\t<tb-text-search class="col-md-3" css="input-sm"></tb-text-search>';
+                    }
+
+                    if (options.PageSizeSelector) {
+                        bottomToolbar +=
+                            '\r\n\t<tb-page-size-selector class="col-md-3" selectorcss="input-sm"></tb-page-size-selector>';
+                    }
+
+                    if (options.PagerInfo) {
+                        bottomToolbar += '\r\n\t<tb-grid-pager-info class="col-md-3"></tb-grid-pager-info>';
+                    }
+
+                    const columnDefinitions = me.generateColumnsDefinitions(columns);
+                    const rowsDefinitions = me.generateCells(columns, options.Mode);
+
+                    return `${'<div class="container">' +
+                        '\r\n<tb-grid server-url="'}${options.dataUrl}" request-method="${options.RequestMethod}" class="row" ` +
+                        `page-size="10" require-authentication="${options.RequireAuthentication}" ${options.Mode !== 'Read-Only' ? ` editor-mode="${options.Mode.toLowerCase()}"` : ''}>${topToolbar === '' ? '' : `\r\n\t<div class="row">${topToolbar}\r\n\t</div>`}\r\n\t<div class="row">` +
+                        '\r\n\t<div class="col-md-12">' +
+                        '\r\n\t<div class="panel panel-default panel-rounded">' +
                         `\r\n\t<tb-grid-table class="table-bordered">
                         \t<tb-column-definitions>
                         ${columnDefinitions}

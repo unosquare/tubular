@@ -3976,6 +3976,37 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             var columnDefinitions = me.generateColumnsDefinitions(columns);
             var rowsDefinitions = me.generateCells(columns, options.Mode);
 
+            return '' + ('<div class="container">' + '\r\n<tb-grid server-url="') + options.dataUrl + '" request-method="' + options.RequestMethod + '" class="row" ' + ('page-size="10" require-authentication="' + options.RequireAuthentication + '" ' + (options.Mode !== 'Read-Only' ? ' editor-mode="' + options.Mode.toLowerCase() + '"' : '') + '>' + (topToolbar === '' ? '' : '\r\n\t<div class="row">' + topToolbar + '\r\n\t</div>') + '\r\n\t<div class="row">') + '\r\n\t<div class="col-md-12">' + '\r\n\t<div class="panel panel-default panel-rounded">' + ('\r\n\t<tb-grid-table class="table-bordered" columns="columns">\n                        \t</tb-grid-table>\n                        \t</div>\n                        \t</div>\n                        \t</div>' + (bottomToolbar === '' ? '' : '\r\n\t<div class="row">' + bottomToolbar + '\r\n\t</div>') + '\r\n</tb-grid>\n                        </div>');
+        };
+
+        me.generateGridToExport = function (columns, options) {
+            var topToolbar = '';
+            var bottomToolbar = '';
+
+            if (options.Pager) {
+                topToolbar += '\r\n\t<tb-grid-pager class="col-md-6"></tb-grid-pager>';
+                bottomToolbar += '\r\n\t<tb-grid-pager class="col-md-6"></tb-grid-pager>';
+            }
+
+            if (options.ExportCsv) {
+                topToolbar += '\r\n\t<div class="col-md-3">' + '\r\n\t\t<div class="btn-group">' + '\r\n\t\t<tb-print-button title="Tubular"></tb-print-button>' + '\r\n\t\t<tb-export-button filename="tubular.csv" css="btn-sm"></tb-export-button>' + '\r\n\t\t</div>' + '\r\n\t</div>';
+            }
+
+            if (options.FreeTextSearch) {
+                topToolbar += '\r\n\t<tb-text-search class="col-md-3" css="input-sm"></tb-text-search>';
+            }
+
+            if (options.PageSizeSelector) {
+                bottomToolbar += '\r\n\t<tb-page-size-selector class="col-md-3" selectorcss="input-sm"></tb-page-size-selector>';
+            }
+
+            if (options.PagerInfo) {
+                bottomToolbar += '\r\n\t<tb-grid-pager-info class="col-md-3"></tb-grid-pager-info>';
+            }
+
+            var columnDefinitions = me.generateColumnsDefinitions(columns);
+            var rowsDefinitions = me.generateCells(columns, options.Mode);
+
             return '' + ('<div class="container">' + '\r\n<tb-grid server-url="') + options.dataUrl + '" request-method="' + options.RequestMethod + '" class="row" ' + ('page-size="10" require-authentication="' + options.RequireAuthentication + '" ' + (options.Mode !== 'Read-Only' ? ' editor-mode="' + options.Mode.toLowerCase() + '"' : '') + '>' + (topToolbar === '' ? '' : '\r\n\t<div class="row">' + topToolbar + '\r\n\t</div>') + '\r\n\t<div class="row">') + '\r\n\t<div class="col-md-12">' + '\r\n\t<div class="panel panel-default panel-rounded">' + ('\r\n\t<tb-grid-table class="table-bordered">\n                        \t<tb-column-definitions>\n                        ' + columnDefinitions + '\n                        </tb-column-definitions>') + '\r\n\t<tb-row-set>' + ('\r\n\t<tb-row-template ng-repeat="row in $component.rows" row-model="row">' + (options.Mode !== 'Read-Only' ? '\r\n\t\t<tb-cell-template>' + (options.Mode === 'Inline' ? '\r\n\t\t\t<tb-save-button model="row"></tb-save-button>' : '') + '\r\n\t\t\t<tb-edit-button model="row"></tb-edit-button>' + '\r\n\t\t</tb-cell-template>' : '') + rowsDefinitions + '\r\n\t</tb-row-template>') + ('\r\n\t</tb-row-set>\n                        \t</tb-grid-table>\n                        \t</div>\n                        \t</div>\n                        \t</div>' + (bottomToolbar === '' ? '' : '\r\n\t<div class="row">' + bottomToolbar + '\r\n\t</div>') + '\r\n</tb-grid>\n                        </div>');
         };
 
