@@ -41,6 +41,12 @@
                     return tubularTemplateService.generateGrid(scope.columns, scope.uiOptions);
                 };
 
+                me.runGridTemplateToExport = function (scope) {
+                    scope.uiOptions.dataUrl = scope.dataUrl;
+                    
+                    return tubularTemplateService.generateGridToExport(scope.columns, scope.uiOptions);
+                };
+
                 me.runFormTemplate = function (scope) {
                     scope.formOptions.dataUrl = scope.dataUrl;
                     
