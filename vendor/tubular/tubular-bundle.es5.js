@@ -3936,6 +3936,17 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             }, '');
         };
 
+        me.generateCellsToExport = function (columns, mode) {
+            return columns.reduce(function (prev, el) {
+                var editorTag = mode === 'Inline' ? el.EditorType.replace(/([A-Z])/g, function ($1) {
+                    return '-' + $1.toLowerCase();
+                }) : '';
+                var templateExpression = el.Template || '<span ng-bind="row.' + el.Name + '"></span>';
+
+                return prev + '\r\n\t\t<tb-cell-template column-name="' + el.Name + '">\n                            \t\t\t' + (mode === 'Inline' ? '<' + editorTag + ' is-editing="row.$isEditing" value="row.' + el.Name + '"></' + editorTag + '>' : templateExpression) + '\n                            \t\t</tb-cell-template>';
+            }, '');
+        };
+
         me.generateColumnsDefinitions = function (columns) {
             return columns.reduce(function (prev, el) {
                 return prev + '\n                        \t\t<tb-column name="' + el.Name + '" label="' + el.Label + '" column-type="' + el.DataType + '" sortable="' + el.Sortable + '" \n                        \t\t\tis-key="' + el.IsKey + '" searchable="' + el.Searchable + '" ' + (el.Sortable ? '\r\n\t\t\tsort-direction="' + el.SortDirection + '" sort-order="' + el.SortOrder + '" ' : ' ') + '\n                                visible="' + el.Visible + '">' + (el.Filter ? '\r\n\t\t\t<tb-column-filter></tb-column-filter>' : '') + '\n                        \t\t\t<tb-column-header><span>{{label}}</span></tb-column-header>\n                        \t\t</tb-column>';
