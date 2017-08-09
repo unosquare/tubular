@@ -3984,9 +3984,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                 bottomToolbar += '\r\n\t<tb-grid-pager-info class="col-md-3"></tb-grid-pager-info>';
             }
 
-            var columnDefinitions = me.generateColumnsDefinitions(columns);
-            var rowsDefinitions = me.generateCells(columns, options.Mode);
-
             return '' + ('<div class="container">' + '\r\n<tb-grid server-url="') + options.dataUrl + '" request-method="' + options.RequestMethod + '" class="row" ' + ('page-size="10" require-authentication="' + options.RequireAuthentication + '" ' + (options.Mode !== 'Read-Only' ? ' editor-mode="' + options.Mode.toLowerCase() + '"' : '') + '>' + (topToolbar === '' ? '' : '\r\n\t<div class="row">' + topToolbar + '\r\n\t</div>') + '\r\n\t<div class="row">') + '\r\n\t<div class="col-md-12">' + '\r\n\t<div class="panel panel-default panel-rounded">' + ('\r\n\t<tb-grid-table class="table-bordered" columns="columns">\n                        \t</tb-grid-table>\n                        \t</div>\n                        \t</div>\n                        \t</div>' + (bottomToolbar === '' ? '' : '\r\n\t<div class="row">' + bottomToolbar + '\r\n\t</div>') + '\r\n</tb-grid>\n                        </div>');
         };
 

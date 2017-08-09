@@ -4132,9 +4132,6 @@ function exportToCsv(header, rows, visibility) {
                         bottomToolbar += '\r\n\t<tb-grid-pager-info class="col-md-3"></tb-grid-pager-info>';
                     }
 
-                    const columnDefinitions = me.generateColumnsDefinitions(columns);
-                    const rowsDefinitions = me.generateCells(columns, options.Mode);
-
                     return `${'<div class="container">' +
                         '\r\n<tb-grid server-url="'}${options.dataUrl}" request-method="${options.RequestMethod}" class="row" ` +
                         `page-size="10" require-authentication="${options.RequireAuthentication}" ${options.Mode !== 'Read-Only' ? ` editor-mode="${options.Mode.toLowerCase()}"` : ''}>${topToolbar === '' ? '' : `\r\n\t<div class="row">${topToolbar}\r\n\t</div>`}\r\n\t<div class="row">` +
