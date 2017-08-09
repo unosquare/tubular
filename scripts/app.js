@@ -232,7 +232,7 @@
 
                             files.push({
                                 name: filename + '.html',
-                                content: $scope.gridmodel.replace(/server-url="(.[^"]+)"/g, 'server-url="' + tempUrl + '"')
+                                content: $scope.gridmodelExport.replace(/server-url="(.[^"]+)"/g, 'server-url="' + tempUrl + '"')
                             });
 
                             appJs = appJs.replace(/grid.html/g, filename + '.html');
@@ -241,8 +241,8 @@
                                 var view = $scope.views[prop];
                                 files.push(view);
 
-                                if (view.indexOf('.html') > 0) {
-                                    appJs = appJs.replace(/grid.html/g, view);
+                                if (view.name.indexOf('.html') > 0) {
+                                    appJs = appJs.replace(/grid.html/g, view.name);
                                 }
                             }
                         }
@@ -266,7 +266,7 @@
                         content: $scope.gridmodel.replace(/server-url="(.[^"]+)"/g, 'server-url="' + tempUrl + '"')
                     });
 
-                    $window.localStorage.setItem('generator_views', $scope.views);
+                    $window.localStorage.setItem('generator_views', angular.toJson($scope.views));
                     $scope.step = 1;
                     $scope.basemodel = '';
                 };
