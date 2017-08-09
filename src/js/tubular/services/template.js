@@ -244,7 +244,7 @@
                     }
 
                     const columnDefinitions = me.generateColumnsDefinitions(columns);
-                    const rowsDefinitions = me.generateCells(columns, options.Mode);
+                    const rowsDefinitions = me.generateCellsToExport(columns, options.Mode);
 
                     return `${'<div class="container">' +
                         '\r\n<tb-grid server-url="'}${options.dataUrl}" request-method="${options.RequestMethod}" class="row" ` +
