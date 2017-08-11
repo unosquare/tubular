@@ -132,7 +132,7 @@
             '$scope', '$http', '$templateCache', 'tubularGenerator', '$window', 'tubularTemplateService',
             function ($scope, $http, $templateCache, tubularGenerator, $window, tubularTemplateService) {
                 // Options
-                $scope.enums = tubularTemplateService.enums;
+                $scope.enums = { gridModes: ["Read-Only", "Inline", "Popup", "Page"] };
 
                 $scope.templatename = '';
                 $scope.basemodel = '';
