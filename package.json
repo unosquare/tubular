@@ -10,7 +10,8 @@
   "scripts": {
     "protractor": "protractor test/integration/tbnodejs/protractor.conf.js",
     "pretest": "./node_modules/protractor/bin/webdriver-manager update",
-    "test": "grunt eslint && grunt unit:ci && grunt e2e:ci && grunt coveralls:ci && grunt e2e-nodejs"
+    "test": "grunt eslint && grunt unit:ci && grunt e2e:ci && grunt coveralls:ci && grunt e2e-nodejs",
+    "serve" : "lite-server -c bs-config.json"
   },
   "keywords": [
     "grid",
@@ -70,6 +71,7 @@
     "karma-jasmine": "1.1.0",
     "karma-jasmine-jquery": "0.1.1",
     "karma-ng-html2js-preprocessor": "1.0.0",
+    "lite-server": "^2.3.0",
     "load-grunt-tasks": "^3.5.2",
     "protractor": "^5.1.2",
     "pug": "~2.0.0-beta11",
