@@ -116,6 +116,19 @@ The following HTML represents a basic grid. You don't need to add anything else 
     </div>
 ```
 
+### Run Sample
+
+There is a sample included in this project, you can run it just by doing the follow.
+
+```
+// Install all the dependencies
+npm install
+// Builds the project and generetes the bundles
+grunt build
+// Runs the sample project
+npm run serve 
+```
+
 ## Boilerplate
 
 We have 3 boilerplates ready to seed your project:
