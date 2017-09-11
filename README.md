@@ -38,19 +38,18 @@ You will need to reference the following JS libraries in order to use Tubular in
 You can get all the dependencies using the following links in your master HTML page. <a href="http://www.jsdelivr.com/">jsDelivr</a> provides almost everything you need to import.
 
 ```html
-<link rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap/latest/css/bootstrap.min.css" />
-<link rel="stylesheet" href="//cdn.jsdelivr.net/fontawesome/latest/css/font-awesome.min.css" />
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/bootstrap@latest/dist/css/bootstrap.min.css" />
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css" />
 
 <script src="//cdn.jsdelivr.net/npm/angular@1.6.4/angular.js"></script>
 <script src="//cdn.jsdelivr.net/npm/angular-route@1.6.4/angular-route.js"></script>
 <script src="//cdn.jsdelivr.net/npm/angular-animate@1.6.4/angular-animate.js"></script>
-<script src="//cdn.jsdelivr.net/g/angular.bootstrap@2.5.0(ui-bootstrap.min.js+ui-bootstrap-tpls.min.js),momentjs@2.17.1"></script>
-```
-
+<script src="//cdn.jsdelivr.net/combine/npm/angular-ui-bootstrap@2.5.0/dist/ui-bootstrap.min.js,npm/angular-ui-bootstrap@2.5.0/dist/ui-bootstrap-tpls.min.js,npm/moment@2.18.1"></script>
+```          
 Then you will need to either grab your own copy of Tubular or you use jsDelivr to reference Tubular CSS and JS files.
 
 ```html
-<link rel="stylesheet" href="//cdn.jsdelivr.net/tubular/latest/tubular-bundle.min.css" />
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/tubular@latest/dist/tubular-bundle.min.css" />
 <script src="//cdn.jsdelivr.net/npm/tubular@1.8.1"></script>
 ```
 
