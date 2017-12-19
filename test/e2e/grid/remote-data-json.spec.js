@@ -26,6 +26,8 @@ describe('Component: Grid', () => {
     templateCache = _$templateCache_;
     scope.serverUrl = serverUrl;
     $httpBackend = _$httpBackend_;
+    $httpBackend.whenPOST(serverUrl)
+    .respond({});
   }));
 
   function generate() {

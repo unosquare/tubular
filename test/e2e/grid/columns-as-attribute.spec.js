@@ -14,6 +14,8 @@ describe('Component: Grid', () => {
     compile = _$compile_;
     templateCache = _$templateCache_;
     $httpBackend = _$httpBackend_;
+    $httpBackend.whenPOST(serverUrl)
+    .respond({});
     tubularColumn = _tubularColumn_;
     scope.serverUrl = serverUrl;
     scope.columns = [

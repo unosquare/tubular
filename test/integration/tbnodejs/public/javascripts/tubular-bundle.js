@@ -1,4 +1,4 @@
-(function(angular) {
+(function (angular) {
   'use strict';
 
   /**
@@ -11,9 +11,36 @@
    * It depends upon  {@link tubular.directives}, {@link tubular.services} and {@link tubular.models}.
    */
   angular
-    .module('tubular', ['tubular.directives', 'tubular.services', 'tubular.models'])
-    .info({ version: '1.8.0' });
+    .module('tubular', ['tubular.core', 'tubular.directives', 'tubular.services', 'tubular.models'])
+    .info({ version: '1.8.1' });
 
+})(angular);
+
+(function (angular) {
+    'use strict';
+
+    /**
+     * @ngdoc module
+     * @name tubular.common
+     *
+     * @description
+     * Tubular Common module.
+     *
+     * It contains common functions/utilities used in Tubular. ie. moment reference.
+     */
+    angular.module('tubular.core', [])
+        .factory('tubular', tubular);
+
+    function tubular() {
+
+        return {
+            isValueInObject: isValueInObject
+        }
+
+        function isValueInObject(val, obj) {
+            return Object.values(obj).indexOf(val) >= 0;
+        }
+    }
 })(angular);
 
 (angular => {
@@ -29,7 +56,7 @@
      *
      * It depends upon {@link tubular.services} and {@link tubular.models}.
      */
-    angular.module('tubular.directives', ['tubular.models', 'tubular.services'])
+    angular.module('tubular.directives', ['tubular.models', 'tubular.services', 'tubular.core'])
         /**
          * @ngdoc directive
          * @name tbGridTable
@@ -84,7 +111,7 @@
                                 element.find('tr').append(headersContent);
 
                                 const cellsTemplate = tubularTemplateService.generateCells(scope.columns, '');
-                                const cellsContent = $compile('<tbody><tr ng-repeat="row in $component.rows" row-model="row">' + cellsTemplate + '</tr></tbody>')(scope);
+                                const cellsContent = $compile(`<tbody><tr ng-repeat="row in $component.rows" row-model="row">${cellsTemplate}</tr></tbody>`)(scope);
                                 element.append(cellsContent);
                             }
                         },
@@ -548,51 +575,56 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
          * @description
          * The `tubularColumn` factory is the base to generate a column model to use with `tbGrid`.
          */
-        .factory('tubularColumn', ['dataTypes', 'sortDirection', 'aggregateFunctions', function (dataTypes, sortDirection, aggregateFunctions) {
-            return function (columnName, options) {
-                options = options || {};
-                options.DataType = options.DataType || dataTypes.STRING;
-                options.Aggregate = options.Aggregate || aggregateFunctions.NONE;
+        .factory('tubularColumn', [
+            'dataTypes',
+            'sortDirection',
+            'aggregateFunctions',
+            'tubular',
+            function (dataTypes, sortDirection, aggregateFunctions, tubular) {
+                return function (columnName, options) {
+                    options = options || {};
+                    options.DataType = options.DataType || dataTypes.STRING;
+                    options.Aggregate = options.Aggregate || aggregateFunctions.NONE;
 
-                if (Object.values(dataTypes).indexOf(options.DataType) < 0) {
-                    throw `Invalid data type: '${options.DataType}' for column '${columnName}'`;
-                }
+                    if (!tubular.isValueInObject(options.DataType, dataTypes)) {
+                        throw `Invalid data type: '${options.DataType}' for column '${columnName}'`;
+                    }
 
-                if (Object.values(aggregateFunctions).indexOf(options.Aggregate) < 0) {
-                    throw `Invalid aggregate function: '${options.Aggregate}' for column '${columnName}'`;
-                }
+                    if (!tubular.isValueInObject(options.Aggregate, aggregateFunctions)) {
+                        throw `Invalid aggregate function: '${options.Aggregate}' for column '${columnName}'`;
+                    }
 
-                const obj = {
-                    Label: options.Label || (columnName || '').replace(/([a-z])([A-Z])/g, '$1 $2'),
-                    Name: columnName,
-                    Sortable: options.Sortable,
-                    SortOrder: parseInt(options.SortOrder) || -1,
-                    SortDirection: function () {
-                        if (angular.isUndefined(options.SortDirection)) {
+                    const obj = {
+                        Label: options.Label || (columnName || '').replace(/([a-z])([A-Z])/g, '$1 $2'),
+                        Name: columnName,
+                        Sortable: options.Sortable,
+                        SortOrder: parseInt(options.SortOrder) || -1,
+                        SortDirection: function () {
+                            if (angular.isUndefined(options.SortDirection)) {
+                                return sortDirection.NONE;
+                            }
+
+                            if (options.SortDirection.toLowerCase().startsWith('asc')) {
+                                return sortDirection.ASCENDING;
+                            }
+
+                            if (options.SortDirection.toLowerCase().startsWith('desc')) {
+                                return sortDirection.DESCENDING;
+                            }
+
                             return sortDirection.NONE;
-                        }
+                        }(),
+                        IsKey: angular.isDefined(options.IsKey) ? options.IsKey : false,
+                        Searchable: angular.isDefined(options.Searchable) ? options.Searchable : false,
+                        Visible: options.Visible === 'false' ? false : true,
+                        Filter: null,
+                        DataType: options.DataType,
+                        Aggregate: options.Aggregate
+                    };
 
-                        if (options.SortDirection.toLowerCase().indexOf('asc') === 0) {
-                            return sortDirection.ASCENDING;
-                        }
-
-                        if (options.SortDirection.toLowerCase().indexOf('desc') === 0) {
-                            return sortDirection.DESCENDING;
-                        }
-
-                        return sortDirection.NONE;
-                    }(),
-                    IsKey: angular.isDefined(options.IsKey) ? options.IsKey : false,
-                    Searchable: angular.isDefined(options.Searchable) ? options.Searchable : false,
-                    Visible: options.Visible === 'false' ? false : true,
-                    Filter: null,
-                    DataType: options.DataType,
-                    Aggregate: options.Aggregate || aggregateFunctions.NONE
+                    return obj;
                 };
-
-                return obj;
-            };
-        }]);
+            }]);
 })(angular);
 
 (function (angular, moment) {
@@ -617,7 +649,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     $fields: [],
                     $state: {},
                     $original: {},
-                    $valid: () => Object.keys(obj.$state).filter(k => angular.isDefined(obj.$state[k]) && !obj.$state[k].$valid()).length == 0,
+                    $valid: () => Object.keys(obj.$state).filter(k => angular.isDefined(obj.$state[k]) && !obj.$state[k].$valid()).length === 0,
                     $addField: (key, value, ignoreOriginal) => {
                         if (obj.$fields.indexOf(key) >= 0) {
                             return;
@@ -625,7 +657,10 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
 
                         obj[key] = value;
                         obj.$fields.push(key);
-                        obj.$original[key] = ignoreOriginal ? undefined : value;
+                        
+                        if (!ignoreOriginal) {
+                            obj.$original[key] = value;
+                        }
                     },
                     resetOriginal: () => angular.forEach(obj.$original, (v, k) => obj.$original[k] = obj[k]),
                     revertChanges: () => {
@@ -1371,13 +1406,12 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     }
 
                     angular.forEach(columns, column => {
-                        const filtered = $ctrl.columns.filter(el => el.Name === column.Name);
+                        const current = $ctrl.columns.find(el => el.Name === column.Name);
 
-                        if (filtered.length === 0) {
+                        if (!current) {
                             return;
                         }
 
-                        const current = filtered[0];
                         // Updates visibility by now
                         current.Visible = column.Visible;
 
@@ -1582,9 +1616,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                     const currentlySortedColumns = $ctrl.columns.filter(col => col.SortOrder > 0);
 
                     // re-index the sort order
-                    currentlySortedColumns.sort((a, b) => {
-                        return a.SortOrder === b.SortOrder ? 0 : a.SortOrder > b.SortOrder
-                    });
+                    currentlySortedColumns.sort((a, b) => a.SortOrder === b.SortOrder ? 0 : a.SortOrder > b.SortOrder);
 
                     angular.forEach(currentlySortedColumns, (col, index) => col.SortOrder = index + 1);
 
@@ -2386,17 +2418,19 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                 onlyContains: '=?'
             },
             controller: [
-                '$scope', 'tubularTemplateService', 'compareOperators', function ($scope, tubular, compareOperators) {
+                '$scope', 'tubularTemplateService', 'compareOperators', 'tubular', function ($scope, tubularTemplateService, compareOperators, tubular) {
                     const $ctrl = this;
-                    console.log($ctrl, $scope.operator)
-                    if (Object.values(compareOperators).indexOf($ctrl.operator) < 0) {
-                        throw `Invalid compare operator: '${$ctrl.operator}'.`;
-                    }
 
                     $ctrl.$onInit = () => {
                         $ctrl.onlyContains = angular.isUndefined($ctrl.onlyContains) ? false : $ctrl.onlyContains;
                         $ctrl.templateName = 'tbColumnFilterPopover.tpl.html';
-                        tubular.setupFilter($scope, $ctrl);
+                        $ctrl.operator = $ctrl.operator || compareOperators.NONE;
+
+                        if (!tubular.isValueInObject($ctrl.operator, compareOperators)) {
+                            throw `Invalid compare operator: '${$ctrl.operator}'.`;
+                        }
+
+                        tubularTemplateService.setupFilter($scope, $ctrl);
                     };
                 }
             ]
@@ -2810,7 +2844,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
  * Tubular Services module.
  * It contains common services like HTTP client, filtering and printing services.
  */
-angular.module('tubular.services', ['ui.bootstrap'])
+angular.module('tubular.services', ['ui.bootstrap', 'tubular.core'])
   .config([
     '$httpProvider',
     ($httpProvider) => {
@@ -2825,7 +2859,7 @@ angular.module('tubular.services', ['ui.bootstrap'])
 (function(angular) {
   'use strict';
 
-  angular.module('tubular')
+  angular.module('tubular.core')
     /**
      * @ngdoc filter
      * @name errormessage
@@ -2848,10 +2882,10 @@ angular.module('tubular.services', ['ui.bootstrap'])
     })
 })(angular);
 
-(function(angular, moment) {
+(function (angular, moment) {
   'use strict';
 
-  angular.module('tubular')
+  angular.module('tubular.core')
 
     /**
      * @ngdoc filter
@@ -2861,12 +2895,9 @@ angular.module('tubular.services', ['ui.bootstrap'])
      * @description
      * `moment` is a filter to call format from moment or, if the input is a Date, call Angular's `date` filter.
      */
-    .filter('moment', [
-      'dateFilter',
-      function(dateFilter) {
-        return (input, format) => {
-          return moment.isMoment(input) ? input.format(format || 'M/DD/YYYY') : dateFilter(input);
-        }
+    .filter('moment', ['dateFilter',
+      function (dateFilter) {
+        return (input, format) => moment.isMoment(input) ? input.format(format || 'M/DD/YYYY') : dateFilter(input);
       }
     ]);
 })(angular, moment);
@@ -2874,7 +2905,7 @@ angular.module('tubular.services', ['ui.bootstrap'])
 (function(angular) {
   'use strict';
 
-  angular.module('tubular')
+  angular.module('tubular.core')
 
     /**
      * @ngdoc filter
@@ -2964,7 +2995,7 @@ angular.module('tubular.services', ['ui.bootstrap'])
                     return config;
                 }
 
-                if (checkIsWhiteListedUrl(config.url)) {
+                if (tubularConfig.webApi.authBypassUrls().some(item => config.url.indexOf(item) >= 0)) {
                     return config;
                 }
 
@@ -2996,10 +3027,6 @@ angular.module('tubular.services', ['ui.bootstrap'])
                 }
 
                 return config;
-            }
-
-            function checkIsWhiteListedUrl(url) {
-                return tubularConfig.webApi.urlWhiteList().find(item => url.indexOf(item) >= 0);
             }
 
             function checkStatic(url) {
@@ -3095,7 +3122,7 @@ angular.module('tubular.services', ['ui.bootstrap'])
      * @returns {Object} A httpInterceptor
      */
     angular.module('tubular.services')
-        .factory('tubularNoCacheInterceptor', [function () {
+        .factory('tubularNoCacheInterceptor', ['tubularConfig', function (tubularConfig) {
 
             return {
                 request: (config) => {
@@ -3104,12 +3131,16 @@ angular.module('tubular.services', ['ui.bootstrap'])
                         return config;
                     }
 
+                    if (tubularConfig.webApi.noCacheBypassUrls().some(item => config.url.indexOf(item) >= 0)) {
+                        return config;
+                    }
+
                     // patterns to escape: .htm | blob: | noCache=
                     const matchesEscapePatterns = (/\.htm|blob:|noCache\=/.test(config.url));
 
                     if (!matchesEscapePatterns) {
                         const separator = config.url.indexOf('?') === -1 ? '?' : '&';
-                        config.url = `${config.url + separator}noCache=${new Date().getTime()}`;
+                        config.url = `${config.url}${separator}noCache=${new Date().getTime()}`;
                     }
 
                     return config;
@@ -3157,7 +3188,7 @@ angular.module('tubular.services', ['ui.bootstrap'])
             SUM: 'Sum',
             AVERAGE: 'Average',
             COUNT: 'Count',
-            DISTINCT_COUNT: 'Distinctcount',
+            DISTINCT_COUNT: 'DistinctCount',
             MAX: 'Max',
             MIN: 'Min'
         });
@@ -3630,39 +3661,37 @@ function exportToCsv(header, rows, visibility) {
          */
         .service('localPager', localPager);
 
-    localPager.$inject = ['$q','orderByFilter', 'sortDirection', 'compareOperators'];
+    localPager.$inject = ['$q', 'orderByFilter', 'sortDirection', 'compareOperators'];
 
     function localPager($q, orderByFilter, sortDirection, compareOperators) {
-        this.process = (request, data) => {
-            return $q(resolve => {
-                if (data && data.length > 0) {
-                    const totalRecords = data.length;
-                    let set = data;
+        this.process = (request, data) => $q(resolve => {
+            if (data && data.length > 0) {
+                const totalRecords = data.length;
+                let set = data;
 
-                    if (angular.isArray(set[0]) == false) {
-                        const columnIndexes = request.data.Columns
-                            .map(el => el.Name);
-                        
-                        set = set.map(el => columnIndexes.map(name => el[name]));
-                    }
+                if (!angular.isArray(set[0])) {
+                    const columnIndexes = request.data.Columns
+                        .map(el => el.Name);
 
-                    set = search(request.data, set);
-                    set = filter(request.data, set);
-                    set = sort(request.data, set);
-
-                    resolve({ data: format(request.data, set, totalRecords) });
+                    set = set.map(el => columnIndexes.map(name => el[name]));
                 }
-                else {
-                    resolve({ data: createEmptyResponse() });
-                }
-            });
-        };
+
+                set = search(request.data, set);
+                set = filter(request.data, set);
+                set = sort(request.data, set);
+
+                resolve({ data: format(request.data, set, totalRecords) });
+            }
+            else {
+                resolve({ data: createEmptyResponse() });
+            }
+        });
 
         function sort(request, set) {
             const sorts = request.Columns
                 .map((el, index) => el.SortOrder > 0 ? (el.SortDirection === sortDirection.DESCENDING ? '-' : '') + index : null)
                 .filter(el => el != null);
-            
+
             angular.forEach(sorts, sort => {
                 set = orderByFilter(set, sort);
             });
@@ -3675,7 +3704,7 @@ function exportToCsv(header, rows, visibility) {
                 const filters = request.Columns
                     .map((el, index) => el.Searchable ? index : null)
                     .filter(el => el != null);
-                
+
                 if (filters.length > 0) {
                     const searchValue = request.Search.Text.toLocaleLowerCase();
 
@@ -3692,7 +3721,7 @@ function exportToCsv(header, rows, visibility) {
             const filters = request.Columns
                 .map((el, index) => el.Filter && el.Filter.Text ? { idx: index, text: el.Filter.Text.toLocaleLowerCase() } : null)
                 .filter(el => el != null);
-                
+
             if (filters.length === 0) {
                 return set;
             }
@@ -3742,7 +3771,7 @@ function exportToCsv(header, rows, visibility) {
          * @name modelSaver
          *
          * @description
-         * Use `modelSaver` to save a `tubularModel` 
+         * Use `modelSaver` to save a `tubularModel`
          */
         .factory('modelSaver', [
             '$http',
@@ -3752,7 +3781,6 @@ function exportToCsv(header, rows, visibility) {
                 }
 
                 return {
-                    
                     /**
                      * Save a model using the url and method
                      *
@@ -4049,6 +4077,16 @@ function exportToCsv(header, rows, visibility) {
                             \t\t</td>`;
                 }, '');
 
+                me.generateCellsToExport = (columns, mode) => columns.reduce((prev, el) => {
+                    const editorTag = mode === 'Inline' ? el.EditorType
+                        .replace(/([A-Z])/g, $1 => `-${$1.toLowerCase()}`) : '';
+                    const templateExpression = el.Template || `<span ng-bind="row.${el.Name}"></span>`;
+
+                    return `${prev}\r\n\t\t<tb-cell-template column-name="${el.Name}">
+                            \t\t\t${mode === 'Inline' ? `<${editorTag} is-editing="row.$isEditing" value="row.${el.Name}"></${editorTag}>` : templateExpression}
+                            \t\t</tb-cell-template>`;
+                }, '');
+
                 me.generateColumnsDefinitions = (columns) => columns.reduce((prev, el) =>
                     `${prev}
                         \t\t<tb-column name="${el.Name}" label="${el.Label}" column-type="${el.DataType}" sortable="${el.Sortable}" 
@@ -4094,8 +4132,52 @@ function exportToCsv(header, rows, visibility) {
                         bottomToolbar += '\r\n\t<tb-grid-pager-info class="col-md-3"></tb-grid-pager-info>';
                     }
 
+                    return `${'<div class="container">' +
+                        '\r\n<tb-grid server-url="'}${options.dataUrl}" request-method="${options.RequestMethod}" class="row" ` +
+                        `page-size="10" require-authentication="${options.RequireAuthentication}" ${options.Mode !== 'Read-Only' ? ` editor-mode="${options.Mode.toLowerCase()}"` : ''}>${topToolbar === '' ? '' : `\r\n\t<div class="row">${topToolbar}\r\n\t</div>`}\r\n\t<div class="row">` +
+                        '\r\n\t<div class="col-md-12">' +
+                        '\r\n\t<div class="panel panel-default panel-rounded">' +
+                        `\r\n\t<tb-grid-table class="table-bordered" columns="columns">
+                        \t</tb-grid-table>
+                        \t</div>
+                        \t</div>
+                        \t</div>${bottomToolbar === '' ? '' : `\r\n\t<div class="row">${bottomToolbar}\r\n\t</div>`}\r\n</tb-grid>
+                        </div>`;
+                };
+
+                me.generateGridToExport = function (columns, options) {
+                    let topToolbar = '';
+                    let bottomToolbar = '';
+
+                    if (options.Pager) {
+                        topToolbar += '\r\n\t<tb-grid-pager class="col-md-6"></tb-grid-pager>';
+                        bottomToolbar += '\r\n\t<tb-grid-pager class="col-md-6"></tb-grid-pager>';
+                    }
+
+                    if (options.ExportCsv) {
+                        topToolbar += '\r\n\t<div class="col-md-3">' +
+                            '\r\n\t\t<div class="btn-group">' +
+                            '\r\n\t\t<tb-print-button title="Tubular"></tb-print-button>' +
+                            '\r\n\t\t<tb-export-button filename="tubular.csv" css="btn-sm"></tb-export-button>' +
+                            '\r\n\t\t</div>' +
+                            '\r\n\t</div>';
+                    }
+
+                    if (options.FreeTextSearch) {
+                        topToolbar += '\r\n\t<tb-text-search class="col-md-3" css="input-sm"></tb-text-search>';
+                    }
+
+                    if (options.PageSizeSelector) {
+                        bottomToolbar +=
+                            '\r\n\t<tb-page-size-selector class="col-md-3" selectorcss="input-sm"></tb-page-size-selector>';
+                    }
+
+                    if (options.PagerInfo) {
+                        bottomToolbar += '\r\n\t<tb-grid-pager-info class="col-md-3"></tb-grid-pager-info>';
+                    }
+
                     const columnDefinitions = me.generateColumnsDefinitions(columns);
-                    const rowsDefinitions = me.generateCells(columns, options.Mode);
+                    const rowsDefinitions = me.generateCellsToExport(columns, options.Mode);
 
                     return `${'<div class="container">' +
                         '\r\n<tb-grid server-url="'}${options.dataUrl}" request-method="${options.RequestMethod}" class="row" ` +
@@ -4357,8 +4439,6 @@ function exportToCsv(header, rows, visibility) {
                         HasFilter: !($ctrl.text == null || $ctrl.text === '' || angular.isUndefined($ctrl.text)),
                         Name: $scope.$parent.$parent.column.Name
                     };
-
-                    console.log($ctrl.filter)
 
                     $ctrl.filterTitle = $ctrl.title || translateFilter('CAPTION_FILTER');
 
@@ -4638,7 +4718,8 @@ function exportToCsv(header, rows, visibility) {
                     enableRefreshTokens: PLATFORM,
                     requireAuthentication: PLATFORM,
                     baseUrl: PLATFORM,
-                    urlWhiteList: PLATFORM
+                    authBypassUrls: PLATFORM,
+                    noCacheBypassUrls: PLATFORM
                 },
                 platform: {},
                 localStorage: {
@@ -4657,7 +4738,8 @@ function exportToCsv(header, rows, visibility) {
                     enableRefreshTokens: false,
                     requireAuthentication: true,
                     baseUrl: '/api',
-                    urlWhiteList : []
+                    authBypassUrls : [],
+                    noCacheBypassUrls: []
                 },
                 localStorage: {
                     prefix: 'tubular.'

@@ -15,6 +15,8 @@ describe('Component: Grid.Pager', () => {
     compile = _$compile_;
     templateCache = _$templateCache_;
     $httpBackend = _$httpBackend_;
+    $httpBackend.whenPOST(serverUrl)
+    .respond({});
     scope.serverUrl = serverUrl;
   }));
 
