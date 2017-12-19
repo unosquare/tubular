@@ -13,10 +13,10 @@ module.exports = (config) => {
         // list of files / patterns to load in the browser
         files: [
           '../../node_modules/jasmine-data_driven_tests/src/all.js',
-          '../../bower_components/angular/angular.js',
-          '../../bower_components/angular-mocks/angular-mocks.js',
-          '../../bower_components/moment/moment.js',
-          '../../bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
+          '../../node_modules/angular/angular.js',
+          '../../node_modules/angular-mocks/angular-mocks.js',
+          '../../node_modules/moment/moment.js',
+          '../../node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js',
           '../../dist/tubular-bundle.js',
           '**/*.spec.js',
           '**/*.case.html'

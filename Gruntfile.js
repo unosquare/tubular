@@ -155,7 +155,7 @@ module.exports = grunt => {
             },
             tubular_css: {
                 src: [
-                    'bower_components/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css',
+                    'node_modules/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css',
                     'src/css/tubular/tubular.css'
                 ],
                 dest: 'src/css/tubular-bundle.css'
