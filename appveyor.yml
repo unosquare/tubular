@@ -9,10 +9,8 @@ notifications:
   channel: '#builds'
 install:
 - ps: Install-Product node $env:nodejs_version
-- npm install
-- npm install -g bower
-- npm install -g grunt
-- bower update
+- yarn install
+- yarn global add grunt
 test_script:
 - grunt eslint
 - grunt unit:ci
