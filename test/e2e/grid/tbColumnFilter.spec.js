@@ -14,6 +14,8 @@ describe('Component: Grid.Filter', () => {
         compile = _$compile_;
         templateCache = _$templateCache_;
         $httpBackend = _$httpBackend_;
+        $httpBackend.whenPOST(serverUrl)
+    .respond({});
         scope.serverUrl = serverUrl;
         compareOperators = _compareOperators_;
     }));
