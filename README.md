@@ -14,7 +14,7 @@ Tubular provides a set of directives and services using AngularJS as framework. 
 * Easy to implement inline editors, page or popup forms totally bound to your grid.
 * Basic services like **Print and Export to CSV** in client-side.
 * Independent backend platform (.NET and Node.js)
-* Compatible with modern browsers (Chrome, Firefox and Edge). We are not supporting old browsers like Internet Explorer, you may need include some polyfills.
+* Compatible with modern browsers (Chrome, Firefox, and Edge). We are not supporting old browsers like Internet Explorer, you may need to include some polyfills.
 
 Developing with .NET as backend? check [Tubular DotNet](https://github.com/unosquare/tubular-dotnet) project.
 
@@ -117,12 +117,12 @@ The following HTML represents a basic grid. You don't need to add anything else 
 
 ### Run Sample
 
-There is a sample included in this project, you can run it just by doing the follow.
+There is a sample included in this project, you can run it just by doing the following.
 
 ```
 // Install all the dependencies
 npm install
-// Builds the project and generetes the bundles
+// Builds the project and generates the bundles
 grunt build
 // Runs the sample project
 npm run serve 
