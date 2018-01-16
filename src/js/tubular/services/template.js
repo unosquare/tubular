@@ -526,6 +526,7 @@
                         if ($ctrl.filter.HasFilter !== val.Filter.HasFilter) {
                             $ctrl.filter.HasFilter = val.Filter.HasFilter;
                             $ctrl.filter.Text = val.Filter.Text;
+                            $ctrl.filter.Operator = val.Filter.Operator;
                             $ctrl.retrieveData();
                         }
                     },
