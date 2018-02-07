@@ -75,7 +75,7 @@ angular.module('tubular.services')
                                 + '</table>';
 
           const popup = $window.open('about:blank', 'Print', 'menubar=0,location=0,height=500,width=800');
-          popup.document.write('<link rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap/latest/css/bootstrap.min.css" />');
+          popup.document.write('<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" />');
 
           if (printCss !== '') {
             popup.document.write(`<link rel="stylesheet" href="${  printCss  }" />`);
