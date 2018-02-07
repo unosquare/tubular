@@ -38,7 +38,7 @@ You will need to reference the following JS libraries in order to use Tubular in
 You can get all the dependencies using the following links in your master HTML page. <a href="http://www.jsdelivr.com/">jsDelivr</a> provides almost everything you need to import.
 
 ```html
-<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/bootstrap@latest/dist/css/bootstrap.min.css" />
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" />
 <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css" />
 
 <script src="//cdn.jsdelivr.net/npm/angular@1.6.4/angular.js"></script>
