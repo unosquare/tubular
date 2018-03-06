@@ -27,9 +27,10 @@
                 const authData = 'auth_data';
                 const prefix = tubularConfig.localStorage.prefix();
                 const me = this;
+                const storage = tubularConfig.useSessionForAuthData() ? $window.sessionStorage : $window.localStorage;
 
                 function init() {
-                    const savedData = angular.fromJson($window.localStorage.getItem(prefix + authData));
+                    const savedData = angular.fromJson(storage.getItem(prefix + authData));
 
                     if (savedData != null) {
                         me.userData = savedData;
@@ -55,7 +56,7 @@
                 me.isAuthenticated = () => me.userData.isAuthenticated && !isAuthenticationExpired(me.userData.expirationDate);
 
                 me.removeAuthentication = function () {
-                    $window.localStorage.removeItem(prefix + authData);
+                    storage.removeItem(prefix + authData);
                     me.userData.isAuthenticated = false;
                     me.userData.username = '';
                     me.userData.bearerToken = '';
@@ -89,7 +90,7 @@
                     me.userData.role = data.role;
                     me.userData.refreshToken = data.refresh_token;
 
-                    $window.localStorage.setItem(prefix + authData, angular.toJson(me.userData));
+                    storage.setItem(prefix + authData, angular.toJson(me.userData));
                 };
 
                 init();
