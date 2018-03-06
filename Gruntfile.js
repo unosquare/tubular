@@ -170,7 +170,7 @@ module.exports = grunt => {
         babel: {
             options: {
                 sourceMap: false,
-                presets: ['env']
+                presets: ["env"]
             },
             tubular_js: {
                 files: {

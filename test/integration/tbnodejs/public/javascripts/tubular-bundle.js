@@ -12,7 +12,7 @@
    */
   angular
     .module('tubular', ['tubular.core', 'tubular.directives', 'tubular.services', 'tubular.models'])
-    .info({ version: '1.8.1' });
+    .info({ version: '1.8.2' });
 
 })(angular);
 
@@ -488,7 +488,7 @@
 })(angular);
 
 (function(angular){
-angular.module('tubular.directives').run(['$templateCache', function ($templateCache) {
+angular.module("tubular.directives").run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("tbCheckboxField.tpl.html",
     "<div ng-class=\"{ 'checkbox' : $ctrl.isEditing, 'has-error' : !$ctrl.$valid && $ctrl.$dirty() }\" class=tubular-checkbox><input type=checkbox ng-model=$ctrl.value ng-disabled=\"$ctrl.readOnly || !$ctrl.isEditing\" class=tubular-checkbox id={{$ctrl.name}} name={{$ctrl.name}}><label ng-show=$ctrl.isEditing for={{$ctrl.name}} ng-bind=$ctrl.label></label><span class=\"help-block error-block\" ng-show=$ctrl.isEditing ng-repeat=\"error in $ctrl.state.$errors\">{{error}}</span> <span class=help-block ng-show=\"$ctrl.isEditing && $ctrl.help\" ng-bind=$ctrl.help></span></div>");
@@ -3477,7 +3477,7 @@ angular.module('tubular.services')
                                 + '</table>';
 
           const popup = $window.open('about:blank', 'Print', 'menubar=0,location=0,height=500,width=800');
-          popup.document.write('<link rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap/latest/css/bootstrap.min.css" />');
+          popup.document.write('<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" />');
 
           if (printCss !== '') {
             popup.document.write(`<link rel="stylesheet" href="${  printCss  }" />`);
@@ -3578,9 +3578,10 @@ function exportToCsv(header, rows, visibility) {
                 const authData = 'auth_data';
                 const prefix = tubularConfig.localStorage.prefix();
                 const me = this;
+                const storage = tubularConfig.useSessionForAuthData() ? $window.sessionStorage : $window.localStorage;
 
                 function init() {
-                    const savedData = angular.fromJson($window.localStorage.getItem(prefix + authData));
+                    const savedData = angular.fromJson(storage.getItem(prefix + authData));
 
                     if (savedData != null) {
                         me.userData = savedData;
@@ -3606,7 +3607,7 @@ function exportToCsv(header, rows, visibility) {
                 me.isAuthenticated = () => me.userData.isAuthenticated && !isAuthenticationExpired(me.userData.expirationDate);
 
                 me.removeAuthentication = function () {
-                    $window.localStorage.removeItem(prefix + authData);
+                    storage.removeItem(prefix + authData);
                     me.userData.isAuthenticated = false;
                     me.userData.username = '';
                     me.userData.bearerToken = '';
@@ -3640,7 +3641,7 @@ function exportToCsv(header, rows, visibility) {
                     me.userData.role = data.role;
                     me.userData.refreshToken = data.refresh_token;
 
-                    $window.localStorage.setItem(prefix + authData, angular.toJson(me.userData));
+                    storage.setItem(prefix + authData, angular.toJson(me.userData));
                 };
 
                 init();
@@ -4459,6 +4460,7 @@ function exportToCsv(header, rows, visibility) {
                         if ($ctrl.filter.HasFilter !== val.Filter.HasFilter) {
                             $ctrl.filter.HasFilter = val.Filter.HasFilter;
                             $ctrl.filter.Text = val.Filter.Text;
+                            $ctrl.filter.Operator = val.Filter.Operator;
                             $ctrl.retrieveData();
                         }
                     },
@@ -4724,7 +4726,11 @@ function exportToCsv(header, rows, visibility) {
                 platform: {},
                 localStorage: {
                     prefix: PLATFORM
-                }
+                },
+                sessionStorage: {
+                    prefix: PLATFORM
+                },
+                useSessionForAuthData: PLATFORM
             };
 
             createConfig(configProperties, provider, '');
@@ -4738,12 +4744,16 @@ function exportToCsv(header, rows, visibility) {
                     enableRefreshTokens: false,
                     requireAuthentication: true,
                     baseUrl: '/api',
-                    authBypassUrls : [],
+                    authBypassUrls: [],
                     noCacheBypassUrls: []
                 },
                 localStorage: {
                     prefix: 'tubular.'
-                }
+                },
+                sessionStorage: {
+                    prefix: 'tubular'
+                },
+                useSessionForAuthData: false
             });
 
             // private: used to set platform configs
@@ -4782,7 +4792,7 @@ function exportToCsv(header, rows, visibility) {
                     if (angular.isObject(configObj[namespace])) {
                         // recursively drill down the config object so we can create a method for each one
                         providerObj[namespace] = {};
-                        createConfig(configObj[namespace], providerObj[namespace], `${platformPath  }.${  namespace}`);
+                        createConfig(configObj[namespace], providerObj[namespace], `${platformPath}.${namespace}`);
 
                     } else {
                         // create a method for the provider/config methods that will be exposed
@@ -4798,7 +4808,7 @@ function exportToCsv(header, rows, visibility) {
                                 //     return platformConfig;
                                 // }
                                 // didnt find a specific platform config, now try the default
-                                return stringObj(configProperties.platform, `default${  platformPath  }.${  namespace}`);
+                                return stringObj(configProperties.platform, `default${platformPath}.${namespace}`);
                             }
                             return configObj[namespace];
                         };
