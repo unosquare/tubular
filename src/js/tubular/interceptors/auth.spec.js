@@ -3,20 +3,18 @@
 describe('Module: tubular.services', function () {
 
     describe('Interceptor: Auth', function () {
-        var AuthInterceptor, $httpBackend, tubularHttp, tubularConfig, $rootScope, $window;
+        var AuthInterceptor, $httpBackend, tubularHttp, tubularConfig, $rootScope;
 
         beforeEach(function () {
             module('tubular.services');
 
-            inject(function (_tubularAuthInterceptor_, _$httpBackend_, _tubularHttp_, _tubularConfig_, _$rootScope_, _$window_) {
+            inject(function (_tubularAuthInterceptor_, _$httpBackend_, _tubularHttp_, _tubularConfig_, _$rootScope_) {
                 AuthInterceptor = _tubularAuthInterceptor_;
                 $httpBackend = _$httpBackend_;
                 tubularHttp = _tubularHttp_;
                 tubularConfig = _tubularConfig_;
                 $rootScope = _$rootScope_;
-                $window = _$window_;
-                $window.localStorage.clear();
-                $window.sessionStorage.clear();
+                tubularHttp.removeAuthentication();
             });
         });
 

@@ -37,7 +37,7 @@ describe('Component: Grid.Filter', () => {
 
     describe('Popover', () => {
 
-        let filter, form, options, idx = 0;;
+        let filter, form;
 
         beforeEach(() => {
             generate();
@@ -50,7 +50,6 @@ describe('Component: Grid.Filter', () => {
             scope.$digest();
 
             form = $j(filter).find('form')[0];
-            options = $j(form).find('option');
         });
 
         it('should show popover template', () => {
