@@ -197,8 +197,6 @@ module.exports = grunt => {
         }
     });
 
-    // grunt.registerTask('lint', ['eslint']);
-
     grunt.registerTask('lint', 'eslint', function(){
         
         grunt.option('force', true);
