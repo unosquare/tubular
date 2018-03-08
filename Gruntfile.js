@@ -197,7 +197,12 @@ module.exports = grunt => {
         }
     });
 
-    grunt.registerTask('lint', ['eslint']);
+    grunt.registerTask('lint', 'eslint', function(){
+        
+        grunt.option('force', true);
+        grunt.task.run(['eslint']);
+
+    });
 
     grunt.registerTask('build', ['html2js:main', 'concat:tubular_js', 'concat:tubular_css', 'concat:tubular_core_css']);
 
@@ -217,5 +222,5 @@ module.exports = grunt => {
 
     grunt.registerTask('e2e-nodejs', ['copy:integration', 'server', 'protractor_coverage:local']);
 
-    grunt.registerTask('local-check', ['dist', 'unit:ci', 'e2e:ci', 'eslint']);
+    grunt.registerTask('local-check', ['dist', 'unit:ci', 'e2e:ci', 'lint']);
 };

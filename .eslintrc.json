@@ -17,6 +17,7 @@
     "angular"
   ],
   "rules": {
+    "angular/service-name": [2, "tubular", { "oldBehavior" : false } ],
     "quotes": [ 2, "single" ],
     "no-unused-labels": "off",
     "prefer-const": "warn",

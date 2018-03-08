@@ -12,7 +12,7 @@ install:
 - yarn install
 - yarn global add grunt
 test_script:
-- grunt eslint
+- grunt lint
 - grunt unit:ci
 - grunt e2e:ci
 build: off
