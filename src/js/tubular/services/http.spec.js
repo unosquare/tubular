@@ -13,6 +13,7 @@ describe('Module: tubular.services', () => {
                 tubularHttp = _tubularHttp_;
                 tubularConfig = _tubularConfig_;
                 $window = _$window_;
+                tubularHttp.removeAuthentication();
             });
         });
 
