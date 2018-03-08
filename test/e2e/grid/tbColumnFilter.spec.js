@@ -15,7 +15,7 @@ describe('Component: Grid.Filter', () => {
         templateCache = _$templateCache_;
         $httpBackend = _$httpBackend_;
         $httpBackend.whenPOST(serverUrl)
-    .respond({});
+            .respond({});
         scope.serverUrl = serverUrl;
         compareOperators = _compareOperators_;
     }));
@@ -37,7 +37,7 @@ describe('Component: Grid.Filter', () => {
 
     describe('Popover', () => {
 
-    let filter, form, options, idx = 0;;
+        let filter, form, options, idx = 0;;
 
         beforeEach(() => {
             generate();
@@ -56,7 +56,7 @@ describe('Component: Grid.Filter', () => {
         it('should show popover template', () => {
             var popover = $j(filter).find('div div')[0];
             var select = $j(form).find('select')[0];
-            var input = $j(form).find('input')[0]; 
+            var input = $j(form).find('input')[0];
             var buttons = $j(form).find('button');
 
             expect(popover.hasAttribute('uib-popover-template-popup')).toBeTruthy();
@@ -65,27 +65,28 @@ describe('Component: Grid.Filter', () => {
             expect($j(buttons).length).toBe(4);
         });
 
-        all('should have options', ['None','Equals','NotEquals','Contains','NotContains','StartsWith','NotStartsWith','EndsWith','NotEndsWith'], range => { 
-            expect($j(options[idx++]).val()).toBe('string:'+range);            
+
+        all('should have options', ['None', 'Equals', 'NotEquals', 'Contains', 'NotContains', 'StartsWith', 'NotStartsWith', 'EndsWith', 'NotEndsWith'], range => {
+            expect($j(form).find('select').html()).toContain('value="string:' + range + '"');
         });
 
-        all('should have state of input and buttons', ['string:None','string:Equals','string:NotEquals','string:Contains','string:NotContains','string:StartsWith','string:NotStartsWith','string:EndsWith','string:NotEndsWith'], range => {
+        all('should have state of input and buttons', ['string:None', 'string:Equals', 'string:NotEquals', 'string:Contains', 'string:NotContains', 'string:StartsWith', 'string:NotStartsWith', 'string:EndsWith', 'string:NotEndsWith'], range => {
             var select = $j(form).find('select')[0];
-           
+
             $j(select).val(range).change();
 
             select = $j(form).find('select')[0];
-            var input = $j(form).find('input')[0];            
+            var input = $j(form).find('input')[0];
             var apply = $j(form).find('button')[2];
             var clear = $j(form).find('button')[3];
 
             expect($j(select).val()).toBe(range);
 
-            if(range == 'string:None'){
+            if (range == 'string:None') {
                 expect(input.hasAttribute('disabled')).toBeTruthy('input ' + range);
                 expect(apply.hasAttribute('disabled')).toBeTruthy('apply ' + range);
             }
-            else{
+            else {
                 expect(input.hasAttribute('disabled')).toBeFalsy('input ' + range);
                 expect(apply.hasAttribute('disabled')).toBeFalsy('apply ' + range);
             }
@@ -110,7 +111,7 @@ describe('Component: Grid.Filter', () => {
                 input = $j(form).find('input')[0];
                 apply = $j(form).find('button')[2];
                 clear = $j(form).find('button')[3];
-                
+
             })
 
             it('should filter Equals', () => {
@@ -124,11 +125,11 @@ describe('Component: Grid.Filter', () => {
                 $j(apply).click();
 
                 for (var index = 1; index <= 500; index++) {
-                    if(value == index)
-                        payload.push([index, 'Name: ' + index]);                    
+                    if (value == index)
+                        payload.push([index, 'Name: ' + index]);
                 }
                 $httpBackend.expectPOST(serverUrl)
-                    .respond(200, {"Counter": 0, "Payload": payload, "TotalRecordCount": 500, "FilteredRecordCount": payload.length, "TotalPages": payload.length/10, "CurrentPage": 1, "AggregationPayload": {}});
+                    .respond(200, { "Counter": 0, "Payload": payload, "TotalRecordCount": 500, "FilteredRecordCount": payload.length, "TotalPages": payload.length / 10, "CurrentPage": 1, "AggregationPayload": {} });
 
                 generate(true);
                 var data = element.find('tbody tr');
@@ -144,13 +145,13 @@ describe('Component: Grid.Filter', () => {
                 input.val(value);
 
                 $j(apply).click();
-                
+
                 for (var index = 1; index <= 500; index++) {
-                    if(value != index)
-                        payload.push([index, 'Name: ' + index]);                    
+                    if (value != index)
+                        payload.push([index, 'Name: ' + index]);
                 }
                 $httpBackend.expectPOST(serverUrl)
-                    .respond(200, {"Counter": 0, "Payload": payload, "TotalRecordCount": 500, "FilteredRecordCount": payload.length, "TotalPages": payload.length/10, "CurrentPage": 1, "AggregationPayload": {}});
+                    .respond(200, { "Counter": 0, "Payload": payload, "TotalRecordCount": 500, "FilteredRecordCount": payload.length, "TotalPages": payload.length / 10, "CurrentPage": 1, "AggregationPayload": {} });
 
                 generate(true);
 
@@ -167,13 +168,13 @@ describe('Component: Grid.Filter', () => {
                 input.val(value);
 
                 $j(apply).click();
-                
+
                 for (var index = 1; index <= 500; index++) {
-                    if(index.toString().includes(value.toString()))
-                        payload.push([index, 'Name: ' + index]);                    
+                    if (index.toString().includes(value.toString()))
+                        payload.push([index, 'Name: ' + index]);
                 }
                 $httpBackend.expectPOST(serverUrl)
-                    .respond(200, {"Counter": 0, "Payload": payload, "TotalRecordCount": 500, "FilteredRecordCount": payload.length, "TotalPages": payload.length/10, "CurrentPage": 1, "AggregationPayload": {}});
+                    .respond(200, { "Counter": 0, "Payload": payload, "TotalRecordCount": 500, "FilteredRecordCount": payload.length, "TotalPages": payload.length / 10, "CurrentPage": 1, "AggregationPayload": {} });
 
                 generate(true);
 
@@ -190,13 +191,13 @@ describe('Component: Grid.Filter', () => {
                 input.val(value);
 
                 $j(apply).click();
-                
+
                 for (var index = 1; index <= 500; index++) {
-                    if(!index.toString().includes(value.toString()))
-                        payload.push([index, 'Name: ' + index]);                    
+                    if (!index.toString().includes(value.toString()))
+                        payload.push([index, 'Name: ' + index]);
                 }
                 $httpBackend.expectPOST(serverUrl)
-                    .respond(200, {"Counter": 0, "Payload": payload, "TotalRecordCount": 500, "FilteredRecordCount": payload.length, "TotalPages": payload.length/10, "CurrentPage": 1, "AggregationPayload": {}});
+                    .respond(200, { "Counter": 0, "Payload": payload, "TotalRecordCount": 500, "FilteredRecordCount": payload.length, "TotalPages": payload.length / 10, "CurrentPage": 1, "AggregationPayload": {} });
 
                 generate(true);
 
@@ -213,13 +214,13 @@ describe('Component: Grid.Filter', () => {
                 input.val(value);
 
                 $j(apply).click();
-                
+
                 for (var index = 1; index <= 500; index++) {
-                    if(index.toString().startsWith(value.toString()))
-                        payload.push([index, 'Name: ' + index]);                    
+                    if (index.toString().startsWith(value.toString()))
+                        payload.push([index, 'Name: ' + index]);
                 }
                 $httpBackend.expectPOST(serverUrl)
-                    .respond(200, {"Counter": 0, "Payload": payload, "TotalRecordCount": 500, "FilteredRecordCount": payload.length, "TotalPages": payload.length/10, "CurrentPage": 1, "AggregationPayload": {}});
+                    .respond(200, { "Counter": 0, "Payload": payload, "TotalRecordCount": 500, "FilteredRecordCount": payload.length, "TotalPages": payload.length / 10, "CurrentPage": 1, "AggregationPayload": {} });
 
                 generate(true);
 
@@ -236,13 +237,13 @@ describe('Component: Grid.Filter', () => {
                 input.val(value);
 
                 $j(apply).click();
-                
+
                 for (var index = 1; index <= 500; index++) {
-                    if(!index.toString().startsWith(value.toString()))
-                        payload.push([index, 'Name: ' + index]);                    
+                    if (!index.toString().startsWith(value.toString()))
+                        payload.push([index, 'Name: ' + index]);
                 }
                 $httpBackend.expectPOST(serverUrl)
-                    .respond(200, {"Counter": 0, "Payload": payload, "TotalRecordCount": 500, "FilteredRecordCount": payload.length, "TotalPages": payload.length/10, "CurrentPage": 1, "AggregationPayload": {}});
+                    .respond(200, { "Counter": 0, "Payload": payload, "TotalRecordCount": 500, "FilteredRecordCount": payload.length, "TotalPages": payload.length / 10, "CurrentPage": 1, "AggregationPayload": {} });
 
                 generate(true);
 
@@ -259,13 +260,13 @@ describe('Component: Grid.Filter', () => {
                 input.val(value);
 
                 $j(apply).click();
-                
+
                 for (var index = 1; index <= 500; index++) {
-                    if(index.toString().endsWith(value.toString()))
-                        payload.push([index, 'Name: ' + index]);                    
+                    if (index.toString().endsWith(value.toString()))
+                        payload.push([index, 'Name: ' + index]);
                 }
                 $httpBackend.expectPOST(serverUrl)
-                    .respond(200, {"Counter": 0, "Payload": payload, "TotalRecordCount": 500, "FilteredRecordCount": payload.length, "TotalPages": payload.length/10, "CurrentPage": 1, "AggregationPayload": {}});
+                    .respond(200, { "Counter": 0, "Payload": payload, "TotalRecordCount": 500, "FilteredRecordCount": payload.length, "TotalPages": payload.length / 10, "CurrentPage": 1, "AggregationPayload": {} });
 
                 generate(true);
 
@@ -282,13 +283,13 @@ describe('Component: Grid.Filter', () => {
                 input.val(value);
 
                 $j(apply).click();
-                
+
                 for (var index = 1; index <= 500; index++) {
-                    if(!index.toString().endsWith(value.toString()))
-                        payload.push([index, 'Name: ' + index]);                    
+                    if (!index.toString().endsWith(value.toString()))
+                        payload.push([index, 'Name: ' + index]);
                 }
                 $httpBackend.expectPOST(serverUrl)
-                    .respond(200, {"Counter": 0, "Payload": payload, "TotalRecordCount": 500, "FilteredRecordCount": payload.length, "TotalPages": payload.length/10, "CurrentPage": 1, "AggregationPayload": {}});
+                    .respond(200, { "Counter": 0, "Payload": payload, "TotalRecordCount": 500, "FilteredRecordCount": payload.length, "TotalPages": payload.length / 10, "CurrentPage": 1, "AggregationPayload": {} });
 
                 generate(true);
 
