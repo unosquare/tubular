@@ -10,7 +10,7 @@
             '$http',
             'tubularConfig',
             '$window',
-            'localPager',
+            'tubularLocalPager',
             'modelSaver',
             'compareOperators',
             'sortDirection',
@@ -21,7 +21,7 @@
                 $http,
                 tubularConfig,
                 $window,
-                localPager,
+                tubularLocalPager,
                 modelSaver,
                 compareOperators,
                 sortDirection) {
@@ -312,7 +312,7 @@
 
                 $ctrl.retrieveLocalData = (request) => {
                     if (angular.isArray($ctrl.gridDatasource)) {
-                        $ctrl.currentRequest = localPager.process(request, $ctrl.gridDatasource)
+                        $ctrl.currentRequest = tubularLocalPager.process(request, $ctrl.gridDatasource)
                             .then($ctrl.processPayload, $ctrl.processError)
                             .then(() => $ctrl.currentRequest = null);
                     }
@@ -326,7 +326,7 @@
 
                 $ctrl.retrieveRemoteDataClientside = (request) => {
                     $ctrl.currentRequest = $http(request)
-                        .then(response => localPager.process(request, response.data), $ctrl.processError)
+                        .then(response => tubularLocalPager.process(request, response.data), $ctrl.processError)
                         .then($ctrl.processPayload, $ctrl.processError)
                         .then(() => $ctrl.currentRequest = null);
                 };

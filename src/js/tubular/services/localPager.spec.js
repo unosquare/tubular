@@ -2,8 +2,8 @@
 
 describe('Module: tubular.services', () => {
 
-    describe('Service: localPager', () => {
-        var localPager,
+    describe('Service: tubularLocalPager', () => {
+        var tubularLocalPager,
             rootScope,
             compareOperators,
             sortDirection,
@@ -69,8 +69,8 @@ describe('Module: tubular.services', () => {
         beforeEach(() => {
             module('tubular.services');
 
-            inject((_localPager_, _$rootScope_, _compareOperators_, _dataTypes_, _sortDirection_) => {
-                localPager = _localPager_;
+            inject((_tubularLocalPager_, _$rootScope_, _compareOperators_, _dataTypes_, _sortDirection_) => {
+                tubularLocalPager = _tubularLocalPager_;
                 rootScope = _$rootScope_;
                 compareOperators = _compareOperators_;
                 dataTypes = _dataTypes_;
@@ -78,15 +78,15 @@ describe('Module: tubular.services', () => {
             });
         });
 
-        it('should be defined', () => expect(localPager).toBeDefined());
+        it('should be defined', () => expect(tubularLocalPager).toBeDefined());
 
         it('should return a promise', () => {
-            expect(localPager.process(null, null)).toBeDefined();
+            expect(tubularLocalPager.process(null, null)).toBeDefined();
             rootScope.$digest();
         });
 
         it('should return empty response with null data', done => {
-            localPager.process(null, null).then(data => {
+            tubularLocalPager.process(null, null).then(data => {
                 expect(data).toEqual(emptyResponse);
                 done();
             });
@@ -95,7 +95,7 @@ describe('Module: tubular.services', () => {
         });
 
         it('should return the data in the format using array of arrays', done => {
-            localPager.process(emptyRequest, dataSource).then(data => {
+            tubularLocalPager.process(emptyRequest, dataSource).then(data => {
                 const expectedResponse = {
                     data: {
                         Counter: 0,
@@ -119,7 +119,7 @@ describe('Module: tubular.services', () => {
         });
 
         it('should return the data in the format using array of objects', done => {
-            localPager.process(emptyRequest, dataSourceObjs).then(data => {
+            tubularLocalPager.process(emptyRequest, dataSourceObjs).then(data => {
                 const expectedResponse = {
                     data: {
                         Counter: 0,
@@ -146,7 +146,7 @@ describe('Module: tubular.services', () => {
             const request = angular.copy(emptyRequest);
             request.data.Search = { Text: 'Alexei', Operator: compareOperators.AUTO };
 
-            localPager.process(request, dataSource).then(data => {
+            tubularLocalPager.process(request, dataSource).then(data => {
                 const expectedResponse = {
                     data: {
                         Counter: 0,
@@ -171,7 +171,7 @@ describe('Module: tubular.services', () => {
             const request = angular.copy(emptyRequest);
             request.data.Search = { Text: 'Al', Operator: compareOperators.AUTO };
 
-            localPager.process(request, dataSource).then(data => {
+            tubularLocalPager.process(request, dataSource).then(data => {
                 const expectedResponse = {
                     data: {
                         Counter: 0,
@@ -199,7 +199,7 @@ describe('Module: tubular.services', () => {
             request.data.Columns[1].Filter.Text = 'Al';
             request.data.Columns[1].Filter.Operator = compareOperators.CONTAINS;
 
-            localPager.process(request, dataSource).then(data => {
+            tubularLocalPager.process(request, dataSource).then(data => {
                 const expectedResponse = {
                     data: {
                         Counter: 0,
@@ -226,7 +226,7 @@ describe('Module: tubular.services', () => {
             request.data.Columns[0].Filter.Text = '1';
             request.data.Columns[0].Filter.Operator = compareOperators.EQUALS;
 
-            localPager.process(request, dataSource).then(data => {
+            tubularLocalPager.process(request, dataSource).then(data => {
                 const expectedResponse = {
                     data: {
                         Counter: 0,
@@ -252,7 +252,7 @@ describe('Module: tubular.services', () => {
             request.data.Columns[0].SortOrder = 1;
             request.data.Columns[0].SortDirection = sortDirection.DESCENDING;
 
-            localPager.process(request, dataSource).then(data => {
+            tubularLocalPager.process(request, dataSource).then(data => {
                 const expectedResponse = {
                     data: {
                         Counter: 0,
@@ -279,7 +279,7 @@ describe('Module: tubular.services', () => {
             request.data.Columns[1].SortOrder = 1;
             request.data.Columns[1].SortDirection = sortDirection.ASCENDING;
 
-            localPager.process(request, dataSource).then(data => {
+            tubularLocalPager.process(request, dataSource).then(data => {
                 const expectedResponse = {
                     data: {
                         Counter: 0,
