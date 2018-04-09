@@ -522,7 +522,7 @@
                             $scope.selectOptions = 'd for d in getValues($viewValue)';
                             $scope.lastSet = [];
 
-                            if ($scope.optionLabe) {
+                            if ($scope.optionLabel) {
                                 $scope.selectOptions = `d as d.${$scope.optionLabel} for d in getValues($viewValue)`;
                             }
 

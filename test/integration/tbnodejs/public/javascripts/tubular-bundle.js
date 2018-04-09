@@ -12,7 +12,7 @@
    */
   angular
     .module('tubular', ['tubular.core', 'tubular.directives', 'tubular.services', 'tubular.models'])
-    .info({ version: '1.8.1' });
+    .info({ version: '1.8.2' });
 
 })(angular);
 
@@ -488,7 +488,7 @@
 })(angular);
 
 (function(angular){
-angular.module('tubular.directives').run(['$templateCache', function ($templateCache) {
+angular.module("tubular.directives").run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("tbCheckboxField.tpl.html",
     "<div ng-class=\"{ 'checkbox' : $ctrl.isEditing, 'has-error' : !$ctrl.$valid && $ctrl.$dirty() }\" class=tubular-checkbox><input type=checkbox ng-model=$ctrl.value ng-disabled=\"$ctrl.readOnly || !$ctrl.isEditing\" class=tubular-checkbox id={{$ctrl.name}} name={{$ctrl.name}}><label ng-show=$ctrl.isEditing for={{$ctrl.name}} ng-bind=$ctrl.label></label><span class=\"help-block error-block\" ng-show=$ctrl.isEditing ng-repeat=\"error in $ctrl.state.$errors\">{{error}}</span> <span class=help-block ng-show=\"$ctrl.isEditing && $ctrl.help\" ng-bind=$ctrl.help></span></div>");
@@ -2173,7 +2173,7 @@ angular.module('tubular.directives').run(['$templateCache', function ($templateC
                             $scope.selectOptions = 'd for d in getValues($viewValue)';
                             $scope.lastSet = [];
 
-                            if ($scope.optionLabe) {
+                            if ($scope.optionLabel) {
                                 $scope.selectOptions = `d as d.${$scope.optionLabel} for d in getValues($viewValue)`;
                             }
 
@@ -3477,7 +3477,7 @@ angular.module('tubular.services')
                                 + '</table>';
 
           const popup = $window.open('about:blank', 'Print', 'menubar=0,location=0,height=500,width=800');
-          popup.document.write('<link rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap/latest/css/bootstrap.min.css" />');
+          popup.document.write('<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" />');
 
           if (printCss !== '') {
             popup.document.write(`<link rel="stylesheet" href="${  printCss  }" />`);
@@ -4459,6 +4459,7 @@ function exportToCsv(header, rows, visibility) {
                         if ($ctrl.filter.HasFilter !== val.Filter.HasFilter) {
                             $ctrl.filter.HasFilter = val.Filter.HasFilter;
                             $ctrl.filter.Text = val.Filter.Text;
+                            $ctrl.filter.Operator = val.Filter.Operator;
                             $ctrl.retrieveData();
                         }
                     },
