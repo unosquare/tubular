@@ -14,6 +14,7 @@ describe('Module: tubular.services', function () {
                 tubularHttp = _tubularHttp_;
                 tubularConfig = _tubularConfig_;
                 $rootScope = _$rootScope_;
+                tubularHttp.removeAuthentication();
             });
         });
 

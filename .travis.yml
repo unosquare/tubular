@@ -13,7 +13,7 @@ env:
   - secure: fTilfs77DNFxmSwAGGGxAIDpfbglmEJzSSIaS+LWddasoKHOEIdB3Yo9uFYZ3Rq+iC4HMKu807wVZVhHtf3mIJummvePIIlCVGl/Q8nTb74rv4iH1xHc682Psl23BlogthvcbXcJ1PSfS9KUXLnDI2/wk0GoOivx4Yv6HDidJv4=
   matrix:
   - BROWSER=chrome CHROME_BIN=/usr/bin/google-chrome DISPLAY=:99.0
-  - BROWSER=firefox DISPLAY=:99.0
+  # - BROWSER=firefox DISPLAY=:99.0
 install:
 - yarn install
 before_install:

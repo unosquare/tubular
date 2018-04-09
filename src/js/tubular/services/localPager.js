@@ -4,16 +4,16 @@
     angular.module('tubular.services')
         /**
          * @ngdoc service
-         * @name localPager
+         * @name tubularLocalPager
          *
          * @description
          * Represents a service to handle a Tubular Grid Request in client side
          */
-        .service('localPager', localPager);
+        .service('tubularLocalPager', tubularLocalPager);
 
-    localPager.$inject = ['$q', 'orderByFilter', 'sortDirection', 'compareOperators'];
+    tubularLocalPager.$inject = ['$q', 'orderByFilter', 'sortDirection', 'compareOperators'];
 
-    function localPager($q, orderByFilter, sortDirection, compareOperators) {
+    function tubularLocalPager($q, orderByFilter, sortDirection, compareOperators) {
         this.process = (request, data) => $q(resolve => {
             if (data && data.length > 0) {
                 const totalRecords = data.length;

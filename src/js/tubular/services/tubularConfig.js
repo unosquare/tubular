@@ -21,7 +21,11 @@
                 platform: {},
                 localStorage: {
                     prefix: PLATFORM
-                }
+                },
+                sessionStorage: {
+                    prefix: PLATFORM
+                },
+                useSessionForAuthData: PLATFORM
             };
 
             createConfig(configProperties, provider, '');
@@ -35,12 +39,16 @@
                     enableRefreshTokens: false,
                     requireAuthentication: true,
                     baseUrl: '/api',
-                    authBypassUrls : [],
+                    authBypassUrls: [],
                     noCacheBypassUrls: []
                 },
                 localStorage: {
                     prefix: 'tubular.'
-                }
+                },
+                sessionStorage: {
+                    prefix: 'tubular'
+                },
+                useSessionForAuthData: false
             });
 
             // private: used to set platform configs
@@ -79,7 +87,7 @@
                     if (angular.isObject(configObj[namespace])) {
                         // recursively drill down the config object so we can create a method for each one
                         providerObj[namespace] = {};
-                        createConfig(configObj[namespace], providerObj[namespace], `${platformPath  }.${  namespace}`);
+                        createConfig(configObj[namespace], providerObj[namespace], `${platformPath}.${namespace}`);
 
                     } else {
                         // create a method for the provider/config methods that will be exposed
@@ -95,7 +103,7 @@
                                 //     return platformConfig;
                                 // }
                                 // didnt find a specific platform config, now try the default
-                                return stringObj(configProperties.platform, `default${  platformPath  }.${  namespace}`);
+                                return stringObj(configProperties.platform, `default${platformPath}.${namespace}`);
                             }
                             return configObj[namespace];
                         };
