@@ -23,14 +23,19 @@
                 $scope.fields = [];
 
                 function getUrlWithKey() {
-                    const urlData = $scope.serverUrl.split('?');
-                    let getUrl = urlData[0] + $scope.modelKey;
+                    if (!$scope.urlQueryString) {
+                        const urlData = $scope.serverUrl.split('?');
+                        let getUrl = urlData[0] + $scope.modelKey;
 
-                    if (urlData.length > 1) {
-                        getUrl += `?${urlData[1]}`;
+                        if (urlData.length > 1) {
+                            getUrl += `?${urlData[1]}`;
+                        }
+
+                        return getUrl;
+                    } else {
+                        let queryStringValue = `${$scope.urlQueryString}=${$scope.modelKey}`;
+                        return $scope.serverUrl + ($scope.serverUrl.indexOf('?') == -1 ? `?${queryStringValue}` : `&${queryStringValue}`);
                     }
-
-                    return getUrl;
                 }
 
                 const $ctrl = this;

@@ -12,7 +12,7 @@
    */
   angular
     .module('tubular', ['tubular.core', 'tubular.directives', 'tubular.services', 'tubular.models'])
-    .info({ version: '1.8.2' });
+    .info({ version: '1.8.4' });
 
 })(angular);
 
@@ -832,6 +832,7 @@ angular.module("tubular.directives").run(["$templateCache", function($templateCa
          * @param {string} modelKey Defines the fields to use like Keys.
          * @param {string} formName Defines the form name.
          * @param {bool} requireAuthentication Set if authentication check must be executed, default true.
+         * @param {string} urlQueryString Defines the optional querystring key to send the key.
          */
         .directive('tbForm',
         [
@@ -851,6 +852,7 @@ angular.module("tubular.directives").run(["$templateCache", function($templateCa
                         name: '@?formName',
                         onSave: '=?',
                         onError: '=?',
+                        urlQueryString: '@?',
                     },
                     controller: 'tbFormController',
                     compile: () => ({ post: scope => scope.finishDefinition() })
@@ -883,14 +885,19 @@ angular.module("tubular.directives").run(["$templateCache", function($templateCa
                 $scope.fields = [];
 
                 function getUrlWithKey() {
-                    const urlData = $scope.serverUrl.split('?');
-                    let getUrl = urlData[0] + $scope.modelKey;
+                    if (!$scope.urlQueryString) {
+                        const urlData = $scope.serverUrl.split('?');
+                        let getUrl = urlData[0] + $scope.modelKey;
 
-                    if (urlData.length > 1) {
-                        getUrl += `?${urlData[1]}`;
+                        if (urlData.length > 1) {
+                            getUrl += `?${urlData[1]}`;
+                        }
+
+                        return getUrl;
+                    } else {
+                        let queryStringValue = `${$scope.urlQueryString}=${$scope.modelKey}`;
+                        return $scope.serverUrl + ($scope.serverUrl.indexOf('?') == -1 ? `?${queryStringValue}` : `&${queryStringValue}`);
                     }
-
-                    return getUrl;
                 }
 
                 const $ctrl = this;
@@ -1169,7 +1176,7 @@ angular.module("tubular.directives").run(["$templateCache", function($templateCa
             '$http',
             'tubularConfig',
             '$window',
-            'localPager',
+            'tubularLocalPager',
             'modelSaver',
             'compareOperators',
             'sortDirection',
@@ -1180,7 +1187,7 @@ angular.module("tubular.directives").run(["$templateCache", function($templateCa
                 $http,
                 tubularConfig,
                 $window,
-                localPager,
+                tubularLocalPager,
                 modelSaver,
                 compareOperators,
                 sortDirection) {
@@ -1471,7 +1478,7 @@ angular.module("tubular.directives").run(["$templateCache", function($templateCa
 
                 $ctrl.retrieveLocalData = (request) => {
                     if (angular.isArray($ctrl.gridDatasource)) {
-                        $ctrl.currentRequest = localPager.process(request, $ctrl.gridDatasource)
+                        $ctrl.currentRequest = tubularLocalPager.process(request, $ctrl.gridDatasource)
                             .then($ctrl.processPayload, $ctrl.processError)
                             .then(() => $ctrl.currentRequest = null);
                     }
@@ -1485,7 +1492,7 @@ angular.module("tubular.directives").run(["$templateCache", function($templateCa
 
                 $ctrl.retrieveRemoteDataClientside = (request) => {
                     $ctrl.currentRequest = $http(request)
-                        .then(response => localPager.process(request, response.data), $ctrl.processError)
+                        .then(response => tubularLocalPager.process(request, response.data), $ctrl.processError)
                         .then($ctrl.processPayload, $ctrl.processError)
                         .then(() => $ctrl.currentRequest = null);
                 };
@@ -3655,16 +3662,16 @@ function exportToCsv(header, rows, visibility) {
     angular.module('tubular.services')
         /**
          * @ngdoc service
-         * @name localPager
+         * @name tubularLocalPager
          *
          * @description
          * Represents a service to handle a Tubular Grid Request in client side
          */
-        .service('localPager', localPager);
+        .service('tubularLocalPager', tubularLocalPager);
 
-    localPager.$inject = ['$q', 'orderByFilter', 'sortDirection', 'compareOperators'];
+    tubularLocalPager.$inject = ['$q', 'orderByFilter', 'sortDirection', 'compareOperators'];
 
-    function localPager($q, orderByFilter, sortDirection, compareOperators) {
+    function tubularLocalPager($q, orderByFilter, sortDirection, compareOperators) {
         this.process = (request, data) => $q(resolve => {
             if (data && data.length > 0) {
                 const totalRecords = data.length;

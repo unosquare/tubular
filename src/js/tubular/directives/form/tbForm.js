@@ -26,6 +26,7 @@
          * @param {string} modelKey Defines the fields to use like Keys.
          * @param {string} formName Defines the form name.
          * @param {bool} requireAuthentication Set if authentication check must be executed, default true.
+         * @param {string} urlQueryString Defines the optional querystring key to send the key.
          */
         .directive('tbForm',
         [
@@ -45,6 +46,7 @@
                         name: '@?formName',
                         onSave: '=?',
                         onError: '=?',
+                        urlQueryString: '@?',
                     },
                     controller: 'tbFormController',
                     compile: () => ({ post: scope => scope.finishDefinition() })
