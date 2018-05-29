@@ -45,7 +45,7 @@
                     }
                 };
 
-                if (!angular.isArray(data)) {
+                if (data && !angular.isArray(data)) {
                     angular.forEach(data, (v, k) => obj.$addField(k, v));
                 }
 
