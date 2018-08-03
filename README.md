@@ -7,7 +7,7 @@
 
 :star: *Please star this project if you find it useful!*
 
-Tubular provides a set of directives and services using AngularJS as framework. The main component is a grid with multiple options:
+Tubular for AngularJS (formerly Tubular) provides a set of directives and services using AngularJS as framework. The main component is a grid with multiple options:
 
 * **Full markup design**, you don't need to write even a Controller in AngularJS to start using our Grid or Form
 * Common functionality like **Sorting, Filtering (specific to the data type), Free-text search, Paging** and more.
@@ -16,13 +16,7 @@ Tubular provides a set of directives and services using AngularJS as framework. 
 * Independent backend platform (.NET and Node.js)
 * Compatible with modern browsers (Chrome, Firefox, and Edge). We are not supporting old browsers like Internet Explorer, you may need to include some polyfills.
 
-Developing with .NET as backend? check [Tubular DotNet](https://github.com/unosquare/tubular-dotnet) project.
-
-Developing with Node.js as backend? check [Tubular Node.js](https://github.com/unosquare/tubular-nodejs) project.
-
-If you are looking for Angular2 components, check [Tubular2](https://github.com/unosquare/tubular2) beta project.
-
-Please visit the [Tubular GitHub Page](http://unosquare.github.io/tubular) to learn how quickly you can start coding.
+Please visit the [Tubular GitHub Page](http://unosquare.github.io/tubular) to learn how quickly you can start coding. See [Related projects](#related-projects) below to discover more Tubular libraries and backend solutions.
 
 ## Dependencies
 
@@ -58,13 +52,6 @@ Finally include Tubular to your module as follows:
 ```javascript
 angular.module('app', ['tubular']);
 ```
-## Bower Installation [![Bower version](https://badge.fury.io/bo/tubular.svg)](http://badge.fury.io/bo/tubular)
-
-<pre>
-# install Tubular package and add it to bower.json
-$ bower install tubular --save
-</pre>
-
 ## npm Installation [![npm version](https://badge.fury.io/js/tubular.svg)](http://badge.fury.io/js/tubular)
 
 <pre>
@@ -128,10 +115,16 @@ grunt build
 npm run serve 
 ```
 
-## Boilerplate
+## Related Projects
 
-We have 3 boilerplates ready to seed your project:
-
-* <a href="https://github.com/unosquare/tubular-boilerplate" target="_blank">Simple Boilerplate</a> without server-side. 
-* [ASP.NET 4.6 Boilerplate](https://github.com/unosquare/tubular-boilerplate-csharp).
-* [ASP.NET Core Boilerplate](https://github.com/unosquare/tubular-aspnet-core-boilerplate)
+Name | Type | Language/tech | Description
+-----|------|---------------|--------------
+| [Tubular for AngularJS (formerly Tubular)](https://github.com/unosquare/tubular) | Library | AngularJs | Tubular provides a set of directives and services using AngularJS as framework. |
+| [Tubular for Angular6 (formerly Tubular2)](https://github.com/unosquare/tubular2) | Library | Angular6 | New Tubular2 with Angular6 (Angular2) and Angular Material 2.
+| [Tubular React](https://github.com/unosquare/tubular-react) | Library | React | Tubular-React is a DataGrid component using Material-UI |
+| [Tubular Common](https://github.com/unosquare/tubular-common) | Library | Javascript/Typescript | Tubular Common provides TypeScript and Javascript models and data transformer to use any Tubular DataGrid component with an array of Javascript objects. |
+| [Tubular Dotnet](https://github.com/unosquare/tubular-dotnet) | Backend library | C#/.NET Core | Tubular provides .NET Framework and .NET Core Library to create REST service to use with Tubular Angular Components easily with any WebApi library (ASP.NET Web API for example). |
+| [Tubular Nodejs](https://github.com/unosquare/tubular-nodejs) | Backend Library | Javascript | Tubular Node.js provides an easy way to integrate Tubular Angular Components easily with any Node.js WebApi library. |
+| [Tubular Boilerplate C#](https://github.com/unosquare/tubular-boilerplate-csharp) | Boilerplate | C# | Tubular Directives Boilerplate (includes AngularJS and Bootstrap) |
+| [Tubular Boilerplate](https://github.com/unosquare/tubular-boilerplate) | Boilerplate | Javascript/AngularJS | Tubular Directives Boilerplate (includes AngularJS and Bootstrap). |
+| [Tubular ASP.NET Core 2.0 Boilerplate](https://github.com/unosquare/tubular-aspnet-core-boilerplate) | Boilerplate | C#/.NET Core | Tubular Directives Boilerplate (includes AngularJS and Bootstrap). |
