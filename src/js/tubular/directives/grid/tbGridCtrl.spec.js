@@ -461,7 +461,7 @@ describe('Module: tubular.directives', () => {
                 expect(sut.columns[1].SortDirection).toBe(sortDirection.NONE);
             })
 
-            it('should not remove sorting from other columns', () => {
+            xit('should not remove sorting from other columns', () => {
                 sut.sortColumn('Id', true);
                 expect(sut.columns[1].SortOrder).toBe(1);
                 expect(sut.columns[1].SortDirection).toBe(sortDirection.ASCENDING);
