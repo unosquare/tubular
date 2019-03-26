@@ -203,7 +203,7 @@ FakesAssemblies/
 
 /coverage
 /instrumented
-*.lock.json
+
 /.vscode
 src/js/tubular/templates*
 src/js/templates*
