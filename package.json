@@ -55,7 +55,7 @@
     "eslint-config-angular": "0.5.0",
     "eslint-plugin-angular": "3.3.0",
     "eslint-plugin-jasmine": "2.9.3",
-    "express": "~4.16.2",
+    "express": "~4.17.1",
     "grunt": "~1.0.2",
     "grunt-babel": "7.0.0",
     "grunt-contrib-concat": "^1.0.1",
