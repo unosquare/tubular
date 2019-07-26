@@ -64,7 +64,7 @@
     "grunt-contrib-csslint": "2.0.0",
     "grunt-contrib-jshint": "^1.1.0",
     "grunt-coveralls": "^1.0.1",
-    "grunt-html2js": "0.5.1",
+    "grunt-html2js": "0.6.0",
     "grunt-karma": "2.0.0",
     "grunt-protractor-coverage": "^0.2.18",
     "gruntify-eslint": "4.0.0",
