@@ -3,7 +3,7 @@
  [![Build status](https://ci.appveyor.com/api/projects/status/scyh5u1fltu4d516?svg=true)](https://ci.appveyor.com/project/geoperez/tubular)
 [![Coverage Status](https://coveralls.io/repos/unosquare/tubular/badge.svg?branch=master)](https://coveralls.io/r/unosquare/tubular?branch=master)
 
-![Tubular](http://unosquare.github.io/tubular/assets/tubular.png)
+![Tubular](http://unosquare.github.io/tubular-angular/assets/tubular.png)
 
 Important - This repository has been archived. We are not longer maintaining this project. Please check Tubular for [Angular.io](https://github.com/unosquare/tubular2) or [React](https://github.com/unosquare/tubular-react).
 
